@@ -501,9 +501,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 $questionbank->process_actions($thispageurl, $cm);
 
 // End of command processing =====================================================.
-
-$PAGE->requires->yui2_lib('container');
-$PAGE->requires->yui2_lib('dragdrop');
 $PAGE->requires->skip_link_to('questionbank',
         get_string('skipto', 'access', get_string('questionbank', 'question')));
 $PAGE->requires->skip_link_to('offlinequizcontentsblock',
@@ -528,8 +525,14 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
 }
 $PAGE->requires->data_for_js('offlinequiz_edit_config', $offlinequizeditconfig);
 $PAGE->requires->js('/question/qengine.js');
-$PAGE->requires->js('/mod/offlinequiz/edit.js');
-$PAGE->requires->js_init_call('offlinequiz_edit_init');
+$module = array(
+    'name'      => 'mod_offlinequiz_edit',
+    'fullpath'  => '/mod/offlinequiz/edit.js',
+    'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
+    'strings'   => array(),
+    'async'     => false,
+);
+$PAGE->requires->js_init_call('offlinequiz_edit_init', null, false, $module);
 
 // Print the tabs to switch mode.
 $currenttab = 'editq';

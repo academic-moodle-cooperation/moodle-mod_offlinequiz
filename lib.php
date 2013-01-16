@@ -362,7 +362,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
     if (has_capability('mod/offlinequiz:viewreports', $context)) {
         if ($filearea == 'pdfs') {
             $filename = clean_filename($course->shortname) . '_' . clean_filename($offlinequiz->name) . '_' . $file->get_filename();
-            send_stored_file($file, 86400, 0, $forcedownload, $filename);
+            send_stored_file($file, 86400, 0, $forcedownload, array('filename' => $filename));
         } else {
             send_stored_file($file, 86400, 0, $forcedownload);
         }

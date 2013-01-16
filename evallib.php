@@ -436,7 +436,6 @@ function offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdat
                     $response['choice' . $key] = 1;
                 }
             } else if ($choicesdata[$slot][$key]->value == 0) {
-                $choice->value = 0;
                 if ($slotquestion instanceof qtype_multichoice_multi_question) {
                     $response['choice' . $key] = 0;
                 }

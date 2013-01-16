@@ -41,9 +41,6 @@ if (! $result = $DB->get_record("offlinequiz_results", array("id" => $resultid))
 if (! $offlinequiz = $DB->get_record("offlinequiz", array("id" => $result->offlinequizid))) {
     print_error("The offlinequiz with id $result->offlinequiz belonging to result $result is missing");
 }
-if (! $group = $DB->get_record("offlinequiz_groups", array('id' => $result->offlinegroupid))) {
-    print_error("The offlinequiz group belonging to result $result is missing");
-}
 if (! $course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
     print_error("The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
 }

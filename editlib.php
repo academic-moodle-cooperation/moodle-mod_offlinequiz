@@ -1808,7 +1808,7 @@ function offlinequiz_print_status_bar($offlinequiz) {
 
 function offlinequiz_print_choose_qtype_to_add_form($hiddenparams) {
     global $CFG, $PAGE, $OUTPUT;
-    $PAGE->requires->js('/question/qbank.js');
+
     echo '<div id="chooseqtypehead" class="hd">' . "\n";
     echo $OUTPUT->heading(get_string('chooseqtypetoadd', 'question'), 3);
     echo "</div>\n";
@@ -1834,7 +1834,16 @@ function offlinequiz_print_choose_qtype_to_add_form($hiddenparams) {
     echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
     echo "</div></form>\n";
     echo "</div>\n";
-    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'));
+ 
+    $PAGE->requires->js('/question/qengine.js');
+    $module = array(
+            'name'      => 'qbank',
+            'fullpath'  => '/question/qbank.js',
+            'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
+            'strings'   => array(),
+            'async'     => false,
+    );
+    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'), false, $module);
 }
 
 /**
@@ -1856,8 +1865,6 @@ function offlinequiz_create_new_question_button($categoryid, $params, $caption, 
     $url = new moodle_url('/question/addquestion.php', $params);
     echo $OUTPUT->single_button($url, $caption, 'get', array('disabled'=>$disabled, 'title'=>$tooltip));
 
-    $PAGE->requires->yui2_lib('dragdrop');
-    $PAGE->requires->yui2_lib('container');
     if (!$choiceformprinted) {
         echo '<div id="qtypechoicecontainer">';
         offlinequiz_print_choose_qtype_to_add_form(array());

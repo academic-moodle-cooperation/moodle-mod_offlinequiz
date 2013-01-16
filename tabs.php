@@ -153,5 +153,3 @@ if ($currenttab == 'editq' and isset($mode)) {
 }
 
 print_tabs($tabs, $currenttab, $inactive, $activated);
-
-$qtypes = array(MULTICHOICE, DESCRIPTION);

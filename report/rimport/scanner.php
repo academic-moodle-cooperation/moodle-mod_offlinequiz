@@ -21,7 +21,7 @@
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer
  * @copyright     2012 The University of Vienna
- * @since         Moodle 2.1
+ * @since         Moodle 2.2
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
@@ -1344,9 +1344,12 @@ class offlinequiz_page_scanner {
 
         if ($width) {
             $factor = $width / imagesx($this->image);
+        } else {
+            $factor = 1;
         }
 
         if ($upperleft) {
+            $this->upperleft = new oq_point();
             $this->upperleft->x = $upperleft->x / $factor + 2 * $this->zoomx;
             $this->upperleft->y = $upperleft->y / $factor + 2 * $this->zoomy;
         } else {
@@ -1374,6 +1377,7 @@ class offlinequiz_page_scanner {
         }
 
         if ($upperright) {
+            $this->upperright = new oq_point();
             $this->upperright->x = $upperright->x / $factor + 2 * $this->zoomx;
             $this->upperright->y = $upperright->y / $factor + 2 * $this->zoomy;
         } else {
@@ -1384,6 +1388,7 @@ class offlinequiz_page_scanner {
         }
 
         if ($lowerleft) {
+            $this->lowerleft = new oq_point();
             $this->lowerleft->x = $lowerleft->x / $factor + 2 * $this->zoomx;
             $this->lowerleft->y = $lowerleft->y / $factor + 2 * $this->zoomy;
         } else {
@@ -1394,6 +1399,7 @@ class offlinequiz_page_scanner {
         }
 
         if ($lowerright) {
+            $this->lowerright = new oq_point();
             $this->lowerright->x = $lowerright->x / $factor + 2 * $this->zoomx;
             $this->lowerright->y = $lowerright->y / $factor + 2 * $this->zoomy;
         } else {

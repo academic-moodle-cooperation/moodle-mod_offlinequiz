@@ -439,7 +439,6 @@ switch($mode) {
         $lists = $DB->get_records_sql("SELECT id, name, number FROM {offlinequiz_p_lists} WHERE offlinequizid = :offlinequizid ORDER BY name ASC",
                  array('offlinequizid' => $offlinequiz->id));
 
-        $formatoptions->noclean = true;
         foreach ($lists as $list) {
             $fs = get_file_storage();
 
@@ -450,6 +449,7 @@ switch($mode) {
                 $list->filename = null;
             }
 
+            // create PDF file if necessary
             if (!property_exists($list, 'filename') ||  !$list->filename ||
                     !$pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $list->filename)) {
                 $pdffile = offlinequiz_create_pdf_participants($offlinequiz, $course->id, $list, $context);
@@ -460,13 +460,13 @@ switch($mode) {
                 $url = "$CFG->wwwroot/pluginfile.php/" . $pdffile->get_contextid() . '/' . $pdffile->get_component() . '/' .
                         $pdffile->get_filearea() . '/' . $pdffile->get_itemid() . '/' . $pdffile->get_filename();
                 echo $OUTPUT->action_link($url, trim(format_text(get_string('downloadpartpdf', 'offlinequiz', $list->name))));
-                echo '<br />&nbsp;<br />';
 
                 $list->filename = $pdffile->get_filename();
                 $DB->update_record('offlinequiz_p_lists', $list);
             } else {
                 echo $OUTPUT->notification(format_text(get_string('createpartpdferror', 'offlinequiz', $list->name)));
             }
+            echo '<br />&nbsp;<br />';
         }
         echo $OUTPUT->box_end();
         break;
@@ -551,6 +551,7 @@ switch($mode) {
             if ($last > $numpages - 1) {
                 $last = $numpages - 1;
             }
+            $a = new stdClass();
             $a->from = $first + 1;
             $a->to = $last + 1;
             $a->total = $numpages;
