@@ -336,8 +336,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
             // Parse input for question -> grades
             $questionid = $matches[1];
-            $rawvalue = required_param($value, PARAM_FLOAT);
-            $offlinequiz->grades[$questionid] = unformat_float($rawvalue); 
+            $offlinequiz->grades[$questionid] = unformat_float($value); 
             offlinequiz_update_question_instance($offlinequiz->grades[$questionid], $questionid, $offlinequiz);
             $deletepreviews = false;
             $recomputesummarks = true;

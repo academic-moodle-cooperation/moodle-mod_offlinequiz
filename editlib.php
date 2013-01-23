@@ -954,7 +954,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                     <input type="text" name="g' . $question->id .
                     '" id="inputq' . $question->id .
                     '" size="' . ($offlinequiz->decimalpoints + 2) .
-                    '" value="' . (0 + $offlinequiz->grades[$qnum]) .
+                    '" value="' . format_float($offlinequiz->grades[$qnum], 2, true, true) .
                     '" tabindex="' . ($lastindex + $qno) . '" />
                     <input type="submit" class="pointssubmitbutton" value="' . $strsave . '" />
                     </fieldset>';
