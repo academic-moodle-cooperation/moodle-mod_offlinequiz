@@ -37,19 +37,19 @@ $action        = optional_param('action', 'load', PARAM_TEXT);
 $submitpage    = optional_param('page', 0, PARAM_INT);
 
 if (!$scannedpage = $DB->get_record('offlinequiz_scanned_p_pages', array('id' => $pageid))) {
-    print_error('noscannedpage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $pageid);
+    print_error('noscannedpage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, $pageid);
 }
 
 if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $scannedpage->offlinequizid))) {
-    print_error('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    print_error('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, $scannedpage->offlinequizid);
 }
 
 if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
-    print_error('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, array('course' => $offlinequiz->course,
+    print_error('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, array('course' => $offlinequiz->course,
          'offlinequiz' => $offlinequiz->id));
 }
 if (!$cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $course->id)) {
-    print_error('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
+    print_error('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, $offlinequiz->id);
 }
 
 require_login($course->id, false, $cm);
