@@ -27,6 +27,18 @@
  **/
 
 $capabilities = array(
+    // The standard capability mod/offlinequiz:addinstance.
+    'mod/offlinequiz:addinstance' => array(
+        'riskbitmask' => RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+                'teacher' => CAP_ALLOW,
+                'editingteacher' => CAP_ALLOW,
+                'manager' => CAP_ALLOW
+        )
+    ),
 
     // Ability to see that the offline quiz exists, and the basic information
     // about it, for example the start date and time limit.

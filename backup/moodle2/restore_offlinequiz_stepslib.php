@@ -89,27 +89,27 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
 
     // dummy methods for group question usages
     public function process_group_question_usage($data) {
-        $this->process_question_usage($data, 'group_');
+        $this->restore_question_usage_worker($data, 'group_');
     }
 
     public function process_group_question_attempt($data) {
-        $this->process_question_attempt($data, 'group_');
+        $this->restore_question_attempt_worker($data, 'group_');
     }
 
     public function process_group_question_attempt_step($data) {
-        $this->process_question_attempt_step($data, 'group_');
+        $this->restore_question_attempt_step_worker($data, 'group_');
     }
 
     public function process_result_question_usage($data) {
-        $this->process_question_usage($data, 'result_');
+        $this->restore_question_usage_worker($data, 'result_');
     }
 
     public function process_result_question_attempt($data) {
-        $this->process_question_attempt($data, 'result_');
+        $this->restore_question_attempt_worker($data, 'result_');
     }
 
     public function process_result_question_attempt_step($data) {
-        $this->process_question_attempt_step($data, 'result_');
+        $this->restore_question_attempt_step_worker($data, 'result_');
     }
 
     // restore method for the activity
@@ -196,6 +196,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $oldid = $data->id;
 
         $data->offlinequizid = $this->get_new_parentid('offlinequiz');
+        $data->resultid = $this->get_mappingid('offlinequiz_result', $data->resultid);
 
         $newitemid = $DB->insert_record('offlinequiz_scanned_pages', $data);
         $this->set_mapping('offlinequiz_scannedpage', $oldid, $newitemid, true);
@@ -291,7 +292,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->teacherid = $this->get_mappingid('user', $data->teacherid);
         // the usageid is set in the function below
-
+        
         $data->timestart = $this->apply_date_offset($data->timestart);
         $data->timefinish = $this->apply_date_offset($data->timefinish);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
@@ -313,7 +314,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
 
             $newitemid = $DB->insert_record('offlinequiz_results', $data);
 
-            // Save offlinequiz_result->id mapping, because logs use it
+            // Save offlinequiz_result->id mapping, because scanned pages use it
             $this->set_mapping('offlinequiz_result', $oldid, $newitemid, false);
         } else {
             // or we might be dealing with an offlinequiz group
@@ -325,7 +326,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
 
                 $newitemid = $DB->insert_record('offlinequiz_groups', $data);
 
-                // Save offlinequiz_group->id mapping, because logs use it
+                // Save offlinequiz_group->id mapping, because offlinequiz_results use it
                 $this->set_mapping('offlinequiz_group', $oldid, $newitemid, false);
             }
         }

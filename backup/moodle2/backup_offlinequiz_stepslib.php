@@ -103,16 +103,20 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $this->add_question_usages($result, 'usageid', 'result_');
         $this->add_question_usages($group, 'templateusageid', 'group_');
 
-        // Build the tree
-        // question instances are children of the offlinequiz
-        $offlinequiz->add_child($qinstances);
-        $qinstances->add_child($qinstance);
-
         // group questions are children of groups which are children of the offlinequiz
         $groups->add_child($group);
         $group->add_child($groupquestions);
         $groupquestions->add_child($groupquestion);
         $offlinequiz->add_child($groups);
+
+        // results are children of the offlinequiz
+        $results->add_child($result);
+        $offlinequiz->add_child($results);
+
+        // Build the tree
+        // question instances are children of the offlinequiz
+        $qinstances->add_child($qinstance);
+        $offlinequiz->add_child($qinstances);
 
         // choices and corners are children of scannedpages which are children of the offlinequiz
         $scannedpage->add_child($choices);
@@ -135,10 +139,6 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $scannedppages->add_child($scannedppage);
         $scannedppage->add_child($pchoices);
         $pchoices->add_child($pchoice);
-
-        // results are children of the offlinequiz
-        $results->add_child($result);
-        $offlinequiz->add_child($results);
 
         // Define sources
         $offlinequiz->set_source_table('offlinequiz', array('id' => backup::VAR_ACTIVITYID));
