@@ -26,4 +26,5 @@
  *
  **/
 
+$string['pluginname'] = 'Offlinequiz Regrading';
 $string['reallyregrade'] = 'Really regrade';

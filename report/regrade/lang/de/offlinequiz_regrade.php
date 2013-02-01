@@ -26,5 +26,6 @@
  *
  **/
 
+$string['pluginname'] = 'Offline-Tests Neubewertung';
 $string['reallyregrade'] = 'Neubewertung durchführen';
 
