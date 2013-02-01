@@ -1416,7 +1416,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
             <div class="question">
               <span class="number">';
 
-    if ($question->qtype != DESCRIPTION) {
+    if ($question->qtype != 'description') {
         echo $number.')&nbsp;&nbsp;';
     }
     echo '    </span>';
@@ -1432,7 +1432,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
 
     if ($tex_filter) {
         $text = $tex_filter->filter($text);
-        if ($question->qtype != DESCRIPTION) {
+        if ($question->qtype != 'description') {
             foreach ($choiceorder as $key => $answer) {
                 $question->options->answers[$answer]->answer = $tex_filter->filter($question->options->answers[$answer]->answer);
             }
@@ -1443,13 +1443,13 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     echo '  </div>
             <div class="grade">';
 
-    if ($question->qtype != DESCRIPTION) {
+    if ($question->qtype != 'description') {
         echo '(' . get_string('marks', 'quiz') . ': ' . ($question->maxgrade + 0) . ')';
     }
 
     echo '  </div>';
 
-    if ($question->qtype != DESCRIPTION) {
+    if ($question->qtype != 'description') {
 
         foreach ($choiceorder as $key => $answer) {
             $answertext = $question->options->answers[$answer]->answer;
