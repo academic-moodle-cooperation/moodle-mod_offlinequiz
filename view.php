@@ -110,6 +110,7 @@ if (!empty($offlinequiz->time)) {
 if (has_capability('mod/offlinequiz:view', $context)) {
     // Print offlinequiz description
     if (trim(strip_tags($offlinequiz->intro))) {
+        $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         echo $OUTPUT->box(format_text($offlinequiz->intro, FORMAT_MOODLE, $formatoptions), 'generalbox', 'intro');
     }

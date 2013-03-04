@@ -106,7 +106,11 @@ $options = new mod_offlinequiz_display_options();
 $options->hide_all_feedback();
 $options->manualcomment = question_display_options::EDITABLE;
 
-echo $quba->render_question($slot, $options, $slotquestion->_number);
+if (property_exists($slotquestion, '_number')) {
+    echo $quba->render_question($slot, $options, $slotquestion->_number);
+} else {
+    echo $quba->render_question($slot, $options);
+}
 
 ?>
   <div>

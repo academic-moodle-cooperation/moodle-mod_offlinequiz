@@ -37,12 +37,6 @@ defined('MOODLE_INTERNAL') || die();
 //  global as this file can be included inside a function scope. However, using the global variables
 //  at the module level is not a recommended.
 
-require_once($CFG->libdir.'/pagelib.php');
-require_once($CFG->libdir.'/questionlib.php');
-require_once($CFG->libdir.'/modinfolib.php');
-require_once($CFG->dirroot.'/course/lib.php');
-require_once('locallib.php');
-
 // CONSTANTS
 
 //  * The different review options are stored in the bits of $offlinequiz->review.
@@ -124,6 +118,7 @@ function offlinequiz_add_instance($offlinequiz) {
  */
 function offlinequiz_update_instance($offlinequiz) {
     global $DB;
+    require_once('locallib.php');
 
     $offlinequiz->timemodified = time();
     $offlinequiz->id = $offlinequiz->instance;
@@ -167,6 +162,7 @@ function offlinequiz_update_instance($offlinequiz) {
  */
 function offlinequiz_delete_instance($id) {
     global $DB;
+    require_once('locallib.php');
 
     if (! $offlinequiz = $DB->get_record('offlinequiz', array('id' => $id))) {
         return false;
@@ -304,6 +300,7 @@ function offlinequiz_answertext_preview_pluginfile($context, $answerid, $args, $
  */
 function offlinequiz_send_answertext_file($context, $answerid, $args, $forcedownload) {
     global $DB;
+    require_once('locallib.php');
 
     $fs = get_file_storage();
     $fullpath = "/$context->id/question/answer/$answerid/" . implode('/', $args);
@@ -327,6 +324,8 @@ function offlinequiz_send_answertext_file($context, $answerid, $args, $forcedown
  */
 function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB, $USER;
+    require_once('locallib.php');
+    require_once($CFG->libdir . '/questionlib.php');
 
     // TODO control file access!
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -519,6 +518,8 @@ function offlinequiz_has_grades($offlinequiz) {
  */
 function offlinequiz_process_options(&$offlinequiz) {
     global $CFG;
+    require_once($CFG->libdir . '/questionlib.php');
+
     $offlinequiz->timemodified = time();
 
     // offlinequiz open time.
@@ -680,7 +681,7 @@ function offlinequiz_user_complete($course, $user, $mod, $offlinequiz) {
  * @param unknown_type $timestart
  * @return boolean
  */
-function offlinequiz_print_recent_activity($course, $viewfullnames, $timestart) {
+function offlinequiz_print_recent_mod_activity($course, $viewfullnames, $timestart) {
     return false;  //  True if anything was printed, otherwise false
 }
 
@@ -841,6 +842,8 @@ function offlinequiz_format_grade($offlinequiz, $grade) {
  * @return float
  */
 function offlinequiz_format_question_grade($offlinequiz, $grade) {
+    require_once('locallib.php');
+
     if (empty($offlinequiz->questiondecimalpoints)) {
         $offlinequiz->questiondecimalpoints = -1;
     }
@@ -929,7 +932,9 @@ function offlinequiz_update_grades($offlinequiz, $userid = 0, $nullifnone = true
 function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
         global $CFG, $OUTPUT, $DB;
 
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once('locallib.php');
+    require_once($CFG->libdir . '/gradelib.php');
+    require_once($CFG->libdir . '/questionlib.php');
 
     if (array_key_exists('cmidnumber', $offlinequiz)) {
         // may not be always present
