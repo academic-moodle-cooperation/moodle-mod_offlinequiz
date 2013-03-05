@@ -1144,6 +1144,44 @@ function offlinequiz_get_review_options($offlinequiz, $result, $context) {
     return $options;
 }
 
+
+/**
+ * Combines the review options from a number of different offlinequiz attempts.
+ * Returns an array of two ojects, so the suggested way of calling this
+ * funciton is:
+ * list($someoptions, $alloptions) = offlinequiz_get_combined_reviewoptions(...)
+ *
+ * @param object $offlinequiz the offlinequiz instance.
+ * @param array $attempts an array of attempt objects.
+ * @param $context the roles and permissions context,
+ *          normally the context for the offlinequiz module instance.
+ *
+ * @return array of two options objects, one showing which options are true for
+ *          at least one of the attempts, the other showing which options are true
+ *          for all attempts.
+ */
+function offlinequiz_get_combined_reviewoptions($offlinequiz) {
+    $fields = array('feedback', 'generalfeedback', 'rightanswer');
+    $someoptions = new stdClass();
+    $alloptions = new stdClass();
+    foreach ($fields as $field) {
+        $someoptions->$field = false;
+        $alloptions->$field = true;
+    }
+    $someoptions->marks = question_display_options::HIDDEN;
+    $alloptions->marks = question_display_options::MARK_AND_MAX;
+
+    $attemptoptions = mod_offlinequiz_display_options::make_from_offlinequiz($offlinequiz);
+    foreach ($fields as $field) {
+        $someoptions->$field = $someoptions->$field || $attemptoptions->$field;
+        $alloptions->$field = $alloptions->$field && $attemptoptions->$field;
+    }
+    $someoptions->marks = max($someoptions->marks, $attemptoptions->marks);
+    $alloptions->marks = min($alloptions->marks, $attemptoptions->marks);
+
+    return array($someoptions, $alloptions);
+}
+
 /**
  * Creates HTML code for a question edit button, used by editlib.php
  * 

@@ -297,6 +297,7 @@ To add page breaks after particular questions, tick the checkboxes next to the q
 To arrange the questions over a number of pages, click the Repaginate button and select the desired number of questions per page.';
 $string['otherresultexists'] = 'Different result for {$a} already exists, import ignored! Delete result first.';
 $string['outof'] = '{$a->grade} out of a maximum of {$a->maxgrade}';
+$string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
 $string['overallfeedback'] = 'Overall feedback';
 $string['overview'] = 'Overview';
 $string['overviewdownload_help'] = '';
