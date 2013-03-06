@@ -59,6 +59,13 @@ define('OQ_STATUS_PROCESSED', 3);
 define('OQ_STATUS_NEEDS_CORRECTION', 4);
 define('OQ_STATUS_DOUBLE', 5);
 
+
+/*
+ * @var int If start and end date for the offline quiz are more than this many seconds apart
+ * they will be represented by two separate events in the calendar
+ */
+define('OFFLINEQUIZ_MAX_EVENT_LENGTH', 5*24*60*60); // 5 days.
+
 // FUNCTIONS
 
 /**
@@ -211,17 +218,9 @@ function offlinequiz_delete_instance($id) {
         }
     }
 
-    //  $pagetypes = page_import_types('mod/offlinequiz/');
-    //  foreach ($pagetypes as $pagetype) {
-    //      if (! $DB->delete_records('block_instance', array('pageid' => $offlinequiz->id, 'pagetype' => $pagetype))) {
-    //          $result = false;
-    //      }
-    //  }
-    offlinequiz_grade_item_delete($offlinequiz);
-
     if ($events = $DB->get_records('event', array('modulename' => 'offlinequiz', 'instance' => $offlinequiz->id))) {
         foreach ($events as $event) {
-            $event = calendar_event::load($event->$id);
+            $event = calendar_event::load($event);
             $event->delete();
         }
     }
@@ -789,15 +788,6 @@ function offlinequiz_after_add_or_update($offlinequiz) {
     //  // Update the events relating to this offlinequiz.
     //  // This is slightly inefficient, deleting the old events and creating new ones. However,
     //  // there are at most two events, and this keeps the code simpler.
-    //  if ($events = $DB->get_records('event', array('modulename' => 'offlinequiz', 'instance' => $offlinequiz->id))) {
-    //      foreach ($events as $event) {
-    //          global $CFG;
-    //          require_once($CFG->dirroot.'/calendar/lib.php');
-    //          $event = calendar_event::load($event->$id);
-    //          $event->delete();
-    //      }
-    //  }
-
     //  $event = new stdClass;
     //  $event->description = ''; //$offlinequiz->intro;
     //  $event->courseid    = $offlinequiz->course;
@@ -817,10 +807,151 @@ function offlinequiz_after_add_or_update($offlinequiz) {
     //      $event->name = $offlinequiz->name.' ('.get_string('reportstarts', 'offlinequiz').')';
     //      calendar_event::create($event);
     //  }
-    // FIXME
+    offlinequiz_update_events($offlinequiz);
+    
     offlinequiz_grade_item_update($offlinequiz);
     return;
 }
+
+/**
+ * This function updates the events associated to the offlinequiz.
+ * If $override is non-zero, then it updates only the events
+ * associated with the specified override.
+ *
+ * @uses OFFLINEQUIZ_MAX_EVENT_LENGTH
+ * @param object $offlinequiz the offlinequiz object.
+ * @param object optional $override limit to a specific override
+ */
+function offlinequiz_update_events($offlinequiz) {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot . '/calendar/lib.php');
+
+    // Load the old events relating to this offlinequiz.
+    $conds = array('modulename' => 'offlinequiz',
+                   'instance' => $offlinequiz->id);
+    
+    if (!empty($override)) {
+        // Only load events for this override.
+        $conds['groupid'] = isset($override->groupid)?  $override->groupid : 0;
+        $conds['userid'] = isset($override->userid)?  $override->userid : 0;
+    }
+    $oldevents = $DB->get_records('event', $conds);
+
+    $groupid   = 0;
+    $userid    = 0;
+    $timeopen  = $offlinequiz->timeopen;
+    $timeclose = $offlinequiz->timeclose;
+
+    if ($offlinequiz->time) {
+        $timeopen = $offlinequiz->time;
+    }
+    
+    // Only add open/close events if they differ from the offlinequiz default.
+    if (!empty($offlinequiz->coursemodule)) {
+        $cmid = $offlinequiz->coursemodule;
+    } else {
+        $cmid = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $offlinequiz->course)->id;
+    }
+
+    $event = new stdClass();
+    $event->name = $offlinequiz->name;
+    $event->description = format_module_intro('offlinequiz', $offlinequiz, $cmid);
+    // Events module won't show user events when the courseid is nonzero.
+    $event->courseid    = ($userid) ? 0 : $offlinequiz->course;
+    $event->groupid     = $groupid;
+    $event->userid      = $userid;
+    $event->modulename  = 'offlinequiz';
+    $event->instance    = $offlinequiz->id;
+    $event->timestart   = $timeopen;
+    $event->timeduration = max($timeclose - $timeopen, 0);
+    $event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
+    //$event->eventtype   = 'open';
+
+    if ($timeopen == $offlinequiz->time) {
+        $event->name = $offlinequiz->name;
+    }
+    if ($timeopen == $offlinequiz->timeopen) {
+         $event->name = $offlinequiz->name . ' (' . get_string('reportstarts', 'offlinequiz') . ')';
+    }
+
+    calendar_event::create($event);
+
+    // Delete any leftover events.
+    foreach ($oldevents as $badevent) {
+        $badevent = calendar_event::load($badevent);
+        $badevent->delete();
+    }
+}
+
+
+/**
+ * Prints offlinequiz summaries on MyMoodle Page
+ * @param arry $courses
+ * @param array $htmlarray
+ */
+function offlinequiz_print_overview($courses, &$htmlarray) {
+    global $USER, $CFG;
+    // These next 6 Lines are constant in all modules (just change module name).
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return array();
+    }
+
+    if (!$offlinequizzes = get_all_instances_in_courses('offlinequiz', $courses)) {
+        return;
+    }
+
+    // Fetch some language strings outside the main loop.
+    $strofflinequiz = get_string('modulename', 'offlinequiz');
+    $strnoattempts = get_string('noresults', 'offlinequiz');
+
+    // We want to list offlinequizzes that are currently available, and which have a close date.
+    // This is the same as what the lesson does, and the dabate is in MDL-10568.
+    $now = time();
+    foreach ($offlinequizzes as $offlinequiz) {
+        if ($offlinequiz->timeclose >= $now && $offlinequiz->timeopen < $now) {
+            // Give a link to the offlinequiz, and the deadline.
+            $str = '<div class="offlinequiz overview">' .
+                    '<div class="name">' . $strofflinequiz . ': <a ' .
+                    ($offlinequiz->visible ? '' : ' class="dimmed"') .
+                    ' href="' . $CFG->wwwroot . '/mod/offlinequiz/view.php?id=' .
+                    $offlinequiz->coursemodule . '">' .
+                    $offlinequiz->name . '</a></div>';
+            $str .= '<div class="info">' . get_string('offlinequizcloseson', 'offlinequiz',
+                    userdate($offlinequiz->timeclose)) . '</div>';
+
+            // Now provide more information depending on the uers's role.
+            $context = context_module::instance($offlinequiz->coursemodule);
+            if (has_capability('mod/offlinequiz:viewreports', $context)) {
+                // For teacher-like people, show a summary of the number of student attempts.
+                // The $offlinequiz objects returned by get_all_instances_in_course have the necessary $cm
+                // fields set to make the following call work.
+                $str .= '<div class="info">' .
+                        offlinequiz_num_attempt_summary($offlinequiz, $offlinequiz, true) . '</div>';
+            } else if (has_capability('mod/offlinequiz:attempt', $context)) { // Student
+                // For student-like people, tell them how many attempts they have made.
+                if (isset($USER->id) && ($results = offlinequiz_get_user_results($offlinequiz->id, $USER->id))) {
+                    $str .= '<div>' .
+                            get_string('hasresult', 'offlinequiz') . '</div>';
+                } else {
+                    $str .= '<div>' . $strnoattempts . '</div>';
+                }
+            } else {
+                // For ayone else, there is no point listing this offlinequiz, so stop processing.
+                continue;
+            }
+
+            // Add the output for this offlinequiz to the rest.
+            $str .= '</div>';
+            if (empty($htmlarray[$offlinequiz->course]['offlinequiz'])) {
+                $htmlarray[$offlinequiz->course]['offlinequiz'] = $str;
+            } else {
+                $htmlarray[$offlinequiz->course]['offlinequiz'] .= $str;
+            }
+        }
+    }
+}
+
 
 /**
  * Round a grade to to the correct number of decimal places, and format it for display.
