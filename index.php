@@ -71,13 +71,26 @@ if (!$offlinequizzes = get_all_instances_in_course('offlinequiz', $course)) {
 // Check if we need the closing date header.
 $showclosingheader = false;
 $showfeedback = false;
+$therearesome = false; 
 foreach ($offlinequizzes as $offlinequiz) {
     if ($offlinequiz->timeclose!=0) {
-        $showclosingheader=true;
+        $showclosingheader = true;
     }
-    if ($showclosingheader && $showfeedback) {
-        break;
+    $outoftime = false;
+    if ($offlinequiz->timeopen && $offlinequiz->timeopen > time()) {
+        $outoftime = true; 
     }
+    if ($offlinequiz->timeclose && $offlinequiz->timeclose < time()) {
+        $outoftime = true;
+    }
+    if (!$outoftime) {
+        $therearesome = true;
+    }
+}
+
+if (!$therearesome) {
+    notice(get_string('thereareno', 'moodle', $strofflinequizzes), "../../course/view.php?id=$course->id");
+    die;
 }
 
 // Configure table for displaying the list of instances.
@@ -122,8 +135,11 @@ foreach ($offlinequizzes as $offlinequiz) {
 
     $grades = array();
     if ($showing == 'grades') {
-        $gradearray = offlinequiz_get_user_grades($offlinequiz, $USER->id);
-        $grades[$offlinequiz->id] = $gradearray[$USER->id]['rawgrade'];
+        if ($gradearray = offlinequiz_get_user_grades($offlinequiz, $USER->id)) {
+            $grades[$offlinequiz->id] = $gradearray[$USER->id]['rawgrade'];
+        } else {
+            $grades[$offlinequiz->id] = null;
+        }
     }
 
     // Section number if necessary.

@@ -28,12 +28,12 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot . '/lib/filelib.php');
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/question/format.php');
 require_once($CFG->dirroot . '/question/engine/questionusage.php');
-
-defined('MOODLE_INTERNAL') || die();
 
 // These are the old error codes from the Moodle 1.9 module. We still need them for migration.
 define("OFFLINEQUIZ_IMPORT_LMS", "1");

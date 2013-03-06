@@ -71,7 +71,7 @@ define('OQ_STATUS_DOUBLE', 5);
  * @return int The id of the newly inserted offlinequiz record
  */
 function offlinequiz_add_instance($offlinequiz) {
-    global $DB;
+    global $CFG, $DB;
 
     // Process the options from the form.
     $offlinequiz->timecreated = time();
@@ -117,8 +117,8 @@ function offlinequiz_add_instance($offlinequiz) {
  * @return boolean Success/Fail
  */
 function offlinequiz_update_instance($offlinequiz) {
-    global $DB;
-    require_once('locallib.php');
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
     $offlinequiz->timemodified = time();
     $offlinequiz->id = $offlinequiz->instance;
@@ -161,8 +161,10 @@ function offlinequiz_update_instance($offlinequiz) {
  * @return boolean Success/Failure
  */
 function offlinequiz_delete_instance($id) {
-    global $DB;
-    require_once('locallib.php');
+    global $DB, $CFG;
+    
+    error_log('delete_instance ' . $id);
+    require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
     if (! $offlinequiz = $DB->get_record('offlinequiz', array('id' => $id))) {
         return false;
@@ -299,8 +301,8 @@ function offlinequiz_answertext_preview_pluginfile($context, $answerid, $args, $
  * @param bool $forcedownload whether the user must be forced to download the file.
  */
 function offlinequiz_send_answertext_file($context, $answerid, $args, $forcedownload) {
-    global $DB;
-    require_once('locallib.php');
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
     $fs = get_file_storage();
     $fullpath = "/$context->id/question/answer/$answerid/" . implode('/', $args);
@@ -324,7 +326,7 @@ function offlinequiz_send_answertext_file($context, $answerid, $args, $forcedown
  */
 function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB, $USER;
-    require_once('locallib.php');
+    require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
     require_once($CFG->libdir . '/questionlib.php');
 
     // TODO control file access!
@@ -842,7 +844,9 @@ function offlinequiz_format_grade($offlinequiz, $grade) {
  * @return float
  */
 function offlinequiz_format_question_grade($offlinequiz, $grade) {
-    require_once('locallib.php');
+    global $CFG;
+    
+    require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
     if (empty($offlinequiz->questiondecimalpoints)) {
         $offlinequiz->questiondecimalpoints = -1;
@@ -930,9 +934,9 @@ function offlinequiz_update_grades($offlinequiz, $userid = 0, $nullifnone = true
  * @return int 0 if ok, error code otherwise
  */
 function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
-        global $CFG, $OUTPUT, $DB;
+    global $CFG, $OUTPUT, $DB;
 
-    require_once('locallib.php');
+    require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
     require_once($CFG->libdir . '/gradelib.php');
     require_once($CFG->libdir . '/questionlib.php');
 

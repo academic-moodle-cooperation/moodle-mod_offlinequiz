@@ -235,6 +235,7 @@ $string['noquestionselected'] = 'Keine Fragen ausgewählt!';
 $string['noresults'] = 'Es gibt keine Ergebnisse.';
 $string['noreview'] = 'Sie dürfen diesen Onlinetest nicht einsehen';
 $string['notxtfile'] = 'Keine TXT- bzw. CSV-Datei';
+$string['notyetgraded'] = 'Noch nicht bewertet';
 $string['nozipfile'] = 'Keine ZIP-Datei';
 $string['numattempts'] = 'Anzahl der importierten Ergebnisse: {$a}';
 $string['numattemptsqueue'] = '{$a} Bögen zur Warteschlange hinzugefügt. Nach der Auswertung werden Sie per Email verständigt.';

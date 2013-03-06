@@ -66,6 +66,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
         $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), array('optional'=>true));
 
+        $offlinequiz = null;
         if (!empty($this->_instance)) {
             $offlinequiz = $DB->get_record('offlinequiz', array('id' => $this->_instance));
         }
@@ -81,7 +82,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         }
 
         // Only allow to change shufflequestions and shuffleanswers if the PDF documents have not been created
-        if (!$offlinequiz->docscreated) {
+        if (!$offlinequiz || !$offlinequiz->docscreated) {
             $attribs = '';
         } else {
             $attribs = ' disabled=disabled';
