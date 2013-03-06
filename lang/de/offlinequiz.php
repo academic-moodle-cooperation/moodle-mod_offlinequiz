@@ -260,6 +260,7 @@ $string['orderingofflinequiz'] = 'Reihenfolge und Seitenumbrüche';
 $string['otherresultexists'] = 'Ein abweichendes Ergebnis für {$a} existiert bereits. Import ignoriert! Löschen Sie das Ergebnis zuerst.';
 $string['otherpageexists'] = 'Die Seite {$a->page} wurde für Teilnehmer/in {$a->name} bereits erfolgreich ausgewertet. Import ignoriert!';
 $string['outof'] = '{$a->grade} von maximal {$a->maxgrade}';
+$string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
 $string['overallfeedback'] = 'Generelles Feedback';
 $string['overview'] = 'Übersicht';
 $string['pagecorrected'] = 'Korrigierter Bogen der Anwesenheitsliste importiert';

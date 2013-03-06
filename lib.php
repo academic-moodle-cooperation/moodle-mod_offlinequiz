@@ -1012,6 +1012,25 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
     return grade_update('mod/offlinequiz', $offlinequiz->course, 'mod', 'offlinequiz', $offlinequiz->id, 0, $grades, $params);
 }
 
+/**
+ * @param int $offlinequizid the offlinequiz id.
+ * @param int $userid the userid.
+ * @param string $status 'all', 'finished' or 'unfinished' to control
+ * @param bool $includepreviews
+ * @return an array of all the user's results at this offlinequiz. Returns an empty
+ *      array if there are none.
+ */
+function offlinequiz_get_user_results($offlinequizid, $userid) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
+
+    $params = array();
+
+    $params['offlinequizid'] = $offlinequizid;
+    $params['userid'] = $userid;
+    return $DB->get_records_select('offlinequiz_results',
+            "offlinequizid = :offlinequizid AND userid = :userid AND status = 'complete'", $params, 'id ASC');
+}
 
 /**
  * This function extends the settings navigation block for the site.

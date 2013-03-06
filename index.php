@@ -25,21 +25,24 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once("../../config.php");
 require_once("locallib.php");
 
 $id = required_param('id', PARAM_INT);
+
 $PAGE->set_url('/mod/offlinequiz/index.php', array('id'=>$id));
+$PAGE->set_pagelayout('incourse');
+
 if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
 }
+
 $coursecontext = context_course::instance($id);
-require_login($course->id);
-$PAGE->set_pagelayout('incourse');
+require_login($course);
 
 add_to_log($course->id, "offlinequiz", "view all", "index.php?id=$course->id", "");
 
-// Print the header
+// Print the header.
 $strofflinequizzes = get_string("modulenameplural", "offlinequiz");
 $streditquestions = '';
 $editqcontexts = new question_edit_contexts($coursecontext);
@@ -52,20 +55,20 @@ if ($editqcontexts->have_one_edit_tab_cap('questions')) {
                </div>
              </form>";
 }
+
 $PAGE->navbar->add($strofflinequizzes);
 $PAGE->set_title($strofflinequizzes);
 $PAGE->set_button($streditquestions);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-// Get all the appropriate data
-if (!$offlinequizzes = get_all_instances_in_course("offlinequiz", $course)) {
+// Get all the appropriate data.
+if (!$offlinequizzes = get_all_instances_in_course('offlinequiz', $course)) {
     notice(get_string('thereareno', 'moodle', $strofflinequizzes), "../../course/view.php?id=$course->id");
     die;
 }
-$sections = get_all_sections($course->id);
 
-// Check if we need the closing date header
+// Check if we need the closing date header.
 $showclosingheader = false;
 $showfeedback = false;
 foreach ($offlinequizzes as $offlinequiz) {
@@ -89,22 +92,21 @@ if ($showclosingheader) {
 array_unshift($headings, get_string('sectionname', 'format_'.$course->format));
 array_unshift($align, 'center');
 
-$showing = '';  // default
+$showing = '';
 
 if (has_capability('mod/offlinequiz:viewreports', $coursecontext)) {
     array_push($headings, get_string('results', 'offlinequiz'));
     array_push($align, 'left');
     $showing = 'stats';
 
-} else if (has_any_capability(array('mod/offlinequiz:attempt', 'mod/offlinequiz:viewreports'),
-        $coursecontext)) {
+} else if (has_capability('mod/offlinequiz:attempt', $coursecontext)) {
     array_push($headings, get_string('grade', 'offlinequiz'));
     array_push($align, 'left');
     if ($showfeedback) {
         array_push($headings, get_string('feedback', 'offlinequiz'));
         array_push($align, 'left');
     }
-    $showing = 'grades';  // default
+    $showing = 'grades';
 }
 
 $table = new html_table();
@@ -118,12 +120,18 @@ foreach ($offlinequizzes as $offlinequiz) {
     $context = context_module::instance($cm->id);
     $data = array();
 
+    $grades = array();
+    if ($showing == 'grades') {
+        $gradearray = offlinequiz_get_user_grades($offlinequiz, $USER->id);
+        $grades[$offlinequiz->id] = $gradearray[$USER->id]['rawgrade'];
+    }
+
     // Section number if necessary.
     $strsection = '';
     if ($offlinequiz->section != $currentsection) {
         if ($offlinequiz->section) {
             $strsection = $offlinequiz->section;
-            $strsection = get_section_name($course, $sections[$offlinequiz->section]);
+            $strsection = get_section_name($course, $offlinequiz->section);
         }
         if ($currentsection) {
             $learningtable->data[] = 'hr';
@@ -150,13 +158,11 @@ foreach ($offlinequizzes as $offlinequiz) {
     if ($showing == 'stats') {
         // The $offlinequiz objects returned by get_all_instances_in_course have the necessary $cm
         // fields set to make the following call work.
-        // $data[] = offlinequiz_result_summary_link_to_reports($offlinequiz, $cm, $context);
-        $data[] = '';
+        $data[] = offlinequiz_attempt_summary_link_to_reports($offlinequiz, $cm, $context);
+
     } else if ($showing == 'grades') {
         // Grade and feedback.
-        $results = offlinequiz_get_user_results($offlinequiz->id, $USER->id, 'all');
-        list($someoptions, $alloptions) = offlinequiz_get_combined_reviewoptions(
-                $offlinequiz, $results, $context);
+        list($someoptions, $alloptions) = offlinequiz_get_combined_reviewoptions($offlinequiz);
 
         $grade = '';
         $feedback = '';
@@ -166,9 +172,6 @@ foreach ($offlinequizzes as $offlinequiz) {
                 $a->grade = offlinequiz_format_grade($offlinequiz, $grades[$offlinequiz->id]);
                 $a->maxgrade = offlinequiz_format_grade($offlinequiz, $offlinequiz->grade);
                 $grade = get_string('outofshort', 'offlinequiz', $a);
-            }
-            if ($alloptions->overallfeedback) {
-                $feedback = offlinequiz_feedback_for_grade($grades[$offlinequiz->id], $offlinequiz, $context);
             }
         }
         $data[] = $grade;
@@ -183,5 +186,5 @@ foreach ($offlinequizzes as $offlinequiz) {
 // Display the table.
 echo html_writer::table($table);
 
-// Finish the page
+// Finish the page.
 echo $OUTPUT->footer();
