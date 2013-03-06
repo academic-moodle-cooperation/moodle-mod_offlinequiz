@@ -51,9 +51,13 @@ $string['cannoteditafterattempts'] = 'Sie können keine Fragen mehr hinzufügen 
 $string['changed'] = 'Ergebnis hat sich geändert.';
 $string['checkparts'] = 'Ausgewählte Teilnehmer/innen als anwesend markieren';
 $string['checkuserid'] = 'Gruppe/Matrikelnummer überprüfen';
+$string['configintro'] = 'Die Einstellungen, die Sie hier treffen werden als Standardwerte für neue Offline-Tests verwendet.';
 $string['configonlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
-$string['configshuffleanswers'] = 'Antworten neu mischen';
-$string['configshufflequestions'] = 'Fragen neu mischen';
+$string['configpapergray'] = 'Weißwert des Papieres, das für Antwortbögen verwendet wird.';
+$string['configshufflequestions'] = 'Wenn Sie diese Option aktivieren werden die Fragen jeder Offline-Test Gruppe nach dem Zufallsprinzip gemischt.';;
+$string['configshufflewithin'] = 'Wenn Sie diese Option aktivieren, werden die Antworten jeder Multple-Choice Frage nach dem Zufallsprinzip gemischt.';
+$string['configuseridentification'] = 'Eine Formel, die die Identifikation von NutzerInnen beschreibt. Diese Formel wird verwendet, um hochgeladene Antwortbögen den richtigen NutzerInnen zuzuordnen.';
+$string['pluginadministration']='Offline-Test Administration';
 $string['copyright'] = 'Diese Seite ist nur zu Ihrer persönlichen Information. Wie jeder andere Text auch unterliegen Prüfungsfragen den Bestimmungen des Urheberrechts. Es ist Ihnen nicht gestattet, Fragen zu kopieren oder an andere weiterzugeben. Zuwiderhandeln kann belangt werden.';
 $string['copyselectedtogroup'] = 'Ausgewählte Fragen zu Gruppe {$a} ';
 $string['copytogroup'] = 'Alle Fragen zu Gruppe {$a} ';
@@ -78,7 +82,7 @@ $string['CSVformat'] = 'Text-Format';
 $string['CSVplus1format'] = 'Text-Format (komplett)';
 $string['darkgray'] = 'Dunkelgrau';
 $string['datanotsaved'] = 'Scanner-Einstellungen nicht gespeichert';
-$string['configdecimalplaces'] = 'foobar';
+$string['configdecimalplaces'] = 'Anzahl der Dezimalstellen, die bei Bewertungen angezeigt werden.';
 $string['deletelistcheck'] = 'Möchten Sie die ausgewählte Liste wirklich löschen?';
 $string['deleteresultcheck'] = 'Möchten Sie die ausgewählen Ergebnisse wirklich löschen?';
 $string['deletepagecheck'] = 'Möchten Sie die ausgewählen Seiten wirklich löschen?';
@@ -105,10 +109,12 @@ $string['editlists'] = 'Anwesenheitslisten';
 $string['editofflinequiz'] = 'Gruppenfragen bearbeiten';
 $string['editorder'] = 'Reihenfolge bearbeiten';
 $string['editparticipants'] = 'Teilnehmer/innen';
+$string['editquestions'] = 'Fragen bearbeiten';
 $string['editscannedform'] = 'Scannerbeleg bearbeiten';
 $string['editthislist'] = 'Diese Liste bearbeiten';
 $string['emptygroups'] = 'Einige Offline-Test-Gruppen enthalten keine Fragen. Bitte fügen Sie Fragen hinzu.';
 $string['errorreport'] = 'Importfehler-Bericht';
+$string['everythingon'] = 'Aktiviert';
 $string['Excelformat'] = 'Excel-Format';
 $string['fileformat'] = 'File format';
 $string['fileformat_help'] = 'Wählen Sie aus, ob Sie die Fragen- und Antwortbögen als PDF- oder RTF-Dokumente erzeugt haben möchten.';
@@ -152,12 +158,10 @@ $string['importerror24'] = 'Liste nicht erfasst';
 $string['importfromto'] = 'Importiere {$a->from} bis {$a->to} von {$a->total}';
 $string['import'] = 'Importieren';
 $string['import_help'] = '<p>
-Sie können entweder die eingescannten Bilddateien in einer ZIP-Datei
-oder einzelne Bilddateien importieren und Moodle die Belege auswerten lassen.
-Wenn Moodle die Auswertung vornehmen soll, brauchen Sie sich nicht um die
-Dateinamen oder Dateiformate kümmern, solange die Bilder als JPG-, GIF-,
-PNG- oder TIF-Datei vorliegen. Eine Auflösung zwischen 200 und 300 dpi wird
-empfohlen.</p>';
+Sie können entweder mehrere eingescannte Bilddateien in einer ZIP-Datei
+oder einzelne Bilddateien importieren. Das Offline-Test Modul wird die Bilder im Hintergrund automatisch auswerten.
+Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als JPG-, GIF-,
+PNG- oder TIF-Datei vorliegen. Eine Punktdichte zwischen 200 und 300 DPI wird empfohlen.</p>';
 $string['importisfinished'] = 'Der Import für Offline-Test {$a} ist beendet.';
 $string['importlinkresults'] = 'Link zu den Ergebnissen: {$a}';
 $string['importlinkverify'] = 'Link zur Überprüfung: {$a}';
@@ -386,6 +390,8 @@ $string['selectgroup'] = 'Basierend auf Gruppe:';
 $string['selectlist'] = 'Bitte wählen Sie eine Liste oder versuchen Sie den Bogen neu zu adjustieren:';
 $string['selectpage'] = 'Bitte wählen Sie die Seite oder versuchen Sie den Bogen neu zu adjustieren:';
 $string['showallparts'] = 'Alle {$a} Teilnehmer/innen anzeigen';
+$string['showcopyright'] = 'Copyright Hinweis';
+$string['showcopyrightdesc'] = 'Wenn Sie diese Option aktivieren wird bei der Prüfungseinsicht für Studierende ein Copyright Hinweis angezeigt.';
 $string['showgrades'] = 'Punkte für Fragen drucken';
 $string['showgrades_help'] = 'Diese Option steuert, ob die erzielbaren Punkte einer Frage auf dem Fragebogen angezeigt werden.';
 $string['showmissingattemptonly'] = 'Alle Anwesenden ohne Ergebnis anzeigen';

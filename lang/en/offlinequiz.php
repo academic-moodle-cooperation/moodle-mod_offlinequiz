@@ -62,14 +62,12 @@ $string['changed'] = 'Result has been changed.';
 $string['checkparts'] = 'Mark selected participants as present';
 $string['checkuserid'] = 'Check group/user ID';
 $string['cmmissing'] = 'The course module for the offlinequiz with ID {$a} is missing';
-$string['configintro'] = 'The values you set here define the default values that are used in the settings form when you create a new offline quiz.';
+$string['configintro'] = 'The values you set here are used as default values for the settings of new offline quizzes.';
 $string['configonlylocalcategories'] = 'No shared question categories allowed.';
 $string['configshuffleanswers'] = 'Antworten neu mischen';
 $string['configshufflequestions'] = 'If you enable this option, then the order of questions in the offline quiz groups will be randomly shuffled each time you re-create the preview in the "Create forms" tab.';;
-$string['configshufflewithin'] = 'adsfasdf';
-$string['configuseridentification'] = 'basdfasdf';
-$string['pluginadministration']='Offlinequiz administration';
-$string['decimalplaces'] = 'decimal places';
+$string['configshufflewithin'] = 'If you enable this option, the answers of multiple choice questions are shuffled separately for each offlinequiz group.';
+$string['configuseridentification'] = 'A formula describing the user identification. This formula used to assign answer forms to users in the system.';
 $string['configpapergray'] = 'grey-value of paper';
 $string['configshufflewithin'] = 'If you enable this option, then the parts making up the individual questions will be randomly shuffled when the PDF answer forms are created.';
 $string['copyright'] = '<strong>Warning: The texts on this page are just for your personal information. Like any other texts these questions are under copyright restrictions. You are not allowed to copy them or to show them to other people!</strong>';
@@ -97,6 +95,7 @@ $string['CSVplus1format'] = 'CSV format (raw data)';
 $string['darkgray'] = 'Dark grey';
 $string['datanotsaved'] = 'Could not save settings';
 $string['configdecimalplaces'] ='Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
+$string['decimalplaces'] = 'decimal places';
 $string['deletelistcheck'] = 'Do you really want to delete the selected list and all it\'s participants?';
 $string['deleteresultcheck'] = 'Do you really want to delete the selected results?';
 $string['deletepartcheck'] = 'Do you really want to delete the selected participants?';
@@ -130,10 +129,11 @@ $string['editingofflinequiz_help'] = 'When creating an offline quiz, the main co
 $string['editofflinequiz'] = 'Edit offline quiz';
 $string['editorder'] = 'Edit order';
 $string['editparticipants'] = 'Edit participants';
+$string['editquestions'] = 'Edit questions';
 $string['editscannedform'] = 'Edit scanned form';
 $string['emptygroups'] = 'Some offline quiz groups are empty. Please add some questions.';
 $string['errorreport'] = 'Report of import errors';
-$string['everythingon'] = 'Everything on';
+$string['everythingon'] = 'enabled';
 $string['Excelformat'] = 'Excel format';
 $string['fileformat'] = 'File format';
 $string['fileformat_help'] = 'Choose whether you want your question and answer sheets in PDF or RTF format.';
@@ -178,10 +178,9 @@ $string['importerror24'] = 'List not detected';
 $string['importfromto'] = 'Importing {$a}->from to {$a}->to of {$a}->total.';
 $string['import'] = 'Import';
 $string['import_help'] = '<p>
-You can import single scanned image files or several scanned image files in a ZIP-archive an let Moodle do the data
-processing. If you let Moodle do the processing,
-file names are not relevant as long as the pictures are JPGs, GIFs, PNGs
-or TIFs. A resolution between 200 and 300 dpi is recommended.</p>';
+You can import single scanned image files or several scanned image files in a ZIP-archive. The offlinequiz module will process the image files in the background.
+File names are not relevant but should not contain special characters such as umlauts. Images should be JPGs, GIFs, PNGs
+or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['importedon'] = 'Imported on';
 $string['importforms'] = 'Import answer forms';
 $string['importisfinished'] = 'Import of offline quiz {$a} is finished.';
@@ -322,6 +321,7 @@ $string['pdfintro_help'] = 'This information will be printed on the first page o
 $string['pdfintrotext'] = '<b>How do I mark correctly?</b><br />This answer form will be scanned automatically. Please do not fold or spot. Use a black or blue pen to mark the fields. If you want to correct a marking, completeley fill the box with color. This field will be interpreted like an empty box.<br /><br />';
 $string['pdfintrotoolarge'] = 'The introduction is too long (max. 2000 characters).';
 $string['pearlywhite'] = 'Pearly white';
+$string['pluginadministration']='Offlinequiz administration';
 $string['point'] = 'point';
 $string['present'] = 'present';
 $string['previewforgroup'] = 'Preview for group {$a}';
@@ -421,6 +421,8 @@ $string['selectgroup'] = 'Based on group';
 $string['selectlist'] = 'Please select a list or try to readjust sheet:';
 $string['selectpage'] = 'Please select page number or try to readjust sheet:';
 $string['showallparts'] = 'Show all {$a} participants';
+$string['showcopyright'] = 'Show copyright statement';
+$string['showcopyrightdesc'] = 'If you enable this option, a copyright statement will be shown on the student result review page.';
 $string['showgrades'] = 'Print question grades';
 $string['showgrades_help'] = 'This option controls whether the maximum grades of the offline quiz questions should be printed on the question sheet.';
 $string['showmissingattemptonly'] = 'Show all checked participants without result';

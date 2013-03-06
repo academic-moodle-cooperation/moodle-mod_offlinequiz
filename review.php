@@ -228,7 +228,9 @@ if (!$isteacher and $options->attempt == question_display_options::HIDDEN) {
 // Print copyright warning:
 if (!$isteacher) {
     echo "<br />\n<div class=\"noticebox warning\">";
-    echo $OUTPUT->notification(get_string('copyright', 'offlinequiz'));
+    if ($offlinequizconfig->showcopyright) {
+        echo $OUTPUT->notification(get_string('copyright', 'offlinequiz'));
+    }
     echo "</div>";
 }
 

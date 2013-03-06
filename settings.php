@@ -54,6 +54,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('offlinequiz/logourl', get_string('logourl', 'offlinequiz'),
             get_string('logourldesc', 'offlinequiz'), '', PARAM_URL));
 
+    // Admin setting to disable display of copyright statement.
+    $settings->add(new admin_setting_configcheckbox('offlinequiz/showcopyright', get_string('showcopyright', 'offlinequiz'),
+            get_string('showcopyrightdesc', 'offlinequiz'), 1));
+
     // Review options
     //  $default = mod_offlinequiz_admin_review_setting::all_on();
     //  $settings->add(new mod_offlinequiz_admin_review_setting('offlinequiz/review', 'review', '', $default));

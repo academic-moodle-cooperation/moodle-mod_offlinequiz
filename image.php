@@ -216,7 +216,7 @@ if ($sheetloaded) {
         echo '</div>';
         echo '<div style="position: absolute; top: 80px; width:280px; left: ' . (OQ_IMAGE_WIDTH + 40) . 'px;">';
 
-        echo '<table callpadding="4" border="1"><tr><td>'; // outer table
+        echo '<table callpadding="4" border="1"><tr><td style="vertical-align: top;">'; // outer table
         echo '<table cellpadding="3" style=" font-size: 80%;"><tr><td><strong>'.get_string('question').'&nbsp;&nbsp;&nbsp;</strong></td><td><strong>' .
                 get_string('points', 'grades').'</strong></td></tr>';
 
@@ -239,7 +239,7 @@ if ($sheetloaded) {
             echo "<td>$grade / $maxgrade</td></tr>";
         }
         echo "</table>"; // inner table 1
-        echo "</td><td>";
+        echo "</td><td style=\"vertical-align: top;\">";
         echo '<table cellpadding="3" style=" font-size: 80%;"><tr><td><strong>'.get_string('question').'&nbsp;&nbsp;&nbsp;</strong></td><td><strong>' .
                 get_string('points', 'grades').'</strong></td></tr>';
 
