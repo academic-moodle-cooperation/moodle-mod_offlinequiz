@@ -1797,7 +1797,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
     list($rsql, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
     $params = array_merge($cparams, $rparams);
 
-    $sql = "SELECT p.id, p.userid, p.listid, u.".$offlinequizconfig->ID_field.", u.firstname, u.lastname, u.picture, p.checked
+    $sql = "SELECT p.id, p.userid, p.listid, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname, u.picture, p.checked
              FROM {offlinequiz_participants} p,
                   {offlinequiz_p_lists} pl,
                   {user} u,
@@ -1811,8 +1811,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
 
     $params['offlinequizid'] = $offlinequiz->id;
 
-    // Define table columns
-    $tablecolumns = array('fullname', $offlinequizconfig->ID_field, 'list', 'attempt', 'checked');
+    // Define table headers
     $tableheaders = array(get_string('fullname'), get_string($offlinequizconfig->ID_field), get_string('participantslist', 'offlinequiz'),
             get_string('attemptexists', 'offlinequiz'), get_string('present', 'offlinequiz'));
 
@@ -1826,24 +1825,24 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
         $workbook->send($filename);
         // Creating the first worksheet
         $sheettitle = get_string('participants', 'offlinequiz');
-        $myxls =& $workbook->add_worksheet($sheettitle);
+        $myxls = $workbook->add_worksheet($sheettitle);
         // Format types
-        $format =& $workbook->add_format();
+        $format = $workbook->add_format();
         $format->set_bold(0);
-        $formatbc =& $workbook->add_format();
+        $formatbc = $workbook->add_format();
         $formatbc->set_bold(1);
         $formatbc->set_align('center');
-        $formatb =& $workbook->add_format();
+        $formatb = $workbook->add_format();
         $formatb->set_bold(1);
-        $formaty =& $workbook->add_format();
+        $formaty = $workbook->add_format();
         $formaty->set_bg_color('yellow');
-        $formatc =& $workbook->add_format();
+        $formatc = $workbook->add_format();
         $formatc->set_align('center');
-        $formatr =& $workbook->add_format();
+        $formatr = $workbook->add_format();
         $formatr->set_bold(1);
         $formatr->set_color('red');
         $formatr->set_align('center');
-        $formatg =& $workbook->add_format();
+        $formatg = $workbook->add_format();
         $formatg->set_bold(1);
         $formatg->set_color('green');
         $formatg->set_align('center');
@@ -1865,24 +1864,25 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
         $workbook->send($filename);
         // Creating the first worksheet
         $sheettitle = get_string('participants', 'offlinequiz');
-        $myxls =& $workbook->add_worksheet($sheettitle);
+        $myxls = $workbook->add_worksheet($sheettitle);
         // Format types
-        $format =& $workbook->add_format();
+        $format = $workbook->add_format();
         $format->set_bold(0);
-        $formatbc =& $workbook->add_format();
+        $formatbc = $workbook->add_format();
         $formatbc->set_bold(1);
         $formatbc->set_align('center');
-        $formatb =& $workbook->add_format();
+        $formatb = new StdClass();
+        $formatb = $workbook->add_format();
         $formatb->set_bold(1);
-        $formaty =& $workbook->add_format();
+        $formaty = $workbook->add_format();
         $formaty->set_bg_color('yellow');
-        $formatc =& $workbook->add_format();
+        $formatc = $workbook->add_format();
         $formatc->set_align('center');
-        $formatr =& $workbook->add_format();
+        $formatr = $workbook->add_format();
         $formatr->set_bold(1);
         $formatr->set_color('red');
         $formatr->set_align('center');
-        $formatg =& $workbook->add_format();
+        $formatg = $workbook->add_format();
         $formatg->set_bold(1);
         $formatg->set_color('green');
         $formatg->set_align('center');
@@ -1903,9 +1903,9 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
         header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
         header("Pragma: public");
 
-        $headers = implode("\t", $tableheaders);
+        $headers = implode(", ", $tableheaders);
 
-        echo $headers." \n";
+        echo $headers . " \n";
     }
 
     $lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id));
@@ -1914,7 +1914,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
         foreach ($participants as $participant) {
             $userid = $participant->userid;
             $attempt = false;
-            $sql = "SELECT *
+            $sql = "SELECT COUNT(*)
                       FROM {offlinequiz_results}
                      WHERE userid = :userid
                        AND offlinequizid = :offlinequizid
@@ -1937,8 +1937,8 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
                 }
                 $rownum++;
             } else if ($fileformat=='CSV') {
-                $text = implode("\t", $row);
-                echo $text."\n";
+                $text = implode(", ", $row);
+                echo $text . "\n";
             }
         }
     }

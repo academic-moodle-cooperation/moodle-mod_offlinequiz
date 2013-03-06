@@ -189,24 +189,24 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $workbook->send($filename);
             // Creating the first worksheet.
             $sheettitle = get_string('reportoverview', 'offlinequiz');
-            $myxls =& $workbook->add_worksheet($sheettitle);
+            $myxls = $workbook->add_worksheet($sheettitle);
             // format types.
-            $format =& $workbook->add_format();
+            $format = $workbook->add_format();
             $format->set_bold(0);
-            $formatbc =& $workbook->add_format();
+            $formatbc = $workbook->add_format();
             $formatbc->set_bold(1);
             $formatbc->set_align('center');
-            $formatb =& $workbook->add_format();
+            $formatb = $workbook->add_format();
             $formatb->set_bold(1);
-            $formaty =& $workbook->add_format();
+            $formaty = $workbook->add_format();
             $formaty->set_bg_color('yellow');
-            $formatc =& $workbook->add_format();
+            $formatc = $workbook->add_format();
             $formatc->set_align('center');
-            $formatr =& $workbook->add_format();
+            $formatr = $workbook->add_format();
             $formatr->set_bold(1);
             $formatr->set_color('red');
             $formatr->set_align('center');
-            $formatg =& $workbook->add_format();
+            $formatg = $workbook->add_format();
             $formatg->set_bold(1);
             $formatg->set_color('green');
             $formatg->set_align('center');
@@ -233,24 +233,24 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $workbook->send($filename);
             // Creating the first worksheet
             $sheettitle = get_string('results', 'offlinequiz');
-            $myxls =& $workbook->add_worksheet($sheettitle);
+            $myxls = $workbook->add_worksheet($sheettitle);
             // format types
-            $format =& $workbook->add_format();
+            $format = $workbook->add_format();
             $format->set_bold(0);
-            $formatbc =& $workbook->add_format();
+            $formatbc = $workbook->add_format();
             $formatbc->set_bold(1);
             $formatbc->set_align('center');
-            $formatb =& $workbook->add_format();
+            $formatb = $workbook->add_format();
             $formatb->set_bold(1);
-            $formaty =& $workbook->add_format();
+            $formaty = $workbook->add_format();
             $formaty->set_bg_color('yellow');
-            $formatc =& $workbook->add_format();
+            $formatc = $workbook->add_format();
             $formatc->set_align('center');
-            $formatr =& $workbook->add_format();
+            $formatr = $workbook->add_format();
             $formatr->set_bold(1);
             $formatr->set_color('red');
             $formatr->set_align('center');
-            $formatg =& $workbook->add_format();
+            $formatg = $workbook->add_format();
             $formatg->set_bold(1);
             $formatg->set_color('green');
             $formatg->set_align('center');

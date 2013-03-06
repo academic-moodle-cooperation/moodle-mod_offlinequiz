@@ -1799,8 +1799,8 @@ function offlinequiz_print_status_bar($offlinequiz) {
         $currentstatus = get_string('offlinequizisopen', 'offlinequiz');
     }
 
-    //  $bits[] = html_writer::tag('span', $currentstatus,
-    // array('class' => 'offlinequizopeningstatus', 'title' => implode(', ', $dates)));
+       $bits[] = html_writer::tag('span', $currentstatus,
+      array('class' => 'offlinequizopeningstatus', 'title' => implode(', ', $dates)));
 
     echo html_writer::tag('div', implode(' | ', $bits), array('class' => 'statusbar'));
 }
