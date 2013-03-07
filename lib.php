@@ -931,10 +931,10 @@ function offlinequiz_print_overview($courses, &$htmlarray) {
             } else if (has_capability('mod/offlinequiz:attempt', $context)) { // Student
                 // For student-like people, tell them how many attempts they have made.
                 if (isset($USER->id) && ($results = offlinequiz_get_user_results($offlinequiz->id, $USER->id))) {
-                    $str .= '<div>' .
+                    $str .= '<div class="info">' .
                             get_string('hasresult', 'offlinequiz') . '</div>';
                 } else {
-                    $str .= '<div>' . $strnoattempts . '</div>';
+                    $str .= '<div class="info">' . $strnoattempts . '</div>';
                 }
             } else {
                 // For ayone else, there is no point listing this offlinequiz, so stop processing.
