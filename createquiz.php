@@ -330,7 +330,7 @@ if ($mode == 'preview') {
     $fs = get_file_storage();
 
     // Delete the PDF forms if forcepdfnew and if there are not scanned pages yet.
-    if ($forcepdfnew && $offlinequiz->docscreated) {
+    if ($forcepdfnew) {
         if ($hasscannedpages) {
             print_error('Some answer forms have already been analysed', "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=".sesskey());
         } else {
@@ -358,22 +358,25 @@ if ($mode == 'preview') {
                     print_error("Missing data for group ".$groupletter, "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey());
                 }
 
-                $pdffile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group, $course->id, $context);
+                if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
+                    require_once('docxlib.php');
+                    $questionfile = offlinequiz_create_docx_question($templateusage, $offlinequiz, $group, $course->id, $context);
+                } else {
+                    $questionfile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group, $course->id, $context);
+                }
             } else {
-                $pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', 'form-' . strtolower($groupletter) . '.pdf');
+                if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
+				    $questionfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', 'form-' . strtolower($groupletter) . '.docx');
+				} else {
+				    $questionfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', 'form-' . strtolower($groupletter) . '.pdf');
+				}
             }
-
-            // Create PDFs (or RTF)
-            //          if ($offlinequiz->fileformat == 1) { // RTF option
-            //              require_once("rtflib.php");
-            //              offlinequiz_create_rtf_question($attempt, $offlinequiz, $course->id);
-            //          } else {
-
-            if ($pdffile) {
-                $url = "$CFG->wwwroot/pluginfile.php/" . $pdffile->get_contextid() . '/' . $pdffile->get_component() . '/' .
-                        $pdffile->get_filearea() . '/' . $pdffile->get_itemid() . '/' . $pdffile->get_filename() . '?forcedownload=1';
+            
+            if ($questionfile) {
+                $url = "$CFG->wwwroot/pluginfile.php/" . $questionfile->get_contextid() . '/' . $questionfile->get_component() . '/' .
+                        $questionfile->get_filearea() . '/' . $questionfile->get_itemid() . '/' . $questionfile->get_filename() . '?forcedownload=1';
+                
                 echo $OUTPUT->action_link($url, get_string('formforgroup', 'offlinequiz', $groupletter));
-                // , new popup_action('click', $url, 'question' . $pdffile->get_id(), $options));
                 echo '<br />&nbsp;<br />';
                 @flush();@ob_flush();
             } else {

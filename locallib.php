@@ -60,6 +60,9 @@ define("OFFLINEQUIZ_IMPORT_NUMUSERS", "50");
 
 define('OFFLINEQUIZ_GROUP_LETTERS', "ABCDEFGHIJKL");  // Letters for naming offlinequiz groups.
 
+define('OFFLINEQUIZ_PDF_FORMAT', 0);   // PDF file format for question sheets
+define('OFFLINEQUIZ_DOCX_FORMAT', 1);  // DOCX file format for question sheets
+
 define('NUMBERS_PER_PAGE', 30);                 // Number of students on participants list.
 define('OQ_IMAGE_WIDTH', 860);                  // Width of correction form.
 

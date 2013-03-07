@@ -141,6 +141,13 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('select', 'fontsize', get_string('fontsize', 'offlinequiz'), $options);
         $mform->setDefault('fontsize', 10);
 
+        $options = array();
+        $options[OFFLINEQUIZ_PDF_FORMAT] = 'PDF';
+        $options[OFFLINEQUIZ_DOCX_FORMAT] = 'DOCX';
+        $mform->addElement('select', 'fileformat', get_string('fileformat', 'offlinequiz'), $options);
+        $mform->addHelpButton('fileformat', 'fileformat', 'offlinequiz');
+        $mform->setDefault('fileformat',0);
+
         $mform->addElement('selectyesno', 'showgrades', get_string("showgrades", "offlinequiz"));
         $mform->addHelpButton('showgrades', "showgrades", "offlinequiz");
         //      $mform->setDefault('showgrades', $offlinequizconfig->showgrades);
