@@ -38,7 +38,7 @@ class PHPWord_Section_ListItem {
 	/**
 	 * ListItem Style
 	 * 
-	 * @var PHPWord_Style_ListItem
+	 * @var PHPWord_Numbering_AbstractNumbering
 	 */
 	private $_style;
 	
@@ -62,22 +62,13 @@ class PHPWord_Section_ListItem {
 	 * 
 	 * @param string $text
 	 * @param int $depth
-	 * @param mixed $styleText
+	 * @param PHPWord_Numbering_AbstractNumbering $styleList
 	 * @param mixed $styleList
 	 */
-	public function __construct($text, $depth = 0, $styleFont = null, $styleList = null, $styleParagraph = null) {
-		$this->_style = new PHPWord_Style_ListItem();
+	public function __construct($text, $depth = 0, PHPWord_Numbering_AbstractNumbering &$styleList = null, $styleFont = null, $styleParagraph = null) {
+		$this->_style = $styleList;
 		$this->_textObject = new PHPWord_Section_Text($text, $styleFont, $styleParagraph);
 		$this->_depth = $depth;
-		
-		if(!is_null($styleList) && is_array($styleList)) {
-			foreach($styleList as $key => $value) {
-				if(substr($key, 0, 1) != '_') {
-					$key = '_'.$key;
-				}
-				$this->_style->setStyleValue($key, $value);
-			}
-		}
 	}
 	
 	/**

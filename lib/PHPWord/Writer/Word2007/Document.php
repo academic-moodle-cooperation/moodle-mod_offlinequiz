@@ -239,34 +239,33 @@ class PHPWord_Writer_Word2007_Document extends PHPWord_Writer_Word2007_Base {
         $SpIsObject = ($styleParagraph instanceof PHPWord_Style_Paragraph) ? true : false;
         
 		$depth = $listItem->getDepth();
-		$listType = $listItem->getStyle()->getListType();
-		print_object('listtype : ' . $listType);
+		$listType = $listItem->getStyle()->getIndex();
 		
 		$objWriter->startElement('w:p');
-		$objWriter->startElement('w:pPr');
-
-		if($SpIsObject) {
-		    $this->_writeParagraphStyle($objWriter, $styleParagraph, true);
-		} elseif(!$SpIsObject && !is_null($styleParagraph)) {
-		    $objWriter->startElement('w:pStyle');
-		    $objWriter->writeAttribute('w:val', $styleParagraph);
-		    $objWriter->endElement();
-		}
-
-		$objWriter->startElement('w:numPr');
-
-		$objWriter->startElement('w:ilvl');
-		$objWriter->writeAttribute('w:val', $depth);
-		$objWriter->endElement();
+			$objWriter->startElement('w:pPr');
+            
+                if($SpIsObject) {
+                    $this->_writeParagraphStyle($objWriter, $styleParagraph, true);
+                } elseif(!$SpIsObject && !is_null($styleParagraph)) {
+                    $objWriter->startElement('w:pStyle');
+                        $objWriter->writeAttribute('w:val', $styleParagraph);
+                    $objWriter->endElement();
+                }
+            
+				$objWriter->startElement('w:numPr');
+				
+					$objWriter->startElement('w:ilvl');
+						$objWriter->writeAttribute('w:val', $depth);
+					$objWriter->endElement();
+					
+					$objWriter->startElement('w:numId');
+						$objWriter->writeAttribute('w:val', $listType);
+					$objWriter->endElement();
+					
+				$objWriter->endElement();
+			$objWriter->endElement();
 			
-		$objWriter->startElement('w:numId');
-		$objWriter->writeAttribute('w:val', $listType);
-		$objWriter->endElement();
-			
-		$objWriter->endElement();
-		$objWriter->endElement();
-			
-		$this->_writeText($objWriter, $textObject, true);
+			$this->_writeText($objWriter, $textObject, true);
 			
 		$objWriter->endElement();
 	}

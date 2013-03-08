@@ -22,22 +22,46 @@
  * @package    PHPWord
  * @copyright  Copyright (c) 010 PHPWord
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    Beta 0.6.3, 08.07.2011
+ * @version    {something}
  */
 
+/**
+ * PHPWord_Style_Tabs
+ *
+ * @category   PHPWord
+ * @package    PHPWord_Style_Paragraph
+ * @copyright  Copyright (c) 2011 PHPWord
+ * @link http://www.schemacentral.com/sc/ooxml/e-w_tabs-1.html w:tabs
+ */
+class PHPWord_Style_Tabs {
 
-abstract class PHPWord_Writer_Word2007_WriterPart {
-	private $_parentWriter;
-	
-	public function setParentWriter(PHPWord_Writer_IWriter $pWriter = null) {
-		$this->_parentWriter = $pWriter;
-	}
-	
-	public function getParentWriter() {
-		if (!is_null($this->_parentWriter)) {
-			return $this->_parentWriter;
-		} else {
-			throw new Exception("No parent PHPWord_Writer_IWriter assigned.");
-		}
-	}
+        /**
+         * Tabs
+         *
+         * @var array
+         */
+        private $_tabs;
+
+        /**
+         *
+         * @param array $tabs
+         */
+        public function __construct(array $tabs) {
+                $this->_tabs = $tabs;
+        }
+
+        /**
+         *
+         * @param PHPWord_Shared_XMLWriter $objWriter
+         */
+        public function toXml(PHPWord_Shared_XMLWriter &$objWriter = NULL) {
+            if(isset($objWriter)) {
+                $objWriter->startElement("w:tabs");
+                foreach ($this->_tabs as &$tab) {
+                    $tab->toXml($objWriter);
+                }
+                $objWriter->endElement();
+            }
+        }
 }
+?>

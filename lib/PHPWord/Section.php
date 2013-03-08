@@ -109,7 +109,8 @@ class PHPWord_Section {
 	 * @return PHPWord_Section_Text
 	 */
 	public function addText($text, $styleFont = null, $styleParagraph = null) {
-		$givenText = $text; // utf8_encode($text);
+//		$givenText = utf8_encode($text);
+	    $givenText = $text;
 		$text = new PHPWord_Section_Text($givenText, $styleFont, $styleParagraph);
 		$this->_elementCollection[] = $text;
 		return $text;
@@ -125,9 +126,9 @@ class PHPWord_Section {
 	 * @return PHPWord_Section_Link
 	 */
 	public function addLink($linkSrc, $linkName = null, $styleFont = null, $styleParagraph = null) {
-		// $linkSrc = utf8_encode($linkSrc);
+		$linkSrc = utf8_encode($linkSrc);
 		if(!is_null($linkName)) {
-			// $linkName = utf8_encode($linkName);
+			$linkName = utf8_encode($linkName);
 		}
 		
 		$link = new PHPWord_Section_Link($linkSrc, $linkName, $styleFont, $styleParagraph);
@@ -173,14 +174,12 @@ class PHPWord_Section {
 	 * 
 	 * @param string $text
 	 * @param int $depth
-	 * @param mixed $styleFont
-     * @param mixed $styleList
-	 * @param mixed $styleParagraph
+	 * @param PHPWord_Numbering_AbstractNumbering $numberingStyle
 	 * @return PHPWord_Section_ListItem
 	 */
-	public function addListItem($text, $depth = 0, $styleFont = null, $styleList = null, $styleParagraph = null) {
-		// $text = utf8_encode($text);
-		$listItem = new PHPWord_Section_ListItem($text, $depth, $styleFont, $styleList, $styleParagraph);
+	public function addListItem($text, $depth = 0, PHPWord_Numbering_AbstractNumbering &$numberingStyle = null, $styleFont = null, $styleParagraph = null) {
+//		$text = utf8_encode($text);
+		$listItem = new PHPWord_Section_ListItem($text, $depth, $numberingStyle, $styleFont, $styleParagraph);
 		$this->_elementCollection[] = $listItem;
 		return $listItem;
 	}
@@ -287,7 +286,7 @@ class PHPWord_Section {
 	 * @return PHPWord_Section_Title
 	 */
 	public function addTitle($text, $depth = 1) {
-		// $text = utf8_encode($text);
+//		$text = utf8_encode($text);
 		$styles = PHPWord_Style::getStyles();
 		if(array_key_exists('Heading_'.$depth, $styles)) {
 			$style = 'Heading'.$depth;

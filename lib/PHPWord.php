@@ -70,7 +70,13 @@ class PHPWord {
 	 */
 	private $_sectionCollection = array();
 
-	
+        /**
+         * Collection of numbering styles
+         *
+         * @var array
+         */
+        private $_numberingCollection = array();
+
 	/**
 	 * Create a new PHPWord Document
 	 */
@@ -211,7 +217,24 @@ class PHPWord {
 	private function _countSections() {
 		return count($this->_sectionCollection);
 	}
-    
+
+	/**
+	 * Get numbering
+	 * @return int
+	 */
+	public function getNumbering() {
+		return $this->_numberingCollection;
+	}
+
+	/**
+	 * Get numbering
+	 * @return int
+	 */
+	public function addNumbering(PHPWord_Numbering_AbstractNumbering &$numbering) {
+		$this->_numberingCollection[] = $numbering;
+		$numbering->setIndex(count($this->_numberingCollection) - 1);
+	}
+
     /**
      * Load a Template File
      * 

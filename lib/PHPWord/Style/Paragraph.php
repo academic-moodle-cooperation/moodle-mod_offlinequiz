@@ -62,8 +62,21 @@ class PHPWord_Style_Paragraph {
 	 * @var int
 	 */
 	private $_spacing;
-	
-	
+
+	/**
+	 * Set of Custom Tab Stops
+	 *
+	 * @var array
+	 */
+	private $_tabs;
+
+	/**
+	 * Paragraph indentations
+	 *
+	 * @var PHPWord_Style_Indentation
+	 */
+	private $_indentations;
+
 	/**
 	 * New Paragraph Style
 	 */
@@ -72,6 +85,8 @@ class PHPWord_Style_Paragraph {
 		$this->_spaceBefore     = null;
 		$this->_spaceAfter      = null;
 		$this->_spacing         = null;
+		$this->_tabs            = null;
+		$this->_indentations    = null;
 	}
 	
 	/**
@@ -83,6 +98,10 @@ class PHPWord_Style_Paragraph {
 	public function setStyleValue($key, $value) {
 		if($key == '_spacing') {
 			$value += 240; // because line height of 1 matches 240 twips
+		} else if($key === '_tabs') {
+			$value = new PHPWord_Style_Tabs($value);
+		} else if($key === '_indentations') {
+			$value = new PHPWord_Style_Indentation($value);
 		}
 		$this->$key = $value;
 	}
@@ -170,5 +189,82 @@ class PHPWord_Style_Paragraph {
 	   $this->_spacing = $pValue;
 	   return $this;
 	}
+
+	/**
+	 * Set indentations for the paragraph.
+	 *
+	 * @param PHPWord_Style_Indentation $pValue
+	 * @return PHPWord_Style_Paragraph
+	 */
+	public function setIndentions(PHPWord_Style_Indentation &$pValue = null) {
+		$this->_indentations = $pValue;
+		return $this;
+	}
+
+	/**
+	 * Set tabs for the paragraph.
+	 *
+	 * @param PHPWord_Style_Tabs $pValue
+	 * @return PHPWord_Style_Paragraph
+	 */
+	public function setTabs(PHPWord_Style_Tabs &$pValue = null) {
+		$this->_tabs = $pValue;
+		return $this;
+	}
+
+	/**
+	 *
+	 * @return PHPWord_Style_Tabs
+	 */
+	public function getTabs() {
+		return $this->_tabs;
+	}
+
+	/**
+	 * @return PHPWord_Style_Indentation
+	 */
+	public function getIndentation() {
+		return $this->_indentations;
+	}
+
+        public function toXml(PHPWord_Shared_XMLWriter &$objWriter = NULL) {
+            if(!is_null($objWriter)) {
+                $objWriter->startElement("w:pPr");
+
+                if(!is_null($this->_align)) {
+                    $objWriter->startElement('w:jc');
+                    $objWriter->writeAttribute('w:val', $this->_align);
+                    $objWriter->endElement();
+                }
+
+                if(!is_null($this->_spaceBefore) || !is_null($this->_spaceAfter) || !is_null($this->_spacing)) {
+                    $objWriter->startElement('w:spacing');
+
+                    if(!is_null($this->_spaceBefore)) {
+                        $objWriter->writeAttribute('w:before', $this->_spaceBefore);
+                    }
+                    if(!is_null($this->_spaceAfter)) {
+                        $objWriter->writeAttribute('w:after', $this->_spaceAfter);
+                    }
+                    if(!is_null($this->_spacing)) {
+                        $objWriter->writeAttribute('w:line', $this->_spacing);
+                        $objWriter->writeAttribute('w:lineRule', 'auto');
+                    }
+
+                    $objWriter->endElement();
+                }
+
+                if(!is_null($this->_tabs)) {
+                    $this->_tabs->toXml($objWriter);
+                }
+
+                // Write the w:ind element
+                if(!is_null($this->_indentations)) {
+                    $this->_indentations->toXml($objWriter);
+                }
+
+                $objWriter->endElement();
+            }
+        }
 }
 ?>

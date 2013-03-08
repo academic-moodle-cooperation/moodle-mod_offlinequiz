@@ -257,5 +257,94 @@ class PHPWord_Style_Font {
 	public function getParagraphStyle() {
 		return $this->_paragraphStyle;
 	}
+
+        public function toXml(PHPWord_Shared_XMLWriter &$objWriter = NULL) {
+            if(isset($objWriter)) {
+                $font = $this->getName();
+                $bold = $this->getBold();
+                $italic = $this->getItalic();
+                $color = $this->getColor();
+                $size = $this->getSize();
+                $fgColor = $this->getFgColor();
+                $striketrough = $this->getStrikethrough();
+                $underline = $this->getUnderline();
+                $superscript = $this->getSuperScript();
+                $subscript = $this->getSubScript();
+
+                $objWriter->startElement('w:rPr');
+
+                // Font
+                if($font != 'Arial') {
+                    $objWriter->startElement('w:rFonts');
+                        $objWriter->writeAttribute('w:ascii', $font);
+                        $objWriter->writeAttribute('w:hAnsi', $font);
+                        $objWriter->writeAttribute('w:cs', $font);
+                    $objWriter->endElement();
+                }
+
+                // Color
+                if($color != '000000') {
+                    $objWriter->startElement('w:color');
+                        $objWriter->writeAttribute('w:val', $color);
+                    $objWriter->endElement();
+                }
+
+                // Size
+                if($size != 20) {
+                    $objWriter->startElement('w:sz');
+                        $objWriter->writeAttribute('w:val', $size);
+                    $objWriter->endElement();
+                    $objWriter->startElement('w:szCs');
+                        $objWriter->writeAttribute('w:val', $size);
+                    $objWriter->endElement();
+                }
+
+                // Bold
+                if($bold) {
+                    $objWriter->writeElement('w:b', null);
+                }
+
+                // Superscript
+                if($superscript) {
+                    $objWriter->startElement('w:vertAlign');
+                    $objWriter->writeAttribute('w:val', 'superscript');
+                    $objWriter->endElement();
+                }
+
+                // Subscript
+                if($subscript) {
+                    $objWriter->startElement('w:vertAlign');
+                    $objWriter->writeAttribute('w:val', 'subscript');
+                    $objWriter->endElement();
+                }
+
+                // Italic
+                if($italic) {
+                    $objWriter->writeElement('w:i', null);
+                    $objWriter->writeElement('w:iCs', null);
+                }
+
+                // Underline
+                if(!is_null($underline) && $underline != 'none') {
+                    $objWriter->startElement('w:u');
+                        $objWriter->writeAttribute('w:val', $underline);
+                    $objWriter->endElement();
+                }
+
+                // Striketrough
+                if($striketrough) {
+                    $objWriter->writeElement('w:strike', null);
+                }
+
+                // Foreground-Color
+                if(!is_null($fgColor)) {
+                    $objWriter->startElement('w:highlight');
+                        $objWriter->writeAttribute('w:val', $fgColor);
+                    $objWriter->endElement();
+                }
+
+                $objWriter->endElement();
+            }
+        }
 }
 ?>

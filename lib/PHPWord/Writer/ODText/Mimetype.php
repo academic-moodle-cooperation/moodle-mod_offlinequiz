@@ -2,7 +2,7 @@
 /**
  * PHPWord
  *
- * Copyright (c) 2011 PHPWord
+ * Copyright (c) 2009 - 2010 PHPWord
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,25 +19,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category   PHPWord
- * @package    PHPWord
- * @copyright  Copyright (c) 010 PHPWord
- * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    Beta 0.6.3, 08.07.2011
+ * @package    PHPWord_Writer_ODText
+ * @copyright  Copyright (c) 2009 - 2010 PHPWord (http://www.codeplex.com/PHPWord)
+ * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
+ * @version    ##VERSION##, ##DATE##
  */
 
 
-abstract class PHPWord_Writer_Word2007_WriterPart {
-	private $_parentWriter;
-	
-	public function setParentWriter(PHPWord_Writer_IWriter $pWriter = null) {
-		$this->_parentWriter = $pWriter;
+/**
+ * PHPWord_Writer_ODText_Mimetype
+ *
+ * @category   PHPWord
+ * @package    PHPWord_Writer_ODText
+ * @copyright  Copyright (c) 2009 - 2010 PHPWord (http://www.codeplex.com/PHPWord)
+ */
+class PHPWord_Writer_ODText_Mimetype extends PHPWord_Writer_ODText_WriterPart
+{
+	/**
+	 * Write Mimetype to Text format
+	 *
+	 * @param 	PHPWord $pPHPWord
+	 * @return 	string 						Text Output
+	 * @throws 	Exception
+	 */
+	public function writeMimetype(PHPWord $pPHPWord = null)
+	{
+		
+		return 'application/vnd.oasis.opendocument.text';
 	}
-	
-	public function getParentWriter() {
-		if (!is_null($this->_parentWriter)) {
-			return $this->_parentWriter;
-		} else {
-			throw new Exception("No parent PHPWord_Writer_IWriter assigned.");
-		}
-	}
+
 }
