@@ -1,4 +1,4 @@
-<?php
+7<?php
 // This file is for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -33,88 +33,149 @@ require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 
 /**
  * Function to print all blocks (parts) of a question or answer text in one textrun.
- * Blocks can be strings or images.
+ * Blocks can be of type string, newline or image.
+ * If the first block is a string it is printed as a listitem using the numbering and depth provided.
+ * Otherwise, the empty string is used as the list item string.
  * 
- * @param unknown_type $section The section the textrun is located in.
- * @param array $blocks The array of blocks that should be printed. 
+ * @param PHPWord_Section $section A PHP Word section
+ * @param array $blocks The array of blocks as created by the conversion functions.
+ * @param PHPWord_Numbering_AbstractNumbering $numbering The numbering used for the list item
+ * @param int $depth The depth in the enumeration (0 for questions, 1 for answers).
  */
-function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks) {
+function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbering = null, $depth = 0) {
      
-    $textrun = $section->createTextRun();
-    foreach($blocks as $block) {
-        if ($block['type'] == 'string') {
-            if (!empty($block['style'])) {
-                $textrun->addText($block['value'], $block['style']);
-            } else {
-                $textrun->addText($block['value']);
-            }
-        } else if ($block['type'] == 'newline') {
-            $textrun = $section->createTextRun();
-        } else if ($block['type'] == 'listitem') {
-            $listStyle = array('listType' => PHPWord_Style_ListItem::TYPE_SMALL_LETTER);
-//            print_object($block['value']);
-            $section->addListItem($block['value'], 1, null, $listStyle);
-        } else if ($block['type'] == 'image') {
-            $style = array();
-            $style['width'] = 200;
-            $style['height'] = 100;
-            $style['align'] = 'center';
+    // We skip leading newlines.
+    while ($blocks[0]['type'] == 'newline') {
+        array_shift($blocks);
+    }
+    
+    // First print the list item string.
+    if (!empty($numbering)) {
+        $itemstring = ' ';
+        if ($blocks[0]['type'] == 'string') {
+            $itemstring = $blocks[0]['value'];
+            array_shift($blocks);
+        }
+        $section->addListItem($itemstring, $depth, $numbering);
+    }
 
-            if ($block['width']) {
-                $style['width'] = intval($block['width']);
-            }
-            if ($block['height']) {
-                $style['height'] = intval($block['height']);
-            }
-            if ($block['align']) {
-                $style['align'] = $block['align'];
-                if ($style['align'] == 'middle') {
-                    $style['align'] = 'center';
+    // Now we go through the rest of the blocks (if there are any) and print them to a textrun.
+    if (!empty($blocks)) {
+        $textrun = $section->createTextRun();
+        foreach($blocks as $block) {
+            if ($block['type'] == 'string') {
+                if (!empty($block['style'])) {
+                    $textrun->addText($block['value'], $block['style']);
+                } else {
+                    $textrun->addText($block['value']);
                 }
-            }
-//            print_object('image data ');
- //         // print_object($block['value']);
-   //         // print_object($style);
-            // Now add the image and start a new textrun.
-            $section->addImage($block['value'], $style);
+            } else if ($block['type'] == 'newline') {
             $textrun = $section->createTextRun();
+            } else if ($block['type'] == 'image') {
+                // Retrieve the style info.
+                $style = array();
+                $style['width'] = 200;
+                $style['height'] = 100;
+                $style['align'] = 'center';
+
+                if ($block['width']) {
+                    $style['width'] = intval($block['width']);
+                }
+                if ($block['height']) {
+                    $style['height'] = intval($block['height']);
+                }
+                if ($block['align']) {
+                    $style['align'] = $block['align'];
+                    if ($style['align'] == 'middle') {
+                        $style['align'] = 'center';
+                    }
+                }
+
+                // Now add the image and start a new textrun.
+                $section->addImage($block['value'], $style);
+                $textrun = $section->createTextRun();
+            }
         }
     }
 }
 
+/**
+ * Function to convert underline characters (HTML <span ...> tags) into string blocks with underline style.
+ *  
+ * @param string $text
+ */
+function offlinequiz_convert_underline_text_docx($text) {
+    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
+    $replace = array('"', '&', '>', '<');
+
+    // Now add the remaining text after the image tag.
+    $parts = preg_split('/<span style="text-decoration: underline;">/i', $text);
+    $result = array();
+    
+    $firstpart = array_shift($parts);
+    if (!empty($firstpart)) {
+        $firstpart = strip_tags($firstpart);
+        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $firstpart));
+    }
+
+    foreach($parts as $part) {
+        $closetagpos = strpos($part, '</span>');
+
+        $underlinetext = strip_tags(substr($part, 0, $closetagpos));
+        $underlineremain = strip_tags(trim(substr($part, $closetagpos + 7)));
+         
+        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $underlinetext), 'style' => 'uStyle');
+        if (!empty($underlineremain)) {
+            $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $underlineremain));
+        }
+    }
+    return $result;
+}
+
+
+/**
+ * Function to convert bold characters (HTML <b> tags) into string blocks with bold style.
+ *  
+ * @param string $text
+ */
 function offlinequiz_convert_bold_text_docx($text) {
     $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
     $replace = array('"', '&', '>', '<');
 
     // Now add the remaining text after the image tag.
-    $parts = preg_split("/<b>/i", $text);
+    $parts = preg_split("/<b>|<strong>/i", $text); 
     $result = array();
     
-    // print_object('bold parts');
-    // print_object($parts);
-
     $firstpart = array_shift($parts);
-    $firstpart = strip_tags($firstpart);
-    $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $firstpart));
+    if (!empty($firstpart)) {
+        $result = offlinequiz_convert_underline_text_docx($firstpart);
+    }
 
     foreach($parts as $part) {
-        $closetagpos = strpos($part, '</b>');
+        if ($closetagpos = strpos($part, '</b>')) {
+            $boldremain = trim(substr($part, $closetagpos + 4));
+        } else if ($closetagpos = strpos($part, '</strong>')) {
+            $boldremain = trim(substr($part, $closetagpos + 9));
+        } else {
+            $closetagpos = strlen($part) - 1;
+            $boldremain = '';            
+        }
         $boldtext = strip_tags(trim(substr($part, 0, $closetagpos)));
-        // print_object('bold text: '. $boldtext);
-        $boldremain = trim(substr($part, $closetagpos + 4));
-        // print_object('bold remain: ' . $boldremain);
-         
+
         $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $boldtext), 'style' => 'bStyle');
         if (!empty($boldremain)) {
-            $boldremainblocks = offlinequiz_convert_question_text_docx($boldremain, false, 0, false);
+            $boldremainblocks = offlinequiz_convert_underline_text_docx($boldremain);
             $result = array_merge($result, $boldremainblocks);
         }
     }
-    // print_object('bold blocks:');
-    // print_object($result);
     return $result;
 }
 
+/**
+ * Function to convert line breaks (HTML <br/> tags) into line break blocks for rendering.
+ * 
+ * @param string $text
+ */
 function offlinequiz_convert_newline_docx($text) {
     $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
     $replace = array('"', '&', '>', '<');
@@ -123,25 +184,23 @@ function offlinequiz_convert_newline_docx($text) {
     $parts = preg_split("!<br>|<br />!i", $text);
     $result = array();
     
-    // print_object('newline parts');
-    // print_object($parts);
-
     $firstpart = array_shift($parts);
+    // If the original text was only a newline, we don't have a first part.
     if (!empty($firstpart)) {
-        $firstpartblocks = offlinequiz_convert_bold_text_docx($firstpart);
-        $result = $firstpartblocks;
+        if ($firstpart == '<br/>' || $firstpart == '<br />') {
+            $result = array('type' => 'newline');
+        } else {
+            $result = offlinequiz_convert_bold_text_docx($firstpart);
+        }
     }
     
-
     foreach($parts as $part) {
         $result[] = array('type' => 'newline');
         if (!empty($part)) {
-            $partblocks = offlinequiz_convert_bold_text_docx($part);
-            $result = array_merge($result, $partblocks);
+            $newlineremainblocks = offlinequiz_convert_bold_text_docx($part);
+            $result = array_merge($result, $newlineremainblocks);
         }
     }
-    // print_object('newline blocks:');
-    // print_object($result);
     return $result;
 }
 
@@ -155,42 +214,23 @@ function offlinequiz_convert_newline_docx($text) {
  * @param unknown_type $coursecontextid The course context ID.
  * @return mixed
  */
-function offlinequiz_convert_question_text_docx($text, $listitem = false, $number = 0, $image = true) {
+function offlinequiz_convert_image_docx($text) {
     global $CFG;
 
-    $result = array();
     $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
     $replace = array('"', '&', '>', '<');
+    $result = array();
 
-    // Replace linebreaks.
-//    $text = preg_replace('!<br>!i', "\r\n", $text);
-//    $text = preg_replace('!<br />!i', "\r\n", $text);
+    // Remove paragraphs.
     $text = preg_replace('!<p>!i', '', $text);
     $text = preg_replace('!</p>!i', '', $text);
 
-    //print_object($strings);
     // First add all the text that appears before the image tag.
-    if ($number) {
-        $result[] = array('type' => 'string', 'value' => $number . ') ', 'style' => 'bStyle');
+    $strings = preg_split("/<img/i", $text);
+    $firstline = array_shift($strings);
+    if (!empty($firstline)) {
+        $result = offlinequiz_convert_newline_docx($firstline);
     }
-
-    if ($image) {    // Extract image tags
-        $strings = preg_split("/<img/i", $text);
-        $firstline = array_shift($strings);
-        if (!empty($firstline)) {
-            $firstlineblocks = offlinequiz_convert_newline_docx($firstline);
-            $result = array_merge($result, $firstlineblocks);
-        }
-    } else {
-        $strings = array();
-        if (!empty($text)) {
-            $textblocks = offlinequiz_convert_newline_docx($text);
-            $result = array_merge($result, $textblocks);
-        }
-    }
-
-    print_object($result);
-    
     
 //     if ($listitem) {
 //         $result[] = array('type' => 'listitem', 'value' => str_ireplace($search, $replace, $firstline));
@@ -206,8 +246,8 @@ function offlinequiz_convert_question_text_docx($text, $listitem = false, $numbe
         $align = 'middle';
         foreach ($attributes as $attribute) {
             $valuepair = explode('=', $attribute);
-            print_object('value pair ' . $valuepair[1]);
-
+            print_object($valuepair);
+            
             if (strtolower(trim($valuepair[0])) == 'src') {
                 $imageurl = str_replace('file://', '', str_replace('"', '', str_replace("'", '', $valuepair[1])));
             } else {
@@ -222,11 +262,10 @@ function offlinequiz_convert_question_text_docx($text, $listitem = false, $numbe
                 }
             }
         }
-        print_object('image url ' . $imageurl);
         $result[] = array('type' => 'image', 'value' => $imageurl, 'height' => $height, 'width' => $width, 'align' => $align);
 
         // Now add the remaining text after the image tag.
-        $remaining = trim(substr($string, strpos($string, '>') + 1));
+        $remaining = substr($string, strpos($string, '>') + 1);
         if (!empty($remaining)) {
             $remainingblocks = offlinequiz_convert_newline_docx($remaining);
             $result = array_merge($result, $remainingblocks);
@@ -271,12 +310,12 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $docx->addFontStyle('bStyle', array('bold' => true, 'size' => $offlinequiz->fontsize));
     $docx->addFontStyle('brStyle', array('bold' => true, 'align' => 'right', 'size' => $offlinequiz->fontsize));
     // underline style
-    $docx->addFontStyle('uStyle', array('underline' => true, 'size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('uStyle', array('underline' => PHPWord_Style_Font::UNDERLINE_SINGLE, 'size' => $offlinequiz->fontsize));
 
     $docx->addFontStyle('ibStyle', array('italic' => true, 'bold' => true, 'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('iuStyle', array('italic' => true, 'underline' => true, 'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('buStyle', array('bold' => true, 'underline' => true, 'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('ibuStyle', array('italic' => true, 'bold' => true, 'underline' => true, 'size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('iuStyle', array('italic' => true, 'underline' =>  PHPWord_Style_Font::UNDERLINE_SINGLE, 'size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('buStyle', array('bold' => true, 'underline' => PHPWord_Style_Font::UNDERLINE_SINGLE, 'size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('ibuStyle', array('italic' => true, 'bold' => true, 'underline' => PHPWord_Style_Font::UNDERLINE_SINGLE, 'size' => $offlinequiz->fontsize));
 
     // header style
     $docx->addFontStyle('hStyle', array('bold' => true, 'size' => $offlinequiz->fontsize + 4));
@@ -366,9 +405,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
         
         // The DOCX intro text can be arbitrarily long so we have to catch page overflows.
         if (!empty($offlinequiz->pdfintro)) {
-            print_object($offlinequiz->pdfintro);
-            $blocks = offlinequiz_convert_question_text_docx($offlinequiz->pdfintro);
-            print_object($blocks);
+            $blocks = offlinequiz_convert_image_docx($offlinequiz->pdfintro);
             offlinequiz_print_blocks_docx($section, $blocks);
         }
         $section->addPageBreak();
@@ -428,6 +465,13 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
         $tex_filter = new filter_tex($context, array());
     }
 
+    // Create the docx question numbering. This is only created once since we number all questions from 1...n
+    $questionnumbering = new PHPWord_Numbering_AbstractNumbering("Question-level", array(
+            new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_DECIMAL, "%1)", "left", $level1),
+            new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_LOWER_LETTER, "%2)", "left", $level2)
+        ));
+    $docx->addNumbering($questionnumbering);
+
     // If shufflequestions has been activated we go through the questions in the order determined by
     // the template question usage.
     if ($offlinequiz->shufflequestions) {
@@ -459,14 +503,15 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
             $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 1, 300);
-            $blocks = offlinequiz_convert_question_text_docx($questiontext, false, $number);
-            offlinequiz_print_blocks_docx($section, $blocks);
 
-            $advancedMultiLevel = new PHPWord_Numbering_AbstractNumbering("Adv Multi-level", array(
+            $blocks = offlinequiz_convert_image_docx($questiontext);
+            offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
+            
+            $answernumbering = new PHPWord_Numbering_AbstractNumbering("Adv Multi-level", array(
                     new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_DECIMAL, "%1.", "left", $level1),
                     new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_LOWER_LETTER, "%2)", "left", $level2)
             ));
-            $docx->addNumbering($advancedMultiLevel);
+            $docx->addNumbering($answernumbering);
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
@@ -501,9 +546,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     //                         $answertext .= " (".round($question->options->answers[$answer]->fraction * 100)."%)";
                     //                     }
 
-//                     $blocks = offlinequiz_convert_question_text_docx($answertext);
-//                     offlinequiz_print_blocks_docx($section, $blocks);
-                    $section->addListItem($answertext, 1, $advancedMultiLevel);
+                    $blocks = offlinequiz_convert_image_docx($answertext);
+                    offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
 
                     if ($offlinequiz->showgrades) {
                         $pointstr = get_string('points', 'grades');
@@ -517,8 +561,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $section->addTextBreak();
             $number++;
         }
-    } else { // not shufflequestions 
-        // Compute mapping  questionid -> slotnumber.
+    } else { // not shufflequestions
+         
+        // We have to compute the mapping  questionid -> slotnumber.
         $questionslots = array();
         foreach ($slots as $slot) {
             $questionslots[$templateusage->get_question($slot)->id] = $slot;
@@ -555,14 +600,21 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
             $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 1, 300);
-            $blocks = offlinequiz_convert_question_text_docx($questiontext, false, $number);
-            offlinequiz_print_blocks_docx($section, $blocks);
 
-            $advancedMultiLevel = new PHPWord_Numbering_AbstractNumbering("Adv Multi-level", array(
+            $blocks = offlinequiz_convert_image_docx($questiontext);
+
+            // Description questions are printed without a number because they are not on the answer form.
+            if ($question->qtype == 'description') {
+                offlinequiz_print_blocks_docx($section, $blocks);
+            } else {
+                offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
+            }
+            
+            $answernumbering = new PHPWord_Numbering_AbstractNumbering("Adv Multi-level", array(
                     new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_DECIMAL, "%1.", "left", $level1),
                     new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_LOWER_LETTER, "%2)", "left", $level2)
             ));
-            $docx->addNumbering($advancedMultiLevel);
+            $docx->addNumbering($answernumbering);
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
@@ -602,14 +654,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     //                         $answertext .= " (".round($question->options->answers[$answer]->fraction * 100)."%)";
                     //                     }
 
-//                    $blocks = offlinequiz_convert_question_text_docx($answertext);
-  //                  offlinequiz_print_blocks_docx($section, $blocks);
-
-
-                    $section->addListItem($answertext, 1, $advancedMultiLevel);
+                    $blocks = offlinequiz_convert_image_docx($answertext);
+                    offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
                     
-                    //$section->addListItem($answertext, 0, null, $listStyle );
-
                     if ($offlinequiz->showgrades) {
                         $pointstr = get_string('points', 'grades');
                         if ($question->maxgrade == 1) {
@@ -619,8 +666,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     }
                 }
                 $section->addTextBreak();
-                $number++;
-            } // end if multichoice 
+                $number++; 
+                // End if multichoice.
+            } 
         } // end forall questions
     } // end else no shufflequestions
 
@@ -681,63 +729,12 @@ function offlinequiz_str_html_docx($input) {
     $output = $input;
 
     // Replace linebreaks.
-    $output = preg_replace('!<br>!i', "\n", $output);
-    $output = preg_replace('!<br />!i', "\n", $output);
-    $output = preg_replace('!</p>!i', "\n", $output);
+//     $output = preg_replace('!<br>!i', "\n", $output);
+//     $output = preg_replace('!<br />!i', "\n", $output);
 
     // First replace the plugin image tags.
     $output = str_replace('[', '(', $output);
     $output = str_replace(']', ')', $output);
-    $strings = preg_split("/<img/i", $output);
-    $output = array_shift($strings);
-    foreach ($strings as $string) {
-        $output.= '[*p ';
-        $imagetag = substr($string, 0, strpos($string, '>'));
-        $attributes = explode(' ', $imagetag);
-        foreach ($attributes as $attribute) {
-            $valuepair = explode('=', $attribute);
-            if (strtolower(trim($valuepair[0])) == 'src') {
-                $pluginfilename = str_replace('"', '', str_replace("'", '', $valuepair[1]));
-                $pluginfilename = str_replace('@@PLUGINFILE@@/', '', $pluginfilename);
-                $file = $fs->get_file($coursecontextid, 'question', 'questiontext', $questionid, '/', $pluginfilename);
-                // Copy file to temporary file.
-                $output .= $file->get_id(). ']';
-            }
-        }
-        $output .= substr($string, strpos($string, '>')+1);
-    }
-    $strings = preg_split("/<span/i", $output);
-    $output = array_shift($strings);
-    foreach ($strings as $string) {
-        $tags = preg_split("/<\/span>/i", $string);
-        $styleinfo = explode('>', $tags[0]);
-        $style = array();
-        if (stripos($styleinfo[0], 'bold')) {
-            $style[] = '[*b]';
-        }
-        if (stripos($styleinfo[0], 'italic')) {
-            $style[] = '[*i]';
-        }
-        if (stripos($styleinfo[0], 'underline')) {
-            $style[] = '[*u]';
-        }
-        sort($style);
-        array_shift($styleinfo);
-        $output .= implode($style).implode($styleinfo, '>');
-        rsort($style);
-        $output .= implode($style);
-        if (!empty($tags[1])) {
-            $output .=$tags[1];
-        }
-    }
-
-    $search  = array('/<i[ ]*>(.*?)<\/i[ ]*>/smi', '/<b[ ]*>(.*?)<\/b[ ]*>/smi', '/<em[ ]*>(.*?)<\/em[ ]*>/smi',
-            '/<strong[ ]*>(.*?)<\/strong[ ]*>/smi', '/<u[ ]*>(.*?)<\/u[ ]*>/smi',
-            '/<sub[ ]*>(.*?)<\/sub[ ]*>/smi', '/<sup[ ]*>(.*?)<\/sup[ ]*>/smi' );
-    $replace = array('[*i]\1[*i]', '[*b]\1[*b]', '[*i]\1[*i]',
-            '[*b]\1[*b]', '[*u]\1[*u]',
-            '[*l]\1[*l]', '[*h]\1[*h]');
-    $output = preg_replace($search, $replace, $output);
 
     $output = strip_tags($output);
 
