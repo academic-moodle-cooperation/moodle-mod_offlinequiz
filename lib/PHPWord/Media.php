@@ -324,5 +324,14 @@ class PHPWord_Media {
 	public static function getFooterMediaElements() {
 		return self::$_footerMedia;
 	}
+	
+	public static function resetMedia() {
+	    self::$_sectionMedia = array(
+	            'images' => array(),
+	            'embeddings' => array(),
+	            'links' => array());
+	    self::$_headerMedia = array();
+	    self::$_footerMedia = array();
+	}
 }
 ?>

@@ -1465,7 +1465,10 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     $text = question_rewrite_questiontext_preview_urls($question->questiontext,
             $context->id, 'offlinequiz', $question->id);
 
-    // filter only for tex formulas
+    // Remove leading paragraph tags because the cause a line break after the question number.
+    $text = preg_replace('!^<p>!i', '', $text);
+
+    // Filter only for tex formulas.
     $texfilteractive = $DB->get_field('filter_active', 'active', array('filter' => 'filter/tex', 'contextid' => 1));
     if ($texfilteractive) {
         $tex_filter = new filter_tex($context, array());
@@ -1481,16 +1484,11 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     }
     echo $text;
 
-    echo '  </div>
-            <div class="grade">';
-
-    if ($question->qtype != 'description') {
-        echo '(' . get_string('marks', 'quiz') . ': ' . ($question->maxgrade + 0) . ')';
-    }
-
     echo '  </div>';
-
     if ($question->qtype != 'description') {
+        echo '  <div class="grade">';
+        echo '(' . get_string('marks', 'quiz') . ': ' . ($question->maxgrade + 0) . ')';
+        echo '  </div>';
 
         foreach ($choiceorder as $key => $answer) {
             $answertext = $question->options->answers[$answer]->answer;
@@ -1511,9 +1509,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
             echo $answertext;
             echo "</div>";
         }
-    } else {
-        echo "<div class=\"answer\"></div>\n";
-    }
+    } 
     echo "</div>";
 }
 

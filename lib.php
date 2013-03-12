@@ -251,8 +251,9 @@ function offlinequiz_grade_item_delete($offlinequiz) {
  * @param array $args remaining file args
  * @param bool $forcedownload
  */
-function offlinequiz_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload) {
+function offlinequiz_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload, array $options=array()) {
     global $CFG;
+
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
     require_once($CFG->dirroot . '/lib/questionlib.php');
 
@@ -260,10 +261,10 @@ function offlinequiz_questiontext_preview_pluginfile($context, $questionid, $arg
     require_login($course, false, $cm);
 
     // Assume only trusted people can see this report. There is no real way to
-    // validate questionid, becuase of the complexity of random quetsions.
+    // validate questionid, because of the complexity of random questions.
     require_capability('mod/offlinequiz:viewreports', $context);
 
-    question_send_questiontext_file($questionid, $args, $forcedownload);
+    question_send_questiontext_file($questionid, $args, false, $options);
 }
 
 /**
@@ -276,7 +277,7 @@ function offlinequiz_questiontext_preview_pluginfile($context, $questionid, $arg
  */
 // questiontext url http://131.130.103.117/mod_offlinequiz/pluginfile.php/1365/question/questiontext_preview/offlinequiz/7894/thomas1.jpg
 //                  http://131.130.103.117/mod_offlinequiz/pluginfile.php/1365/question/answertext_preview/offlinequiz/32080/P1070019.JPG
-function offlinequiz_answertext_preview_pluginfile($context, $answerid, $args, $forcedownload) {
+function offlinequiz_answertext_preview_pluginfile($context, $answerid, $args, $forcedownload, array $options=array()) {
     global $CFG;
 
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
@@ -289,7 +290,7 @@ function offlinequiz_answertext_preview_pluginfile($context, $answerid, $args, $
     // validate questionid, becuase of the complexity of random quetsions.
     require_capability('mod/offlinequiz:viewreports', $context);
 
-    offlinequiz_send_answertext_file($context, $answerid, $args, $forcedownload);
+    offlinequiz_send_answertext_file($context, $answerid, $args, $forcedownload, $options);
 }
 
 /**

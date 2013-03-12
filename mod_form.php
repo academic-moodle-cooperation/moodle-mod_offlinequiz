@@ -44,12 +44,22 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
         $offlinequizconfig = get_config('offlinequiz');
 
+        $offlinequiz = null;
+        if (!empty($this->_instance)) {
+            $offlinequiz = $DB->get_record('offlinequiz', array('id' => $this->_instance));
+        }
+
         $mform = $this->_form;
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('html', '<center>' . get_string('pluginname', 'offlinequiz') . '</center>');
+
+        if ($offlinequiz && $offlinequiz->docscreated) {
+            $mform->addElement('html', "<center><a href=\"" . $CFG->wwwroot .
+                    "/mod/offlinequiz/createquiz.php?mode=createpdfs&amp;q=$offlinequiz->id\">" . get_string('formsexist', 'offlinequiz')."</a></center>");
+        }
 
         // Name.
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
@@ -65,11 +75,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $this->add_intro_editor(false, get_string('introduction', 'offlinequiz'));
 
         $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), array('optional'=>true));
-
-        $offlinequiz = null;
-        if (!empty($this->_instance)) {
-            $offlinequiz = $DB->get_record('offlinequiz', array('id' => $this->_instance));
-        }
 
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             for ($i=1; $i<=6; $i++) {
@@ -87,7 +92,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         } else {
             $attribs = ' disabled=disabled';
         }
-
+        
         $mform->addElement('selectyesno', 'shufflequestions', get_string("shufflequestions", "offlinequiz"), $attribs);
         // $mform->addHelpButton('shufflequestions', 'shufflequestions', 'offlinequiz');
         $mform->setDefault('shufflequestions', $offlinequizconfig->shufflequestions);
@@ -136,15 +141,15 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $options[8] = 8;
         $options[9] = 9;
         $options[10] = 10;
-        $options[11] = 11;
         $options[12] = 12;
-        $mform->addElement('select', 'fontsize', get_string('fontsize', 'offlinequiz'), $options);
+        $options[14] = 14;
+        $mform->addElement('select', 'fontsize', get_string('fontsize', 'offlinequiz'), $options, $attribs);
         $mform->setDefault('fontsize', 10);
 
         $options = array();
         $options[OFFLINEQUIZ_PDF_FORMAT] = 'PDF';
         $options[OFFLINEQUIZ_DOCX_FORMAT] = 'DOCX';
-        $mform->addElement('select', 'fileformat', get_string('fileformat', 'offlinequiz'), $options);
+        $mform->addElement('select', 'fileformat', get_string('fileformat', 'offlinequiz'), $options, $attribs);
         $mform->addHelpButton('fileformat', 'fileformat', 'offlinequiz');
         $mform->setDefault('fileformat',0);
 

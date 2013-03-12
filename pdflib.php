@@ -32,6 +32,7 @@ require_once($CFG->libdir . '/pdflib.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/type/questionbase.php');
 require_once($CFG->dirroot . '/filter/tex/filter.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 
 class offlinequiz_pdf extends pdf
 {
@@ -90,180 +91,6 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
         // Page number.
         $this->Cell(0, 10, offlinequiz_str_html_pdf(get_string('page')) . ' ' . $this->getAliasNumPage() .
                 '/' . $this->getAliasNbPages(), 0, 0, 'C');
-    }
-
-    /**
-     * Function to replace plugin file references in question and answer texts with <img> tags to be included in PDF documents.
-     *
-     * @param string $input The input text.
-     * @param int $coursecontextid The context of the category the question resides in.
-     * @param string $filearea The filearea ('questiontext' or 'answer').
-     * @param int $itemid The itemid (question- or answer-ID).
-     * @param float $kfactor A zoom factor.
-     * @param int $maxwidth The maximum width of the image.
-     */
-    public function offlinequiz_fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor, $maxwidth) {
-        global $CFG;
-
-        $fs = get_file_storage();
-
-        $output = $input;
-        $strings = preg_split("/<img/i", $output);
-        $output = array_shift($strings);
-        foreach ($strings as $string) {
-            $imagetag = substr($string, 0, strpos($string, '>'));
-            $attributestrings = explode(' ', $imagetag);
-            $attributes = array();
-            foreach ($attributestrings as $attributestring) {
-                $valuepair = explode('=', $attributestring);
-                if (count($valuepair) > 1 && strlen(trim($valuepair[0])) > 0) {
-                    $attributes[strtolower(trim($valuepair[0]))] = str_replace('"', '', str_replace("'", '', $valuepair[1]));
-                }
-            }
-
-            if (array_key_exists('width', $attributes) && $attributes['width'] > 0) {
-                $imagewidth = $attributes['width'];
-            } else {
-                $imagewidth = 0;
-            }
-            if (array_key_exists('height', $attributes) && $attributes['height'] > 0) {
-                $imageheight = $attributes['height'];
-            } else {
-                $imageheight = 0;
-            }
-
-            if (strlen($attributes['src']) > 10) {
-                $pluginfilename = $attributes['src'];
-                $imageurl = false;
-                $teximage = false;
-                $pluginfile = false;
-                $texparts = preg_split("!$CFG->wwwroot/filter/tex/pix.php/!", $pluginfilename);
-                if (preg_match('!@@PLUGINFILE@@/!', $pluginfilename)) {
-
-                    $pluginfilename = str_replace('@@PLUGINFILE@@/', '', $pluginfilename);
-                    $path_parts = pathinfo($pluginfilename);
-                    if (!empty($path_parts['dirname'])) {
-                        $filepath = '/' . $path_parts['dirname'] . '/';
-                    } else {
-                        $filepath = '/';
-                    }
-                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath, $path_parts['basename'])) {
-                        $imagefilename = $imagefile->get_filename();
-                        // Copy image content to temporary file.
-                        $path_parts = pathinfo($imagefilename);
-                        srand(microtime()*1000000);
-                        $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
-                        $file = $CFG->dataroot."/temp/offlinequiz/".$unique.'.'.strtolower($path_parts["extension"]);
-                        clearstatcache();
-                        if (!check_dir_exists($CFG->dataroot."/temp/offlinequiz", true, true)) {
-                            print_error("Could not create data directory");
-                        }
-                        $imagefile->copy_content_to($file);
-                        $pluginfile = true;
-                    } else {
-                        $output .= 'Image file not found ' . $path_parts['dirname'] . '/' . $path_parts['basename'];
-                    }
-                } else if (count($texparts) > 1) {
-                    $teximagefile = $CFG->dataroot . '/filter/tex/' . $texparts[1];
-                    $path_parts = pathinfo($teximagefile);
-                    $unique = str_replace('.', '', "" . microtime(true));
-                    $file = $CFG->dataroot."/temp/offlinequiz/".$unique.'.'.strtolower($path_parts["extension"]);
-                    clearstatcache();
-                    if (!check_dir_exists($CFG->dataroot."/temp/offlinequiz", true, true)) {
-                        print_error("Could not create data directory");
-                    }
-                    copy($teximagefile, $file);
-                    $teximage = true;
-                } else {
-                    // Image file URL.
-                    $imageurl = true;
-                }
-
-                $factor = 2; // Per default show images half sized.
-
-                if (!$imageurl) {
-                    if (!file_exists($file)) {
-                        $output .= get_string('imagenotfound', 'offlinequiz', $imagefilename);
-                    } else {
-                        // Use imagemagick to remove alpha channel and reduce resolution of large images.
-                        $imageinfo = getimagesize($file);
-                        $filewidth  = $imageinfo[0];
-                        $fileheight = $imageinfo[1];
-
-                        if (file_exists($CFG->filter_tex_pathconvert)) {
-                            $newfile = $CFG->dataroot."/temp/offlinequiz/".$unique.'_c.png';
-                            $resize = '';
-                            $percent = round(200000000 / ($filewidth * $fileheight));
-                            if ($percent < 100) {
-                                $resize = ' -resize '.$percent.'%';
-                            }
-                            $handle = popen($CFG->filter_tex_pathconvert.' '.$file.$resize.' -background white -flatten +matte '.$newfile, 'r');
-                            pclose($handle);
-                            $this->tempfiles[] = $file;
-                            $file = $newfile;
-                            if ($percent < 100) {
-                                $imageinfo = getimagesize($file);
-                                $filewidth  = $imageinfo[0];
-                                $fileheight = $imageinfo[1];
-                            }
-                        } else if (!in_array($imagetype, $accepted)) {
-                            $output .= get_string('imagenotjpg', 'offlinequiz', $imagefilename);
-                        }
-                        if ($imagewidth > 0) {
-                            if ($imageheight > 0) {
-                                $fileheight = $imageheight;
-                            } else {
-                                $fileheight = $imagewidth / $filewidth * $fileheight;
-                            }
-                            $filewidth = $imagewidth;
-                        }
-
-                        if ($teximage) {
-                            $factor = $fileheight / 40;
-                        }
-
-                        $width = $filewidth / ($kfactor * $factor);
-
-                        if ($width > $maxwidth) {
-                            $width = $maxwidth;
-                        }
-
-                        $height = $fileheight * $width / $filewidth;
-
-                        // Add filename to list of temporary files.
-                        $this->tempfiles[] = $file;
-
-                        // In answer texts we want a line break to avoid the picture going above the line.
-                        if ($filearea == 'answer') {
-                            $output .= '<br/>';
-                        }
-
-                        // Finally, add the image tag for tcpdf.
-                        $output.= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' . $height .'"/>';
-                    }
-                } else {
-
-                    if (($imagewidth > 0) && ($imageheight > 0)) {
-                        $width = $imagewidth / ($kfactor * $factor);
-                        if ($width > $maxwidth) {
-                            $width = $maxwidth;
-                        }
-                        $height = $imageheight * $width / $imagewidth;
-                        $output.= '<img src="' . $pluginfilename . '" align="middle" width="' . $width . '" height="' . $height .'"/>';
-                    } else {
-                        $output.= '<img src="' . $pluginfilename . '" align="middle"/>';
-                    }
-                }
-            }
-            $output .= substr($string, strpos($string, '>')+1);
-        }
-        return $output;
-    }
-
-    public function remove_temp_files() {
-        foreach ($this->tempfiles as $file) {
-            unlink($file);
-        }
     }
 }
 
@@ -570,6 +397,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             "$offlinequiz->id", $offlinequiz->id);
 
     $pdf = new offlinequiz_question_pdf('P', 'mm', 'A4');
+    $trans = new offlinequiz_html_translator();
+
     $title = offlinequiz_str_html_pdf($offlinequiz->name);
     if (!empty($offlinequiz->time)) {
         $title .= ": ".offlinequiz_str_html_pdf(userdate($offlinequiz->time));
@@ -732,7 +561,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             // Remove all class info from paragraphs because TCPDF won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $pdf->offlinequiz_fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 1, 300);
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 1, 300);
 
             $html = '';
 
@@ -760,7 +589,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                     // Remove all paragraph tags because they mess up the layout.
                     $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $pdf->offlinequiz_fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200);
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200);
 
                     if ($correction) {
                         if ($question->options->answers[$answer]->fraction > 0) {
@@ -866,7 +695,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 // Remove all class info from paragraphs because TCPDF won't use CSS.
                 $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-                $questiontext = $pdf->offlinequiz_fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 1, 300);
+                $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 1, 300);
 
                 $html = '';
 
@@ -896,7 +725,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                         // Remove all paragraph tags because they mess up the layout.
                         $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
                         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                        $answertext = $pdf->offlinequiz_fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200); // $pdf->GetK());
+                        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200); // $pdf->GetK());
 
                         if ($correction) {
                             if ($question->options->answers[$answer]->fraction > 0) {
@@ -984,7 +813,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     $pdfstring = $pdf->Output('', 'S');
 
     $file = $fs->create_file_from_string($fileinfo, $pdfstring);
-    $pdf->remove_temp_files();
+    $trans->remove_temp_files();
 
     return $file;
 

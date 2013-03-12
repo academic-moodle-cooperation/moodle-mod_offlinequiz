@@ -373,10 +373,14 @@ if ($mode == 'preview') {
             }
             
             if ($questionfile) {
+                $filestring = get_string('formforgroup', 'offlinequiz', $groupletter);
+                if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
+                    $filestring = get_string('formforgroupdocx', 'offlinequiz', $groupletter);
+                }
                 $url = "$CFG->wwwroot/pluginfile.php/" . $questionfile->get_contextid() . '/' . $questionfile->get_component() . '/' .
                         $questionfile->get_filearea() . '/' . $questionfile->get_itemid() . '/' . $questionfile->get_filename() . '?forcedownload=1';
                 
-                echo $OUTPUT->action_link($url, get_string('formforgroup', 'offlinequiz', $groupletter));
+                echo $OUTPUT->action_link($url, $filestring);
                 echo '<br />&nbsp;<br />';
                 @flush();@ob_flush();
             } else {

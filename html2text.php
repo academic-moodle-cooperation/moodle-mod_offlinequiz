@@ -32,6 +32,10 @@ class offlinequiz_html_translator
 {
     private $tempfiles = array();
 
+    public function __construct() {
+        $this->tempfiles = array();
+    }
+    
     /**
      * Function to replace @@PLUGINFILE@@ references to image files by local file:// URLs.
      *
@@ -52,6 +56,11 @@ class offlinequiz_html_translator
         $strings = preg_split("/<img/i",$output);
         $output = array_shift($strings);
         foreach ($strings as $string) {
+
+            // Define a unique temporary name for each image file.
+            srand(microtime() * 1000000);
+            $unique = str_replace('.', '', microtime(true) . '_' . rand(0, 100000));
+
             $imagetag = substr($string, 0, strpos($string, '>'));
             $attributestrings = explode(' ', $imagetag);
             $attributes = array();
@@ -62,18 +71,18 @@ class offlinequiz_html_translator
                 }
             }
 
-            if ($attributes['width'] > 0) {
+            if (array_key_exists('width', $attributes) && $attributes['width'] > 0) {
                 $imagewidth = $attributes['width'];
             } else {
                 $imagewidth = 0;
             }
-            if ($attributes['height'] > 0) {
+            if (array_key_exists('height', $attributes) && $attributes['height'] > 0) {
                 $imageheight = $attributes['height'];
             } else {
                 $imageheight = 0;
             }
 
-            if (strlen($attributes['src']) > 10) {
+            if (array_key_exists('src', $attributes) && strlen($attributes['src']) > 10) {
                 $pluginfilename = $attributes['src'];
                 $imageurl = false;
                 $teximage = false;
@@ -91,9 +100,7 @@ class offlinequiz_html_translator
                         $imagefilename = $imagefile->get_filename();
                         // copy image content to temporary file
                         $path_parts = pathinfo($imagefilename);
-                        srand(microtime()*1000000);
-                        $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
-                        $file = $CFG->dataroot."/temp/offlinequiz/".$unique.'.'.strtolower($path_parts["extension"]);
+                        $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($path_parts["extension"]);
                         clearstatcache();
                         if (!check_dir_exists($CFG->dataroot."/temp/offlinequiz", true, true)) {
                             print_error("Could not create data directory");
@@ -106,7 +113,7 @@ class offlinequiz_html_translator
                 } else if ($parts = preg_split("!$CFG->wwwroot/filter/tex/pix.php/!", $pluginfilename) && (count($parts) > 1)) {
                     $teximagefile = $CFG->dataroot . '/filter/tex/' . $parts[1];
                     $path_parts = pathinfo($teximagefile);
-                    $unique = str_replace('.', '', "" . microtime(true));
+
                     $file = $CFG->dataroot."/temp/offlinequiz/".$unique.'.'.strtolower($path_parts["extension"]);
                     clearstatcache();
                     if (!check_dir_exists($CFG->dataroot."/temp/offlinequiz", true, true)) {
@@ -131,11 +138,11 @@ class offlinequiz_html_translator
                         $fileheight = $imageinfo[1];
 
                         if (file_exists($CFG->filter_tex_pathconvert)) {
-                            $newfile = $CFG->dataroot."/temp/offlinequiz/".$unique.'_c.png';
+                            $newfile = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '_c.png';
                             $resize = '';
                             $percent = round(200000000 / ($filewidth * $fileheight));
                             if ($percent < 100) $resize = ' -resize '.$percent.'%';
-                            $handle = popen($CFG->filter_tex_pathconvert.' '.$file.$resize.' -background white -flatten +matte '.$newfile, 'r');
+                            $handle = popen($CFG->filter_tex_pathconvert . ' ' . $file . $resize . ' -background white -flatten +matte ' . $newfile, 'r');
                             pclose($handle);
                             $this->tempfiles[] = $file;
                             $file = $newfile;
@@ -147,6 +154,7 @@ class offlinequiz_html_translator
                         } else if (!in_array($imagetype, $accepted)) {
                             $output .= get_string('imagenotjpg','offlinequiz',$imagefilename);
                         }
+                        
                         if ($imagewidth > 0) {
                             if ($imageheight > 0) {
                                 $fileheight = $imageheight;
@@ -196,6 +204,7 @@ class offlinequiz_html_translator
             $output .= substr($string, strpos($string, '>')+1);
             //print_object($output);
         }
+        //print_object($this->tempfiles);
         return $output;
     }
 

@@ -1,4 +1,4 @@
-7<?php
+<?php
 // This file is for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -56,21 +56,36 @@ function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbe
             $itemstring = $blocks[0]['value'];
             array_shift($blocks);
         }
-        $section->addListItem($itemstring, $depth, $numbering);
+        $section->addListItem($itemstring, $depth, $numbering, 'nStyle');
+        
+        // We also skip the first sequential newline because we got a newline with addListItem
+        if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
+            array_shift($blocks);
+        }
     }
 
     // Now we go through the rest of the blocks (if there are any) and print them to a textrun.
     if (!empty($blocks)) {
-        $textrun = $section->createTextRun();
+        if (empty($numbering)) {
+            $textrun = $section->createTextRun();
+        } else {
+            $textrun = $section->createTextRun('questionTab');
+            $textrun->addText("\t", 'nStyle');
+        }
         foreach($blocks as $block) {
             if ($block['type'] == 'string') {
                 if (!empty($block['style'])) {
                     $textrun->addText($block['value'], $block['style']);
                 } else {
-                    $textrun->addText($block['value']);
+                    $textrun->addText($block['value'], 'nStyle');
                 }
             } else if ($block['type'] == 'newline') {
-            $textrun = $section->createTextRun();
+                if (empty($numbering)) {
+                    $textrun = $section->createTextRun();
+                } else {
+                    $textrun = $section->createTextRun('questionTab');
+                    $textrun->addText("\t", 'nStyle');
+                }
             } else if ($block['type'] == 'image') {
                 // Retrieve the style info.
                 $style = array();
@@ -93,7 +108,12 @@ function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbe
 
                 // Now add the image and start a new textrun.
                 $section->addImage($block['value'], $style);
-                $textrun = $section->createTextRun();
+                if (empty($numbering)) {
+                    $textrun = $section->createTextRun();
+                } else {
+                    $textrun = $section->createTextRun('questionTab');
+                    $textrun->addText("\t", 'nStyle');
+                }
             }
         }
     }
@@ -246,19 +266,21 @@ function offlinequiz_convert_image_docx($text) {
         $align = 'middle';
         foreach ($attributes as $attribute) {
             $valuepair = explode('=', $attribute);
-            print_object($valuepair);
+            $valuepair[0] = strtolower(trim($valuepair[0]));
             
-            if (strtolower(trim($valuepair[0])) == 'src') {
-                $imageurl = str_replace('file://', '', str_replace('"', '', str_replace("'", '', $valuepair[1])));
-            } else {
-                $valuepair[1] = preg_replace('!"!i', '', $valuepair[1]);
-                $valuepair[1] = preg_replace('!/!i', '', $valuepair[1]);
-                if (strtolower(trim($valuepair[0])) == 'width') {
-                    $width = trim($valuepair[1]);
-                } else if (strtolower(trim($valuepair[0])) == 'height') {
-                    $height = trim($valuepair[1]);
-                } else if (strtolower(trim($valuepair[0])) == 'align') {
-                    $align = trim($valuepair[1]);
+            if (!empty($valuepair[0])) {
+                if ($valuepair[0] == 'src') {
+                    $imageurl = str_replace('file://', '', str_replace('"', '', str_replace("'", '', $valuepair[1])));
+                } else {
+                    $valuepair[1] = trim(preg_replace('!"!i', '', $valuepair[1]));
+                    $valuepair[1] = trim(preg_replace('!/!i', '', $valuepair[1]));
+                    if ($valuepair[0] == 'width') {
+                        $width = trim($valuepair[1]);
+                    } else if ($valuepair[0] == 'height') {
+                        $height = trim($valuepair[1]);
+                    } else if ($valuepair[0] == 'align') {
+                        $align = trim($valuepair[1]);
+                    }
                 }
             }
         }
@@ -296,14 +318,18 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     add_to_log($courseid, 'offlinequiz', 'createdocx question',
             "mod/offlinequiz.php?q=$offlinequiz->id",
             "$offlinequiz->id", $offlinequiz->id);
-
+    
+    PHPWord_Media::resetMedia();
+    
     $docx = new PHPWord();
     $trans = new offlinequiz_html_translator();
 
     // Define cell style arrays
     $styleCell = array('valign' => 'center');
 
-    // Add text elements.
+    // Add text styles.
+    // Normal style
+    $docx->addFontStyle('nStyle', array('size' => $offlinequiz->fontsize));
     // italic style
     $docx->addFontStyle('iStyle', array('italic' => true, 'size' => $offlinequiz->fontsize));
     // bold style
@@ -322,11 +348,23 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     // center style
     $docx->addParagraphStyle('cStyle', array('align' => 'center', 'spaceAfter' => 100));
     $docx->addParagraphStyle('cStyle', array('align' => 'center', 'spaceAfter' => 100));
+    $docx->addParagraphStyle('questionTab', array(
+            'tabs' => array(
+                    new PHPWord_Style_Tab("left", 360)
+            )
+    ));
 
     // Define table style arrays
     $styleTable = array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 20, 'align' => 'center');
     $styleFirstRow = array('borderBottomSize' => 0, 'borderBottomColor' => 'FFFFFF', 'bgColor' => 'FFFFFF');
     $docx->addTableStyle('tableStyle', $styleTable, $styleFirstRow);
+
+    $boldfont = new PHPWord_Style_Font();
+    $boldfont->setBold(true);
+    $boldfont->setSize($offlinequiz->fontsize);
+
+    $normalfont = new PHPWord_Style_Font();
+    $normalfont->setSize($offlinequiz->fontsize);
 
     // Define custom list item style for question answers
     $level1 = new PHPWord_Style_Paragraph();
@@ -368,7 +406,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Add a header.
     $header = $section->createHeader();
-    $header->addText($title, 'iStyle', 'cStyle' );
+    $header->addText($title, array('size' => 10), 'cStyle' );
     $header->addImage($CFG->dirroot . '/mod/offlinequiz/pix/line.png', array('width' => 600, 'height' => 5, 'align' => 'center'));
     //$header->addText("___________________________________________________________________________");
 
@@ -467,8 +505,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Create the docx question numbering. This is only created once since we number all questions from 1...n
     $questionnumbering = new PHPWord_Numbering_AbstractNumbering("Question-level", array(
-            new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_DECIMAL, "%1)", "left", $level1),
-            new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_LOWER_LETTER, "%2)", "left", $level2)
+            new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_DECIMAL, "%1)", "left", $level1, $boldfont),
+            new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_LOWER_LETTER, "%2)", "left", $level2, $normalfont)
         ));
     $docx->addNumbering($questionnumbering);
 
@@ -502,14 +540,14 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 1, 300);
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 0.2, 400);
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
             offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
             
             $answernumbering = new PHPWord_Numbering_AbstractNumbering("Adv Multi-level", array(
-                    new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_DECIMAL, "%1.", "left", $level1),
-                    new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_LOWER_LETTER, "%2)", "left", $level2)
+                    new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_DECIMAL, "%1.", "left", $level1, $boldfont),
+                    new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_LOWER_LETTER, "%2)", "left", $level2, $normalfont)
             ));
             $docx->addNumbering($answernumbering);
 
@@ -599,7 +637,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 1, 300);
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 0.2, 400);
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
 
@@ -685,12 +723,16 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
         $fileprefix = 'correction';
     }
 
-    if (file_exists($CFG->dataroot . '/questions.docx')) {
-        unlink($CFG->dataroot . '/questions.docx');
+    srand(microtime()*1000000);
+    $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
+    $tempfilename = $CFG->dataroot."/temp/offlinequiz/" . $unique . '.docx';
+    
+    if (file_exists($tempfilename)) {
+        unlink($tempfilename);
     }
     // Save File
     $objWriter = PHPWord_IOFactory::createWriter($docx, 'Word2007');
-    $objWriter->save($CFG->dataroot . '/questions.docx');
+    $objWriter->save($tempfilename);
 
     // Prepare file record object.
     $fileinfo = array(
@@ -701,13 +743,18 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             'itemid' => 0,           // usually = ID of row in table.
             'filename' => $fileprefix . '-' . strtolower($groupletter) . '.docx'); // any filename
 
-    // delete existing old files, should actually not happen. 
+    // Delete existing old files, should actually not happen. 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
         $oldfile->delete();
     }
 
-    $file = $fs->create_file_from_pathname($fileinfo, $CFG->dataroot . '/questions.docx');
+    // Create a Moodle file from the temporary file.
+    $file = $fs->create_file_from_pathname($fileinfo, $tempfilename);
+
+    // Remove all temporary files.
+    unlink($tempfilename);
+    $trans->remove_temp_files();
 
     return $file;
 }
