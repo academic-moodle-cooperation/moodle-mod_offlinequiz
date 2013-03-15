@@ -167,7 +167,7 @@ Sie können entweder mehrere eingescannte Bilddateien in einer ZIP-Datei
 oder einzelne Bilddateien importieren. Das Offline-Test Modul wird die Bilder im Hintergrund automatisch auswerten.
 Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als JPG-, GIF-,
 PNG- oder TIF-Datei vorliegen. Eine Punktdichte zwischen 200 und 300 DPI wird empfohlen.</p>';
-$string['importisfinished'] = 'Der Import für Offline-Test {$a} ist beendet.';
+$string['importisfinished'] = 'Der Import für den Offline-Test {$a} ist beendet.';
 $string['importlinkresults'] = 'Link zu den Ergebnissen: {$a}';
 $string['importlinkverify'] = 'Link zur Überprüfung: {$a}';
 $string['importmailsubject'] = 'Offline-Test Importbenachrichtigung';

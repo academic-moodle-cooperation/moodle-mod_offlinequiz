@@ -31,6 +31,7 @@ if (!defined('CLI_SCRIPT')) {
 }
 
 define("OFFLINEQUIZ_MAX_CRON_JOBS", "5");
+define("OFFLINEQUIZ_TOP_QUEUE_JOBS", "5");
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/moodlelib.php');
@@ -45,7 +46,7 @@ function offlinequiz_evaluation_cron($jobid = 0) {
     $runningjobs = $DB->count_records_sql("SELECT COUNT(*) FROM {offlinequiz_queue} WHERE status = 'processing'", array());
 
     if ($runningjobs >= OFFLINEQUIZ_MAX_CRON_JOBS) {
-        echo date('Y-m-d-H:i') . ": Too many jobs running! Exiting!";
+        echo "Too many jobs running! Exiting!";
         return;
     }
 
@@ -60,183 +61,196 @@ function offlinequiz_evaluation_cron($jobid = 0) {
     }
     $sql .= " ORDER BY id ASC";
 
-    $job = false;
-    if ($jobs = $DB->get_records_sql($sql, $params)) {
-        $job = array_shift($jobs);
-        $job->status = 'processing';
-        $DB->set_field('offlinequiz_queue', 'status', 'processing', array('id' => $job->id));
-        $job->timestart = time();
-        $DB->set_field('offlinequiz_queue', 'timestart', $job->timestart, array('id' => $job->id));
-    }
-
-    $transaction->allow_commit();
-
-    if (!$job) {
+    // If there are no new jobs, we simply exit.
+    if (!$jobs = $DB->get_records_sql($sql, $params, 0, OFFLINEQUIZ_TOP_QUEUE_JOBS)) {
         echo "nothing to do!\n";
         return;
     }
 
-    // TODO
-    if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $job->offlinequizid))) {
-        $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
-        return;
-    }
-    if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
-        print_error('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, array('course' => $offlinequiz->course,
-                'offlinequiz' => $offlinequiz->id));
-    }
-
-    if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-        $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
-        print_error('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
-    }
-    // TODO
-    if (!$context = context_module::instance($cm->id)) {
-        $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
-    }
-    $coursecontext = context_course::instance($course->id);
-
-    offlinequiz_load_useridentification();
-
-    $jobdata = $DB->get_records_sql("
-            SELECT *
-              FROM {offlinequiz_queue_data}
-             WHERE queueid = :queueid
-               AND status = 'new'",
-            array('queueid' => $job->id));
-
-    if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
-        $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
-        // TODO
-        echo "missing groups";
-        return;
-    }
-
-    list($maxquestions, $maxanswers, $formtype, $questionsperpage) =  offlinequiz_get_question_numbers($offlinequiz, $groups);
-
-    $dirname = '';
-    $doubleentry = 0;
-    foreach ($jobdata as $data) {
-        $starttime = time();
-
-        $DB->set_field('offlinequiz_queue_data', 'status', 'processing', array('id' => $data->id));
-
-        // we remember the directory name to be able to remove it later
-        if (empty($dirname)) {
-            $path_parts = pathinfo($data->filename);
-            $dirname = $path_parts['dirname'];
+    foreach ($jobs as $job) {
+        // Check whether the status is still 'new' (might have been changed by other cronjob).
+        $transaction = $DB->start_delegated_transaction();
+        $status = $DB->get_field('offlinequiz_queue', 'status', array('id' => $job->id));
+        if ($status == 'new') {
+            $DB->set_field('offlinequiz_queue', 'status', 'processing', array('id' => $job->id));
+            $job->timestart = time();
+            $DB->set_field('offlinequiz_queue', 'timestart', $job->timestart, array('id' => $job->id));
+            $alreadydone = false;
+        } else {
+            $alreadydone = true;
         }
+        $transaction->allow_commit();
 
-        set_time_limit(120);
+        // If the job is still new, process it!
+        if (!$alreadydone) {
+            // Set up the context for this job.
+            if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $job->offlinequizid))) {
+                $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
+                $DB->set_field('offlinequiz_queue', 'info', 'offlinequiz not found', array('id' => $job->id));
+                continue;
+            }
+            if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
+                $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
+                $DB->set_field('offlinequiz_queue', 'info', 'course not found', array('id' => $job->id));
+                continue;
+            }
 
-        try {
-            // Create a new scanner for every page.
-            $scanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
+            if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
+                $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
+                $DB->set_field('offlinequiz_queue', 'info', 'course module found', array('id' => $job->id));
+                continue;
+            }
+            if (!$context = context_module::instance($cm->id)) {
+                $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
+                $DB->set_field('offlinequiz_queue', 'info', 'context not found', array('id' => $job->id));
+                continue;
+            }
+            if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+                $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
+                $DB->set_field('offlinequiz_queue', 'info', 'no offlinequiz groups found', array('id' => $job->id));
+                continue;
+            }
+            $coursecontext = context_course::instance($course->id);
 
-            // Try to load the image file.
-            echo $job->id . ' evaluating ' . $data->filename . "\n";
-            $scannedpage = $scanner->load_image($data->filename);
-            echo $job->id . ' image loaded ' . $scannedpage->filename . "\n";
-            $scannedpage->offlinequizid = $offlinequiz->id;
+            offlinequiz_load_useridentification();
 
-            // If we could load the image file, the status is 'ok', so we can check the page for errors.
-            if ($scannedpage->status == 'ok') {
-                // we autorotate so check_scanned_page will return a potentially new scanner and the scannedpage
-                list($scanner, $scannedpage) = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $coursecontext, true);
-            } else {
-                if (property_exists($scannedpage, 'id') && !empty($scannedpage->id)) {
-                    $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
-                } else {
-                    $scannedpage->id = $DB->insert_record('offlinequiz_scanned_pages', $scannedpage);
+            // TODO
+            $jobdata = $DB->get_records_sql("
+                    SELECT *
+                      FROM {offlinequiz_queue_data}
+                     WHERE queueid = :queueid
+                       AND status = 'new'",
+                    array('queueid' => $job->id));
+
+            list($maxquestions, $maxanswers, $formtype, $questionsperpage) =  offlinequiz_get_question_numbers($offlinequiz, $groups);
+
+            $dirname = '';
+            $doubleentry = 0;
+            foreach ($jobdata as $data) {
+                $starttime = time();
+
+                $DB->set_field('offlinequiz_queue_data', 'status', 'processing', array('id' => $data->id));
+
+                // We remember the directory name to be able to remove it later.
+                if (empty($dirname)) {
+                    $path_parts = pathinfo($data->filename);
+                    $dirname = $path_parts['dirname'];
                 }
+
+                set_time_limit(120);
+
+                try {
+                    // Create a new scanner for every page.
+                    $scanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
+
+                    // Try to load the image file.
+                    echo 'job ' . $job->id . ': evaluating ' . $data->filename . "\n";
+                    $scannedpage = $scanner->load_image($data->filename);
+                    echo 'job ' . $job->id . ': image loaded ' . $scannedpage->filename . "\n";
+                    $scannedpage->offlinequizid = $offlinequiz->id;
+
+                    // If we could load the image file, the status is 'ok', so we can check the page for errors.
+                    if ($scannedpage->status == 'ok') {
+                        // we autorotate so check_scanned_page will return a potentially new scanner and the scannedpage
+                        list($scanner, $scannedpage) = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $coursecontext, true);
+                    } else {
+                        if (property_exists($scannedpage, 'id') && !empty($scannedpage->id)) {
+                            $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
+                        } else {
+                            $scannedpage->id = $DB->insert_record('offlinequiz_scanned_pages', $scannedpage);
+                        }
+                    }
+                    echo 'job ' . $job->id . ': scannedpage id ' . $scannedpage->id . "\n";
+
+                    // if the status is still 'ok', we can process the answers. This potentially submits the page and
+                    // checks whether the result for a student is complete
+                    if ($scannedpage->status == 'ok') {
+                        // we can process the answers and submit them if possible
+                        $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $questionsperpage, $coursecontext, true);
+                        echo 'job ' . $job->id . ': processed answers for ' . $scannedpage->id . "\n";
+                    } else if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
+                        // already process the answers but don't submit them.
+                        $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $questionsperpage, $coursecontext, false);
+
+                        // compare the old and the new result wrt. the choices
+                        $scannedpage = offlinequiz_check_different_result($scannedpage);
+                    }
+
+                    if ($scannedpage->status == 'ok' || $scannedpage->status == 'submitted'
+                            || $scannedpage->status == 'suspended' || $scannedpage->error == 'missingpages') {
+                        // mark the file as processed
+                        $DB->set_field('offlinequiz_queue_data', 'status', 'processed', array('id' => $data->id));
+                    } else {
+                        $DB->set_field('offlinequiz_queue_data', 'status', 'error', array('id' => $data->id));
+                        $DB->set_field('offlinequiz_queue_data', 'error', $scannedpage->error, array('id' => $data->id));
+                    }
+                    if ($scannedpage->error == 'doublepage') {
+                        $doubleentry++;
+                    }
+                } catch (Exception $e) {
+                    echo 'job ' . $job->id . ': ' . $e->getMessage() . "\n";
+                    $DB->set_field('offlinequiz_queue_data', 'status', 'error', array('id' => $data->id));
+                    $DB->set_field('offlinequiz_queue_data', 'error', 'couldnotgrab', array('id' => $data->id));
+                    $DB->set_field('offlinequiz_queue_data', 'info', $e->getMessage(), array('id' => $data->id));
+                    $scannedpage->status = 'error';
+                    $scannedpage->error = 'couldnotgrab';
+                    if ($scannedpage->id) {
+                        $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
+                    } else {
+                        $DB->insert_record('offlinequiz_scanned_pages', $scannedpage);
+                    }
+                }
+            } // End foreach jobdata.
+
+            offlinequiz_update_grades($offlinequiz);
+
+            $job->timefinish = time();
+            $DB->set_field('offlinequiz_queue', 'timefinish', $job->timefinish, array('id' => $job->id));
+            $job->status = 'finished';
+            $DB->set_field('offlinequiz_queue', 'status', 'finished', array('id' => $job->id));
+
+            echo date('Y-m-d-H:i') . ": Import queue with id $job->id imported.\n\n";
+
+            if ($user = $DB->get_record('user',  array('id' =>$job->importuserid))) {
+                $mailtext = get_string('importisfinished', 'offlinequiz', format_text($offlinequiz->name, FORMAT_PLAIN));
+
+                // how many pages have been imported successfully
+                $countsql = "SELECT COUNT(id)
+                               FROM {offlinequiz_queue_data}
+                              WHERE queueid = :queueid
+                                AND status = 'processed'";
+                $params = array('queueid' => $job->id);
+
+                $mailtext .= "\n\n". get_string('importnumberpages', 'offlinequiz', $DB->count_records_sql($countsql, $params));
+
+                // how many pages have an error
+                $countsql = "SELECT COUNT(id)
+                               FROM {offlinequiz_queue_data}
+                              WHERE queueid = :queueid
+                                AND status = 'error'";
+
+                $mailtext .= "\n". get_string('importnumberverify', 'offlinequiz', $DB->count_records_sql($countsql, $params));
+
+                $mailtext .= "\n". get_string('importnumberexisting', 'offlinequiz', $doubleentry);
+
+                $linkoverview = "$CFG->wwwroot/mod/offlinequiz/report.php?q={$job->offlinequizid}&mode=overview";
+                $mailtext .= "\n\n". get_string('importlinkresults', 'offlinequiz', $linkoverview);
+
+                $linkupload = "$CFG->wwwroot/mod/offlinequiz/report.php?q={$job->offlinequizid}&mode=rimport";
+                $mailtext .= "\n". get_string('importlinkverify', 'offlinequiz', $linkupload);
+
+                $mailtext .= "\n\n". get_string('importtimestart', 'offlinequiz', userdate($job->timestart));
+                $mailtext .= "\n". get_string('importtimefinish', 'offlinequiz', userdate($job->timefinish));
+
+                email_to_user($user, $CFG->noreplyaddress, get_string('importmailsubject', 'offlinequiz'), $mailtext);
             }
-            echo $job->id . ' scannedpage id ' . $scannedpage->id . "\n";
+            echo "removing dir " . $dirname . "\n";
+            remove_dir($dirname);
 
-            // if the status is still 'ok', we can process the answers. This potentially submits the page and
-            // checks whether the result for a student is complete
-            if ($scannedpage->status == 'ok') {
-                // we can process the answers and submit them if possible
-                $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $questionsperpage, $coursecontext, true);
-                echo $job->id . ' processed answers for ' . $scannedpage->id . "\n";
-            } else if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
-                // already process the answers but don't submit them.
-                $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $questionsperpage, $coursecontext, false);
+        } // End !alreadydone.
+    } // End foreach.
 
-                // compare the old and the new result wrt. the choices
-                $scannedpage = offlinequiz_check_different_result($scannedpage);
-            }
-
-            if ($scannedpage->status == 'ok' || $scannedpage->status == 'submitted'
-                    || $scannedpage->status == 'suspended' || $scannedpage->error == 'missingpages') {
-                // mark the file as processed
-                $data->status = 'processed';
-                $DB->set_field('offlinequiz_queue_data', 'status', 'processed', array('id' => $data->id));
-            } else {
-                $data->status = 'error';
-                $DB->set_field('offlinequiz_queue_data', 'status', 'error', array('id' => $data->id));
-                $DB->set_field('offlinequiz_queue_data', 'error', $scannedpage->error, array('id' => $data->id));
-            }
-            if ($scannedpage->error == 'doublepage') {
-                $doubleentry++;
-            }
-        } catch (Exception $e) {
-            echo $job->id . ' ' . $e->getMessage() . "\n";
-            $DB->set_field('offlinequiz_queue_data', 'status', 'error', array('id' => $data->id));
-            $DB->set_field('offlinequiz_queue_data', 'error', 'couldnotgrab', array('id' => $data->id));
-            $scannedpage->status = 'error';
-            $scannedpage->error = 'couldnotgrab';
-            if ($scannedpage->id) {
-                $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
-            } else {
-                $DB->insert_record('offlinequiz_scanned_pages', $scannedpage);
-            }
-        }
-    }
-    offlinequiz_update_grades($offlinequiz);
-
-    $job->timefinish = time();
-    $DB->set_field('offlinequiz_queue', 'timefinish', $job->timefinish, array('id' => $job->id));
-    $job->status = 'finished';
-    $DB->set_field('offlinequiz_queue', 'status', 'finished', array('id' => $job->id));
-
-    echo date('Y-m-d-H:i') . ": Import queue with id $job->id imported.\n\n";
-
-    if ($user = $DB->get_record('user',  array('id' =>$job->importuserid))) {
-        $mailtext = get_string('importisfinished', 'offlinequiz', format_text($offlinequiz->name, FORMAT_PLAIN));
-
-        // how many pages have been imported successfully
-        $countsql = "SELECT COUNT(id)
-                       FROM {offlinequiz_queue_data}
-                      WHERE queueid = :queueid
-                        AND status = 'processed'";
-        $params = array('queueid' => $job->id);
-
-        $mailtext .= "\n\n". get_string('importnumberpages', 'offlinequiz', $DB->count_records_sql($countsql, $params));
-
-        // how many pages have an error
-        $countsql = "SELECT COUNT(id)
-                       FROM {offlinequiz_queue_data}
-                      WHERE queueid = :queueid
-                        AND status = 'error'";
-
-        $mailtext .= "\n". get_string('importnumberverify', 'offlinequiz', $DB->count_records_sql($countsql, $params));
-
-        $mailtext .= "\n". get_string('importnumberexisting', 'offlinequiz', $doubleentry);
-
-        $linkoverview = "$CFG->wwwroot/mod/offlinequiz/report.php?q={$job->offlinequizid}&mode=overview";
-        $mailtext .= "\n\n". get_string('importlinkresults', 'offlinequiz', $linkoverview);
-
-        $linkupload = "$CFG->wwwroot/mod/offlinequiz/report.php?q={$job->offlinequizid}&mode=rimport";
-        $mailtext .= "\n". get_string('importlinkverify', 'offlinequiz', $linkupload);
-
-        $mailtext .= "\n\n". get_string('importtimestart', 'offlinequiz', userdate($job->timestart));
-        $mailtext .= "\n". get_string('importtimefinish', 'offlinequiz', userdate($job->timefinish));
-
-        email_to_user($user, $CFG->noreplyaddress, get_string('importmailsubject', 'offlinequiz'), $mailtext);
-    }
-    echo "removing dir " . $dirname . "\n";
-    remove_dir($dirname);
-}
+} // End function.
 
 require_once($CFG->libdir . '/clilib.php');
 list($options, $unrecognized) = cli_get_params(array('cli'=>false), array('h'=>'help'));
@@ -247,4 +261,3 @@ if (array_key_exists('cli', $options) && $options['cli']) {
     echo 'done.\n';
     die();
 }
-
