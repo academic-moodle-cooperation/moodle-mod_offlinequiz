@@ -50,6 +50,11 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, $reportmode="overview");
             echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading(get_string('results', 'offlinequiz'));
+            
+            require_once($CFG->libdir . '/grouplib.php');
+            echo $OUTPUT->box_start('linkbox');
+            echo groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/offlinequiz/report.php?id=' . $cm->id . '&mode=overview', true);
+            echo $OUTPUT->box_end();
         }
 
         $context = context_module::instance($cm->id);
@@ -58,6 +63,8 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         // Set table options.
         $noresults = optional_param('noresults', 0, PARAM_INT);
         $pagesize = optional_param('pagesize', 10, PARAM_INT);
+        $groupid = optional_param('group', 0 , PARAM_INT);
+        
         if ($pagesize < 1) {
             $pagesize = 10;
         }
@@ -358,13 +365,19 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
         $from  = "FROM {user} u
                   JOIN {role_assignments} ra ON ra.userid = u.id
-             LEFT JOIN {offlinequiz_results} qa ON u.id = qa.userid AND qa.offlinequizid = :offlinequizid";
+             LEFT JOIN {offlinequiz_results} qa ON u.id = qa.userid AND qa.offlinequizid = :offlinequizid
+             ";
 
         $where = " WHERE ra.contextid $contexttest AND ra.roleid $roletest ";
 
         $params = array('offlinequizid' => $offlinequiz->id);
         $params = array_merge($params, $cparams, $rparams);
 
+        if ($groupid) {
+            $from .= " JOIN {groups_members} gm ON gm.userid = u.id ";
+            $where .= " AND gm.groupid = :groupid ";
+            $params['groupid'] = $groupid;
+        }
         if (empty($noresults)) {
             $where = $where . " AND qa.userid IS NOT NULL
                                 AND qa.status = 'complete'"; // show ONLY students with results;

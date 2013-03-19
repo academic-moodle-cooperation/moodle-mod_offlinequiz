@@ -51,7 +51,6 @@ function offlinequiz_evaluation_cron($jobid = 0) {
     }
 
     // TODO do this properly. Just for testing
-    $transaction = $DB->start_delegated_transaction();
 
     $sql = "SELECT * FROM {offlinequiz_queue} WHERE status = 'new'";
     $params = array();
