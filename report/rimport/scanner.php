@@ -344,7 +344,7 @@ class offlinequiz_page_scanner {
         // reduce resolution of large images
         $percent = round(300000 / $imageinfo['0']);
         if ($percent > 0 && $percent < 100) {
-            $handle = popen('convert ' . $file . ' -resize ' . $percent . '% ' . $file, 'r');
+            $handle = popen("convert '" . $file . "' -resize " . $percent . "% '" . $file . "'", 'r');
             pclose($handle);
             $imageinfo = getimagesize($file);
         }
@@ -389,7 +389,7 @@ class offlinequiz_page_scanner {
                 break;
             case IMAGETYPE_TIFF_II:
                 $newfile = $path_parts["dirname"] . '/' . $path_parts["filename"] . ".png";
-                $handle = popen("convert $file $newfile", 'r');        // converting the tiff file to png format via imagemagick 
+                $handle = popen("convert '" . $file . "' '" . $newfile . "' ", 'r');        // converting the tiff file to png format via imagemagick 
                 fread($handle, 1);
                 while (!feof($handle)) {
                 }
@@ -415,7 +415,7 @@ class offlinequiz_page_scanner {
                 break;
             case IMAGETYPE_TIFF_MM:
                 $newfile = $path_parts["dirname"] . '/' . $path_parts["filename"] . ".png";
-                $handle = popen("convert $file $newfile", 'r');  // converting the tiff file to png format via imagemagick 
+                $handle = popen("convert '" . $file . "' '" . $newfile . "' ", 'r');  // converting the tiff file to png format via imagemagick 
                 fread($handle, 100);
                 while (!feof($handle)) {
                 }
@@ -926,7 +926,7 @@ class offlinequiz_page_scanner {
         $temp_src = $CFG->dataroot . "/temp/$uniquename"."_src.png";
         $temp_dst = $CFG->dataroot . "/temp/$uniquename"."_dst.png";
         if (imagepng($this->image, $temp_src)) {
-            $handle = popen("convert $temp_src -rotate 180 $temp_dst", 'r');
+            $handle = popen("convert '" . $temp_src . "' -rotate 180 '" . $temp_dst . "' ", 'r');
             pclose($handle);
             if ($this->image = imagecreatefrompng($temp_dst)) {
                 $this->sourcefile = $temp_dst;
@@ -991,7 +991,7 @@ class offlinequiz_page_scanner {
         $temp_src = $CFG->dataroot."/temp/$uniquename"."_src.png";
         $temp_dst = $CFG->dataroot."/temp/$uniquename"."_dst.png";
         if (imagepng($this->image, $temp_src)) {
-            $handle = popen("convert $temp_src -rotate 90 $temp_dst", 'r');
+            $handle = popen("convert '" . $temp_src . "' -rotate 90 '" . $temp_dst . "' ", 'r');
             pclose($handle);
             if ($this->image = imagecreatefrompng($temp_dst)) {
                 unlink($temp_dst);
