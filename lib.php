@@ -674,6 +674,22 @@ function offlinequiz_user_complete($course, $user, $mod, $offlinequiz) {
 }
 
 /**
+ * @param array $questionids of question ids.
+ * @return bool whether any of these questions are used by any instance of this module.
+ */
+function offlinequiz_questions_in_use($questionids) {
+    global $DB, $CFG;
+    require_once($CFG->libdir . '/questionlib.php');
+
+    
+    list($test, $params) = $DB->get_in_or_equal($questionids);
+    return $DB->record_exists_select('offlinequiz_q_instances',
+            'question ' . $test, $params) || question_engine::questions_in_use(
+            $questionids, new qubaid_join('{offlinequiz_results} oqr',
+            'oqr.usageid'));
+}
+
+/**
  * Given a course and a time, this module should find recent activity
  * that has occurred in offlinequiz activities and print it out.
  * Return true if there was output, or false is there was none.
