@@ -455,6 +455,7 @@ $string['shufflewithin_help'] = 'If enabled, the parts making up each question w
 $string['signature'] = 'Signature';
 $string['standard'] = 'Standard';
 $string['starttutorial'] = 'Start tutorial about the examination';
+$string['statistics'] = 'Statistics';
 $string['studycode'] = 'Study code';
 $string['theattempt'] = 'The attempt';
 $string['timesup'] = 'Time is up!';

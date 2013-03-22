@@ -38,7 +38,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
         $confirm = optional_param('confirm', 0, PARAM_INT);
 
         // Print header
-        $this->print_header_and_tabs($cm, $course, $offlinequiz, $reportmode="regrade");
+        $this->print_header_and_tabs($cm, $course, $offlinequiz, 'regrade');
 
         offlinequiz_load_useridentification();
         $offlinequizconfig = get_config('offlinequiz');
