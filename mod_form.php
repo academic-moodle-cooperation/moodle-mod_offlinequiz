@@ -153,7 +153,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('fileformat', 'fileformat', 'offlinequiz');
         $mform->setDefault('fileformat',0);
 
-        $mform->addElement('selectyesno', 'showgrades', get_string("showgrades", "offlinequiz"));
+        $mform->addElement('selectyesno', 'showgrades', get_string("showgrades", "offlinequiz"), $attribs);
         $mform->addHelpButton('showgrades', "showgrades", "offlinequiz");
         //      $mform->setDefault('showgrades', $offlinequizconfig->showgrades);
 
