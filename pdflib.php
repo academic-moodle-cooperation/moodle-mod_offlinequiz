@@ -837,7 +837,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 * @return stored_file instance, the generated PDF file.
 */
 function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context) {
-    global $CFG, $DB, $USER;
+    global $CFG, $DB, $OUTPUT, $USER;
 
     $letterstr = ' abcdefghijklmnopqrstuvwxyz';
     $groupletter = strtoupper($letterstr[$group->number]);
