@@ -492,8 +492,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                    {offlinequiz_q_instances} i,
                    {question_categories} c
              WHERE q.id $qsql
-               AND i.offlinequiz = ?
-               AND q.id = i.question
+               AND i.offlinequizid = ?
+               AND q.id = i.questionid
                AND q.category=c.id";
 
     // Load the questions.
@@ -907,8 +907,8 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
                    {offlinequiz_q_instances} i,
                    {question_categories} c
              WHERE q.id $qsql
-               AND i.offlinequiz = ?
-               AND q.id = i.question
+               AND i.offlinequizid = ?
+               AND q.id = i.questionid
                AND q.category=c.id";
 
     if (!$questions = $DB->get_records_sql($sql, $params)) {

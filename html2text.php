@@ -87,6 +87,7 @@ class offlinequiz_html_translator
                 $imageurl = false;
                 $teximage = false;
                 $pluginfile = false;
+                $parts = preg_split("!$CFG->wwwroot/filter/tex/pix.php/!", $pluginfilename);
                 if (preg_match('!@@PLUGINFILE@@/!', $pluginfilename)) {
 
                     $pluginfilename = str_replace('@@PLUGINFILE@@/', '', $pluginfilename);
@@ -110,7 +111,7 @@ class offlinequiz_html_translator
                     } else {
                         $output .= 'Image file not found ' . $path_parts['dirname'] . '/' . $path_parts['basename'];
                     }
-                } else if ($parts = preg_split("!$CFG->wwwroot/filter/tex/pix.php/!", $pluginfilename) && (count($parts) > 1)) {
+                } else if (count($parts) > 1) {
                     $teximagefile = $CFG->dataroot . '/filter/tex/' . $parts[1];
                     $path_parts = pathinfo($teximagefile);
 
@@ -141,7 +142,9 @@ class offlinequiz_html_translator
                             $newfile = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '_c.png';
                             $resize = '';
                             $percent = round(200000000 / ($filewidth * $fileheight));
-                            if ($percent < 100) $resize = ' -resize '.$percent.'%';
+                            if ($percent < 100) {
+                                $resize = ' -resize '.$percent.'%';
+                            }
                             $handle = popen($CFG->filter_tex_pathconvert . ' ' . $file . $resize . ' -background white -flatten +matte ' . $newfile, 'r');
                             pclose($handle);
                             $this->tempfiles[] = $file;

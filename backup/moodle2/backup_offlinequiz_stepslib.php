@@ -144,7 +144,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $offlinequiz->set_source_table('offlinequiz', array('id' => backup::VAR_ACTIVITYID));
 
         $qinstance->set_source_table('offlinequiz_q_instances',
-                array('offlinequiz' => backup::VAR_PARENTID));
+                array('offlinequizid' => backup::VAR_PARENTID));
 
         $group->set_source_table('offlinequiz_groups',
                 array('offlinequizid' => backup::VAR_PARENTID));

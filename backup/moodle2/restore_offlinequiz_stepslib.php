@@ -146,8 +146,8 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $data = (object)$data;
         $oldid = $data->id;
 
-        $data->offlinequiz = $this->get_new_parentid('offlinequiz');
-        $data->question = $this->get_mappingid('question', $data->question);
+        $data->offlinequizid = $this->get_new_parentid('offlinequiz');
+        $data->questionid = $this->get_mappingid('question', $data->questionid);
 
         $DB->insert_record('offlinequiz_q_instances', $data);
     }

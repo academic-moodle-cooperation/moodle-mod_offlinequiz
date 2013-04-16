@@ -219,7 +219,7 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
                 $templateusage = offlinequiz_load_questions_usage_by_activity($group->templateusageid);
 
                 // Get the question instances for initial markmarks.
-                $qinstances = $DB->get_records_sql('SELECT question, grade FROM {offlinequiz_q_instances} WHERE offlinequiz = :offlinequizid',
+                $qinstances = $DB->get_records_sql('SELECT questionid, grade FROM {offlinequiz_q_instances} WHERE offlinequizid = :offlinequizid',
                         array('offlinequizid' => $offlinequiz->id));
 
                 // Clone it...

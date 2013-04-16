@@ -186,7 +186,7 @@ File names are not relevant but should not contain special characters such as um
 or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['importedon'] = 'Imported on';
 $string['importforms'] = 'Import answer forms';
-$string['importisfinished'] = 'Import of offline quiz {$a} is finished.';
+$string['importisfinished'] = 'Import for offline quiz {$a} is finished.';
 $string['importlinkresults'] = 'Link to results: {$a}';
 $string['importlinkverify'] = 'Link to verifying: {$a}';
 $string['importmailsubject'] = 'offline quiz import notification';

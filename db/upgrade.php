@@ -961,4 +961,32 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // offlinequiz savepoint reached
         upgrade_mod_savepoint(true, 2012121200, 'offlinequiz');
     }
+    
+    if ($oldversion < 2013041600) {
+    
+        // Rename field question on table offlinequiz_q_instances to NEWNAMEGOESHERE
+        $table = new xmldb_table('offlinequiz_q_instances');
+        $field = new xmldb_field('question', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'offlinequiz');
+    
+        // Launch rename field question
+        $dbman->rename_field($table, $field, 'questionid');
+    
+        // offlinequiz savepoint reached
+        upgrade_mod_savepoint(true, 2013041600, 'offlinequiz');
+    }
+    
+    if ($oldversion < 2013041601) {
+    
+        // Rename field offlinequiz on table offlinequiz_q_instances to NEWNAMEGOESHERE
+        $table = new xmldb_table('offlinequiz_q_instances');
+        $field = new xmldb_field('offlinequiz', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
+    
+        // Launch rename field offlinequiz
+        $dbman->rename_field($table, $field, 'offlinequizid');
+    
+        // offlinequiz savepoint reached
+        upgrade_mod_savepoint(true, 2013041601, 'offlinequiz');
+    }
+    
+    
 }
