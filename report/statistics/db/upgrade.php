@@ -69,6 +69,21 @@ function xmldb_offlinequiz_statistics_upgrade($oldversion) {
 
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this
+    if ($oldversion < 2013040300) {
+    
+        // Define field offlinegroupid to be added to offlinequiz_statistics.
+        $table = new xmldb_table('offlinequiz_statistics');
+        $field = new xmldb_field('offlinegroupid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'offlinequizid');
+    
+        // Conditionally launch add field offlinegroupid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    
+        // Statistics savepoint reached.
+        upgrade_plugin_savepoint(true, 2013040300, 'offlinequiz', 'statistics');
+    }
+    
 
 
     return true;

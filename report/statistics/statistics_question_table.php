@@ -61,7 +61,7 @@ class offlinequiz_statistics_question_table extends flexible_table {
      * @param bool $hassubqs
      */
     public function question_setup($reporturl, $questiondata,
-            offlinequiz_statistics_response_analyser $responesstats) {
+            offlinequiz_statistics_response_analyser $responsestats) {
         $this->questiondata = $questiondata;
 
         $this->define_baseurl($reporturl->out());
@@ -72,16 +72,16 @@ class offlinequiz_statistics_question_table extends flexible_table {
         $columns = array();
         $headers = array();
 
-        if ($responesstats->has_subparts()) {
+        if ($responsestats->has_subparts()) {
             $columns[] = 'part';
             $headers[] = 'Part of question';
         }
 
-        if ($responesstats->has_response_classes()) {
+        if ($responsestats->has_response_classes()) {
             $columns[] = 'responseclass';
             $headers[] = get_string('modelresponse', 'offlinequiz_statistics');
 
-            if ($responesstats->has_actual_responses()) {
+            if ($responsestats->has_actual_responses()) {
                 $columns[] = 'response';
                 $headers[] = get_string('actualresponse', 'offlinequiz_statistics');
             }

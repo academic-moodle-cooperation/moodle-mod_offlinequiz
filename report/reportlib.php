@@ -157,38 +157,41 @@ function offlinequiz_report_get_significant_questions($offlinequiz) {
 
     list($usql, $params) = $DB->get_in_or_equal(explode(',', $questionids));
     $params[] = $offlinequiz->id;
-    $questions = $DB->get_records_sql("
-SELECT
-    q.id,
-    q.length,
-    qqi.grade AS maxmark
+    $questions = $DB->get_records_sql("SELECT q.id, q.length, qqi.grade AS maxmark
+                                         FROM {question} q
+                                         JOIN {offlinequiz_q_instances} qqi ON qqi.question = q.id
+                                        WHERE q.id $usql
+                                          AND qqi.offlinequiz = ?
+                                          AND length > 0", $params);
 
-FROM {question} q
-JOIN {offlinequiz_q_instances} qqi ON qqi.question = q.id
-
-WHERE
-    q.id $usql AND
-    qqi.offlinequiz = ? AND
-    length > 0", $params);
-
-    $qsbyslot = array();
     $number = 1;
     foreach (explode(',', $questionids) as $key => $id) {
         if (!array_key_exists($id, $questions)) {
             continue;
         }
-
-        $slot = $key + 1;
-        $question = $questions[$id];
-        $question->slot = $slot;
-        $question->number = $number;
-
-        $qsbyslot[$slot] = $question;
-
-        $number += $question->length;
+        $questions[$id]->number = $number;
+        $number += $questions[$id]->length;
     }
+    
+//     $qsbyslot = array();
+//     $number = 1;
+//     foreach (explode(',', $questionids) as $key => $id) {
+//         if (!array_key_exists($id, $questions)) {
+//             continue;
+//         }
 
-    return $qsbyslot;
+//         $slot = $key + 1;
+//         $question = $questions[$id];
+//         $question->slot = $slot;
+//         $question->number = $number;
+
+//         $qsbyslot[$slot] = $question;
+
+//         $number += $question->length;
+//     }
+
+//     return $qsbyslot;
+    return $questions;
 }
 
 /**
@@ -215,7 +218,7 @@ function offlinequiz_report_qm_filter_select($offlinequiz, $offlinequizattemptsa
         case OFFLINEQUIZ_GRADEHIGHEST :
             return "$offlinequizattemptsalias.id = (
                     SELECT MIN(qa2.id)
-                    FROM {offlinequiz_attempts} qa2
+                    FROM {offlinequiz_results} qa2
                     WHERE qa2.offlinequiz = $offlinequizattemptsalias.offlinequiz AND
                         qa2.userid = $offlinequizattemptsalias.userid AND
                         COALESCE(qa2.sumgrades, 0) = (
@@ -364,12 +367,13 @@ function offlinequiz_report_feedback_for_grade($grade, $offlinequizid, $context)
 
 /**
  * Format a number as a percentage out of $offlinequiz->sumgrades
+ * 
  * @param number $rawgrade the mark to format.
  * @param object $offlinequiz the offlinequiz settings
  * @param bool $round whether to round the results ot $offlinequiz->decimalpoints.
  */
 function offlinequiz_report_scale_summarks_as_percentage($rawmark, $offlinequiz, $round = true) {
-    if ($offlinequiz->sumgrades == 0) {
+    if ($offlinequiz->sumgrades <= 0) {
         return '';
     }
     if (!is_numeric($rawmark)) {

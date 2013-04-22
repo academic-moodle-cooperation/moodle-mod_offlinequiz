@@ -1470,6 +1470,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
 
     // Filter only for tex formulas.
     $texfilteractive = $DB->get_field('filter_active', 'active', array('filter' => 'filter/tex', 'contextid' => 1));
+    $tex_filter = null;
     if ($texfilteractive) {
         $tex_filter = new filter_tex($context, array());
     }

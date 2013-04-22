@@ -58,6 +58,7 @@ $string['configonlylocalcategories'] = 'Keine öffentlichen Fragekategorien zula
 $string['configpapergray'] = 'Weißwert des Papieres, das für Antwortbögen verwendet wird.';
 $string['configshufflequestions'] = 'Wenn Sie diese Option aktivieren werden die Fragen jeder Offline-Test Gruppe nach dem Zufallsprinzip gemischt.';;
 $string['configshufflewithin'] = 'Wenn Sie diese Option aktivieren, werden die Antworten jeder Multple-Choice Frage nach dem Zufallsprinzip gemischt.';
+$string['configshufflequestionsanswers'] = 'Antworten mischen blah blah';
 $string['configuseridentification'] = 'Eine Formel, die die Identifikation von NutzerInnen beschreibt. Diese Formel wird verwendet, um hochgeladene Antwortbögen den richtigen NutzerInnen zuzuordnen.';
 $string['pluginadministration']='Offline-Test Administration';
 $string['copyright'] = 'Diese Seite ist nur zu Ihrer persönlichen Information. Wie jeder andere Text auch unterliegen Prüfungsfragen den Bestimmungen des Urheberrechts. Es ist Ihnen nicht gestattet, Fragen zu kopieren oder an andere weiterzugeben. Zuwiderhandeln kann belangt werden.';
@@ -416,7 +417,6 @@ $string['shufflequestions'] = 'Fragen neu mischen';
 $string['shufflequestionsagain'] = 'Fragen neu mischen';
 $string['shufflequestionsanswers'] = 'Fragen und Antworten mischen';
 $string['shufflequestionsselected'] = 'Fragen-Mischen wurde aktiviert. Deshalb sind einige Aktionen auf dieser Seite nicht verfügbar. Um dies zu ändern, bearbeiten Sie die Einstellungen, {$a}.';
-$string['configshufflequestionsanswers'] = 'Antworten mischen blah blah';
 $string['shufflewithin'] =  'Antworten innerhalb der Fragen mischen';
 $string['shufflewithin_help'] = 'Wenn diese Auswahl aktiviert ist, werden für jede Frage in jeder Offline-Test Gruppe die Antworten innerhalb der Frage gemischt. ACHTUNG: Antworten werden nur für Fragen gemischt, für die das Mischen aktiviert wurde!';
 $string['signature'] = 'Unterschrift';
@@ -431,6 +431,7 @@ Außerdem können sie das korrekte Ankreuzen der Matrikelnummer interaktiv üben
 <b>Bitte beachten Sie:</b><br />
 Falls Sie diese Option auf "Ja" setzen, die Prüfung aber ausblenden, wird der Link zum Tutorial trotzdem nicht sichtbar sein. 
 In diesem Fall können Sie das Tutorial auf der Startseite verlinken.';
+$string['statistics'] = 'Statistik';
 $string['theattempt'] = 'Das Ergebnis';
 $string['timesup'] = 'Zeit wurde überschritten!';
 $string['trigger'] = 'Unter-/Obergrenze';

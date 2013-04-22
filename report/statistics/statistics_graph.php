@@ -53,10 +53,30 @@ function graph_get_new_colour() {
 
 // Get the parameters.
 $offlinequizstatisticsid = required_param('id', PARAM_INT);
+$groupnumber = optional_param('group', -1, PARAM_INT);
 
 // Load enough data to check permissions.
 $offlinequizstatistics = $DB->get_record('offlinequiz_statistics', array('id' => $offlinequizstatisticsid));
 $offlinequiz = $DB->get_record('offlinequiz', array('id' => $offlinequizstatistics->offlinequizid), '*', MUST_EXIST);
+
+if ($groupnumber > 0) {
+    if ($offlinegroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
+        $offlinequiz->groupid = $offlinegroup->id;
+        $groupquestions = offlinequiz_get_group_questions($offlinequiz);
+        $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions);
+
+        // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
+        $offlinequiz->questions = offlinequiz_clean_layout($groupquestions, empty($purequestions));
+    } else {
+        print_error('invalidgroupnumber', 'offlinequiz');
+    }
+} else {
+    $offlinequiz->groupid = 0;
+    // If no group has been chosen we simply take the questions from the question instances
+    $qinstanceids = $DB->get_fieldset_select('offlinequiz_q_instances', 'question', 'offlinequiz = :offlinequiz', array('offlinequiz' => $offlinequiz->id));
+    $offlinequiz->questions = offlinequiz_clean_layout(implode(',', $qinstanceids));
+}
+
 $cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id);
 
 // Check access.

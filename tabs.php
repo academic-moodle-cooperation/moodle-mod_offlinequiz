@@ -72,7 +72,7 @@ if ($currenttab == 'reports' and isset($mode)) {
 
     $allreports = get_list_of_plugins("mod/offlinequiz/report");
 
-    $reportlist = array ('overview', 'rimport'); //, 'statistics'); //  'regrade'  // Standard reports we want to show first
+    $reportlist = array('overview', 'rimport', 'statistics'); //  'regrade'  // Standard reports we want to show first
 
     foreach ($allreports as $report) {
         if (!in_array($report, $reportlist)) {

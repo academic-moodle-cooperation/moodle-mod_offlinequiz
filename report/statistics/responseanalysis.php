@@ -164,8 +164,9 @@ class offlinequiz_statistics_response_analyser {
     }
 
     /**
-     * Store the computed response analysis in the offlinequiz_q_response_stats
+     * Load the stored response analysis from the offlinequiz_q_response_stats
      * table.
+     * 
      * @param int $offlinequizstatisticsid the cached offlinequiz statistics to load the
      * data corresponding to.
      * @return bool true if cached data was found in the database and loaded,
@@ -193,6 +194,7 @@ class offlinequiz_statistics_response_analyser {
     /**
      * Store the computed response analysis in the offlinequiz_q_response_stats
      * table.
+     * 
      * @param int $offlinequizstatisticsid the cached offlinequiz statistics this correspons to.
      */
     public function store_cached($offlinequizstatisticsid) {

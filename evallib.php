@@ -154,7 +154,6 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
             $sql = "SELECT id
                       FROM {offlinequiz_results}
                      WHERE offlinequizid = :offlinequizid
-                       AND offlinegroupid = :offlinegroupid
                        AND userid = :userid
                        AND status = 'complete'";
             $params =  array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id, 'userid' => $user->id);

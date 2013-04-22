@@ -47,7 +47,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
         // Only print headers if not asked to download data.
         if (!$download = optional_param('download', null, PARAM_TEXT)) {
-            $this->print_header_and_tabs($cm, $course, $offlinequiz, $reportmode="overview");
+            $this->print_header_and_tabs($cm, $course, $offlinequiz, 'overview');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading(get_string('results', 'offlinequiz'));
             

@@ -187,8 +187,8 @@ class offlinequiz_statistics_table extends flexible_table {
         $url = null;
         if ($question->_stats->subquestion) {
             $url = new moodle_url($this->baseurl, array('qid' => $question->id));
-        } else if ($question->_stats->slot && $question->qtype != 'random') {
-            $url = new moodle_url($this->baseurl, array('slot' => $question->_stats->slot));
+        } else if ($question->_stats->questionid && $question->qtype != 'random') {
+            $url = new moodle_url($this->baseurl, array('questionid' => $question->_stats->questionid));
         }
 
         if ($url) {

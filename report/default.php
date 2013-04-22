@@ -60,8 +60,23 @@ abstract class offlinequiz_default_report {
     public function print_header_and_tabs($cm, $course, $offlinequiz, $reportmode = 'overview') {
         global $CFG, $PAGE, $OUTPUT;
 
+        switch ($reportmode) {
+            case 'overview':
+                $reporttitle = get_string('results', 'offlinequiz');
+                break;
+            case 'rimport':
+                $reporttitle = get_string('resultimport', 'offlinequiz');
+                break;
+            case 'regrade':
+                $reporttitle = get_string('regradingquiz', 'offlinequiz');
+                break;
+            case 'statistics':
+                $reporttitle = get_string('statistics', 'offlinequiz');
+                break;
+        }
+        
         // Print the page header
-        $PAGE->set_title(format_string($offlinequiz->name));
+        $PAGE->set_title(format_string($offlinequiz->name) . ' -- ' . $reporttitle);
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
 

@@ -55,11 +55,11 @@ class offlinequiz_statistics_question_stats {
     public function __construct($questions, $s, $summarksavg) {
         $this->s = $s;
         $this->summarksavg = $summarksavg;
-
-        foreach ($questions as $slot => $question) {
+        $slot = 1;
+        foreach ($questions as $qid => $question) {
             $question->_stats = $this->make_blank_question_stats();
-            $question->_stats->questionid = $question->id;
-            $question->_stats->slot = $slot;
+            $question->_stats->questionid = $qid;
+            $question->_stats->slot = $slot++;
         }
 
         $this->questions = $questions;
@@ -95,16 +95,28 @@ class offlinequiz_statistics_question_stats {
      * @param array $groupstudents students in this group.
      * @param bool $allattempts use all attempts, or just first attempts.
      */
-    public function load_step_data($offlinequizid, $currentgroup, $groupstudents, $allattempts) {
+    public function load_step_data($offlinequizid, $currentgroup, $groupstudents, $allattempts, $offlinegroupid) {
         global $DB;
 
         $this->allattempts = $allattempts;
+        // print_object($this->questions[1]);
 
-        list($qsql, $qparams) = $DB->get_in_or_equal(array_keys($this->questions),
-                SQL_PARAMS_NAMED, 'q');
+        $questionids = array();
+        foreach ($this->questions as $question) {
+            $questionids[] = $question->id;
+        }
+
+        // Get the SQL and params for question IDs.
+        list($qsql, $qparams) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'q');
+        
+//         list($qsql, $qparams) = $DB->get_in_or_equal(array_keys($this->questions),
+//                 SQL_PARAMS_NAMED, 'q');
         list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(
-                $offlinequizid, $currentgroup, $groupstudents, $allattempts, false);
+                $offlinequizid, $currentgroup, $groupstudents, $allattempts, false, $offlinegroupid);
 
+        // print_object(array($fromqa, $whereqa));
+        // print_object(array($qsql, $qparams));
+        
         $this->lateststeps = $DB->get_records_sql("
                 SELECT
                     qas.id,
@@ -115,7 +127,7 @@ class offlinequiz_statistics_question_stats {
                     qas.fraction * qa.maxmark as mark
 
                 FROM $fromqa
-                JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.uniqueid
+                JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid
                 JOIN (
                     SELECT questionattemptid, MAX(id) AS latestid
                       FROM {question_attempt_steps}
@@ -124,22 +136,32 @@ class offlinequiz_statistics_question_stats {
                 JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
 
                 WHERE
-                    qa.slot $qsql AND
+                    qa.questionid $qsql AND
                     $whereqa", $qparams + $qaparams);
+//         foreach ($this->lateststeps as $step) {
+//             error_log($step->id . ' ' . $step->slot . ' ' . $step->questionid);
+//         }
     }
+
+//                     WHERE
+//                     qa.slot $qsql AND
+//                     $whereqa", $qparams + $qaparams);
 
     public function compute_statistics() {
         set_time_limit(0);
 
+// print_object($this->s);
+// print_object($this->questions[2]);
+// print_object('count lateststeps: ' . count($this->lateststeps));
         $subquestionstats = array();
 
         // Compute the statistics of position, and for random questions, work
         // out which questions appear in which positions.
         foreach ($this->lateststeps as $step) {
-            $this->initial_steps_walker($step, $this->questions[$step->slot]->_stats);
+            $this->initial_steps_walker($step, $this->questions[$step->questionid]->_stats);
 
             // If this is a random question what is the real item being used?
-            if ($step->questionid != $this->questions[$step->slot]->id) {
+            if ($step->questionid != $this->questions[$step->questionid]->id) {
                 if (!isset($subquestionstats[$step->questionid])) {
                     $subquestionstats[$step->questionid] = $this->make_blank_question_stats();
                     $subquestionstats[$step->questionid]->questionid = $step->questionid;
@@ -155,11 +177,11 @@ class offlinequiz_statistics_question_stats {
                 $this->initial_steps_walker($step,
                         $subquestionstats[$step->questionid], false);
 
-                $number = $this->questions[$step->slot]->number;
+                $number = $this->questions[$step->questionid]->number;
                 $subquestionstats[$step->questionid]->usedin[$number] = $number;
 
-                $randomselectorstring = $this->questions[$step->slot]->category .
-                        '/' . $this->questions[$step->slot]->questiontext;
+                $randomselectorstring = $this->questions[$step->questionid]->category .
+                        '/' . $this->questions[$step->questionid]->questiontext;
                 if (!isset($this->randomselectors[$randomselectorstring])) {
                     $this->randomselectors[$randomselectorstring] = array();
                 }
@@ -167,6 +189,7 @@ class offlinequiz_statistics_question_stats {
                         $step->questionid;
             }
         }
+// print_object($this->questions[2]);
 
         foreach ($this->randomselectors as $key => $notused) {
             ksort($this->randomselectors[$key]);
@@ -174,6 +197,7 @@ class offlinequiz_statistics_question_stats {
 
         // Compute the statistics of question id, if we need any.
         $this->subquestions = question_load_questions(array_keys($subquestionstats));
+
         foreach ($this->subquestions as $qid => $subquestion) {
             $subquestion->_stats = $subquestionstats[$qid];
             $subquestion->maxmark = $subquestion->_stats->maxmark;
@@ -232,9 +256,8 @@ class offlinequiz_statistics_question_stats {
         // Go through the records one more time.
         foreach ($this->lateststeps as $step) {
             $this->secondary_steps_walker($step,
-                    $this->questions[$step->slot]->_stats);
-
-            if ($this->questions[$step->slot]->qtype == 'random') {
+                    $this->questions[$step->questionid]->_stats);
+            if ($this->questions[$step->questionid]->qtype == 'random') {
                 $this->secondary_steps_walker($step,
                         $this->subquestions[$step->questionid]->_stats);
             }
@@ -304,7 +327,11 @@ class offlinequiz_statistics_question_stats {
      * @param object $stats quetsion stats to update.
      */
     protected function initial_question_walker($stats) {
-        $stats->markaverage = $stats->totalmarks / $stats->s;
+        if ($stats->s != 0) {
+            $stats->markaverage = $stats->totalmarks / $stats->s;
+        } else {
+            $stats->markaverage = 0;
+        }
 
         if ($stats->maxmark != 0) {
             $stats->facility = $stats->markaverage / $stats->maxmark;
@@ -312,8 +339,11 @@ class offlinequiz_statistics_question_stats {
             $stats->facility = null;
         }
 
-        $stats->othermarkaverage = $stats->totalothermarks / $stats->s;
-
+        if ($stats->s != 0) {
+            $stats->othermarkaverage = $stats->totalothermarks / $stats->s;
+        } else {
+            $stats->othermarkaverage = 0;
+        }
         sort($stats->markarray, SORT_NUMERIC);
         sort($stats->othermarksarray, SORT_NUMERIC);
     }

@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/responseanalysi
  */
 class offlinequiz_statistics_report extends offlinequiz_default_report {
     /** @var integer Time after which statistics are automatically recomputed. */
-    const TIME_TO_CACHE_STATS = 900; // 15 minutes.
+    const TIME_TO_CACHE_STATS = 2; // 900; // 15 minutes.
 
     /** @var object instance of table class used for main questions stats table. */
     protected $table;
@@ -59,42 +59,79 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $download = optional_param('download', '', PARAM_ALPHA);
         $everything = optional_param('everything', 0, PARAM_BOOL);
         $recalculate = optional_param('recalculate', 0, PARAM_BOOL);
-        // A qid paramter indicates we should display the detailed analysis of a question.
+        // A qid paramter indicates we should display the detailed analysis of a question and subquestions
         $qid = optional_param('qid', 0, PARAM_INT);
-        $slot = optional_param('slot', 0, PARAM_INT);
+//        $slot = optional_param('slot', 0, PARAM_INT);
+        $questionid = optional_param('questionid', 0, PARAM_INT);
 
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
         $pageoptions['mode'] = 'statistics';
 
+        if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+            print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+        }
+
         // Determine groupid.
-        $groupnumber    = optional_param('groupnumber', -1, PARAM_INT);
+        $groupnumber = optional_param('group', -1, PARAM_INT);
         if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
             $groupnumber = $SESSION->question_pagevars['groupnumber'];
         }
 
-        if ($groupnumber === -1) {
-            $groupnumber = 1;
-        }
+        if ($groupnumber > 0) {
+            $pageoptions['group'] = $groupnumber;
+            $offlinequiz->groupnumber = $groupnumber;
+            $offlinequiz->sumgrades = $DB->get_field('offlinequiz_groups', 'sumgrades', array('offlinequizid' => $offlinequiz->id, 'number' => $groupnumber));
 
-        $offlinequiz->groupnumber = $groupnumber;
-        // $thispageurl->param('groupnumber', $offlinequiz->groupnumber);
-        $PAGE->url->param('groupnumber', $offlinequiz->groupnumber);
-        
-        if ($offlinequiz_group = offlinequiz_get_group($offlinequiz, $groupnumber)) {
-            $offlinequiz->groupid = $offlinequiz_group->id;
-            $groupquestions = offlinequiz_get_group_questions($offlinequiz);
-            $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions);
-            // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
-            $offlinequiz->questions = offlinequiz_clean_layout($groupquestions, empty($purequestions));
+            if ($offlinegroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
+                $offlinequiz->groupid = $offlinegroup->id;
+                $groupquestions = offlinequiz_get_group_questions($offlinequiz);
+                $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions);
+
+                // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
+                $offlinequiz->questions = offlinequiz_clean_layout($groupquestions, empty($purequestions));
+            } else {
+                print_error('invalidgroupnumber', 'offlinequiz');
+            }
         } else {
-            print_error('invalidgroupnumber', 'offlinequiz');
+            $offlinequiz->groupid = 0;
+            // The user wants to evaluate results from all offlinequiz groups.
+            // Compare the sumgrades of all offlinequiz groups. First we put all sumgrades in an array.
+            $sumgrades = array();
+            foreach ($groups as $group) {
+                $sumgrades[] = round($group->sumgrades, $offlinequiz->decimalpoints);
+            }
+            // Now we remove duplicates.
+            $sumgrades = array_unique($sumgrades);
+
+            if (count($sumgrades) > 1) {
+                // If the groups have different sumgrades, we can't pick one
+                $offlinequiz->sumgrades = -1;
+            } else if (count($sumgrades) == 1) {
+                // If the groups all have the same sumgrades, we pick the first one.
+                $offlinequiz->sumgrades = $sumgrades[0];
+            } else {
+                // Pathological, there are no sumgrades, i.e. no groups...
+                $offlinequiz->sumgrades = 0;
+            }
+            
+            // If no group has been chosen we simply take the questions from the question instances
+            $qinstanceids = $DB->get_fieldset_select('offlinequiz_q_instances', 'question', 'offlinequiz = :offlinequiz', array('offlinequiz' => $offlinequiz->id));
+            $offlinequiz->questions = offlinequiz_clean_layout(implode(',', $qinstanceids));
         }
+            // print_object($offlinequiz); 
+
+        
+//         if ($groupnumber < 1) {
+//             $this->print_header_and_tabs($cm, $course, $offlinequiz, 'statistics');
+//             $this->print_group_selector($cm, $groups, $groupnumber);
+//             echo $OUTPUT->footer();
+//             die;
+//         }
 
         $reporturl = new moodle_url('/mod/offlinequiz/report.php', $pageoptions);
 
-
-        $useallattempts = 1;
+        $useallattempts = 0;
 
         // Find out current groups mode.
         $currentgroup = $this->get_current_group($cm, $course, $this->context);
@@ -119,7 +156,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         // If recalculate was requested, handle that.
         if ($recalculate && confirm_sesskey()) {
-            $this->clear_cached_data($offlinequiz->id, $currentgroup, $useallattempts);
+            $this->clear_cached_data($offlinequiz->id, $currentgroup, $useallattempts, $offlinequiz->groupid);
             redirect($reporturl);
         }
 
@@ -137,18 +174,28 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 get_string('offlinequizstructureanalysis', 'offlinequiz_statistics'));
 
         // Load the questions.
+        // NOTE: function is hacked to deliver question array with question IDs as keys, not the slot as before 
         $questions = offlinequiz_report_get_significant_questions($offlinequiz);
-        $questionids = array();
-        foreach ($questions as $question) {
-            $questionids[] = $question->id;
-        }
+
+        $questionids = array_keys($questions);
+//        $questionids = array();
+//         foreach ($questions as $question) {
+//             $questionids[] = $question->id;
+//         }
         $fullquestions = question_load_questions($questionids);
-        foreach ($questions as $qno => $question) {
-            $q = $fullquestions[$question->id];
+//         foreach ($questions as $qno => $question) {
+//             $q = $fullquestions[$question->id];
+//             $q->maxmark = $question->maxmark;
+//             $q->slot = $qno;
+//             $q->number = $question->number;
+//             $questions[$qno] = $q;
+//         }
+        foreach ($questions as $quid => $question) {
+            $q = $fullquestions[$quid];
             $q->maxmark = $question->maxmark;
-            $q->slot = $qno;
+//            $q->slot = $qno;
             $q->number = $question->number;
-            $questions[$qno] = $q;
+            $questions[$quid] = $q;
         }
 
         // Get the data to be displayed.
@@ -171,10 +218,17 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             echo $OUTPUT->heading(get_string('statistics', 'offlinequiz'));
             echo $OUTPUT->box_end('linkbox');
 
+            if (!$questionid) {
+                $this->print_group_selector($cm, $groups, $groupnumber);
+                if ($offlinequiz->sumgrades == -1) {
+                    echo $OUTPUT->notification(get_string('differentsumgrades', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifyproblem');
+                }
+            }
+
             if (groups_get_activity_groupmode($cm)) {
                 groups_print_activity_menu($cm, $reporturl->out());
                 if ($currentgroup && !$groupstudents) {
-                    $OUTPUT->notification(get_string('nostudentsingroup', 'offlinequiz_statistics'));
+                    echo $OUTPUT->notification(get_string('nostudentsingroup', 'offlinequiz_statistics'));
                 }
             }
 
@@ -214,15 +268,15 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
             $this->table->export_class_instance()->finish_document();
 
-        } else if ($slot) {
+        } else if ($questionid) {
             // Report on an individual question indexed by position.
-            if (!isset($questions[$slot])) {
+            if (!isset($questions[$questionid])) {
                 print_error('questiondoesnotexist', 'question');
             }
 
-            $this->output_individual_question_data($offlinequiz, $questions[$slot]);
+            $this->output_individual_question_data($offlinequiz, $questions[$questionid]);
             $this->output_individual_question_response_analysis(
-                    $questions[$slot], $reporturl, $offlinequizstats);
+                    $questions[$questionid], $reporturl, $offlinequizstats);
 
             // Back to overview link.
             echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
@@ -254,7 +308,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             // On-screen display of overview report.
             echo $OUTPUT->heading(get_string('offlinequizinformation', 'offlinequiz_statistics'));
             echo $this->output_caching_info($offlinequizstats, $offlinequiz->id, $currentgroup,
-                    $groupstudents, $useallattempts, $reporturl);
+                    $groupstudents, $useallattempts, $reporturl, $offlinequiz->groupid);
             echo $this->everything_download_options();
             echo $this->output_offlinequiz_info_table($offlinequizinfo);
             if ($s) {
@@ -263,8 +317,20 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 $this->output_statistics_graph($offlinequizstats->id, $s);
             }
         }
-
-        return true;
+    }
+    
+    private function print_group_selector($cm, $groups, $groupnumber) {
+        global $CFG, $OUTPUT;
+                    
+        $options = array();
+        $letterstr = 'ABCDEFGH';
+        $prefix = get_string('statisticsforgroup', 'offlinequiz_statistics');
+        foreach ($groups as $group) {
+            $options[$group->number] = $prefix . ' ' . $letterstr[$group->number -1];
+        }
+        $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php',
+                array('id' => $cm->id, 'mode' => 'statistics'));
+        echo $OUTPUT->single_select($url, 'group', $options, $groupnumber, array(0 => get_string('allgroups', 'offlinequiz_statistics')));
     }
 
     /**
@@ -462,7 +528,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         // You can edit this array to control which statistics are displayed.
         $todisplay = array( //'firstattemptscount' => 'number',
                     'allattemptscount' => 'number',
-                    'firstattemptsavg' => 'summarks_as_percentage',
+                    //'firstattemptsavg' => 'summarks_as_percentage',
                     'allattemptsavg' => 'summarks_as_percentage',
                     'median' => 'summarks_as_percentage',
                     'standarddeviation' => 'summarks_as_percentage',
@@ -632,7 +698,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      *      - array $qstats The statistics for each question.
      */
     protected function compute_stats($offlinequizid, $currentgroup, $nostudentsingroup,
-            $useallattempts, $groupstudents, $questions) {
+            $useallattempts, $groupstudents, $questions, $offlinegroupid) {
         global $DB;
 
         // Calculating MEAN of marks for all attempts by students
@@ -643,8 +709,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
 
         list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(
-                $offlinequizid, $currentgroup, $groupstudents, true);
-
+                $offlinequizid, $currentgroup, $groupstudents, true, false, $offlinegroupid);
+        // print_object(array($fromqa, $whereqa, $qaparams));
         $attempttotals = $DB->get_records_sql("
                 SELECT
                     1, 
@@ -654,6 +720,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 WHERE $whereqa
                 GROUP BY 1", $qaparams);
 // GROUP BY CASE WHEN attempt = 1 THEN 1 ELSE 0 END AS isfirst,
+// print_object($attempttotals);
         if (!$attempttotals) {
             return $this->get_emtpy_stats($questions);
         }
@@ -684,8 +751,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $usingattempts = $firstattempts;
             $usingattempts->sql = 'AND offlinequiza.attempt = 1 ';
         }
-
+        // print_object($usingattempts);
         $s = $usingattempts->countrecs;
+        // print_object('s ' . $s);
         if ($s == 0) {
             return $this->get_emtpy_stats($questions, $firstattempts->countrecs,
                     $allattempts->countrecs);
@@ -763,9 +831,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 }
             }
         }
-
+// print_object('s2 ' .$s);
         $qstats = new offlinequiz_statistics_question_stats($questions, $s, $summarksavg);
-        $qstats->load_step_data($offlinequizid, $currentgroup, $groupstudents, $useallattempts);
+        $qstats->load_step_data($offlinequizid, $currentgroup, $groupstudents, $useallattempts, $offlinegroupid);
         $qstats->compute_statistics();
 
         if ($s > 1) {
@@ -803,9 +871,15 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         global $DB;
 
         $timemodified = time() - self::TIME_TO_CACHE_STATS;
-        $offlinequizstats = $DB->get_record_select('offlinequiz_statistics',
+        if ($offlinequiz->groupid) {
+            $offlinequizstats = $DB->get_record_select('offlinequiz_statistics',
+                'offlinequizid = ? AND offlinegroupid = ? AND groupid = ? AND allattempts = ? AND timemodified > ?',
+                array($offlinequiz->id, $offlinequiz->groupid, $currentgroup, $useallattempts, $timemodified));
+        } else {
+            $offlinequizstats = $DB->get_record_select('offlinequiz_statistics',
                 'offlinequizid = ? AND groupid = ? AND allattempts = ? AND timemodified > ?',
-                array($offlinequiz->id, $currentgroup, $useallattempts, $timemodified));
+                    array($offlinequiz->id, $currentgroup, $useallattempts, $timemodified));
+        }
 
         if (!$offlinequizstats) {
             // No cached data found.
@@ -824,11 +898,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         $subquestionstats = array();
         foreach ($questionstats as $stat) {
-            if ($stat->slot) {
-                $questions[$stat->slot]->_stats = $stat;
-            } else {
-                $subquestionstats[$stat->questionid] = $stat;
-            }
+            //            if ($stat->slot) {
+            $questions[$stat->questionid]->_stats = $stat;
+            //             } else {
+            //                 $subquestionstats[$stat->questionid] = $stat;
+            //             }
         }
 
         if (!empty($subquestionstats)) {
@@ -854,11 +928,12 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      * @param array $subquestions The subquestions, if any, with an additional _stats field.
      */
     protected function cache_stats($offlinequizid, $currentgroup,
-            $offlinequizstats, $questions, $subquestions) {
+            $offlinequizstats, $questions, $subquestions, $offlinegroupid = 0) {
         global $DB;
 
         $toinsert = clone($offlinequizstats);
         $toinsert->offlinequizid = $offlinequizid;
+        $toinsert->offlinegroupid = $offlinegroupid; 
         $toinsert->groupid = $currentgroup;
         $toinsert->timemodified = time();
 
@@ -911,18 +986,18 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         if (is_null($offlinequizstats)) {
             list($s, $offlinequizstats, $qstats) = $this->compute_stats($offlinequiz->id,
-                    $currentgroup, $nostudentsingroup, $useallattempts, $groupstudents, $questions);
+                    $currentgroup, $nostudentsingroup, $useallattempts, $groupstudents, $questions, $offlinequiz->groupid);
 
             if ($s) {
                 $questions = $qstats->questions;
                 $subquestions = $qstats->subquestions;
-
+                // print_object('s3 ' . $s);
                 $offlinequizstatisticsid = $this->cache_stats($offlinequiz->id, $currentgroup,
-                        $offlinequizstats, $questions, $subquestions);
+                        $offlinequizstats, $questions, $subquestions, $offlinequiz->groupid);
 
                 $this->analyse_responses($offlinequizstatisticsid, $offlinequiz->id, $currentgroup,
                         $nostudentsingroup, $useallattempts, $groupstudents,
-                        $questions, $subquestions);
+                        $questions, $subquestions, $offlinequiz->groupid);
             }
         }
 
@@ -930,10 +1005,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
     }
 
     protected function analyse_responses($offlinequizstatisticsid, $offlinequizid, $currentgroup,
-            $nostudentsingroup, $useallattempts, $groupstudents, $questions, $subquestions) {
+            $nostudentsingroup, $useallattempts, $groupstudents, $questions, $subquestions, $offlinegroupid) {
 
         $qubaids = offlinequiz_statistics_qubaids_condition(
-                $offlinequizid, $currentgroup, $groupstudents, $useallattempts);
+                $offlinequizid, $currentgroup, $groupstudents, $useallattempts, false, $offlinegroupid);
 
         $done = array();
         foreach ($questions as $question) {
@@ -941,7 +1016,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 continue;
             }
             $done[$question->id] = 1;
-
             $responesstats = new offlinequiz_statistics_response_analyser($question);
             $responesstats->analyse($qubaids);
             $responesstats->store_cached($offlinequizstatisticsid);
@@ -994,7 +1068,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      *      or blank if that is not appropriate.
      */
     protected function output_caching_info($offlinequizstats, $offlinequizid, $currentgroup,
-            $groupstudents, $useallattempts, $reporturl) {
+            $groupstudents, $useallattempts, $reporturl, $offlinegroupid) {
         global $DB, $OUTPUT;
 
         if (empty($offlinequizstats->timemodified)) {
@@ -1003,7 +1077,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         // Find the number of attempts since the cached statistics were computed.
         list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(
-                $offlinequizid, $currentgroup, $groupstudents, $useallattempts, true);
+                $offlinequizid, $currentgroup, $groupstudents, $useallattempts, true, false, $offlinegroupid);
         $count = $DB->count_records_sql("
                 SELECT COUNT(1)
                 FROM $fromqa
@@ -1039,12 +1113,18 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      * @param int $currentgroup a group id, or 0.
      * @param bool $useallattempts whether all attempts, or just first attempts are included.
      */
-    protected function clear_cached_data($offlinequizid, $currentgroup, $useallattempts) {
+    protected function clear_cached_data($offlinequizid, $currentgroup, $useallattempts, $offlinegroupid) {
         global $DB;
 
-        $todelete = $DB->get_records_menu('offlinequiz_statistics', array('offlinequizid' => $offlinequizid,
-                'groupid' => $currentgroup, 'allattempts' => $useallattempts), '', 'id, 1');
-
+        if ($offlinegroupid) {
+            $todelete = $DB->get_records_menu('offlinequiz_statistics', array('offlinequizid' => $offlinequizid, 'offlinegroupid' => $offlinegroupid,
+                    'groupid' => $currentgroup, 'allattempts' => $useallattempts), '', 'id, 1');
+            
+        } else {
+            $todelete = $DB->get_records_menu('offlinequiz_statistics', array('offlinequizid' => $offlinequizid,
+                    'groupid' => $currentgroup, 'allattempts' => $useallattempts), '', 'id, 1');
+        }
+        
         if (!$todelete) {
             return;
         }
@@ -1073,13 +1153,18 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 }
 
 function offlinequiz_statistics_attempts_sql($offlinequizid, $currentgroup, $groupstudents,
-        $allattempts = true, $includeungraded = false) {
+        $allattempts = true, $includeungraded = false, $offlinegroupid = 0) {
     global $DB;
-
+    
     $fromqa = '{offlinequiz_results} offlinequiza ';
 
     $whereqa = 'offlinequiza.offlinequizid = :offlinequizid AND  offlinequiza.status = :offlinequizstatefinished';
     $qaparams = array('offlinequizid' => $offlinequizid, 'offlinequizstatefinished' => 'complete');
+
+    if ($offlinegroupid) {
+        $whereqa .= ' AND offlinequiza.offlinegroupid = :offlinegroupid';
+        $qaparams['offlinegroupid'] = $offlinegroupid;
+    }
 
     if (!empty($currentgroup) && $groupstudents) {
         list($grpsql, $grpparams) = $DB->get_in_or_equal(array_keys($groupstudents),
@@ -1106,8 +1191,8 @@ function offlinequiz_statistics_attempts_sql($offlinequizid, $currentgroup, $gro
  * @param string $whereqa from offlinequiz_statistics_attempts_sql.
  */
 function offlinequiz_statistics_qubaids_condition($offlinequizid, $currentgroup, $groupstudents,
-        $allattempts = true, $includeungraded = false) {
+        $allattempts = true, $includeungraded = false, $offlinegroupid = 0) {
     list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql($offlinequizid, $currentgroup,
-            $groupstudents, $allattempts, $includeungraded);
-    return new qubaid_join($fromqa, 'offlinequiza.uniqueid', $whereqa, $qaparams);
+            $groupstudents, $allattempts, $includeungraded, $offlinegroupid);
+    return new qubaid_join($fromqa, 'offlinequiza.usageid', $whereqa, $qaparams);
 }
