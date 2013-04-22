@@ -269,7 +269,9 @@ if ($mode == 'preview') {
                     // use our own function to print the preview.
                     offlinequiz_print_question_preview($question, $order, $questionnumber, $context);
 
-                    $questionnumber++;
+                    if ($question->qtype != 'description') {
+                        $questionnumber++;
+                    }
                 }
             }
         }
