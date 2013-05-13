@@ -201,12 +201,14 @@ if ($scrollpos) {
 if (($up = optional_param('up', false, PARAM_INT)) && confirm_sesskey()) {
     $offlinequiz->questions = offlinequiz_move_question_up($offlinequiz->questions, $up);
     offlinequiz_save_questions($offlinequiz);
+	offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
 
 if (($down = optional_param('down', false, PARAM_INT)) && confirm_sesskey()) {
     $offlinequiz->questions = offlinequiz_move_question_down($offlinequiz->questions, $down);
     offlinequiz_save_questions($offlinequiz);
+	offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
 
@@ -216,6 +218,7 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     $offlinequiz->questions = offlinequiz_repaginate($offlinequiz->questions, $questionsperpage );
 
     offlinequiz_save_questions($offlinequiz);
+	offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
 
@@ -228,9 +231,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
     $offlinequiz->grades = offlinequiz_get_all_question_grades($offlinequiz);
     $thispageurl->param('lastchanged', $addquestion);
-    if (!$offlinequiz->docscreated) {
-        offlinequiz_delete_template_usages($offlinequiz);
-    }
+    offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
 
@@ -250,9 +251,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     $offlinequiz->grades = offlinequiz_get_all_question_grades($offlinequiz);
 
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
-    if (!$offlinequiz->docscreated) {
-        offlinequiz_delete_template_usages($offlinequiz);
-    }
+    offlinequiz_delete_template_usages($offlinequiz);
     //  redirect($afteractionurl);
 }
 
@@ -262,10 +261,7 @@ if (optional_param('addnewpagesafterselected', null, PARAM_CLEAN) &&
         $offlinequiz->questions = offlinequiz_add_page_break_after($offlinequiz->questions, $questionid);
     }
     offlinequiz_save_questions($offlinequiz);
-
-    if (!$offlinequiz->docscreated) {
-        offlinequiz_delete_template_usages($offlinequiz);
-    }
+    offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
 
@@ -290,9 +286,7 @@ if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey())
     offlinequiz_remove_question($offlinequiz, $remove);
     // TODO offlinequiz_delete_previews($offlinequiz);
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
-    if (!$offlinequiz->docscreated) {
-        offlinequiz_delete_template_usages($offlinequiz);
-    }
+    offlinequiz_delete_template_usages($offlinequiz);
     //  redirect($afteractionurl);
 }
 
@@ -300,9 +294,7 @@ if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
         !empty($selectedquestionids) && confirm_sesskey()) {
 
     offlinequiz_remove_questionlist($offlinequiz, $selectedquestionids);
-    if (!$offlinequiz->docscreated) {
-        offlinequiz_delete_template_usages($offlinequiz);
-    }
+    offlinequiz_delete_template_usages($offlinequiz);
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
     // redirect($afteractionurl);
 }
@@ -417,9 +409,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
             $offlinequiz->grades = offlinequiz_get_all_question_grades($offlinequiz);
 
             $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
-            if (!$offlinequiz->docscreated) {
-                offlinequiz_delete_template_usages($offlinequiz);
-            }
+            offlinequiz_delete_template_usages($offlinequiz);
 
             $offlinequiz->groupid = $currentgroupid;
             $offlinequiz->questions = $currentquestions;
@@ -444,9 +434,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
             $offlinequiz->grades = offlinequiz_get_all_question_grades($offlinequiz);
 
             $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
-            if (!$offlinequiz->docscreated) {
-                offlinequiz_delete_template_usages($offlinequiz);
-            }
+            offlinequiz_delete_template_usages($offlinequiz);
 
             $offlinequiz->groupid = $currentgroupid;
             $offlinequiz->questions = $currentquestions;
@@ -470,9 +458,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
             $offlinequiz->grades = offlinequiz_get_all_question_grades($offlinequiz);
 
             $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
-            if (!$offlinequiz->docscreated) {
-                offlinequiz_delete_template_usages($offlinequiz);
-            }
+            offlinequiz_delete_template_usages($offlinequiz);
 
             $offlinequiz->groupid = $currentgroupid;
             $offlinequiz->questions = $currentquestions;
@@ -485,7 +471,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         offlinequiz_set_grade($maxgrade, $offlinequiz);
     }
 
-    if ($deletepreviews && !$offlinequiz->docscreated) {
+    if ($deletepreviews) {
         offlinequiz_delete_template_usages($offlinequiz);
     }
     if ($recomputesummarks) {
