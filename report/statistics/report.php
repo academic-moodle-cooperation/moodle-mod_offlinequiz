@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/responseanalysi
  */
 class offlinequiz_statistics_report extends offlinequiz_default_report {
     /** @var integer Time after which statistics are automatically recomputed. */
-    const TIME_TO_CACHE_STATS = 2; // 900; // 15 minutes.
+    const TIME_TO_CACHE_STATS = 900; // 900; // 15 minutes.
 
     /** @var object instance of table class used for main questions stats table. */
     protected $table;
@@ -119,8 +119,12 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $qinstanceids = $DB->get_fieldset_select('offlinequiz_q_instances', 'question', 'offlinequiz = :offlinequiz', array('offlinequiz' => $offlinequiz->id));
             $offlinequiz->questions = offlinequiz_clean_layout(implode(',', $qinstanceids));
         }
-            // print_object($offlinequiz); 
 
+        // We warn the user if the different offlinequiz groups have different sets of questions.
+        $differentquestions = false;
+        if ($offlinequiz->groupid == 0 && count($groups) > 1 && $this->groups_have_different_questions($offlinequiz, $groups)) {
+            $differentquestions = true; 
+        }
         
 //         if ($groupnumber < 1) {
 //             $this->print_header_and_tabs($cm, $course, $offlinequiz, 'statistics');
@@ -211,17 +215,21 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         // Print the page header stuff (if not downloading.
         if (!$this->table->is_downloading()) {
+            
             $this->print_header_and_tabs($cm, $course, $offlinequiz, 'statistics');
 
             echo $OUTPUT->box_start('linkbox');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading(get_string('statistics', 'offlinequiz'));
-            echo $OUTPUT->box_end('linkbox');
+            echo $OUTPUT->box_end();
 
             if (!$questionid) {
                 $this->print_group_selector($cm, $groups, $groupnumber);
                 if ($offlinequiz->sumgrades == -1) {
-                    echo $OUTPUT->notification(get_string('differentsumgrades', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifyproblem');
+                    echo $OUTPUT->notification('- ' . get_string('differentsumgrades', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
+                }
+                if ($differentquestions) {
+                    echo $OUTPUT->notification('- ' . get_string('differentquestions', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
                 }
             }
 
@@ -235,7 +243,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             if (!offlinequiz_questions_in_offlinequiz($offlinequiz->questions)) {
                 echo offlinequiz_no_questions_message($offlinequiz, $cm, $this->context);
             } else if (!$this->table->is_downloading() && $s == 0) {
-                echo $OUTPUT->notification(get_string('noattempts', 'offlinequiz'));
+                echo $OUTPUT->box_start('linkbox');
+                echo $OUTPUT->notification(get_string('noattempts', 'offlinequiz'), 'notifyproblem');
+                echo $OUTPUT->box_end();
             }
         }
 
@@ -319,6 +329,41 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
     }
     
+    
+    /**
+     * Checks whether the different offlinequiz groups have different sets of questions (order is irrelevant).
+     * 
+     * @param unknown_type $offlinequiz
+     * @param unknown_type $groups
+     * @return boolean
+     */
+    private function groups_have_different_questions($offlinequiz, $groups) {
+        $agroup = array_pop($groups);
+        $aquestions = offlinequiz_get_group_questions($offlinequiz, $agroup->id);
+        $aquestions = explode(',', offlinequiz_questions_in_offlinequiz($aquestions));
+
+        // Compare all other groups to the first one. 
+        foreach ($groups as $bgroup) {
+            $bquestions = offlinequiz_get_group_questions($offlinequiz, $bgroup->id);
+            $bquestions = explode(',', offlinequiz_questions_in_offlinequiz($bquestions));
+            // Check which questions are in group A but not in group B
+            $diff1 = array_diff($aquestions, $bquestions);
+            // Check which questions are in group B but not in group A.
+            $diff2 = array_diff($bquestions, $aquestions);
+            // Return true if there are any differences.
+            if (!empty($diff1) || !empty($diff2)) {
+                return true;
+            }
+        }
+        return false;        
+    }
+    
+    /**
+     * 
+     * @param unknown_type $cm The course module, needed to construct the base URL
+     * @param unknown_type $groups The group objects as read from the database
+     * @param unknown_type $groupnumber The currently chosen group number
+     */
     private function print_group_selector($cm, $groups, $groupnumber) {
         global $CFG, $OUTPUT;
                     
@@ -710,7 +755,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(
                 $offlinequizid, $currentgroup, $groupstudents, true, false, $offlinegroupid);
-        // print_object(array($fromqa, $whereqa, $qaparams));
+
         $attempttotals = $DB->get_records_sql("
                 SELECT
                     1, 
@@ -720,7 +765,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 WHERE $whereqa
                 GROUP BY 1", $qaparams);
 // GROUP BY CASE WHEN attempt = 1 THEN 1 ELSE 0 END AS isfirst,
-// print_object($attempttotals);
+
         if (!$attempttotals) {
             return $this->get_emtpy_stats($questions);
         }
@@ -751,9 +796,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $usingattempts = $firstattempts;
             $usingattempts->sql = 'AND offlinequiza.attempt = 1 ';
         }
-        // print_object($usingattempts);
         $s = $usingattempts->countrecs;
-        // print_object('s ' . $s);
         if ($s == 0) {
             return $this->get_emtpy_stats($questions, $firstattempts->countrecs,
                     $allattempts->countrecs);
@@ -831,7 +874,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 }
             }
         }
-// print_object('s2 ' .$s);
         $qstats = new offlinequiz_statistics_question_stats($questions, $s, $summarksavg);
         $qstats->load_step_data($offlinequizid, $currentgroup, $groupstudents, $useallattempts, $offlinegroupid);
         $qstats->compute_statistics();
@@ -877,7 +919,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 array($offlinequiz->id, $offlinequiz->groupid, $currentgroup, $useallattempts, $timemodified));
         } else {
             $offlinequizstats = $DB->get_record_select('offlinequiz_statistics',
-                'offlinequizid = ? AND groupid = ? AND allattempts = ? AND timemodified > ?',
+                'offlinequizid = ? AND offlinegroupid = 0 AND groupid = ? AND allattempts = ? AND timemodified > ?',
                     array($offlinequiz->id, $currentgroup, $useallattempts, $timemodified));
         }
 
@@ -991,7 +1033,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             if ($s) {
                 $questions = $qstats->questions;
                 $subquestions = $qstats->subquestions;
-                // print_object('s3 ' . $s);
                 $offlinequizstatisticsid = $this->cache_stats($offlinequiz->id, $currentgroup,
                         $offlinequizstats, $questions, $subquestions, $offlinequiz->groupid);
 

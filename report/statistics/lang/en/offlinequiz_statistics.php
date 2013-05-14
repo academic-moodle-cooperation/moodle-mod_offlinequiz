@@ -39,6 +39,7 @@ $string['completestatsfilename'] = 'completestats';
 $string['count'] = 'Count';
 $string['coursename'] = 'Course name';
 $string['detailedanalysis'] = 'More detailed analysis of the responses to this question';
+$string['differentquestions'] = 'Note: Your offlinequiz groups contain different sets of questions.';
 $string['differentsumgrades'] = 'Note: Your offlinequiz groups have different sums of grades ({$a}). Therefore, the average grade, the median, and the standard deviation cannot be calculated.';
 $string['discrimination_index'] = 'Discrimination index';
 $string['discriminative_efficiency'] = 'Discriminative efficiency';

@@ -249,9 +249,8 @@ if ($mode == 'preview') {
                 $attempt = $templateusage->get_question_attempt($slot);
                 $order = $slotquestion->get_order($attempt);  // order
                 offlinequiz_print_question_preview($question, $order, $questionnumber, $context);
-                if ($question->qtype != 'description') {
-                    $questionnumber++;
-                }
+                // Note: we don't have description questions in quba slots.
+                $questionnumber++;
             }
         } else {
             foreach ($pagequestions as $myquestion) {

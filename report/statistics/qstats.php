@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Offlinequiz statistics report calculations class.
+ * Offlinequiz statistics report question calculations class.
  *
- * @package   offlinequiz_statistics
- * @copyright 2008 Jamie Pratt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer
+ * @copyright     2012 The University of Vienna
+ * @since         Moodle 2.5
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ **/
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * This class has methods to compute the question statistics from the raw data.
  *
- * @copyright 2008 Jamie Pratt
+ * @author    Juergen Zimmer
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_statistics_question_stats {
@@ -99,7 +102,6 @@ class offlinequiz_statistics_question_stats {
         global $DB;
 
         $this->allattempts = $allattempts;
-        // print_object($this->questions[1]);
 
         $questionids = array();
         foreach ($this->questions as $question) {
@@ -114,9 +116,6 @@ class offlinequiz_statistics_question_stats {
         list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(
                 $offlinequizid, $currentgroup, $groupstudents, $allattempts, false, $offlinegroupid);
 
-        // print_object(array($fromqa, $whereqa));
-        // print_object(array($qsql, $qparams));
-        
         $this->lateststeps = $DB->get_records_sql("
                 SELECT
                     qas.id,
@@ -147,12 +146,14 @@ class offlinequiz_statistics_question_stats {
 //                     qa.slot $qsql AND
 //                     $whereqa", $qparams + $qaparams);
 
+    
+    /*
+     * Compute the statistics for the questions given to the constructor
+     * 
+     */
     public function compute_statistics() {
         set_time_limit(0);
 
-// print_object($this->s);
-// print_object($this->questions[2]);
-// print_object('count lateststeps: ' . count($this->lateststeps));
         $subquestionstats = array();
 
         // Compute the statistics of position, and for random questions, work
@@ -189,7 +190,6 @@ class offlinequiz_statistics_question_stats {
                         $step->questionid;
             }
         }
-// print_object($this->questions[2]);
 
         foreach ($this->randomselectors as $key => $notused) {
             ksort($this->randomselectors[$key]);

@@ -712,6 +712,8 @@ function offlinequiz_print_recent_mod_activity($course, $viewfullnames, $timesta
  *    
  **/
 function offlinequiz_cron() {
+    cron_execute_plugin_type('offlinequiz', 'offlinequiz reports');
+
     return true;
 }
 
