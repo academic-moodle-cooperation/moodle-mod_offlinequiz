@@ -988,5 +988,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2013041601, 'offlinequiz');
     }
     
+    if ($oldversion < 2013052700) {
+    
+        // Changing type of field grade on table offlinequiz to int
+        $table = new xmldb_table('offlinequiz');
+        
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', XMLDB_SIGNED, XMLDB_NOTNULL, null, '0', 'time');
+    
+        // Launch change for field grade
+        $dbman->change_field_type($table, $field);
+        $dbman->change_field_precision($table, $field);
+        $dbman->change_field_unsigned($table, $field);
+        
+        // offlinequiz savepoint reached
+        upgrade_mod_savepoint(true, 2013052700, 'offlinequiz');
+    }
     
 }
