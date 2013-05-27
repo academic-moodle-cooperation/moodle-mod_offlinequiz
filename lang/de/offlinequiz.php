@@ -382,6 +382,7 @@ Weiterhin befindet sich am rechten Rand eine Auflistung der erreichten Punkte pr
 
 $string['rimport'] = 'Hochladen/Korrigieren';
 $string['rotate'] = 'Drehen';
+$string['rotatingsheet'] = 'Bogen wird gedreht...';
 $string['saveandshow'] = 'Speichern mit Fehlerhinweis';
 $string['savescannersettings'] = 'Scannereinstellungen speichern';
 $string['save'] = 'Speichern';

@@ -763,7 +763,7 @@ function offlinequiz_get_question_numbers($offlinequiz, $groups) {
  * @param unknown_type $teacherid
  * @param unknown_type $coursecontext
  */
-function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_participants_scanner $scanner, $scannedpage, $teacherid, $coursecontext) {
+function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_participants_scanner $scanner, $scannedpage, $teacherid, $coursecontext, $autorotate = false) {
     global $DB;
 
     // Check the list number.
@@ -790,6 +790,58 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
             $scannedpage->status = 'error';
             $scannedpage->error = 'invalidlistnumber';
         }
+    } 
+    
+    if ($scannedpage->status == 'error' && $scanner->ontop && $autorotate) {
+        print_string('rotatingsheet', 'offlinequiz');
+
+        $oldfilename = $scannedpage->filename;
+        $corners = $scanner->get_corners();
+
+        if ($newfile = $scanner->rotate_180()) {
+            $scannedpage->status = 'ok';
+            $scannedpage->error = '';
+            $scannedpage->userkey = null;
+            $scannedpage->pagenumber = null;
+            $scannedpage->groupnumber = null;
+            $scannedpage->filename = $newfile->get_filename();
+            $corners = $scanner->get_corners();
+            $newcorners = array();
+            $newcorners[0] = new oq_point(853 - $corners[3]->x, 1208 - $corners[3]->y);
+            $newcorners[1] = new oq_point(853 - $corners[2]->x, 1208 - $corners[2]->y);
+            $newcorners[2] = new oq_point(853 - $corners[1]->x, 1208 - $corners[1]->y);
+            $newcorners[3] = new oq_point(853 - $corners[0]->x, 1208 - $corners[0]->y);
+
+            // Create a completely new scanner.
+            $scanner = new offlinequiz_participants_scanner($offlinequiz, $scanner->contextid, 0, 0);
+
+            $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $newcorners);
+            if (!$sheetloaded) {
+                $scannedpage->status = 'error';
+                $scannedpage->error = 'fatalerror';
+            } else {
+                $scannedpage->status = 'ok';
+                $scannedpage->error = '';
+
+                $listnumber = $scanner->get_list();
+
+                if (is_string($listnumber)) {
+                    $intln = intval($listnumber);
+                    if ($intln > 0) {
+                        $listnumber = $intln;
+                    }
+                }
+                $scannedpage->listnumber = $listnumber;
+                $maxlistnumber = $DB->get_field_sql("SELECT MAX(number)
+                        FROM {offlinequiz_p_lists}
+                        WHERE offlinequizid = :offlinequizid",
+                        array('offlinequizid' => $offlinequiz->id));
+                if ((!is_int($scannedpage->listnumber)) || $scannedpage->listnumber < 1 || $scannedpage->listnumber > $maxlistnumber) {
+                    $scannedpage->status = 'error';
+                    $scannedpage->error = 'invalidlistnumber';
+                }
+            }
+        }
     }
 
     $scannedpage->time = time();
@@ -799,7 +851,11 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
         $scannedpage->id = $DB->insert_record('offlinequiz_scanned_p_pages', $scannedpage);
     }
 
-    return $scannedpage;
+    if ($autorotate) {
+        return array($scanner, $scannedpage);
+    } else {
+        return $scannedpage;
+    }
 }
 
 /**
