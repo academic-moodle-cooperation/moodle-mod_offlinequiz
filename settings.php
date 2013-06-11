@@ -104,4 +104,25 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configselect('offlinequiz/papergray', get_string('papergray', 'offlinequiz'),
             get_string('configpapergray', 'offlinequiz'), array('value' => 670, 'fix' => true), $options));
+    
+    $settings->add(new admin_setting_heading('correctionheading',
+            get_string('correctionoptionsheading', 'offlinequiz'), ''));
+
+    // Admin setting to allow teachers to enrol users with one click while correcting answer forms.
+    $settings->add(new admin_setting_configcheckbox('offlinequiz/oneclickenrol', get_string('oneclickenrol', 'offlinequiz'),
+            get_string('oneclickenroldesc', 'offlinequiz'), 0));
+    
+    $studentroles = $DB->get_records('role', array('archetype' => 'student'), 'sortorder');
+    $options = array();
+    $default = null;
+    foreach ($studentroles as $role) {
+        $options[$role->id] = $role->name;
+        if ($default) {
+            $default = $role->id;
+        }
+    }
+
+    $settings->add(new admin_setting_configselect('offlinequiz/oneclickrole', get_string('oneclickrole', 'offlinequiz'),
+            get_string('oneclickroledesc', 'offlinequiz'), array('value' => $default, 'fix' => true), $options));
+    
 }
