@@ -179,7 +179,7 @@ $string['importerror21'] = 'Could not grab';
 $string['importerror22'] = 'Insecure markings';
 $string['importerror23'] = 'User not in list';
 $string['importerror24'] = 'List not detected';
-$string['importfromto'] = 'Importing {$a}->from to {$a}->to of {$a}->total.';
+$string['importfromto'] = 'Importing {$a->from} to {$a->to} of {$a->total}.';
 $string['import'] = 'Import';
 $string['import_help'] = '<p>
 You can import single scanned image files or several scanned image files in a ZIP-archive. The offlinequiz module will process the image files in the background.
@@ -187,7 +187,7 @@ File names are not relevant but should not contain special characters such as um
 or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['importedon'] = 'Imported on';
 $string['importforms'] = 'Import answer forms';
-$string['importisfinished'] = 'Import of offline quiz {$a} is finished.';
+$string['importisfinished'] = 'Import for offline quiz {$a} is finished.';
 $string['importlinkresults'] = 'Link to results: {$a}';
 $string['importlinkverify'] = 'Link to verifying: {$a}';
 $string['importmailsubject'] = 'offline quiz import notification';
@@ -411,6 +411,7 @@ The scanned answer forms are shown. Checked boxes are marked with green squares.
 $string['review'] = 'Review';
 $string['rimport'] = 'Upload';
 $string['rotate'] = 'Rotate';
+$string['rotatingsheet'] = 'Sheet is rotated...';
 $string['saveandshow'] = 'Save and show changes to student';
 $string['save'] = 'Save';
 $string['savescannersettings'] = 'Save scanner settings';

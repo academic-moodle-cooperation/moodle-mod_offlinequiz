@@ -466,8 +466,9 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     }
 
     // If rescaling is required save the new maximum
-    $maxgrade = optional_param('maxgrade', -1, PARAM_FLOAT);
+    $maxgrade = optional_param('maxgrade', -1, PARAM_RAW);
     if ($maxgrade >= 0) {
+        $maxgrade = clean_param(str_replace(',', '.', $maxgrade), PARAM_FLOAT);
         offlinequiz_set_grade($maxgrade, $offlinequiz);
     }
 

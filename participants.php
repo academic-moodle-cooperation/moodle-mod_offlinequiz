@@ -565,14 +565,14 @@ switch($mode) {
 
             // offlinequiz_load_useridentification();
 
-            $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
             for ($j = $first; $j <= $last; $j++) {
                 $file = $files[$j];
                 $filename = $tempdir . '/' . $file;
                 set_time_limit(120);
+                $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
                 if ($scannedpage = $scanner->load_image($filename)) {
                     if ($scannedpage->status == 'ok') {
-                        $scannedpage = offlinequiz_check_scanned_participants_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
+                        list($scanner, $scannedpage) = offlinequiz_check_scanned_participants_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, true);
                     }
                     if ($scannedpage->status == 'ok') {
                         $scannedpage = offlinequiz_process_scanned_participants_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);

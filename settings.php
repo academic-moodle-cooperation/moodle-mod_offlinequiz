@@ -38,7 +38,7 @@ if ($ADMIN->fulltree) {
     // User identification
     $settings->add(new admin_setting_configtext('offlinequiz/useridentification',
             get_string('useridentification', 'offlinequiz'), get_string('configuseridentification', 'offlinequiz'),
-            '[7]=id' , PARAM_RAW, 30));
+            '[7]=idnumber' , PARAM_RAW, 30));
 
     // Shuffle questions
     $settings->add(new admin_setting_configcheckbox('offlinequiz/shufflequestions',

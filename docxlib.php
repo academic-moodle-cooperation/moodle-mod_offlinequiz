@@ -469,8 +469,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                    {offlinequiz_q_instances} i,
                    {question_categories} c
              WHERE q.id $qsql
-               AND i.offlinequiz = ?
-               AND q.id = i.question
+               AND i.offlinequizid = ?
+               AND q.id = i.questionid
                AND q.category=c.id";
 
     // Load the questions.

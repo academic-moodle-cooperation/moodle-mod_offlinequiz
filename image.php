@@ -156,8 +156,8 @@ if ($sheetloaded) {
         $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance
                   FROM {question} q,
                        {offlinequiz_q_instances} i
-                 WHERE i.offlinequiz = :offlinequizid
-                   AND q.id = i.question
+                 WHERE i.offlinequizid = :offlinequizid
+                   AND q.id = i.questionid
                    AND q.id $qsql";
 
         // Load the questions

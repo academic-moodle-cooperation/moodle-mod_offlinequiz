@@ -106,11 +106,11 @@ function offlinequiz_add_question_to_group($id, $offlinequiz, $page = 0) {
     offlinequiz_save_questions($offlinequiz);
 
     // Only add a new question instance if there isn't already one.
-    if (!$instance = $DB->get_record('offlinequiz_q_instances', array('offlinequiz' => $offlinequiz->id, 'question' => $id))) {
+    if (!$instance = $DB->get_record('offlinequiz_q_instances', array('offlinequizid' => $offlinequiz->id, 'questionid' => $id))) {
         // Add the new question instance if it doesn't already exist
         $instance = new stdClass();
-        $instance->offlinequiz = $offlinequiz->id;
-        $instance->question = $id;
+        $instance->offlinequizid = $offlinequiz->id;
+        $instance->questionid = $id;
         $instance->grade = $DB->get_field('question', 'defaultmark', array('id' => $id));
 
         $DB->insert_record('offlinequiz_q_instances', $instance);
@@ -182,11 +182,11 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $page
             $questions[] = 0;
         }
         // Only add a new question instance if there isn't already one.
-        if (!$instance = $DB->get_record('offlinequiz_q_instances', array('offlinequiz' => $offlinequiz->id, 'question' => $id))) {
+        if (!$instance = $DB->get_record('offlinequiz_q_instances', array('offlinequizid' => $offlinequiz->id, 'questionid' => $id))) {
             // Add the new question instance if it doesn't already exist
             $instance = new stdClass();
-            $instance->offlinequiz = $offlinequiz->id;
-            $instance->question = $id;
+            $instance->offlinequizid = $offlinequiz->id;
+            $instance->questionid = $id;
             $instance->grade = $DB->get_field('question', 'defaultmark', array('id' => $id));
 
             $DB->insert_record('offlinequiz_q_instances', $instance);
@@ -230,7 +230,7 @@ function offlinequiz_remove_question($offlinequiz, $questionid) {
     // Question instances can only be deleted if the question is not used in any offlinequiz group
     if (!$otherusages) {
         $DB->delete_records('offlinequiz_q_instances',
-                array('offlinequiz' => $offlinequiz->id, 'question' => $questionid));
+                array('offlinequizid' => $offlinequiz->id, 'questionid' => $questionid));
     }
 }
 
@@ -257,7 +257,7 @@ function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
         // Question instances can only be deleted if the question is not used in any offlinequiz group
         if (!$otherusages) {
             $DB->delete_records('offlinequiz_q_instances',
-                    array('offlinequiz' => $offlinequiz->id, 'question' => $questionid));
+                    array('offlinequizid' => $offlinequiz->id, 'questionid' => $questionid));
         }
 
     }
@@ -357,64 +357,10 @@ function offlinequiz_add_offlinequiz_question($id, $offlinequiz, $page = 0) {
 
     // Add the new question instance.
     $instance = new stdClass();
-    $instance->offlinequiz = $offlinequiz->id;
-    $instance->question = $id;
+    $instance->offlinequizid = $offlinequiz->id;
+    $instance->questionid = $id;
     $instance->grade = $DB->get_field('question', 'defaultmark', array('id' => $id));
     $DB->insert_record('offlinequiz_q_instances', $instance);
-}
-
-function offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $number,
-        $includesubcategories) {
-    global $DB;
-
-    $category = $DB->get_record('question_categories', array('id' => $categoryid));
-    if (!$category) {
-        print_error('invalidcategoryid', 'error');
-    }
-
-    $catcontext = get_context_instance_by_id($category->contextid);
-    require_capability('moodle/question:useall', $catcontext);
-
-    // Find existing random questions in this category that are
-    // not used by any offlinequiz.
-    if ($existingquestions = $DB->get_records_sql(
-            "SELECT q.id, q.qtype
-               FROM {question} q
-              WHERE qtype = 'random'
-                AND category = ?
-                AND " . $DB->sql_compare_text('questiontext') . " = ?
-                AND NOT EXISTS (
-                        SELECT *
-                          FROM {offlinequiz_q_instances}
-                         WHERE question = q.id)
-           ORDER BY id", array($category->id, $includesubcategories))) {
-            // Take as many of these as needed.
-        while (($existingquestion = array_shift($existingquestions)) && $number > 0) {
-            offlinequiz_add_offlinequiz_question($existingquestion->id, $offlinequiz, $addonpage);
-            $number -= 1;
-        }
-    }
-
-    if ($number <= 0) {
-        return;
-    }
-
-    // More random questions are needed, create them.
-    for ($i = 0; $i < $number; $i += 1) {
-        $form = new stdClass();
-        $form->questiontext = array('text' => $includesubcategories, 'format' => 0);
-        $form->category = $category->id . ',' . $category->contextid;
-        $form->defaultmark = 1;
-        $form->hidden = 1;
-        $form->stamp = make_unique_id_code(); // Set the unique code (not to be changed)
-        $question = new stdClass();
-        $question->qtype = 'random';
-        $question = question_bank::get_qtype('random')->save_question($question, $form);
-        if (!isset($question->id)) {
-            print_error('cannotinsertrandomquestion', 'offlinequiz');
-        }
-        offlinequiz_add_offlinequiz_question($question->id, $offlinequiz, $addonpage);
-    }
 }
 
 /**
@@ -466,8 +412,8 @@ function offlinequiz_add_page_break_after($layout, $questionid) {
 function offlinequiz_update_question_instance($grade, $questionid, $offlinequiz) {
     global $DB;
 
-    $instance = $DB->get_record('offlinequiz_q_instances', array('offlinequiz' => $offlinequiz->id,
-            'question' => $questionid));
+    $instance = $DB->get_record('offlinequiz_q_instances', array('offlinequizid' => $offlinequiz->id,
+            'questionid' => $questionid));
 
     if (!empty($instance)) {
 
@@ -633,8 +579,8 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
         $questions = $DB->get_records_sql("SELECT q.*, qc.contextid, qqi.grade as maxmark
                                              FROM {question} q
                                              JOIN {question_categories} qc ON qc.id = q.category
-                                             JOIN {offlinequiz_q_instances} qqi ON qqi.question = q.id
-                                            WHERE q.id $usql AND qqi.offlinequiz = ?", $params);
+                                             JOIN {offlinequiz_q_instances} qqi ON qqi.questionid = q.id
+                                            WHERE q.id $usql AND qqi.offlinequizid = ?", $params);
     } else {
         $questions = array();
     }

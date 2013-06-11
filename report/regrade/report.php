@@ -100,13 +100,13 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
         }
 
         // Fetch all questions
-        $sql = "SELECT q.id, i.question, i.grade as maxgrade,
+        $sql = "SELECT q.id, i.grade as maxgrade,
                        q.category, q.parent, q.name, q.defaultmark,
                        q.penalty, q.qtype, q.stamp, q.version, q.hidden
                   FROM {offlinequiz_q_instances} i,
                        {question} q
-                 WHERE i.offlinequiz = :offlinequizid
-                   AND i.question = q.id";
+                 WHERE i.offlinequizid = :offlinequizid
+                   AND i.questionid = q.id";
 
         $params = array('offlinequizid' => $offlinequiz->id);
 

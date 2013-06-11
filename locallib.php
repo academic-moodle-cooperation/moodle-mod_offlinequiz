@@ -805,13 +805,13 @@ function offlinequiz_get_all_question_grades($offlinequiz) {
     $wheresql = '';
     if (!is_null($questionlist)) {
         list($usql, $question_params) = $DB->get_in_or_equal(explode(',', $questionlist));
-        $wheresql = " AND question $usql ";
+        $wheresql = " AND questionid $usql ";
         $params = array_merge($params, $question_params);
     }
     $instances = $DB->get_records_sql("
-            SELECT question, grade, id
+            SELECT questionid, grade, id
               FROM {offlinequiz_q_instances}
-             WHERE offlinequiz = ? $wheresql", $params);
+             WHERE offlinequizid = ? $wheresql", $params);
 
     $list = explode(",", $questionlist);
     $grades = array();
@@ -883,8 +883,8 @@ function offlinequiz_get_group_sumgrades($offlinequiz) {
     $sql = 'SELECT COALESCE((SELECT SUM(grade)
               FROM {offlinequiz_q_instances} oqi,
                    {offlinequiz_group_questions} ogq
-             WHERE oqi.offlinequiz = :offlinequizid1
-               AND ogq.questionid = oqi.question
+             WHERE oqi.offlinequizid = :offlinequizid1
+               AND ogq.questionid = oqi.questionid
                AND ogq.offlinequizid = :offlinequizid2
                AND ogq.offlinegroupid = :groupid1) , 0)';
 
@@ -914,8 +914,8 @@ function offlinequiz_update_sumgrades($offlinequiz, $groupid = null) {
                    SELECT SUM(grade)
                      FROM {offlinequiz_q_instances} oqi,
                           {offlinequiz_group_questions} ogq
-                    WHERE oqi.offlinequiz = :offlinequizid1
-                      AND ogq.questionid = oqi.question
+                    WHERE oqi.offlinequizid = :offlinequizid1
+                      AND ogq.questionid = oqi.questionid
                       AND ogq.offlinequizid = :offlinequizid2
                       AND ogq.offlinegroupid = :groupid1
                       ), 0)
@@ -1329,7 +1329,7 @@ function offlinequiz_get_group_template_usage($offlinequiz, $group, $context) {
         $questiondata = question_load_questions($questionids);
 
         // Get the question instances for initial markmarks
-        $qinstances = $DB->get_records_sql('SELECT question, grade FROM {offlinequiz_q_instances} WHERE offlinequiz = :offlinequizid',
+        $qinstances = $DB->get_records_sql('SELECT questionid, grade FROM {offlinequiz_q_instances} WHERE offlinequizid = :offlinequizid',
                 array('offlinequizid' => $offlinequiz->id));
 
         foreach ($questionids as $questionid) {

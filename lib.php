@@ -201,7 +201,7 @@ function offlinequiz_delete_instance($id) {
 
     $tables_to_purge = array(
             'offlinequiz_groups' => 'offlinequizid',
-            'offlinequiz_q_instances' => 'offlinequiz',
+            'offlinequiz_q_instances' => 'offlinequizid',
             'offlinequiz' => 'id'
     );
 
@@ -684,7 +684,7 @@ function offlinequiz_questions_in_use($questionids) {
     
     list($test, $params) = $DB->get_in_or_equal($questionids);
     return $DB->record_exists_select('offlinequiz_q_instances',
-            'question ' . $test, $params) || question_engine::questions_in_use(
+            'questionid ' . $test, $params) || question_engine::questions_in_use(
             $questionids, new qubaid_join('{offlinequiz_results} oqr',
             'oqr.usageid'));
 }
