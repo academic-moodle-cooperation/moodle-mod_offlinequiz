@@ -728,14 +728,13 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
         echo '<form method="post" action="edit.php" id="offlinequizquestions"><div>';
         echo html_writer::input_hidden_params($pageurl);
         echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-
         echo $reordercontrolstop;
     } else {
         echo '<form method="post" action="edit.php" id="offlinequizquestions"><div>';
         echo html_writer::input_hidden_params($pageurl);
         echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         echo $editcontrolstop;
-
+        echo '</div></form>';
     }
 
     // The current question ordinal (no descriptions).
@@ -886,7 +885,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                                 array('title' => $strremove));
                     }
                 }
-                echo '</div>';
+                echo '</div>'; // End div questioncontrols
                 if (!in_array($question->qtype, array('description', 'missingtype')) && !$reordertool) {
 
                     echo '<div class="points">
@@ -976,6 +975,9 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
         echo $reordercontrolsbottom;
         echo '</div></form>';
     } else {
+        echo '<form method="post" action="edit.php" id="offlinequizquestions"><div>';
+        echo html_writer::input_hidden_params($pageurl);
+        echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         echo $editcontrolsbottom;
         echo '</div></form>';
     }
