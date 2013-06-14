@@ -61,18 +61,21 @@ if (has_capability('mod/offlinequiz:createofflinequiz', $context)) {
 if (has_capability('mod/offlinequiz:viewreports', $context)) {
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id", get_string('results', 'offlinequiz'));
 }
+if (has_capability('mod/offlinequiz:viewreports', $context)) {
+    $row[] = new tabobject('statistics', "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id&mode=statistics", get_string('statisticsplural', 'offlinequiz'));
+}
 
 if ($currenttab != 'info' || count($row) != 1) {
     $tabs[] = $row;
 }
 
-if ($currenttab == 'reports' and isset($mode)) {
+if ($currenttab == 'reports' && isset($mode)) {
     $inactive[] = 'reports';
     $activated[] = 'reports';
 
     $allreports = get_list_of_plugins("mod/offlinequiz/report");
 
-    $reportlist = array('overview', 'rimport', 'statistics'); //  'regrade'  // Standard reports we want to show first
+    $reportlist = array('overview', 'rimport'); //  'regrade'  // Standard reports we want to show first
 
     foreach ($allreports as $report) {
         if (!in_array($report, $reportlist)) {
@@ -152,5 +155,26 @@ if ($currenttab == 'editq' and isset($mode)) {
 
     $tabs[] = $row;
 }
+
+if ($currenttab == 'statistics' and isset($statmode)) {
+    $inactive[] = 'statistics';
+    $activated[] = 'statistics';
+
+    $row  = array();
+    $currenttab = $statmode;
+
+    $row[] = new tabobject('statsoverview', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
+            array('mode' => 'statistics', 'statmode' => 'statsoverview')), get_string('statsoverview', 'offlinequiz_statistics'));
+    $row[] = new tabobject('questionstats', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
+            array('mode' => 'statistics', 'statmode' => 'questionstats')), get_string('questionstats', 'offlinequiz_statistics'));
+    $row[] = new tabobject('questionandanswerstats', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id, 
+            array('mode' => 'statistics', 'statmode' => 'questionandanswerstats')), get_string('questionansanswerstats', 'offlinequiz_statistics'));
+
+    // $row[] = new tabobject('editq', "$CFG->wwwroot/mod/offlinequiz/edit.php?cmid=$offlinequiz->cmid", $strofflinequiz, $streditingofflinequiz);
+
+    $tabs[] = $row;
+}
+
+
 
 print_tabs($tabs, $currenttab, $inactive, $activated);

@@ -116,7 +116,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             }
             
             // If no group has been chosen we simply take the questions from the question instances
-            $qinstanceids = $DB->get_fieldset_select('offlinequiz_q_instances', 'question', 'offlinequiz = :offlinequiz', array('offlinequiz' => $offlinequiz->id));
+            $qinstanceids = $DB->get_fieldset_select('offlinequiz_q_instances', 'questionid', 'offlinequizid = :offlinequizid',
+                    array('offlinequizid' => $offlinequiz->id));
             $offlinequiz->questions = offlinequiz_clean_layout(implode(',', $qinstanceids));
         }
 
@@ -215,8 +216,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         // Print the page header stuff (if not downloading.
         if (!$this->table->is_downloading()) {
-            
-            $this->print_header_and_tabs($cm, $course, $offlinequiz, 'statistics');
+            $this->print_header_and_tabs($cm, $course, $offlinequiz, 'statsoverview' , 'statistics');
 
             echo $OUTPUT->box_start('linkbox');
             echo $OUTPUT->heading(format_string($offlinequiz->name));

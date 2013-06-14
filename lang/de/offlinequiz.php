@@ -433,6 +433,7 @@ Außerdem können sie das korrekte Ankreuzen der Matrikelnummer interaktiv üben
 Falls Sie diese Option auf "Ja" setzen, die Prüfung aber ausblenden, wird der Link zum Tutorial trotzdem nicht sichtbar sein. 
 In diesem Fall können Sie das Tutorial auf der Startseite verlinken.';
 $string['statistics'] = 'Statistik';
+$string['statisticsplural'] = 'Statistiken';
 $string['theattempt'] = 'Das Ergebnis';
 $string['timesup'] = 'Zeit wurde überschritten!';
 $string['trigger'] = 'Unter-/Obergrenze';

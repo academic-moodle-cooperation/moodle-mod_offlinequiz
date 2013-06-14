@@ -73,7 +73,8 @@ if ($groupnumber > 0) {
 } else {
     $offlinequiz->groupid = 0;
     // If no group has been chosen we simply take the questions from the question instances
-    $qinstanceids = $DB->get_fieldset_select('offlinequiz_q_instances', 'question', 'offlinequiz = :offlinequiz', array('offlinequiz' => $offlinequiz->id));
+    $qinstanceids = $DB->get_fieldset_select('offlinequiz_q_instances', 'questionid', 'offlinequizid = :offlinequizid',
+            array('offlinequizid' => $offlinequiz->id));
     $offlinequiz->questions = offlinequiz_clean_layout(implode(',', $qinstanceids));
 }
 
