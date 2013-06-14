@@ -31,7 +31,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2013041601;         // If version == 0 then module will not be installed
+$module->version  = 2013061300;         // If version == 0 then module will not be installed
 $module->requires = 2013051400;         // Requires this Moodle version
 $module->component = 'mod_offlinequiz'; // Full name of the plugin (used for diagnostics)
-$module->cron     = 10;                  // Period for cron to check this module (secs)
+$module->cron     = 3600;               // Period for cron to check this module (secs)

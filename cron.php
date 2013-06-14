@@ -175,6 +175,11 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                         $scannedpage = offlinequiz_check_different_result($scannedpage);
                     }
 
+                    // If there is something to correct then store the hotspots for retrieval in correct.php.
+                    if ($scannedpage->status != 'ok') {
+                        $scanner->store_hotspots($scannedpage->id);
+                    }
+
                     if ($scannedpage->status == 'ok' || $scannedpage->status == 'submitted'
                             || $scannedpage->status == 'suspended' || $scannedpage->error == 'missingpages') {
                         // mark the file as processed

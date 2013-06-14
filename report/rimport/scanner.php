@@ -482,7 +482,7 @@ class offlinequiz_page_scanner {
      * @param int $filename The name of the file in the imagefiles filearea of the scanner's context
      * @param mixed $corners The corner coordinates as retrieved from the offlinequiz_page_corners table
      */
-    public function load_stored_image($filename, $corners) {
+    public function load_stored_image($filename, $corners, $scannedpageid = null) {
         global $CFG, $OUTPUT;
 
         $this->offset = new oq_point();
@@ -515,9 +515,9 @@ class offlinequiz_page_scanner {
 
         $this->image = imagecreatefromstring($file->get_content());
         if (count($corners) > 3) {
-            $ok = $this->adjust(false, $corners[0], $corners[1], $corners[2], $corners[3], OQ_IMAGE_WIDTH);
+            $ok = $this->adjust(false, $corners[0], $corners[1], $corners[2], $corners[3], OQ_IMAGE_WIDTH, $scannedpageid);
         } else {
-            $ok = $this->adjust(true, false, false, false, false, 0);
+            $ok = $this->adjust(true, false, false, false, false, 0, $scannedpageid);
         }
         return $ok;
     }
@@ -753,6 +753,49 @@ class offlinequiz_page_scanner {
             $hotspot->y = $this->get_hotspot_y($hotspot);
             $hotspot->x = $x;
             $hotspot->blank = $this->blankbox;
+        }
+    }
+
+    /**
+     * Function to store the hotspots in the DB for retrieval during correction. This is called by cron.php because
+     * we only store the hotspots if the scannedpage has an error.
+     *
+     * @param unknown_type $scannedpageid
+     */
+    public function store_hotspots($scannedpageid) {
+        global $DB;
+
+        $timenow = time();
+
+        foreach ($this->hotspots as $key => $hotspot) {
+            if ($key == 'page') {
+                continue;
+            }
+
+            $entry = new stdClass();
+            $entry->scannedpageid = $scannedpageid;
+            $entry->name = $key;
+            $entry->x = $hotspot->x;
+            $entry->y = $hotspot->y;
+            $entry->time = $timenow;
+            
+            if ($hotspot->blank) {
+                $entry->blank = 1; 
+            } else {
+                $entry->blank = 0;
+            }
+            $DB->insert_record('offlinequiz_hotspots', $entry);
+        }
+    }
+    
+    /**
+     * Function to restore the hotspots from DB records in offlinequiz_hotspots.
+     *
+     * @param unknown_type $hotspots
+     */
+    private function restore_hotspots($hotspots) {
+        foreach ($hotspots as $hotspot) {
+            $this->hotspots[$hotspot->name] = new oq_point($hotspot->x, $hotspot->y, $hotspot->blank);
         }
     }
 
@@ -1317,8 +1360,9 @@ class offlinequiz_page_scanner {
      * @param unknown_type $width
      * @return boolean
      */
-    public function adjust($check, $upperleft, $upperright, $lowerleft, $lowerright, $width) {
-
+    public function adjust($check, $upperleft, $upperright, $lowerleft, $lowerright, $width, $scannedpageid = null) {
+        global $DB;
+        
         if (imagesx($this->image) > imagesy($this->image)) {  // flip image if landscape orientation
             // downsize large pictures first if it is not send from correct.php (width != 0)
             if (imagesy($this->image) > 3000 and empty($width)) {
@@ -1429,13 +1473,18 @@ class offlinequiz_page_scanner {
 
         $this->move_hotspots();
 
-        $this->adjust_hotspots();
+        if ($scannedpageid && $hotspots = $DB->get_records('offlinequiz_hotspots', array('scannedpageid' => $scannedpageid))) {
+            $this->restore_hotspots($hotspots);
+        } else {                
+            $this->adjust_hotspots();
+        }
 
         $this->init_pattern();
 
         return $return;
     }
 
+    
     /**
      * Set the 4 trigger values.
      * @param unknown_type $empty
