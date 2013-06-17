@@ -460,6 +460,7 @@ $string['standard'] = 'Standard';
 $string['starttutorial'] = 'Start tutorial about the examination';
 $string['statistics'] = 'Statistics';
 $string['statisticsplural'] = 'Statistics';
+$string['statsoverview'] = 'Statistics Overview';
 $string['studycode'] = 'Study code';
 $string['theattempt'] = 'The attempt';
 $string['timesup'] = 'Time is up!';

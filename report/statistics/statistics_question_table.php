@@ -74,7 +74,7 @@ class offlinequiz_statistics_question_table extends flexible_table {
 
         if ($responsestats->has_subparts()) {
             $columns[] = 'part';
-            $headers[] = 'Part of question';
+            $headers[] = ''; // get_string('partofquestion', 'offlinequiz_statistics');
         }
 
         if ($responsestats->has_response_classes()) {

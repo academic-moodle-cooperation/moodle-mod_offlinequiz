@@ -24,7 +24,7 @@
 
 $string['actualresponse'] = 'Actual response';
 $string['allattempts'] = 'all attempts';
-$string['allattemptsavg'] = 'Average grade of all attempts';
+$string['allattemptsavg'] = 'Average grade of all results';
 $string['allattemptscount'] = 'Total number of complete graded results';
 $string['allgroups'] = 'Statistics for all offlinequiz groups';
 $string['analysisofresponses'] = 'Analysis of responses';
@@ -72,13 +72,18 @@ Our equation for effective question weight cannot be calculated in this case. Th
 If you edit a offlinequiz and give these question(s) with negative covariance a max grade of zero then the effective question weight of these questions will be zero and the real effective question weight of other questions will be as calculated now.';
 $string['nostudentsingroup'] = 'There are no students in this group yet';
 $string['optiongrade'] = 'Partial credit';
+$string['partofquestion'] = 'Antwort';
 $string['pluginname'] = 'Statistics';
 $string['position'] = 'Position';
 $string['positions'] = 'Position(s)';
+$string['questionandanswerstats'] = 'Questions + Answers';
+$string['questionandanswerstatsheader'] = 'Statistics - Question- and Answeranalysis';
 $string['questioninformation'] = 'Question information';
 $string['questionname'] = 'Question name';
 $string['questionnumber'] = 'Q#';
 $string['questionstatistics'] = 'Question statistics';
+$string['questionstats'] = 'Question Analysis';
+$string['questionstatsheader'] = 'Statistics - Question Analysis';
 $string['questionstatsfilename'] = 'questionstats';
 $string['questiontype'] = 'Question type';
 $string['offlinequizinformation'] = 'Offlinequiz information';
@@ -95,6 +100,8 @@ $string['standarderror'] = 'Standard error (for {$a})';
 $string['statistics'] = 'Statistics';
 $string['statistics:componentname'] = 'Offlinequiz statistics report';
 $string['statisticsforgroup'] = 'Statistics for group';
+$string['statsoverview'] = 'Statistics Overview';
+$string['statsoverviewheader'] = 'Statistics - Overview';
 $string['statisticsreport'] = 'Statistics report';
 $string['statisticsreportgraph'] = 'Statistics for question positions';
 $string['statistics:view'] = 'View statistics report';

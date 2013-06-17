@@ -71,10 +71,14 @@ abstract class offlinequiz_default_report {
                 $reporttitle = get_string('regradingquiz', 'offlinequiz');
                 break;
             case 'statistics':
-                $reporttitle = get_string('statistics', 'offlinequiz');
+                $reporttitle = get_string('statisticsplural', 'offlinequiz');
                 break;
         }
         
+        if ($currenttab == 'statistics') {
+            $reporttitle = get_string('statisticsplural', 'offlinequiz');
+        }
+
         // Print the page header
         $PAGE->set_title(format_string($offlinequiz->name) . ' -- ' . $reporttitle);
         $PAGE->set_heading($course->fullname);
