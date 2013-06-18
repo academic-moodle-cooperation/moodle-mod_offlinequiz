@@ -617,7 +617,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
 
         foreach ($questions as $question) {
-            // Output the data for this questions.
+            // Output the data for this question.
             $this->table->add_data_keyed($this->table->format_row($question));
 
             if (empty($question->_stats->subquestions)) {
@@ -739,7 +739,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $row = array();
         foreach ($offlinequizinfo as $heading => $value) {
             $headers[] = $heading;
-            $row[] = $value;
+            $row[] = format_float($value, 2);
         }
 
         // Do the output.

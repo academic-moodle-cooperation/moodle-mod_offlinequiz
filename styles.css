@@ -566,6 +566,12 @@ a:hover
 #page-mod-offlinequiz-report table#statisticsquestiontable .r1 {
     background-color: #F2F2F2;
 }
-#page-mod-offlinequiz-report .doubleScroll {
-	width: 400px;
+#page-mod-offlinequiz-report table#questionstatistics .r1 {
+    background-color: #F2F2F2;
+}
+#page-mod-offlinequiz-report table#questionstatistics .numcol {
+	text-align: right;
+}
+#page-mod-offlinequiz-report table#questionstatistics td.numcol div.negcovar {
+	position: relative;
 }

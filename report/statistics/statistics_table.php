@@ -93,8 +93,8 @@ class offlinequiz_statistics_table extends flexible_table {
             $headers[] = get_string('standarddeviationq', 'offlinequiz_statistics');
         }
 
-        $columns[] = 'random_guess_score';
-        $headers[] = get_string('random_guess_score', 'offlinequiz_statistics');
+//         $columns[] = 'random_guess_score';
+//         $headers[] = get_string('random_guess_score', 'offlinequiz_statistics');
 
         $columns[] = 'intended_weight';
         $headers[] = get_string('intended_weight', 'offlinequiz_statistics');
@@ -105,8 +105,8 @@ class offlinequiz_statistics_table extends flexible_table {
         $columns[] = 'discrimination_index';
         $headers[] = get_string('discrimination_index', 'offlinequiz_statistics');
 
-        $columns[] = 'discriminative_efficiency';
-        $headers[] = get_string('discriminative_efficiency', 'offlinequiz_statistics');
+//         $columns[] = 'discriminative_efficiency';
+//         $headers[] = get_string('discriminative_efficiency', 'offlinequiz_statistics');
 
         $this->define_columns($columns);
         $this->define_headers($headers);
@@ -115,11 +115,11 @@ class offlinequiz_statistics_table extends flexible_table {
         $this->column_class('s', 'numcol');
         $this->column_class('facility', 'numcol');
         $this->column_class('sd', 'numcol');
-        $this->column_class('random_guess_score', 'numcol');
+        //$this->column_class('random_guess_score', 'numcol');
         $this->column_class('intended_weight', 'numcol');
         $this->column_class('effective_weight', 'numcol');
         $this->column_class('discrimination_index', 'numcol');
-        $this->column_class('discriminative_efficiency', 'numcol');
+//        $this->column_class('discriminative_efficiency', 'numcol');
 
         // Set up the table.
         $this->define_baseurl($reporturl->out());
@@ -226,7 +226,7 @@ class offlinequiz_statistics_table extends flexible_table {
             return '';
         }
 
-        return number_format($question->_stats->facility*100, 2) . '%';
+        return format_float($question->_stats->facility*100, 2) . '%';
     }
 
     /**
@@ -239,7 +239,7 @@ class offlinequiz_statistics_table extends flexible_table {
             return '';
         }
 
-        return number_format($question->_stats->sd*100 / $question->_stats->maxmark, 2) . '%';
+        return format_float($question->_stats->sd*100 / $question->_stats->maxmark, 2) . '%';
     }
 
     /**
@@ -247,13 +247,13 @@ class offlinequiz_statistics_table extends flexible_table {
      * @param object $question containst the data to display.
      * @return string contents of this table cell.
      */
-    protected function col_random_guess_score($question) {
-        if (is_null($question->_stats->randomguessscore)) {
-            return '';
-        }
+//     protected function col_random_guess_score($question) {
+//         if (is_null($question->_stats->randomguessscore)) {
+//             return '';
+//         }
 
-        return number_format($question->_stats->randomguessscore * 100, 2).'%';
-    }
+//         return format_float($question->_stats->randomguessscore * 100, 2).'%';
+//     }
 
     /**
      * The intended question weight. Maximum mark for the question as a percentage
@@ -292,7 +292,7 @@ class offlinequiz_statistics_table extends flexible_table {
             return $negcovar;
         }
 
-        return number_format($question->_stats->effectiveweight, 2) . '%';
+        return format_float($question->_stats->effectiveweight, 2) . '%';
     }
 
     /**
@@ -307,7 +307,7 @@ class offlinequiz_statistics_table extends flexible_table {
             return $question->_stats->discriminationindex;
         }
 
-        return number_format($question->_stats->discriminationindex, 2) . '%';
+        return format_float($question->_stats->discriminationindex, 2) . '%';
     }
 
     /**
@@ -315,13 +315,13 @@ class offlinequiz_statistics_table extends flexible_table {
      * @param object $question containst the data to display.
      * @return string contents of this table cell.
      */
-    protected function col_discriminative_efficiency($question) {
-        if (!is_numeric($question->_stats->discriminativeefficiency)) {
-            return '';
-        }
+//     protected function col_discriminative_efficiency($question) {
+//         if (!is_numeric($question->_stats->discriminativeefficiency)) {
+//             return '';
+//         }
 
-        return number_format($question->_stats->discriminativeefficiency, 2) . '%';
-    }
+//         return format_float($question->_stats->discriminativeefficiency, 2) . '%';
+//     }
 
     /**
      * This method encapsulates the test for wheter a question should be considered dubious.
