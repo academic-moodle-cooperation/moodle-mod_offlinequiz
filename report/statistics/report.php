@@ -71,10 +71,19 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $pageoptions['mode'] = 'statistics';
         $pageoptions['statmode'] = $statmode;
         
+        // When showing big tables add the JavaScript for the double scrollbar.
         if ($statmode == 'questionstats' || $statmode == 'questionandanswerstats') {
             $PAGE->requires->jquery();
             $PAGE->requires->jquery_plugin('ui');
             $PAGE->requires->jquery_plugin('doubleScroll', 'mod_offlinequiz');
+            $module = array(
+                    'name'      => 'mod_offlinequiz_statistics',
+                    'fullpath'  => '/mod/offlinequiz/report/statistics/doublescroll.js',
+                    'requires'  => array(),
+                    'strings'   => array(),
+                    'async'     => false,
+            );
+            $PAGE->requires->js_init_call('offlinequiz_statistics_init', null, false, $module);
         }
             
         if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
@@ -338,11 +347,13 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 echo '<br/><center>';
                 echo $this->output_offlinequiz_info_table($offlinequizinfo);
                 echo '</center>';
-            } else if ($statmode == 'questionstats') { 
+            } else if ($statmode == 'questionstats') {
                 if ($s) {
 //                    echo $OUTPUT->heading(get_string('offlinequizstructureanalysis', 'offlinequiz_statistics'));
+                    //echo '<div id = "questionstatisticscontainer">';
+
                     $this->output_offlinequiz_structure_analysis_table($s, $questions, $subquestions);
-                    $this->output_statistics_graph($offlinequizstats->id, $s);
+                   // echo '</div>';                    //$this->output_statistics_graph($offlinequizstats->id, $s);
                 }
             } else if ($statmode == 'questionandanswerstats') {
                 if ($s) {
@@ -504,8 +515,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             return '&nbsp;&nbsp;&nbsp;' . format_text($text, $question->questiontextformat,
                     array('noclean' => true, 'para' => false, 'overflowdiv' => true));
         } else {
-            $text = $question->questiontext;
-            return '&nbsp;&nbsp;&nbsp;' . format_text($text, FORMAT_PLAIN,
+            return '&nbsp;&nbsp;&nbsp;' . format_text(html_to_text($question->questiontext), FORMAT_HTML,
                     array('noclean' => true, 'para' => false, 'overflowdiv' => true));
         }
     }
@@ -534,6 +544,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             // Output an appropriate title.
             echo $OUTPUT->heading(get_string('analysisofresponses', 'offlinequiz_statistics'));
             echo $this->render_question_text_plain($question, false);
+            echo '<br/>';
 
         } else {
             // Work out an appropriate title.
@@ -561,10 +572,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         if ($this->table->is_downloading()) {
             $exportclass->output_headers($qtable->headers);
         }
-
+        $letterstr = 'abcdefghijklmnopqrstuvwxyz';
+        $counter = 0;
         foreach ($responesstats->responseclasses as $partid => $partclasses) {
             $rowdata = new stdClass();
-            $rowdata->part = $partid;
+            $rowdata->part = $letterstr[$counter++] . ')';
             foreach ($partclasses as $responseclassid => $responseclass) {
                 $rowdata->responseclass = $responseclass->responseclass;
 
@@ -619,7 +631,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 $this->table->add_data_keyed($this->table->format_row($subquestions[$subitemid]));
             }
         }
-
         $this->table->finish_output(!$this->table->is_downloading());
     }
 
@@ -655,7 +666,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $offlinequizinfo[get_string('duration', 'offlinequiz_statistics')] =
                     format_time($offlinequiz->timeclose - $offlinequiz->timeopen);
         }
-print_object($offlinequizstats);
+//print_object($offlinequizstats);
         // The statistics.
         foreach ($todisplay as $property => $format) {
             if (!isset($offlinequizstats->$property) || empty($format[$property])) {
@@ -1190,7 +1201,7 @@ print_object($offlinequizstats);
 
         $recalcualteurl = new moodle_url($reporturl,
                 array('recalculate' => 1, 'sesskey' => sesskey()));
-        $output = '';
+        $output = '<br/>';
         $output .= $OUTPUT->box_start(
                 'boxaligncenter generalbox boxwidthnormal mdl-align', 'cachingnotice');
         $output .= get_string('lastcalculated', 'offlinequiz_statistics', $a);

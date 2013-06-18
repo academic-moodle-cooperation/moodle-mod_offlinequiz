@@ -205,7 +205,7 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-report .controls {text-align: center;}
 #page-mod-offlinequiz-report .dubious{background-color: #fcc;}
 #page-mod-offlinequiz-report .highlight{border :medium solid yellow;background-color:lightYellow;}
-#page-mod-offlinequiz-report .negcovar{border :medium solid pink;}
+#page-mod-offlinequiz-report .negcovar{border :medium solid pink; width: 70%; float: right;}
 #page-mod-offlinequiz-report .toggleincludeauto {text-align: center;}
 #page-mod-offlinequiz-report .gradetheselink {font-size: 0.8em;}
 #page-mod-offlinequiz-report .mform fieldset {margin: 0;}
@@ -548,15 +548,24 @@ a:hover
 }
 #page-mod-offlinequiz-report table#questionstatstable {
     border: 1px solid #555555;
+    width: 60%;
+}
+#page-mod-offlinequiz-report table#questionstatstable .r1 {
+    background-color: #F2F2F2;
+}
+#page-mod-offlinequiz-report table#questionstatstable tr td.c0 {
     width: 50%;
 }
 #page-mod-offlinequiz-report table#questionstatstable .r1 {
     background-color: #F2F2F2;
 }
-#page-mod-offlinequiz-report table#statisticsquestiontable .r1 {
-    background-color: #F2F2F2;
-}
 #page-mod-offlinequiz-report table#statisticsquestiontable {
     border: 1px solid #555555;
     width: 80%;
+}
+#page-mod-offlinequiz-report table#statisticsquestiontable .r1 {
+    background-color: #F2F2F2;
+}
+#page-mod-offlinequiz-report .doubleScroll {
+	width: 400px;
 }
