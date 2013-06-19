@@ -35,7 +35,7 @@ function xmldb_offlinequiz_statistics_install() {
 
     $record = new stdClass();
     $record->name         = 'statistics';
-    $record->displayorder = 8000;
+    $record->displayorder = 6000;
     $record->capability   = 'offlinequiz/statistics:view';
 
     if ($dbman->table_exists('offlinequiz_reports')) {

@@ -73,7 +73,7 @@ If you edit a offlinequiz and give these question(s) with negative covariance a 
 $string['nostudentsingroup'] = 'There are no students in this group yet';
 $string['optiongrade'] = 'Partial credit';
 $string['partofquestion'] = 'Antwort';
-$string['pluginname'] = 'Statistics';
+$string['pluginname'] = 'Offlinequiz Statistics';
 $string['position'] = 'Position';
 $string['positions'] = 'Position(s)';
 $string['questionandanswerstats'] = 'Questions + Answers';
