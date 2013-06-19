@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/responseanalysi
  */
 class offlinequiz_statistics_report extends offlinequiz_default_report {
     /** @var integer Time after which statistics are automatically recomputed. */
-    const TIME_TO_CACHE_STATS = 900; // 900; // 15 minutes.
+    const TIME_TO_CACHE_STATS = 1; //900; // 900; // 15 minutes.
 
     /** @var object instance of table class used for main questions stats table. */
     protected $table;
@@ -225,6 +225,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         list($offlinequizstats, $questions, $subquestions, $s) =
                 $this->get_offlinequiz_and_questions_stats($offlinequiz, $currentgroup,
                         $nostudentsingroup, $useallattempts, $groupstudents, $questions);
+
         $offlinequizinfo = $this->get_formatted_offlinequiz_info_data($course, $cm, $offlinequiz, $offlinequizstats);
 
         // Set up the table, if there is data.
@@ -640,8 +641,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $todisplay = array( //'firstattemptscount' => 'number',
                     'allattemptscount' => 'number',
                     //'firstattemptsavg' => 'summarks_as_percentage',
-                    'allattemptsavg' => 'number_format', // 'summarks_as_percentage',
-                    'median' => 'number_format', // 'summarks_as_percentage',
+                    'sumgrades' => 'number_format',
+                    'bestgrade' => 'number_format',
+                    'worstgrade' => 'number_format',
+                    'allattemptsavg' => 'number_format',
+                    'median' =>  'number_format',
                     'standarddeviation' => 'number_format', // 'summarks_as_percentage',
                     'skewness' => 'number_format',
                     'kurtosis' => 'number_format',
@@ -649,6 +653,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     'errorratio' => 'number_format_percent',
                     'standarderror' => 'summarks_as_percentage');
 
+        if ($offlinequiz->sumgrades > 0) {
+            $offlinequizstats->sumgrades = $offlinequiz->sumgrades;
+        }
+        
         // General information about the offlinequiz.
         $offlinequizinfo = array();
         $offlinequizinfo[get_string('offlinequizname', 'offlinequiz_statistics')] = format_string($offlinequiz->name);
@@ -874,6 +882,16 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $offlinequizstats->allattemptscount = $allattempts->countrecs;
         $offlinequizstats->firstattemptsavg = $firstattempts->average;
         $offlinequizstats->allattemptsavg = $allattempts->total / $allattempts->countrecs;
+
+        $marks = $DB->get_fieldset_sql("
+                SELECT sumgrades
+                FROM $fromqa
+                WHERE $whereqa", $qaparams);
+        
+        print_object($marks);
+        // Also remember the best and worst grade.
+        $offlinequizstats->bestgrade = max($marks);
+        $offlinequizstats->worstgrade = min($marks);
 
         // Recalculate sql again this time possibly including test for first attempt.
         list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(

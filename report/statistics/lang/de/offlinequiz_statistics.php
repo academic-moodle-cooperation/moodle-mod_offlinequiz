@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['actualresponse'] = 'Aktuelle Antwort';
 $string['allattempts'] = 'Alle Ergebnisse';
-$string['allattemptsavg'] = 'Durchschnittliches Ergebnis';
+$string['allattemptsavg'] = 'Durchschnittliche Bewertung';
 $string['allattemptscount'] = 'Gesamtzahl an vollständig bewerteten Ergebnissen';
 $string['allgroups'] = 'Statistik über alle Offline-Test Gruppen';
 $string['analysisofresponses'] = 'Antwortanalyse';
@@ -37,6 +37,7 @@ $string['analysisofresponsesfor'] = 'Antwortanalyse für {$a}';
 $string['attempts'] = 'Ergebnisse';
 $string['attemptsall'] = 'Alle Ergebnisse';
 $string['backtoofflinequizreport'] = 'Zurück zur Fragenanalyse';
+$string['bestgrade'] = 'Beste Bewertung';
 $string['calculatefrom'] = 'Statistik berechnen aus';
 $string['cic'] = 'Koeffizient interner Konsistenz';
 $string['completestatsfilename'] = 'Vollständige Statistiken';
@@ -114,3 +115,6 @@ $string['statisticsreport'] = 'Statistik-Report';
 $string['statisticsreportgraph'] = 'Statistik für Fragepositionen';
 $string['statistics:view'] = 'Ansehen des Statistik-Reports';
 $string['statsfor'] = 'Statistik (für {$a})';
+$string['sumgrades'] = 'Maximal mögliche Bewertung';
+$string['worstgrade'] = 'Schlechteste Bewertung';
+
