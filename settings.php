@@ -116,8 +116,13 @@ if ($ADMIN->fulltree) {
     $options = array();
     $default = null;
     foreach ($studentroles as $role) {
-        $options[$role->id] = $role->name;
-        if ($default) {
+        if ($role->name) {
+            $name = $role->name;
+        } else {
+            $name = $role->shortname;
+        }
+        $options[$role->id] = $name;
+        if (!$default) {
             $default = $role->id;
         }
     }
