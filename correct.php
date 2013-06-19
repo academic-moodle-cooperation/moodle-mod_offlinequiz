@@ -21,7 +21,7 @@
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer
  * @copyright     2012 The University of Vienna
- * @since         Moodle 2.2+
+ * @since         Moodle 2.4
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  **/
@@ -35,6 +35,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
 $scannedpageid = optional_param('pageid', 0, PARAM_INT);
 $overwrite     = optional_param('overwrite', 0, PARAM_INT);
 $action        = optional_param('action', 'load', PARAM_TEXT);
+$userchanged   = optional_param('userchanged', 0, PARAM_INT);
 
 if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', array('id' => $scannedpageid))) {
     print_error('noscannedpage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpageid);
@@ -155,7 +156,9 @@ onClick=\"self.close(); return false;\"><br />";
 
     // Maybe old errors have been fixed.
     $scannedpage->status = 'ok';
+    $DB->set_field('offlinequiz_scanned_pages', 'status', 'ok', array('id' => $scannedpage->id));
     $scannedpage->error = '';
+    $DB->set_field('offlinequiz_scanned_pages', 'error', '', array('id' => $scannedpage->id));
 
     $groupnumber = required_param('groupnumber', PARAM_TEXT);
     $groupnumber = intval($groupnumber);
@@ -182,7 +185,15 @@ onClick=\"self.close(); return false;\"><br />";
     // Now we check the scanned page with potentially updated information.
     //  $scannedpage = offlinequiz_check_for_changed_groupnumber($offlinequiz, $scanner, $scannedpage, $coursecontext, $questionsperpage, $offlinequizconfig);
 
+    $oldresultid = $scannedpage->resultid;
     $scannedpage = offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage, $coursecontext, $questionsperpage, $offlinequizconfig);
+
+    if ($oldresultid != $scannedpage->resultid) {
+        // Already process the answers but don't submit them.
+        $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $questionsperpage, $coursecontext, false);
+        $userchanged = 1;
+    }
+
     if (!$overwrite) {
         $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
@@ -194,7 +205,6 @@ onClick=\"self.close(); return false;\"><br />";
             $scannedpage = offlinequiz_check_different_result($scannedpage);
         }
     }
-
 
     $userkey = $scannedpage->userkey;
     $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
@@ -232,7 +242,7 @@ onClick=\"self.close(); return false;\"><br />";
         $scannedpage->userkey = $userkey;
     }
 
-    if ($overwrite) {
+    if ($overwrite && !$userchanged) {
         // We want to overwrite an old result, so we have to create a new one.
         // Don't delete the choices stored in the DB.
         // $DB->delete_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id));
@@ -248,7 +258,55 @@ onClick=\"self.close(); return false;\"><br />";
         $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
         if ($scannedpage->resultid) {
-            $DB->delete_records('offlinequiz_results', array('id' => $oldresultid));
+
+            // Get all other pages of the old result and set their resultid number to the new one.
+            $sql = "SELECT *
+                      FROM {offlinequiz_scanned_pages}
+                     WHERE offlinequizid = :offlinequizid
+                       AND resultid = :resultid
+                       AND status = 'submitted'
+                       AND id <> :currentpageid";
+            $params = array('offlinequizid' => $scannedpage->offlinequizid, 'resultid' => $oldresultid, 'currentpageid' => $scannedpage->id);
+            
+            if ($oldpages = $DB->get_records_sql($sql, $params)) {
+
+                // Load the new result and the quba slots.
+                $newresult = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid));
+                $quba = question_engine::load_questions_usage_by_activity($newresult->usageid);
+                $pageslots = $quba->get_slots();
+
+                foreach ($oldpages as $page) {
+                    $page->resultid = $scannedpage->resultid;
+                    $DB->set_field('offlinequiz_scanned_pages', 'resultid', $scannedpage->resultid, array('id' => $page->id));
+
+                    echo get_string('resubmitting', 'offlinequiz') . ' ' . $page->pagenumber . ' ... ';
+ 
+                    // Load the choices made before from the database. This might be empty.
+                    $pagechoices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $page->id), 'slotnumber, choicenumber');
+
+                    // Choicesdata contains the choices data from the DB indexed by slotnumber and choicenumber.
+                    $pagechoicesdata = array();
+                    if (!empty($pagechoices)) {
+                        foreach ($pagechoices as $pagechoice) {
+                            if (!isset($pagechoicesdata[$pagechoice->slotnumber]) || !is_array($pagechoicesdata[$pagechoice->slotnumber])) {
+                                $pagechoicesdata[$pagechoice->slotnumber] = array();
+                            }
+                            $pagechoicesdata[$pagechoice->slotnumber][$pagechoice->choicenumber] = $pagechoice;
+                        }
+                    }
+                    // Determine the slice of slots we are interested in.
+                    // We start at the top of the page (e.g. 0, 96, etc).
+                    $pagestartindex = min(($page->pagenumber - 1) * $questionsperpage, count($pageslots));
+                    // We end on the bottom of the page or when the questions are gone (e.g., 95, 105).
+                    $pageendindex = min($page->pagenumber * $questionsperpage, count($pageslots));
+                    // Submit the choices of the other pages to the new result.
+                    $page = offlinequiz_submit_scanned_page($offlinequiz, $page, $pagechoicesdata, $pagestartindex, $pageendindex);
+                    echo get_string('done', 'offlinequiz') . '<br/>';
+                }
+            } 
+
+            // Finally, delete the old result.
+            $DB->delete_records('offlinequiz_results', array('id' => $oldresultid));            
         } else {
             $scannedpage->resultid = $oldresultid;
             $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
@@ -397,17 +455,66 @@ onClick=\"self.close(); return false;\"><br />";
     $pagenumber = intval($scannedpage->pagenumber);
 
     $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
-}
+    
+    
+} else if ($action == 'enrol' && $offlinequizconfig->oneclickenrol) {
+    // =============================================
+    // Action enrol.
+    // =============================================
+    if (!confirm_sesskey()) {
+        print_error('invalidsesskey');
+        echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
+onClick=\"self.close(); return false;\"><br />";
+        die;
+    }
 
+    require_once($CFG->libdir . '/enrollib.php');
+    require_once($CFG->dirroot.'/enrol/manual/locallib.php');
+
+    // Check that the user has the permission to manual enrol.
+    require_capability('enrol/manual:enrol', $coursecontext);
+
+    $userid = $DB->get_field('user', 'id', array($offlinequizconfig->ID_field => $scannedpage->userkey), MUST_EXIST);
+
+    // Get the manual enrolment plugin
+    $enrol = enrol_get_plugin('manual');
+    if (empty($enrol)) {
+        throw new moodle_exception('manualpluginnotinstalled', 'enrol_manual');
+    }
+
+    if (!is_enrolled($coursecontext, $userid)) {
+        // Now we need the correct instance of the manual enrolment plugin.
+        if (!$instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'), '*', IGNORE_MISSING)) {
+            if ($instanceid = $enrol->add_default_instance($course)) {
+                $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+            }
+        }
+
+        if ($instance != false) {
+            $enrol->enrol_user($instance, $userid, $offlinequizconfig->oneclickrole);
+        }
+    }
+    
+    $scannedpage->status = 'ok';
+    $scannedpage->error = '';
+
+    // Now check the scanned page again. The user should be enrolled now.
+    $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
+
+    $userkey = $scannedpage->userkey;
+    $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
+    $groupnumber = intval($scannedpage->groupnumber);
+    $pagenumber = intval($scannedpage->pagenumber);
+}
 
 // If we correct an OK page or a suspended page we can first process it and store the choices in the database.
 if ($action == 'load' ) {
     $oldchoices = $DB->count_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id));
 }
 
-// If we have an OK page and the action was checkuser, setpage, or rotate we should process the page.
+// If we have an OK page and the action was checkuser, setpage, etc. we should process the page.
 if (($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') && ($action == 'readjust' ||
-        $action == 'checkuser' || $action == 'setpage' || $action == 'rotate' || ($action == 'load' && !$oldchoices))) {
+        $action == 'checkuser' || $action == 'enrol' || $action == 'setpage' || $action == 'rotate' || ($action == 'load' && !$oldchoices))) {
     // Process the scanned page and write the answers in the offlinequiz_choices table.
     $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $questionsperpage, $coursecontext);
 }
@@ -709,6 +816,11 @@ function submitCheckuser() {
   document.forms.cform.submit();
 }
 
+function submitEnrol() {
+  document.forms.cform.elements['action'].value='enrol'
+  document.forms.cform.submit();
+}
+
 function submitRotated() {
   document.forms.cform.elements['action'].value='rotate'
   document.forms.cform.submit();
@@ -770,17 +882,25 @@ if ($scannedpage->status == 'ok' ||
         $scannedpage->error == 'usernotincourse' ||
         $scannedpage->error == 'resultexists' ||
         $scannedpage->error == 'doublepage' ||
-                $scannedpage->error == 'differentresultexists' ||
+        $scannedpage->error == 'differentresultexists' ||
         $scannedpage->error == 'grouperror') {
 
-    echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('checkuserid', 'offlinequiz').
+    echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('checkuserid', 'offlinequiz') .
     "\" name=\"submitbutton4\" onClick=\"submitCheckuser(); return false;\"><br />";
 
+    if ($scannedpage->error == 'usernotincourse' && $offlinequizconfig->oneclickenrol) {
+        echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('enroluser', 'offlinequiz') .
+        "\" name=\"submitbutton6\" onClick=\"submitEnrol(); return false;\"><br />";
+        
+    }
+    
     // Show enabled save button if the error state allows it.
     if ($scannedpage->error != 'doublepage' &&
+            $scannedpage->error != 'resultexists' &&
             $scannedpage->error != 'nonexistinguser' &&
             $scannedpage->error != 'usernotincourse' &&
-            $scannedpage->error != 'grouperror') {
+            $scannedpage->error != 'grouperror' &&
+            $scannedpage->error != 'differentresultexists') {
         echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('saveandshow', 'offlinequiz').
         "\" name=\"submitbutton2\" onClick=\"document.forms.cform.show.value=1; return checkinput()\"><br />";
         echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('save', 'offlinequiz')."\" name=\"submitbutton1\" onClick=\"return checkinput()\">";
@@ -802,6 +922,10 @@ echo "<input type=\"hidden\" name=\"sesskey\" value=\"". sesskey() . "\">\n";
 echo "<input type=\"hidden\" name=\"filename\" value=\"$filename\">\n";
 echo "<input type=\"hidden\" name=\"action\" value=\"update\">\n";
 echo "<input type=\"hidden\" name=\"show\" value=\"0\">\n";
+
+if ($userchanged) {
+    echo "<input type=\"hidden\" name=\"userchanged\" value=\"1\">\n";
+}
 
 foreach ($itemdata as $dkey => $items) {
     foreach ($items as $key => $item) {
