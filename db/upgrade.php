@@ -1032,4 +1032,33 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // offlinequiz savepoint reached
         upgrade_mod_savepoint(true, 2013041601, 'offlinequiz');
     }
+    
+    if ($oldversion < 2013061300) {
+    
+        // Define table offlinequiz_hotspots to be created.
+        $table = new xmldb_table('offlinequiz_hotspots');
+
+        // Adding fields to table offlinequiz_hotspots.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('scannedpageid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('x', XMLDB_TYPE_NUMBER, '10, 2', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('y', XMLDB_TYPE_NUMBER, '10, 2', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('blank', XMLDB_TYPE_INTEGER, '1', null, null, null, null);
+        $table->add_field('time', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table offlinequiz_hotspots.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table offlinequiz_hotspots.
+        $table->add_index('scannedpageididx', XMLDB_INDEX_NOTUNIQUE, array('scannedpageid'));
+
+        // Conditionally launch create table for offlinequiz_hotspots.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+    
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2013061300, 'offlinequiz');
+    }
 }

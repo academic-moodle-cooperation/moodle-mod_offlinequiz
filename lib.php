@@ -714,6 +714,13 @@ function offlinequiz_print_recent_mod_activity($course, $viewfullnames, $timesta
 function offlinequiz_cron() {
     cron_execute_plugin_type('offlinequiz', 'offlinequiz reports');
 
+    // Remove all saved hotspot data that is older than 7 days.
+    $timenow = time();
+
+    $sql = "DELETE FROM {offlinequiz_hotspots} 
+            WHERE time < :expiretime";
+    $params['expiretime'] = $timenow - 604800;
+
     return true;
 }
 
@@ -1212,8 +1219,8 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
         $beforekey = $keys[$i + 1];
     }
 
-    if (has_capability('mod/offlinequiz:manage', $PAGE->cm->context)) {
-        $node = navigation_node::create(get_string('editingofflinequiz', 'offlinequiz'),
+    if (has_capability('mod/offlinequiz:manage', $PAGE->cm->context)) { 
+        $node = navigation_node::create(get_string('groupquestions', 'offlinequiz'),
                 new moodle_url('/mod/offlinequiz/edit.php', array('cmid' => $PAGE->cm->id)),
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_edit',
                 new pix_icon('i/questions', ''));
@@ -1222,7 +1229,7 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
         $node = navigation_node::create(get_string('createofflinequiz', 'offlinequiz'),
                 new moodle_url('/mod/offlinequiz/createquiz.php', array('id' => $PAGE->cm->id)),
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_createpdfs',
-                new pix_icon('f/pdf', ''));
+                new pix_icon('f/text', ''));
         $offlinequiznode->add_node($node, $beforekey);
 
         $node = navigation_node::create(get_string('participantslists', 'offlinequiz'),

@@ -272,7 +272,7 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #page-mod-offlinequiz-edit .repaginatecommand {float:right;clear:right;padding-right:1em;}
 #page-mod-offlinequiz-edit div.reorder .reordercontrols .deleteselected{float:right;margin-right:1em;}
 #page-mod-offlinequiz-edit div.reorder div.question{padding-top:0.2em;}
-#page-mod-offlinequiz-edit div.reorder div.question div.qnum {width:2.9em;padding-top:0.1em;}
+#page-mod-offlinequiz-edit div.reorder div.question div.qnum {width: 3.3em; padding-top:0.1em;}
 #page-mod-offlinequiz-edit .reorder div.question div.content {width:87%;float:left;position:relative;-webkit-border-radius:0.3em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.3em;border-radius-bottomleft:0;border-radius-topleft:0;line-height:1.2em;padding:0.1em;background-color:#F9F9F9;}
 #page-mod-offlinequiz-edit .reorder .questioncontentcontainer .offlinequiz_randomquestion {position:relative;}
 #page-mod-offlinequiz-edit .reorder div.question div.content div.offlinequiz_randomquestion {line-height:1em;}
@@ -334,6 +334,11 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #page-mod-offlinequiz-edit .editq div.question div.content .singlequestion.missingtype .questionname {font-style: italic; max-width: 75%;}
 #page-mod-offlinequiz-edit .editq div.question div.description div.content .questiontext {max-width: 75%;}
 #page-mod-offlinequiz-edit .editq div.question div.qnum{font-size:1.5em;}
+
+#page-mod-offlinequiz-edit div#page-content div.offlinequizpage div.pagecontent div.question div.questioncontainer div.qnum input[type="checkbox"] {
+  margin-right: 7px;
+  vertical-align: text-bottom;
+}
 
 table#categoryquestions td,
 #page-mod-offlinequiz-edit table#categoryquestions th{overflow:hidden;white-space:nowrap;}
