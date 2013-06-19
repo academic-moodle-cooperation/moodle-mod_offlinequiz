@@ -45,8 +45,13 @@ function xmldb_offlinequiz_install() {
     $record->displayorder = '9000';
     $DB->insert_record('offlinequiz_reports', $record);
 
-    //     $record = new stdClass();
-    //     $record->name         = 'regrade';
-    //     $record->displayorder = '6000';
-    //     $DB->insert_record('offlinequiz_reports', $record);
+    $record = new stdClass();
+    $record->name         = 'regrade';
+    $record->displayorder = '6000';
+    $DB->insert_record('offlinequiz_reports', $record);
+
+    $record = new stdClass();
+    $record->name         = 'statistics';
+    $record->displayorder = '4000';
+    $DB->insert_record('offlinequiz_reports', $record);
 }
