@@ -23,8 +23,8 @@
         <FIELD NAME="cic" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10"/>
         <FIELD NAME="errorratio" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10"/>
         <FIELD NAME="standarderror" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10"/>
-        <FIELD NAME="bestgrade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The best grade achieved."/>
-        <FIELD NAME="worstgrade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The worst grade achieved."/>
+        <FIELD NAME="bestgrade" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The best grade achieved."/>
+        <FIELD NAME="worstgrade" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The worst grade achieved."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
