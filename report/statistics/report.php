@@ -578,6 +578,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         foreach ($responesstats->responseclasses as $partid => $partclasses) {
             $rowdata = new stdClass();
             $rowdata->part = $letterstr[$counter++] . ')';
+            
             foreach ($partclasses as $responseclassid => $responseclass) {
                 $rowdata->responseclass = $responseclass->responseclass;
 
@@ -590,7 +591,13 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     }
                     $rowdata->fraction = $responseclass->fraction;
                     $rowdata->count = 0;
-                    $qtable->add_data_keyed($qtable->format_row($rowdata));
+                    $classname = '';
+                    if ($rowdata->fraction > 0) {
+                        $classname = 'greenrow';
+                    } else if ($rowdata->fraction < 0) {
+                        $classname = 'redrow';
+                    }
+                    $qtable->add_data_keyed($qtable->format_row($rowdata), $classname);
                     continue;
                 }
 
@@ -598,7 +605,13 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     $rowdata->response = $response;
                     $rowdata->fraction = $data->fraction;
                     $rowdata->count = $data->count;
-                    $qtable->add_data_keyed($qtable->format_row($rowdata));
+                    $classname = '';
+                    if ($rowdata->fraction > 0) {
+                        $classname = 'greenrow';
+                    } else if ($rowdata->fraction < 0) {
+                        $classname = 'redrow';
+                    }
+                    $qtable->add_data_keyed($qtable->format_row($rowdata), $classname);
                 }
             }
         }

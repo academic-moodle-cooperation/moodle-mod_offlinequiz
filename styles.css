@@ -571,6 +571,12 @@ a:hover
 #page-mod-offlinequiz-report table#statisticsquestiontable .r1 {
     background-color: #F2F2F2;
 }
+#page-mod-offlinequiz-report tr.redrow {
+	color: red;
+}
+#page-mod-offlinequiz-report tr.greenrow {
+	color: green;
+}
 #page-mod-offlinequiz-report table#questionstatistics .r1 {
     background-color: #F2F2F2;
 }
