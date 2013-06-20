@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/responseanalysi
  */
 class offlinequiz_statistics_report extends offlinequiz_default_report {
     /** @var integer Time after which statistics are automatically recomputed. */
-    const TIME_TO_CACHE_STATS = 1; //900; // 900; // 15 minutes.
+    const TIME_TO_CACHE_STATS = 900; // 900; // 15 minutes.
 
     /** @var object instance of table class used for main questions stats table. */
     protected $table;
@@ -710,6 +710,16 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
     }
 
     /**
+     * Output the table that lists all the questions in the offlinequiz with their statistics.
+     * @param int $s number of attempts.
+     * @param array $questions the questions in the offlinequiz.
+     * @param array $subquestions the subquestions of any random questions.
+     */
+    protected function output_offlinequiz_question_answer_analysis_table($s, $questions, $subquestions) {
+        return;
+    }
+
+    /**
      * Output the table of overall offlinequiz statistics.
      * @param array $offlinequizinfo as returned by {@link get_formatted_offlinequiz_info_data()}.
      * @return string the HTML.
@@ -888,7 +898,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 FROM $fromqa
                 WHERE $whereqa", $qaparams);
         
-        print_object($marks);
         // Also remember the best and worst grade.
         $offlinequizstats->bestgrade = max($marks);
         $offlinequizstats->worstgrade = min($marks);
