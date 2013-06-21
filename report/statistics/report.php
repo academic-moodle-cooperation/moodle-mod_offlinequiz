@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/statistics_form.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/statistics_table.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/statistics_question_table.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/statistics_question_answer_table.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/qstats.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/responseanalysis.php');
 
@@ -184,7 +185,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
 
         // Set up the main table.
-        $this->table = new offlinequiz_statistics_table();
+        if ($statmode == 'statsoverview' || $statmode == 'questionstats') {
+            $this->table = new offlinequiz_statistics_table();
+        } else {
+            $this->table = new offlinequiz_question_answer_statistics_table();
+        }
         if ($everything) {
             $report = get_string('completestatsfilename', 'offlinequiz_statistics');
         } else {
@@ -269,7 +274,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
 
         if ($everything) { // Implies is downloading.
-
             // Overall report, then the analysis of each question.
             if ($statmode == 'statsoverview') {
                 $this->download_offlinequiz_info_table($offlinequizinfo);
@@ -297,8 +301,32 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         }
                     }
                 }
+            } else if ($statmode == 'questionandanswerstats') {
+                if ($s) {
+                    $this->output_offlinequiz_structure_analysis_table($s, $questions, $subquestions);
+
+                    if ($this->table->is_downloading() == 'xhtml') {
+                        $this->output_statistics_graph($offlinequizstats->id, $s);
+                    }
+
+                    foreach ($questions as $question) {
+                        if (question_bank::get_qtype(
+                                $question->qtype, false)->can_analyse_responses()) {
+                            print_object('can analyse responses');
+                            $this->output_individual_question_response_analysis(
+                                    $question, $reporturl, $offlinequizstats);
+
+                        } else if (!empty($question->_stats->subquestions)) {
+                            $subitemstodisplay = explode(',', $question->_stats->subquestions);
+                            foreach ($subitemstodisplay as $subitemid) {
+                                $this->output_individual_question_response_analysis(
+                                        $subquestions[$subitemid], $reporturl, $offlinequizstats);
+                            }
+                        }
+                    }
+                }
             }
-            
+
             $this->table->export_class_instance()->finish_document();
 
         } else if ($questionid) {
@@ -334,7 +362,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         } else if ($this->table->is_downloading()) {
             // Downloading overview report.
             $this->download_offlinequiz_info_table($offlinequizinfo);
-            $this->output_offlinequiz_structure_analysis_table($s, $questions, $subquestions);
+            if ($statmode == 'questionstats') {
+                $this->output_offlinequiz_structure_analysis_table($s, $questions, $subquestions);
+            } else if ($statmode == 'questionandanswerstats') {
+                $this->output_offlinequiz_question_answer_table($s, $questions, $subquestions);
+            }
             $this->table->finish_output();
 
         } else {
@@ -350,15 +382,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 echo '</center>';
             } else if ($statmode == 'questionstats') {
                 if ($s) {
-//                    echo $OUTPUT->heading(get_string('offlinequizstructureanalysis', 'offlinequiz_statistics'));
-                    //echo '<div id = "questionstatisticscontainer">';
-
                     $this->output_offlinequiz_structure_analysis_table($s, $questions, $subquestions);
-                   // echo '</div>';                    //$this->output_statistics_graph($offlinequizstats->id, $s);
                 }
             } else if ($statmode == 'questionandanswerstats') {
                 if ($s) {
-                    $this->output_offlinequiz_question_answer_analysis_table($s, $questions, $subquestions);
+                    $this->output_offlinequiz_question_answer_table($s, $questions, $subquestions);
                 }
             }
         }
@@ -728,8 +756,71 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      * @param array $questions the questions in the offlinequiz.
      * @param array $subquestions the subquestions of any random questions.
      */
-    protected function output_offlinequiz_question_answer_analysis_table($s, $questions, $subquestions) {
-        return;
+    protected function output_offlinequiz_question_answer_table($s, $questions, $subquestions) {
+        if (!$s) {
+            return;
+        }
+
+        foreach ($questions as $question) {
+            // Output the data for this question.
+            $question->fraction = '';
+            $question->count = '';
+            $this->table->add_data_keyed($this->table->format_row($question));
+            $this->output_question_answers($question);
+        }
+        $this->table->finish_output(!$this->table->is_downloading());
+    }
+    
+    protected function output_question_answers($question) {
+                
+//         $exportclass = $this->table->export_class_instance();
+
+//         $responesstats = new offlinequiz_statistics_response_analyser($question);
+//         $responesstats->load_cached($offlinequizstats->id);
+
+//         $qtable->question_setup($reporturl, $question, $responesstats);
+//         $letterstr = 'abcdefghijklmnopqrstuvwxyz';
+//         $counter = 0;
+//         foreach ($responesstats->responseclasses as $partid => $partclasses) {
+//             $rowdata = new stdclass();
+//             $rowdata->part = $letterstr[$counter++] . ')';
+            
+//             foreach ($partclasses as $responseclassid => $responseclass) {
+//                 $rowdata->responseclass = $responseclass->responseclass;
+
+//                 $responsesdata = $responesstats->responses[$partid][$responseclassid];
+//                 if (empty($responsesdata)) {
+//                     if (!array_key_exists('responseclass', $qtable->columns)) {
+//                         $rowdata->response = $responseclass->responseclass;
+//                     } else {
+//                         $rowdata->response = '';
+//                     }
+//                     $rowdata->fraction = $responseclass->fraction;
+//                     $rowdata->count = 0;
+//                     $classname = '';
+//                     if ($rowdata->fraction > 0) {
+//                         $classname = 'greenrow';
+//                     } else if ($rowdata->fraction < 0) {
+//                         $classname = 'redrow';
+//                     }
+//                     $qtable->add_data_keyed($qtable->format_row($rowdata), $classname);
+//                     continue;
+//                 }
+
+//                 foreach ($responsesdata as $response => $data) {
+//                     $rowdata->response = $response;
+//                     $rowdata->fraction = $data->fraction;
+//                     $rowdata->count = $data->count;
+//                     $classname = '';
+//                     if ($rowdata->fraction > 0) {
+//                         $classname = 'greenrow';
+//                     } else if ($rowdata->fraction < 0) {
+//                         $classname = 'redrow';
+//                     }
+//                     $qtable->add_data_keyed($qtable->format_row($rowdata), $classname);
+//                 }
+//             }
+//         }
     }
 
     /**

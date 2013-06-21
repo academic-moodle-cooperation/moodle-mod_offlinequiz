@@ -334,7 +334,8 @@ class offlinequiz_statistics_table extends flexible_table {
             return false;
         }
 
-        return $question->_stats->discriminativeefficiency < 15;
+//        return $question->_stats->discriminativeefficiency < 15;
+        return $question->_stats->discriminationindex < 0;
     }
 
     public function  wrap_html_start() {
