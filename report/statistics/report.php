@@ -365,7 +365,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             if ($statmode == 'questionstats') {
                 $this->output_offlinequiz_structure_analysis_table($s, $questions, $subquestions);
             } else if ($statmode == 'questionandanswerstats') {
-                $this->output_offlinequiz_question_answer_table($s, $questions, $subquestions);
+                $this->output_offlinequiz_question_answer_table($s, $questions, $subquestions, $offlinequizstats);
             }
             $this->table->finish_output();
 
@@ -386,7 +386,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 }
             } else if ($statmode == 'questionandanswerstats') {
                 if ($s) {
-                    $this->output_offlinequiz_question_answer_table($s, $questions, $subquestions);
+                    $this->output_offlinequiz_question_answer_table($s, $questions, $subquestions, $offlinequizstats);
                 }
             }
         }
@@ -493,6 +493,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $actions = $datumfromtable['actions'];
         unset($datumfromtable['actions']);
         unset($datumfromtable['name']);
+        unset($datumfromtable['response']);
+        unset($datumfromtable['frequency']);
+        unset($datumfromtable['count']);
+        unset($datumfromtable['fraction']);
         $labels = array(
             's' => get_string('attempts', 'offlinequiz_statistics'),
             'facility' => get_string('facility', 'offlinequiz_statistics'),
@@ -756,71 +760,90 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      * @param array $questions the questions in the offlinequiz.
      * @param array $subquestions the subquestions of any random questions.
      */
-    protected function output_offlinequiz_question_answer_table($s, $questions, $subquestions) {
+    protected function output_offlinequiz_question_answer_table($s, $questions, $subquestions, $offlinequizstats) {
         if (!$s) {
             return;
         }
 
         foreach ($questions as $question) {
             // Output the data for this question.
-            $question->fraction = '';
-            $question->count = '';
             $this->table->add_data_keyed($this->table->format_row($question));
-            $this->output_question_answers($question);
+            $this->output_question_answers($question, $offlinequizstats);
         }
         $this->table->finish_output(!$this->table->is_downloading());
     }
     
-    protected function output_question_answers($question) {
+    /**
+     * Output a question and its answers in one table in a sequence of rows.
+     * 
+     * @param object $question
+     */
+    protected function output_question_answers($question, $offlinequizstats) {
                 
-//         $exportclass = $this->table->export_class_instance();
+        $exportclass = $this->table->export_class_instance();
+        $responesstats = new offlinequiz_statistics_response_analyser($question);
+        $responesstats->load_cached($offlinequizstats->id);
 
-//         $responesstats = new offlinequiz_statistics_response_analyser($question);
-//         $responesstats->load_cached($offlinequizstats->id);
-
+        $this->table->set_questiondata($question);
 //         $qtable->question_setup($reporturl, $question, $responesstats);
-//         $letterstr = 'abcdefghijklmnopqrstuvwxyz';
-//         $counter = 0;
-//         foreach ($responesstats->responseclasses as $partid => $partclasses) {
-//             $rowdata = new stdclass();
-//             $rowdata->part = $letterstr[$counter++] . ')';
-            
-//             foreach ($partclasses as $responseclassid => $responseclass) {
-//                 $rowdata->responseclass = $responseclass->responseclass;
-
-//                 $responsesdata = $responesstats->responses[$partid][$responseclassid];
-//                 if (empty($responsesdata)) {
-//                     if (!array_key_exists('responseclass', $qtable->columns)) {
-//                         $rowdata->response = $responseclass->responseclass;
-//                     } else {
-//                         $rowdata->response = '';
-//                     }
-//                     $rowdata->fraction = $responseclass->fraction;
-//                     $rowdata->count = 0;
-//                     $classname = '';
-//                     if ($rowdata->fraction > 0) {
-//                         $classname = 'greenrow';
-//                     } else if ($rowdata->fraction < 0) {
-//                         $classname = 'redrow';
-//                     }
-//                     $qtable->add_data_keyed($qtable->format_row($rowdata), $classname);
-//                     continue;
-//                 }
-
-//                 foreach ($responsesdata as $response => $data) {
-//                     $rowdata->response = $response;
-//                     $rowdata->fraction = $data->fraction;
-//                     $rowdata->count = $data->count;
-//                     $classname = '';
-//                     if ($rowdata->fraction > 0) {
-//                         $classname = 'greenrow';
-//                     } else if ($rowdata->fraction < 0) {
-//                         $classname = 'redrow';
-//                     }
-//                     $qtable->add_data_keyed($qtable->format_row($rowdata), $classname);
-//                 }
-//             }
-//         }
+        $letterstr = 'abcdefghijklmnopqrstuvwxyz';
+        $counter = 0;
+        foreach ($responesstats->responseclasses as $partid => $partclasses) {
+            $rowdata = new stdclass();
+            $rowdata->part = $letterstr[$counter] . ')';
+            foreach ($partclasses as $responseclassid => $responseclass) {
+                $rowdata->responseclass = $responseclass->responseclass;
+                $responsesdata = $responesstats->responses[$partid][$responseclassid];
+                if (empty($responsesdata)) {
+                    $rowdata->response = $responseclass->responseclass;
+                    $rowdata->fraction = $responseclass->fraction;
+                    $rowdata->count = 0;
+                    $classname = '';
+                    if ($rowdata->fraction > 0) {
+                        $classname = 'greenrow';
+                    } else if ($rowdata->fraction < 0) {
+                        $classname = 'redrow';
+                    }
+                    if ($counter == 0) {
+                        $rowdata->name = format_text(html_to_text($question->questiontext));
+                    } else {
+                        $rowdata->name = '';
+                    }
+                    $rowdata->s = '';
+                    $rowdata->facility = '';
+                    $rowdata->sd = '';
+                    $rowdata->intended_weight = '';
+                    $rowdata->effective_weight = '';
+                    $rowdata->discrimination_index = '';
+                    $this->table->add_data_keyed($this->table->format_row($rowdata), $classname);
+                    continue;
+                }
+                foreach ($responsesdata as $response => $data) {
+                    $rowdata->response = $response;
+                    $rowdata->fraction = $data->fraction;
+                    $rowdata->count = $data->count;
+                    $classname = '';
+                    if ($rowdata->fraction > 0) {
+                        $classname = 'greenrow';
+                    } else if ($rowdata->fraction < 0) {
+                        $classname = 'redrow';
+                    }
+                    if ($counter == 0) {
+                        $rowdata->name = format_text(html_to_text($question->questiontext));
+                    } else {
+                        $rowdata->name = '';
+                    }
+                    $rowdata->s = '';
+                    $rowdata->facility = '';
+                    $rowdata->sd = '';
+                    $rowdata->intended_weight = '';
+                    $rowdata->effective_weight = '';
+                    $rowdata->discrimination_index = '';
+                    $this->table->add_data_keyed($this->table->format_row($rowdata), $classname);
+                }
+            }
+            $counter++;
+        }
     }
 
     /**

@@ -40,6 +40,9 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
     /** @var object the offlinequiz settings. */
     protected $offlinequiz;
 
+    /** @var object this question with a _stats field. */
+    protected $questiondata;
+
     /** @var integer the offlinequiz course_module id. */
     protected $cmid;
 
@@ -50,6 +53,10 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         parent::__construct('mod-offlinequiz-report-statistics-report');
     }
 
+    public function set_questiondata($questiondata) {
+        $this->questiondata = $questiondata;
+    }
+    
     /**
      * Set up the columns and headers and other properties of the table and then
      * call flexible_table::setup() method.
@@ -81,10 +88,10 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         }
 
         $columns[] = 'name';
-        $headers[] = get_string('questionname', 'offlinequiz');
+        $headers[] = get_string('question');
 
         $columns[] = 'response';
-            $headers[] = get_string('response', 'offlinequiz_statistics');
+        $headers[] = get_string('response', 'offlinequiz_statistics');
 
         $columns[] = 'fraction';
         $headers[] = get_string('optiongrade', 'offlinequiz_statistics');
@@ -125,6 +132,10 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         $this->define_headers($headers);
         $this->sortable(false);
 
+        $this->column_class('name', 'questiontext');
+        $this->column_class('fraction', 'numcol');
+        $this->column_class('count', 'numcol');
+        $this->column_class('frequency', 'numcol');
         $this->column_class('s', 'numcol');
         $this->column_class('facility', 'numcol');
         $this->column_class('sd', 'numcol');
@@ -151,11 +162,10 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_number($question) {
-        if ($question->_stats->subquestion) {
-            return '';
-        }
-
-        return $question->number;
+        if (property_exists($question, 'number')) {
+            return $question->number;
+        } 
+        return '';
     }
 
     /**
@@ -164,7 +174,11 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_icon($question) {
-        return print_question_icon($question, true);
+        if (property_exists($question, 'qtype') && $question->qtype) {
+            return print_question_icon($question, true);
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -173,7 +187,11 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_actions($question) {
-        return offlinequiz_question_action_icons($this->offlinequiz, $this->cmid, $question, $this->baseurl);
+        if (property_exists($question, 'actions') && $question->actions) {
+            return offlinequiz_question_action_icons($this->offlinequiz, $this->cmid, $question, $this->baseurl);
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -182,7 +200,11 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_qtype($question) {
-        return question_bank::get_qtype_name($question->qtype);
+        if (property_exists($question->qtype)) {
+            return question_bank::get_qtype_name($question->qtype);
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -197,22 +219,23 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
             return $name;
         }
 
-        $url = null;
-        if ($question->_stats->subquestion) {
-            $url = new moodle_url($this->baseurl, array('qid' => $question->id));
-        } else if ($question->_stats->questionid && $question->qtype != 'random') {
-            $url = new moodle_url($this->baseurl, array('questionid' => $question->_stats->questionid));
-        }
+        if (property_exists($question, '_stats')) {
+            $url = null;
+            if ($question->_stats->subquestion) {
+                $url = new moodle_url($this->baseurl, array('qid' => $question->id));
+            } else if ($question->_stats->questionid && $question->qtype != 'random') {
+                $url = new moodle_url($this->baseurl, array('questionid' => $question->_stats->questionid));
+            }
 
-        if ($url) {
-            $name = html_writer::link($url, $name,
-                    array('title' => get_string('detailedanalysis', 'offlinequiz_statistics')));
-        }
+            if ($url) {
+                $name = html_writer::link($url, $name,
+                        array('title' => get_string('detailedanalysis', 'offlinequiz_statistics')));
+            }
 
-        if ($this->is_dubious_question($question)) {
-            $name = html_writer::tag('div', $name, array('class' => 'dubious'));
+            if ($this->is_dubious_question($question)) {
+                $name = html_writer::tag('div', $name, array('class' => 'dubious'));
+            }
         }
-
         return $name;
     }
 
@@ -222,24 +245,39 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_response($question) {
-        if (!isset($question->_stats->response)) {
+        if (property_exists($question, 'response')) {
+            return format_text(html_to_text($question->part . ' ' . $question->response));
+        } else {
             return '';
         }
-
-        return $question->_stats->response;
     }
 
-        /**
+    /**
      * The mark fraction that this response earns.
+     *
      * @param object $response containst the data to display.
      * @return string contents of this table cell.
      */
     protected function col_fraction($response) {
-        if (!isset($response->response)) {
+        if (!isset($response->fraction)) {
             return '';
         }
 
-        return $this->format_float($response->fraction);
+        return format_float(100.0 * $response->fraction, $this->offlinequiz->decimalpoints);
+    }
+
+    /**
+     * The count of this response.
+     *
+     * @param object $response containst the data to display.
+     * @return string contents of this table cell.
+     */
+    protected function col_count($response) {
+        if (!isset($response->count)) {
+            return '';
+        }
+
+        return $response->count;
     }
 
     /**
@@ -248,11 +286,11 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_frequency($response) {
-        if (!isset($response->frequency)) {
+        if (!isset($response->count)) {
             return '';
         }
 
-        return $this->format_text($response->count / $this->questiondata->_stats->s);
+        return format_float(100.0 * $response->count / $this->questiondata->_stats->s, $this->offlinequiz->decimalpoints);
     }
 
     
@@ -262,8 +300,8 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_s($question) {
-        if (!isset($question->_stats->s)) {
-            return 0;
+        if (!property_exists($question, '_stats') || !isset($question->_stats->s)) {
+            return '';
         }
 
         return $question->_stats->s;
@@ -275,11 +313,11 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_facility($question) {
-        if (is_null($question->_stats->facility)) {
+        if (!property_exists($question, '_stats') || is_null($question->_stats->facility)) {
             return '';
         }
 
-        return format_float($question->_stats->facility*100, 2) . '%';
+        return format_float($question->_stats->facility * 100, 2) . '%';
     }
 
     /**
@@ -288,7 +326,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_sd($question) {
-        if (is_null($question->_stats->sd) || $question->_stats->maxmark == 0) {
+        if (!property_exists($question, '_stats') || is_null($question->_stats->sd) || $question->_stats->maxmark == 0) {
             return '';
         }
 
@@ -316,6 +354,9 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_intended_weight($question) {
+        if (!property_exists($question, '_stats')) {
+            return '';
+        }
         return offlinequiz_report_scale_summarks_as_percentage(
                 $question->_stats->maxmark, $this->offlinequiz);
     }
@@ -329,7 +370,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
     protected function col_effective_weight($question) {
         global $OUTPUT;
 
-        if ($question->_stats->subquestion) {
+        if (!property_exists($question, '_stats') || $question->_stats->subquestion) {
             return '';
         }
 
@@ -356,6 +397,9 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_discrimination_index($question) {
+        if (!property_exists($question, '_stats')) {
+            return '';
+        }
         if (!is_numeric($question->_stats->discriminationindex)) {
             return $question->_stats->discriminationindex;
         }
@@ -383,7 +427,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return bool is this question possibly not pulling it's weight?
      */
     protected function is_dubious_question($question) {
-        if (!is_numeric($question->_stats->discriminativeefficiency)) {
+        if (!property_exists($question, '_stats') || !is_numeric($question->_stats->discriminativeefficiency)) {
             return false;
         }
 
