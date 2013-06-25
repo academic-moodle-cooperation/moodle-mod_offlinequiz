@@ -996,7 +996,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
         // Changing type of field grade on table offlinequiz to int
         $table = new xmldb_table('offlinequiz');
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', XMLDB_SIGNED, XMLDB_NOTNULL, null, '0', 'time');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'time');
 
         // Launch change for field grade
         $dbman->change_field_type($table, $field);
