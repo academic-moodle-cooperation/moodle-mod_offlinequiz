@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
  * Strings for component 'offlinequiz_statistics', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   offlinequiz_statistics
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @author    Juergen Zimmer
+ * @copyright 2013 The University of Vienna
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -40,8 +41,8 @@ $string['completestatsfilename'] = 'completestats';
 $string['count'] = 'Count';
 $string['coursename'] = 'Course name';
 $string['detailedanalysis'] = 'More detailed analysis of the responses to this question';
-$string['differentquestions'] = 'Note: Your offlinequiz groups contain different sets of questions.';
-$string['differentsumgrades'] = 'Note: Your offlinequiz groups have different sums of grades ({$a}). Therefore, the average grade, the median, and the standard deviation cannot be calculated.';
+$string['differentquestions'] = '- Your offlinequiz groups contain different sets of questions.';
+$string['differentsumgrades'] = '- Your offlinequiz groups have different sums of grades ({$a}). Therefore, the average grade, the median, and the standard deviation cannot be calculated.';
 $string['discrimination_index'] = 'Discrimination index';
 $string['discriminative_efficiency'] = 'Discriminative efficiency';
 $string['downloadeverything'] = 'Download full report as {$a->formatsmenu} {$a->downloadbutton}';
@@ -93,6 +94,7 @@ $string['offlinequizoverallstatistics'] = 'Offlinequiz overall statistics';
 $string['offlinequizstructureanalysis'] = 'Offlinequiz structure analysis';
 $string['random_guess_score'] = 'Random guess score';
 $string['recalculatenow'] = 'Recalculate now';
+$string['remarks'] = 'Note:';
 $string['response'] = 'Response';
 $string['skewness'] = 'Score distribution skewness (for {$a})';
 $string['standarddeviation'] = 'Standard deviation (for {$a})';

@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * Offlinequiz statistics report, table for showing statistics of each question in the offlinequiz.
  *
  * @package   offlinequiz_statistics
- * @copyright 2008 Jamie Pratt
+ * @copyright 2013 The University of Vienna
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ require_once($CFG->libdir.'/tablelib.php');
  * This table has one row for each question in the offlinequiz, with sub-rows when
  * random questions appear. There are columns for the various statistics.
  *
- * @copyright 2008 Jamie Pratt
+ * @copyright 2013 The University of Vienna
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_statistics_table extends flexible_table {

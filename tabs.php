@@ -61,7 +61,7 @@ if (has_capability('mod/offlinequiz:createofflinequiz', $context)) {
 if (has_capability('mod/offlinequiz:viewreports', $context)) {
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id", get_string('results', 'offlinequiz'));
 }
-if (has_capability('mod/offlinequiz:viewreports', $context)) {
+if (has_capability('mod/offlinequiz:viewreports', $context) && has_capability('offlinequiz/statistics:view', $context)) {
     $row[] = new tabobject('statistics', "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id&mode=statistics", get_string('statisticsplural', 'offlinequiz'));
 }
 
@@ -164,13 +164,14 @@ if ($currenttab == 'statistics' and isset($statmode)) {
 
     $row  = array();
     $currenttab = $statmode;
-
+    $offlinegroup = optional_param('offlinegroup', -1, PARAM_INT);
+    
     $row[] = new tabobject('statsoverview', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
-            array('mode' => 'statistics', 'statmode' => 'statsoverview')), get_string('statsoverview', 'offlinequiz_statistics'));
+            array('mode' => 'statistics', 'statmode' => 'statsoverview', 'offlinegroup' => $offlinegroup)), get_string('statsoverview', 'offlinequiz_statistics'));
     $row[] = new tabobject('questionstats', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
-            array('mode' => 'statistics', 'statmode' => 'questionstats')), get_string('questionstats', 'offlinequiz_statistics'));
+            array('mode' => 'statistics', 'statmode' => 'questionstats', 'offlinegroup' => $offlinegroup)), get_string('questionstats', 'offlinequiz_statistics'));
     $row[] = new tabobject('questionandanswerstats', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id, 
-            array('mode' => 'statistics', 'statmode' => 'questionandanswerstats')), get_string('questionandanswerstats', 'offlinequiz_statistics'));
+            array('mode' => 'statistics', 'statmode' => 'questionandanswerstats', 'offlinegroup' => $offlinegroup)), get_string('questionandanswerstats', 'offlinequiz_statistics'));
 
     // $row[] = new tabobject('editq', "$CFG->wwwroot/mod/offlinequiz/edit.php?cmid=$offlinequiz->cmid", $strofflinequiz, $streditingofflinequiz);
 

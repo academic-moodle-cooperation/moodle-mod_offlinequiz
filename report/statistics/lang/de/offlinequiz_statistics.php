@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['actualresponse'] = 'Aktuelle Antwort';
 $string['allattempts'] = 'Alle Ergebnisse';
-$string['allattemptsavg'] = 'Durchschnittliche Bewertung';
+$string['allattemptsavg'] = 'Durchschnittliche erreichte Bewertung';
 $string['allattemptscount'] = 'Gesamtzahl an vollständig bewerteten Ergebnissen';
 $string['allgroups'] = 'Statistik über alle Offline-Test Gruppen';
 $string['analysisofresponses'] = 'Antwortanalyse';
@@ -37,16 +36,16 @@ $string['analysisofresponsesfor'] = 'Antwortanalyse für {$a}';
 $string['attempts'] = 'Ergebnisse';
 $string['attemptsall'] = 'Alle Ergebnisse';
 $string['backtoofflinequizreport'] = 'Zurück zur Fragenanalyse';
-$string['bestgrade'] = 'Beste Bewertung';
+$string['bestgrade'] = 'Höchste erreichte Bewertung';
 $string['calculatefrom'] = 'Statistik berechnen aus';
 $string['cic'] = 'Koeffizient interner Konsistenz';
 $string['completestatsfilename'] = 'Vollständige Statistiken';
 $string['count'] = '#Ankreuzungen';
 $string['coursename'] = 'Kursname';
 $string['detailedanalysis'] = 'Mehr Details zu den Antworten dieser Frage';
-$string['differentquestions'] = 'Anmerkung: Ihre Offline-Test Gruppen enthalten unterschiedliche Fragenmengen.';
-$string['differentsumgrades'] = 'Anmerkung: Ihre Offline-Test Gruppen haben unterschiedliche maximale Bewertungen ({$a}).
- Deshalb können die Werte "Durchschnittliches Ergebnis", "Median" und "Standardabweichung" für den Gesamttest nicht berechnet werden. Die Berechnung kann nur auf Basis
+$string['differentquestions'] = 'Ihre Offline-Test Gruppen enthalten unterschiedliche Fragenmengen.';
+$string['differentsumgrades'] = 'Ihre Offline-Test Gruppen haben unterschiedliche maximale Bewertungen ({$a}).
+ Deshalb können mehrere Werte, wie z.B. "Durchschnittliche erreichte Bewertung", "Median" und "Standardabweichung" für den Gesamttest nicht berechnet werden. Die Berechnung kann nur auf Basis
 der einzelnen Gruppen erfolgen. Bitte wählen Sie eine Gruppe aus!';
 $string['discrimination_index'] = 'Discrimination Index';
 $string['discriminative_efficiency'] = 'Unterscheidungs-Effizienz';
@@ -80,8 +79,8 @@ $string['offlinequizinformation'] = 'Offline-Test Informationen';
 $string['offlinequizname'] = 'Offline-Test Name';
 $string['offlinequizoverallstatistics'] = 'Offline-Test Statistiken';
 $string['offlinequizstructureanalysis'] = 'Offline-Test Strukturelle Analyse';
-$string['optiongrade'] = 'Teilweise Bewertung';
-$string['partofquestion'] = '#Answer';
+$string['optiongrade'] = 'Teilbewertung';
+$string['partofquestion'] = '#Antwort';
 $string['pluginname'] = 'Offline-Test Statistiken';
 $string['position'] = 'Position';
 $string['positions'] = 'Position(en)';
@@ -101,6 +100,7 @@ $string['quizoverallstatistics'] = 'Test-Gesamtsatistik';
 $string['quizstructureanalysis'] = 'Test-Strukturanalyse';
 $string['random_guess_score'] = 'Zufällig angenommene Punktezahl';
 $string['recalculatenow'] = 'Jetzt neu berechnen';
+$string['remarks'] = 'Anmerkungen:';
 $string['response'] = 'Antwort';
 $string['skewness'] = 'Schiefe der Punkteverteilung';
 $string['standarddeviation'] = 'Standardabweichung';
@@ -116,5 +116,5 @@ $string['statisticsreportgraph'] = 'Statistik für Fragepositionen';
 $string['statistics:view'] = 'Ansehen des Statistik-Reports';
 $string['statsfor'] = 'Statistik (für {$a})';
 $string['sumgrades'] = 'Maximal mögliche Bewertung';
-$string['worstgrade'] = 'Schlechteste Bewertung';
+$string['worstgrade'] = 'Niedrigste erreichte Bewertung';
 

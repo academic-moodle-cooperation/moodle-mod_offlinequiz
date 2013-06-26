@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
  * Offlinequiz statistics report class.
  *
  * @package   offlinequiz_statistics
- * @copyright 2008 Jamie Pratt
+ * @author    Juergen Zimmer
+ * @copyright 2013 The University of Vienna
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -38,12 +39,12 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/responseanalysi
  * a offlinequiz, compared to the whole offlinequiz. It also provides a drill-down to more
  * detailed information about each question.
  *
- * @copyright 2008 Jamie Pratt
+ * @copyright 2013 The University of Vienna
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_statistics_report extends offlinequiz_default_report {
     /** @var integer Time after which statistics are automatically recomputed. */
-    const TIME_TO_CACHE_STATS = 900; // 900; // 15 minutes.
+    const TIME_TO_CACHE_STATS = 900; // 15 minutes.
 
     /** @var object instance of table class used for main questions stats table. */
     protected $table;
@@ -92,13 +93,13 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
 
         // Determine groupid.
-        $groupnumber = optional_param('group', -1, PARAM_INT);
+        $groupnumber = optional_param('offlinegroup', -1, PARAM_INT);
         if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
             $groupnumber = $SESSION->question_pagevars['groupnumber'];
         }
 
         if ($groupnumber > 0) {
-            $pageoptions['group'] = $groupnumber;
+            $pageoptions['offlinegroup'] = $groupnumber;
             $offlinequiz->groupnumber = $groupnumber;
             $offlinequiz->sumgrades = $DB->get_field('offlinequiz_groups', 'sumgrades', array('offlinequizid' => $offlinequiz->id, 'number' => $groupnumber));
 
@@ -247,12 +248,19 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             echo $OUTPUT->box_end();
 
             if (!$questionid) {
-                $this->print_group_selector($cm, $groups, $groupnumber);
-                if ($offlinequiz->sumgrades == -1) {
-                    echo $OUTPUT->notification('- ' . get_string('differentsumgrades', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
-                }
-                if ($differentquestions) {
-                    echo $OUTPUT->notification('- ' . get_string('differentquestions', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
+                $this->print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions);
+                if ($statmode == 'statsoverview') {
+                    if ($offlinequiz->sumgrades == -1 || $differentquestions) {
+                        echo $OUTPUT->notification(get_string('remarks', 'offlinequiz_statistics') . ':', 'notifynote');
+                    } 
+                    echo $OUTPUT->box_start();
+                    if ($offlinequiz->sumgrades == -1) {
+                        echo $OUTPUT->notification('- ' . get_string('differentsumgrades', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
+                    }
+                    if ($differentquestions) {
+                        echo $OUTPUT->notification('- ' . get_string('differentquestions', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
+                    }
+                    echo $OUTPUT->box_end();
                 }
             }
 
@@ -426,7 +434,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      * @param unknown_type $groups The group objects as read from the database
      * @param unknown_type $groupnumber The currently chosen group number
      */
-    private function print_group_selector($cm, $groups, $groupnumber) {
+    private function print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions) {
         global $CFG, $OUTPUT;
                     
         $options = array();
@@ -435,11 +443,16 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         foreach ($groups as $group) {
             $options[$group->number] = $prefix . ' ' . $letterstr[$group->number -1];
         }
-        $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php',
-                array('id' => $cm->id, 'mode' => 'statistics'));
-        echo $OUTPUT->single_select($url, 'group', $options, $groupnumber, array(0 => get_string('allgroups', 'offlinequiz_statistics')));
+        $urlparams = array('id' => $cm->id, 'mode' => 'statistics', 'statmode' => $pageoptions['statmode']);
+        if (key_exists('offlinegroup', $pageoptions)) {
+            $urlparams['offlinegroup'] = $pageoptions['offlinegroup'];
+        }
+        
+        $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php', $urlparams);
+        echo $OUTPUT->single_select($url, 'offlinegroup', $options, $groupnumber, array(0 => get_string('allgroups', 'offlinequiz_statistics')));
     }
 
+    
     /**
      * Display the statistical and introductory information about a question.
      * Only called when not downloading.
@@ -685,7 +698,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $todisplay = array( //'firstattemptscount' => 'number',
                     'allattemptscount' => 'number',
                     //'firstattemptsavg' => 'summarks_as_percentage',
-                    'sumgrades' => 'number_format',
+                    'sumgrades' => 'scale_to_grade',
                     'bestgrade' => 'number_format',
                     'worstgrade' => 'number_format',
                     'allattemptsavg' => 'number_format',
@@ -699,6 +712,13 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         if ($offlinequiz->sumgrades > 0) {
             $offlinequizstats->sumgrades = $offlinequiz->sumgrades;
+        } else if ($offlinequiz->sumgrades == -1) {
+            $offlinequizstats->sumgrades = '';
+            $offlinequizstats->bestgrade = '';
+            $offlinequizstats->worstgrade = '';
+            $offlinequizstats->allattemptsavg = '';
+            $offlinequizstats->median = '';
+            $offlinequizstats->standarddeviation = '';
         }
         
         // General information about the offlinequiz.
@@ -729,6 +749,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             switch ($format) {
                 case 'summarks_as_percentage':
                     $formattedvalue = offlinequiz_report_scale_summarks_as_percentage($value, $offlinequiz);
+                    break;
+                case 'scale_to_grade':
+                    $formattedvalue = offlinequiz_report_scale_grade($value, $offlinequiz);
                     break;
                 case 'number_format_percent':
                     $formattedvalue = offlinequiz_format_grade($offlinequiz, $value) . '%';
