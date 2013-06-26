@@ -380,7 +380,7 @@ function offlinequiz_report_scale_summarks_as_percentage($rawmark, $offlinequiz,
         return $rawmark;
     }
 
-    $mark = $rawmark * 100 / $offlinequiz->sumgrades;
+    $mark = 100 * $rawmark / $offlinequiz->sumgrades;
     if ($round) {
         $mark = offlinequiz_format_grade($offlinequiz, $mark);
     }

@@ -693,22 +693,21 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
     }
 
     protected function get_formatted_offlinequiz_info_data($course, $cm, $offlinequiz, $offlinequizstats) {
-
         // You can edit this array to control which statistics are displayed.
         $todisplay = array( //'firstattemptscount' => 'number',
                     'allattemptscount' => 'number',
                     //'firstattemptsavg' => 'summarks_as_percentage',
-                    'sumgrades' => 'scale_to_grade',
-                    'bestgrade' => 'number_format',
-                    'worstgrade' => 'number_format',
-                    'allattemptsavg' => 'number_format',
-                    'median' =>  'number_format',
-                    'standarddeviation' => 'number_format', // 'summarks_as_percentage',
+                    'maxgrade' => 'number_format',
+                    'bestgrade' => 'scale_to_maxgrade',
+                    'worstgrade' => 'scale_to_maxgrade',
+                    'allattemptsavg' => 'scale_to_maxgrade',
+                    'median' =>  'scale_to_maxgrade',
+                    'standarddeviation' => 'scale_to_maxgrade', // 'summarks_as_percentage',
                     'skewness' => 'number_format',
                     'kurtosis' => 'number_format',
-                    'cic' => 'number_format_percent',
+                    'cic' => 'percent_to_number_format',
                     'errorratio' => 'number_format_percent',
-                    'standarderror' => 'summarks_as_percentage');
+                    'standarderror' => 'scale_to_maxgrade');
 
         if ($offlinequiz->sumgrades > 0) {
             $offlinequizstats->sumgrades = $offlinequiz->sumgrades;
@@ -720,7 +719,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $offlinequizstats->median = '';
             $offlinequizstats->standarddeviation = '';
         }
+        $offlinequizstats->maxgrade = $offlinequiz->grade;
         
+    print_object($offlinequizstats);
         // General information about the offlinequiz.
         $offlinequizinfo = array();
         $offlinequizinfo[get_string('offlinequizname', 'offlinequiz_statistics')] = format_string($offlinequiz->name);
@@ -750,7 +751,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 case 'summarks_as_percentage':
                     $formattedvalue = offlinequiz_report_scale_summarks_as_percentage($value, $offlinequiz);
                     break;
-                case 'scale_to_grade':
+                case 'scale_to_maxgrade':
                     $formattedvalue = offlinequiz_report_scale_grade($value, $offlinequiz);
                     break;
                 case 'number_format_percent':
@@ -760,6 +761,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     // 2 extra decimal places, since not a percentage,
                     // and we want the same number of sig figs.???
                     $formattedvalue = format_float($value, $offlinequiz->decimalpoints);
+                    break;
+                case 'percent_to_number_format':
+                    $formattedvalue = format_float($value / 100.00, $offlinequiz->decimalpoints);
                     break;
                 case 'number':
                     $formattedvalue = $value + 0;

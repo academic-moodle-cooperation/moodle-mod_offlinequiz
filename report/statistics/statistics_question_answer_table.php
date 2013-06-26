@@ -421,7 +421,8 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
 //     }
 
     /**
-     * This method encapsulates the test for wheter a question should be considered dubious.
+     * This method encapsulates the test for whether a question should be considered dubious.
+     * 
      * @param object question the question object with a property _stats which
      * includes all the stats for the question.
      * @return bool is this question possibly not pulling it's weight?
@@ -431,7 +432,6 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
             return false;
         }
 
-//        return $question->_stats->discriminativeefficiency < 15;
         return $question->_stats->discriminationindex < 0;
     }
 
