@@ -352,4 +352,28 @@ class offlinequiz_statistics_table extends flexible_table {
             echo html_writer::end_tag('div');
         }
     }
+    
+        /**
+     * This function is not part of the public api.
+     */
+    function download_buttons() {
+        if ($this->is_downloadable() && !$this->is_downloading()) {
+            $downloadoptions = $this->get_download_menu();
+
+            $downloadelements = new stdClass();
+            $downloadelements->formatsmenu = html_writer::select($downloadoptions,
+                    'download', $this->defaultdownloadformat, false);
+            $downloadelements->downloadbutton = '<input type="submit" value="'.
+                    get_string('download').'"/>';
+            $html = '<form action="'. $this->baseurl .'" method="post">';
+            $html .= '<div class="mdl-align">';
+            $html .= html_writer::tag('label', get_string('downloadas', 'table', $downloadelements));
+            $html .= '</div></form><br/>';
+
+            return $html;
+        } else {
+            return '';
+        }
+    }
+
 }

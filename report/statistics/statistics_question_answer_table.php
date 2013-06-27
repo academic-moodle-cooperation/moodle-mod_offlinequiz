@@ -199,8 +199,8 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @param object $question containst the data to display.
      * @return string contents of this table cell.
      */
-    protected function col_qtype($question) {
-        if (property_exists($question->qtype)) {
+    protected function col_qtype($question) { 
+        if (property_exists($question, 'qtype') && $question->qtype) {
             return question_bank::get_qtype_name($question->qtype);
         } else {
             return '';
@@ -246,7 +246,12 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      */
     protected function col_response($question) {
         if (property_exists($question, 'response')) {
-            return format_text(html_to_text($question->part . ' ' . $question->response));
+            if ($this->is_downloading()) {
+                return $this->format_text($question->part . ' ' . $question->response);
+//                return format_text(strip_tags($question->part . ' ' . $question->response), FORMAT_PLAIN);
+            } else {
+                return format_text(html_to_text($question->part . ' ' . $question->response));
+            }
         } else {
             return '';
         }
@@ -448,4 +453,28 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
             echo html_writer::end_tag('div');
         }
     }
+    
+    /**
+     * This function is not part of the public api.
+     */
+    function download_buttons() {
+        if ($this->is_downloadable() && !$this->is_downloading()) {
+            $downloadoptions = $this->get_download_menu();
+
+            $downloadelements = new stdClass();
+            $downloadelements->formatsmenu = html_writer::select($downloadoptions,
+                    'download', $this->defaultdownloadformat, false);
+            $downloadelements->downloadbutton = '<input type="submit" value="'.
+                    get_string('download').'"/>';
+            $html = '<form action="'. $this->baseurl .'" method="post">';
+            $html .= '<div class="mdl-align">';
+            $html .= html_writer::tag('label', get_string('downloadas', 'table', $downloadelements));
+            $html .= '</div></form><br/>';
+
+            return $html;
+        } else {
+            return '';
+        }
+    }
+
 }

@@ -243,7 +243,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         if ($s) {
             $this->table->statistics_setup($offlinequiz, $cm->id, $reporturl, $s);
         }
-
         // Print the page header stuff (if not downloading.
         if (!$this->table->is_downloading()) {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, $statmode, 'statistics');
@@ -395,10 +394,12 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 echo '</center>';
             } else if ($statmode == 'questionstats') {
                 if ($s) {
+                    echo '<br/>';
                     $this->output_offlinequiz_structure_analysis_table($s, $questions, $subquestions);
                 }
             } else if ($statmode == 'questionandanswerstats') {
                 if ($s) {
+                    echo '<br/>';
                     $this->output_offlinequiz_question_answer_table($s, $questions, $subquestions, $offlinequizstats);
                 }
             }
@@ -727,7 +728,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
         $offlinequizstats->maxgrade = $offlinequiz->grade;
         
-    print_object($offlinequizstats);
+//    print_object($offlinequizstats);
         // General information about the offlinequiz.
         $offlinequizinfo = array();
         $offlinequizinfo[get_string('offlinequizname', 'offlinequiz_statistics')] = format_string($offlinequiz->name);
@@ -837,7 +838,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $classname = 'redrow';
                     }
                     if ($counter == 0) {
-                        $rowdata->name = format_text(html_to_text($question->questiontext));
+                        if ($this->table->is_downloading()) {
+                            $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
+                        } else {
+                            $rowdata->name = format_text(html_to_text($question->questiontext));
+                        }
                     } else {
                         $rowdata->name = '';
                     }
@@ -861,7 +866,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $classname = 'redrow';
                     }
                     if ($counter == 0) {
-                        $rowdata->name = format_text(html_to_text($question->questiontext));
+                        if ($this->table->is_downloading()) {
+                            $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
+                        } else {
+                            $rowdata->name = format_text(html_to_text($question->questiontext));
+                        }
                     } else {
                         $rowdata->name = '';
                     }
@@ -916,7 +925,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $row = array();
         foreach ($offlinequizinfo as $heading => $value) {
             $headers[] = $heading;
-            $row[] = format_float($value, 2);
+            if (is_double($value)) {
+                $row[] = format_float($value, 2);
+            } else {
+                $row[] = $value;
+            }
         }
 
         // Do the output.
