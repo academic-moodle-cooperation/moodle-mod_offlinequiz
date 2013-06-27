@@ -590,3 +590,37 @@ a:hover
 	position: relative;
 	width: 18em;
 }
+#page-mod-offlinequiz-report table#questionstatistics td.cell {
+	border: 1px solid #DDDDDD;
+    border-collapse: collapse;
+}
+#page-mod-offlinequiz-report div.no-overflow table th.header {
+	border: 1px solid #CCCCCC;
+	border-collapse: collapse;
+}
+#page-mod-offlinequiz-report table#questionstatistics td.c0 {
+	width: 2em;
+}
+#page-mod-offlinequiz-report div.no-overflow table th.c0 {
+	width: 2em;
+}
+
+#page-mod-offlinequiz-report table#questionstatistics td.c1 {
+	width: 2em;
+}
+#page-mod-offlinequiz-report div.no-overflow table th.c1 {
+	width: 2em;
+}
+ #page-mod-offlinequiz-report table#questionstatistics td.c2 {
+	width: 2em;
+}
+#page-mod-offlinequiz-report div.no-overflow table th.c2 {
+	width: 2em;
+}
+ #page-mod-offlinequiz-report table#questionstatistics td.c3 {
+	width: 40em;
+}
+#page-mod-offlinequiz-report div.no-overflow table th.c3 {
+	width: 40em;
+}
+  

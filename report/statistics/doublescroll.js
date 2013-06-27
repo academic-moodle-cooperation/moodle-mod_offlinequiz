@@ -27,8 +27,8 @@
 // Initialise double scrollbar on the offlinequiz statistics table.
 var offlinequiz_statistics = {};
 
-function offlinequiz_statistics_init(Y) {
-	jQuery(document).ready(function($) {
+function offlinequiz_statistics_init_doublescroll(Y) {
+    jQuery(document).ready(function($) {
 		$('#tablecontainer > div.no-overflow').doubleScroll();
 	});
 	
@@ -36,4 +36,12 @@ function offlinequiz_statistics_init(Y) {
 		width = $('#tablecontainer > div.no-overflow').width();
 		$('div.suwala-doubleScroll-scroll-wrapper').width(width);
 	});
+
+//	fxheaderInit('questionstatistics', 380, 1, 0);
+//	fxheader();
+}
+
+function offlinequiz_statistics_init_fxheader(Y) {
+	fxheaderInit('questionstatistics', 380, 1, 0);
+	fxheader();
 }

@@ -75,9 +75,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         
         // When showing big tables add the JavaScript for the double scrollbar.
         if ($statmode == 'questionstats' || $statmode == 'questionandanswerstats') {
-            $PAGE->requires->jquery();
-            $PAGE->requires->jquery_plugin('ui');
-            $PAGE->requires->jquery_plugin('doubleScroll', 'mod_offlinequiz');
             $module = array(
                     'name'      => 'mod_offlinequiz_statistics',
                     'fullpath'  => '/mod/offlinequiz/report/statistics/doublescroll.js',
@@ -85,7 +82,16 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     'strings'   => array(),
                     'async'     => false,
             );
-            $PAGE->requires->js_init_call('offlinequiz_statistics_init', null, false, $module);
+
+            //            $PAGE->requires->jquery();
+            //            $PAGE->requires->jquery_plugin('ui');
+            //            $PAGE->requires->jquery_plugin('doubleScroll', 'mod_offlinequiz');
+            //            $PAGE->requires->js_init_call('offlinequiz_statistics_init_doublescroll', null, false, $module);
+             
+            // fxHeader doesn't work with jquery 1.9.1, so we need to load 1.7.2
+            $PAGE->requires->jquery_plugin('jquery-1.7.2.min', 'mod_offlinequiz');
+            $PAGE->requires->jquery_plugin('fxHeader', 'mod_offlinequiz');
+            $PAGE->requires->js_init_call('offlinequiz_statistics_init_fxheader', null, false, $module);
         }
             
         if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {

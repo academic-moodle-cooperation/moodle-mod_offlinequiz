@@ -263,7 +263,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
             return '';
         }
 
-        return format_float(100.0 * $response->fraction, $this->offlinequiz->decimalpoints);
+        return format_float(100.0 * $response->fraction, $this->offlinequiz->decimalpoints) . '%';
     }
 
     /**
@@ -286,11 +286,11 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_frequency($response) {
-        if (!isset($response->count)) {
+        if (!isset($response->count) || $this->questiondata->_stats->s <= 0) {
             return '';
         }
 
-        return format_float(100.0 * $response->count / $this->questiondata->_stats->s, $this->offlinequiz->decimalpoints);
+        return format_float(100.0 * $response->count / $this->questiondata->_stats->s, $this->offlinequiz->decimalpoints) . '%';
     }
 
     

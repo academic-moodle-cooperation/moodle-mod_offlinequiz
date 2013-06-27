@@ -112,8 +112,9 @@ class offlinequiz_statistics_table extends flexible_table {
         $this->define_headers($headers);
         $this->sortable(false);
 
-        $this->column_class('s', 'numcol');
-        $this->column_class('facility', 'numcol');
+        $this->column_class('number', 'number');
+        $this->column_class('s', 's');
+        $this->column_class('facility', 'facility');
         $this->column_class('sd', 'numcol');
         //$this->column_class('random_guess_score', 'numcol');
         $this->column_class('intended_weight', 'numcol');
