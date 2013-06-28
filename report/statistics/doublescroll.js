@@ -42,6 +42,6 @@ function offlinequiz_statistics_init_doublescroll(Y) {
 }
 
 function offlinequiz_statistics_init_fxheader(Y) {
-	fxheaderInit('questionstatistics', 380, 1, 0);
+	fxheaderInit('questionstatistics', 320, 1, 0);
 	fxheader();
 }
