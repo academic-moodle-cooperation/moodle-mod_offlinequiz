@@ -829,6 +829,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 $responsesdata = $responesstats->responses[$partid][$responseclassid];
                 if (empty($responsesdata)) {
                     $rowdata->response = $responseclass->responseclass;
+                    $rowdata->response = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->response);
                     $rowdata->fraction = $responseclass->fraction;
                     $rowdata->count = 0;
                     $classname = '';
@@ -840,6 +841,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     if ($counter == 0) {
                         if ($this->table->is_downloading()) {
                             $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
+                            $rowdata->name = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->name);
                         } else {
                             $rowdata->name = format_text(html_to_text($question->questiontext));
                         }
@@ -857,6 +859,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 }
                 foreach ($responsesdata as $response => $data) {
                     $rowdata->response = $response;
+                    $rowdata->response = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->response);
                     $rowdata->fraction = $data->fraction;
                     $rowdata->count = $data->count;
                     $classname = '';
@@ -868,6 +871,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     if ($counter == 0) {
                         if ($this->table->is_downloading()) {
                             $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
+                            $rowdata->name = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->name);
                         } else {
                             $rowdata->name = format_text(html_to_text($question->questiontext));
                         }
