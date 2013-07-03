@@ -996,51 +996,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
         // Changing type of field grade on table offlinequiz to int
         $table = new xmldb_table('offlinequiz');
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', XMLDB_SIGNED, XMLDB_NOTNULL, null, '0', 'time');
-
-        // Launch change for field grade
-        $dbman->change_field_type($table, $field);
-        $dbman->change_field_precision($table, $field);
-        $dbman->change_field_unsigned($table, $field);
-
-        // offlinequiz savepoint reached
-        upgrade_mod_savepoint(true, 2013012500, 'offlinequiz');
-    }
-    
-    if ($oldversion < 2013012400) {
-
-        // Define field info to be added to offlinequiz_queue
-        $table = new xmldb_table('offlinequiz_queue');
-        $field = new xmldb_field('info', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'status');
-
-        // Conditionally launch add field info
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // offlinequiz savepoint reached
-        upgrade_mod_savepoint(true, 2013012400, 'offlinequiz');
-    }
-
-    if ($oldversion < 2013012410) {
-
-        // Define field info to be added to offlinequiz_queue_data
-        $table = new xmldb_table('offlinequiz_queue_data');
-        $field = new xmldb_field('info', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'error');
-
-        // Conditionally launch add field info
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // offlinequiz savepoint reached
-        upgrade_mod_savepoint(true, 2013012410, 'offlinequiz');
-    }
-
-    if ($oldversion < 2013012500) {
-
-        // Changing type of field grade on table offlinequiz to int
-        $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'time');
 
         // Launch change for field grade
@@ -1054,7 +1009,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     
     if ($oldversion < 2013041600) {
 
-        // Rename field question on table offlinequiz_q_instances to NEWNAMEGOESHERE
+        // Rename field question on table offlinequiz_q_instances to questionid
         $table = new xmldb_table('offlinequiz_q_instances');
         $field = new xmldb_field('question', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'offlinequiz');
 
@@ -1067,7 +1022,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     if ($oldversion < 2013041601) {
 
-        // Rename field offlinequiz on table offlinequiz_q_instances to NEWNAMEGOESHERE
+        // Rename field offlinequiz on table offlinequiz_q_instances to offlinequizid
         $table = new xmldb_table('offlinequiz_q_instances');
         $field = new xmldb_field('offlinequiz', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
 
