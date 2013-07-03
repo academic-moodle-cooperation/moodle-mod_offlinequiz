@@ -307,6 +307,12 @@ Sie eine Gruppenanmeldung verwenden wollen.</p>
 mit Kreuzen, ähnlich wie die Antworten auf dem Antwortbogen. Die Listen werden hochgeladen und das Programm speichert
 in der Datenbank, wer als anwesend markiert ist. Bitte vermeiden Sie Verschmutzungen im Bereich der Barcodes, da
 diese der Identifikation der Studierenden dienen.</p>';
+$string['partimport'] = 'Importieren von Anwesenheitslisten';
+$string['partimport_help'] = '<p> Hier können Sie die ausgefüllten Anwesenheitslisten importieren.
+Sie können entweder mehrere eingescannte Bilddateien in einer ZIP-Datei
+oder einzelne Bilddateien importieren. Das Offline-Test Modul wird die Bilder im Hintergrund automatisch auswerten.
+Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als JPG-, GIF-,
+PNG- oder TIF-Datei vorliegen. Eine Punktdichte zwischen 200 und 300 DPI wird empfohlen.</p>';
 $string['pdfdeletedforgroup'] = 'Fragebogen für Gruppe {$a} gelöscht';
 $string['pdfintro'] = 'Zusatzinformation';
 $string['pdfintro_help'] = 'Dieser Text wird auf der ersten Seite des PDF-Fragebogens angezeigt und sollte genaue Angaben über die Prüfungsmodalitäten enthalten.

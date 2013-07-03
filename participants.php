@@ -497,7 +497,7 @@ switch($mode) {
             redirect('participants.php?mode=createpdf&amp;q='.$offlinequiz->id, get_string('createpdffirst', 'offlinequiz'));
         }
 
-        echo $OUTPUT->heading(get_string('uploadpart', 'offlinequiz')); // TODO help button,'participants','offlinequiz');
+        echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimport', 'offlinequiz');
         $report = new participants_report();
         $import_form = new offlinequiz_participants_upload_form($thispageurl);
 
