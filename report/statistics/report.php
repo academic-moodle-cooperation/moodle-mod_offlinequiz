@@ -549,7 +549,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $text = question_rewrite_questiontext_preview_urls($question->questiontext,
                 $this->context->id, 'offlinequiz_statistics', $question->id);
 
-        return $output->box(format_text($text, $question->questiontextformat,
+        return $OUTPUT->box(format_text($text, $question->questiontextformat,
                 array('noclean' => true, 'para' => false, 'overflowdiv' => true)),
                 'questiontext boxaligncenter generalbox boxwidthnormal mdl-align');
     }
