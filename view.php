@@ -75,7 +75,7 @@ if ($edit != -1 and $PAGE->user_allowed_editing()) {
 }
 
 // Print the tabs to switch mode.
-if (has_capability('mod/offlinequiz:manage', $context)) {
+if (has_capability('mod/offlinequiz:viewreports', $context)) {
     $currenttab = 'info';
     include_once('tabs.php');
 }
