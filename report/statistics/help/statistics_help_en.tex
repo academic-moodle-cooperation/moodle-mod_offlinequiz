@@ -1,0 +1,113 @@
+\documentclass[12pt]{report}
+\usepackage{german}
+
+\setlength{\textwidth}{14.5cm}
+\setlength{\textheight}{26.0cm}
+
+\setlength{\topmargin}{-3.0cm}
+%% \setlength{\headheight}{0.0cm}
+%% \setlength{\oddsidemargin}{0.0cm} 
+%% \setlength{\evensidemargin}{0.0cm}
+
+\begin{document}
+
+\subsection{Help for offline quiz statistics}
+\subsubsection{Definitions}
+\begin{itemize}
+\item $S$ is the set of students for which an offline quiz result exists. $|S|$ is the number of students in $S$.
+\item $I_s$ is the set of items (questions) that have been answered by a student $s\in S$ in an offline quiz.
+\item $S_i$ is the set of students that answered item (question) $i$.
+\item $x_i(s)$ is the result that student $s$ achieved for item $i$.
+\item $T_s = \sum\limits_{i\in I_s} x_i(s)$ is the complete result of student $s\in S$ adjusted to the maximum grade of the offline quiz.
+\item $x_i(max)$ is the maximum grade for item $i$ adjusted to the maximum grade of the offline quiz. 
+\item $x_i(min)$ is the minimum grade for item $i$ adjusted to the maximum grade of the offline quiz. 
+\item $T_{max}=\sum\limits_{i\in I} x_i(max)$ is the maximum grade of the offline quiz.
+\end{itemize}
+
+\subsubsection{Statistiken - "Ubersicht}
+We assume that a result exists for at least one student, i.e. $|S|>1$.
+
+\paragraph{Durchschnittliche Bewertung}
+We calculate the average grade of all students relative to the maximum grade of the offline quiz.
+$\bar{T}=\frac{1}{|S|}\sum\limits_{s\in S}T_s$.
+
+\paragraph{Median}
+All grades in $T_s$ are sorted. If $|S|$ is odd the grade in the middle is displayed. If $|S|$ is even, the mean of the two middle grades is displayed.
+
+\paragraph{Standardabweichung}
+The standard deviation adjusted to the maximum grade of the offline quiz.
+
+$SD = \sqrt{V(T)} = \sqrt{\frac{1}{|S| - 1}\sum\limits_{s\in S}(T_s - \bar{T})^2}$.
+
+\paragraph{Schiefe und W"olbung der Bewertungsverteilung}
+Skewness is a measure of the asymmetry in a distribution. Kurtosis tells you if your distribution has more of a bulge, but thinner tails, or vice-versa. 
+
+First, we calculate:
+
+$m_2=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^2}$
+
+$m_3=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^3}$
+
+$m_4=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^4}$\\
+
+Then we calculate:\\
+
+$k_2 = \frac{|S|}{|S| - 1}m_2 = V(T)$
+
+$k_3 = \frac{|S|^2}{(|S|-1)(|S|-2)} m_3$
+
+$k_4 = \frac{|S|^2}{(|S|-1)(|S|-2)(|S|-3)}\left((|S|+1)m_4-3(|S|-1)m_2^2\right)$\\
+
+Then the skewness is defined as:\\
+
+ $Skewness = \frac{k_3}{k_2^(3/2)}$\\
+
+the kurtosis is defined as:\\
+
+ $Kurtosis = \frac{k_4}{k_2^2}$
+
+
+\paragraph{Coefficient of Internal Consistency (Cronbach's Alpha)}
+The Coefficient of Internal Consistency (Cronbach's Alpha) is a measure for the internal consistency of a scale. It is commonly used as an estimate of the reliability of a psychometric test for a sample of examinees. It describes the  interrelatedness of the offline quiz questions. We calculate the Coefficient of Internal Consistency (CIC) as follows:
+
+$CIC=\frac{|I|}{|I|-1}\left(1-\frac{1}{V(T)}\sum\limits_{i\in I}V(x_i)\right)$.
+
+
+\subsubsection{Statistiken - Fragenanalyse}
+\paragraph{Notationen}
+
+$X_i(s) = T_s - x_i(s)$ ist die restliche Bewertung f"ur einen Studierenden $s$ und ein Item $i$.\\
+$\bar{x}_i = \frac{1}{|S_i|}\sum\limits_{s\in S_i}x_i(s)$ ist die durchschnittliche Bewertung f"ur Item $i$ "uber alle Studierende. Analog f"ur andere Werte.
+
+\paragraph{Varianz und Kovarianz}
+
+Wir nehmen an, dass mindestens zwei Studierende das Item $i$ beantwortet haben, d.h. $|S_i| > 1$.
+Die Varianz der Bewertung f"ur Item $i$ ist definiert als:
+
+ $V(x_i) = \frac{1}{|S_i| - 1}\sum\limits_{s\in S_i} (x_i(s) - \bar{x}_i)^2$.
+
+\noindent Die Kovarianz von zwei Werten ist definiert als:\\
+$C(x_i, X_i) = \frac{1}{|S_i| - 1}\sum\limits_{s\in S_i}(x_i(s) - \bar{x}_i)(X_i(s) - \bar{X}_i)$.
+
+
+\paragraph{Leichtigkeits-Index}
+Der Leichtigkeits-Index (engl. facility index) beschreibt, wie leicht bzw. schwer eine Frage f"ur die Studierenden war. 
+Haben z.B. zwei Studierende ein Item $i$ beantwortet, wobei ein Studierender $50\%$ und der andere $100\%$ der Punkte erreicht hat, dann betr"agt der Leichtigkeits-Index $75\%$. Der Leichtigkeits-Index wird also prozentual ausgedr"uckt:
+
+$F_i = 100\cdot\frac{\bar{x}_i - x_i(min)}{x_i(max) - x_i(min)}$. 
+
+\paragraph{Standardabweichung}
+Die Standardabweichung einer Frage ist ein Ma"s f"ur die Streuung der erreichten Bewertungen f"ur diese Frage um die durchschnittliche Bewertung. 
+
+$SD_i = \frac{\sqrt{V(x_i)}}{x_i(max) - x_i(min)}$.
+
+\paragraph{Discrimination Index}
+Der Korrelations-Koeffizient zwischen $x_i$ and $X_i$ prozentual ausgedr"uckt:
+
+$D_i= \frac{C(x_i, X_i)}{\sqrt{V(x_i)V(X_i)}}$.
+
+\ \\
+\end{document}
+
+%% 
+%% End of file `statistics.tex'.

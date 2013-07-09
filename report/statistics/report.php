@@ -247,9 +247,33 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         if (!$this->table->is_downloading()) {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, $statmode, 'statistics');
 
+            // Options for the help text popup_action
+            $options = array('width' => 600,
+                    'height' => 400, // optional
+                    'resizable' => false,
+                    'top' => 0,
+                    'left' => 0,
+                    'menubar' => false,
+                    'location' => false,
+                    'scrollbars' => true,
+                    'toolbar' => false,
+                    'status' => false,
+                    'directories' => false,
+                    'fullscreen' => false,
+                    'dependent' => false);
+            
+            $helpfilename = 'statistics_help_';
+            if (current_language() == 'de') {
+                $helpfilename .= 'de.html';
+            } else {
+                $helpfilename .= 'en.html';
+            } 
+            $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report/statistics/help/' . $helpfilename);
+            $pixicon = new pix_icon('help', get_string('statisticshelp', 'offlinequiz_statistics'));
+
             echo $OUTPUT->box_start('linkbox');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
-            echo $OUTPUT->heading(get_string($statmode . 'header', 'offlinequiz_statistics'));
+            echo $OUTPUT->heading(get_string($statmode . 'header', 'offlinequiz_statistics') . $OUTPUT->action_icon($url, $pixicon, new popup_action('click', $url, 'help123', $options)));
             echo $OUTPUT->box_end();
 
             if (!$questionid) {
