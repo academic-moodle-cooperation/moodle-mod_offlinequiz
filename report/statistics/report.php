@@ -83,15 +83,15 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     'async'     => false,
             );
 
-            //            $PAGE->requires->jquery();
-            //            $PAGE->requires->jquery_plugin('ui');
-            //            $PAGE->requires->jquery_plugin('doubleScroll', 'mod_offlinequiz');
-            //            $PAGE->requires->js_init_call('offlinequiz_statistics_init_doublescroll', null, false, $module);
+            $PAGE->requires->jquery();
+            $PAGE->requires->jquery_plugin('ui');
+            $PAGE->requires->jquery_plugin('doubleScroll', 'mod_offlinequiz');
+            $PAGE->requires->js_init_call('offlinequiz_statistics_init_doublescroll', null, false, $module);
              
-            // fxHeader doesn't work with jquery 1.9.1, so we need to load 1.7.2
-            $PAGE->requires->jquery_plugin('jquery-1.7.2.min', 'mod_offlinequiz');
-            $PAGE->requires->jquery_plugin('fxHeader', 'mod_offlinequiz');
-            $PAGE->requires->js_init_call('offlinequiz_statistics_init_fxheader', null, false, $module);
+//             // fxHeader doesn't work with jquery 1.9.1, so we need to load 1.7.2
+//             $PAGE->requires->jquery_plugin('jquery-1.7.2.min', 'mod_offlinequiz');
+//             $PAGE->requires->jquery_plugin('fxHeader', 'mod_offlinequiz');
+//             $PAGE->requires->js_init_call('offlinequiz_statistics_init_fxheader', null, false, $module);
         }
             
         if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
@@ -248,7 +248,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, $statmode, 'statistics');
 
             // Options for the help text popup_action
-            $options = array('width' => 600,
+            $options = array('width' => 650,
                     'height' => 400, // optional
                     'resizable' => false,
                     'top' => 0,
@@ -270,10 +270,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             } 
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report/statistics/help/' . $helpfilename);
             $pixicon = new pix_icon('help', get_string('statisticshelp', 'offlinequiz_statistics'));
-
+            $helpaction = $OUTPUT->action_icon($url, $pixicon, new popup_action('click', $url, 'help123', $options));
+            
             echo $OUTPUT->box_start('linkbox');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
-            echo $OUTPUT->heading(get_string($statmode . 'header', 'offlinequiz_statistics') . $OUTPUT->action_icon($url, $pixicon, new popup_action('click', $url, 'help123', $options)));
+            echo $OUTPUT->heading(get_string($statmode . 'header', 'offlinequiz_statistics') . $helpaction);
             echo $OUTPUT->box_end();
 
             if (!$questionid) {
@@ -687,6 +688,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $classname = 'redrow';
                     }
                     $qtable->add_data_keyed($qtable->format_row($rowdata), $classname);
+                    break;
                 }
             }
         }
@@ -845,6 +847,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 //         $qtable->question_setup($reporturl, $question, $responesstats);
         $letterstr = 'abcdefghijklmnopqrstuvwxyz';
         $counter = 0;
+        print_object($responesstats);
         foreach ($responesstats->responseclasses as $partid => $partclasses) {
             $rowdata = new stdclass();
             $rowdata->part = $letterstr[$counter] . ')';
@@ -880,35 +883,37 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     $rowdata->discrimination_index = '';
                     $this->table->add_data_keyed($this->table->format_row($rowdata), $classname);
                     continue;
-                }
-                foreach ($responsesdata as $response => $data) {
-                    $rowdata->response = $response;
-                    $rowdata->response = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->response);
-                    $rowdata->fraction = $data->fraction;
-                    $rowdata->count = $data->count;
-                    $classname = '';
-                    if ($rowdata->fraction > 0) {
-                        $classname = 'greenrow';
-                    } else if ($rowdata->fraction < 0) {
-                        $classname = 'redrow';
-                    }
-                    if ($counter == 0) {
-                        if ($this->table->is_downloading()) {
-                            $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
-                            $rowdata->name = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->name);
-                        } else {
-                            $rowdata->name = format_text(html_to_text($question->questiontext));
+                } else {
+                    foreach ($responsesdata as $response => $data) {
+                        $rowdata->response = $response;
+                        $rowdata->response = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->response);
+                        $rowdata->fraction = $data->fraction;
+                        $rowdata->count = $data->count;
+                        $classname = '';
+                        if ($rowdata->fraction > 0) {
+                            $classname = 'greenrow';
+                        } else if ($rowdata->fraction < 0) {
+                            $classname = 'redrow';
                         }
-                    } else {
-                        $rowdata->name = '';
+                        if ($counter == 0) {
+                            if ($this->table->is_downloading()) {
+                                $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
+                                $rowdata->name = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->name);
+                            } else {
+                                $rowdata->name = format_text(html_to_text($question->questiontext));
+                            }
+                        } else {
+                            $rowdata->name = '';
+                        }
+                        $rowdata->s = '';
+                        $rowdata->facility = '';
+                        $rowdata->sd = '';
+                        $rowdata->intended_weight = '';
+                        $rowdata->effective_weight = '';
+                        $rowdata->discrimination_index = '';
+                        $this->table->add_data_keyed($this->table->format_row($rowdata), $classname);
+                        break; // We want to display every response only once.
                     }
-                    $rowdata->s = '';
-                    $rowdata->facility = '';
-                    $rowdata->sd = '';
-                    $rowdata->intended_weight = '';
-                    $rowdata->effective_weight = '';
-                    $rowdata->discrimination_index = '';
-                    $this->table->add_data_keyed($this->table->format_row($rowdata), $classname);
                 }
             }
             $counter++;

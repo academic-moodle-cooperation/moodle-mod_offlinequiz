@@ -11,7 +11,7 @@
 
 \begin{document}
 
-\subsection{Help for offline quiz statistics}
+\subsection{Information on Offline Quiz Statistics}
 \subsubsection{Definitions}
 \begin{itemize}
 \item $S$ is the set of students for which an offline quiz result exists. $|S|$ is the number of students in $S$.
@@ -24,22 +24,22 @@
 \item $T_{max}=\sum\limits_{i\in I} x_i(max)$ is the maximum grade of the offline quiz.
 \end{itemize}
 
-\subsubsection{Statistiken - "Ubersicht}
+\subsubsection{Statistiken - Overview}
 We assume that a result exists for at least one student, i.e. $|S|>1$.
 
-\paragraph{Durchschnittliche Bewertung}
+\paragraph{Average Grade}
 We calculate the average grade of all students relative to the maximum grade of the offline quiz.
 $\bar{T}=\frac{1}{|S|}\sum\limits_{s\in S}T_s$.
 
 \paragraph{Median}
 All grades in $T_s$ are sorted. If $|S|$ is odd the grade in the middle is displayed. If $|S|$ is even, the mean of the two middle grades is displayed.
 
-\paragraph{Standardabweichung}
+\paragraph{Standard Deviation}
 The standard deviation adjusted to the maximum grade of the offline quiz.
 
 $SD = \sqrt{V(T)} = \sqrt{\frac{1}{|S| - 1}\sum\limits_{s\in S}(T_s - \bar{T})^2}$.
 
-\paragraph{Schiefe und W"olbung der Bewertungsverteilung}
+\paragraph{Skewness and Kurtosis}
 Skewness is a measure of the asymmetry in a distribution. Kurtosis tells you if your distribution has more of a bulge, but thinner tails, or vice-versa. 
 
 First, we calculate:
@@ -73,36 +73,35 @@ The Coefficient of Internal Consistency (Cronbach's Alpha) is a measure for the 
 $CIC=\frac{|I|}{|I|-1}\left(1-\frac{1}{V(T)}\sum\limits_{i\in I}V(x_i)\right)$.
 
 
-\subsubsection{Statistiken - Fragenanalyse}
-\paragraph{Notationen}
+\subsubsection{Statistics - Question Analysis}
+\paragraph{Notation}
 
-$X_i(s) = T_s - x_i(s)$ ist die restliche Bewertung f"ur einen Studierenden $s$ und ein Item $i$.\\
-$\bar{x}_i = \frac{1}{|S_i|}\sum\limits_{s\in S_i}x_i(s)$ ist die durchschnittliche Bewertung f"ur Item $i$ "uber alle Studierende. Analog f"ur andere Werte.
+$X_i(s) = T_s - x_i(s)$ is the remaining grade for student $s$ on item $i$.\\
+$\bar{x}_i = \frac{1}{|S_i|}\sum\limits_{s\in S_i}x_i(s)$ is the average grade for item $i$ for all students. Analogously for other values.
 
-\paragraph{Varianz und Kovarianz}
+\paragraph{Variance and Co-Variance}
 
-Wir nehmen an, dass mindestens zwei Studierende das Item $i$ beantwortet haben, d.h. $|S_i| > 1$.
-Die Varianz der Bewertung f"ur Item $i$ ist definiert als:
+We assume that at least two students have answered item $i$, i.e. $|S_i| > 1$.
+The variance of the grade for item $i$ is defined as:
 
  $V(x_i) = \frac{1}{|S_i| - 1}\sum\limits_{s\in S_i} (x_i(s) - \bar{x}_i)^2$.
 
-\noindent Die Kovarianz von zwei Werten ist definiert als:\\
+\noindent The co-variance of two quantities is defined as:\\
 $C(x_i, X_i) = \frac{1}{|S_i| - 1}\sum\limits_{s\in S_i}(x_i(s) - \bar{x}_i)(X_i(s) - \bar{X}_i)$.
 
 
-\paragraph{Leichtigkeits-Index}
-Der Leichtigkeits-Index (engl. facility index) beschreibt, wie leicht bzw. schwer eine Frage f"ur die Studierenden war. 
-Haben z.B. zwei Studierende ein Item $i$ beantwortet, wobei ein Studierender $50\%$ und der andere $100\%$ der Punkte erreicht hat, dann betr"agt der Leichtigkeits-Index $75\%$. Der Leichtigkeits-Index wird also prozentual ausgedr"uckt:
+\paragraph{Facility Index}
+The facility index is the average score of an item $i$ expressed as a percentage. If, for instance, two students have answered item $i$, where one student achieved $50\%$ and the other student achieved $100\%$, then the facility index is $75\%$.
 
 $F_i = 100\cdot\frac{\bar{x}_i - x_i(min)}{x_i(max) - x_i(min)}$. 
 
-\paragraph{Standardabweichung}
-Die Standardabweichung einer Frage ist ein Ma"s f"ur die Streuung der erreichten Bewertungen f"ur diese Frage um die durchschnittliche Bewertung. 
+\paragraph{Standard Deviation}
+The standard deviation of a question shows how much variation or dispersion exists from the mean grade of that question. 
 
 $SD_i = \frac{\sqrt{V(x_i)}}{x_i(max) - x_i(min)}$.
 
 \paragraph{Discrimination Index}
-Der Korrelations-Koeffizient zwischen $x_i$ and $X_i$ prozentual ausgedr"uckt:
+This is the product moment correlation coefficient between $x_i$ and $X_i$, expressed on a percentage scale:
 
 $D_i= \frac{C(x_i, X_i)}{\sqrt{V(x_i)V(X_i)}}$.
 

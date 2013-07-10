@@ -110,6 +110,7 @@ $string['standarderror'] = 'Standardfehler';
 $string['statistics'] = 'Statistik';
 $string['statistics:componentname'] = 'Teststatistik-Report';
 $string['statisticsforgroup'] = 'Statistik für Gruppe';
+$string['statisticshelp'] = 'Hilfe zu Offline-Test Statistiken';
 $string['statsoverview'] = 'Statistiken Übersicht';
 $string['statsoverviewheader'] = 'Statistiken - Übersicht';
 $string['statisticsreport'] = 'Statistik-Report';

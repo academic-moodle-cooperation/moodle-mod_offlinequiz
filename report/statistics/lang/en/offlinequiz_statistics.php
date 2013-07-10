@@ -104,6 +104,7 @@ $string['standarderror'] = 'Standard error';
 $string['statistics'] = 'Statistics';
 $string['statistics:componentname'] = 'Offlinequiz statistics report';
 $string['statisticsforgroup'] = 'Statistics for group';
+$string['statisticshelp'] = 'Help for offline quiz statistics';
 $string['statsoverview'] = 'Statistics Overview';
 $string['statsoverviewheader'] = 'Statistics - Overview';
 $string['statisticsreport'] = 'Statistics report';

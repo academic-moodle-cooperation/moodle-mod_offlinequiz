@@ -3,5 +3,14 @@ BODY {
     color: #555555;
     font-family: verdana,Arial,Helvetica,sans;
     font-size: 14px;
-    line-height: 2em;
+/*    line-height: 2em; */
+}
+
+h4 {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+h3 {
+    margin-bottom: 5px;
 }
