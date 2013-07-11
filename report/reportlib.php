@@ -159,9 +159,9 @@ function offlinequiz_report_get_significant_questions($offlinequiz) {
     $params[] = $offlinequiz->id;
     $questions = $DB->get_records_sql("SELECT q.id, q.length, qqi.grade AS maxmark
                                          FROM {question} q
-                                         JOIN {offlinequiz_q_instances} qqi ON qqi.question = q.id
+                                         JOIN {offlinequiz_q_instances} qqi ON qqi.questionid = q.id
                                         WHERE q.id $usql
-                                          AND qqi.offlinequiz = ?
+                                          AND qqi.offlinequizid = ?
                                           AND length > 0", $params);
 
     $number = 1;

@@ -66,6 +66,7 @@ $string['copyselectedtogroup'] = 'Ausgewählte Fragen zu Gruppe {$a} ';
 $string['copytogroup'] = 'Alle Fragen zu Gruppe {$a} ';
 $string['correcterror'] = 'korrigieren';
 $string['correctforgroup'] = 'Korrekturbogen für Gruppe {$a}';
+$string['correctionoptionsheading'] = 'Einstellungen für Korrektur von Antworbögen.';
 $string['correctupdated'] = 'Korrekturbogen für Gruppe {$a} angepasst.';
 $string['correct'] = 'richtig';
 $string['couldnotgrab'] = 'Kann Bild {$a} nicht erfassen.';
@@ -117,6 +118,7 @@ $string['editquestions'] = 'Fragen bearbeiten';
 $string['editscannedform'] = 'Scannerbeleg bearbeiten';
 $string['editthislist'] = 'Diese Liste bearbeiten';
 $string['emptygroups'] = 'Einige Offline-Test-Gruppen enthalten keine Fragen. Bitte fügen Sie Fragen hinzu.';
+$string['enroluser'] = 'Teilnehmer/in einschreiben';
 $string['errorreport'] = 'Importfehler-Bericht';
 $string['everythingon'] = 'Aktiviert';
 $string['Excelformat'] = 'Excel-Format';
@@ -268,6 +270,10 @@ $string['offlinequizopens'] = 'Offline-Test beginnt';
 $string['offlinequiz:preview'] = 'Test-Vorschau';
 $string['offlinequiz:viewreports'] = 'Test-Berichte sehen';
 $string['offlinequiz:view'] = 'Test-Informationen sehen';
+$string['oneclickenrol'] = '1-Click Einschreibung';
+$string['oneclickenroldesc'] = 'Wenn Sie diese Option aktivieren haben die Lehrenden beim Korrigieren von Antwortbögen (Fehler "Teilnehmer/in nicht im Kurs") die Möglichkeit Nutzer mit einem Click in den Kurs einzuschreiben.';
+$string['oneclickrole'] = 'Rolle für Einschreibung.';
+$string['oneclickroledesc'] = 'Wählen Sie hier die Rolle aus, die bei der 1-Click Einschreibung verwendet werden soll. Es können nur Rollen mit dem Archetyp "student" ausgewählt werden.';
 $string['onlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
 $string['orderingofflinequiz'] = 'Reihenfolge und Seitenumbrüche';
 $string['otherresultexists'] = 'Ein abweichendes Ergebnis für {$a} existiert bereits. Import ignoriert! Löschen Sie das Ergebnis zuerst.';
@@ -301,6 +307,12 @@ Sie eine Gruppenanmeldung verwenden wollen.</p>
 mit Kreuzen, ähnlich wie die Antworten auf dem Antwortbogen. Die Listen werden hochgeladen und das Programm speichert
 in der Datenbank, wer als anwesend markiert ist. Bitte vermeiden Sie Verschmutzungen im Bereich der Barcodes, da
 diese der Identifikation der Studierenden dienen.</p>';
+$string['partimport'] = 'Importieren von Anwesenheitslisten';
+$string['partimport_help'] = '<p> Hier können Sie die ausgefüllten Anwesenheitslisten importieren.
+Sie können entweder mehrere eingescannte Bilddateien in einer ZIP-Datei
+oder einzelne Bilddateien importieren. Das Offline-Test Modul wird die Bilder im Hintergrund automatisch auswerten.
+Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als JPG-, GIF-,
+PNG- oder TIF-Datei vorliegen. Eine Punktdichte zwischen 200 und 300 DPI wird empfohlen.</p>';
 $string['pdfdeletedforgroup'] = 'Fragebogen für Gruppe {$a} gelöscht';
 $string['pdfintro'] = 'Zusatzinformation';
 $string['pdfintro_help'] = 'Dieser Text wird auf der ersten Seite des PDF-Fragebogens angezeigt und sollte genaue Angaben über die Prüfungsmodalitäten enthalten.

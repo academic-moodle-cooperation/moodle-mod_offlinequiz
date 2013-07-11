@@ -77,6 +77,7 @@ $string['copy'] = 'Copy';
 $string['correct'] = 'correct';
 $string['correcterror'] = 'solve';
 $string['correctforgroup'] = 'Correct answers for Group {$a}';
+$string['correctionoptionsheading'] = 'Correction options.';
 $string['correctupdated'] = 'Updated correction form for group {$a}.';
 $string['couldnotgrab'] = 'Could not grab image {$a}';
 $string['couldnotregister'] = 'Could not register user {$a}';
@@ -134,6 +135,7 @@ $string['editparticipants'] = 'Edit participants';
 $string['editquestions'] = 'Edit questions';
 $string['editscannedform'] = 'Edit scanned form';
 $string['emptygroups'] = 'Some offline quiz groups are empty. Please add some questions.';
+$string['enroluser'] = 'Enrol user';
 $string['errorreport'] = 'Report of import errors';
 $string['everythingon'] = 'enabled';
 $string['Excelformat'] = 'Excel format';
@@ -297,6 +299,10 @@ $string['offlinequiz:preview'] = 'Preview offline quizzes';
 $string['offlinequiz:viewreports'] = 'View offline quiz reports';
 $string['offlinequiz:view'] = 'View offline quiz information';
 $string['offlinequizwillopen'] = 'Offline-Test öffnet am {$a}';
+$string['oneclickenrol'] = '1-Click Enrolment';
+$string['oneclickenroldesc'] = 'If this option is activated teachers have the possiblity to enrol users with one click while correcting answer forms (error "User not in course").';
+$string['oneclickrole'] = 'Role for 1-Click Enrolment.';
+$string['oneclickroledesc'] = 'Choose the role used for 1-click enrolment. Only roles with archetype "student" can be selected.';
 $string['onlylocalcategories'] = 'Only local question categories';
 $string['orderingofflinequiz'] = 'Order and paging';
 $string['orderandpaging_help'] = 'The numbers 10, 20, 30, ... opposite each question indicate the order of the questions. The numbers increase in steps of 10 to leave space for additional questions to be inserted. To reorder the questions, change the numbers then click the "Reorder questions" button.
@@ -325,6 +331,11 @@ $string['participants_help'] = '<p>Lists of participants are designed for large 
 You can add users to different lists. Each list could, for instance, contain the participants in a particular room. The participants can be members of a special group. A group registration tool can be used for creating those groups.
 Lists of participants can be downloaded as PDF documents, printed and marked with crosses just like the answer forms of offline quizzes. Afterwards they can be uploaded and the marked students will be marked as present in the database.
 Please avoid spots on the barcodes as they are used to identify the students.</p>';
+$string['partimport'] = 'Uploading lists of participants';
+$string['partimport_help'] = '<p>
+In this tab you can upload the filled-in lists of participants. You can upload single scanned image files or several scanned image files in a ZIP-archive. The offlinequiz module will process the image files in the background.
+File names are not relevant but should not contain special characters such as umlauts. Images should be JPGs, GIFs, PNGs
+or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['pdfdeletedforgroup'] = 'Form for group {$a} deleted';
 $string['pdfscreated'] = 'PDF forms have been created';
 $string['pdfsdeletedforgroup'] = 'Forms for group {$a} deleted';
