@@ -122,10 +122,54 @@ if ($action == 'load') {
     $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
     $groupnumber = intval($scannedpage->groupnumber);
     $pagenumber = intval($scannedpage->pagenumber);
+    
+    // Remember initial data for cancel action
+    $origfilename = $filename;
+    $origuserkey = $userkey;
+    $origgroupnumber = $groupnumber;
+    $origpagenumber = $pagenumber;
+    $origstatus = $scannedpage->status;
+    $origerror = $scannedpage->error;
+
+    // We get the original choices in case of a cancel action. The choices are put into the HTML form below.
+    $oldchoices = $DB->count_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id));
+    $origchoices = array();
+    if ($oldchoices) {
+        foreach ($oldchoices as $k => $v) {
+            $origchoices[$k] = clone $v;
+        }
+    }    
 } else {
     if ($submitfilename = optional_param('filename', '', PARAM_RAW)) {
         $scannedpage->filename = $submitfilename;
         $filename = $submitfilename;
+    }
+
+    $origfilename = required_param('origfilename', PARAM_ALPHA);
+    $origuserkey = required_param('origuserkey', PARAM_ALPHA);
+    $origgroupnumber = required_param('origgroupnumber', PARAM_INT);
+    $origpagenumber = required_param('origpagenumber', PARAM_INT);
+    $origstatus = required_param('origstatus', PARAM_ALPHA);
+    $origerror = required_param('origerror', PARAM_ALPHA);
+
+    $origchoicesraw = required_param('origchoice', PARAM_RAW);
+    $origchoices = array();
+    $counter = 1;
+    foreach ($origchoicesraw as $rawchoice) {
+        print_object($rawchoice);
+//                         echo "<input type=\"hidden\" name=\"origchoice[" . $oldchoice->id .
+//              "]\" value=\"" . $oldchoice->slotnumber . '_' . $oldchoice->choicenumber . '_' . $oldchoice->value . "\">\n";
+        $parts = preg_split('/_/', $rawchoice);
+        print_object($parts);
+        $slotnumber = $parts[0];
+        $choicenumber = $parts[1];
+        $value = $parts[2];
+        $choice = new stdClass();
+        $choice->id = $counter++;
+        $choice->slotnumber = $slotnumber;
+        $choice->choicenumber = $choicenumber;
+        $choice->value = $value;
+        $origchoices[] = $choice;
     }
 }
 
@@ -139,9 +183,35 @@ if ($nodbcorners) {
 // Step 2. The user might have submitted data.
 // =======================================
 // =============================================
+//   Action cancel.
+// =============================================
+if ($action == 'cancel') {
+    $scannedpage->filename = $origfilename;
+    $scannedpage->userkey = $origuserkey;
+    $scannedpage->groupnumber = $origgroupnumber;
+    $scannedpage->pagenumber = $origpagenumber;
+    $scannedpage->status = $origstatus;
+    $scannedpage->error = $origerror;
+    $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
+    
+    // If there are original choices, delete all choices and insert the original ones into the DB.
+    if ($origchoices) {
+        $DB->delete_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id));
+        foreach ($origchoices as $choice) {
+            $choice->scannedpageid = $scannedpage->id;
+            $DB->insert_record('$offlinequiz_choices', $choice);
+        }
+    }
+    
+    // Display a button to close the window and die.
+    echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
+onClick=\"self.close(); return false;\"><br />";
+    die;
+
+// =============================================
 //   Action checkuser.
 // =============================================
-if ($action == 'checkuser') {
+} else if ($action == 'checkuser') {
 
     if (!confirm_sesskey()) {
         print_error('invalidsesskey');
@@ -503,11 +573,6 @@ onClick=\"self.close(); return false;\"><br />";
     $pagenumber = intval($scannedpage->pagenumber);
 }
 
-// If we correct an OK page or a suspended page we can first process it and store the choices in the database.
-if ($action == 'load' ) {
-    $oldchoices = $DB->count_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id));
-}
-
 // If we have an OK page and the action was checkuser, setpage, etc. we should process the page.
 if (($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') && ($action == 'readjust' ||
         $action == 'checkuser' || $action == 'enrol' || $action == 'setpage' || $action == 'rotate' || ($action == 'load' && !$oldchoices))) {
@@ -793,6 +858,11 @@ function submitReadjust() {
  }
 }
 
+function submitCancel() {
+  document.forms.cform.elements['action'].value='cancel'
+  document.forms.cform.submit();
+}
+
 function submitPage() {
   for (i=0; i<=3; i++) {
     corner = document.getElementById('c-'+i);
@@ -863,8 +933,10 @@ echo "<div style=\"position:absolute; top:10px; left:" . (OQ_IMAGE_WIDTH + 10) .
 echo "<div style=\"margin:4px;margin-bottom:8px\"><u>";
 print_string('actions');
 echo ":</u></div>\n";
+// echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
+// onClick=\"window.opener.location.reload(1); self.close(); return false;\"><br />";
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
-onClick=\"window.opener.location.reload(1); self.close(); return false;\"><br />";
+onClick=\"submitCancel(); return false;\"><br />";
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('rotate', 'offlinequiz')."\" name=\"submitbutton5\"
 onClick=\"submitRotated(); return false;\"><br />";
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('readjust', 'offlinequiz')."\" name=\"submitbutton3\"
@@ -918,6 +990,21 @@ echo "<input type=\"hidden\" name=\"sesskey\" value=\"". sesskey() . "\">\n";
 echo "<input type=\"hidden\" name=\"filename\" value=\"$filename\">\n";
 echo "<input type=\"hidden\" name=\"action\" value=\"update\">\n";
 echo "<input type=\"hidden\" name=\"show\" value=\"0\">\n";
+
+echo "<input type=\"hidden\" name=\"origfilename\" value=\"$origfilename\">\n";
+echo "<input type=\"hidden\" name=\"origuserkey\" value=\"$origuserkey\">\n";
+echo "<input type=\"hidden\" name=\"origgroupnumber\" value=\"$origgroupnumber\">\n";
+echo "<input type=\"hidden\" name=\"origpagenumber\" value=\"$origpagenumber\">\n";
+echo "<input type=\"hidden\" name=\"origstatus\" value=\"$origstatus\">\n";
+echo "<input type=\"hidden\" name=\"origerror\" value=\"$origerror\">\n";
+
+// Remember old choices for Cancel action.
+if ($origchoices) {
+    foreach ($origchoices as $origchoice) {
+        echo "<input type=\"hidden\" name=\"origchoice[" . $origchoice->id .
+             "]\" value=\"" . $origchoice->slotnumber . '_' . $origchoice->choicenumber . '_' . $origchoice->value . "\">\n";
+    }
+}     
 
 if ($userchanged) {
     echo "<input type=\"hidden\" name=\"userchanged\" value=\"1\">\n";
