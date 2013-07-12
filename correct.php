@@ -105,7 +105,11 @@ if ($action == 'rotate') {
 $scanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
 
 // Load the stored picture file.
-$sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
+if (property_exists($scannedpage, 'id')) {
+    $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners, $scannedpage->id);
+} else {
+    $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
+}
 
 // Make a first check.
 if (!$scanner->check_deleted()) {
