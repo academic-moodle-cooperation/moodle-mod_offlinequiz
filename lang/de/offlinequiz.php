@@ -53,6 +53,7 @@ $string['changed'] = 'Ergebnis hat sich geändert.';
 $string['checkparts'] = 'Ausgewählte Teilnehmer/innen als anwesend markieren';
 $string['checkuserid'] = 'Gruppe/Matrikelnummer überprüfen';
 $string['closebeforeopen'] = 'Konnte die Einstellungen nicht speichern. Die Beginnzeit für Berichte liegt nach der Endzeit.';
+$string['closewindow'] = 'Fenster schließen';
 $string['configintro'] = 'Die Einstellungen, die Sie hier treffen werden als Standardwerte für neue Offline-Tests verwendet.';
 $string['configonlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
 $string['configpapergray'] = 'Weißwert des Papieres, das für Antwortbögen verwendet wird.';

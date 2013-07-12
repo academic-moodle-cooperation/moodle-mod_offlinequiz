@@ -591,10 +591,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $offlinequizinfo[get_string('idnumbermod')] = $cm->idnumber;
         }
         if ($offlinequiz->timeopen) {
-            $offlinequizinfo[get_string('offlinequizopen', 'offlinequiz')] = userdate($offlinequiz->timeopen);
+            $offlinequizinfo[get_string('reviewopens', 'offlinequiz')] = userdate($offlinequiz->timeopen);
         }
         if ($offlinequiz->timeclose) {
-            $offlinequizinfo[get_string('offlinequizclose', 'offlinequiz')] = userdate($offlinequiz->timeclose);
+            $offlinequizinfo[get_string('reviewcloses', 'offlinequiz')] = userdate($offlinequiz->timeclose);
         }
         if ($offlinequiz->timeopen && $offlinequiz->timeclose) {
             $offlinequizinfo[get_string('duration', 'offlinequiz_statistics')] =

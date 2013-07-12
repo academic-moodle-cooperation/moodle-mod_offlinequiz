@@ -130,47 +130,21 @@ if ($action == 'load') {
     $origpagenumber = $pagenumber;
     $origstatus = $scannedpage->status;
     $origerror = $scannedpage->error;
+    $origtime = $scannedpage->time;
 
-    // We get the original choices in case of a cancel action. The choices are put into the HTML form below.
-    $oldchoices = $DB->count_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id));
-    $origchoices = array();
-    if ($oldchoices) {
-        foreach ($oldchoices as $k => $v) {
-            $origchoices[$k] = clone $v;
-        }
-    }    
 } else {
     if ($submitfilename = optional_param('filename', '', PARAM_RAW)) {
         $scannedpage->filename = $submitfilename;
         $filename = $submitfilename;
     }
 
-    $origfilename = required_param('origfilename', PARAM_ALPHA);
-    $origuserkey = required_param('origuserkey', PARAM_ALPHA);
+    $origfilename = required_param('origfilename', PARAM_FILE);
+    $origuserkey = required_param('origuserkey', PARAM_ALPHANUM);
     $origgroupnumber = required_param('origgroupnumber', PARAM_INT);
     $origpagenumber = required_param('origpagenumber', PARAM_INT);
     $origstatus = required_param('origstatus', PARAM_ALPHA);
     $origerror = required_param('origerror', PARAM_ALPHA);
-
-    $origchoicesraw = required_param('origchoice', PARAM_RAW);
-    $origchoices = array();
-    $counter = 1;
-    foreach ($origchoicesraw as $rawchoice) {
-        print_object($rawchoice);
-//                         echo "<input type=\"hidden\" name=\"origchoice[" . $oldchoice->id .
-//              "]\" value=\"" . $oldchoice->slotnumber . '_' . $oldchoice->choicenumber . '_' . $oldchoice->value . "\">\n";
-        $parts = preg_split('/_/', $rawchoice);
-        print_object($parts);
-        $slotnumber = $parts[0];
-        $choicenumber = $parts[1];
-        $value = $parts[2];
-        $choice = new stdClass();
-        $choice->id = $counter++;
-        $choice->slotnumber = $slotnumber;
-        $choice->choicenumber = $choicenumber;
-        $choice->value = $value;
-        $origchoices[] = $choice;
-    }
+    $origtime = required_param('origtime', PARAM_INT);
 }
 
 // If we still don't have corners, get them from the scanner.
@@ -192,20 +166,12 @@ if ($action == 'cancel') {
     $scannedpage->pagenumber = $origpagenumber;
     $scannedpage->status = $origstatus;
     $scannedpage->error = $origerror;
+    $scannedpage->time = $origtime;
     $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
     
-    // If there are original choices, delete all choices and insert the original ones into the DB.
-    if ($origchoices) {
-        $DB->delete_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id));
-        foreach ($origchoices as $choice) {
-            $choice->scannedpageid = $scannedpage->id;
-            $DB->insert_record('$offlinequiz_choices', $choice);
-        }
-    }
-    
     // Display a button to close the window and die.
-    echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
-onClick=\"self.close(); return false;\"><br />";
+    echo "<center><input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('closewindow', 'offlinequiz')."\" name=\"submitbutton4\"
+onClick=\"self.close(); return false;\"></center>";
     die;
 
 // =============================================
@@ -573,6 +539,9 @@ onClick=\"self.close(); return false;\"><br />";
     $pagenumber = intval($scannedpage->pagenumber);
 }
 
+// We count the old choices to decide whether to process the page again.
+$oldchoices = $DB->count_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id));
+
 // If we have an OK page and the action was checkuser, setpage, etc. we should process the page.
 if (($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') && ($action == 'readjust' ||
         $action == 'checkuser' || $action == 'enrol' || $action == 'setpage' || $action == 'rotate' || ($action == 'load' && !$oldchoices))) {
@@ -594,7 +563,6 @@ if (!empty($choices)) {
     }
 }
 
-
 // Retrieve the offlinequiz group.
 if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz->numgroups) {
     if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'number' => $groupnumber))) {
@@ -605,7 +573,6 @@ if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz
 }
 // Check whether the user exists in Moodle.
 $user = $DB->get_record('user', array($offlinequizconfig->ID_field => $userkey));
-
 
 // Check whether the user is enrolled in the current course.
 $notincourse = false;
@@ -997,14 +964,7 @@ echo "<input type=\"hidden\" name=\"origgroupnumber\" value=\"$origgroupnumber\"
 echo "<input type=\"hidden\" name=\"origpagenumber\" value=\"$origpagenumber\">\n";
 echo "<input type=\"hidden\" name=\"origstatus\" value=\"$origstatus\">\n";
 echo "<input type=\"hidden\" name=\"origerror\" value=\"$origerror\">\n";
-
-// Remember old choices for Cancel action.
-if ($origchoices) {
-    foreach ($origchoices as $origchoice) {
-        echo "<input type=\"hidden\" name=\"origchoice[" . $origchoice->id .
-             "]\" value=\"" . $origchoice->slotnumber . '_' . $origchoice->choicenumber . '_' . $origchoice->value . "\">\n";
-    }
-}     
+echo "<input type=\"hidden\" name=\"origtime\" value=\"$origtime\">\n";
 
 if ($userchanged) {
     echo "<input type=\"hidden\" name=\"userchanged\" value=\"1\">\n";
@@ -1061,7 +1021,6 @@ if ($scannedpage->error == 'invalidpagenumber') {
     echo "<input type=\"hidden\" name=\"page\" value=\"$pagenumber\">\n";
 }
 echo "</form>\n";
-
 
 // ==================================================
 // Print hotspots.
