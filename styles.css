@@ -205,7 +205,7 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-report .controls {text-align: center;}
 #page-mod-offlinequiz-report .dubious{background-color: #fcc;}
 #page-mod-offlinequiz-report .highlight{border :medium solid yellow;background-color:lightYellow;}
-#page-mod-offlinequiz-report .negcovar{border :medium solid pink;}
+#page-mod-offlinequiz-report .negcovar{border :medium solid pink; width: 70%; float: right;}
 #page-mod-offlinequiz-report .toggleincludeauto {text-align: center;}
 #page-mod-offlinequiz-report .gradetheselink {font-size: 0.8em;}
 #page-mod-offlinequiz-report .mform fieldset {margin: 0;}
@@ -334,6 +334,11 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #page-mod-offlinequiz-edit .editq div.question div.content .singlequestion.missingtype .questionname {font-style: italic; max-width: 75%;}
 #page-mod-offlinequiz-edit .editq div.question div.description div.content .questiontext {max-width: 75%;}
 #page-mod-offlinequiz-edit .editq div.question div.qnum{font-size:1.5em;}
+
+#page-mod-offlinequiz-edit div#page-content div.offlinequizpage div.pagecontent div.question div.questioncontainer div.qnum input[type="checkbox"] {
+  margin-right: 7px;
+  vertical-align: text-bottom;
+}
 
 table#categoryquestions td,
 #page-mod-offlinequiz-edit table#categoryquestions th{overflow:hidden;white-space:nowrap;}
@@ -539,7 +544,84 @@ a:hover
     vertical-align: middle;
 }
 
-#page-mod-offlinequiz-edit div#page-content div.offlinequizpage div.pagecontent div.question div.questioncontainer div.qnum input[type="checkbox"] {
-  margin-right: 7px;
-  vertical-align: text-bottom;
+#page-mod-offlinequiz-report table#statsoverviewtable {
+    border: 1px solid #555555;
+    width: 50%;
 }
+#page-mod-offlinequiz-report table#statsoverviewtable .r1 {
+    background-color: #F2F2F2;
+}
+#page-mod-offlinequiz-report table#questionstatstable {
+    border: 1px solid #555555;
+    width: 60%;
+}
+#page-mod-offlinequiz-report table#questionstatstable .r1 {
+    background-color: #F2F2F2;
+}
+#page-mod-offlinequiz-report table#questionstatstable tr td.c0 {
+    width: 50%;
+}
+#page-mod-offlinequiz-report table#questionstatstable .r1 {
+    background-color: #F2F2F2;
+}
+#page-mod-offlinequiz-report table#statisticsquestiontable {
+    border: 1px solid #555555;
+    width: 80%;
+}
+#page-mod-offlinequiz-report table#statisticsquestiontable .r1 {
+    background-color: #F2F2F2;
+}
+#page-mod-offlinequiz-report tr.redrow {
+	color: red;
+}
+#page-mod-offlinequiz-report tr.greenrow {
+	color: green;
+}
+#page-mod-offlinequiz-report table#questionstatistics .r1 {
+    background-color: #F2F2F2;
+}
+#page-mod-offlinequiz-report table#questionstatistics .numcol {
+	text-align: right;
+}
+#page-mod-offlinequiz-report table#questionstatistics .questiontext {
+	color: #555555;
+}
+#page-mod-offlinequiz-report table#questionstatistics td.numcol div.negcovar {
+	position: relative;
+	width: 18em;
+}
+#page-mod-offlinequiz-report table#questionstatistics td.cell {
+	border: 1px solid #DDDDDD;
+    border-collapse: collapse;
+}
+#page-mod-offlinequiz-report div.no-overflow table th.header {
+	border: 1px solid #CCCCCC;
+	border-collapse: collapse;
+}
+
+/* #page-mod-offlinequiz-report table#questionstatistics td.c0 { */
+/* 	width: 2em; */
+/* } */
+/* #page-mod-offlinequiz-report div.no-overflow table th.c0 { */
+/* 	width: 2em; */
+/* } */
+
+/* #page-mod-offlinequiz-report table#questionstatistics td.c1 { */
+/* 	width: 2em; */
+/* } */
+/* #page-mod-offlinequiz-report div.no-overflow table th.c1 { */
+/* 	width: 2em; */
+/* } */
+/*  #page-mod-offlinequiz-report table#questionstatistics td.c2 { */
+/* 	width: 2em; */
+/* } */
+/* #page-mod-offlinequiz-report div.no-overflow table th.c2 { */
+/* 	width: 2em; */
+/* } */
+/*  #page-mod-offlinequiz-report table#questionstatistics td.c3 { */
+/* 	width: 40em; */
+/* } */
+/* #page-mod-offlinequiz-report div.no-overflow table th.c3 { */
+/* 	width: 40em; */
+/* } */
+  

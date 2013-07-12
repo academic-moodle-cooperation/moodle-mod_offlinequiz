@@ -629,7 +629,7 @@ function offlinequiz_user_outline($course, $user, $mod, $offlinequiz) {
     $return->time = 0;
     $return->info = '';
 
-    if ($grade = $DB->get_record('offlinequiz_results', array('userid' => $user->id, 'offlinequiz' => $offlinequiz->id))) {
+    if ($grade = $DB->get_record('offlinequiz_results', array('userid' => $user->id, 'offlinequizid' => $offlinequiz->id))) {
         if ((float) $grade->sumgrades) {
             $return->info = get_string('grade') . ':&nbsp;' . round($grade->sumgrades, $offlinequiz->decimalpoints);
         }

@@ -120,6 +120,7 @@ $string['editscannedform'] = 'Scannerbeleg bearbeiten';
 $string['editthislist'] = 'Diese Liste bearbeiten';
 $string['emptygroups'] = 'Einige Offline-Test-Gruppen enthalten keine Fragen. Bitte fügen Sie Fragen hinzu.';
 $string['enroluser'] = 'Teilnehmer/in einschreiben';
+$string['erroraccessingreport'] = 'Sie haben nicht genügend Rechte, um diesen Bericht einzusehen.';
 $string['errorreport'] = 'Importfehler-Bericht';
 $string['everythingon'] = 'Aktiviert';
 $string['Excelformat'] = 'Excel-Format';
@@ -262,6 +263,7 @@ $string['offlinequizisclosed'] = 'Offline-Test geschlossen';
 $string['offlinequizisclosedwillopen'] = 'Offline-Test geschlossen (öffnet am {$a})';
 $string['offlinequizisopen'] = 'Offline-Test offen';
 $string['offlinequizisopenwillclose'] = 'Offline-Test offen (schließt am {$a})';
+$string['offlinequiz:addinstance'] = 'Offline-Test hinzufügen';
 $string['offlinequiz:createquiz'] = 'Fragebögen erstellen';
 $string['offlinequiz:deleteattempts'] = 'Ergebnisse löschen';
 $string['offlinequiz:grade'] = 'Tests manuell bewerten';
@@ -446,6 +448,7 @@ Außerdem können sie das korrekte Ankreuzen der Matrikelnummer interaktiv üben
 Falls Sie diese Option auf "Ja" setzen, die Prüfung aber ausblenden, wird der Link zum Tutorial trotzdem nicht sichtbar sein. 
 In diesem Fall können Sie das Tutorial auf der Startseite verlinken.';
 $string['statistics'] = 'Statistik';
+$string['statisticsplural'] = 'Statistiken';
 $string['theattempt'] = 'Das Ergebnis';
 $string['timesup'] = 'Zeit wurde überschritten!';
 $string['trigger'] = 'Unter-/Obergrenze';

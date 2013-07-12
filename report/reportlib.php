@@ -380,11 +380,33 @@ function offlinequiz_report_scale_summarks_as_percentage($rawmark, $offlinequiz,
         return $rawmark;
     }
 
-    $mark = $rawmark * 100 / $offlinequiz->sumgrades;
+    $mark = 100 * $rawmark / $offlinequiz->sumgrades;
     if ($round) {
         $mark = offlinequiz_format_grade($offlinequiz, $mark);
     }
     return $mark . '%';
+}
+
+/**
+ * Format a number as a percentage out of $offlinequiz->sumgrades
+ * 
+ * @param number $rawgrade the mark to format.
+ * @param object $offlinequiz the offlinequiz settings
+ * @param bool $round whether to round the results ot $offlinequiz->decimalpoints.
+ */
+function offlinequiz_report_scale_grade($rawmark, $offlinequiz, $round = true) {
+    if ($offlinequiz->sumgrades <= 0) {
+        return '';
+    }
+    if (!is_numeric($rawmark)) {
+        return $rawmark;
+    }
+
+    $mark = $rawmark / $offlinequiz->sumgrades * $offlinequiz->grade;
+    if ($round) {
+        $mark = offlinequiz_format_grade($offlinequiz, $mark);
+    }
+    return $mark;
 }
 
 

@@ -1245,7 +1245,8 @@ function offlinequiz_question_edit_button($cmid, $question, $returnurl, $content
  */
 function offlinequiz_question_preview_button($offlinequiz, $question, $label = false) {
     global $CFG, $OUTPUT;
-    if (!question_has_capability_on($question, 'use', $question->category)) {
+    if (property_exists($question, 'category') &&
+            !question_has_capability_on($question, 'use', $question->category)) {
         return '';
     }
 

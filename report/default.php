@@ -57,7 +57,7 @@ abstract class offlinequiz_default_report {
      * @param object $offlinequiz the offlinequiz settings.
      * @param string $reportmode the report name.
      */
-    public function print_header_and_tabs($cm, $course, $offlinequiz, $reportmode = 'overview') {
+    public function print_header_and_tabs($cm, $course, $offlinequiz, $reportmode = 'overview', $currenttab = 'reports') {
         global $CFG, $PAGE, $OUTPUT;
 
         switch ($reportmode) {
@@ -71,18 +71,25 @@ abstract class offlinequiz_default_report {
                 $reporttitle = get_string('regradingquiz', 'offlinequiz');
                 break;
             case 'statistics':
-                $reporttitle = get_string('statistics', 'offlinequiz');
+                $reporttitle = get_string('statisticsplural', 'offlinequiz');
                 break;
         }
         
+        if ($currenttab == 'statistics') {
+            $reporttitle = get_string('statisticsplural', 'offlinequiz');
+        }
+
         // Print the page header
         $PAGE->set_title(format_string($offlinequiz->name) . ' -- ' . $reporttitle);
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
 
         // Print the tabs
-        $currenttab = 'reports';
-        $mode = $reportmode;
+        if ($currenttab == 'statistics') {
+            $statmode = $reportmode;
+        } else {
+            $mode = $reportmode;
+        }
         include($CFG->dirroot . '/mod/offlinequiz/tabs.php');
     }
 

@@ -749,7 +749,7 @@ echo ".imagebutton {width:250px; height:24px; text-align:left; margin-bottom:10p
 echo "</style>\n";
 echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
 
-echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/jquery-1.4.3.js');
+echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/jquery-1.4.3.min.js');
 echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/ui/jquery.ui.core.js');
 echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/ui/jquery.ui.widget.js');
 echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/ui/jquery.ui.mouse.js');
@@ -757,7 +757,7 @@ echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/ui/jquer
 
 $javascript = "<script language=\"JavaScript\">
 function checkinput() {
-// Get all item elements. We have jquery!
+ // Get all item elements. We have jquery!
  items = $('input[name^=\"item\"]');
  console.log(items);
  for (i=0; i < items.length; i++) {
@@ -779,12 +779,12 @@ function checkinput() {
 }
 
 function set_userid(image, x, y) {
-for (i=0; i<=9; i++) {
-key = 'u'+x+i;
-document.images[key].src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"
-}
-image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"
-document.forms.cform.usernumber.value = document.forms.cform.usernumber.value.substr(0,x) + y + document.forms.cform.usernumber.value.substr(x+1);
+  for (i=0; i<=9; i++) {
+    key = 'u'+x+i;
+    document.images[key].src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"
+  }
+  image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"
+  document.forms.cform.usernumber.value = document.forms.cform.usernumber.value.substr(0,x) + y + document.forms.cform.usernumber.value.substr(x+1);
 }
 
 function set_group(image, x) {
@@ -811,18 +811,18 @@ function set_item(image, x, y) {
 function submitReadjust() {
  changed = false;
  for (i=0; i<=3; i++) {
-  corner = document.getElementById('c-'+i);
-  document.forms.cform.elements['c-'+i+'-x'].value = corner.style.left.replace('px','');
-  document.forms.cform.elements['c-'+i+'-y'].value = corner.style.top.replace('px','');
-  if (document.forms.cform.elements['c-'+i+'-x'].value != document.forms.cform.elements['c-old-'+i+'-x'].value) {
-    changed = true;
-  }
-  if (document.forms.cform.elements['c-'+i+'-y'].value != document.forms.cform.elements['c-old-'+i+'-y'].value) {
-    changed = true;
-  }
+   corner = document.getElementById('c-'+i);
+   document.forms.cform.elements['c-'+i+'-x'].value = corner.style.left.replace('px','');
+   document.forms.cform.elements['c-'+i+'-y'].value = corner.style.top.replace('px','');
+   if (document.forms.cform.elements['c-'+i+'-x'].value != document.forms.cform.elements['c-old-'+i+'-x'].value) {
+     changed = true;
+   }
+   if (document.forms.cform.elements['c-'+i+'-y'].value != document.forms.cform.elements['c-old-'+i+'-y'].value) {
+     changed = true;
+   }
  }
  if (!changed) {
-  alert('" . get_string('movecorners', 'offlinequiz') . "')
+   alert('" . get_string('movecorners', 'offlinequiz') . "')
  } else {
   document.forms.cform.elements['action'].value='readjust'
   document.forms.cform.submit();
@@ -845,12 +845,12 @@ function submitPage() {
 }
 
 function submitCheckuser() {
-for (i=0; i<=3; i++) {
-document.forms.cform.elements['c-'+i+'-x'].value = document.forms.cform.elements['c-old-'+i+'-x'].value;  // Reset possible readjustment.
-document.forms.cform.elements['c-'+i+'-y'].value = document.forms.cform.elements['c-old-'+i+'-y'].value;
-}
-document.forms.cform.elements['action'].value='checkuser'
-document.forms.cform.submit();
+  for (i=0; i<=3; i++) {
+    document.forms.cform.elements['c-'+i+'-x'].value = document.forms.cform.elements['c-old-'+i+'-x'].value;  // Reset possible readjustment.
+    document.forms.cform.elements['c-'+i+'-y'].value = document.forms.cform.elements['c-old-'+i+'-y'].value;
+  }
+  document.forms.cform.elements['action'].value='checkuser'
+  document.forms.cform.submit();
 }
 
 function submitEnrol() {
@@ -859,8 +859,8 @@ function submitEnrol() {
 }
 
 function submitRotated() {
-document.forms.cform.elements['action'].value='rotate'
-document.forms.cform.submit();
+  document.forms.cform.elements['action'].value='rotate'
+  document.forms.cform.submit();
 }
 
 </script>";

@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ function xmldb_offlinequiz_statistics_install() {
 
     $record = new stdClass();
     $record->name         = 'statistics';
-    $record->displayorder = 8000;
+    $record->displayorder = 6000;
     $record->capability   = 'offlinequiz/statistics:view';
 
     if ($dbman->table_exists('offlinequiz_reports')) {

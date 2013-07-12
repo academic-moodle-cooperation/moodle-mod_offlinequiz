@@ -61,18 +61,21 @@ if (has_capability('mod/offlinequiz:createofflinequiz', $context)) {
 if (has_capability('mod/offlinequiz:viewreports', $context)) {
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id", get_string('results', 'offlinequiz'));
 }
+if (has_capability('mod/offlinequiz:viewreports', $context) && has_capability('offlinequiz/statistics:view', $context)) {
+    $row[] = new tabobject('statistics', "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id&mode=statistics", get_string('statisticsplural', 'offlinequiz'));
+}
 
 if ($currenttab != 'info' || count($row) != 1) {
     $tabs[] = $row;
 }
 
-if ($currenttab == 'reports' and isset($mode)) {
+if ($currenttab == 'reports' && isset($mode)) {
     $inactive[] = 'reports';
     $activated[] = 'reports';
 
     $allreports = get_list_of_plugins("mod/offlinequiz/report");
 
-    $reportlist = array('overview', 'rimport', 'statistics'); //  'regrade'  // Standard reports we want to show first
+    $reportlist = array('overview', 'rimport'); //  'regrade'  // Standard reports we want to show first
 
     foreach ($allreports as $report) {
         if (!in_array($report, $reportlist)) {
@@ -83,10 +86,12 @@ if ($currenttab == 'reports' and isset($mode)) {
     $row  = array();
     $currenttab = '';
     foreach ($reportlist as $report) {
-        $row[] = new tabobject($report, "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id&amp;mode=$report",
-        get_string($report, 'offlinequiz'));
-        if ($report == $mode) {
-            $currenttab = $report;
+        if ($report != 'statistics') {
+            $row[] = new tabobject($report, "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id&amp;mode=$report",
+                    get_string($report, 'offlinequiz'));
+            if ($report == $mode) {
+                $currenttab = $report;
+            }
         }
     }
     $tabs[] = $row;
@@ -147,6 +152,26 @@ if ($currenttab == 'editq' and isset($mode)) {
             array('reordertool' => 0)), get_string('editingofflinequiz', 'offlinequiz'));
     $row[] = new tabobject('reorder', new moodle_url($thispageurl,
             array('reordertool' => 1)), get_string('orderingofflinequiz', 'offlinequiz'));
+
+    // $row[] = new tabobject('editq', "$CFG->wwwroot/mod/offlinequiz/edit.php?cmid=$offlinequiz->cmid", $strofflinequiz, $streditingofflinequiz);
+
+    $tabs[] = $row;
+}
+
+if ($currenttab == 'statistics' and isset($statmode)) {
+    $inactive[] = 'statistics';
+    $activated[] = 'statistics';
+
+    $row  = array();
+    $currenttab = $statmode;
+    $offlinegroup = optional_param('offlinegroup', -1, PARAM_INT);
+    
+    $row[] = new tabobject('statsoverview', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
+            array('mode' => 'statistics', 'statmode' => 'statsoverview', 'offlinegroup' => $offlinegroup)), get_string('statsoverview', 'offlinequiz_statistics'));
+    $row[] = new tabobject('questionstats', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
+            array('mode' => 'statistics', 'statmode' => 'questionstats', 'offlinegroup' => $offlinegroup)), get_string('questionstats', 'offlinequiz_statistics'));
+    $row[] = new tabobject('questionandanswerstats', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id, 
+            array('mode' => 'statistics', 'statmode' => 'questionandanswerstats', 'offlinegroup' => $offlinegroup)), get_string('questionandanswerstats', 'offlinequiz_statistics'));
 
     // $row[] = new tabobject('editq', "$CFG->wwwroot/mod/offlinequiz/edit.php?cmid=$offlinequiz->cmid", $strofflinequiz, $streditingofflinequiz);
 

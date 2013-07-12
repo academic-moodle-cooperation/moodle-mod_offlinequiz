@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * Offlinequiz statistics report, table for showing statistics of each question in the offlinequiz.
  *
  * @package   offlinequiz_statistics
- * @copyright 2008 Jamie Pratt
+ * @copyright 2013 The University of Vienna
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ require_once($CFG->libdir.'/tablelib.php');
  * This table has one row for each question in the offlinequiz, with sub-rows when
  * random questions appear. There are columns for the various statistics.
  *
- * @copyright 2008 Jamie Pratt
+ * @copyright 2013 The University of Vienna
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_statistics_table extends flexible_table {
@@ -93,8 +93,8 @@ class offlinequiz_statistics_table extends flexible_table {
             $headers[] = get_string('standarddeviationq', 'offlinequiz_statistics');
         }
 
-        $columns[] = 'random_guess_score';
-        $headers[] = get_string('random_guess_score', 'offlinequiz_statistics');
+//         $columns[] = 'random_guess_score';
+//         $headers[] = get_string('random_guess_score', 'offlinequiz_statistics');
 
         $columns[] = 'intended_weight';
         $headers[] = get_string('intended_weight', 'offlinequiz_statistics');
@@ -105,21 +105,22 @@ class offlinequiz_statistics_table extends flexible_table {
         $columns[] = 'discrimination_index';
         $headers[] = get_string('discrimination_index', 'offlinequiz_statistics');
 
-        $columns[] = 'discriminative_efficiency';
-        $headers[] = get_string('discriminative_efficiency', 'offlinequiz_statistics');
+//         $columns[] = 'discriminative_efficiency';
+//         $headers[] = get_string('discriminative_efficiency', 'offlinequiz_statistics');
 
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->sortable(false);
 
-        $this->column_class('s', 'numcol');
-        $this->column_class('facility', 'numcol');
+        $this->column_class('number', 'number');
+        $this->column_class('s', 's');
+        $this->column_class('facility', 'facility');
         $this->column_class('sd', 'numcol');
-        $this->column_class('random_guess_score', 'numcol');
+        //$this->column_class('random_guess_score', 'numcol');
         $this->column_class('intended_weight', 'numcol');
         $this->column_class('effective_weight', 'numcol');
         $this->column_class('discrimination_index', 'numcol');
-        $this->column_class('discriminative_efficiency', 'numcol');
+//        $this->column_class('discriminative_efficiency', 'numcol');
 
         // Set up the table.
         $this->define_baseurl($reporturl->out());
@@ -226,7 +227,7 @@ class offlinequiz_statistics_table extends flexible_table {
             return '';
         }
 
-        return number_format($question->_stats->facility*100, 2) . '%';
+        return format_float($question->_stats->facility*100, 2) . '%';
     }
 
     /**
@@ -239,7 +240,7 @@ class offlinequiz_statistics_table extends flexible_table {
             return '';
         }
 
-        return number_format($question->_stats->sd*100 / $question->_stats->maxmark, 2) . '%';
+        return format_float($question->_stats->sd*100 / $question->_stats->maxmark, 2) . '%';
     }
 
     /**
@@ -247,13 +248,13 @@ class offlinequiz_statistics_table extends flexible_table {
      * @param object $question containst the data to display.
      * @return string contents of this table cell.
      */
-    protected function col_random_guess_score($question) {
-        if (is_null($question->_stats->randomguessscore)) {
-            return '';
-        }
+//     protected function col_random_guess_score($question) {
+//         if (is_null($question->_stats->randomguessscore)) {
+//             return '';
+//         }
 
-        return number_format($question->_stats->randomguessscore * 100, 2).'%';
-    }
+//         return format_float($question->_stats->randomguessscore * 100, 2).'%';
+//     }
 
     /**
      * The intended question weight. Maximum mark for the question as a percentage
@@ -292,7 +293,7 @@ class offlinequiz_statistics_table extends flexible_table {
             return $negcovar;
         }
 
-        return number_format($question->_stats->effectiveweight, 2) . '%';
+        return format_float($question->_stats->effectiveweight, 2) . '%';
     }
 
     /**
@@ -307,7 +308,7 @@ class offlinequiz_statistics_table extends flexible_table {
             return $question->_stats->discriminationindex;
         }
 
-        return number_format($question->_stats->discriminationindex, 2) . '%';
+        return format_float($question->_stats->discriminationindex, 2) . '%';
     }
 
     /**
@@ -315,13 +316,13 @@ class offlinequiz_statistics_table extends flexible_table {
      * @param object $question containst the data to display.
      * @return string contents of this table cell.
      */
-    protected function col_discriminative_efficiency($question) {
-        if (!is_numeric($question->_stats->discriminativeefficiency)) {
-            return '';
-        }
+//     protected function col_discriminative_efficiency($question) {
+//         if (!is_numeric($question->_stats->discriminativeefficiency)) {
+//             return '';
+//         }
 
-        return number_format($question->_stats->discriminativeefficiency, 2) . '%';
-    }
+//         return format_float($question->_stats->discriminativeefficiency, 2) . '%';
+//     }
 
     /**
      * This method encapsulates the test for wheter a question should be considered dubious.
@@ -334,7 +335,8 @@ class offlinequiz_statistics_table extends flexible_table {
             return false;
         }
 
-        return $question->_stats->discriminativeefficiency < 15;
+//        return $question->_stats->discriminativeefficiency < 15;
+        return $question->_stats->discriminationindex < 0;
     }
 
     public function  wrap_html_start() {
@@ -350,4 +352,28 @@ class offlinequiz_statistics_table extends flexible_table {
             echo html_writer::end_tag('div');
         }
     }
+    
+        /**
+     * This function is not part of the public api.
+     */
+    function download_buttons() {
+        if ($this->is_downloadable() && !$this->is_downloading()) {
+            $downloadoptions = $this->get_download_menu();
+
+            $downloadelements = new stdClass();
+            $downloadelements->formatsmenu = html_writer::select($downloadoptions,
+                    'download', $this->defaultdownloadformat, false);
+            $downloadelements->downloadbutton = '<input type="submit" value="'.
+                    get_string('download').'"/>';
+            $html = '<form action="'. $this->baseurl .'" method="post">';
+            $html .= '<div class="mdl-align">';
+            $html .= html_writer::tag('label', get_string('downloadas', 'table', $downloadelements));
+            $html .= '</div></form><br/>';
+
+            return $html;
+        } else {
+            return '';
+        }
+    }
+
 }
