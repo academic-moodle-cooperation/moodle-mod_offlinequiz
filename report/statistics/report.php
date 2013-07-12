@@ -349,7 +349,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     foreach ($questions as $question) {
                         if (question_bank::get_qtype(
                                 $question->qtype, false)->can_analyse_responses()) {
-                            print_object('can analyse responses');
                             $this->output_individual_question_response_analysis(
                                     $question, $reporturl, $offlinequizstats);
 
@@ -754,7 +753,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
         $offlinequizstats->maxgrade = $offlinequiz->grade;
         
-//    print_object($offlinequizstats);
         // General information about the offlinequiz.
         $offlinequizinfo = array();
         $offlinequizinfo[get_string('offlinequizname', 'offlinequiz_statistics')] = format_string($offlinequiz->name);
@@ -772,7 +770,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $offlinequizinfo[get_string('duration', 'offlinequiz_statistics')] =
                     format_time($offlinequiz->timeclose - $offlinequiz->timeopen);
         }
-//print_object($offlinequizstats);
         // The statistics.
         foreach ($todisplay as $property => $format) {
             if (!isset($offlinequizstats->$property) || empty($format[$property])) {
@@ -847,7 +844,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 //         $qtable->question_setup($reporturl, $question, $responesstats);
         $letterstr = 'abcdefghijklmnopqrstuvwxyz';
         $counter = 0;
-        print_object($responesstats);
         foreach ($responesstats->responseclasses as $partid => $partclasses) {
             $rowdata = new stdclass();
             $rowdata->part = $letterstr[$counter] . ')';
