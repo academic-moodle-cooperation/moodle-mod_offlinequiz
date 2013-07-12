@@ -266,7 +266,6 @@ onClick=\"self.close(); return false;\"><br />";
     $scannedpage->status = 'ok';
     $scannedpage->error = '';
 
-    $itemdata = required_param('item', PARAM_RAW);
     $groupnumber = required_param('groupnumber', PARAM_TEXT);
     $scannedpage->groupnumber = $groupnumber;
     $scanner->set_group($groupnumber);
@@ -375,7 +374,7 @@ onClick=\"self.close(); return false;\"><br />";
     $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
 
     // The updated item information (crosses), will be processed later.
-    $rawitemdata = required_param('item', PARAM_RAW);
+    $rawitemdata = required_param_array('item', PARAM_RAW);
 
     // =============================================
     // Action rotate.
