@@ -728,13 +728,13 @@ function offlinequiz_cron() {
     // First we get the differente IDs. 
     $ids = $DB->get_fieldset_sql($sql, $params);
     
-    print_object($ids);
+    if (!empty($ids)) {
+        list($isql, $iparams) = $DB->get_in_or_equal($ids);
+
+        // Now we delete the records.
+        $DB->delete_records_select('offlinequiz_hotspots', 'scannedpageid ' . $isql, $iparams);
+    }
     
-    list($isql, $iparams) = $DB->get_in_or_equal($ids);
-
-    // Now we delete the records. 
-    $DB->delete_records_select('offlinequiz_hotspots', 'scannedpageid ' . $isql, $iparams);
-
     return true;
 }
 
