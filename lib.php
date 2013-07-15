@@ -712,14 +712,28 @@ function offlinequiz_print_recent_mod_activity($course, $viewfullnames, $timesta
  *    
  **/
 function offlinequiz_cron() {
+    global $DB;
+    
     cron_execute_plugin_type('offlinequiz', 'offlinequiz reports');
 
     // Remove all saved hotspot data that is older than 7 days.
     $timenow = time();
 
-    $sql = "DELETE FROM {offlinequiz_hotspots} 
+    // We have to make sure we do this atomic for each scanned page.
+    $sql = "SELECT DISTINCT(scannedpageid)
+            FROM {offlinequiz_hotspots}
             WHERE time < :expiretime";
-    $params['expiretime'] = $timenow - 604800;
+    $params = array('expiretime' => $timenow - 604800);
+    
+    // First we get the differente IDs. 
+    $ids = $DB->get_fieldset_sql($sql, $params);
+    
+    print_object($ids);
+    
+    list($isql, $iparams) = $DB->get_in_or_equal($ids);
+
+    // Now we delete the records. 
+    $DB->delete_records_select('offlinequiz_hotspots', 'scannedpageid ' . $isql, $iparams);
 
     return true;
 }
