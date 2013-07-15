@@ -170,7 +170,6 @@ function offlinequiz_update_instance($offlinequiz) {
 function offlinequiz_delete_instance($id) {
     global $DB, $CFG;
     
-    error_log('delete_instance ' . $id);
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
     if (! $offlinequiz = $DB->get_record('offlinequiz', array('id' => $id))) {
@@ -182,7 +181,7 @@ function offlinequiz_delete_instance($id) {
     }
     $context = context_module::instance($cm->id);
 
-    // Delete any dependent records here
+    // Delete any dependent records here.
     if ($results = $DB->get_records("offlinequiz_results", array('offlinequizid' => $offlinequiz->id))) {
         foreach ($results as $result) {
             offlinequiz_delete_result($result->id, $context);
@@ -260,7 +259,7 @@ function offlinequiz_questiontext_preview_pluginfile($context, $questionid, $arg
     list($context, $course, $cm) = get_context_info_array($context->id);
     require_login($course, false, $cm);
 
-    // Assume only trusted people can see this report. There is no real way to
+    // We assume that only trusted people can see this report. There is no real way to
     // validate questionid, because of the complexity of random questions.
     require_capability('mod/offlinequiz:viewreports', $context);
 
@@ -329,7 +328,6 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
     require_once($CFG->libdir . '/questionlib.php');
 
-    // TODO control file access!
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
@@ -346,10 +344,6 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
         return false;
     }
 
-    //     if (!$feedback = $DB->get_record('offlinequiz_feedback', array('id'=>$feedbackid))) {
-    //         return false;
-    //     }
-
     $fs = get_file_storage();
     $relativepath = implode('/', $args);
 
@@ -359,7 +353,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
         return false;
     }
 
-    // teachers in this context are allowed to see all files in this context
+    // Teachers in this context are allowed to see all the files in the context.
     if (has_capability('mod/offlinequiz:viewreports', $context)) {
         if ($filearea == 'pdfs') {
             $filename = clean_filename($course->shortname) . '_' . clean_filename($offlinequiz->name) . '_' . $file->get_filename();
@@ -369,7 +363,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
         }
     } else {
 
-        // get the corresponding scanned pages. There might be several in case an image file is used twice
+        // Get the corresponding scanned pages. There might be several in case an image file is used twice
         if (!$scannedpages = $DB->get_records('offlinequiz_scanned_pages',
                 array('offlinequizid' => $offlinequiz->id, 'warningfilename' => $file->get_filename()))) {
             if (!$scannedpages = $DB->get_records('offlinequiz_scanned_pages', array('offlinequizid' => $offlinequiz->id,
@@ -379,12 +373,12 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
             }
         }
 
-        // actually there should be only one scannedpage with that filename...
+        // Actually, there should be only one scannedpage with that filename...
         foreach ($scannedpages as $scannedpage) {
             $sql = "SELECT *
-            FROM {offlinequiz_results}
-            WHERE id = :resultid
-            AND status = 'complete'";
+                      FROM {offlinequiz_results}
+                     WHERE id = :resultid
+                       AND status = 'complete'";
             if (!$result = $DB->get_record_sql($sql, array('resultid' => $scannedpage->resultid))) {
                 return false;
             }
@@ -398,7 +392,6 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
 
             // if we found a page of a complete result that belongs to the user, we can send the file.
             if ($result->userid == $USER->id) {
-                //              error_log("offlinequiz_pluginfile sending file " . $file->get_filename() . " !");
                 send_stored_file($file, 86400, 0, $forcedownload);
                 return true;
             }
@@ -674,7 +667,9 @@ function offlinequiz_user_complete($course, $user, $mod, $offlinequiz) {
 }
 
 /**
- * @param array $questionids of question ids.
+ * Check whether some of the questions given are used in any offlinequiz.
+ * 
+ * @param array $questionids of question IDs.
  * @return bool whether any of these questions are used by any instance of this module.
  */
 function offlinequiz_questions_in_use($questionids) {
@@ -708,7 +703,7 @@ function offlinequiz_print_recent_mod_activity($course, $viewfullnames, $timesta
  * This function searches for things that need to be done, such
  * as sending out mail, toggling flags etc ...
  *
- * The cron function is empty. The evaluation of answer forms is done by a separate cron job using the cron.php script.
+ * Note: The evaluation of answer forms is done by a separate cron job using the script mod/offlinequiz/cron.php.
  *    
  **/
 function offlinequiz_cron() {
@@ -721,8 +716,8 @@ function offlinequiz_cron() {
 
     // We have to make sure we do this atomic for each scanned page.
     $sql = "SELECT DISTINCT(scannedpageid)
-            FROM {offlinequiz_hotspots}
-            WHERE time < :expiretime";
+              FROM {offlinequiz_hotspots}
+             WHERE time < :expiretime";
     $params = array('expiretime' => $timenow - 604800);
     
     // First we get the differente IDs. 
@@ -825,28 +820,7 @@ function offlinequiz_after_add_or_update($offlinequiz) {
             }
         }
     }
-    //  // Update the events relating to this offlinequiz.
-    //  // This is slightly inefficient, deleting the old events and creating new ones. However,
-    //  // there are at most two events, and this keeps the code simpler.
-    //  $event = new stdClass;
-    //  $event->description = ''; //$offlinequiz->intro;
-    //  $event->courseid    = $offlinequiz->course;
-    //  $event->groupid     = 0;
-    //  $event->userid      = 0;
-    //  $event->modulename  = 'offlinequiz';
-    //  $event->instance    = $offlinequiz->id;
-    //  $event->timeduration = 0;
-    //  $event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
-    //  $event->eventtype   = 'open';
 
-    //  if ($event->timestart = $offlinequiz->time) {
-    //      $event->name = $offlinequiz->name;
-    //      calendar_event::create($event);
-    //  }
-    //  if ($event->timestart = $offlinequiz->timeopen) {
-    //      $event->name = $offlinequiz->name.' ('.get_string('reportstarts', 'offlinequiz').')';
-    //      calendar_event::create($event);
-    //  }
     offlinequiz_update_events($offlinequiz);
     
     offlinequiz_grade_item_update($offlinequiz);
