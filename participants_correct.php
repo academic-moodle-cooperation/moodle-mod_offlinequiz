@@ -441,7 +441,7 @@ if ($scannedpage->error == 'invalidlistnumber') {
     print_string('selectlist', 'offlinequiz');
     echo "<br />";
     echo "<select class=\"imagebutton\" name=\"listid\"
-    onchange=\"document.location.href='participants_correct.php?pageid=$pageid&amp;action=setpage&amp;listid='+this.value;\">\n";
+    onchange=\"document.location.href='participants_correct.php?pageid=$pageid&amp;action=setpage&amp;sesskey=" . sesskey() . "&amp;listid='+this.value;\">\n";
     echo '<option value="0">'.get_string('choose').'...</option>';
     if ($lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), 'name ASC')) {
         foreach ($lists as $item) {
