@@ -62,7 +62,7 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
     // If there are no new jobs, we simply exit.
     if (!$jobs = $DB->get_records_sql($sql, $params, 0, OFFLINEQUIZ_TOP_QUEUE_JOBS)) {
-        echo "nothing to do!\n";
+        echo "nothing to do!";
         return;
     }
 
@@ -257,11 +257,11 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 } // End function.
 
 require_once($CFG->libdir . '/clilib.php');
-list($options, $unrecognized) = cli_get_params(array('cli'=>false), array('h'=>'help'));
+list($options, $unrecognized) = cli_get_params(array('cli' => false), array('h' => 'help'));
 
 if (array_key_exists('cli', $options) && $options['cli']) {
     echo date('Y-m-d-H:i') . ': ';
     offlinequiz_evaluation_cron();
-    echo 'done.\n';
+    echo " done.\n";
     die();
 }
