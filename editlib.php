@@ -1275,6 +1275,68 @@ function offlinequiz_question_tostring($question, $showicon = false,
 }
 
 /**
+ * A column type for the name of the question type.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_bank_my_question_type_column extends question_bank_question_type_column {
+    public function get_name() {
+        return 'myqtype';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        global $PAGE;
+        $qtypename = $question->qtype;
+        $qtype = question_bank::get_qtype($qtypename, false);
+        $namestr = $qtype->local_name();
+        if ($question->hidden) {
+            echo $PAGE->get_renderer('question', 'bank')->pix_icon('icon', $namestr, $qtype->plugin_name(),
+                    array('title' => $namestr, 'style' => 'opacity: 0.4; filter: alpha(opacity=40); /* msie *//'));
+        } else {
+            echo $PAGE->get_renderer('question', 'bank')->qtype_icon($question->qtype);
+        }
+//    echo print_question_icon($question);
+    }
+}
+
+/**
+ * A column with a checkbox for each question with name q{questionid}.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_bank_my_checkbox_column extends question_bank_checkbox_column {
+    public function get_name() {
+        return 'mycheckbox';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        global $PAGE;
+        if ($question->hidden) {
+            echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
+                    $question->id . '" id="checkq' . $question->id . '" value="1" disabled="disabled"/>';
+        } else {
+            echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
+                    $question->id . '" id="checkq' . $question->id . '" value="1"/>';
+        }
+        if ($this->firstrow) {
+            $PAGE->requires->js('/question/qengine.js');
+            $module = array(
+                'name'      => 'qbank',
+                'fullpath'  => '/question/qbank.js',
+                'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
+                'strings'   => array(),
+                'async'     => false,
+            );
+            $PAGE->requires->js_init_call('question_bank.init_checkbox_column', array(get_string('selectall'),
+                    get_string('deselectall'), 'checkq' . $question->id), false, $module);
+            $this->firstrow = false;
+        }
+    }
+}
+
+/**
  * A column type for the add this question to the offlinequiz.
  *
  * @copyright  2012 Juergen Zimmer
@@ -1299,7 +1361,25 @@ class question_bank_add_to_offlinequiz_action_column extends question_bank_actio
         } else {
             $movearrow = 't/moveleft';
         }
-        $this->print_icon($movearrow, $this->stradd, $this->qbank->add_to_offlinequiz_url($question->id));
+        if ($question->hidden) {
+            $disabled = true;
+        } else {
+            $disabled = false;
+        }
+        
+        $this->print_icon($movearrow, $this->stradd, $this->qbank->add_to_offlinequiz_url($question->id), $disabled);
+    }
+
+    protected function print_icon($icon, $title, $url, $disabled=false) {
+        global $OUTPUT;
+        if ($disabled) {
+            echo '<a title="' . $title . '" href="' . $url . '" disabled="disabled">
+                    <img src="' . $OUTPUT->pix_url($icon) . '" class="iconsmall" alt="' . $title . '"
+                            style="opacity: 0.4; filter: alpha(opacity=40); /* msie *//"></a>';
+        } else {
+            echo '<a title="' . $title . '" href="' . $url . '">
+                    <img src="' . $OUTPUT->pix_url($icon) . '" class="iconsmall" alt="' . $title . '" /></a>';
+        }
     }
 
     public function get_required_fields() {
@@ -1366,12 +1446,14 @@ class offlinequiz_question_bank_view extends question_bank_view {
     protected function known_field_types() {
         $types = parent::known_field_types();
         $types[] = new question_bank_add_to_offlinequiz_action_column($this);
+        $types[] = new question_bank_my_question_type_column($this);
+        $types[] = new question_bank_my_checkbox_column($this);
         $types[] = new question_bank_question_name_text_column($this);
         return $types;
     }
 
     protected function wanted_columns() {
-        return array('addtoofflinequizaction', 'checkbox', 'qtype', 'questionnametext',
+        return array('addtoofflinequizaction', 'mycheckbox', 'myqtype', 'questionnametext',
                 'editaction', 'previewaction');
     }
 
