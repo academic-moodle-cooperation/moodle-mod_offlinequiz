@@ -599,6 +599,45 @@ a:hover
 	border-collapse: collapse;
 }
 
+/* CSS for student view in mod_form.php */
+.Popup{     
+    display: none;
+    background: #fff;
+    left: 50%;
+    margin-left: -250px;
+    position: fixed;
+    top: 10px;
+    width: 600px;
+    height: 500px;
+    z-index: 3;
+    box-shadow: 0 0 10px #222;
+    padding: 10px;
+}
+#overlay{
+    display: none; 
+    background: -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.5) 100%); 
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0.5)));     
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
+    background: -o-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
+    background: -ms-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
+    : radial-gradient(ellipse at center,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#80000000',GradientType=1 );   
+    width: 100%;   
+    height: 100%;   
+    position: fixed;   
+    z-index: 2;   
+    top: 0px;
+    left: 0px; 
+}
+input#showviewbutton {
+	 display: none;
+}
+
+.jsenabled input#showviewbutton {
+	float: right;
+	display: block;
+}
+
 /* #page-mod-offlinequiz-report table#questionstatistics td.c0 { */
 /* 	width: 2em; */
 /* } */
