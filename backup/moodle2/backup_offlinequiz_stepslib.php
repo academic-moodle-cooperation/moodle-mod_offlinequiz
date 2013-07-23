@@ -47,7 +47,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $qinstances = new backup_nested_element('question_instances');
 
         $qinstance = new backup_nested_element('question_instance', array('id'), array(
-                'question', 'grade'));
+                'questionid', 'grade'));
 
         $groups = new backup_nested_element('groups');
         $group = new backup_nested_element('group', array('id'), array(
@@ -197,7 +197,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         //         $result->set_source_alias('result', 'resultnum');
 
         // Define id annotations
-        $qinstance->annotate_ids('question', 'question');
+        $qinstance->annotate_ids('question', 'questionid');
         $result->annotate_ids('user', 'userid');
         $result->annotate_ids('user', 'teacherid');
 
