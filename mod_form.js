@@ -25,18 +25,19 @@
  */
 
 function showStudentView() {
-	attempt = $('#id_attemptclosed').is(":checked");
-	correctness = $('#id_correctnessclosed').is(":checked");
-	marks = $('#id_marksclosed').is(":checked");
-	specificfeedback = $('#id_specificfeedbackclosed').is(":checked");
-	generalfeedback = $('#id_generalfeedbackclosed').is(":checked");
-	rightanswer = $('#id_rightanswerclosed').is(":checked");
-	sheet = $('#id_sheetclosed').is(":checked");
-	gradedsheet = $('#id_gradedsheetclosed').is(":checked");
+	attempt = $('#id_attemptclosed').is(":checked") && !$('#id_attemptclosed').is(":disabled");
+	correctness = $('#id_correctnessclosed').is(":checked") && !$('#id_correctnessclosed').is(":disabled");
+	marks = $('#id_marksclosed').is(":checked") && !$('#id_marksclosed').is(":disabled");
+	specificfeedback = $('#id_specificfeedbackclosed').is(":checked") && !$('#id_specificfeedbackclosed').is(":disabled");
+	generalfeedback = $('#id_generalfeedbackclosed').is(":checked") && !$('#id_generalfeedbackclosed').is(":disabled");
+	rightanswer = $('#id_rightanswerclosed').is(":checked") && !$('#id_rightanswerclosed').is(":disabled");
+	sheet = $('#id_sheetclosed').is(":checked") && !$('#id_sheetclosed').is(":disabled");
+	gradedsheet = $('#id_gradedsheetclosed').is(":checked") && !$('#id_gradedsheetclosed').is(":disabled");
 
-	str = 'attempt='+ attempt + ' correctness=' + correctness + ' marks='+marks+ ' specfeed='+ specificfeedback + ' genfeed='+ generalfeedback +
-			' rightanswer='+ rightanswer+ ' sheet=' + sheet + ' gradedsheet=' + gradedsheet + '<br/>';
-	
+//	str = 'attempt='+ attempt + ' correctness=' + correctness + ' marks='+marks+ ' specfeed='+ specificfeedback + ' genfeed='+ generalfeedback +
+//			' rightanswer='+ rightanswer+ ' sheet=' + sheet + ' gradedsheet=' + gradedsheet + '<br/>';
+//	
+//	console.log(str);
 	baseurl = $('#basefilename').val();
 	imagefile1 = baseurl;
 	imagefile2 = '';
@@ -60,26 +61,25 @@ function showStudentView() {
 		imagefile1 = imagefile1 + "_general"; 
 	}
 	if (rightanswer) {
-		imagefile1 = imagefile1 + "_marks"; 
+		imagefile1 = imagefile1 + "_rightanswer"; 
 	}
 	imagefile1 = imagefile1 + '.png';
 
-	if (sheet) {
-		imagefile2 = imagefile2 + "_sheet.png"; 
-	} else if (gradedsheet) {
+	if (gradedsheet) {
 		imagefile2 = imagefile2 + "_gradedsheet.png"; 
+	} else if (sheet) {
+		imagefile2 = imagefile2 + "_sheet.png"; 
 	}
 
-	console.log(str);
-	button = $('.Popup').html();
+	$('<img />').attr({ 'id': 'image1', 'width': '100%', 'src': imagefile1}).appendTo($('.Popup'));
+	$('<br/>').appendTo($('.Popup'));
+
 	if (imagefile2 != '') {
-		$('<br/>').prependTo($('.Popup'));
-		$('<img />').attr({ 'id': 'image2', 'src': imagefile2}).prependTo($('.Popup'));
+        $('<hr/>').appendTo($('.Popup'));
+		$('<img />').attr({ 'id': 'image2', 'width': '100%', 'src': imagefile2}).appendTo($('.Popup'));
+		$('<br/>').appendTo($('.Popup'));
 	}
-	
-	$('<br/>').prependTo($('.Popup'));
-	$('<img />').attr({ 'id': 'image1', 'src': imagefile1}).prependTo($('.Popup'));
-	
+
 	$('.Popup').fadeIn("slow");
 	$('#overlay').fadeIn("slow");
 }
@@ -90,4 +90,5 @@ function resetPopup () {
 	
 	$('.Popup').children('img').remove();
 	$('.Popup').children('br').remove();
+	$('.Popup').children('hr').remove();	
 }

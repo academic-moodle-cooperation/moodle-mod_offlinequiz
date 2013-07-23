@@ -63,6 +63,7 @@ $string['checkparts'] = 'Mark selected participants as present';
 $string['checkuserid'] = 'Check group/user ID';
 $string['chooseagroup'] = 'Choose a group...';
 $string['closebeforeopen'] = 'Could not update the offline quiz. You have specified a close date before the open date.';
+$string['closestudentview'] = 'Close Student View';
 $string['closewindow'] = 'Close Window';
 $string['cmmissing'] = 'The course module for the offlinequiz with ID {$a} is missing';
 $string['configintro'] = 'The values you set here are used as default values for the settings of new offline quizzes.';
@@ -457,6 +458,7 @@ $string['showmissingattemptonly'] = 'Show all checked participants without resul
 $string['showmissingcheckonly'] = 'Show all unchecked participants with result';
 $string['shownumpartsperpage'] = 'Show {$a} participants per page';
 $string['starttutorial'] = 'Information zum Prüfungsablauf ansehen';
+$string['showstudentview'] = 'Show student view.';
 $string['showtutorial'] = 'Show an offline quiz tutorial to students.';
 $string['showtutorial_help'] = 'This option determines whether students can see a tutorial about the basics of offline quizzes. 
 The tutorial provides information about how to handle the different types of documents in offline quizzes. In an interactive part they learn how to tick their student ID correctly.<br />
