@@ -596,6 +596,12 @@ if ($docscreated) {
     echo "</div><br />\n";
 }
 
+if ($offlinequiz->grade == 0.0) {
+    echo "<div class=\"noticebox notifyproblem infobox\">";
+    echo $OUTPUT->notification(get_string('zerogradewarning', 'offlinequiz'), 'notifyproblem');
+    echo '</div><br/>';
+}
+
 if ($offlinequiz->shufflequestions || $offlinequiz->docscreated || $hasscannedpages) {
     $repaginatingdisabledhtml = 'disabled="disabled"';
     $repaginatingdisabled = true;

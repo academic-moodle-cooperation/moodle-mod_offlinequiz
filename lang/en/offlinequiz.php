@@ -507,6 +507,7 @@ $string['white'] = 'White';
 $string['withselected'] = 'With selected...';
 $string['zipfile'] = 'ZIP file';
 $string['zipok'] = 'ZIP file imported';
+$string['zerogradewarning'] = 'Warning: Your offline quiz grade is 0.0!';
 $string['quizquestions'] = 'Quiz Questions';
 $string['groupquestions'] = 'Group Questions';
 $string['reordergroupquestions'] = 'Reorder Group Questions';

@@ -141,11 +141,11 @@ if (!empty($offlinequiz->time)) {
 if ($options->marks != question_display_options::HIDDEN) {
     if ($offlinequiz->grade and $group->sumgrades) {
         $a = new stdClass;
-        $percentage = round(($result->sumgrades / $group->sumgrades) * 100, 2);
-        $a->grade = $grade;
-        $a->maxgrade = $offlinequiz->grade;
-        $rawscore = round($result->sumgrades, $offlinequizconfig->decimalpoints);
-        $table->data[] = array($strscore . ':', $rawscore . '/' . round($group->sumgrades, $offlinequizconfig->decimalpoints) . ' (' . $percentage . '%)');
+        $percentage = format_float(($result->sumgrades / $group->sumgrades) * 100, 2);
+        $a->grade = format_float($grade, $offlinequizconfig->decimalpoints);
+        $a->maxgrade = format_float($offlinequiz->grade, $offlinequizconfig->decimalpoints);
+        $rawscore = format_float($result->sumgrades, $offlinequizconfig->decimalpoints);
+        $table->data[] = array($strscore . ':', $rawscore . '/' . format_float($group->sumgrades, $offlinequizconfig->decimalpoints) . ' (' . $percentage . '%)');
         $table->data[] = array($strgrade . ':', get_string('outof', 'offlinequiz', $a));
     }
 }
