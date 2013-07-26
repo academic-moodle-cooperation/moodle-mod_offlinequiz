@@ -458,7 +458,7 @@ switch($mode) {
             // show downloadlink
             if ($pdffile) {
                 $url = "$CFG->wwwroot/pluginfile.php/" . $pdffile->get_contextid() . '/' . $pdffile->get_component() . '/' .
-                        $pdffile->get_filearea() . '/' . $pdffile->get_itemid() . '/' . $pdffile->get_filename();
+                        $pdffile->get_filearea() . '/' . $pdffile->get_itemid() . '/' . $pdffile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, trim(format_text(get_string('downloadpartpdf', 'offlinequiz', $list->name))));
 
                 $list->filename = $pdffile->get_filename();

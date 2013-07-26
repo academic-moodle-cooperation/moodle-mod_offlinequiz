@@ -265,6 +265,7 @@ onClick=\"self.close(); return false;\"><br />";
     // Maybe old errors have been fixed.
     $scannedpage->status = 'ok';
     $scannedpage->error = '';
+    $scannedpage->warningfilename = '';
 
     $groupnumber = required_param('groupnumber', PARAM_TEXT);
     $scannedpage->groupnumber = $groupnumber;
@@ -642,8 +643,7 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
             }
         }
         if ($show = optional_param('show', false, PARAM_BOOL)) {
-
-            $scanner->create_warning_image($scanner->get_usernumber(),
+            $scanner->create_warning_image($origuserkey,
                     substr($user->{$offlinequizconfig->ID_field}, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits),
                     $scanner->calibrate_and_get_group(),
                     $group->number,
@@ -658,6 +658,8 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
                     'filename'  => $scanner->filename . '_warning');
 
             // Create a unique temp dir.
+            srand(microtime()*1000000);
+            $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
             $dirname = "{$CFG->tempdir}/offlinequiz/import/$unique";
             check_dir_exists($dirname, true, true);
 
