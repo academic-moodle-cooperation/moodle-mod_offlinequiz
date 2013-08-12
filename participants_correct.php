@@ -31,10 +31,10 @@ require_once($CFG->dirroot . '/mod/offlinequiz/participants/participants_scanner
 require_once($CFG->dirroot . '/mod/offlinequiz/participants/participants_report.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
-$pageid = optional_param('pageid', 0, PARAM_INT);
-$overwrite     = optional_param('overwrite', 0, PARAM_INT);
-$action        = optional_param('action', 'load', PARAM_TEXT);
-$submitpage    = optional_param('page', 0, PARAM_INT);
+$pageid     = optional_param('pageid', 0, PARAM_INT);
+$overwrite  = optional_param('overwrite', 0, PARAM_INT);
+$action     = optional_param('action', 'load', PARAM_TEXT);
+$submitpage = optional_param('page', 0, PARAM_INT);
 
 if (!$scannedpage = $DB->get_record('offlinequiz_scanned_p_pages', array('id' => $pageid))) {
     print_error('noscannedpage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, $pageid);
@@ -65,7 +65,6 @@ $PAGE->set_pagelayout('report');
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 
-
 $offlinequiz->penaltyscheme = 0;
 $offlinequiz->timelimit = 0;
 $offlinequiz->timeclose = 0;
@@ -75,7 +74,7 @@ $report = new participants_report();
 
 $action = optional_param('action', '', PARAM_TEXT);
 $error = false;
-
+$list = null;
 
 // Load corner values if readjusted
 $ul_x = optional_param('ul_x', 0, PARAM_INT);
@@ -100,8 +99,11 @@ $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0
 $corners = array();
 $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
 
-if ($action == 'update') {
+if ($sheetloaded) {
+    $corners = $scanner->export_corners(OQ_IMAGE_WIDTH);
+}
 
+if ($action == 'update') {
     if (!confirm_sesskey()) {
         print_error('invalidsesskey');
         echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
@@ -121,6 +123,32 @@ onClick=\"self.close(); return false;\"><br />";
     if ($list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid))) {
         $scannedpage->listnumber = intval($list->number);
     }
+
+} else if ($action == 'setlist') {
+        $upperleft = new oq_point(required_param('c-0-x', PARAM_INT) + 8, required_param('c-0-y', PARAM_INT) + 8);
+        $upperright = new oq_point(required_param('c-1-x', PARAM_INT) + 8, required_param('c-1-y', PARAM_INT) + 8);
+        $lowerleft = new oq_point(required_param('c-2-x', PARAM_INT) + 8, required_param('c-2-y', PARAM_INT) + 8);
+        $lowerright = new oq_point(required_param('c-3-x', PARAM_INT) + 8, required_param('c-3-y', PARAM_INT) + 8);
+        $ul_x = $upperleft->x;
+        $ul_y = $upperleft->y;
+        $ur_x = $upperright->x;
+        $ur_y = $upperright->y;
+        $ll_x = $lowerleft->x;
+        $ll_y = $lowerleft->y;
+        $lr_x = $lowerright->x;
+        $lr_y = $lowerright->y;
+        
+        // maybe old errors have been fixed
+        $scannedpage->status = 'ok';
+        $scannedpage->error = '';
+        $listid = required_param('listid', PARAM_INT);
+        $list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid));
+        $scannedpage->listnumber = intval($list->number);
+        $listnumber = $list->number;
+    
+        $offlinequizconfig->papergray = $offlinequiz->papergray;
+        $sheetloaded = $scanner->load_stored_image($scannedpage->filename, array($upperleft, $upperright, $lowerleft, $lowerright));
+        $scannedpage = offlinequiz_check_scanned_participants_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
 } else if ($action == 'readjust') {
     if (!confirm_sesskey()) {
@@ -143,13 +171,19 @@ onClick=\"self.close(); return false;\"><br />";
     $lr_x = $lowerright->x;
     $lr_y = $lowerright->y;
     $offlinequizconfig->papergray = $offlinequiz->papergray;
-    $sheetloaded = $scanner->load_stored_image($scannedpage->filename, array($upperleft, $upperright, $lowerleft, $lowerright));
+     
+    $corners = array($upperleft, $upperright, $lowerleft, $lowerright);
+
+    // Create a completely new scanner and load the image with the submitted corners.
+    $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
+    $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
+
     // maybe old errors have been fixed
     $scannedpage->status = 'ok';
     $scannedpage->error = '';
 
     // we reset all user information s.t. it is retrieved again from the scanner
-    $listid= optional_param('listid', 0, PARAM_INT);
+    $listid = optional_param('listid', 0, PARAM_INT);
     if (!$listid) {
         $listnumber = $scannedpage->listnumber;
     } else {
@@ -217,8 +251,8 @@ onClick=\"self.close(); return false;\"><br />";
     } else {
         $list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid));
         $scannedpage->listnumber = intval($list->number);
-                $scannedpage->status = 'ok';
-                $scannedpage->error = '';
+        $scannedpage->status = 'ok';
+        $scannedpage->error = '';
     }
 }
 $offlinequizconfig->papergray = $offlinequiz->papergray;
@@ -324,6 +358,11 @@ echo "      }\n";
 echo "   }\n";
 echo "}\n";
 
+echo "function set_list(n) {\n";
+echo "   document.forms.cform.elements['action'].value='setlist'\n";
+echo "   document.forms.cform.submit();\n";
+echo "}\n";
+
 echo "function set_participant(image, x) {\n";
 echo "   if (document.forms.cform.elements['participants['+x+']'].value=='marked') {\n";
 echo "       image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"\n";
@@ -364,9 +403,6 @@ echo "</script>\n\n";
 
 echo "<div style=\"position:absolute; top:10px; left:" . (OQ_IMAGE_WIDTH + 10) . "px; width:280px\">\n";
 echo "<form method=\"post\" action=\"participants_correct.php\" id=\"cform\">\n";
-if ($list) {
-    echo "<input type=\"hidden\" name=\"listid\" value=\"$list->id\">\n";
-}
 echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\">\n";
 echo "<input type=\"hidden\" name=\"action\" value=\"update\">\n";
 echo "<input type=\"hidden\" name=\"show\" value=\"0\">\n";
@@ -388,8 +424,7 @@ foreach ($participants as $key => $participant) {
     echo "<input type=\"hidden\" name=\"userid[$key]\" value=\"{$participant->userid}\">\n";
 }
 
-if ($sheetloaded) {
-    $corners = $scanner->export_corners(OQ_IMAGE_WIDTH);
+if (!empty($corners)) {
     foreach ($corners as $key => $hotspot) {
         echo "<input type=\"hidden\" name=\"c-old-$key-x\" value=\"".($hotspot->x-7)."\">\n";
         echo "<input type=\"hidden\" name=\"c-old-$key-y\" value=\"".($hotspot->y-7)."\">\n";
@@ -434,14 +469,14 @@ if ($scannedpage->status == 'error') {
 
 // ==================================================
 // print list select box
-if ($scannedpage->error == 'invalidlistnumber') {
+if ($scannedpage->error == 'invalidlistnumber' && !$scanner->ontop) {
     echo "<div style=\"position:absolute; top:300px; left:180px; width:500px; background-color:#eee; padding:20px; border:2px red solid; text-align: center\">";
     print_string('listnotdetected', 'offlinequiz');
     echo "<br />";
     print_string('selectlist', 'offlinequiz');
     echo "<br />";
-    echo "<select class=\"imagebutton\" name=\"listid\"
-    onchange=\"document.location.href='participants_correct.php?pageid=$pageid&amp;action=setpage&amp;sesskey=" . sesskey() . "&amp;listid='+this.value;\">\n";
+    echo "<select class=\"imagebutton\" name=\"listid\" onchange=\"set_list(this.value); true;\">\n";
+    
     echo '<option value="0">'.get_string('choose').'...</option>';
     if ($lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), 'name ASC')) {
         foreach ($lists as $item) {
@@ -450,7 +485,10 @@ if ($scannedpage->error == 'invalidlistnumber') {
     }
     echo "</select>\n";
     echo "</div>";
+} else if ($list) {
+    echo "<input type=\"hidden\" name=\"listid\" value=\"" . $list->id . "\">\n";
 }
+
 echo "</form>\n";
 
 // Print hotspots
