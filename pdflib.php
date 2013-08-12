@@ -521,8 +521,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     // We need a mapping from question IDs to slots, assuming that each question occurs only once.
     $slots = $templateusage->get_slots();
 
-    $texfilteractive = $DB->get_field('filter_active', 'active', array('filter' => 'filter/tex', 'contextid' => 1));
-    if ($texfilteractive) {
+    $tex_filter = null;
+    $filters = filter_get_active_in_context($context);
+    if (array_key_exists('tex', $filters)) {
         $tex_filter = new filter_tex($context, array());
     }
 
