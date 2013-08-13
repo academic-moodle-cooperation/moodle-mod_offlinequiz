@@ -104,10 +104,16 @@ if ($action == 'rotate') {
 // Initialize a page scanner.
 $scanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
 
-// Load the stored picture file.
+// Load the stored image file.
 if (property_exists($scannedpage, 'id')) {
+    // If we re-adjust we have to delete the stored hotspots.
+    if ($action == 'readjust' || $action == 'rotate') {
+        $DB->delete_records('offlinequiz_hotspots', array('scannedpageid' => $scannedpage->id));
+    }
+    // Load the stored image and the hotspots from the DB if they have not been deleted.
     $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners, $scannedpage->id);
 } else {
+    // Load the stored image and adjust the hotspots from scratch.
     $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
 }
 
