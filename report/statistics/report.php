@@ -847,6 +847,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         foreach ($responesstats->responseclasses as $partid => $partclasses) {
             $rowdata = new stdclass();
             $rowdata->part = $letterstr[$counter] . ')';
+            $partcounter = 0;
             foreach ($partclasses as $responseclassid => $responseclass) {
                 $rowdata->responseclass = $responseclass->responseclass;
                 $responsesdata = $responesstats->responses[$partid][$responseclassid];
@@ -861,7 +862,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     } else if ($rowdata->fraction < 0) {
                         $classname = 'redrow';
                     }
-                    if ($counter == 0) {
+                    if ($counter == 0 && $partcounter == 0) {
                         if ($this->table->is_downloading()) {
                             $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
                             $rowdata->name = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->name);
@@ -871,6 +872,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     } else {
                         $rowdata->name = '';
                     }
+                    if ($counter == 0 && $partcounter > 0) {
+                        $rowdata->part = $letterstr[$partcounter] . ')';
+                    }
+
                     $rowdata->s = '';
                     $rowdata->facility = '';
                     $rowdata->sd = '';
@@ -878,8 +883,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     $rowdata->effective_weight = '';
                     $rowdata->discrimination_index = '';
                     $this->table->add_data_keyed($this->table->format_row($rowdata), $classname);
+                    $partcounter++;
                     continue;
-            } else {
+                } else {
                     foreach ($responsesdata as $response => $data) {
                         $rowdata->response = $response;
                         $rowdata->response = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->response);
@@ -891,7 +897,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         } else if ($rowdata->fraction < 0) {
                             $classname = 'redrow';
                         }
-                        if ($counter == 0) {
+                        
+                        if ($counter == 0 && $partcounter == 0) {
                             if ($this->table->is_downloading()) {
                                 $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
                                 $rowdata->name = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->name);
@@ -901,6 +908,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         } else {
                             $rowdata->name = '';
                         }
+                        if ($counter == 0 && $partcounter > 0) {
+                            $rowdata->part = $letterstr[$partcounter] . ')';
+                        }
                         $rowdata->s = '';
                         $rowdata->facility = '';
                         $rowdata->sd = '';
@@ -908,6 +918,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $rowdata->effective_weight = '';
                         $rowdata->discrimination_index = '';
                         $this->table->add_data_keyed($this->table->format_row($rowdata), $classname);
+                        $partcounter++;
                         break; // We want to display every response only once.
                     }
                 }

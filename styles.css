@@ -571,6 +571,7 @@ a:hover
 }
 #page-mod-offlinequiz-report table#statisticsquestiontable {
     border: 1px solid #555555;
+    border-collapse: collapse; 
     width: 80%;
 }
 #page-mod-offlinequiz-report table#statisticsquestiontable .r1 {
@@ -581,6 +582,14 @@ a:hover
 }
 #page-mod-offlinequiz-report tr.greenrow {
 	color: green;
+}
+#page-mod-offlinequiz-report table#questionstatistics th.header {
+	border: 1px solid #DDDDDD;
+	border-collapse: collapse;
+}
+#page-mod-offlinequiz-report div.no-overflow table#questionstatistics td {
+	border: 1px solid #DDDDDD;
+	border-collapse: collapse;
 }
 #page-mod-offlinequiz-report table#questionstatistics .r1 {
     background-color: #F2F2F2;
@@ -599,15 +608,19 @@ a:hover
 	border: 1px solid #DDDDDD;
     border-collapse: collapse; 
 }
-#page-mod-offlinequiz-report div.no-overflow table th.header {
-	border: 1px solid #CCCCCC;
+#page-mod-offlinequiz-report div.no-overflow table#statisticsquestiontable th.header {
+	border: 1px solid #DDDDDD;
 	border-collapse: collapse;
 }
 
-#page-mod-offlinequiz-report div.no-overflow table td {
-	border: 1px solid #CCCCCC;
+#page-mod-offlinequiz-report div.no-overflow table#statisticsquestiontable td {
+	border: 1px solid #DDDDDD;
 	border-collapse: collapse;
 }
+#page-mod-offlinequiz-report table#questionstatistics div.commands {
+	float: right;
+}
+
 
 /* #page-mod-offlinequiz-report table#questionstatistics td.c0 { */
 /* 	width: 2em; */
