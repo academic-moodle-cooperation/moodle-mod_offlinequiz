@@ -320,14 +320,50 @@ The standard deviation of a question shows how much variation or dispersion exis
 <P>
 
 <H4><A NAME="SECTION00001230000000000000">
+Intended Question Weight</A>
+</H4>
+
+<P>
+How much this question was supposed to contribute to determining the overall test score.
+
+<P>
+<!-- MATH
+ $IQW_p = 100\frac{x_p(max) - x_p(min)}{T_{max} - T_{min}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="183" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$IQW_p = 100\frac{x_p(max) - x_p(min)}{T_{max} - T_{min}}$"></SPAN>.
+<BR>
+<P>
+
+<H4><A NAME="SECTION00001240000000000000">
+Effective Question Weight</A>
+</H4>
+
+<P>
+This is an estimate of what proportion of the variance in the students' test scores is due this question.
+
+<P>
+<!-- MATH
+ $EQW_p = 100\frac{\sqrt{C(x_p, T)}}{\sum_{p \in P}\sqrt{C(x_p, T)}}.$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="188" HEIGHT="48" ALIGN="MIDDLE" BORDER="0"
+ SRC="img24.png"
+ ALT="$EQW_p = 100\frac{\sqrt{C(x_p, T)}}{\sum_{p \in P}\sqrt{C(x_p, T)}}.$"></SPAN>
+<BR>
+<P>
+
+<H4><A NAME="SECTION00001250000000000000">
 Discrimination Index</A>
 </H4>
 This is the product moment correlation coefficient between <SPAN CLASS="MATH"><IMG
  WIDTH="17" HEIGHT="27" ALIGN="MIDDLE" BORDER="0"
- SRC="img23.png"
+ SRC="img25.png"
  ALT="$x_i$"></SPAN> and <SPAN CLASS="MATH"><IMG
  WIDTH="21" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img24.png"
+ SRC="img26.png"
  ALT="$X_i$"></SPAN>, expressed on a percentage scale:
 
 <P>
@@ -336,7 +372,7 @@ This is the product moment correlation coefficient between <SPAN CLASS="MATH"><I
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="116" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img25.png"
+ SRC="img27.png"
  ALT="$D_i= \frac{C(x_i, X_i)}{\sqrt{V(x_i)V(X_i)}}$"></SPAN>.
 
 <P>
@@ -350,26 +386,26 @@ Definitions
 <UL>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
- SRC="img26.png"
+ SRC="img28.png"
  ALT="$S$"></SPAN> is the set of students for which an offline quiz result exists. <SPAN CLASS="MATH"><IMG
  WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
  SRC="img4.png"
  ALT="$\vert S\vert$"></SPAN> is the number of students in <SPAN CLASS="MATH"><IMG
  WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
- SRC="img26.png"
+ SRC="img28.png"
  ALT="$S$"></SPAN>.
 </LI>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img27.png"
+ SRC="img29.png"
  ALT="$I_s$"></SPAN> is the set of items (questions) that have been answered by a student <SPAN CLASS="MATH"><IMG
  WIDTH="40" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img28.png"
+ SRC="img30.png"
  ALT="$s\in S$"></SPAN> in an offline quiz.
 </LI>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="17" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img29.png"
+ SRC="img31.png"
  ALT="$S_i$"></SPAN> is the set of students that answered item (question) <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -377,10 +413,10 @@ Definitions
 </LI>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="36" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
- SRC="img30.png"
+ SRC="img32.png"
  ALT="$x_i(s)$"></SPAN> is the result that student <SPAN CLASS="MATH"><IMG
  WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
- SRC="img31.png"
+ SRC="img33.png"
  ALT="$s$"></SPAN> achieved for item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -391,15 +427,15 @@ Definitions
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="95" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
- SRC="img32.png"
+ SRC="img34.png"
  ALT="$T_s = \sum\limits_{i\in I_s} x_i(s)$"></SPAN> is the complete result of student <SPAN CLASS="MATH"><IMG
  WIDTH="40" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img28.png"
+ SRC="img30.png"
  ALT="$s\in S$"></SPAN> adjusted to the maximum grade of the offline quiz.
 </LI>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="59" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
- SRC="img33.png"
+ SRC="img35.png"
  ALT="$x_i(max)$"></SPAN> is the maximum grade for item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -407,7 +443,7 @@ Definitions
 </LI>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="56" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
- SRC="img34.png"
+ SRC="img36.png"
  ALT="$x_i(min)$"></SPAN> is the minimum grade for item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -418,7 +454,7 @@ Definitions
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="130" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
- SRC="img35.png"
+ SRC="img37.png"
  ALT="$T_{max}=\sum\limits_{i\in I} x_i(max)$"></SPAN> is the maximum grade of the offline quiz.
 </LI>
 <LI><!-- MATH
@@ -426,10 +462,10 @@ Definitions
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="126" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
- SRC="img36.png"
+ SRC="img38.png"
  ALT="$X_i(s) = T_s - x_i(s)$"></SPAN> is the remaining grade for student <SPAN CLASS="MATH"><IMG
  WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
- SRC="img31.png"
+ SRC="img33.png"
  ALT="$s$"></SPAN> on item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -440,7 +476,7 @@ Definitions
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="118" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
- SRC="img37.png"
+ SRC="img39.png"
  ALT="$\bar{x}_i = \frac{1}{\vert S_i\vert}\sum\limits_{s\in S_i}x_i(s)$"></SPAN> is the average grade for item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -454,7 +490,7 @@ We assume that at least two students have answered item <SPAN CLASS="MATH"><IMG
  SRC="img17.png"
  ALT="$i$"></SPAN>, i.e. <SPAN CLASS="MATH"><IMG
  WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
- SRC="img38.png"
+ SRC="img40.png"
  ALT="$\vert S_i\vert &gt; 1$"></SPAN>.
 Then we define the following values:
 
@@ -464,7 +500,7 @@ Then we define the following values:
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="204" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
- SRC="img39.png"
+ SRC="img41.png"
  ALT="$V(x_i) = \frac{1}{\vert S_i\vert - 1}\sum\limits_{s\in S_i} (x_i(s) - \bar{x}_i)^2$"></SPAN> is the variance of the grade for item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -475,13 +511,13 @@ Then we define the following values:
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="306" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
- SRC="img40.png"
+ SRC="img42.png"
  ALT="$C(x_i, X_i) = \frac{1}{\vert S_i\vert - 1}\sum\limits_{s\in S_i}(x_i(s) - \bar{x}_i)(X_i(s) - \bar{X}_i)$"></SPAN> is the co-variance of <SPAN CLASS="MATH"><IMG
  WIDTH="17" HEIGHT="27" ALIGN="MIDDLE" BORDER="0"
- SRC="img23.png"
+ SRC="img25.png"
  ALT="$x_i$"></SPAN> and <SPAN CLASS="MATH"><IMG
  WIDTH="21" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img24.png"
+ SRC="img26.png"
  ALT="$X_i$"></SPAN>.
 </LI>
 </UL>

@@ -106,8 +106,15 @@ Die Standardabweichung einer Frage ist ein Ma"s f"ur die Streuung der erreichten
 $SD_i = \frac{\sqrt{V(x_i)}}{x_i(max) - x_i(min)}$.
 
 \paragraph{Beabsichtigte Gewichtung}
-Gibt die Gewichtung der Frage im Test an, d.h. wieviel Prozent die Frage Gesamtergebnis beisteuert.
+Gibt die Gewichtung der Frage im Test an, d.h. wieviel Prozent die Frage Gesamtergebnis beisteuert:
 
+$IQW_p = 100\frac{x_p(max) - x_p(min)}{T_{max} - T_{min}}$.\\
+
+\paragraph{Effektive Gewichtung}
+
+Die effektive Gewichtung ist ein Schätzung für den Anteil einer Frage an der Varianz der erreichten Bewertungen.
+
+$EQW_p = 100\frac{\sqrt{C(x_p, T)}}{\sum_{p \in P}\sqrt{C(x_p, T)}}.$\\
 
 \paragraph{Discrimination Index}
 Der Korrelations-Koeffizient zwischen $x_i$ and $X_i$ prozentual ausgedr"uckt:

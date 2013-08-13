@@ -79,7 +79,7 @@ $string['createpartpdferror'] = 'Beim erstellen des PDF-Formulars für die Anwes
 $string['createpdferror'] = 'Der Fragebogen für Gruppe {$a} konnte nicht erzeugt werden. Eventuell sind für die Gruppe keine Fragen definiert.';
 $string['createpdffirst'] = 'Erstellen Sie zuerst das PDF-Formular';
 $string['createpdfforms'] = 'Formulare erstellen';
-$string['createpdf'] = 'PDF-Formular';
+$string['createpdf'] = 'Formular';
 $string['createpdfs'] = 'Formulare herunterladen';
 $string['createpdfsparticipants'] = 'Anwesenheitslisten: PDFs herunterladen';
 $string['createquestionandadd'] = 'Frage erzeugen und zum Test hinzufügen.';
@@ -99,7 +99,7 @@ $string['deletepdfs'] = 'Formulare löschen';
 $string['deleteselectedresults'] = 'Ausgewählte Ergebnisse löschen';
 $string['deleteselectedpart'] = 'Ausgewählte Teilnehmer/innen löschen';
 $string['deletethislist'] = 'Diese Liste löschen';
-$string['deleteupdatepdf'] = 'PDF-Formulare löschen und aktualisieren';
+$string['deleteupdatepdf'] = 'Formulare löschen und aktualisieren';
 $string['done'] = 'erledigt';
 $string['difficultytitle'] = 'Gesamt';
 $string['displayoptions'] = 'Einstellungen für die Darstellung';
@@ -218,7 +218,7 @@ $string['modulename'] = 'Offline-Test';
 $string['modulenameplural'] = 'Offline-Tests';
 $string['modulename_help'] = 'Dieses Modul erlaubt die Erstellung von Fragebogen-Tests mit Multiple-Choice-Fragen. 
 Die Fragen werden in der Moodle-Fragendatenbank gespeichert und können in anderen Offline- und Online-Tests wiederverwendet werden. 
-Das Modul erstellt Frage- und Antwortbögen, die als PDF-Dateien heruntergeladen werden können. Auf den ausgedruckten Antwortbögen werden die Antworten von den Studierenden angekreuzt. 
+Das Modul erstellt Frage- und Antwortbögen, die als PDF- oder DOCX-Dateien heruntergeladen werden können. Auf den ausgedruckten Antwortbögen werden die Antworten von den Studierenden angekreuzt. 
 Die Resultate werden eigescannt und in das Moodle System importiert. 
 Eine detaillierte Beschreibung des Moduls finden Sie auf der Webseite: http://offline-tests.univie.ac.at';
 $string['moodleprocessing'] = 'Belege durch Moodle auswerten';
@@ -233,13 +233,13 @@ Die aufgrund dieses Fehlers notwendige händische Nachbearbeitung verzögerte di
 $string['newgrade'] = 'Bewertet';
 $string['newpage'] = 'Seitenumbruch';
 $string['noattemptexists'] = 'Keine Ergebnisse vorhanden';
-$string['noattempts'] = 'Keine Ergebnisse importiert';
+$string['noattempts'] = 'Keine Ergebnisse importiert!';
 $string['noattemptsonly'] = 'Nur Teilnehmer/innen ohne Ergebnis anzeigen';
 $string['nogradesseelater'] = 'Es sind keine Ergebnisse für {$a} vorhanden bzw. die Ergebniseinsicht ist nicht frei geschaltet.';
 $string['nogroupdata'] = 'Keine Gruppenvorlage für {$a}';
 $string['nopages'] = 'Keine Seite importiert';
 $string['noparticipantsfound'] = 'Keine Teilnehmer/innen gefunden';
-$string['nopdfscreated'] = 'PDF-Formulare wurden noch nicht erstellt';
+$string['nopdfscreated'] = 'Formulare wurden noch nicht erstellt!';
 $string['noquestionsfound'] = 'Gruppe {$a} besitzt keine Fragen!';
 $string['noquestionsonpage'] = 'Leere Seite';
 $string['noquestionselected'] = 'Keine Fragen ausgewählt!';
@@ -319,7 +319,7 @@ Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. 
 PNG- oder TIF-Datei vorliegen. Eine Punktdichte zwischen 200 und 300 DPI wird empfohlen.</p>';
 $string['pdfdeletedforgroup'] = 'Fragebogen für Gruppe {$a} gelöscht';
 $string['pdfintro'] = 'Zusatzinformation';
-$string['pdfintro_help'] = 'Dieser Text wird auf der ersten Seite des PDF-Fragebogens angezeigt und sollte genaue Angaben über die Prüfungsmodalitäten enthalten.
+$string['pdfintro_help'] = 'Dieser Text wird auf der ersten Seite des Fragebogens angezeigt und sollte genaue Angaben über die Prüfungsmodalitäten enthalten.
  Er ist normalerweise mit den üblichen Anweisungen über das Ankreuzen der Kästchen vorausgefüllt.';
 $string['pdfintrotext'] = '<b>AUSFÜLLHILFE FÜR DEN ANTWORTBOGEN</b><br /><br /><b>Wie markiere ich richtig?</b><br />Für diese Prüfung erhalten Sie einen Fragebogen und einen Antwortbogen. Die Antworten sind durch entsprechende Markierungen auf dem Antwortbogen vorzunehmen. Dieser wird maschinell ausgewertet, handschriftliche Anmerkungen werden nicht berücksichtigt. Ankreuzungen auf dem Fragebogen werden nicht ausgewertet! Verwenden Sie für Ihre Markierungen ausschließlich einen schwarzen oder blauen Kugelschreiber von normaler Schriftstärke. Die Markierungen müssen deutlich und positionsgenau durch ein Kreuz erfolgen. Wenn Sie eine Ankreuzung korrigieren möchten, füllen Sie das Kästchen vollkommen aus, dadurch wird diese Markierung wie ein leeres Kästchen gewertet. Eine neuerliche Korrektur ist dann nicht mehr möglich!<br /><br /><b>Ausfüllen der Matrikelnummer</b>:<br />Tragen Sie zu Beginn der Prüfung Ihre 7-stellige Matrikelnummer auf dem Antwortbogen in das dafür vorgesehene Feld ein. Übertragen Sie dann Ihre Matrikelnummer mit Kreuzen in die darunter befindlichen Kästchen, die von 0 bis 9 nummeriert sind. Die erste Spalte entspricht der 1. Ziffer Ihrer Matrikelnummer, die zweite Spalte entspricht der 2. Ziffer Ihrer Matrikelnummer usw.<br /><br /><b>Viel Erfolg bei der Prüfung!</b><br />';
 $string['pdfintrotoolarge'] = 'Die Zusatzinformation ist zu lang (maximal 2000 Zeichen).';
@@ -334,6 +334,7 @@ $string['previewquestion'] = 'Vorschau der Frage';
 $string['questionanalysis'] = 'Schwierigkeitsübersicht';
 $string['questionanalysistitle'] = 'Schwierigkeitsübersicht';
 $string['questionbankcontents'] = 'Die Frage-Reihe beinhaltet';
+$string['questionname'] = 'Frage';
 $string['questionsheet'] = 'Fragebogen';
 $string['questionsingroup'] = 'Fragen in Gruppe';
 $string['quizdate'] = 'Testdatum';

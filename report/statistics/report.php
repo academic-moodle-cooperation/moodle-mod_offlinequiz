@@ -33,7 +33,6 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/statistics_ques
 require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/qstats.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/responseanalysis.php');
 
-
 /**
  * The offlinequiz statistics report provides summary information about each question in
  * a offlinequiz, compared to the whole offlinequiz. It also provides a drill-down to more
@@ -281,16 +280,17 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 $this->print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions);
                 if ($statmode == 'statsoverview') {
                     if ($offlinequiz->sumgrades == -1 || $differentquestions) {
+                        echo $OUTPUT->box_start();
                         echo $OUTPUT->notification(get_string('remarks', 'offlinequiz_statistics') . ':', 'notifynote');
-                    } 
-                    echo $OUTPUT->box_start();
+                    }
                     if ($offlinequiz->sumgrades == -1) {
                         echo $OUTPUT->notification('- ' . get_string('differentsumgrades', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
-                    }
-                    if ($differentquestions) {
+                    } else if ($differentquestions) {
                         echo $OUTPUT->notification('- ' . get_string('differentquestions', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
                     }
-                    echo $OUTPUT->box_end();
+                    if ($offlinequiz->sumgrades == -1 || $differentquestions) {
+                        echo $OUTPUT->box_end();
+                    }
                 }
             }
 
@@ -307,6 +307,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 echo $OUTPUT->box_start('linkbox');
                 echo $OUTPUT->notification(get_string('noattempts', 'offlinequiz'), 'notifyproblem');
                 echo $OUTPUT->box_end();
+                echo '<br/>';
             }
         }
 
@@ -653,7 +654,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         foreach ($responesstats->responseclasses as $partid => $partclasses) {
             $rowdata = new stdClass();
             $rowdata->part = $letterstr[$counter++] . ')';
-            
             foreach ($partclasses as $responseclassid => $responseclass) {
                 $rowdata->responseclass = $responseclass->responseclass;
 
@@ -823,6 +823,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         foreach ($questions as $question) {
             // Output the data for this question.
+            $question->actions = 'actions';
             $this->table->add_data_keyed($this->table->format_row($question));
             $this->output_question_answers($question, $offlinequizstats);
         }
@@ -839,7 +840,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $exportclass = $this->table->export_class_instance();
         $responesstats = new offlinequiz_statistics_response_analyser($question);
         $responesstats->load_cached($offlinequizstats->id);
-
         $this->table->set_questiondata($question);
 //         $qtable->question_setup($reporturl, $question, $responesstats);
         $letterstr = 'abcdefghijklmnopqrstuvwxyz';
@@ -879,7 +879,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     $rowdata->discrimination_index = '';
                     $this->table->add_data_keyed($this->table->format_row($rowdata), $classname);
                     continue;
-                } else {
+            } else {
                     foreach ($responsesdata as $response => $data) {
                         $rowdata->response = $response;
                         $rowdata->response = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->response);

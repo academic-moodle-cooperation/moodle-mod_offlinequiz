@@ -80,7 +80,7 @@ class offlinequiz_statistics_table extends flexible_table {
         }
 
         $columns[] = 'name';
-        $headers[] = get_string('questionname', 'offlinequiz');
+        $headers[] = get_string('questionname', 'offlinequiz_statistics');
 
         $columns[] = 's';
         $headers[] = get_string('attempts', 'offlinequiz_statistics');

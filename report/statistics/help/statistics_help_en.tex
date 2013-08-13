@@ -112,6 +112,19 @@ The standard deviation of a question shows how much variation or dispersion exis
 
 $SD_i = \frac{\sqrt{V(x_i)}}{x_i(max) - x_i(min)}$.
 
+\paragraph{Intended Question Weight}
+
+How much this question was supposed to contribute to determining the overall test score.
+
+$IQW_p = 100\frac{x_p(max) - x_p(min)}{T_{max} - T_{min}}$.\\
+
+\paragraph{Effective Question Weight}
+
+This is an estimate of what proportion of the variance in the students' test scores is due this question.
+
+$EQW_p = 100\frac{\sqrt{C(x_p, T)}}{\sum_{p \in P}\sqrt{C(x_p, T)}}.$\\
+
+ 
 \paragraph{Discrimination Index}
 This is the product moment correlation coefficient between $x_i$ and $X_i$, expressed on a percentage scale:
 

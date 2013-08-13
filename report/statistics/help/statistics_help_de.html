@@ -314,19 +314,46 @@ Die Standardabweichung einer Frage ist ein Ma&#223; f&#252;r die Streuung der er
 <H4><A NAME="SECTION00001230000000000000">
 Beabsichtigte Gewichtung</A>
 </H4>
-Gibt die Gewichtung der Frage im Test an, d.h. wieviel Prozent die Frage Gesamtergebnis beisteuert.
+Gibt die Gewichtung der Frage im Test an, d.h. wieviel Prozent die Frage Gesamtergebnis beisteuert:
 
+<P>
+<!-- MATH
+ $IQW_p = 100\frac{x_p(max) - x_p(min)}{T_{max} - T_{min}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="183" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$IQW_p = 100\frac{x_p(max) - x_p(min)}{T_{max} - T_{min}}$"></SPAN>.
+<BR>
 <P>
 
 <H4><A NAME="SECTION00001240000000000000">
+Effektive Gewichtung</A>
+</H4>
+
+<P>
+Die effektive Gewichtung ist ein Schätzung für den Anteil einer Frage an der Varianz der erreichten Bewertungen.
+
+<P>
+<!-- MATH
+ $EQW_p = 100\frac{\sqrt{C(x_p, T)}}{\sum_{p \in P}\sqrt{C(x_p, T)}}.$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="188" HEIGHT="48" ALIGN="MIDDLE" BORDER="0"
+ SRC="img24.png"
+ ALT="$EQW_p = 100\frac{\sqrt{C(x_p, T)}}{\sum_{p \in P}\sqrt{C(x_p, T)}}.$"></SPAN>
+<BR>
+<P>
+
+<H4><A NAME="SECTION00001250000000000000">
 Discrimination Index</A>
 </H4>
 Der Korrelations-Koeffizient zwischen <SPAN CLASS="MATH"><IMG
  WIDTH="17" HEIGHT="27" ALIGN="MIDDLE" BORDER="0"
- SRC="img23.png"
+ SRC="img25.png"
  ALT="$x_i$"></SPAN> and <SPAN CLASS="MATH"><IMG
  WIDTH="21" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img24.png"
+ SRC="img26.png"
  ALT="$X_i$"></SPAN> prozentual ausgedr&#252;ckt:
 
 <P>
@@ -335,7 +362,7 @@ Der Korrelations-Koeffizient zwischen <SPAN CLASS="MATH"><IMG
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="116" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
- SRC="img25.png"
+ SRC="img27.png"
  ALT="$D_i= \frac{C(x_i, X_i)}{\sqrt{V(x_i)V(X_i)}}$"></SPAN>.
 
 <P>
@@ -352,26 +379,26 @@ Definitionen
 <UL>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
- SRC="img26.png"
+ SRC="img28.png"
  ALT="$S$"></SPAN> ist die Menge der Studenten f&#252;r die ein Ergebnis existiert. <SPAN CLASS="MATH"><IMG
  WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
  SRC="img4.png"
  ALT="$\vert S\vert$"></SPAN> ist die Anzahl der Elemente in <SPAN CLASS="MATH"><IMG
  WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
- SRC="img26.png"
+ SRC="img28.png"
  ALT="$S$"></SPAN>.
 </LI>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img27.png"
+ SRC="img29.png"
  ALT="$I_s$"></SPAN> ist die Menge der Items (Fragen), die von den Studierenden <SPAN CLASS="MATH"><IMG
  WIDTH="40" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img28.png"
+ SRC="img30.png"
  ALT="$s\in S$"></SPAN> in einem Offline-Test beantwortet wurden.
 </LI>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="17" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img29.png"
+ SRC="img31.png"
  ALT="$S_i$"></SPAN> ist die Menge der Studierenden, die das Item (die Frage) <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -379,10 +406,10 @@ Definitionen
 </LI>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="36" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
- SRC="img30.png"
+ SRC="img32.png"
  ALT="$x_i(s)$"></SPAN> ist das Ergebnis, den der Studierende <SPAN CLASS="MATH"><IMG
  WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
- SRC="img31.png"
+ SRC="img33.png"
  ALT="$s$"></SPAN> f&#252;r <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -393,15 +420,15 @@ Definitionen
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="95" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
- SRC="img32.png"
+ SRC="img34.png"
  ALT="$T_s = \sum\limits_{i\in I_s} x_i(s)$"></SPAN> ist das komplette Ergebnis f&#252;r den Studierenden <SPAN CLASS="MATH"><IMG
  WIDTH="40" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img28.png"
+ SRC="img30.png"
  ALT="$s\in S$"></SPAN> hochgerechnet auf die maximale Bewertung des Offline-Tests.
 </LI>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="59" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
- SRC="img33.png"
+ SRC="img35.png"
  ALT="$x_i(max)$"></SPAN> ist die maximale Bewertung f&#252;r Item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -409,7 +436,7 @@ Definitionen
 </LI>
 <LI><SPAN CLASS="MATH"><IMG
  WIDTH="56" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
- SRC="img34.png"
+ SRC="img36.png"
  ALT="$x_i(min)$"></SPAN> ist die minimale Bewertung f&#252;r Item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -420,7 +447,7 @@ Definitionen
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="130" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
- SRC="img35.png"
+ SRC="img37.png"
  ALT="$T_{max}=\sum\limits_{i\in I} x_i(max)$"></SPAN> ist die maximale Bewertung f&#252;r den Offline-Test.
 </LI>
 <LI><!-- MATH
@@ -428,10 +455,10 @@ Definitionen
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="126" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
- SRC="img36.png"
+ SRC="img38.png"
  ALT="$X_i(s) = T_s - x_i(s)$"></SPAN> ist die restliche Bewertung f&#252;r einen Studierenden <SPAN CLASS="MATH"><IMG
  WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
- SRC="img31.png"
+ SRC="img33.png"
  ALT="$s$"></SPAN> und ein Item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -442,7 +469,7 @@ Definitionen
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="118" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
- SRC="img37.png"
+ SRC="img39.png"
  ALT="$\bar{x}_i = \frac{1}{\vert S_i\vert}\sum\limits_{s\in S_i}x_i(s)$"></SPAN> ist die durchschnittliche Bewertung f&#252;r Item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -456,7 +483,7 @@ Wir nehmen an, dass mindestens zwei Studierende das Item <SPAN CLASS="MATH"><IMG
  SRC="img17.png"
  ALT="$i$"></SPAN> beantwortet haben, d.h. <SPAN CLASS="MATH"><IMG
  WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
- SRC="img38.png"
+ SRC="img40.png"
  ALT="$\vert S_i\vert &gt; 1$"></SPAN>.
 Dann sind:
 
@@ -466,7 +493,7 @@ Dann sind:
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="204" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
- SRC="img39.png"
+ SRC="img41.png"
  ALT="$V(x_i) = \frac{1}{\vert S_i\vert - 1}\sum\limits_{s\in S_i} (x_i(s) - \bar{x}_i)^2$"></SPAN> die Varianz der Bewertung f&#252;r Item <SPAN CLASS="MATH"><IMG
  WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
  SRC="img17.png"
@@ -477,13 +504,13 @@ Dann sind:
  -->
 <SPAN CLASS="MATH"><IMG
  WIDTH="306" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
- SRC="img40.png"
+ SRC="img42.png"
  ALT="$C(x_i, X_i) = \frac{1}{\vert S_i\vert - 1}\sum\limits_{s\in S_i}(x_i(s) - \bar{x}_i)(X_i(s) - \bar{X}_i)$"></SPAN> die Kovarianz von <SPAN CLASS="MATH"><IMG
  WIDTH="17" HEIGHT="27" ALIGN="MIDDLE" BORDER="0"
- SRC="img23.png"
+ SRC="img25.png"
  ALT="$x_i$"></SPAN> und <SPAN CLASS="MATH"><IMG
  WIDTH="21" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
- SRC="img24.png"
+ SRC="img26.png"
  ALT="$X_i$"></SPAN>.
 </LI>
 </UL>
