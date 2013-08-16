@@ -299,6 +299,9 @@ if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
     // redirect($afteractionurl);
 }
 
+$maxgradewrong = false;
+$gradewarning = false;
+
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     $deletepreviews = false;
     $recomputesummarks = false;
@@ -326,13 +329,17 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     foreach ($rawdata as $key => $value) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
-            // Parse input for question -> grades
-            $questionid = $matches[1];
-            $offlinequiz->grades[$questionid] = unformat_float($value); 
-            offlinequiz_update_question_instance($offlinequiz->grades[$questionid], $questionid, $offlinequiz);
-            $deletepreviews = false;
-            $recomputesummarks = true;
+            if (is_numeric(str_replace(',', '.', $value))) {
 
+                // Parse input for question -> grades
+                $questionid = $matches[1];
+                $offlinequiz->grades[$questionid] = unformat_float($value); 
+                offlinequiz_update_question_instance($offlinequiz->grades[$questionid], $questionid, $offlinequiz);
+                $deletepreviews = false;
+                $recomputesummarks = true;
+            } else {
+                $gradewarning = true;
+            }
         } else if (preg_match('!^o(pg)?([0-9]+)$!', $key, $matches)) {
             // Parse input for ordering info
             $questionid = $matches[2];
@@ -467,9 +474,13 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     // If rescaling is required save the new maximum
     $maxgrade = optional_param('maxgrade', -1, PARAM_RAW);
-    if ($maxgrade >= 0) {
-        $maxgrade = clean_param(str_replace(',', '.', $maxgrade), PARAM_FLOAT);
-        offlinequiz_set_grade($maxgrade, $offlinequiz);
+    if (is_numeric(str_replace(',', '.', $maxgrade))) {
+        if ($maxgrade >= 0) {
+            $maxgrade = clean_param(str_replace(',', '.', $maxgrade), PARAM_FLOAT);
+            offlinequiz_set_grade($maxgrade, $offlinequiz);
+        }
+    } else {
+        $maxgradewrong = true;
     }
 
     if ($deletepreviews) {
@@ -599,6 +610,18 @@ if ($docscreated) {
 if ($offlinequiz->grade == 0.0) {
     echo "<div class=\"noticebox notifyproblem infobox\">";
     echo $OUTPUT->notification(get_string('zerogradewarning', 'offlinequiz'), 'notifyproblem');
+    echo '</div><br/>';
+}
+
+if ($maxgradewrong) {
+    echo "<div class=\"noticebox notifyproblem infobox\">";
+    echo $OUTPUT->notification(get_string('maxgradewarning', 'offlinequiz'), 'notifyproblem');
+    echo '</div><br/>';
+}
+
+if ($gradewarning) {
+    echo "<div class=\"noticebox notifyproblem infobox\">";
+    echo $OUTPUT->notification(get_string('gradewarning', 'offlinequiz'), 'notifyproblem');
     echo '</div><br/>';
 }
 
