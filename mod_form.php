@@ -90,7 +90,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             $attribs = '';
         } else {
-            $attribs = ' disabled=disabled';
+            $attribs = ' disabled="disabled"';
         }
         
         $mform->addElement('selectyesno', 'shufflequestions', get_string("shufflequestions", "offlinequiz"), $attribs);
@@ -132,7 +132,11 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         // -------------------------------------------------------------------------------
         // $mform->addElement('header', 'displayhdr', get_string('generatepdfform', 'offlinequiz'));
 
-        $mform->addElement('htmleditor', 'pdfintro', get_string('pdfintro', 'offlinequiz'), array('rows' => 20));
+        if (!$offlinequiz || !$offlinequiz->docscreated) {
+            $mform->addElement('htmleditor', 'pdfintro', get_string('pdfintro', 'offlinequiz'), array('rows' => 20));
+        } else {
+            $mform->addElement('static', 'pdfintro', get_string('pdfintro', 'offlinequiz'), $offlinequiz->pdfintro);
+        }
         $mform->setType('pdfintro', PARAM_RAW);
         $mform->setDefault('pdfintro', get_string('pdfintrotext', 'offlinequiz'));
         $mform->addHelpButton('pdfintro', 'pdfintro', "offlinequiz");

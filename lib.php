@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
 
 //  If, for some reason, you need to use global variables instead of constants, do not forget to make them
 //  global as this file can be included inside a function scope. However, using the global variables
-//  at the module level is not a recommended.
+//  at the module level is not recommended.
 
 // CONSTANTS
 

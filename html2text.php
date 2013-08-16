@@ -56,7 +56,6 @@ class offlinequiz_html_translator
         $strings = preg_split("/<img/i",$output);
         $output = array_shift($strings);
         foreach ($strings as $string) {
-
             // Define a unique temporary name for each image file.
             srand(microtime() * 1000000);
             $unique = str_replace('.', '', microtime(true) . '_' . rand(0, 100000));
@@ -168,7 +167,7 @@ class offlinequiz_html_translator
                         }
 
                         if ($teximage) {
-                            $factor = $fileheight / 40;
+                            $factor = $fileheight / 20;
                         }
 
                         $width = $filewidth / ($kfactor * $factor);
