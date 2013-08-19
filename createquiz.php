@@ -123,9 +123,9 @@ if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $
 $hasscannedpages = offlinequiz_has_scanned_pages($offlinequiz->id);
 
 if ($offlinequiz->grade == 0) {
-    echo '<div class="linkbox">';
+    echo '<div class="linkbox"><strong>';
     echo $OUTPUT->notification(get_string('gradeiszero', 'offlinequiz'), 'notifyproblem');
-    echo '</div>';
+    echo '</strong></div>';
 }
 
 // Preview

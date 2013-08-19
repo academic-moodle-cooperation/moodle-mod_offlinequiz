@@ -608,15 +608,15 @@ if ($docscreated) {
 }
 
 if ($offlinequiz->grade == 0.0) {
-    echo "<div class=\"noticebox notifyproblem infobox\">";
-    echo $OUTPUT->notification(get_string('zerogradewarning', 'offlinequiz'), 'notifyproblem');
-    echo '</div><br/>';
+    echo "<div class=\"noticebox notifyproblem infobox\"><strong>";
+    echo $OUTPUT->notification(get_string('gradeiszero', 'offlinequiz'), 'notifyproblem');
+    echo '</strong></div><br/>';
 }
 
 if ($maxgradewrong) {
-    echo "<div class=\"noticebox notifyproblem infobox\">";
+    echo "<div class=\"noticebox notifyproblem infobox\"><b>";
     echo $OUTPUT->notification(get_string('maxgradewarning', 'offlinequiz'), 'notifyproblem');
-    echo '</div><br/>';
+    echo '</b></div><br/>';
 }
 
 if ($gradewarning) {
