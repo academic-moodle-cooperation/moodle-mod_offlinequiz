@@ -51,20 +51,17 @@ function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbe
     
     // First print the list item string.
     if (!empty($numbering)) {
-        print_object($blocks[0]);
         $itemstring = ' ';
-        $style = '';
+        $style = 'nStyle';
         if ($blocks[0]['type'] == 'string') {
             $itemstring = $blocks[0]['value'];
-            $style = $blocks[0]['style'];
+            if (array_key_exists('style', $blocks[0])) {
+                $style = $blocks[0]['style'];
+            }
             array_shift($blocks);
         }
-        if (!empty($style)) {
-            $section->addListItem($itemstring, $depth, $numbering, $style);
-        } else {
-            $section->addListItem($itemstring, $depth, $numbering, 'nStyle');
-        }
-        
+        $section->addListItem($itemstring, $depth, $numbering, $style);
+
         // We also skip the first sequential newline because we got a newline with addListItem
         if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
             array_shift($blocks);
@@ -81,7 +78,7 @@ function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbe
         }
         foreach($blocks as $block) {
             if ($block['type'] == 'string') {
-                if (!empty($block['style'])) {
+                if (array_key_exists('style', $block) && !empty($block['style'])) {
                     $textrun->addText($block['value'], $block['style']);
                 } else {
                     $textrun->addText($block['value'], 'nStyle');
@@ -138,7 +135,7 @@ function offlinequiz_convert_underline_text_docx($text) {
     // Now add the remaining text after the image tag.
     $parts = preg_split('/<span style="text-decoration: underline;">/i', $text);
     $result = array();
-    
+
     $firstpart = array_shift($parts);
     if (!empty($firstpart)) {
         $firstpart = strip_tags($firstpart);
@@ -149,7 +146,7 @@ function offlinequiz_convert_underline_text_docx($text) {
         $closetagpos = strpos($part, '</span>');
 
         $underlinetext = strip_tags(substr($part, 0, $closetagpos));
-        $underlineremain = strip_tags(trim(substr($part, $closetagpos + 7)));
+        $underlineremain = strip_tags(substr($part, $closetagpos + 7)); // trim
          
         $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $underlinetext), 'style' => 'uStyle');
         if (!empty($underlineremain)) {
@@ -180,12 +177,12 @@ function offlinequiz_convert_italic_text_docx($text) {
 
     foreach($parts as $part) {
         if ($closetagpos = strpos($part, '</em>')) {
-            $italicremain = trim(substr($part, $closetagpos + 5));
+            $italicremain = substr($part, $closetagpos + 5); //trim
         } else {
             $closetagpos = strlen($part) - 1;
             $italicremain = '';            
         }
-        $italictext = strip_tags(trim(substr($part, 0, $closetagpos)));
+        $italictext = strip_tags(substr($part, 0, $closetagpos)); // trim
 
         $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $italictext), 'style' => 'iStyle');
         if (!empty($italicremain)) {
@@ -216,14 +213,14 @@ function offlinequiz_convert_bold_text_docx($text) {
 
     foreach($parts as $part) {
         if ($closetagpos = strpos($part, '</b>')) {
-            $boldremain = trim(substr($part, $closetagpos + 4));
+            $boldremain = substr($part, $closetagpos + 4); // trim
         } else if ($closetagpos = strpos($part, '</strong>')) {
-            $boldremain = trim(substr($part, $closetagpos + 9));
+            $boldremain = substr($part, $closetagpos + 9); // trim?
         } else {
             $closetagpos = strlen($part) - 1;
             $boldremain = '';            
         }
-        $boldtext = strip_tags(trim(substr($part, 0, $closetagpos)));
+        $boldtext = strip_tags(substr($part, 0, $closetagpos)); // trim?
 
         $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $boldtext), 'style' => 'bStyle');
         if (!empty($boldremain)) {
@@ -246,7 +243,7 @@ function offlinequiz_convert_newline_docx($text) {
     // Now add the remaining text after the image tag.
     $parts = preg_split("!<br>|<br />!i", $text);
     $result = array();
-    
+
     $firstpart = array_shift($parts);
     // If the original text was only a newline, we don't have a first part.
     if (!empty($firstpart)) {

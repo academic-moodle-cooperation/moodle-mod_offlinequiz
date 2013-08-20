@@ -179,6 +179,10 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $table->column_suppress('fullname');
 
             $table->column_class('picture', 'picture');
+            $table->column_class($offlinequizconfig->ID_field, 'userkey');
+            $table->column_class('timestart', 'timestart');
+            $table->column_class('offlinegroupid', 'offlinegroupid');
+            $table->column_class('sumgrades', 'sumgrades');
 
             $table->set_attribute('cellpadding', '2');
             $table->set_attribute('id', 'attempts');
@@ -483,7 +487,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 }
 
                 if (!empty($result) && $result->offlinegroupid) {
-                    $outputgrade = round($result->sumgrades / $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints);
+                    $outputgrade = format_float($result->sumgrades / $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints);
                 } else {
                     $outputgrade = '-';
                 }
