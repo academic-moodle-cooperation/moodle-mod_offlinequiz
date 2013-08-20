@@ -488,6 +488,15 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     }
     if ($recomputesummarks) {
         $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+        // Redmine 983: Upgrade sumgrades for all other groups as well.
+        if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+            foreach ($groups as $group) {
+                if ($group->id != $offlinequiz->groupid) {
+                    $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
+                }
+            }
+        }
+        
         offlinequiz_update_all_attempt_sumgrades($offlinequiz);
         // NOTE: We don't need this because we don't have a module-specific grade table
         // offlinequiz_update_all_final_grades($offlinequiz);
