@@ -651,7 +651,7 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
         if ($show = optional_param('show', false, PARAM_BOOL)) {
             $scanner->create_warning_image(substr($origuserkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits),
                     substr($user->{$offlinequizconfig->ID_field}, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits),
-                    $scanner->calibrate_and_get_group(),
+                    $origgroupnumber,
                     $group->number,
                     $changed);
 
