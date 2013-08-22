@@ -116,6 +116,19 @@ class offlinequiz_statistics_question_stats {
         list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(
                 $offlinequizid, $currentgroup, $groupstudents, $allattempts, false, $offlinegroupid);
 
+        // Trying to make this work on MySQL 
+        // First we get the questionattemptids that we actually need.
+        $questionattemptids = $DB->get_fieldset_sql("
+                SELECT qa.id
+                  FROM $fromqa
+                  JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid
+                 WHERE qa.questionid $qsql
+                   AND $whereqa", $qparams + $qaparams);
+
+        list($qaidssql, $qaidsparams) = $DB->get_in_or_equal($questionattemptids, SQL_PARAMS_NAMED, 'qaid');
+        
+        $params = array_merge($qparams, $qaparams, $qaidsparams);
+
         $this->lateststeps = $DB->get_records_sql("
                 SELECT
                     qas.id,
@@ -128,25 +141,23 @@ class offlinequiz_statistics_question_stats {
                 FROM $fromqa
                 JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid
                 JOIN (
-                    SELECT questionattemptid, MAX(id) AS latestid
-                      FROM {question_attempt_steps}
-                  GROUP BY questionattemptid
+                      SELECT questionattemptid, MAX(id) AS latestid
+                        FROM {question_attempt_steps} qass
+                       WHERE qass.questionattemptid $qaidssql
+                    GROUP BY questionattemptid
                 ) lateststepid ON lateststepid.questionattemptid = qa.id
                 JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
 
                 WHERE
                     qa.questionid $qsql AND
-                    $whereqa", $qparams + $qaparams);
-//         foreach ($this->lateststeps as $step) {
-//             error_log($step->id . ' ' . $step->slot . ' ' . $step->questionid);
-//         }
+                    $whereqa", $params);
+
+        // used to be:
+        //                     WHERE
+        //                     qa.slot $qsql AND
+        //                     $whereqa", $qparams + $qaparams);
     }
 
-//                     WHERE
-//                     qa.slot $qsql AND
-//                     $whereqa", $qparams + $qaparams);
-
-    
     /*
      * Compute the statistics for the questions given to the constructor
      * 
