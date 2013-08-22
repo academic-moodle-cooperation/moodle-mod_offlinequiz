@@ -127,18 +127,10 @@ class offlinequiz_statistics_question_stats {
 
         list($qaidssql, $qaidsparams) = $DB->get_in_or_equal($questionattemptids, SQL_PARAMS_NAMED, 'qaid');
         
-        $lateststepsids = $DB->get_fieldset_sql("
-                SELECT MAX(id)
-                  FROM {question_attempt_steps} qass
-                 WHERE qass.questionattemptid $qaidssql
-              GROUP BY questionattemptid", $qaidsparams);
-        
-        print_object($lateststepsids);
-        list($lssql, $lsparams) = $DB->get_in_or_equal($lateststepsids, SQL_PARAMS_NAMED, 'lsid');
+        $params = array_merge($qparams, $qaparams, $qaidsparams);
 
-        $params = array_merge($qparams, $qaparams, $lsparams);
-        
-        $this->lateststeps = $DB->get_records_sql("
+	// works already quite a bit faster 
+	$this->lateststeps = $DB->get_records_sql("
                 SELECT
                     qas.id,
                     offlinequiza.sumgrades,
@@ -149,11 +141,45 @@ class offlinequiz_statistics_question_stats {
 
                 FROM $fromqa
                 JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid
-                JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+                JOIN (
+                      SELECT questionattemptid, MAX(id) AS latestid
+                        FROM {question_attempt_steps} qass
+                       WHERE qass.questionattemptid $qaidssql
+                    GROUP BY questionattemptid
+                ) lateststepid ON lateststepid.questionattemptid = qa.id
+                JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
 
-                WHERE qa.questionid $qsql
-                  AND qas.id $lssql                
-                  AND $whereqa", $params);
+                WHERE
+                    qa.questionid $qsql AND
+                    $whereqa", $params);
+
+	// Second try: Split the query even further, didnt make it faster
+        /* $lateststepsids = $DB->get_fieldset_sql(" */
+        /*         SELECT MAX(id) */
+        /*           FROM {question_attempt_steps} qass */
+        /*          WHERE qass.questionattemptid $qaidssql */
+        /*       GROUP BY questionattemptid", $qaidsparams); */
+        
+        /* list($lssql, $lsparams) = $DB->get_in_or_equal($lateststepsids, SQL_PARAMS_NAMED, 'lsid'); */
+
+        // $params = array_merge($qparams, $qaparams, $lsparams);
+        
+        /* $this->lateststeps = $DB->get_records_sql(" */
+        /*         SELECT */
+        /*             qas.id, */
+        /*             offlinequiza.sumgrades, */
+        /*             qa.questionid, */
+        /*             qa.slot, */
+        /*             qa.maxmark, */
+        /*             qas.fraction * qa.maxmark as mark */
+
+        /*         FROM $fromqa */
+        /*         JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid */
+        /*         JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id */
+
+        /*         WHERE qa.questionid $qsql */
+        /*           AND qas.id $lssql                 */
+        /*           AND $whereqa", $params); */
 
 //         $this->lateststeps = $DB->get_records_sql("
 //                 SELECT
@@ -167,30 +193,6 @@ class offlinequiz_statistics_question_stats {
 //                 FROM $fromqa
 //                 JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid
 //                 JOIN (
-//                 ) lateststepid ON lateststepid.questionattemptid = qa.id
-//                 JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
-
-//                 WHERE
-//                     qa.questionid $qsql AND
-//                     $whereqa", $params);
-
-// works already quite a bit faster 
-        //                 $this->lateststeps = $DB->get_records_sql("
-//                 SELECT
-//                     qas.id,
-//                     offlinequiza.sumgrades,
-//                     qa.questionid,
-//                     qa.slot,
-//                     qa.maxmark,
-//                     qas.fraction * qa.maxmark as mark
-
-//                 FROM $fromqa
-//                 JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid
-//                 JOIN (
-//                       SELECT questionattemptid, MAX(id) AS latestid
-//                         FROM {question_attempt_steps} qass
-//                        WHERE qass.questionattemptid $qaidssql
-//                     GROUP BY questionattemptid
 //                 ) lateststepid ON lateststepid.questionattemptid = qa.id
 //                 JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
 
