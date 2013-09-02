@@ -219,6 +219,15 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-report table#attempts .header .commands {display: inline;}
 #page-mod-offlinequiz-report table#attempts .picture {width: 40px;}
 #page-mod-offlinequiz-report table#attempts td {border-left-width: 1px;border-right-width: 1px;border-left-style: solid;border-right-style: solid;vertical-align: middle;}
+#page-mod-offlinequiz-report table#attempts th.userkey {text-align: center;}
+#page-mod-offlinequiz-report table#attempts td.userkey {text-align: center;}
+#page-mod-offlinequiz-report table#attempts th.timestart {text-align: center;}
+#page-mod-offlinequiz-report table#attempts td.timestart {text-align: center;}
+#page-mod-offlinequiz-report table#attempts th.offlinegroupid {text-align: center;}
+#page-mod-offlinequiz-report table#attempts td.offlinegroupid {text-align: center;}
+#page-mod-offlinequiz-report table#attempts th.sumgrades {text-align: right;}
+#page-mod-offlinequiz-report table#attempts td.sumgrades {text-align: right;}
+
 #page-mod-offlinequiz-report table#attempts .header {text-align: left;}
 #page-mod-offlinequiz-report table#attempts .picture {text-align: center !important;}
 #page-mod-offlinequiz-report table#attempts.grades span.que,
@@ -245,8 +254,11 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #categoryquestions .iconcol {width: 15px;text-align: center;padding: 0;}
 #categoryquestions .checkbox {width: 19px;text-align: center;padding: 0;}
+#categoryquestions .mycheckbox {width: 19px;text-align: center;padding: 0;}
 #categoryquestions .qtype {text-align: center;}
 #categoryquestions .qtype {width: 24px;padding: 0;}
+#categoryquestions .myqtype {text-align: center;}
+#categoryquestions .myqtype {width: 24px;padding: 0;}
 #categoryquestions .questiontext p {margin: 0;}
 
 #page-mod-offlinequiz-edit div.offlinequizcontents {float:left;width:70%;display:block;clear:left;}
@@ -543,7 +555,9 @@ a:hover
 #page-mod-offlinequiz-createquiz div.answer img.texrender {
     vertical-align: middle;
 }
-
+#page-mod-offlinequiz-report div.notifynote {
+    color: #006699;
+}
 #page-mod-offlinequiz-report table#statsoverviewtable {
     border: 1px solid #555555;
     width: 50%;
@@ -553,7 +567,7 @@ a:hover
 }
 #page-mod-offlinequiz-report table#questionstatstable {
     border: 1px solid #555555;
-    width: 60%;
+    width: 30em;
 }
 #page-mod-offlinequiz-report table#questionstatstable .r1 {
     background-color: #F2F2F2;
@@ -566,6 +580,7 @@ a:hover
 }
 #page-mod-offlinequiz-report table#statisticsquestiontable {
     border: 1px solid #555555;
+    border-collapse: collapse; 
     width: 80%;
 }
 #page-mod-offlinequiz-report table#statisticsquestiontable .r1 {
@@ -576,6 +591,14 @@ a:hover
 }
 #page-mod-offlinequiz-report tr.greenrow {
 	color: green;
+}
+#page-mod-offlinequiz-report table#questionstatistics th.header {
+	border: 1px solid #DDDDDD;
+	border-collapse: collapse;
+}
+#page-mod-offlinequiz-report div.no-overflow table#questionstatistics td {
+	border: 1px solid #DDDDDD;
+	border-collapse: collapse;
 }
 #page-mod-offlinequiz-report table#questionstatistics .r1 {
     background-color: #F2F2F2;
@@ -592,12 +615,22 @@ a:hover
 }
 #page-mod-offlinequiz-report table#questionstatistics td.cell {
 	border: 1px solid #DDDDDD;
-    border-collapse: collapse;
+    border-collapse: collapse; 
 }
-#page-mod-offlinequiz-report div.no-overflow table th.header {
-	border: 1px solid #CCCCCC;
+#page-mod-offlinequiz-report div.no-overflow table#statisticsquestiontable th.header {
+	border: 1px solid #DDDDDD;
 	border-collapse: collapse;
 }
+
+#page-mod-offlinequiz-report div.no-overflow table#statisticsquestiontable td {
+	border: 1px solid #DDDDDD;
+	border-collapse: collapse;
+}
+#page-mod-offlinequiz-report table#questionstatistics div.commands {
+	float: right;
+}
+
+
 
 /* CSS for student view in mod_form.php */
 .Popup{     

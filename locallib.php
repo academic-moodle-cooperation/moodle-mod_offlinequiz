@@ -1451,7 +1451,6 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
  */
 function offlinequiz_print_question_preview($question, $choiceorder, $number, $context) {
     global $CFG, $DB;
-
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
 
     echo '<div id="q' . $question->id . '" class="preview">
@@ -1470,9 +1469,9 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     $text = preg_replace('!^<p>!i', '', $text);
 
     // Filter only for tex formulas.
-    $texfilteractive = $DB->get_field('filter_active', 'active', array('filter' => 'filter/tex', 'contextid' => 1));
     $tex_filter = null;
-    if ($texfilteractive) {
+    $filters = filter_get_active_in_context($context);
+    if (array_key_exists('tex', $filters)) {
         $tex_filter = new filter_tex($context, array());
     }
 

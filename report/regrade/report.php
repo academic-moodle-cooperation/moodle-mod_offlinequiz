@@ -120,7 +120,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
                 $groupletter = $letterstr[$group->number - 1];
                 $a = new StdClass();
                 $a->letter = $groupletter;
-                $a->grade = round($sumgrade, $offlinequizconfig->decimalpoints);
+                $a->grade = round($sumgrade, $offlinequiz->decimalpoints);
                 echo $OUTPUT->notification(get_string('updatedsumgrades', 'offlinequiz', $a), 'notifysuccess');
             }
         }

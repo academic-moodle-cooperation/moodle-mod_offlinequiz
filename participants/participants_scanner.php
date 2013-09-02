@@ -149,7 +149,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
      * Returns the corners of the scanned page.
      *
      * @param int $width
-     * @return array
+     * @return array of oq_points (upperleft, upperright, lowerleft, lowerright).
      */
     public function export_corners($width) {
         global $CFG;

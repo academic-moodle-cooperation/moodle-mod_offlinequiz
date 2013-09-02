@@ -299,6 +299,9 @@ if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
     // redirect($afteractionurl);
 }
 
+$maxgradewrong = false;
+$gradewarning = false;
+
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     $deletepreviews = false;
     $recomputesummarks = false;
@@ -326,13 +329,17 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     foreach ($rawdata as $key => $value) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
-            // Parse input for question -> grades
-            $questionid = $matches[1];
-            $offlinequiz->grades[$questionid] = unformat_float($value); 
-            offlinequiz_update_question_instance($offlinequiz->grades[$questionid], $questionid, $offlinequiz);
-            $deletepreviews = false;
-            $recomputesummarks = true;
+            if (is_numeric(str_replace(',', '.', $value))) {
 
+                // Parse input for question -> grades
+                $questionid = $matches[1];
+                $offlinequiz->grades[$questionid] = unformat_float($value); 
+                offlinequiz_update_question_instance($offlinequiz->grades[$questionid], $questionid, $offlinequiz);
+                $deletepreviews = false;
+                $recomputesummarks = true;
+            } else {
+                $gradewarning = true;
+            }
         } else if (preg_match('!^o(pg)?([0-9]+)$!', $key, $matches)) {
             // Parse input for ordering info
             $questionid = $matches[2];
@@ -467,9 +474,13 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     // If rescaling is required save the new maximum
     $maxgrade = optional_param('maxgrade', -1, PARAM_RAW);
-    if ($maxgrade >= 0) {
-        $maxgrade = clean_param(str_replace(',', '.', $maxgrade), PARAM_FLOAT);
-        offlinequiz_set_grade($maxgrade, $offlinequiz);
+    if (is_numeric(str_replace(',', '.', $maxgrade))) {
+        if ($maxgrade >= 0) {
+            $maxgrade = clean_param(str_replace(',', '.', $maxgrade), PARAM_FLOAT);
+            offlinequiz_set_grade($maxgrade, $offlinequiz);
+        }
+    } else {
+        $maxgradewrong = true;
     }
 
     if ($deletepreviews) {
@@ -477,6 +488,15 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     }
     if ($recomputesummarks) {
         $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+        // Redmine 983: Upgrade sumgrades for all other groups as well.
+        if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+            foreach ($groups as $group) {
+                if ($group->id != $offlinequiz->groupid) {
+                    $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
+                }
+            }
+        }
+        
         offlinequiz_update_all_attempt_sumgrades($offlinequiz);
         // NOTE: We don't need this because we don't have a module-specific grade table
         // offlinequiz_update_all_final_grades($offlinequiz);
@@ -594,6 +614,24 @@ if ($docscreated) {
     get_string('formsexist', 'offlinequiz')."</a><br />" .
     get_string("attemptsexist", "offlinequiz")."<br />".get_string("regradinginfo", "offlinequiz");
     echo "</div><br />\n";
+}
+
+if ($offlinequiz->grade == 0.0) {
+    echo "<div class=\"noticebox notifyproblem infobox\"><strong>";
+    echo $OUTPUT->notification(get_string('gradeiszero', 'offlinequiz'), 'notifyproblem');
+    echo '</strong></div><br/>';
+}
+
+if ($maxgradewrong) {
+    echo "<div class=\"noticebox notifyproblem infobox\"><b>";
+    echo $OUTPUT->notification(get_string('maxgradewarning', 'offlinequiz'), 'notifyproblem');
+    echo '</b></div><br/>';
+}
+
+if ($gradewarning) {
+    echo "<div class=\"noticebox notifyproblem infobox\">";
+    echo $OUTPUT->notification(get_string('gradewarning', 'offlinequiz'), 'notifyproblem');
+    echo '</div><br/>';
 }
 
 if ($offlinequiz->shufflequestions || $offlinequiz->docscreated || $hasscannedpages) {

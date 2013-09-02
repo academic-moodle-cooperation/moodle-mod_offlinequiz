@@ -52,12 +52,16 @@ function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbe
     // First print the list item string.
     if (!empty($numbering)) {
         $itemstring = ' ';
+        $style = 'nStyle';
         if ($blocks[0]['type'] == 'string') {
             $itemstring = $blocks[0]['value'];
+            if (array_key_exists('style', $blocks[0])) {
+                $style = $blocks[0]['style'];
+            }
             array_shift($blocks);
         }
-        $section->addListItem($itemstring, $depth, $numbering, 'nStyle');
-        
+        $section->addListItem($itemstring, $depth, $numbering, $style);
+
         // We also skip the first sequential newline because we got a newline with addListItem
         if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
             array_shift($blocks);
@@ -74,7 +78,7 @@ function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbe
         }
         foreach($blocks as $block) {
             if ($block['type'] == 'string') {
-                if (!empty($block['style'])) {
+                if (array_key_exists('style', $block) && !empty($block['style'])) {
                     $textrun->addText($block['value'], $block['style']);
                 } else {
                     $textrun->addText($block['value'], 'nStyle');
@@ -131,7 +135,7 @@ function offlinequiz_convert_underline_text_docx($text) {
     // Now add the remaining text after the image tag.
     $parts = preg_split('/<span style="text-decoration: underline;">/i', $text);
     $result = array();
-    
+
     $firstpart = array_shift($parts);
     if (!empty($firstpart)) {
         $firstpart = strip_tags($firstpart);
@@ -142,7 +146,7 @@ function offlinequiz_convert_underline_text_docx($text) {
         $closetagpos = strpos($part, '</span>');
 
         $underlinetext = strip_tags(substr($part, 0, $closetagpos));
-        $underlineremain = strip_tags(trim(substr($part, $closetagpos + 7)));
+        $underlineremain = strip_tags(substr($part, $closetagpos + 7)); // trim
          
         $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $underlinetext), 'style' => 'uStyle');
         if (!empty($underlineremain)) {
@@ -152,6 +156,42 @@ function offlinequiz_convert_underline_text_docx($text) {
     return $result;
 }
 
+
+/**
+ * Function to convert bold characters (HTML <b> tags) into string blocks with bold style.
+ *  
+ * @param string $text
+ */
+function offlinequiz_convert_italic_text_docx($text) {
+    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
+    $replace = array('"', '&', '>', '<');
+
+    // Now add the remaining text after the image tag.
+    $parts = preg_split("/<b>|<em>/i", $text); 
+    $result = array();
+    
+    $firstpart = array_shift($parts);
+    if (!empty($firstpart)) {
+        $result = offlinequiz_convert_underline_text_docx($firstpart);
+    }
+
+    foreach($parts as $part) {
+        if ($closetagpos = strpos($part, '</em>')) {
+            $italicremain = substr($part, $closetagpos + 5); //trim
+        } else {
+            $closetagpos = strlen($part) - 1;
+            $italicremain = '';            
+        }
+        $italictext = strip_tags(substr($part, 0, $closetagpos)); // trim
+
+        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $italictext), 'style' => 'iStyle');
+        if (!empty($italicremain)) {
+            $italicremainblocks = offlinequiz_convert_underline_text_docx($italicremain);
+            $result = array_merge($result, $italicremainblocks);
+        }
+    }
+    return $result;
+}
 
 /**
  * Function to convert bold characters (HTML <b> tags) into string blocks with bold style.
@@ -168,23 +208,23 @@ function offlinequiz_convert_bold_text_docx($text) {
     
     $firstpart = array_shift($parts);
     if (!empty($firstpart)) {
-        $result = offlinequiz_convert_underline_text_docx($firstpart);
+        $result = offlinequiz_convert_italic_text_docx($firstpart);
     }
 
     foreach($parts as $part) {
         if ($closetagpos = strpos($part, '</b>')) {
-            $boldremain = trim(substr($part, $closetagpos + 4));
+            $boldremain = substr($part, $closetagpos + 4); // trim
         } else if ($closetagpos = strpos($part, '</strong>')) {
-            $boldremain = trim(substr($part, $closetagpos + 9));
+            $boldremain = substr($part, $closetagpos + 9); // trim?
         } else {
             $closetagpos = strlen($part) - 1;
             $boldremain = '';            
         }
-        $boldtext = strip_tags(trim(substr($part, 0, $closetagpos)));
+        $boldtext = strip_tags(substr($part, 0, $closetagpos)); // trim?
 
         $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $boldtext), 'style' => 'bStyle');
         if (!empty($boldremain)) {
-            $boldremainblocks = offlinequiz_convert_underline_text_docx($boldremain);
+            $boldremainblocks = offlinequiz_convert_italic_text_docx($boldremain);
             $result = array_merge($result, $boldremainblocks);
         }
     }
@@ -203,7 +243,7 @@ function offlinequiz_convert_newline_docx($text) {
     // Now add the remaining text after the image tag.
     $parts = preg_split("!<br>|<br />!i", $text);
     $result = array();
-    
+
     $firstpart = array_shift($parts);
     // If the original text was only a newline, we don't have a first part.
     if (!empty($firstpart)) {
@@ -243,7 +283,7 @@ function offlinequiz_convert_image_docx($text) {
 
     // Remove paragraphs.
     $text = preg_replace('!<p>!i', '', $text);
-    $text = preg_replace('!</p>!i', '', $text);
+    $text = preg_replace('!</p>!i', '<br>', $text);
 
     // First add all the text that appears before the image tag.
     $strings = preg_split("/<img/i", $text);
@@ -498,8 +538,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     // we need a mapping from question IDs to slots, assuming that each question occurs only once.
     $slots = $templateusage->get_slots();
 
-    $texfilteractive = $DB->get_field('filter_active', 'active', array('filter' => 'filter/tex', 'contextid' => 1));
-    if ($texfilteractive) {
+    $tex_filter = null;
+    $filters = filter_get_active_in_context($context);
+    if (array_key_exists('tex', $filters)) {
         $tex_filter = new filter_tex($context, array());
     }
 
@@ -540,7 +581,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 0.2, 400);
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 0.2, 300);
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
             offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
@@ -637,7 +678,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 0.2, 400);
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 0.2, 300);
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
 
