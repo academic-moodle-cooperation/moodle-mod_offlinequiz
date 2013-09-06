@@ -37,6 +37,8 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
 
         $confirm = optional_param('confirm', 0, PARAM_INT);
 
+        raise_memory_limit(MEMORY_EXTRA);
+        
         // Print header
         $this->print_header_and_tabs($cm, $course, $offlinequiz, 'regrade');
 
@@ -135,6 +137,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
 
         // Loop through all results and regrade while printing progress info
         foreach ($results as $result) {
+            set_time_limit(120);
 
             $user = $DB->get_record('user', array('id' => $result->userid));
             echo '<strong>' . get_string('regradingresult', 'offlinequiz', $user->{$offlinequizconfig->ID_field}) .
@@ -151,7 +154,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
                         array('resultid' => $result->id));
                 $title = get_string('changed', 'offlinequiz');
 
-                $OUTPUT->action_link($url, $title, new popup_action('click', $url, 'review' . $result->id, $options));
+                echo $OUTPUT->action_link($url, $title, new popup_action('click', $url, 'review' . $result->id, $options));
             } else {
                 echo get_string('done', 'offlinequiz');
             }
