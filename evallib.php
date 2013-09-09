@@ -200,7 +200,8 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
     // we also do that if another result exists, s.t. we have the answers later.
     if (empty($scannedpage->resultid)) {
         if ($scannedpage->status == 'ok' || $scannedpage->status == 'suspended' ||
-                ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists')) {
+                ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') ||
+                ($scannedpage->status == 'error' && $scannedpage->error == 'usernotincourse')) {
             // We have a group and a userid, so we can check if there is a matching partial result in the offlinequiz_results table.
             // The problem with this is that we could have several partial results with several pages.
             $sql = "SELECT *

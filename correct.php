@@ -107,7 +107,7 @@ $scanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestion
 // Load the stored image file.
 if (property_exists($scannedpage, 'id')) {
     // If we re-adjust, rotate, or changed the user we have to delete the stored hotspots.
-    if ($action == 'readjust' || $action == 'rotate' || $action == 'checkuser' || $scannedpage->error == 'usernotincourse') {
+    if ($action == 'readjust' || $action == 'rotate' || $action == 'checkuser') {
         $DB->delete_records('offlinequiz_hotspots', array('scannedpageid' => $scannedpage->id));
     }
     // Load the stored image and the hotspots from the DB if they have not been deleted.
