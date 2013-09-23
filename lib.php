@@ -241,6 +241,50 @@ function offlinequiz_grade_item_delete($offlinequiz) {
             null, array('deleted' => 1));
 }
 
+/**
+ * Called via pluginfile.php -> question_pluginfile to serve files belonging to
+ * a question in a question_attempt when that attempt is an offlinequiz attempt.
+ *
+ * @package  mod_offlinequiz
+ * @category files
+ * @param stdClass $course course settings object
+ * @param stdClass $context context object
+ * @param string $component the name of the component we are serving files for.
+ * @param string $filearea the name of the file area.
+ * @param int $qubaid the attempt usage id.
+ * @param int $slot the id of a question in this quiz attempt.
+ * @param array $args the remaining bits of the file path.
+ * @param bool $forcedownload whether the user must be forced to download the file.
+ * @param array $options additional options affecting the file serving
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
+function offlinequiz_question_pluginfile($course, $context, $component,
+        $filearea, $qubaid, $slot, $args, $forcedownload, array $options=array()) {
+    global $CFG, $DB, $USER;
+
+    list($context, $course, $cm) = get_context_info_array($context->id);
+    require_login($course, false, $cm);
+    
+    if (!has_capability('mod/offlinequiz:viewreports', $context)) {
+        // If the user is not a teacher then check whether a complete result exists.
+        if (!$result = $DB->get_record('offlinequiz_results', array('usageid' => $qubaid, 'status' => 'complete'))) {
+            send_file_not_found();
+        }
+        // If the user's ID is not the ID of the result we don't serve the file.
+        if ($result->userid != $USER->id) {
+            send_file_not_found();
+        }
+    }
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/$component/$filearea/$relativepath";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        send_file_not_found();
+    }
+
+    send_stored_file($file, 0, 0, $forcedownload, $options);
+}
 
 /**
  * Serve questiontext files in the question text when they are displayed in this report.
