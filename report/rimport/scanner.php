@@ -1073,7 +1073,6 @@ class offlinequiz_page_scanner {
         global $CFG;
 
         if ($x >= imagesx($this->image) or $x >= imagesy($this->image)) { // point is out of range
-            debugging("Image point is out of range");
             return false;
         }
         $rgb = imagecolorsforindex($this->image, imagecolorat($this->image, $x, $y));
