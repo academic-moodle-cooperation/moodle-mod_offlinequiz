@@ -176,7 +176,8 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                     }
 
                     // If there is something to correct then store the hotspots for retrieval in correct.php.
-                    if ($scannedpage->status != 'ok') {
+                    if ($scannedpage->status != 'ok' && $scannedpage->error != 'couldnotgrab'
+                            && $scannedpage->error != 'notadjusted' && $scannedpage->error != 'grouperror') {
                         $scanner->store_hotspots($scannedpage->id);
                     }
 
