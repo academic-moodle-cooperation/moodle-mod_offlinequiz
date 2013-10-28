@@ -33,6 +33,7 @@ $string['deleteselectedpages'] = 'Delete selected pages';
 $string['errorcouldnotgrab'] = 'Could not grab';
 $string['errordifferentpage'] = 'Differing page exists';
 $string['errordoublepage'] = 'Page already exists';
+$string['errorfilenotfound'] = 'File not found';
 $string['errorgrouperror'] = 'Group error';
 $string['errorinsecuremarkings'] = 'Insecure markings';
 $string['errorinvalidpagenumber'] = 'Invalid page number';

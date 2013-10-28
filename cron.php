@@ -145,7 +145,11 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                     // Try to load the image file.
                     echo 'job ' . $job->id . ': evaluating ' . $data->filename . "\n";
                     $scannedpage = $scanner->load_image($data->filename);
-                    echo 'job ' . $job->id . ': image loaded ' . $scannedpage->filename . "\n";
+                    if ($scannedpage->status == 'ok') {
+                        echo 'job ' . $job->id . ': image loaded ' . $scannedpage->filename . "\n";
+                    } else if ($scannedpage->error == 'filenotfound') {
+                        echo 'job ' . $job->id . ': image file not found: ' . $scannedpage->filename . "\n";
+                    }
                     $scannedpage->offlinequizid = $offlinequiz->id;
 
                     // If we could load the image file, the status is 'ok', so we can check the page for errors.

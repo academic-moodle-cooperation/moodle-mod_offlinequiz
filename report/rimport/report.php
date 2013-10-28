@@ -124,15 +124,19 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
         foreach ($errorpages as $page) {
 
-            if ($page->error == 'missingpages') {
-                $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/image.php?pageid=' . $page->id . '&resultid=' . $page->resultid);
-                $title = get_string('showpage', 'offlinequiz_rimport');
+            if ($page->error == 'filenotfound') {
+                $actionlink = '';
             } else {
-                $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/correct.php?pageid=' . $page->id);
-                $title = get_string('correcterror', 'offlinequiz_rimport');
-            }
+                if ($page->error == 'missingpages') {
+                    $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/image.php?pageid=' . $page->id . '&resultid=' . $page->resultid);
+                    $title = get_string('showpage', 'offlinequiz_rimport');
+                } else {
+                    $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/correct.php?pageid=' . $page->id);
+                    $title = get_string('correcterror', 'offlinequiz_rimport');
+                }
 
-            $actionlink = $OUTPUT->action_link($url, $title, new popup_action('click', $url, 'correct' . $page->id, $options));
+                $actionlink = $OUTPUT->action_link($url, $title, new popup_action('click', $url, 'correct' . $page->id, $options));
+            }
             //             if ($page->error == 'missingpages') {
             //              $actionlink = ' ';
             //             }
