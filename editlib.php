@@ -1237,18 +1237,21 @@ function print_random_option_icon($question) {
 function offlinequiz_question_tostring($question, $showicon = false,
         $showquestiontext = true, $return = true) {
     global $COURSE;
+
     $result = '';
-    $result .= '<span class="questionname">';
+
+    $formatoptions = new stdClass();
+    $formatoptions->noclean = true;
+    $formatoptions->para = false;
+    $questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
+    $result .= '<span class="questionname" title="' . $questiontext . '">';
+    
     if ($showicon) {
         $result .= print_question_icon($question, true);
         echo ' ';
     }
     $result .= shorten_text(format_string($question->name), 200) . '</span>';
     if ($showquestiontext) {
-        $formatoptions = new stdClass();
-        $formatoptions->noclean = true;
-        $formatoptions->para = false;
-        $questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
         $result .= '<span class="questiontext" title="' . $questiontext . '">';
 
         $questiontext = shorten_text($questiontext, 200);
