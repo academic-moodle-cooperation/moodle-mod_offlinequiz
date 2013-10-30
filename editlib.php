@@ -599,7 +599,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
     if ($hasattempts || $offlinequiz->shufflequestions) {
         $pagingdisabled = 'disabled="disabled"';
     }
-    if ($hasattempts) {
+    if (($hasattempts) || ($offlinequiz->numgroups == 1)) {
         $copyingdisabled = 'disabled="disabled"';
     }
 
@@ -628,19 +628,20 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
     $d = '';
     $e = '';
     $f = '';
+
+    $letterstr = 'ABCDEFGHIJKL';
+
+    $c = '<select name="copyselectedtogrouptop" ' . $copyingdisabled . '>';
+    $d = '<select name="copyselectedtogroupbottom" ' . $copyingdisabled . '>';
+    $e = '<select name="copytogrouptop" ' . $copyingdisabled . '>';
+    $f = '<select name="copytogroupbottom" ' . $copyingdisabled . '>';
+
+    $c .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
+    $d .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
+    $e .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
+    $f .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
+
     if ($offlinequiz->numgroups > 1) {
-        $letterstr = 'ABCDEFGHIJKL';
-
-        $c = '<select name="copyselectedtogrouptop" ' . $copyingdisabled . '>';
-        $d = '<select name="copyselectedtogroupbottom" ' . $copyingdisabled . '>';
-        $e = '<select name="copytogrouptop" ' . $copyingdisabled . '>';
-        $f = '<select name="copytogroupbottom" ' . $copyingdisabled . '>';
-
-        $c .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
-        $d .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
-        $e .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
-        $f .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
-
         for ($i=1; $i<=$offlinequiz->numgroups; $i++) {
             if ($i != $offlinequiz->groupnumber) {
                 $c .= '<option value="' . $i . '">' . $letterstr[$i-1] . '</option>';
@@ -649,19 +650,17 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                 $f .= '<option value="' . $i . '">' . $letterstr[$i-1] . '</option>';
             }
         }
-        $c .= '</select>';
-        $d .= '</select>';
-        $e .= '</select>';
-        $f .= '</select>';
     }
+    $c .= '</select>';
+    $d .= '</select>';
+    $e .= '</select>';
+    $f .= '</select>';
 
     // Add the controls in case we are in reorder and paging mode.
     $reordercontrols2top = '<div class="moveselectedonpage">';
 
-    if ($offlinequiz->numgroups > 1) {
-        $reordercontrols2top .= get_string('copyselectedtogroup', 'offlinequiz', $c);
-    }
-    $reordercontrols2top .= '<input type="submit" name="savechanges" value="' .
+    $reordercontrols2top .= get_string('copyselectedtogroup', 'offlinequiz', $c) .
+            '<input type="submit" name="savechanges" value="' .
             $strcopytogroup . '" ' . $copyingdisabled . '/><br/>' .
             get_string('moveselectedonpage', 'offlinequiz', $a) .
             '<input type="submit" name="savechanges" value="' .
@@ -703,20 +702,16 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
 
     // Add the controls in case we are in question list editing mode
     $editcontrols2top = '';
-    if ($offlinequiz->numgroups > 1) {
-        $editcontrols2top = '<div class="moveselectedonpage">';
-        $editcontrols2top .= get_string('copytogroup', 'offlinequiz', $e);
-        $editcontrols2top .= '<input type="submit" name="savechanges" value="' .
-                $strcopytogroup . '" ' . $copyingdisabled . '/>' . '</div>';
-    }
+    $editcontrols2top = '<div class="moveselectedonpage">';
+    $editcontrols2top .= get_string('copytogroup', 'offlinequiz', $e);
+    $editcontrols2top .= '<input type="submit" name="savechanges" value="' .
+                 $strcopytogroup . '" ' . $copyingdisabled . '/>' . '</div>';
 
     $editcontrols2bottom = '';
-    if ($offlinequiz->numgroups > 1) {
-        $editcontrols2bottom = '<div class="moveselectedonpage">';
-        $editcontrols2bottom .= get_string('copytogroup', 'offlinequiz', $f);
-        $editcontrols2bottom .= '<input type="submit" name="savechanges" value="' .
-                $strcopytogroup . '" ' . $copyingdisabled . ' />' . '</div>';
-    }
+    $editcontrols2bottom = '<div class="moveselectedonpage">';
+    $editcontrols2bottom .= get_string('copytogroup', 'offlinequiz', $f);
+    $editcontrols2bottom .= '<input type="submit" name="savechanges" value="' .
+            $strcopytogroup . '" ' . $copyingdisabled . ' />' . '</div>';
 
     $editcontrolstop = '<div class="editcontrols">' .
             $editcontrols2top . "</div>";
