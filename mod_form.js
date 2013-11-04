@@ -51,7 +51,6 @@ function showStudentView() {
 	if (attempt) {
 		imagefile1 = baseurl + '1';
 		imagefile2 = baseurl + '2';
-        imagefile3 = baseurl + '3';
 	}
 	if (correctness) {
 		imagefile2 = imagefile2 + "_correctness"; 
@@ -63,15 +62,22 @@ function showStudentView() {
 	}
 	if (specificfeedback) {
 		imagefile2 = imagefile2 + "_specific";
+        imagefile3 = baseurl + '3';
 		imagefile3 = imagefile3 + "_specific";
 	}
 	if (generalfeedback) {
+        if (imagefile3 == '') {
+        	imagefile3 = baseurl + '3';
+        }
 		imagefile3 = imagefile3 + "_general";
     }
 	if (rightanswer) {
 		if (imagefile2 == '') {
 			imagefile2 = baseurl + '2';
 		}
+        if (imagefile3 == '') {
+        	imagefile3 = baseurl + '3';
+        }
 		imagefile3 = imagefile3 + "_rightanswer";
 	}
 
