@@ -39,44 +39,78 @@ function showStudentView() {
 //	
 //	console.log(str);
 	baseurl = $('#basefilename').val();
-	imagefile1 = baseurl;
+	imagefile1 = '';
 	imagefile2 = '';
+	imagefile3 = '';
+	pagefile = '';
 	if (sheet || gradedsheet) {
-		imagefile2 = baseurl;
+		imagefile1 = baseurl + '1';
+		pagefile = baseurl;
 	}
-	
+
 	if (attempt) {
-		imagefile1 = imagefile1 + "_attempt"; 
+		imagefile1 = baseurl + '1';
+		imagefile2 = baseurl + '2';
+        imagefile3 = baseurl + '3';
 	}
 	if (correctness) {
-		imagefile1 = imagefile1 + "_correctness"; 
+		imagefile2 = imagefile2 + "_correctness"; 
 	}
 	if (marks) {
+		imagefile1 = baseurl + '1';
 		imagefile1 = imagefile1 + "_marks"; 
+		imagefile2 = imagefile2 + "_marks"; 
 	}
 	if (specificfeedback) {
-		imagefile1 = imagefile1 + "_specific"; 
+		imagefile2 = imagefile2 + "_specific";
+		imagefile3 = imagefile3 + "_specific";
 	}
 	if (generalfeedback) {
-		imagefile1 = imagefile1 + "_general"; 
-	}
+		imagefile3 = imagefile3 + "_general";
+    }
 	if (rightanswer) {
-		imagefile1 = imagefile1 + "_rightanswer"; 
+		if (imagefile2 == '') {
+			imagefile2 = baseurl + '2';
+		}
+		imagefile3 = imagefile3 + "_rightanswer";
 	}
-	imagefile1 = imagefile1 + '.png';
 
 	if (gradedsheet) {
-		imagefile2 = imagefile2 + "_gradedsheet.png"; 
+		imagefile1 = imagefile1 + "_pagelink"; 
+		pagefile = pagefile + "_gradedsheet.png";
 	} else if (sheet) {
-		imagefile2 = imagefile2 + "_sheet.png"; 
+		imagefile1 = imagefile1 + "_pagelink"; 
+		pagefile = pagefile + "_sheet.png"; 
 	}
 
-	$('<img />').attr({ 'id': 'image1', 'width': '100%', 'src': imagefile1}).appendTo($('.Popup'));
-	$('<br/>').appendTo($('.Popup'));
+	if (imagefile1 != '') {
+		imagefile1 = imagefile1 + '.png';
+	}
+	if (imagefile2 != '') {
+		imagefile2 = imagefile2 + '.png';
+	}
+	if (imagefile3 != '') {
+		imagefile3 = imagefile3 + '.png';
+	}
+
+	if (imagefile1 != '') {
+		$('<img />').attr({ 'id': 'image1', 'width': '100%', 'src': imagefile1}).appendTo($('.Popup'));
+		$('<br/>').appendTo($('.Popup'));
+	}
 
 	if (imagefile2 != '') {
-        $('<hr/>').appendTo($('.Popup'));
 		$('<img />').attr({ 'id': 'image2', 'width': '100%', 'src': imagefile2}).appendTo($('.Popup'));
+		$('<br/>').appendTo($('.Popup'));
+	}
+
+	if (imagefile3 != '') {
+		$('<img />').attr({ 'id': 'image3', 'width': '100%', 'src': imagefile3}).appendTo($('.Popup'));
+		$('<br/>').appendTo($('.Popup'));
+	}
+	
+	if (pagefile != '') {
+        $('<hr/>').appendTo($('.Popup'));
+		$('<img />').attr({ 'id': 'image4', 'width': '100%', 'src': pagefile}).appendTo($('.Popup'));
 		$('<br/>').appendTo($('.Popup'));
 	}
 
@@ -84,7 +118,7 @@ function showStudentView() {
 	$('#overlay').fadeIn("slow");
 }
 
-function resetPopup () {
+function closePopup () {
 	$('.Popup').fadeOut('slow');
 	$('#overlay').fadeOut('slow');
 	
@@ -92,3 +126,23 @@ function resetPopup () {
 	$('.Popup').children('br').remove();
 	$('.Popup').children('hr').remove();	
 }
+
+// Catch ESC key to close popup.
+$(document).keyup(function(e) {
+	  if (e.keyCode == 27) {
+		  closePopup();
+      }   // esc
+	});
+
+// Close popup when user clicks on overlay
+$("#overlay").click(function(e){
+	  if ($('.Popup').is(':visible')) {
+		  closePopup();
+	  }
+});
+
+// Prevent events from getting pass .popup
+$(".Popup").click(function(e){
+  e.stopPropagation();
+});
+
