@@ -156,7 +156,7 @@ class offlinequiz_html_translator
                         } else if (!in_array($imagetype, $accepted)) {
                             $output .= get_string('imagenotjpg','offlinequiz',$imagefilename);
                         }
-                        
+
                         if ($imagewidth > 0) {
                             if ($imageheight > 0) {
                                 $fileheight = $imageheight;
@@ -166,18 +166,18 @@ class offlinequiz_html_translator
                             $filewidth = $imagewidth;
                         }
 
-                        if ($teximage) {
-                            $factor = $fileheight / 20;
-                        }
+//                         if ($teximage && $fileheight > 20) {
+//                             $factor = $fileheight / 20;
+//                         }
 
-                        $width = $filewidth / ($kfactor * $factor);
+                        $width = round($filewidth / ($kfactor * $factor));
                         	
                         if ($width > $maxwidth) {
                             $width = $maxwidth;
                         }
                         	
-                        $height = $fileheight * $width / $filewidth;
-                        	
+                        $height = round($fileheight * $width / $filewidth);
+
                         // Add filename to list of temporary files.
                         $this->tempfiles[] = $file;
                         	
@@ -204,9 +204,7 @@ class offlinequiz_html_translator
                 }
             }
             $output .= substr($string, strpos($string, '>')+1);
-            //print_object($output);
         }
-        //print_object($this->tempfiles);
         return $output;
     }
 
