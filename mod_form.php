@@ -189,7 +189,27 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->disabledIf('generalfeedbackclosed', 'attemptclosed');
         $mform->disabledIf('rightanswerclosed', 'attemptclosed');
         //      $mform->disabledIf('gradedsheetclosed', 'sheetclosed');
+        $mform->setExpanded('reviewoptionshdr');
+        // Try to insert student view for teachers
+        
+        $language = current_language();
 
+        $mform->addElement('html', '<input id="showviewbutton" type="button" value="'. get_string('showstudentview', 'offlinequiz') . '" onClick="showStudentView(); return false;">');
+        $mform->addElement('html', '<div class="Popup"><center><input type="button" class="closePopup" onClick="closePopup(); return false;" value="' . get_string('closestudentview', 'offlinequiz') . '"/></center><br/></div>');
+        $mform->addElement('html', '<div id="overlay" class="closePopup"></div>');
+        $mform->addElement('html', '<input id="basefilename" type="hidden" value="' . $CFG->wwwroot . '/mod/offlinequiz/pix/studentview/' . $language . '/img">');
+
+        $module = array(
+                'name'      => 'mod_offlinequiz_mod_form',
+                'fullpath'  => '/mod/offlinequiz/mod_form.js',
+                'requires'  => array(),
+                'strings'   => array(),
+                'async'     => false,
+        );
+
+        $PAGE->requires->jquery();
+        $PAGE->requires->js('/mod/offlinequiz/mod_form.js');
+        
         //      $this->standard_grading_coursemodule_elements();
         // $this->standard_hidden_coursemodule_elements();
 
