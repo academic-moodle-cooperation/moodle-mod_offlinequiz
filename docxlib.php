@@ -76,8 +76,14 @@ function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbe
             $textrun = $section->createTextRun('questionTab');
             $textrun->addText("\t", 'nStyle');
         }
+        $counter = count($blocks);
         foreach($blocks as $block) {
+            $counter--;
             if ($block['type'] == 'string') {
+                // Skip empty string at the end of the text block.
+                if (($counter == 0) && strlen(trim($block['value']) == '')) {
+                    continue;
+                } 
                 if (array_key_exists('style', $block) && !empty($block['style'])) {
                     $textrun->addText($block['value'], $block['style']);
                 } else {
@@ -112,11 +118,13 @@ function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbe
 
                 // Now add the image and start a new textrun.
                 $section->addImage($block['value'], $style);
-                if (empty($numbering)) {
-                    $textrun = $section->createTextRun();
-                } else {
-                    $textrun = $section->createTextRun('questionTab');
-                    $textrun->addText("\t", 'nStyle');
+                if ($counter > 0) {
+                    if (empty($numbering)) {
+                        $textrun = $section->createTextRun();
+                    } else {
+                        $textrun = $section->createTextRun('questionTab');
+                        $textrun->addText("\t", 'nStyle');
+                    }
                 }
             }
         }
@@ -283,8 +291,10 @@ function offlinequiz_convert_image_docx($text) {
 
     // Remove paragraphs.
     $text = preg_replace('!<p>!i', '', $text);
-    $text = preg_replace('!</p>!i', '<br>', $text);
-
+    $text = preg_replace('!</p>!i', '<br />', $text);
+    $text = preg_replace('!</a>!i', '', $text);
+    $text = preg_replace('!<a([^>]+)>!i', '', $text);
+    
     // First add all the text that appears before the image tag.
     $strings = preg_split("/<img/i", $text);
     $firstline = array_shift($strings);
@@ -581,7 +591,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 0.2, 300);
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 0.6, 300);
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
             offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
@@ -614,7 +624,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     // Remove all paragraph tags because they mess up the layout.
                     $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200);
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 0.6, 200);
 //                    $answertext = '     ' . $letterstr[$key] . ') ' . $answertext;
                     
                     //                     if ($correction) {
@@ -678,10 +688,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 0.2, 300);
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 0.6, 300);
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
-
             // Description questions are printed without a number because they are not on the answer form.
             if ($question->qtype == 'description') {
                 offlinequiz_print_blocks_docx($section, $blocks);
@@ -720,7 +729,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     // Remove all paragraph tags because they mess up the layout.
                     $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200);
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 0.6, 200);
 //                    $answertext = '     ' . $letterstr[$key] . ') ' . $answertext;
                     // Alternative would be a tab:
 //                    $answertext = "\t" . $letterstr[$key] . ') ' . $answertext;
@@ -734,6 +743,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     //                     }
 
                     $blocks = offlinequiz_convert_image_docx($answertext);
+
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
                     
                     if ($offlinequiz->showgrades) {
