@@ -247,6 +247,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             $job = new stdClass();
             $job->offlinequizid = $offlinequiz->id;
             $job->importuserid = $USER->id;
+            $job->timecreated = time();
             $job->timestart = 0;
             $job->timefinish = 0;
             $job->status = 'new';
