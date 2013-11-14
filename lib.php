@@ -764,7 +764,7 @@ function offlinequiz_cron() {
              WHERE time < :expiretime";
     $params = array('expiretime' => $timenow - 604800);
     
-    // First we get the differente IDs. 
+    // First we get the different IDs. 
     $ids = $DB->get_fieldset_sql($sql, $params);
     
     if (!empty($ids)) {
@@ -772,6 +772,34 @@ function offlinequiz_cron() {
 
         // Now we delete the records.
         $DB->delete_records_select('offlinequiz_hotspots', 'scannedpageid ' . $isql, $iparams);
+    }
+    
+    // Delete old temporary files not needed any longer.
+    $keepdays = get_config('offlinequiz', 'keepfilesfordays');
+    $keepseconds = $keepdays * 24 * 60 * 60;
+    
+    $sql = "SELECT id
+              FROM {offlinequiz_queue}
+             WHERE timecreated < :expiretime";
+    $params = array('expiretime' => $timenow - $keepseconds);
+
+    // First we get the IDs of cronjobs older than the configured number of days. 
+    $jobids = $DB->get_fieldset_sql($sql, $params);
+    foreach ($jobids as $jobid) {
+        $dirname = null;
+        // Delete all temporary files and the database entries.
+        if ($files = $DB->get_records('offlinequiz_queue_data', array('queueid' => $jobid))) {
+            foreach ($files as $file) {
+                if (empty($dirname)) {
+                    $path_parts = pathinfo($file->filename);
+                    $dirname = $path_parts['dirname'];
+                }
+                $DB->delete_records('offlinequiz_queue_data', array('id' => $file->id));
+            }
+            // Remove the temporary directory
+            echo "Removing dir " . $dirname . "\n";
+            remove_dir($dirname);
+        }
     }
     
     return true;
