@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/offlinequiz/db" VERSION="20131113" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
+<XMLDB PATH="mod/offlinequiz/db" VERSION="20131125" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -150,6 +150,9 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="offlinequiz_userid_idx" UNIQUE="false" FIELDS="userid" COMMENT="Index on User ID for faster loading of results overview."/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="offlinequiz_p_lists" COMMENT="Lists for participants">
       <FIELDS>

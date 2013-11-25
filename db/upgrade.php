@@ -1076,5 +1076,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2013110800, 'offlinequiz');
     }
+
+    if ($oldversion < 2013112500) {
+    
+        // Define index offlinequiz_userid_idx (not unique) to be added to offlinequiz_results.
+        $table = new xmldb_table('offlinequiz_results');
+        $index = new xmldb_index('offlinequiz_userid_idx', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+    
+        // Conditionally launch add index offlinequiz_userid_idx.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+    
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2013112500, 'offlinequiz');
+    }
     
 }
