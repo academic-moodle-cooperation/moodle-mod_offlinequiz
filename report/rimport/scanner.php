@@ -341,6 +341,7 @@ class offlinequiz_page_scanner {
 
         $path_parts = pathinfo($file);
         $this->filename = $path_parts['filename'] . '.' . $path_parts['extension'];
+        $scannedpage->origfilename = $this->filename;
 
         if (!file_exists($file)) {
             $scannedpage->status = 'error';
@@ -405,6 +406,7 @@ class offlinequiz_page_scanner {
                 if (file_exists($newfile)) {
                     unlink($file);
                     $this->filename = $path_parts["filename"] . ".png";
+                    $scannedpage->origfilename = $this->filename;
                     $this->sourcefile = $newfile;
                     if (function_exists('imagecreatefrompng')) {
                         $this->image = imagecreatefrompng($newfile);
@@ -431,6 +433,7 @@ class offlinequiz_page_scanner {
                 if (file_exists($newfile)) {
                     unlink($file);
                     $this->filename = $path_parts["filename"] . ".png";
+                    $scannedpage->origfilename = $this->filename;
                     $this->sourcefile = $newfile;
                     if (function_exists('imagecreatefrompng')) {
                         $this->image = imagecreatefrompng($newfile);

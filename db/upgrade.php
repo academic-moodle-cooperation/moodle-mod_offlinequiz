@@ -1061,4 +1061,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2013061300, 'offlinequiz');
     }
+    
+    if ($oldversion < 2013110800) {
+    
+        // Define field timecreated to be added to offlinequiz_queue.
+        $table = new xmldb_table('offlinequiz_queue');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'importuserid');
+    
+        // Conditionally launch add field timecreated.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2013110800, 'offlinequiz');
+    }
+    
 }
