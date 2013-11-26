@@ -68,6 +68,8 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         if ($pagesize < 1) {
             $pagesize = 10;
         }
+
+        $answerletters = 'abcdefghijklmnopqrstuvwxyz';
         
         // Deal with actions.
         $action = optional_param('action', '', PARAM_ACTION);
@@ -302,14 +304,15 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
             header("Pragma: public");
 
-            echo get_string($offlinequizconfig->ID_field) . ', ' . get_string('group');
+            // Print the table headers.
+            echo get_string($offlinequizconfig->ID_field) . '; ' . get_string('group');
             $maxquestions = offlinequiz_get_maxquestions($offlinequiz, $groups);
             for ($i = 0; $i < $maxquestions; $i++) {
-                echo ', ' . get_string('question') . ' ' . ($i + 1);
+                echo '; ' . get_string('question') . ' ' . ($i + 1);
             }
             echo "\n";
 
-            // print the correct answer bit-strings
+            // Print the correct answer bit-strings
             foreach ($groups as $group) {
                 if ($group->templateusageid) {
                     $quba = question_engine::load_questions_usage_by_activity($group->templateusageid);
@@ -323,16 +326,17 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                             $attempt = $quba->get_question_attempt($slot);
                             $order = $slotquestion->get_order($attempt);  // order of the answers
 
-                            $tempstr = ", ";
-
+                            $tempstr = ";";
+                            $letters = array();
+                            $counter = 0;
                             foreach ($order as $key => $answerid) {
                                 $fraction = $DB->get_field('question_answers', 'fraction',  array('id' => $answerid));
                                 if ($fraction > 0) {
-                                    $tempstr .= "1";
-                                } else {
-                                    $tempstr .= "0";
-                                }
+                                    $letters[] = $answerletters[$counter];
+                                } 
+                                $counter++;
                             }
+                            $tempstr .= implode(',', $letters);
                             echo $tempstr;
                         }
                     }
@@ -531,13 +535,20 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                         foreach ($pages as $page) {
                             $choices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $page->id), 'slotnumber, choicenumber');
                             $oldslot = 0;
+                            $counter = 0;
+                            $letters = array();
                             foreach ($choices as $choice) {
                                 if ($oldslot != $choice->slotnumber) {
-                                    $text .= ", ";
+                                    $text .= ";";
+                                    $counter = 0;
                                     $oldslot = $choice->slotnumber;
                                 }
-                                $text .= $choice->value;
+                                if ($choice->value) {
+                                    $letters[] = $answerletters[$counter];
+                                }
+                                $counter++;
                             }
+                            $text .= implode(',', $letters);
                         }
                     }
                     echo $text."\n";
