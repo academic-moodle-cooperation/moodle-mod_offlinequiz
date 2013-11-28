@@ -305,10 +305,11 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             header("Pragma: public");
 
             // Print the table headers.
-            echo get_string($offlinequizconfig->ID_field) . '; ' . get_string('group');
+            echo get_string('firstname') . ',' . get_string('lastname') . ',' .
+                    get_string($offlinequizconfig->ID_field) . ',' . get_string('group');
             $maxquestions = offlinequiz_get_maxquestions($offlinequiz, $groups);
             for ($i = 0; $i < $maxquestions; $i++) {
-                echo '; ' . get_string('question') . ' ' . ($i + 1);
+                echo ', ' . get_string('question') . ' ' . ($i + 1);
             }
             echo "\n";
 
@@ -317,16 +318,15 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 if ($group->templateusageid) {
                     $quba = question_engine::load_questions_usage_by_activity($group->templateusageid);
                     $slots = $quba->get_slots();
-                    echo get_string ('correct', 'offlinequiz');
-                    echo ", " . $group->number;
+                    echo ', ,' . get_string ('correct', 'offlinequiz');
+                    echo ',' . $group->number;
                     foreach ($slots as $slot) {
                         $slotquestion = $quba->get_question($slot);
                         $qtype = $slotquestion->get_type_name();
                         if ($qtype == 'multichoice' || $qtype == 'multichoiceset') {
                             $attempt = $quba->get_question_attempt($slot);
                             $order = $slotquestion->get_order($attempt);  // order of the answers
-
-                            $tempstr = ";";
+                            $tempstr = ",";
                             $letters = array();
                             $counter = 0;
                             foreach ($order as $key => $answerid) {
@@ -336,7 +336,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                 } 
                                 $counter++;
                             }
-                            $tempstr .= implode(',', $letters);
+                            $tempstr .= implode('/', $letters);
                             echo $tempstr;
                         }
                     }
@@ -526,32 +526,34 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     }
                     $rownum++;
                 } else if ($download=='CSV') {
-                    $text = implode(", ", $row);
+                    $text = implode(',', $row);
                     echo $text."\n";
                 } else if ($download=='CSVplus1') {
-                    $text = $row[0]."," . $groups[$result->offlinegroupid]->number;
-
+                    $text = $row[1] . ',' . $row[2] . ',' . $row[0] . ',' . $groups[$result->offlinegroupid]->number;
                     if ($pages = $DB->get_records('offlinequiz_scanned_pages', array('resultid' => $result->resultid), 'pagenumber ASC')) {
                         foreach ($pages as $page) {
                             $choices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $page->id), 'slotnumber, choicenumber');
-                            $oldslot = 0;
                             $counter = 0;
+                            $oldslot = -1;
                             $letters = array();
                             foreach ($choices as $choice) {
-                                if ($oldslot != $choice->slotnumber) {
-                                    $text .= ";";
+                                if ($oldslot == -1) {
+                                    $oldslot = $choice->slotnumber;
+                                } else if ($oldslot != $choice->slotnumber) {
+                                    $text .= ',' . implode('/', $letters); 
                                     $counter = 0;
                                     $oldslot = $choice->slotnumber;
+                                    $letters = array();
                                 }
-                                if ($choice->value) {
+                                if ($choice->value == 1) {
                                     $letters[] = $answerletters[$counter];
                                 }
                                 $counter++;
                             }
-                            $text .= implode(',', $letters);
+                            $text .= ',' . implode('/', $letters);
                         }
                     }
-                    echo $text."\n";
+                    echo $text . "\n";
                 }
             } // end foreach ($results...
         } else if (!$download) {
