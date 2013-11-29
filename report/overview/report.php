@@ -333,10 +333,14 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                 $fraction = $DB->get_field('question_answers', 'fraction',  array('id' => $answerid));
                                 if ($fraction > 0) {
                                     $letters[] = $answerletters[$counter];
-                                } 
+                                }
                                 $counter++;
                             }
-                            $tempstr .= implode('/', $letters);
+                            if (empty($letters)) {
+                                $tempstr .= '99';
+                            } else {
+                                $tempstr .= implode('/', $letters);
+                            }
                             echo $tempstr;
                         }
                     }
@@ -540,7 +544,11 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                 if ($oldslot == -1) {
                                     $oldslot = $choice->slotnumber;
                                 } else if ($oldslot != $choice->slotnumber) {
-                                    $text .= ',' . implode('/', $letters); 
+                                    if (empty($letters)) {
+                                        $text .= ',99';
+                                    } else {
+                                        $text .= ',' . implode('/', $letters); 
+                                    }
                                     $counter = 0;
                                     $oldslot = $choice->slotnumber;
                                     $letters = array();
@@ -550,7 +558,11 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                 }
                                 $counter++;
                             }
-                            $text .= ',' . implode('/', $letters);
+                            if (empty($letters)) {
+                                $text .= ',99';
+                            } else {
+                                $text .= ',' . implode('/', $letters);
+                            }
                         }
                     }
                     echo $text . "\n";
