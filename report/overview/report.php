@@ -536,32 +536,34 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     $text = $row[1] . ',' . $row[2] . ',' . $row[0] . ',' . $groups[$result->offlinegroupid]->number;
                     if ($pages = $DB->get_records('offlinequiz_scanned_pages', array('resultid' => $result->resultid), 'pagenumber ASC')) {
                         foreach ($pages as $page) {
-                            $choices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $page->id), 'slotnumber, choicenumber');
-                            $counter = 0;
-                            $oldslot = -1;
-                            $letters = array();
-                            foreach ($choices as $choice) {
-                                if ($oldslot == -1) {
-                                    $oldslot = $choice->slotnumber;
-                                } else if ($oldslot != $choice->slotnumber) {
-                                    if (empty($letters)) {
-                                        $text .= ',99';
-                                    } else {
-                                        $text .= ',' . implode('/', $letters); 
-                                    }
-                                    $counter = 0;
+                            if ($page->status == 'ok' || $page->status == 'submitted') {
+                                $choices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $page->id), 'slotnumber, choicenumber');
+                                $counter = 0;
+                                $oldslot = -1;
+                                $letters = array();
+                                foreach ($choices as $choice) {
+                                    if ($oldslot == -1) {
+                                        $oldslot = $choice->slotnumber;
+                                    } else if ($oldslot != $choice->slotnumber) {
+                                        if (empty($letters)) {
+                                            $text .= ',99';
+                                        } else {
+                                            $text .= ',' . implode('/', $letters);
+                                        }
+                                        $counter = 0;
                                     $oldslot = $choice->slotnumber;
                                     $letters = array();
+                                    }
+                                    if ($choice->value == 1) {
+                                        $letters[] = $answerletters[$counter];
+                                    }
+                                    $counter++;
                                 }
-                                if ($choice->value == 1) {
-                                    $letters[] = $answerletters[$counter];
+                                if (empty($letters)) {
+                                    $text .= ',99';
+                                } else {
+                                    $text .= ',' . implode('/', $letters);
                                 }
-                                $counter++;
-                            }
-                            if (empty($letters)) {
-                                $text .= ',99';
-                            } else {
-                                $text .= ',' . implode('/', $letters);
                             }
                         }
                     }
