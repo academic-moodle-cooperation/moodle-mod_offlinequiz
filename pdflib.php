@@ -184,9 +184,9 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
         // Print boxes for the user ID number.
         $this->SetFont('FreeSans', '', 12);
-        for ($i=0; $i<$offlinequizconfig->ID_digits; $i++) {
+        for ($i = 0; $i < $offlinequizconfig->ID_digits; $i++) {
             $x = 139 + 6.5 * $i;
-            for ($j=0; $j<=9; $j++) {
+            for ($j = 0; $j <= 9; $j++) {
                 $y = 44 + $j * 6;
                 $this->Rect($x, $y, 3.5, 3.5);
                 // $this->SetXY($x,$y);
@@ -196,10 +196,10 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
         // Print the digits for the user ID number.
         $this->SetFont('FreeSans', '', 10);
-        for ($y=0; $y<=9; $y++) {
-            $this->SetXY(134, ($y*5.95+44.2));
+        for ($y = 0; $y <= 9; $y++) {
+            $this->SetXY(134, ($y * 6 + 44));
             $this->Cell(3.5, 3.5, "$y", 0, 1, 'C');
-            $this->SetXY(138 + $offlinequizconfig->ID_digits * 6.5, ($y * 5.95 + 44.2));
+            $this->SetXY(138 + $offlinequizconfig->ID_digits * 6.5, ($y * 6 + 44));
             $this->Cell(3.5, 3.5, "$y", 0, 1, 'C');
         }
 
@@ -371,6 +371,39 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf
         }
         $this->Rect($x, $y, 0.2, 3.7, 'F');
     }
+}
+
+/**
+ * Returns a rendering of the number depending on the answernumbering format.
+ * 
+ * @param int $num The number, starting at 0.
+ * @param string $style The style to render the number in. One of the
+ * options returned by {@link qtype_multichoice:;get_numbering_styles()}.
+ * @return string the number $num in the requested style.
+ */
+function number_in_style($num, $style) {
+    switch($style) {
+        case 'abc':
+            $number = chr(ord('a') + $num);
+            break;
+        case 'ABCD':
+            $number = chr(ord('A') + $num);
+            break;
+        case '123':
+            $number = $num + 1;
+            break;
+        case 'iii':
+            $number = question_utils::int_to_roman($num + 1);
+            break;
+        case 'IIII':
+            $number = strtoupper(question_utils::int_to_roman($num + 1));
+            break;
+        case 'none':
+            return '';
+        default:
+                return 'ERR';
+    }
+    return $number;
 }
 
 /**
@@ -600,7 +633,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                         $answertext .= " (".round($question->options->answers[$answer]->fraction * 100)."%)";
                     }
 
-                    $html .= $letterstr[$key] . ') &nbsp; ';
+                    $html .= number_in_style($key, $question->answernumbering) . ') &nbsp; ';
                     $html .= $answertext;
 
                     if ($correction) {
@@ -736,7 +769,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                             $answertext .= " (".round($question->options->answers[$answer]->fraction * 100)."%)";
                         }
 
-                        $html .= $letterstr[$key] . ') &nbsp; ';
+                        $html .= number_in_style($key, $question->options->answernumbering) . ') &nbsp; ';
                         $html .= $answertext;
 
                         if ($correction) {
@@ -954,8 +987,9 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
         if ($number % 8 == 0) {
             $pdf->SetFont('FreeSans', '', 8);
             $pdf->SetX(($col-1) * ($pdf->colwidth) + $offsetx + 5);
-            for ($i=1; $i <=$maxanswers; $i++) {
-                $pdf->Cell(3.5, 3.5, $letterstr[$i], 0, 0, 'C');
+            for ($i = 0; $i < $maxanswers; $i++) {
+//                $pdf->Cell(3.5, 3.5, $letterstr[$i], 0, 0, 'C');
+                $pdf->Cell(3.5, 3.5, number_in_style($i, $question->options->answernumbering), 0, 0, 'C');
                 $pdf->Cell(3, 3.5, '', 0, 0, 'C');
             }
             $pdf->Ln(4.5);
@@ -972,8 +1006,8 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
 
         for ($i=1; $i <=count($order); $i++) {
             // Move the boxes slightly down to align with question number.
-            $pdf->Rect($x, $y+0.6, 3.5, 3.5);
-            $pdf->Rect($x+0.1, $y+0.7, 3.5, 3.5);
+            $pdf->Rect($x, $y+0.6, 3.5, 3.5, '', array('all' => array('width' => 0.2)));
+//            $pdf->Rect($x+0.1, $y+0.7, 3.5, 3.5);
             $x += 6.5;
         }
 
@@ -1034,8 +1068,6 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
  */
 function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $context) {
     global $CFG, $DB;
-
-    $letterstr = ' abcdefghijklmnopqrstuvwxyz';
 
     $coursecontext = context_course::instance($courseid); // Course context.
     $systemcontext = context_system::instance();
