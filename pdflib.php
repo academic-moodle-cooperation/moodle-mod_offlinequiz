@@ -633,7 +633,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                         $answertext .= " (".round($question->options->answers[$answer]->fraction * 100)."%)";
                     }
 
-                    $html .= number_in_style($key, $question->answernumbering) . ') &nbsp; ';
+                    $html .= number_in_style($key, $question->options->answernumbering) . ') &nbsp; ';
                     $html .= $answertext;
 
                     if ($correction) {
