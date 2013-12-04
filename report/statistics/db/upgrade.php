@@ -84,7 +84,35 @@ function xmldb_offlinequiz_statistics_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013040300, 'offlinequiz', 'statistics');
     }
     
+    if ($oldversion < 2013120400) {
+    
+        // Define field correct to be added to offlinequiz_q_statistics.
+        $table = new xmldb_table('offlinequiz_q_statistics');
+        $field = new xmldb_field('correct', XMLDB_TYPE_INTEGER, '4', null, null, null, '0', 'randomguessscore');
+    
+        // Conditionally launch add field correct.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
 
+        $field = new xmldb_field('partially', XMLDB_TYPE_INTEGER, '4', null, null, null, '0', 'correct');
+        
+        // Conditionally launch add field partially.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        $field = new xmldb_field('wrong', XMLDB_TYPE_INTEGER, '4', null, null, null, '0', 'partially');
+        
+        // Conditionally launch add field wrong.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+              
+        // Statistics savepoint reached.
+        upgrade_plugin_savepoint(true, 2013120400, 'offlinequiz', 'statistics');
+    }
+    
 
     return true;
 }
