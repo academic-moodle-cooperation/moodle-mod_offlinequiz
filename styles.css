@@ -629,6 +629,25 @@ a:hover
 #page-mod-offlinequiz-report table#questionstatistics div.commands {
 	float: right;
 }
+#page-mod-offlinequiz-report table#questionstatistics td.correct {
+	display: none;
+}
+#page-mod-offlinequiz-report table#questionstatistics td.partially {
+	display: none;
+}
+#page-mod-offlinequiz-report table#questionstatistics td.wrong {
+	display: none;
+}
+
+#page-mod-offlinequiz-report table#questionstatistics th.correct {
+	display: none;
+}
+#page-mod-offlinequiz-report table#questionstatistics th.partially {
+	display: none;
+}
+#page-mod-offlinequiz-report table#questionstatistics th.wrong {
+	display: none;
+}
 
 
 
