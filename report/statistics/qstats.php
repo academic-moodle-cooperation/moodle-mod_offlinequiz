@@ -152,58 +152,6 @@ class offlinequiz_statistics_question_stats {
                 WHERE
                     qa.questionid $qsql AND
                     $whereqa", $params);
-
-	// Second try: Split the query even further, didnt make it faster
-        /* $lateststepsids = $DB->get_fieldset_sql(" */
-        /*         SELECT MAX(id) */
-        /*           FROM {question_attempt_steps} qass */
-        /*          WHERE qass.questionattemptid $qaidssql */
-        /*       GROUP BY questionattemptid", $qaidsparams); */
-        
-        /* list($lssql, $lsparams) = $DB->get_in_or_equal($lateststepsids, SQL_PARAMS_NAMED, 'lsid'); */
-
-        // $params = array_merge($qparams, $qaparams, $lsparams);
-        
-        /* $this->lateststeps = $DB->get_records_sql(" */
-        /*         SELECT */
-        /*             qas.id, */
-        /*             offlinequiza.sumgrades, */
-        /*             qa.questionid, */
-        /*             qa.slot, */
-        /*             qa.maxmark, */
-        /*             qas.fraction * qa.maxmark as mark */
-
-        /*         FROM $fromqa */
-        /*         JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid */
-        /*         JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id */
-
-        /*         WHERE qa.questionid $qsql */
-        /*           AND qas.id $lssql                 */
-        /*           AND $whereqa", $params); */
-
-//         $this->lateststeps = $DB->get_records_sql("
-//                 SELECT
-//                     qas.id,
-//                     offlinequiza.sumgrades,
-//                     qa.questionid,
-//                     qa.slot,
-//                     qa.maxmark,
-//                     qas.fraction * qa.maxmark as mark
-
-//                 FROM $fromqa
-//                 JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid
-//                 JOIN (
-//                 ) lateststepid ON lateststepid.questionattemptid = qa.id
-//                 JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
-
-//                 WHERE
-//                     qa.questionid $qsql AND
-//                     $whereqa", $params);
-
-        // used to be:
-        //                     WHERE
-        //                     qa.slot $qsql AND
-        //                     $whereqa", $qparams + $qaparams);
     }
 
     /*
@@ -219,7 +167,6 @@ class offlinequiz_statistics_question_stats {
         // out which questions appear in which positions.
         foreach ($this->lateststeps as $step) {
             $this->initial_steps_walker($step, $this->questions[$step->questionid]->_stats);
-
             // If this is a random question what is the real item being used?
             if ($step->questionid != $this->questions[$step->questionid]->id) {
                 if (!isset($subquestionstats[$step->questionid])) {
@@ -230,8 +177,19 @@ class offlinequiz_statistics_question_stats {
                     $subquestionstats[$step->questionid]->subquestion = true;
                     $subquestionstats[$step->questionid]->differentweights = false;
                     $subquestionstats[$step->questionid]->maxmark = $step->maxmark;
+                    $subquestionstats[$step->questionid]->correct = 0;
+                    $subquestionstats[$step->questionid]->partially = 0;
+                    $subquestionstats[$step->questionid]->wrong = 0;                    
                 } else if ($subquestionstats[$step->questionid]->maxmark != $step->maxmark) {
                     $subquestionstats[$step->questionid]->differentweights = true;
+                }
+                // Redmine 1302. Compute the number of results 
+                if ($step->mark == $step->maxmark) {
+                    $subquestionstats[$step->questionid]->correct++;
+                } else if ($step->mark > 0 && $step->mark < $step->maxmark) {
+                    $subquestionstats[$step->questionid]->partially++;
+                } else {
+                    $subquestionstats[$step->questionid]->wrong++;
                 }
 
                 $this->initial_steps_walker($step,
@@ -256,7 +214,6 @@ class offlinequiz_statistics_question_stats {
 
         // Compute the statistics of question id, if we need any.
         $this->subquestions = question_load_questions(array_keys($subquestionstats));
-
         foreach ($this->subquestions as $qid => $subquestion) {
             $subquestion->_stats = $subquestionstats[$qid];
             $subquestion->maxmark = $subquestion->_stats->maxmark;
@@ -314,12 +271,10 @@ class offlinequiz_statistics_question_stats {
 
         // Go through the records one more time.
         foreach ($this->lateststeps as $step) {
-            $this->secondary_steps_walker($step,
-                    $this->questions[$step->questionid]->_stats);
-            if ($this->questions[$step->questionid]->qtype == 'random') {
-                $this->secondary_steps_walker($step,
-                        $this->subquestions[$step->questionid]->_stats);
-            }
+            $this->secondary_steps_walker($step, $this->questions[$step->questionid]->_stats);
+//             if ($this->questions[$step->questionid]->qtype == 'random') {
+//                 $this->secondary_steps_walker($step, $this->subquestions[$step->questionid]->_stats);
+//             }
         }
 
         $sumofcovariancewithoverallmark = 0;
@@ -405,6 +360,10 @@ class offlinequiz_statistics_question_stats {
         }
         sort($stats->markarray, SORT_NUMERIC);
         sort($stats->othermarksarray, SORT_NUMERIC);
+        
+        $stats->correct = 0;
+        $stats->partially = 0;
+        $stats->wrong = 0;
     }
 
     /**
@@ -434,6 +393,15 @@ class offlinequiz_statistics_question_stats {
         $stats->covariancesum += $markdifference * $othermarkdifference;
         $stats->covariancemaxsum += $sortedmarkdifference * $sortedothermarkdifference;
         $stats->covariancewithoverallmarksum += $markdifference * $overallmarkdifference;
+
+        // Redmine 1302. Compute the number of results
+        if ($step->mark == $step->maxmark) {
+            $stats->correct++;
+        } else if ($step->mark > 0 && $step->mark < $step->maxmark) {
+            $stats->partially++;
+        } else {
+            $stats->wrong++;
+        }
     }
 
     /**

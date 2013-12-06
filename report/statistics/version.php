@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013040300;
+$plugin->version   = 2013120400;
 $plugin->requires  = 2013051400;
 $plugin->cron      = 18000;
 $plugin->component = 'offlinequiz_statistics';

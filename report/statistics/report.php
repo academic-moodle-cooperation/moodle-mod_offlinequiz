@@ -500,7 +500,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         // and the question statistics.
         $datumfromtable = $this->table->format_row($question);
 
-        // Set up the question info table.
+// Set up the question info table.
 //         $questioninfotable = new html_table();
 //         $questioninfotable->id = 'questioninfotable';
 //         $questioninfotable->align = array('left', 'right');
@@ -541,6 +541,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         unset($datumfromtable['frequency']);
         unset($datumfromtable['count']);
         unset($datumfromtable['fraction']);
+
         $labels = array(
             's' => get_string('attempts', 'offlinequiz_statistics'),
             'facility' => get_string('facility', 'offlinequiz_statistics'),
@@ -549,8 +550,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             'intended_weight' => get_string('intended_weight', 'offlinequiz_statistics'),
             'effective_weight' => get_string('effective_weight', 'offlinequiz_statistics'),
             'discrimination_index' => get_string('discrimination_index', 'offlinequiz_statistics'),
-            'discriminative_efficiency' =>
-                                get_string('discriminative_efficiency', 'offlinequiz_statistics')
+            'discriminative_efficiency' => get_string('discriminative_efficiency', 'offlinequiz_statistics'),
+            'correct' => get_string('correct', 'offlinequiz_statistics'),
+            'partially' => get_string('partially', 'offlinequiz_statistics'),
+            'wrong' => get_string('wrong', 'offlinequiz_statistics'),
         );
         foreach ($datumfromtable as $item => $value) {
             $questionstatstable->data[] = array($labels[$item], $value);
