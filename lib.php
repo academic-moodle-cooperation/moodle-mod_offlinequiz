@@ -171,6 +171,7 @@ function offlinequiz_delete_instance($id) {
     global $DB, $CFG;
     
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
+    require_once($CFG->dirroot . '/calendar/lib.php');
 
     if (! $offlinequiz = $DB->get_record('offlinequiz', array('id' => $id))) {
         return false;
