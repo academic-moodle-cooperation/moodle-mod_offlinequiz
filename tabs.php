@@ -149,9 +149,11 @@ if ($currenttab == 'editq' and isset($mode)) {
     $strupdate = get_string('updatethis', 'moodle', $strofflinequiz);
 
     $row[] = new tabobject('edit', new moodle_url($thispageurl,
-            array('reordertool' => 0)), get_string('editingofflinequiz', 'offlinequiz'));
+            array('reordertool' => 0, 'gradetool' => 0)), get_string('editingofflinequiz', 'offlinequiz'));
     $row[] = new tabobject('reorder', new moodle_url($thispageurl,
-            array('reordertool' => 1)), get_string('orderingofflinequiz', 'offlinequiz'));
+            array('reordertool' => 1, 'gradetool' => 0)), get_string('orderingofflinequiz', 'offlinequiz'));
+    $row[] = new tabobject('grade', new moodle_url($thispageurl,
+            array('reordertool' => 0, 'gradetool' => 1)), get_string('gradingofflinequiz', 'offlinequiz'));
 
     // $row[] = new tabobject('editq', "$CFG->wwwroot/mod/offlinequiz/edit.php?cmid=$offlinequiz->cmid", $strofflinequiz, $streditingofflinequiz);
 

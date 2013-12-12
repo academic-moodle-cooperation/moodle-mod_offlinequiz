@@ -136,6 +136,7 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
 $offlinequiz_reordertool = optional_param('reordertool', -1, PARAM_BOOL);
+$offlinequiz_gradetool = optional_param('gradetool', -1, PARAM_BOOL);
 $offlinequiz_qbanktool = optional_param('qbanktool', -1, PARAM_BOOL);
 $scrollpos = optional_param('scrollpos', '', PARAM_INT);
 
@@ -179,6 +180,9 @@ $PAGE->set_url($thispageurl);
 $pagetitle = get_string('editingofflinequiz', 'offlinequiz');
 if ($offlinequiz_reordertool) {
     $pagetitle = get_string('orderingofflinequiz', 'offlinequiz');
+}
+if ($offlinequiz_gradetool) {
+    $pagetitle = get_string('gradingofflinequiz', 'offlinequiz');
 }
 // Get the course object and related bits.
 $course = $DB->get_record('course', array('id' => $offlinequiz->course));
@@ -599,9 +603,17 @@ if ($offlinequiz_reordertool > -1) {
 } else {
     $offlinequiz_reordertool = get_user_preferences('offlinequiz_reordertab', 0);
 }
+if ($offlinequiz_gradetool > -1) {
+    $thispageurl->param('gradetool', $offlinequiz_gradetool);
+    set_user_preference('offlinequiz_gradetab', $offlinequiz_gradetool);
+} else {
+    $offlinequiz_gradetool = get_user_preferences('offlinequiz_gradetab', 0);
+}
 
 if ($offlinequiz_reordertool) {
     $mode = 'reorder';
+} else if ($offlinequiz_gradetool) {
+    $mode = 'grade';
 } else {
     $mode = 'edit';
 }
@@ -710,6 +722,9 @@ for ($i=1; $i<=$offlinequiz->numgroups; $i++) {
 if ($offlinequiz_reordertool) {
     echo $OUTPUT->heading_with_help(get_string('orderingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
             get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 'orderandpaging', 'quiz');
+} else if ($offlinequiz_gradetool) {
+    echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
+            get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
 } else {
     echo $OUTPUT->heading(get_string('editingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name . ' (' .
             get_string('group') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 2);
@@ -783,7 +798,7 @@ if ($offlinequiz_reordertool) {
 
 }
 offlinequiz_print_question_list($offlinequiz, $thispageurl, true,
-        $offlinequiz_reordertool, $offlinequiz_qbanktool, $docscreated, $defaultcategoryobj);
+        $offlinequiz_reordertool, $offlinequiz_gradetool, $offlinequiz_qbanktool, $docscreated, $defaultcategoryobj);
 
 echo '</div>';
 
