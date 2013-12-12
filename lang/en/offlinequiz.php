@@ -108,6 +108,7 @@ $string['configdecimalplaces'] ='Number of digits that should be shown after the
 $string['decimalplaces'] = 'decimal places';
 $string['deletelistcheck'] = 'Do you really want to delete the selected list and all it\'s participants?';
 $string['deleteresultcheck'] = 'Do you really want to delete the selected results?';
+$string['deletepagesafterselected'] = 'Remove page breaks after selected questions';
 $string['deletepartcheck'] = 'Do you really want to delete the selected participants?';
 $string['deletepagecheck'] = 'Do you really want to delete the selected pages?';
 $string['deleteparticipantslist'] = 'Delete participants list';

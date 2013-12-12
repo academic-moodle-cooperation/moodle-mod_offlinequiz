@@ -303,6 +303,16 @@ if (optional_param('addnewpagesafterselected', null, PARAM_CLEAN) &&
     redirect($afteractionurl);
 }
 
+if (optional_param('deletepagesafterselected', null, PARAM_CLEAN) &&
+        !empty($selectedquestionids) && confirm_sesskey()) {
+    foreach ($selectedquestionids as $questionid) {
+        $offlinequiz->questions = offlinequiz_remove_page_break_after($offlinequiz->questions, $questionid);
+    }
+    offlinequiz_save_questions($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
+    redirect($afteractionurl);
+}
+
 $addpage = optional_param('addpage', false, PARAM_INT);
 if ($addpage !== false && confirm_sesskey()) {
     $offlinequiz->questions = offlinequiz_add_page_break_at($offlinequiz->questions, $addpage);

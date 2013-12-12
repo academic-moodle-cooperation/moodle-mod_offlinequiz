@@ -451,6 +451,24 @@ function offlinequiz_add_page_break_after($layout, $questionid) {
     return implode(',', $questionids);
 }
 
+/**
+ * Remove a page break after a particular question if it exists.
+ * @param string $layout the existinng layout, $offlinequiz->questions.
+ * @param int $qustionid the question to add the page break after.
+ * @return the updated layout
+ */
+function offlinequiz_remove_page_break_after($layout, $questionid) {
+    $questionids = explode(',', $layout);
+    $key = array_search($questionid, $questionids);
+    if ($key === false || !$questionid) {
+        return $layout;
+    }
+    // Only remove page break if it is not the last one.
+    if (intval($questionids[$key + 1]) == 0 && ($key - 1 < count($questionids))) {
+        unset($questionids[$key + 1]);
+    }
+    return implode(',', $questionids);
+}
 
 /**
  * Save changes to a question instance
@@ -662,7 +680,11 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
             '<input type="submit" name="savechanges" value="' .
 
             $strreorderquestions . '" ' . $pagingdisabled . ' /></div>';
-    $reordercontrols1 = '<div class="addnewpagesafterselected">' .
+    $reordercontrols1 = '<div class="deletepagesafterselected">' .
+            '<input type="submit" name="deletepagesafterselected" value="' .
+            get_string('deletepagesafterselected', 'offlinequiz') . '"  ' .
+            $pagingdisabled . ' /></div>';
+    $reordercontrols1 .= '<div class="addnewpagesafterselected">' .
             '<input type="submit" name="addnewpagesafterselected" value="' .
             get_string('addnewpagesafterselected', 'offlinequiz') . '"  ' .
             $pagingdisabled . ' /></div>';
@@ -751,7 +773,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
 
     $reordercontrolsbottom = '<div class="reordercontrols">' .
             $reordercontrolssetdefaultsubmit .
-            $reordercontrols2bottom . $reordercontrols1 . $reordercontrols3 . "</div>";
+            $reordercontrols1 . $reordercontrols3 . $reordercontrols2bottom . "</div>";
 
     // Add the controls in case we are in question list editing mode
     $editcontrols2top = '';
