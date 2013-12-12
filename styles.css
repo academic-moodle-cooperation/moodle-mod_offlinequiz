@@ -284,7 +284,7 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #page-mod-offlinequiz-edit .repaginatecommand {float:right;clear:right;padding-right:1em;}
 #page-mod-offlinequiz-edit div.reorder .reordercontrols .deleteselected{float:right;margin-right:1em;}
 #page-mod-offlinequiz-edit div.reorder div.question{padding-top:0.2em;}
-#page-mod-offlinequiz-edit div.reorder div.question div.qnum {width: 3.3em; padding-top:0.1em;}
+#page-mod-offlinequiz-edit div.reorder div.question div.qnum {width: 4em; padding-top:0.1em;}
 #page-mod-offlinequiz-edit .reorder div.question div.content {width:87%;float:left;position:relative;-webkit-border-radius:0.3em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.3em;border-radius-bottomleft:0;border-radius-topleft:0;line-height:1.2em;padding:0.1em;background-color:#F9F9F9;}
 #page-mod-offlinequiz-edit .reorder .questioncontentcontainer .offlinequiz_randomquestion {position:relative;}
 #page-mod-offlinequiz-edit .reorder div.question div.content div.offlinequiz_randomquestion {line-height:1em;}

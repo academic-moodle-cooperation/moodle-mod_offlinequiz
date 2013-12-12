@@ -29,7 +29,7 @@
  * up and down  Changes the order of questions and page breaks
  * addquestion  Adds a single question to the offlinequiz
  * add          Adds several selected questions to the offlinequiz
- * addrandom    Adds a certain number of random questions to the offlinequiz
+ * addrandom    Randomly adds a certain number of multichoice questions to the offlinequiz
  * repaginate   Re-paginates the offlinequiz
  * delete       Removes a question from the offlinequiz
  * savechanges  Saves the order and grades for questions in the offlinequiz
@@ -70,19 +70,43 @@ function module_specific_buttons($cmid, $cmoptions) {
  * (which is called from showbank())
  */
 function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmoptions) {
-    global $OUTPUT;
+    global $OUTPUT, $DB;
+    
     $out = '';
-    $catcontext = get_context_instance_by_id($category->contextid);
+    $catcontext = context::instance_by_id($category->contextid);
+    if (!$cm = get_coursemodule_from_id('offlinequiz', $cmid)) {
+        return $out;
+    }
+
     if (has_capability('moodle/question:useall', $catcontext)) {
         if ($cmoptions->hasattempts) {
             $disabled = ' disabled="disabled"';
         } else {
             $disabled = '';
         }
-        $randomusablequestions =
-        question_bank::get_qtype('random')->get_available_questions_from_category(
-                $category->id, $recurse);
-        $maxrand = count($randomusablequestions);
+
+        if ($recurse) {
+            $categoryids = question_categorylist($category->id);
+        } else {
+            $categoryids = array($category->id);
+        }
+
+        list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
+
+        $sql = "SELECT COUNT(id)
+              FROM {question} q
+             WHERE q.category $qcsql
+               AND q.parent = 0
+               AND q.hidden = 0
+               AND q.qtype IN ('multichoice', 'multichoiceset')
+               AND NOT EXISTS (SELECT 1 
+                                 FROM {offlinequiz_q_instances} oqi
+                                WHERE oqi.questionid = q.id
+                                  AND oqi.offlinequizid = :offlinequizid)";
+    
+        $qcparams['offlinequizid'] = $cm->instance;
+    
+        $maxrand = $DB->count_records_sql($sql, $qcparams);
         if ($maxrand > 0) {
             for ($i = 1; $i <= min(10, $maxrand); $i++) {
                 $randomcount[$i] = $i;
@@ -95,17 +119,16 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
             $disabled = ' disabled="disabled"';
         }
 
-        //      $out = '<strong><label for="menurandomcount">'.get_string('addrandomfromcategory', 'offlinequiz').
-        //                 '</label></strong><br />';
-        //      $attributes = array();
-        //      $attributes['disabled'] = $disabled ? 'disabled' : null;
-        //      $select = html_writer::select($randomcount, 'randomcount', '1', null, $attributes);
-        //      $out .= get_string('addrandom', 'offlinequiz', $select);
-        //      $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';
-        //      $out .= '<input type="hidden" name="categoryid" value="' . $category->id . '" />';
-        //      $out .= ' <input type="submit" name="addrandom" value="'.
-        //      get_string('addtoofflinequiz', 'offlinequiz').'"' . $disabled . ' />';
-        // $out .= $OUTPUT->help_icon('addarandomquestion', 'offlinequiz');
+        $out = '<strong><label for="menurandomcount">' . get_string('addrandomfromcategory', 'offlinequiz') . '</label></strong><br />';
+        $attributes = array();
+        $attributes['disabled'] = $disabled ? 'disabled' : null;
+        $select = html_writer::select($randomcount, 'randomcount', '1', null, $attributes);
+        $out .= get_string('addrandom', 'offlinequiz', $select);
+        $out .= '<input type="hidden" name="recurse" value="' . $recurse . '" />';
+        $out .= '<input type="hidden" name="categoryid" value="' . $category->id . '" />';
+        $out .= '<input type="submit" name="addrandom" value="' . get_string('addtoofflinequiz', 'offlinequiz') .
+        '"' . $disabled . ' />';
+        $out .= $OUTPUT->help_icon('addarandomquestion', 'offlinequiz');
     }
     return $out;
 }
@@ -252,7 +275,22 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
 
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
     offlinequiz_delete_template_usages($offlinequiz);
-    //  redirect($afteractionurl);
+    redirect($afteractionurl);
+}
+
+if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
+    // Add random questions to the quiz.
+    $recurse = optional_param('recurse', 0, PARAM_BOOL);
+    $addonpage = optional_param('addonpage', 0, PARAM_INT);
+    $categoryid = required_param('categoryid', PARAM_INT);
+    $randomcount = required_param('randomcount', PARAM_INT);
+    offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount, $recurse);
+
+    $offlinequiz->grades = offlinequiz_get_all_question_grades($offlinequiz);
+    $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
+
+    redirect($afteractionurl);
 }
 
 if (optional_param('addnewpagesafterselected', null, PARAM_CLEAN) &&
