@@ -27,12 +27,13 @@
  **/
 
 $string['pluginname'] = 'Offline-Test';
+$string['add'] = 'zur Gruppe hinzufügen';
 $string['addaquestion'] = 'Frage hinzufügen';
 $string['addlist'] = 'Anwesenheitsliste hinzufügen';
 $string['addnewpagesafterselected'] = 'Seitenumbrüche hinter der ausgewählten Frage hinzufügen';
 $string['addpagehere'] = 'Seite hier hinzufügen';
 $string['addparts'] = 'Teilnehmer/innen hinzufügen';
-$string['addrandom'] = 'Zufällig {$a} MC Fragen hinzufügen';
+$string['addrandom'] = 'Zufällig {$a} MC Frage(n) ';
 $string['addrandomfromcategory'] = 'Zufällig Fragen hinzufügen';
 $string['addarandomquestion'] = 'Zufällig Fragen hinzufügen';
 $string['addarandomquestion_help'] = 'Moodle fügt eine zufällige Auswahl an MC-Fragen (oder Alles-oder-Nichts MC Fragen) zur aktuellen Offline-Test Gruppe hinzu. Die Anzahl der Fragen, die hinzugefügt werden, muss ausgewählt werden. Die Fragen werden aus der aktuellen Kategorie (und, wenn erwünscht, aus deren Unter-Kategorien) ausgewählt.';

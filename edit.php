@@ -126,7 +126,7 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
         $out .= get_string('addrandom', 'offlinequiz', $select);
         $out .= '<input type="hidden" name="recurse" value="' . $recurse . '" />';
         $out .= '<input type="hidden" name="categoryid" value="' . $category->id . '" />';
-        $out .= '<input type="submit" name="addrandom" value="' . get_string('addtoofflinequiz', 'offlinequiz') .
+        $out .= '<input type="submit" name="addrandom" value="' . get_string('add', 'offlinequiz') .
         '"' . $disabled . ' />';
         $out .= $OUTPUT->help_icon('addarandomquestion', 'offlinequiz');
     }
