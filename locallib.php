@@ -931,7 +931,7 @@ function offlinequiz_update_sumgrades($offlinequiz, $groupid = null) {
 
     $sumgrades = $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $offlinequiz->groupid));
 
-    return $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $offlinequiz->groupid));
+    return $sumgrades;
 }
 
 /**

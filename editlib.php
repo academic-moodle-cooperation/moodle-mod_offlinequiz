@@ -548,13 +548,14 @@ function offlinequiz_update_question_instance($grade, $questionid, $offlinequiz)
                     }
 
                     // Now change the sumgrades in the offlinequiz results.
-                    foreach ($results as $result) {
-                        if ($result->usageid > 0) {
-                            $resultusage = question_engine::load_questions_usage_by_activity($result->usageid);
-                            $DB->set_field('offlinequiz_results', 'sumgrades', $resultusage->get_total_mark(),
-                                    array('id' => $result->id));
-                        }
-                    }
+                    // The results are changes with a call to offlinequiz_update_all_attempt_sumgrades()
+//                     foreach ($results as $result) {
+//                         if ($result->usageid > 0) {
+//                             $resultusage = question_engine::load_questions_usage_by_activity($result->usageid);
+//                             $DB->set_field('offlinequiz_results', 'sumgrades', $resultusage->get_total_mark(),
+//                                     array('id' => $result->id));
+//                         }
+//                     }
                 }
             }
         }
@@ -824,7 +825,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
         echo '<form method="post" action="edit.php" class="offlinequizbulkgradesform">
                 <input type="hidden" name="sesskey" value="' . sesskey() . '" />' .
                 html_writer::input_hidden_params($pageurl) .
-                '<input type="hidden" name="savechanges" value="save" />';
+                '<input type="hidden" name="savechanges" value="bulksavegrades" />';
     }
 
     foreach ($order as $count => $qnum) {
@@ -924,54 +925,57 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
 
                 echo '    </div>';
                 echo '    <div class="content">';
-                echo '    <div class="questioncontrols">';
+                if (!$gradetool) {
+                    echo '    <div class="questioncontrols">';
 
-                if ($count != 0) {
-                    if (!$hasattempts) {
-                        $upbuttonclass = '';
-                        if ($count >= $lastindex - 1) {
-                            $upbuttonclass = 'upwithoutdown';
+                    if ($count != 0) {
+                        if (!$hasattempts) {
+                            $upbuttonclass = '';
+                            if ($count >= $lastindex - 1) {
+                                $upbuttonclass = 'upwithoutdown';
+                            }
+                            echo $OUTPUT->action_icon($pageurl->out(true,
+                                    array('up' => $question->id, 'sesskey'=>sesskey())),
+                                    new pix_icon('t/up', $strmoveup),
+                                    new component_action('click',
+                                            'M.core_scroll_manager.save_scroll_action'),
+                                    array('title' => $strmoveup));
                         }
-                        echo $OUTPUT->action_icon($pageurl->out(true,
-                                array('up' => $question->id, 'sesskey'=>sesskey())),
-                                new pix_icon('t/up', $strmoveup),
-                                new component_action('click',
-                                        'M.core_scroll_manager.save_scroll_action'),
-                                array('title' => $strmoveup));
-                    }
 
-                }
-                if ($count < $lastindex - 1) {
-                    if (!$hasattempts) {
-                        echo $OUTPUT->action_icon($pageurl->out(true,
-                                array('down' => $question->id, 'sesskey'=>sesskey())),
-                                new pix_icon('t/down', $strmovedown),
-                                new component_action('click',
-                                        'M.core_scroll_manager.save_scroll_action'),
-                                array('title' => $strmovedown));
                     }
-                }
-                if ($allowdelete && ($question->qtype == 'missingtype' ||
-                        question_has_capability_on($question, 'use', $question->category))) {
-                    // Remove from offlinequiz, not question delete.
-                    if (!$hasattempts) {
-                        echo $OUTPUT->action_icon($pageurl->out(true,
-                                array('remove' => $question->id, 'sesskey'=>sesskey())),
-                                new pix_icon('t/delete', $strremove),
-                                new component_action('click',
+                    if ($count < $lastindex - 1) {
+                        if (!$hasattempts) {
+                            echo $OUTPUT->action_icon($pageurl->out(true,
+                                    array('down' => $question->id, 'sesskey'=>sesskey())),
+                                    new pix_icon('t/down', $strmovedown),
+                                    new component_action('click',
                                         'M.core_scroll_manager.save_scroll_action'),
-                                array('title' => $strremove));
+                                    array('title' => $strmovedown));
+                        }
                     }
+                    if ($allowdelete && ($question->qtype == 'missingtype' ||
+                            question_has_capability_on($question, 'use', $question->category))) {
+                        // Remove from offlinequiz, not question delete.
+                        if (!$hasattempts) {
+                            echo $OUTPUT->action_icon($pageurl->out(true,
+                                    array('remove' => $question->id, 'sesskey'=>sesskey())),
+                                    new pix_icon('t/delete', $strremove),
+                                    new component_action('click',
+                                            'M.core_scroll_manager.save_scroll_action'),
+                                    array('title' => $strremove));
+                        }
+                    }
+                    echo '</div>'; // End div questioncontrols
                 }
-                echo '</div>'; // End div questioncontrols
+
                 if (!in_array($question->qtype, array('description', 'missingtype')) && !$reordertool && !$gradetool) {
 
                     echo '<div class="points">
                     <form method="post" action="edit.php" class="offlinequizsavegradesform">
                     <div>
                     <fieldset class="invisiblefieldset" style="display: block;">
-                    <label for="inputq' . $question->id . '">' . $strgrade . '
-                    </label>:<br /> <input type="hidden" name="sesskey"
+                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>:<br />
+                    <input type="hidden" name="sesskey"
                     value="' . sesskey() . '" />' . html_writer::input_hidden_params($pageurl) . '
                     <input type="hidden" name="savechanges" value="save" />
                     <input type="text" name="g' . $question->id .
@@ -987,8 +991,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
 
                 } else if (!in_array($question->qtype, array('description', 'missingtype')) && $gradetool) {
                     echo '<div class="points">
-                    <label for="inputq' . $question->id . '">' . $strgrade . '
-                    </label>:
+                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>
                     <input type="text" name="g' . $question->id .
                     '" id="inputq' . $question->id .
                     '" size="' . ($offlinequiz->decimalpoints + 2) .
@@ -1007,21 +1010,11 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                 }
                 echo '<div class="questioncontentcontainer">';
 
-//                 if ($question->qtype == 'random') { // it is a random question
-//                     if (!$reordertool) {
-//                         offlinequiz_print_randomquestion($question, $pageurl, $offlinequiz, $offlinequiz_qbanktool);
-//                     } else {
-//                         offlinequiz_print_randomquestion_reordertool($question, $pageurl, $offlinequiz);
-//                     }
-//                 } else { // it is a single question
                 if ($reordertool) {
                     offlinequiz_print_singlequestion_reordertool($question, $returnurl, $offlinequiz);
-                } else if ($gradetool) {
-                    offlinequiz_print_singlequestion_gradetool($question, $returnurl, $offlinequiz);
                 } else {
                     offlinequiz_print_singlequestion($question, $returnurl, $offlinequiz);
-}
-//                 }
+                }
                 echo '            </div></div></div></div>';
             }
         }
@@ -1137,26 +1130,6 @@ function offlinequiz_print_pagecontrols($offlinequiz, $pageurl, $page, $hasattem
  * @param object $offlinequiz The offlinequiz in the context of which the question is being displayed
  */
 function offlinequiz_print_singlequestion($question, $returnurl, $offlinequiz) {
-    echo '<div class="singlequestion ' . $question->qtype . '">';
-    echo offlinequiz_question_edit_button($offlinequiz->cmid, $question, $returnurl,
-            offlinequiz_question_tostring($question) . ' ');
-    echo '<span class="questiontype">';
-    echo print_question_icon($question);
-    echo ' ' . question_bank::get_qtype_name($question->qtype) . '</span>';
-    echo '<span class="questionpreview">' .
-            offlinequiz_question_preview_button($offlinequiz, $question, true) . '</span>';
-    echo "</div>\n";
-}
-
-/**
- * Print a given single question in offlinequiz for the edit tab of edit.php.
- * Meant to be used from offlinequiz_print_question_list()
- *
- * @param object $question A question object from the database questions table
- * @param object $returnurl The url to get back to this page, for example after editing.
- * @param object $offlinequiz The offlinequiz in the context of which the question is being displayed
- */
-function offlinequiz_print_singlequestion_gradetool($question, $returnurl, $offlinequiz) {
     echo '<div class="singlequestion ' . $question->qtype . '">';
     echo offlinequiz_question_edit_button($offlinequiz->cmid, $question, $returnurl,
             offlinequiz_question_tostring($question) . ' ');

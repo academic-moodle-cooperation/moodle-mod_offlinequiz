@@ -339,7 +339,7 @@ if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey())
     // TODO offlinequiz_delete_previews($offlinequiz);
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
     offlinequiz_delete_template_usages($offlinequiz);
-    //  redirect($afteractionurl);
+    redirect($afteractionurl);
 }
 
 if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
@@ -348,13 +348,47 @@ if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
     offlinequiz_remove_questionlist($offlinequiz, $selectedquestionids);
     offlinequiz_delete_template_usages($offlinequiz);
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
-    // redirect($afteractionurl);
+    redirect($afteractionurl);
 }
 
 $maxgradewrong = false;
 $gradewarning = false;
 
-if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
+$savechanges = optional_param('savechanges', '', PARAM_ALPHA);
+
+if ($savechanges == 'bulksavegrades' && confirm_sesskey()) {
+    $rawdata = (array) data_submitted();
+
+    foreach ($rawdata as $key => $value) {
+        if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
+            if (is_numeric(str_replace(',', '.', $value))) {
+                // Parse input for question -> grades
+                $questionid = $matches[1];
+                $offlinequiz->grades[$questionid] = unformat_float($value); 
+                offlinequiz_update_question_instance($offlinequiz->grades[$questionid], $questionid, $offlinequiz);
+            } else {
+                $gradewarning = true;
+            }
+        }
+    }
+
+    $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+    // Redmine 983: Upgrade sumgrades for all other groups as well.
+    if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+        foreach ($groups as $group) {
+            if ($group->id != $offlinequiz->groupid) {
+                $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
+            }
+        }
+    }
+
+    offlinequiz_update_all_attempt_sumgrades($offlinequiz);
+    offlinequiz_update_grades($offlinequiz, 0, true);
+
+    redirect($afteractionurl);
+}
+
+if ($savechanges == 'save' && confirm_sesskey()) {
     $deletepreviews = false;
     $recomputesummarks = false;
 
@@ -554,7 +588,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         // offlinequiz_update_all_final_grades($offlinequiz);
         offlinequiz_update_grades($offlinequiz, 0, true);
     }
-    // redirect($afteractionurl);
+    //redirect($afteractionurl);
 }
 
 $questionbank->process_actions($thispageurl, $cm);
