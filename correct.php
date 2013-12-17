@@ -766,7 +766,7 @@ $javascript = "<script language=\"JavaScript\">
 function checkinput() {
  // Get all item elements. We have jquery!
  items = $('input[name^=\"item\"]');
- console.log(items);
+
  for (i=0; i < items.length; i++) {
   if (items[i].value == '-1') {
     parts = items[i].name.split('[');
