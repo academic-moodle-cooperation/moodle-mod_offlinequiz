@@ -825,7 +825,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
         echo '<form method="post" action="edit.php" class="offlinequizbulkgradesform">
                 <input type="hidden" name="sesskey" value="' . sesskey() . '" />' .
                 html_writer::input_hidden_params($pageurl) .
-                '<input type="hidden" name="savechanges" value="bulksavegrades" />';
+                '<input type="hidden" name="savegrades" value="bulksavegrades" />';
     }
 
     foreach ($order as $count => $qnum) {

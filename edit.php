@@ -355,8 +355,9 @@ $maxgradewrong = false;
 $gradewarning = false;
 
 $savechanges = optional_param('savechanges', '', PARAM_ALPHA);
+$savegrades = optional_param('savegrades', '', PARAM_ALPHA);
 
-if ($savechanges == 'bulksavegrades' && confirm_sesskey()) {
+if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
     $rawdata = (array) data_submitted();
 
     foreach ($rawdata as $key => $value) {
@@ -388,7 +389,7 @@ if ($savechanges == 'bulksavegrades' && confirm_sesskey()) {
     redirect($afteractionurl);
 }
 
-if ($savechanges == 'save' && confirm_sesskey()) {
+if ($savechanges && confirm_sesskey()) {
     $deletepreviews = false;
     $recomputesummarks = false;
 
