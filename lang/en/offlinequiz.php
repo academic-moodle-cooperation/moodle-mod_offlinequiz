@@ -169,6 +169,7 @@ $string['grade'] = 'Grade';
 $string['gradedon'] = 'Graded on';
 $string['gradedscannedform'] = 'Scanned form with grades';
 $string['gradeiszero'] = 'Note: The maximum grade for this offline quiz is 0 points!';
+$string['gradeswarning'] = 'The question grades have to be numbers!';
 $string['gradewarning'] = 'The question grade has to be a number!';
 $string['gradingofflinequiz'] = 'Grades';
 $string['gradingoptionsheading'] = 'Grading options';

@@ -353,6 +353,7 @@ if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
 
 $maxgradewrong = false;
 $gradewarning = false;
+$bulkgradewarning = false;
 
 $savechanges = optional_param('savechanges', '', PARAM_ALPHA);
 $savegrades = optional_param('savegrades', '', PARAM_ALPHA);
@@ -365,10 +366,10 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
             if (is_numeric(str_replace(',', '.', $value))) {
                 // Parse input for question -> grades
                 $questionid = $matches[1];
-                $offlinequiz->grades[$questionid] = unformat_float($value); 
+                $offlinequiz->grades[$questionid] = unformat_float($value);
                 offlinequiz_update_question_instance($offlinequiz->grades[$questionid], $questionid, $offlinequiz);
             } else {
-                $gradewarning = true;
+                $bulkgradewarning = true;
             }
         }
     }
@@ -386,7 +387,7 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
     offlinequiz_update_all_attempt_sumgrades($offlinequiz);
     offlinequiz_update_grades($offlinequiz, 0, true);
 
-    redirect($afteractionurl);
+//    redirect($afteractionurl);
 }
 
 if ($savechanges && confirm_sesskey()) {
@@ -711,24 +712,6 @@ if ($docscreated) {
     echo "</div><br />\n";
 }
 
-if ($offlinequiz->grade == 0.0) {
-    echo "<div class=\"noticebox notifyproblem infobox\"><strong>";
-    echo $OUTPUT->notification(get_string('gradeiszero', 'offlinequiz'), 'notifyproblem');
-    echo '</strong></div><br/>';
-}
-
-if ($maxgradewrong) {
-    echo "<div class=\"noticebox notifyproblem infobox\"><b>";
-    echo $OUTPUT->notification(get_string('maxgradewarning', 'offlinequiz'), 'notifyproblem');
-    echo '</b></div><br/>';
-}
-
-if ($gradewarning) {
-    echo "<div class=\"noticebox notifyproblem infobox\">";
-    echo $OUTPUT->notification(get_string('gradewarning', 'offlinequiz'), 'notifyproblem');
-    echo '</div><br/>';
-}
-
 if ($offlinequiz->shufflequestions || $offlinequiz->docscreated || $hasscannedpages) {
     $repaginatingdisabledhtml = 'disabled="disabled"';
     $repaginatingdisabled = true;
@@ -780,6 +763,27 @@ offlinequiz_print_status_bar($offlinequiz);
 
 $tabindex = 0;
 offlinequiz_print_grading_form($offlinequiz, $thispageurl, $tabindex);
+
+if ($maxgradewrong) {
+    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+    echo $OUTPUT->notification(get_string('maxgradewarning', 'offlinequiz'), 'notifyproblem');
+    echo $OUTPUT->box_end();
+}
+if ($offlinequiz->grade == 0.0) {
+    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+    echo $OUTPUT->notification(get_string('gradeiszero', 'offlinequiz'), 'notifyproblem');
+    echo $OUTPUT->box_end();
+}
+if ($gradewarning) {
+    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+    echo $OUTPUT->notification(get_string('gradewarning', 'offlinequiz'), 'notifyproblem');
+    echo $OUTPUT->box_end();
+}
+if ($bulkgradewarning) {
+    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+    echo $OUTPUT->notification(get_string('gradeswarning', 'offlinequiz'), 'notifyproblem');
+    echo $OUTPUT->box_end();
+}
 
 $notifystrings = array();
 if ($hasscannedpages) {

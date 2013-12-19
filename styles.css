@@ -387,10 +387,9 @@ body.jsenabled #offlinequizcontentsblock .repaginatecommand #repaginatecommand {
 #page-mod-offlinequiz-edit #qtypechoicecontainer {display: none;}
 #page-mod-offlinequiz-edit #qtypechoicecontainer div.qtypes {height: 180px;}
 
-#page-mod-offlinequiz-edit .offlinequizcontents .noticebox {
-	  text-align: center;
-	  width: 95%;
-	  }
+#page-mod-offlinequiz-edit .offlinequizcontents .noticebox {padding-top:5px;padding-bottom:5px;text-align:center;width: 95%;}
+
+#page-mod-offlinequiz-edit div.maxgradewarning {font-size:14px;font-weight:bold;}
 
 #page-mod-offlinequiz-edit .questionbankwindow select#catmenu_jump{
 /* In Opera9, IE6 the width of the

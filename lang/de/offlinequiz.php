@@ -152,6 +152,7 @@ $string['grade'] = 'Bewertung';
 $string['gradedon'] = 'Bewertet am';
 $string['gradedscannedform'] = 'Scannerbeleg mit Bewertung';
 $string['gradeiszero'] = 'Hinweis: Die beste Bewertung für den Offline-Test beträgt 0 Punkte!';
+$string['gradeswarning'] = 'Die Bewertungen für die Fragen müssen Zahlen sein!';
 $string['gradewarning'] = 'Die Bewertung für die Frage muss eine Zahl sein!';
 $string['gradingofflinequiz'] = 'Bewertungen';
 $string['gradingoptionsheading'] = 'Einstellungen für Bewertungen';
