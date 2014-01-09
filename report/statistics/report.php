@@ -1205,11 +1205,15 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         if ($s > 1) {
             $p = count($qstats->questions); // Number of positions.
             if ($p > 1 && isset($k2)) {
-                $offlinequizstats->cic = (100 * $p / ($p -1)) *
-                        (1 - ($qstats->get_sum_of_mark_variance()) / $k2);
-                $offlinequizstats->errorratio = 100 * sqrt(1 - ($offlinequizstats->cic / 100));
-                $offlinequizstats->standarderror = $offlinequizstats->errorratio *
-                        $offlinequizstats->standarddeviation / 100;
+                if ($k2 == 0) {
+                    $offlinequizstats->cic = null;
+                    $offlinequizstats->errorratio = null;
+                    $offlinequizstats->standarderror = null;
+                } else {
+                    $offlinequizstats->cic = (100 * $p / ($p -1)) * (1 - ($qstats->get_sum_of_mark_variance()) / $k2);
+                    $offlinequizstats->errorratio = 100 * sqrt(1 - ($offlinequizstats->cic / 100));
+                    $offlinequizstats->standarderror = $offlinequizstats->errorratio * $offlinequizstats->standarddeviation / 100;
+                }
             }
         }
 
