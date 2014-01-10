@@ -1136,7 +1136,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         // Recalculate sql again this time possibly including test for first attempt.
         list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(
-                $offlinequizid, $currentgroup, $groupstudents, $useallattempts);
+                $offlinequizid, $currentgroup, $groupstudents, $useallattempts, false, $offlinegroupid);
 
         // Median ...
         if ($s % 2 == 0) {
