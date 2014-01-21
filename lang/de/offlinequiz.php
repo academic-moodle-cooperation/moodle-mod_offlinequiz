@@ -254,6 +254,7 @@ $string['nogroupdata'] = 'Keine Gruppenvorlage für {$a}';
 $string['nopages'] = 'Keine Seite importiert';
 $string['noparticipantsfound'] = 'Keine Teilnehmer/innen gefunden';
 $string['nopdfscreated'] = 'Formulare wurden noch nicht erstellt!';
+$string['noquestions'] = 'Einige Offline-Test-Gruppen enthalten keine Fragen. Bitte fügen Sie Fragen hinzu.';
 $string['noquestionsfound'] = 'Gruppe {$a} enthält keine Fragen!';
 $string['noquestionsonpage'] = 'Leere Seite';
 $string['noquestionselected'] = 'Keine Fragen ausgewählt!';
