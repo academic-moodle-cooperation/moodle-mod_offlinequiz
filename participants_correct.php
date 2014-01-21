@@ -72,7 +72,7 @@ offlinequiz_load_useridentification();
 $report = new participants_report();
 // if (!$filename = optional_param('filename', '', PARAM_RAW)) $filename = $report->get_pic_name($log->rawdata);
 
-$action = optional_param('action', '', PARAM_TEXT);
+$action = optional_param('action', 'load', PARAM_TEXT);
 $error = false;
 $list = null;
 
@@ -103,7 +103,41 @@ if ($sheetloaded) {
     $corners = $scanner->export_corners(OQ_IMAGE_WIDTH);
 }
 
-if ($action == 'update') {
+if ($action == 'load') {
+    // Remember initial data for cancel action
+    $origfilename = $scannedpage->filename;
+    $origlistnumber = $scannedpage->listnumber;
+    $origstatus = $scannedpage->status;
+    $origerror = $scannedpage->error;
+    $origtime = $scannedpage->time;
+} else {
+    $origfilename = required_param('origfilename', PARAM_FILE);
+    $origlistnumber = required_param('origlistnumber', PARAM_INT);
+    $origstatus = required_param('origstatus', PARAM_ALPHA);
+    $origerror = required_param('origerror', PARAM_ALPHA);
+    $origtime = required_param('origtime', PARAM_INT);
+}
+
+// =============================================
+//   Action cancel.
+// =============================================
+if ($action == 'cancel') {
+    $scannedpage->filename = $origfilename;
+    $scannedpage->listnumber = $origlistnumber;
+    $scannedpage->status = $origstatus;
+    $scannedpage->error = $origerror;
+    $scannedpage->time = $origtime;
+    $DB->update_record('offlinequiz_scanned_p_pages', $scannedpage);
+    
+    // Display a button to close the window and die.
+    echo '<html>';
+    echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
+    echo "<center><input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('closewindow', 'offlinequiz')."\" name=\"submitbutton4\"
+onClick=\"self.close(); return false;\"></center>";
+    echo '</html>';
+    die;
+
+} else if ($action == 'update') {
     if (!confirm_sesskey()) {
         print_error('invalidsesskey');
         echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
@@ -373,6 +407,11 @@ echo "       document.forms.cform.elements['participants['+x+']'].value = 'marke
 echo "   }\n";
 echo "}\n";
 
+echo "function submitCancel() {";
+echo "  document.forms.cform.elements['action'].value='cancel'";
+echo "  document.forms.cform.submit();";
+echo "}";
+
 echo "function submitReadjust() {\n";
 echo "   changed = false;\n";
 echo "   for (i=0; i<=3; i++) {\n";
@@ -416,6 +455,12 @@ echo "<input type=\"hidden\" name=\"ll_y\" value=\"$ll_y\">\n";
 echo "<input type=\"hidden\" name=\"lr_x\" value=\"$lr_x\">\n";
 echo "<input type=\"hidden\" name=\"lr_y\" value=\"$lr_y\">\n";
 
+echo "<input type=\"hidden\" name=\"origfilename\" value=\"$origfilename\">\n";
+echo "<input type=\"hidden\" name=\"origlistnumber\" value=\"$origlistnumber\">\n";
+echo "<input type=\"hidden\" name=\"origstatus\" value=\"$origstatus\">\n";
+echo "<input type=\"hidden\" name=\"origerror\" value=\"$origerror\">\n";
+echo "<input type=\"hidden\" name=\"origtime\" value=\"$origtime\">\n";
+
 foreach ($participants as $key => $participant) {
     if (empty($participant->userid)) {
         $participant->userid = 0;
@@ -437,7 +482,7 @@ echo "<div style=\"margin:4px;margin-bottom:8px\"><u>";
 print_string('actions');
 echo ":</u></div>";
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('cancel').
-"\" name=\"submitbutton4\" onClick=\"window.opener.location.reload(1); self.close(); return false;\"><br />";
+"\" name=\"submitbutton4\" onClick=\"submitCancel(); return false;\"><br />";
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('rotate', 'offlinequiz').
 "\" name=\"submitbutton5\" onClick=\"submitRotated(); return false;\"><br />";
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('readjust', 'offlinequiz').
