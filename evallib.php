@@ -41,7 +41,7 @@ require_once($CFG->libdir . '/filelib.php');
  * @param unknown_type $teacherid
  * @param unknown_type $coursecontext
  */
-function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $scanner, $scannedpage, $teacherid, $coursecontext, $autorotate = false) {
+function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $scanner, $scannedpage, $teacherid, $coursecontext, $autorotate = false, $recheckresult = false) {
     global $DB, $CFG;
 
     $offlinequizconfig = get_config('offlinequiz');
@@ -150,7 +150,7 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
     // Check whether there is already a scanned page or even a completed result with the same group, userid, etc.
     if (($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') && $user && $group && $page) {
         $resultexists = false;
-        if (!property_exists($scannedpage, 'resultid') || !$scannedpage->resultid) {
+        if (!property_exists($scannedpage, 'resultid') || !$scannedpage->resultid || $recheckresult) {
             $sql = "SELECT id
                       FROM {offlinequiz_results}
                      WHERE offlinequizid = :offlinequizid

@@ -180,8 +180,11 @@ if ($action == 'cancel') {
     $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
     
     // Display a button to close the window and die.
+    echo '<html>';
+    echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
     echo "<center><input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('closewindow', 'offlinequiz')."\" name=\"submitbutton4\"
 onClick=\"self.close(); return false;\"></center>";
+    echo '</html>';
     die;
 
 // =============================================
@@ -230,14 +233,15 @@ onClick=\"self.close(); return false;\"><br />";
     $oldresultid = $scannedpage->resultid;
     $scannedpage = offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage, $coursecontext, $questionsperpage, $offlinequizconfig);
 
-    if ($oldresultid != $scannedpage->resultid) {
-        // Already process the answers but don't submit them.
+    if ($oldresultid != $scannedpage->resultid) { 
+        // A new result has been linked to the scanned page.
+        // Already process the answers but don't submit them yet.
         $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $questionsperpage, $coursecontext, false);
         $userchanged = 1;
     }
 
     if (!$overwrite) {
-        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
+        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, false, true);
 
         if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
             // Already process the answers but don't submit them.
@@ -693,6 +697,8 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
                     echo $OUTPUT->notification(get_string('userpageimported', 'offlinequiz', fullname($user) . " (" .
                             $user->{$offlinequizconfig->ID_field}.")"), 'notifysuccess');
                 }
+                echo '<html>';
+                echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
                 if ($overwrite) {
                     echo "<input type=\"button\" value=\"".get_string('closewindow')."\" onClick=\"window.opener.location.replace('" .
                             $CFG->wwwroot . '/mod/offlinequiz/review.php?q=' . $offlinequiz->id . '&resultid=' .
@@ -701,6 +707,7 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
                     echo "<input type=\"button\" value=\"".get_string('closewindow')."\" onClick=\"window.opener.location.reload(1);
                     self.close(); return false;\">";
                 }
+                echo '<html>';
                 return;
             }
         } else {
