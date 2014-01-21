@@ -44,7 +44,7 @@ $string['correct'] = 'Richtig beantwortet';
 $string['count'] = 'Ankreuzungen';
 $string['coursename'] = 'Kursname';
 $string['detailedanalysis'] = 'Mehr Details zu den Antworten dieser Frage';
-$string['differentquestions'] = 'Ihre Offline-Test Gruppen enthalten unterschiedliche Fragenmengen.';
+$string['differentquestions'] = 'Ihre Offline-Test Gruppen enthalten unterschiedliche Fragen.';
 $string['differentsumgrades'] = 'Ihre Offline-Test Gruppen haben unterschiedliche maximale Bewertungen ({$a}).
  Deshalb können mehrere Werte, wie z.B. "Durchschnittliche erreichte Bewertung", "Median" und "Standardabweichung" für den Gesamttest nicht berechnet werden. Die Berechnung kann nur auf Basis
 der einzelnen Gruppen erfolgen. Bitte wählen Sie eine Gruppe aus!';
