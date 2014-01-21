@@ -443,7 +443,7 @@ echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('rotate'
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('readjust', 'offlinequiz').
 "\" name=\"submitbutton3\" onClick=\"submitReadjust(); return false;\"><br />";
 
-if ($scannedpage->status == 'error' && $scannedpage->error != 'insecuremarkings') {
+if ($scannedpage->status == 'error' && $scannedpage->error == 'insecuremarkings') {
     echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('save', 'offlinequiz')."\" name=\"submitbutton1\" disabled=\"disabled\">";
 } else {
     echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('save', 'offlinequiz').
