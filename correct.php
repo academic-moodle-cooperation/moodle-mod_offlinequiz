@@ -325,8 +325,6 @@ onClick=\"self.close(); return false;\"><br />";
                     $page->resultid = $scannedpage->resultid;
                     $DB->set_field('offlinequiz_scanned_pages', 'resultid', $scannedpage->resultid, array('id' => $page->id));
 
-                    echo get_string('resubmitting', 'offlinequiz') . ' ' . $page->pagenumber . ' ... ';
- 
                     // Load the choices made before from the database. This might be empty.
                     $pagechoices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $page->id), 'slotnumber, choicenumber');
 
@@ -347,7 +345,6 @@ onClick=\"self.close(); return false;\"><br />";
                     $pageendindex = min($page->pagenumber * $questionsperpage, count($pageslots));
                     // Submit the choices of the other pages to the new result.
                     $page = offlinequiz_submit_scanned_page($offlinequiz, $page, $pagechoicesdata, $pagestartindex, $pageendindex);
-                    echo get_string('done', 'offlinequiz') . '<br/>';
                 }
             } 
 
