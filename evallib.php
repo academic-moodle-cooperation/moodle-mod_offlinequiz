@@ -767,17 +767,16 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
     global $DB;
 
     // Check the list number.
-    $listnumber = $scanner->get_list();
-
-    if (is_string($listnumber)) {
-        $intln = intval($listnumber);
-        if ($intln > 0) {
-            $listnumber = $intln;
-        }
-    }
-
     if (!property_exists($scannedpage, 'listnumber') || $scannedpage->listnumber == 0) {
-        $scannedpage->listnumber = $listnumber;
+        $listnumber = $scanner->get_list();
+
+        if (is_string($listnumber)) {
+            $intln = intval($listnumber);
+            if ($intln > 0) {
+                $listnumber = $intln;
+                $scannedpage->listnumber = $listnumber;
+            }
+        }
     }
 
     if ($scannedpage->status == 'ok') {

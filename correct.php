@@ -757,11 +757,12 @@ if ($group && $pagenumber > 0 and $pagenumber <= $group->numberofpages) {
 // OUTPUT THE PAGE HTML.
 // =======================================================================
 // echo $OUTPUT->header('','','','','',false,'','',false,'');
+echo '<html>';
 echo "<style>\n";
 echo "body {margin:0px; font-family:Arial,Verdana,Helvetica,sans-serif;}\n";
 echo ".imagebutton {width:250px; height:24px; text-align:left; margin-bottom:10px;}\n";
 echo "</style>\n";
-echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
+echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
 
 echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/jquery-1.4.3.min.js');
 echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/ui/jquery.ui.core.js');
@@ -795,15 +796,15 @@ function checkinput() {
 function set_userid(image, x, y) {
   for (i=0; i<=9; i++) {
     key = 'u'+x+i;
-    document.images[key].src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"
+    document.images[key].src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\";
   }
-  image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"
+  image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\";
   document.forms.cform.usernumber.value = document.forms.cform.usernumber.value.substr(0,x) + y + document.forms.cform.usernumber.value.substr(x+1);
 }
 
 function set_group(image, x) {
  for (i=0; i<=5; i++) {
-  document.images['g'+i].src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"
+  document.images['g'+i].src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\";
  }
  image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"
  document.forms.cform.groupnumber.value = x+1;
@@ -814,10 +815,10 @@ function set_group(image, x) {
 function set_item(image, x, y) {
   key = 'item['+x+'-'+y+']';
   if (document.forms.cform.elements[key].value == '1') {
-    image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"
+    image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\";
     document.forms.cform.elements[key].value = 0;
   } else {
-    image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"
+    image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\";
     document.forms.cform.elements[key].value = 1;
   }
 }
@@ -836,15 +837,15 @@ function submitReadjust() {
    }
  }
  if (!changed) {
-   alert('" . get_string('movecorners', 'offlinequiz') . "')
+   alert('" . get_string('movecorners', 'offlinequiz') . "');
  } else {
-  document.forms.cform.elements['action'].value='readjust'
+  document.forms.cform.elements['action'].value='readjust';
   document.forms.cform.submit();
  }
 }
 
 function submitCancel() {
-  document.forms.cform.elements['action'].value='cancel'
+  document.forms.cform.elements['action'].value='cancel';
   document.forms.cform.submit();
 }
 
@@ -854,7 +855,7 @@ function submitPage() {
     document.forms.cform.elements['c-'+i+'-x'].value = corner.style.left.replace('px','');
     document.forms.cform.elements['c-'+i+'-y'].value = corner.style.top.replace('px','');
   }
-  document.forms.cform.elements['action'].value='setpage'
+  document.forms.cform.elements['action'].value='setpage';
   document.forms.cform.submit();
 }
 
@@ -863,17 +864,17 @@ function submitCheckuser() {
     document.forms.cform.elements['c-'+i+'-x'].value = document.forms.cform.elements['c-old-'+i+'-x'].value;  // Reset possible readjustment.
     document.forms.cform.elements['c-'+i+'-y'].value = document.forms.cform.elements['c-old-'+i+'-y'].value;
   }
-  document.forms.cform.elements['action'].value='checkuser'
+  document.forms.cform.elements['action'].value='checkuser';
   document.forms.cform.submit();
 }
 
 function submitEnrol() {
-  document.forms.cform.elements['action'].value='enrol'
+  document.forms.cform.elements['action'].value='enrol';
   document.forms.cform.submit();
 }
 
 function submitRotated() {
-  document.forms.cform.elements['action'].value='rotate'
+  document.forms.cform.elements['action'].value='rotate';
   document.forms.cform.submit();
 }
 
