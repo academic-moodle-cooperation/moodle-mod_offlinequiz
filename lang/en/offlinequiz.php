@@ -259,6 +259,7 @@ $string['multipleanswers'] = 'Choose at least one answer.';
 $string['moodleprocessing'] = 'Let Moodle process data';
 $string['movecorners'] = 'Change the positions of the corner markings first. Use drag and drop.';
 $string['multianswersforsingle'] = 'Multiple answers for single choice question';
+$string['name'] = 'Offline Quiz name';
 $string['neededcorrection'] = '<strong>Attention: Some of your markings needed manual correction. Have a look at the red squares in the following picture.
 <br />This implied manual intervention by a teacher and delayed the publishing of the offline quiz results!</strong>';
 $string['newgrade'] = 'Graded';

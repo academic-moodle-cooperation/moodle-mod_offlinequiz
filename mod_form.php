@@ -62,7 +62,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         }
 
         // Name.
-        $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
+        $mform->addElement('text', 'name', get_string('name', 'offlinequiz'), array('size'=>'64'));
 
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);

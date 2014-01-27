@@ -1187,7 +1187,7 @@ function print_random_option_icon($question) {
  * @param bool $return If true (default), return the output. If false, print it.
  */
 function offlinequiz_question_tostring($question, $showicon = false,
-        $showquestiontext = true, $return = true) {
+        $showquestiontext = true, $return = true, $shorttitle = false) {
     global $COURSE;
 
     $result = '';
@@ -1196,13 +1196,24 @@ function offlinequiz_question_tostring($question, $showicon = false,
     $formatoptions->noclean = true;
     $formatoptions->para = false;
     $questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
-    $result .= '<span class="questionname" title="' . $questiontext . '">';
+    $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
+
+    if ($shorttitle && strlen($questiontitle) > 25) {
+        $questiontitle = shorten_text($questiontitle, 25, false, '...');
+    }
+    $result .= '<span class="questionname" title="' . $questiontitle . '">';
     
     if ($showicon) {
         $result .= print_question_icon($question, true);
         echo ' ';
     }
-    $result .= shorten_text(format_string($question->name), 200) . '</span>';
+    
+    if ($shorttitle) {
+        $result .= $questiontitle;
+    } else {
+        $result .= shorten_text(format_string($question->name), 200) . '</span>';
+    }
+        
     if ($showquestiontext) {
         $result .= '<span class="questiontext" title="' . $questiontext . '">';
 
@@ -1354,7 +1365,7 @@ class question_bank_question_name_text_column extends question_bank_question_nam
         if ($labelfor) {
             echo '<label for="' . $labelfor . '">';
         }
-        echo offlinequiz_question_tostring($question, false, true, true);
+        echo offlinequiz_question_tostring($question, false, true, true, true);
         if ($labelfor) {
             echo '</label>';
         }

@@ -240,6 +240,7 @@ $string['movecorners'] = 'Ziehen Sie die Eckmarkierungen per Drag-and-Drop zunä
 $string['moveselectedonpage'] = 'Verschieben der ausgewählten Fragen zur Seite: {$a}';
 $string['removeselected'] = 'Ausgewählte entfernen';
 $string['multianswersforsingle'] = 'Mehrere Antworten bei Einfachauswahl';
+$string['name'] = 'Name des Offline-Tests';
 $string['neededcorrection'] = '<strong>Achtung!</strong><br />&nbsp;<br />Einige Ihrer Markierungen mussten manuell korrigiert werden.
 Die aufgrund dieses Fehlers notwendige händische Nachbearbeitung verzögerte die Gesamtauswertung und die Bekanntgabe der Ergebnisse an alle Studierenden.
 <br />Die erfolgten Korrekturen sind als rot markierte Kästchen im folgenden Beleg zu sehen.
