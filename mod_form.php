@@ -116,6 +116,15 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'timeclose', get_string("reviewcloses", "offlinequiz"),
                 array('optional' => true, 'step' => 1));
 
+        unset($options);
+        $options = array();
+        for ($i = 0; $i <= 3; $i++) {
+            $options[$i] = $i;
+        }
+        $mform->addElement('select', 'decimalpoints', get_string('decimalplaces', 'offlinequiz'), $options);
+        $mform->addHelpButton('decimalpoints', 'decimalplaces', 'offlinequiz');
+        $mform->setDefault('decimalpoints', $offlinequizconfig->decimalpoints);
+
         /* ------------------------------------------------------------------------------- */
         $mform->addElement('header', 'layouthdr', get_string('formsheetsettings', 'offlinequiz'));
 

@@ -105,7 +105,7 @@ function offlinequiz_add_instance($offlinequiz) {
             return false;
         }
     } catch (Exception $e) {
-        print_error("ERROR: ".$e->debuginfo);
+        print_error("ERROR: " . $e->debuginfo);
     }
 
     // Do the processing required after an add or an update.
@@ -881,7 +881,7 @@ function offlinequiz_scale_used_anywhere($scaleid) {
 function offlinequiz_after_add_or_update($offlinequiz) {
     global $DB;
 
-    // create group entries if they don't exist.
+    // Create group entries if they don't exist.
     if (property_exists($offlinequiz, 'numgroups')) {
         for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
             if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'number' => $i))) {
@@ -1207,7 +1207,11 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
         // If the grade item is not hidden by the offlinequiz logic, then we need to
         // hide it if the offlinequiz is hidden from students.
         $cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id);
-        $params['hidden'] = !$cm->visible;
+        if ($cm) {
+            $params['hidden'] = !$cm->visible;
+        } else {
+            $params['hidden'] = !$offlinequiz->visible;
+        }
     }
 
     if ($grades  === 'reset') {

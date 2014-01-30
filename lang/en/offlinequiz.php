@@ -107,6 +107,7 @@ $string['darkgray'] = 'Dark grey';
 $string['datanotsaved'] = 'Could not save settings';
 $string['configdecimalplaces'] ='Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
 $string['decimalplaces'] = 'decimal places';
+$string['decimalplaces_help'] ='Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
 $string['deletelistcheck'] = 'Do you really want to delete the selected list and all it\'s participants?';
 $string['deleteresultcheck'] = 'Do you really want to delete the selected results?';
 $string['deletepagesafterselected'] = 'Remove page breaks after selected questions';
