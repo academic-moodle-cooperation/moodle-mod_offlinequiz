@@ -141,7 +141,7 @@ if (!empty($offlinequiz->time)) {
 if ($options->marks != question_display_options::HIDDEN) {
     if ($offlinequiz->grade and $group->sumgrades) {
         $a = new stdClass;
-        $percentage = format_float(($result->sumgrades / $group->sumgrades) * 100, 2);
+        $percentage = format_float(($result->sumgrades / $group->sumgrades) * 100, $offlinequiz->decimalpoints);
         $a->grade = format_float(preg_replace('/,/i', '.', $grade), $offlinequiz->decimalpoints);
         $a->maxgrade = format_float($offlinequiz->grade, $offlinequiz->decimalpoints);
         $rawscore = format_float($result->sumgrades, $offlinequiz->decimalpoints);
