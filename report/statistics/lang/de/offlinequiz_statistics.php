@@ -50,7 +50,7 @@ $string['differentsumgrades'] = 'Ihre Offline-Test-Gruppen haben unterschiedlich
 der einzelnen Gruppen erfolgen. Bitte wählen Sie eine Gruppe aus!';
 $string['discrimination_index'] = 'Discrimination Index';
 $string['discriminative_efficiency'] = 'Unterscheidungs-Effizienz';
-$string['downloadeverything'] = 'Bericht herunterladen als als {$a->formatsmenu} {$a->downloadbutton}';
+$string['downloadeverything'] = 'Bericht herunterladen als {$a->formatsmenu} {$a->downloadbutton}';
 $string['duration'] = 'Geöffnet für';
 $string['effective_weight'] = 'Effektive Gewichtung';
 $string['errordeleting'] = 'Fehler beim Löschen von {$a} Datensätzen.';

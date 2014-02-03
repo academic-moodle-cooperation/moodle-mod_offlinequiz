@@ -157,7 +157,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 //             echo $OUTPUT->footer();
 //             die;
 //         }
-
         $reporturl = new moodle_url('/mod/offlinequiz/report.php', $pageoptions);
 
         $useallattempts = 0;
