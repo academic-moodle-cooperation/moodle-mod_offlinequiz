@@ -137,7 +137,7 @@ $string['errorreport'] = 'Importfehler-Bericht';
 $string['everythingon'] = 'Aktiviert';
 $string['Excelformat'] = 'Excel-Format';
 $string['fileformat'] = 'Dateiformat für Fragebögen';
-$string['fileformat_help'] = 'Wählen Sie aus, ob Sie die Fragenbögen als PDF- oder DOCX-Dokumente erzeugen möchten. Antwort- und Korrekturbögen werden immer im PDF Format erzeugt.';
+$string['fileformat_help'] = 'Wählen Sie aus, ob Sie die Fragenbögen als PDF- oder DOCX-Dokumente erzeugen möchten. Antwort- und Korrekturbögen werden immer im PDF-Format erzeugt.';
 $string['filesizetolarge'] = 'Einige Ihrer Dateien sind sehr groß und müssen während der Interpretation verkleinert werden. Bitte wählen Sie beim Scannen eine Auflösung zwischen 200 und 300 dpi und einen Schwarz-Weiß-Modus. Dadurch wird die Auswertung beim nächsten Mal deutlich beschleunigt!';
 $string['fontsize'] = 'Schriftgröße';
 $string['forautoanalysis'] = 'Zur automatischen Prüfungsauswertung';
@@ -297,6 +297,11 @@ $string['oneclickenroldesc'] = 'Wenn Sie diese Option aktivieren haben die Lehre
 $string['oneclickrole'] = 'Rolle für Einschreibung.';
 $string['oneclickroledesc'] = 'Wählen Sie hier die Rolle aus, die bei der 1-Click Einschreibung verwendet werden soll. Es können nur Rollen mit dem Archetyp "student" ausgewählt werden.';
 $string['onlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
+$string['orderandpaging'] = 'Reihenfolge und Seitenumbrüche';
+$string['orderandpaging_help'] = 'Die Zahlen 10, 20, 30, ... neben jeder Frage zeigt deren Reihenfolge an. Die Zahlenfolge in 10er-Schritten lässt Platz, um weitere Fragen einfügen zu können.
+Um die Reihenfolge der Fragen zu ändern, ändern Sie die Zahlen und klicken auf die Taste \'Neu sortieren\'.
+Um Seitenumbrüche nach bestimmten Fragen einzufügen, markieren Sie das Kontrollfeld \'Seitenumbrüche hinter den ausgewählten Fragen hinzufügen\'.
+Um Fragen über eine Reihe von Seiten anzuordnen, klicken Sie auf die Taste \'Seitenumbrüche durchführen\' und wählen die gewünschte Anzahl von Fragen pro Seite.';
 $string['orderingofflinequiz'] = 'Reihenfolge und Seitenumbrüche';
 $string['otherresultexists'] = 'Ein abweichendes Ergebnis für {$a} existiert bereits. Import ignoriert! Löschen Sie das Ergebnis zuerst.';
 $string['otherpageexists'] = 'Die Seite {$a->page} wurde für Teilnehmer/in {$a->name} bereits erfolgreich ausgewertet. Import ignoriert!';
@@ -357,7 +362,7 @@ $string['questionsheet'] = 'Fragebogen';
 $string['questionsingroup'] = 'Fragen in Gruppe';
 $string['quizdate'] = 'Testdatum';
 $string['quizopenclose'] = 'Anfangs- und Endzeiten';
-$string['quizopenclose_help'] = 'StudentInnen können ihre Ergebnisse nur nach zwischen Anfangs- und Endzeit sehen.';
+$string['quizopenclose_help'] = 'StudentInnen können ihre Ergebnisse nur zwischen Anfangs- und Endzeit sehen.';
 $string['readjust'] = 'Neu adjustieren';
 $string['realydeletepdfs'] = 'Möchten Sie die Formulare wirklich löschen?';
 $string['realydeleteupdatepdf'] = 'Möchten Sie die Anwesenheitsliste wirklich löschen und aktualisieren?';
@@ -396,7 +401,7 @@ Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist u
  welche der angekreuzten Antwortalternativen richtig (grün hinterlegt) und welche falsch (rot hinterlegt) sind.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Punktezahl</b></td><td>
-Angezeigt werden Gruppe (bspw. C), Punktezahl (erreichte Punktezahl, Summe der Punkte der Fragen des Tests, erreichte %  bspw. 40/80 (50%) ) 
+Angezeigt werden Gruppe (bspw. C), Punktezahl (erreichte Punktezahl, Summe der Punkte der Fragen des Tests, erreichte %  bspw. 40/80 (50%)) 
 und Bewertung (bspw. 50 von maximal 100). Ist zusätzlich die Option "Das Ergebnis" ausgewählt, 
 wird auch für jede Frage die maximale Punktezahl und die erreichten Punkte angezeigt.
 </td></tr>
@@ -406,11 +411,11 @@ Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist u
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scannerbeleg</b></td><td>
 Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Antwortformular angezeigt. 
-Kästchen, die als Ankreuzungen gewertet wurden, sind grünen umrandet.
+Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scannerbeleg mit Bewertung</b></td><td>
 Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Formular angezeigt. 
-Kästchen, die als Ankreuzungen gewertet wurden, sind grünen umrandet.
+Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 Zusätzlich sind alle Kästchen, die fälschlicherweise angekreuzt wurden und solche, die fälschlicherweise nicht angekreuzt sind, rot hinterlegt. 
 Weiterhin befindet sich am rechten Rand eine Auflistung der erreichten Punkte pro Frage.
 </td></tr>
@@ -455,7 +460,7 @@ $string['shufflequestionsagain'] = 'Fragen neu mischen';
 $string['shufflequestionsanswers'] = 'Fragen und Antworten mischen';
 $string['shufflequestionsselected'] = 'Fragen-Mischen wurde aktiviert. Deshalb sind einige Aktionen auf dieser Seite nicht verfügbar. Um dies zu ändern, bearbeiten Sie die Einstellungen, {$a}.';
 $string['shufflewithin'] =  'Antworten innerhalb der Fragen mischen';
-$string['shufflewithin_help'] = 'Wenn diese Auswahl aktiviert ist, werden für jede Frage in jeder Offline-Test Gruppe die Antworten innerhalb der Frage gemischt. ACHTUNG: Antworten werden nur für Fragen gemischt, für die das Mischen aktiviert wurde!';
+$string['shufflewithin_help'] = 'Wenn hier "Ja" ausgewählt ist, wird die Reihenfolge der Antwortalternativen pro Frage zufällig gewählt. Ist dieselbe Frage in zwei oder mehreren Gruppen des Offline-Tests eingebunden, wird für jede Gruppe die Antwortreihenfolge nach dem Zufallsprinzip festgelegt. ACHTUNG: Antworten werden nur bei Fragen gemischt, für die in den Einstellungen der Frage das Mischen aktiviert ist!';
 $string['signature'] = 'Unterschrift';
 $string['standard'] = 'Standard';
 $string['studycode'] = 'Studienkennzahl';

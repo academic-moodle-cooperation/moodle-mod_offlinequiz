@@ -41,9 +41,17 @@ require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
 function offlinequiz_evaluation_cron($jobid = 0) {
     global $CFG, $DB;
 
+//     $CFG->debug = 32767;
+//     $CFG->debugdisplay = true;
     raise_memory_limit(MEMORY_EXTRA);
 
-    $runningjobs = $DB->count_records_sql("SELECT COUNT(*) FROM {offlinequiz_queue} WHERE status = 'processing'", array());
+    // Only count the jobs with status processing that have been started in the last 24 hours.
+    $expiretime = time() - 86400; 
+    $runningsql = "SELECT COUNT(*)
+                     FROM {offlinequiz_queue}
+                    WHERE status = 'processing'
+                      AND timestart > :expiretime";
+    $runningjobs = $DB->count_records_sql($runningsql, array('expiretime' => $expiretime));
 
     if ($runningjobs >= OFFLINEQUIZ_MAX_CRON_JOBS) {
         echo "Too many jobs running! Exiting!";
@@ -51,7 +59,6 @@ function offlinequiz_evaluation_cron($jobid = 0) {
     }
 
     // TODO do this properly. Just for testing
-
     $sql = "SELECT * FROM {offlinequiz_queue} WHERE status = 'new'";
     $params = array();
     if ($jobid) {
@@ -62,7 +69,6 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
     // If there are no new jobs, we simply exit.
     if (!$jobs = $DB->get_records_sql($sql, $params, 0, OFFLINEQUIZ_TOP_QUEUE_JOBS)) {
-        echo "nothing to do!";
         return;
     }
 

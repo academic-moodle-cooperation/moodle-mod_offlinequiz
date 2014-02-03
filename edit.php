@@ -739,7 +739,7 @@ for ($i=1; $i<=$offlinequiz->numgroups; $i++) {
 
 if ($offlinequiz_reordertool) {
     echo $OUTPUT->heading_with_help(get_string('orderingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
-            get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 'orderandpaging', 'quiz');
+            get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 'orderandpaging', 'offlinequiz');
 } else if ($offlinequiz_gradetool) {
     echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
             get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
