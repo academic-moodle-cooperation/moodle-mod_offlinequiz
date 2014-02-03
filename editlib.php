@@ -1198,10 +1198,10 @@ function offlinequiz_question_tostring($question, $showicon = false,
     $questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
     $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
 
+    $result .= '<span class="questionname" title="' . $questiontitle . '">';
     if ($shorttitle && strlen($questiontitle) > 25) {
         $questiontitle = shorten_text($questiontitle, 25, false, '...');
     }
-    $result .= '<span class="questionname" title="' . $questiontitle . '">';
     
     if ($showicon) {
         $result .= print_question_icon($question, true);
