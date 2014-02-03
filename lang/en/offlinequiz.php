@@ -326,7 +326,7 @@ $string['orderingofflinequiz'] = 'Order and paging';
 $string['orderandpaging'] = 'Order and paging';
 $string['orderandpaging_help'] = 'The numbers 10, 20, 30, ... opposite each question indicate the order of the questions. The numbers increase in steps of 10 to leave space for additional questions to be inserted. To reorder the questions, change the numbers then click the "Reorder questions" button.
 
-To add page breaks after particular questions, tick the checkboxes next to the questions then click the "Add new pages after selected questions" button.
+To add page breaks after particular questions, tick the checkboxes next to the questions then click the "Add page breaks after selected questions" button.
 
 To arrange the questions over a number of pages, click the Repaginate button and select the desired number of questions per page.';
 $string['otherresultexists'] = 'Different result for {$a} already exists, import ignored! Delete result first.';
@@ -441,7 +441,7 @@ The scanned answer forms are shown. Checked boxes are marked with green squares.
 </table>';
 
 $string['review'] = 'Review';
-$string['rimport'] = 'Upload';
+$string['rimport'] = 'Upload/Correct';
 $string['rotate'] = 'Rotate';
 $string['rotatingsheet'] = 'Sheet is rotated...';
 $string['saveandshow'] = 'Save and show changes to student';
