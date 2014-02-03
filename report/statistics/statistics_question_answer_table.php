@@ -51,6 +51,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      */
     public function __construct() {
         parent::__construct('mod-offlinequiz-report-statistics-report');
+        $this->defaultdownloadformat  = 'excel';
     }
 
     public function set_questiondata($questiondata) {
@@ -256,7 +257,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_response($question) {
-        if (property_exists($question, 'response')) {
+        if (property_exists($question, 'response') && property_exists($question, 'part')) {
             if ($this->is_downloading()) {
                 return $this->format_text($question->part . ' ' . $question->response);
 //                return format_text(strip_tags($question->part . ' ' . $question->response), FORMAT_PLAIN);
@@ -493,7 +494,11 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_correct($question) {
-        $result = $question->_stats->correct . ' (' . round($question->_stats->correct / $question->_stats->s * 100) . '%)';
+        if (property_exists($question, '_stats') && property_exists($question->_stats, 'correct')) {
+            $result = $question->_stats->correct . ' (' . round($question->_stats->correct / $question->_stats->s * 100) . '%)';
+        } else {
+            $result = '';
+        }
         return $result;
     }
 
@@ -503,7 +508,11 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_partially($question) {
-        return $question->_stats->partially . ' (' . round($question->_stats->partially / $question->_stats->s * 100) . '%)';
+        if (property_exists($question, '_stats') && property_exists($question->_stats, 'partially')) {
+            return $question->_stats->partially . ' (' . round($question->_stats->partially / $question->_stats->s * 100) . '%)';
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -512,6 +521,10 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_wrong($question) {
-        return $question->_stats->wrong . ' (' . round($question->_stats->wrong / $question->_stats->s * 100) . '%)';
+        if (property_exists($question, '_stats') && property_exists($question->_stats, 'wrong')) {
+            return $question->_stats->wrong . ' (' . round($question->_stats->wrong / $question->_stats->s * 100) . '%)';
+        } else {
+            return '';
+        }
     }
 }
