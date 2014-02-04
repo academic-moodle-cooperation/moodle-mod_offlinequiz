@@ -299,9 +299,9 @@ $string['oneclickroledesc'] = 'Wählen Sie hier die Rolle aus, die bei der 1-Cli
 $string['onlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
 $string['orderandpaging'] = 'Reihenfolge und Seitenumbrüche';
 $string['orderandpaging_help'] = 'Die Zahlen 10, 20, 30, ... neben jeder Frage zeigt deren Reihenfolge an. Die Zahlenfolge in 10er-Schritten lässt Platz, um weitere Fragen einfügen zu können.
-Um die Reihenfolge der Fragen zu ändern, ändern Sie die Zahlen und klicken auf die Taste \'Neu sortieren\'.
-Um Seitenumbrüche nach bestimmten Fragen einzufügen, markieren Sie das Kontrollfeld \'Seitenumbrüche hinter den ausgewählten Fragen hinzufügen\'.
-Um Fragen über eine Reihe von Seiten anzuordnen, klicken Sie auf die Taste \'Seitenumbrüche durchführen\' und wählen die gewünschte Anzahl von Fragen pro Seite.';
+Um die Reihenfolge der Fragen zu ändern, ändern Sie die Zahlen und klicken Sie auf das Kontrollfeld \'Neu sortieren\'.
+Um Seitenumbrüche nach bestimmten Fragen einzufügen, klicken Sie auf das Kontrollfeld \'Seitenumbrüche hinter den ausgewählten Fragen hinzufügen\'.
+Um Fragen über eine Reihe von Seiten anzuordnen, klicken Sie auf das Kontrollfeld  \'Neuer Seitenumbruch...\' und wählen Sie die gewünschte Anzahl von Fragen pro Seite.';
 $string['orderingofflinequiz'] = 'Reihenfolge und Seitenumbrüche';
 $string['otherresultexists'] = 'Ein abweichendes Ergebnis für {$a} existiert bereits. Import ignoriert! Löschen Sie das Ergebnis zuerst.';
 $string['otherpageexists'] = 'Die Seite {$a->page} wurde für Teilnehmer/in {$a->name} bereits erfolgreich ausgewertet. Import ignoriert!';
