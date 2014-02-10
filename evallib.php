@@ -785,7 +785,10 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
                   FROM {offlinequiz_p_lists}
                  WHERE offlinequizid = :offlinequizid",
                 array('offlinequizid' => $offlinequiz->id));
-        if ((!is_int($scannedpage->listnumber)) || $scannedpage->listnumber < 1 || $scannedpage->listnumber > $maxlistnumber) {
+        if (!property_exists($scannedpage, 'listnumber') ||
+                (!is_int($scannedpage->listnumber)) ||
+                $scannedpage->listnumber < 1 ||
+                $scannedpage->listnumber > $maxlistnumber) {
             $scannedpage->status = 'error';
             $scannedpage->error = 'invalidlistnumber';
         }

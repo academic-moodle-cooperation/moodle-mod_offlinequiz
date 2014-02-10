@@ -78,7 +78,6 @@ offlinequiz_load_useridentification();
 $report = new participants_report();
 // if (!$filename = optional_param('filename', '', PARAM_RAW)) $filename = $report->get_pic_name($log->rawdata);
 
-$error = false;
 $list = null;
 
 // Load corner values if readjusted
@@ -163,6 +162,9 @@ onClick=\"self.close(); return false;\"><br />";
         $scannedpage->listnumber = intval($list->number);
     }
 
+    // *************************************************************
+    //       Action setlist
+    // *************************************************************
 } else if ($action == 'setlist') {
         $upperleft = new oq_point(required_param('c-0-x', PARAM_INT) + 8, required_param('c-0-y', PARAM_INT) + 8);
         $upperright = new oq_point(required_param('c-1-x', PARAM_INT) + 8, required_param('c-1-y', PARAM_INT) + 8);
@@ -188,12 +190,19 @@ onClick=\"self.close(); return false;\"><br />";
         $DB->update_record('offlinequiz_scanned_p_pages', $scannedpage);
 
         $offlinequizconfig->papergray = $offlinequiz->papergray;
+        // Initialise a new page scanner
+        $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
         $sheetloaded = $scanner->load_stored_image($scannedpage->filename, array($upperleft, $upperright, $lowerleft, $lowerright));
-        $scannedpage = offlinequiz_check_scanned_participants_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
+        // The following calibrates the scanner.
+        $scanner->get_list();
 
         if ($scannedpage->listnumber) {
             $listchosen = 1;
         }
+        
+        // *************************************************************
+        //       Action readjust
+        // *************************************************************
 } else if ($action == 'readjust') {
     if (!confirm_sesskey()) {
         print_error('invalidsesskey');
@@ -221,6 +230,8 @@ onClick=\"self.close(); return false;\"><br />";
     // Create a completely new scanner and load the image with the submitted corners.
     $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
     $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
+    // The following calibrates the scanner.
+    $scanner->get_list();
 
     // maybe old errors have been fixed
     $scannedpage->status = 'ok';
@@ -274,10 +285,8 @@ onClick=\"self.close(); return false;\"><br />";
 
         // load the stored picture file.
         $sheetloaded = $scanner->load_stored_image($scannedpage->filename, array($upperleft, $upperright, $lowerleft, $lowerright));
-        $listnumber = $scanner->get_list();
-        if (!$listnumber) {
-            $error = true;
-        }
+        // The following calibrates the scanner.
+        $scanner->get_list();
         $participants = $scanner->get_participants();
     }
 } else if ($action == 'setpage') {
@@ -288,7 +297,6 @@ onClick=\"self.close(); return false;\"><br />";
         die;
     }
 
-    $error = OFFLINEQUIZ_PART_FATAL_ERROR==$log->error;
     //  $participants = $report->get_participants($log->rawdata);
     $listid = required_param('listid', PARAM_INT);
     if (!$listid) {
@@ -302,7 +310,7 @@ onClick=\"self.close(); return false;\"><br />";
 }
 $offlinequizconfig->papergray = $offlinequiz->papergray;
 
-// now we check the scanned page with potentially updated information
+// Now we check the scanned page with potentially updated information
 $scannedpage = offlinequiz_check_scanned_participants_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
 $listnumber = $scannedpage->listnumber;
