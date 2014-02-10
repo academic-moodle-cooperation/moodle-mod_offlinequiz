@@ -149,10 +149,30 @@ onClick=\"self.close(); return false;\"><br />";
         die;
     }
 
+    $upperleft = new oq_point(required_param('c-0-x', PARAM_INT) + 7, required_param('c-0-y', PARAM_INT) + 7);
+    $upperright = new oq_point(required_param('c-1-x', PARAM_INT) + 7, required_param('c-1-y', PARAM_INT) + 7);
+    $lowerleft = new oq_point(required_param('c-2-x', PARAM_INT) + 7, required_param('c-2-y', PARAM_INT) + 7);
+    $lowerright = new oq_point(required_param('c-3-x', PARAM_INT) + 7, required_param('c-3-y', PARAM_INT) + 7);
+    $ul_x = $upperleft->x;
+    $ul_y = $upperleft->y;
+    $ur_x = $upperright->x;
+    $ur_y = $upperright->y;
+    $ll_x = $lowerleft->x;
+    $ll_y = $lowerleft->y;
+    $lr_x = $lowerright->x;
+    $lr_y = $lowerright->y;
+
+    // Initialise a new page scanner
+    $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
+    $sheetloaded = $scanner->load_stored_image($scannedpage->filename, array($upperleft, $upperright, $lowerleft, $lowerright));
+    // The following calibrates the scanner.
+    $scanner->get_list();
+
     $OUTPUT->heading(get_string('participantslist', 'offlinequiz'));
     $listid = required_param('listid', PARAM_INT);
-    $newparticipants = required_param('participants', PARAM_RAW);
-    $userid = required_param('userid', PARAM_RAW);
+    // Get the values chosen by the user.
+    $newparticipants = required_param_array('participants', PARAM_RAW);
+    $userid = required_param_array('userid', PARAM_RAW);
 
     // Maybe old errors have been fixed
     $scannedpage->status = 'ok';
@@ -340,7 +360,8 @@ if ($action == 'update') {
     $unknownuser = false;
 
     foreach ($newparticipants as $key => $value) {
-        if (!isset($userid[$key]) || $userid[$key] < 1) {
+        // Continue if the checkbox has been marked but no userid has been chosen.
+        if ($value == 'marked' && (!isset($userid[$key]) || $userid[$key] < 1)) {
             $unknownuser = true;
             continue;
         }
@@ -362,6 +383,7 @@ if ($action == 'update') {
             $DB->set_field('offlinequiz_p_choices', 'value', 0,
                     array('scannedppageid' => $scannedpage->id, 'userid' => $userid[$key]));
         } else {
+            // Should not happen because we can only save the page when all checkboxes are either empty or marked.
             $dbdata[$userid[$key]]->value = -1;
             $DB->set_field('offlinequiz_p_choices', 'value', -1,
                     array('scannedppageid' => $scannedpage->id, 'userid' => $userid[$key]));
@@ -371,6 +393,8 @@ if ($action == 'update') {
 
     if (!$insecuremarkings && !$unknownuser) {
         $scannedpage = offlinequiz_submit_scanned_participants_page($offlinequiz, $scannedpage, $dbdata);
+        echo '<html>';
+        echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head><body>';
         if ($scannedpage->status == 'submitted') {
             echo get_string('pageimported', 'offlinequiz')."<br /><br />";
             $DB->set_field('offlinequiz_scanned_p_pages', 'error', '', array('id' => $pageid));
@@ -380,10 +404,8 @@ if ($action == 'update') {
             $scannedpage->error = 'insecuremarkings';
             $DB->update_record('offlinequiz_scanned_p_pages', $scannedpage);
         }
-        echo '<html>';
-        echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
         echo "<div align=\"center\"><input type=\"button\" value=\"".get_string('closewindow')."\" onClick=\"window.opener.location.reload(1); self.close();return false;\">";
-        echo "</div>\n";
+        echo "</div></body>\n";
         echo "</html>\n";
         die();
     } else if ($unknownuser) {
@@ -411,17 +433,35 @@ echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/ui/jquer
 echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/ui/jquery.ui.draggable.js');
 
 $javascript = "<script language=\"JavaScript\">
- function checkinput() {
+ function checkinput(alert) {
+   insecuremarkings = false;
+   missinguserid = false;
    for (i=1; i<=" . count($participants) . "; i++) {
-      if (document.forms.cform.elements['participants['+i+']'].value == 'X') {
-          alert(\"" . addslashes(get_string('insecuremarkings', 'offlinequiz')) . "\");
-          return false;
+      checkbox = $('input[name^=\"participants[' + i + '\"]');
+      userid = $('input[name^=\"userid[' + i + '\"]');
+      if (checkbox.attr('value') == 'X') { 
+          insecuremarkings = true;
+          if (alert) {
+              alert(\"" . addslashes(get_string('insecuremarkings', 'offlinequiz')) . "\");
+          }
       }
-      if (document.forms.cform.elements['participants['+i+']'].value == '1' && document.forms.cform.elements['userid['+i+']'].value == 0) {
+      console.log(userid.attr('value'));
+      if (checkbox.attr('value') == '1' && userid.attr('value') == '0') {
           document.getElementById('b'+i).setAttribute('class', 'barcodeselect barcodeerror');
-          alert(\"" . addslashes(get_string('missinguserid', 'offlinequiz')) . "\");
-          return false;
+          missinguserid = true;
+          if (alert) {
+              alert(\"" . addslashes(get_string('missinguserid', 'offlinequiz')) . "\");
+          }
       }
+   }
+   if (insecuremarkings || missinguserid) {
+       return false;
+   } else {
+       if (alert) {
+           
+       } else {
+         $('input[name^=\"submitbutton1\"]').removeAttr('disabled');
+       }
    }
 }
 
@@ -438,6 +478,16 @@ function set_participant(image, x) {
        image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\";
        document.forms.cform.elements['participants['+x+']'].value = 'marked';
    }
+}
+
+function select_user(element, x, value) {
+   document.forms.cform.elements['userid['+ x + ']'].value = value;
+   if (value == 0) {
+       element.setAttribute('class', 'barcodeselect barcodeerror');
+   } else {
+       element.setAttribute('class', 'barcodeselect');
+   }
+   return checkinput(false);
 }
 
 function submitCancel() {
@@ -528,7 +578,7 @@ if ($scannedpage->status == 'error' && ($scannedpage->error == 'insecuremarkings
     echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('save', 'offlinequiz')."\" name=\"submitbutton1\" disabled=\"disabled\">";
 } else {
     echo "<input class=\"imagebutton\" type=\"submit\" value=\"".get_string('save', 'offlinequiz').
-    "\" name=\"submitbutton1\" onClick=\"return checkinput()\">";
+    "\" name=\"submitbutton1\" onClick=\"return checkinput(true)\">";
 }
 echo "</div>\n";
 
@@ -538,9 +588,9 @@ $fs = get_file_storage();
 $imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename);
 
 // ==================================================
-// print image of the form sheet
+// Print image of the form sheet
 echo '<img name="formimage" src="' . $CFG->wwwroot . "/pluginfile.php/$context->id/mod_offlinequiz/imagefiles/0/" .
-  $imagefile->get_filename() .'" border="1" width="' . OQ_IMAGE_WIDTH . '" style="position:absolute; top:0px; left:0px; display: block;">';
+  $imagefile->get_filename() .'" border="1" width="' . OQ_IMAGE_WIDTH . '" style="position:absolute; top:0px; left:0px; display: none;">';
 
 if ($scannedpage->status == 'error') {
     echo "<div style=\"position:absolute; top: 20px; left: 130px\">\n";
@@ -549,7 +599,7 @@ if ($scannedpage->status == 'error') {
 }
 
 // ==================================================
-// print list select box
+// Print list select box
 if ($scannedpage->error == 'invalidlistnumber' && !$scanner->ontop && !$listchosen) {
     echo "<div style=\"position:absolute; top:300px; left:180px; width:500px; background-color:#eee; padding:20px; border:2px red solid; text-align: center\">";
     print_string('listnotdetected', 'offlinequiz');
@@ -592,14 +642,14 @@ if ($sheetloaded) {
     // Get userid select items
     if ($list) {
         $sql = "SELECT DISTINCT p.id, p.userid, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
-                FROM {user} u,
-                     {offlinequiz_participants} p,
-                     {offlinequiz_p_lists} pl
-               WHERE p.userid = u.id
-                 AND p.listid = :listid
-                 AND p.listid = pl.id
-                 AND pl.offlinequizid = :offlinequizid
-            ORDER BY u.lastname, u.firstname";
+                  FROM {user} u,
+                       {offlinequiz_participants} p,
+                       {offlinequiz_p_lists} pl
+                 WHERE p.userid = u.id
+                   AND p.listid = :listid
+                   AND p.listid = pl.id
+                   AND pl.offlinequizid = :offlinequizid
+              ORDER BY u.lastname, u.firstname";
 
         $params['offlinequizid'] = $offlinequiz->id;
         $params['listid'] = $list->id;
@@ -612,8 +662,9 @@ if ($sheetloaded) {
                 echo " barcodeerror";
             }
             echo "\" id=\"b$x\" style=\"position:absolute; top:".($hotspot->y - 10)."px; left:".($hotspot->x - 100).
-            "px\" onChange=\"document.forms.cform.elements['userid['+$x+']'].value = this.value;
-             if (this.value==0) {this.setAttribute('class', 'barcodeselect barcodeerror');} else {this.setAttribute('class', 'barcodeselect');};\">\n>";
+            "px\" onChange=\"document.forms.cform.elements['userid['+$x+']'].value = this.value;                       
+             if (this.value==0) {this.setAttribute('class', 'barcodeselect barcodeerror');} else {this.setAttribute('c\
+lass', 'barcodeselect');}; checkinput(false);\">\n>";
             echo "<option value=\"0\"></option>\n";
             foreach ($users as $user) {
                 echo "<option value=\"{$user->userid}\"";
