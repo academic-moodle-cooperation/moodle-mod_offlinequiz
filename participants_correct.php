@@ -479,6 +479,7 @@ function set_participant(image, x) {
        image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\";
        document.forms.cform.elements['participants['+x+']'].value = 'marked';
    }
+   return checkinput(false);
 }
 
 function select_user(element, x, value) {
