@@ -613,7 +613,7 @@ switch($mode) {
             $import_form->display();
         } else if ($action == 'delete') {
             // Some pages need to be deleted
-            $pageids = optional_param('pageid', array(), PARAM_INT);
+            $pageids = optional_param_array('pageid', array(), PARAM_INT);
             foreach ($pageids as $pageid) {
                 if ($pageid && $todelete = $DB->get_record('offlinequiz_scanned_p_pages', array('id' => $pageid))) {
                     $DB->delete_records('offlinequiz_scanned_p_pages', array('id' => $pageid));

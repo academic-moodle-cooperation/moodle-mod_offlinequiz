@@ -102,6 +102,7 @@ echo "</style>\n";
 $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
 $corners = array();
 $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
+$scanner->get_list();
 
 if ($sheetloaded) {
     $corners = $scanner->export_corners(OQ_IMAGE_WIDTH);
