@@ -590,7 +590,7 @@ $imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/'
 // ==================================================
 // Print image of the form sheet
 echo '<img name="formimage" src="' . $CFG->wwwroot . "/pluginfile.php/$context->id/mod_offlinequiz/imagefiles/0/" .
-  $imagefile->get_filename() .'" border="1" width="' . OQ_IMAGE_WIDTH . '" style="position:absolute; top:0px; left:0px; display: none;">';
+  $imagefile->get_filename() .'" border="1" width="' . OQ_IMAGE_WIDTH . '" style="position:absolute; top:0px; left:0px; display: block;">';
 
 if ($scannedpage->status == 'error') {
     echo "<div style=\"position:absolute; top: 20px; left: 130px\">\n";
