@@ -47,7 +47,7 @@ class offlinequiz_html_translator
      * @param int $maxwidth The maximum width in pixels for images.
      * @return string The result string
      */
-    public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor, $maxwidth) {
+    public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor, $maxwidth, $format = 'pdf') {
         global $CFG;
 
         $fs = get_file_storage();
@@ -166,9 +166,13 @@ class offlinequiz_html_translator
                             $filewidth = $imagewidth;
                         }
 
-//                         if ($teximage && $fileheight > 20) {
-//                             $factor = $fileheight / 20;
-//                         }
+                        if ($teximage) {
+                            if ($format == 'pdf') {
+                                $factor = $factor * 0.6;
+                            } else {
+                                $factor = $factor * 0.8;
+                            }
+                        }
 
                         $width = round($filewidth / ($kfactor * $factor));
                         	
