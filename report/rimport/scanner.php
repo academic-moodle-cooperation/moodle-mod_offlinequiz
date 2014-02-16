@@ -335,11 +335,23 @@ class offlinequiz_page_scanner {
         $this->init_hotspots();
         $this->sourcefile = $file;
 
-        $imageinfo = getimagesize($file);
-
         $scannedpage = new stdClass();
         $scannedpage->offlinequizid = $this->offlinequizid;
         $scannedpage->time = time();
+
+        $path_parts = pathinfo($file);
+        $this->filename = $path_parts['filename'] . '.' . $path_parts['extension'];
+        $scannedpage->origfilename = $this->filename;
+
+        if (!file_exists($file)) {
+            $scannedpage->status = 'error';
+            $scannedpage->error = 'filenotfound';
+            $scannedpage->filename = $this->filename;
+            $scannedpage->info = $this->filename;
+            return $scannedpage;
+        }
+
+        $imageinfo = getimagesize($file);
 
         // reduce resolution of large images
         $percent = round(300000 / $imageinfo['0']);
@@ -352,9 +364,6 @@ class offlinequiz_page_scanner {
         $this->zoomx = $imageinfo['0'] / A3_WIDTH;  // first estimation of zoom factor, will be adjusted later
         $this->zoomy = $imageinfo['1'] / A3_HEIGHT;
         $type = $imageinfo['2'];
-        $path_parts = pathinfo($file);
-
-        $this->filename = $path_parts['filename'] . '.' . $path_parts['extension'];
 
         switch ($type) {
             case IMAGETYPE_GIF:
@@ -382,7 +391,7 @@ class offlinequiz_page_scanner {
                     $this->image = imagecreatefrompng($file);
                 } else {
                     $scannedpage->status = 'error';
-                    $scannedpage->error = 'pngnotsupported';
+                    $scannedpage->error = 'pngnotsupported'; 
                     $scannedpage->info = $this->filename;
                     return $scannedpage;
                 }
@@ -397,6 +406,7 @@ class offlinequiz_page_scanner {
                 if (file_exists($newfile)) {
                     unlink($file);
                     $this->filename = $path_parts["filename"] . ".png";
+                    $scannedpage->origfilename = $this->filename;
                     $this->sourcefile = $newfile;
                     if (function_exists('imagecreatefrompng')) {
                         $this->image = imagecreatefrompng($newfile);
@@ -423,6 +433,7 @@ class offlinequiz_page_scanner {
                 if (file_exists($newfile)) {
                     unlink($file);
                     $this->filename = $path_parts["filename"] . ".png";
+                    $scannedpage->origfilename = $this->filename;
                     $this->sourcefile = $newfile;
                     if (function_exists('imagecreatefrompng')) {
                         $this->image = imagecreatefrompng($newfile);

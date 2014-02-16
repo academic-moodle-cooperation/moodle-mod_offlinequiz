@@ -41,9 +41,17 @@ require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
 function offlinequiz_evaluation_cron($jobid = 0) {
     global $CFG, $DB;
 
+//     $CFG->debug = 32767;
+//     $CFG->debugdisplay = true;
     raise_memory_limit(MEMORY_EXTRA);
 
-    $runningjobs = $DB->count_records_sql("SELECT COUNT(*) FROM {offlinequiz_queue} WHERE status = 'processing'", array());
+    // Only count the jobs with status processing that have been started in the last 24 hours.
+    $expiretime = time() - 86400; 
+    $runningsql = "SELECT COUNT(*)
+                     FROM {offlinequiz_queue}
+                    WHERE status = 'processing'
+                      AND timestart > :expiretime";
+    $runningjobs = $DB->count_records_sql($runningsql, array('expiretime' => $expiretime));
 
     if ($runningjobs >= OFFLINEQUIZ_MAX_CRON_JOBS) {
         echo "Too many jobs running! Exiting!";
@@ -51,7 +59,6 @@ function offlinequiz_evaluation_cron($jobid = 0) {
     }
 
     // TODO do this properly. Just for testing
-
     $sql = "SELECT * FROM {offlinequiz_queue} WHERE status = 'new'";
     $params = array();
     if ($jobid) {
@@ -62,7 +69,6 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
     // If there are no new jobs, we simply exit.
     if (!$jobs = $DB->get_records_sql($sql, $params, 0, OFFLINEQUIZ_TOP_QUEUE_JOBS)) {
-        echo "nothing to do!";
         return;
     }
 
@@ -145,7 +151,16 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                     // Try to load the image file.
                     echo 'job ' . $job->id . ': evaluating ' . $data->filename . "\n";
                     $scannedpage = $scanner->load_image($data->filename);
-                    echo 'job ' . $job->id . ': image loaded ' . $scannedpage->filename . "\n";
+                    if ($scannedpage->status == 'ok') {
+                        echo 'job ' . $job->id . ': image loaded ' . $scannedpage->filename . "\n";
+                        // Little hack to get the real filename. load_image() appends a counter suffix in case a file already exists...
+                        $data->filename = $dirname . '/' . $scannedpage->origfilename;
+                        $DB->update_record('offlinequiz_queue_data', $data);
+                    } else if ($scannedpage->error == 'filenotfound') {
+                        echo 'job ' . $job->id . ': image file not found: ' . $scannedpage->filename . "\n";
+                    }
+                    // Unset the origfilename because we don't need it in the DB.
+                    unset($scannedpage->origfilename);
                     $scannedpage->offlinequizid = $offlinequiz->id;
 
                     // If we could load the image file, the status is 'ok', so we can check the page for errors.
@@ -176,7 +191,8 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                     }
 
                     // If there is something to correct then store the hotspots for retrieval in correct.php.
-                    if ($scannedpage->status != 'ok') {
+                    if ($scannedpage->status != 'ok' && $scannedpage->error != 'couldnotgrab'
+                            && $scannedpage->error != 'notadjusted' && $scannedpage->error != 'grouperror') {
                         $scanner->store_hotspots($scannedpage->id);
                     }
 
@@ -248,8 +264,8 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
                 email_to_user($user, $CFG->noreplyaddress, get_string('importmailsubject', 'offlinequiz'), $mailtext);
             }
-            echo "removing dir " . $dirname . "\n";
-            remove_dir($dirname);
+//            echo "removing dir " . $dirname . "\n";
+//            remove_dir($dirname);
 
         } // End !alreadydone.
     } // End foreach.

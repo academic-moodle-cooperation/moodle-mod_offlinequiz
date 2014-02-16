@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/offlinequiz/report/statistics/db" VERSION="20130619" COMMENT="XMLDB file for Moodle mod/offlinequiz/report/statistics"
+<XMLDB PATH="mod/offlinequiz/report/statistics/db" VERSION="20131204" COMMENT="XMLDB file for Moodle mod/offlinequiz/report/statistics"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
@@ -48,6 +48,9 @@
         <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7"/>
         <FIELD NAME="positions" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="positions in which this item appears. Only used for random questions."/>
         <FIELD NAME="randomguessscore" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="An estimate of the score a student would get by guessing randomly."/>
+        <FIELD NAME="correct" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The number of attempts that answered this question correctly (100%)."/>
+        <FIELD NAME="partially" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The number of attempts that answered this quesiton partially correct (0-100%)."/>
+        <FIELD NAME="wrong" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The number of attempts that answered this question wrongly (&amp;lt;0%)."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -41,7 +41,7 @@ require_once($CFG->libdir . '/filelib.php');
  * @param unknown_type $teacherid
  * @param unknown_type $coursecontext
  */
-function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $scanner, $scannedpage, $teacherid, $coursecontext, $autorotate = false) {
+function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $scanner, $scannedpage, $teacherid, $coursecontext, $autorotate = false, $recheckresult = false) {
     global $DB, $CFG;
 
     $offlinequizconfig = get_config('offlinequiz');
@@ -150,7 +150,7 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
     // Check whether there is already a scanned page or even a completed result with the same group, userid, etc.
     if (($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') && $user && $group && $page) {
         $resultexists = false;
-        if (!property_exists($scannedpage, 'resultid') || !$scannedpage->resultid) {
+        if (!property_exists($scannedpage, 'resultid') || !$scannedpage->resultid || $recheckresult) {
             $sql = "SELECT id
                       FROM {offlinequiz_results}
                      WHERE offlinequizid = :offlinequizid
@@ -767,17 +767,16 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
     global $DB;
 
     // Check the list number.
-    $listnumber = $scanner->get_list();
-
-    if (is_string($listnumber)) {
-        $intln = intval($listnumber);
-        if ($intln > 0) {
-            $listnumber = $intln;
-        }
-    }
-
     if (!property_exists($scannedpage, 'listnumber') || $scannedpage->listnumber == 0) {
-        $scannedpage->listnumber = $listnumber;
+        $listnumber = $scanner->get_list();
+
+        if (is_string($listnumber)) {
+            $intln = intval($listnumber);
+            if ($intln > 0) {
+                $listnumber = $intln;
+                $scannedpage->listnumber = $listnumber;
+            }
+        }
     }
 
     if ($scannedpage->status == 'ok') {
@@ -786,7 +785,10 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
                   FROM {offlinequiz_p_lists}
                  WHERE offlinequizid = :offlinequizid",
                 array('offlinequizid' => $offlinequiz->id));
-        if ((!is_int($scannedpage->listnumber)) || $scannedpage->listnumber < 1 || $scannedpage->listnumber > $maxlistnumber) {
+        if (!property_exists($scannedpage, 'listnumber') ||
+                (!is_int($scannedpage->listnumber)) ||
+                $scannedpage->listnumber < 1 ||
+                $scannedpage->listnumber > $maxlistnumber) {
             $scannedpage->status = 'error';
             $scannedpage->error = 'invalidlistnumber';
         }

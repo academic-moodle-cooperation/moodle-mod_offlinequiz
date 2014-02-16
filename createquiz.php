@@ -407,7 +407,7 @@ if ($mode == 'preview') {
             }
 
             if (!$offlinequiz->docscreated) {
-                $answerpdffile = offlinequiz_create_pdf_answer(offlinequiz_get_maxanswers($offlinequiz), $templateusage, $offlinequiz, $group, $course->id, $context);
+                $answerpdffile = offlinequiz_create_pdf_answer(offlinequiz_get_maxanswers($offlinequiz, array($group)), $templateusage, $offlinequiz, $group, $course->id, $context);
             } else {
                 $answerpdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', 'answer-' . strtolower($groupletter) . '.pdf');
             }

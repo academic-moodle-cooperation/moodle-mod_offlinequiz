@@ -130,4 +130,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('offlinequiz/oneclickrole', get_string('oneclickrole', 'offlinequiz'),
             get_string('oneclickroledesc', 'offlinequiz'), array('value' => $default, 'fix' => true), $options));
     
+    $settings->add(new admin_setting_configtext('offlinequiz/keepfilesfordays', get_string('keepfilesfordays', 'offlinequiz'),
+             get_string('configkeepfilesfordays', 'offlinequiz'), 8, PARAM_INT));
 }

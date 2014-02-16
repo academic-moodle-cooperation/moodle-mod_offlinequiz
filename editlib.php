@@ -364,6 +364,59 @@ function offlinequiz_add_offlinequiz_question($id, $offlinequiz, $page = 0) {
 }
 
 /**
+ * Randomly add a number of multichoice questions to an offlinequiz group.
+ * 
+ * @param unknown_type $offlinequiz
+ * @param unknown_type $addonpage
+ * @param unknown_type $categoryid
+ * @param unknown_type $number
+ * @param unknown_type $includesubcategories
+ */
+function offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $number, $recurse) {
+    global $DB;
+
+    $category = $DB->get_record('question_categories', array('id' => $categoryid));
+    if (!$category) {
+        print_error('invalidcategoryid', 'error');
+    }
+
+    $catcontext = context::instance_by_id($category->contextid);
+    require_capability('moodle/question:useall', $catcontext);
+
+    if ($recurse) {
+        $categoryids = question_categorylist($category->id);
+    } else {
+        $categoryids = array($category->id);
+    }
+
+    list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
+
+    $sql = "SELECT id
+              FROM {question} q
+             WHERE q.category $qcsql
+               AND q.parent = 0
+               AND q.hidden = 0
+               AND q.qtype IN ('multichoice', 'multichoiceset')
+               AND NOT EXISTS (SELECT 1 
+                                 FROM {offlinequiz_q_instances} oqi
+                                WHERE oqi.questionid = q.id
+                                  AND oqi.offlinequizid = :offlinequizid)";
+    
+    $qcparams['offlinequizid'] = $offlinequiz->id;
+    
+    $questionids = $DB->get_fieldset_sql($sql, $qcparams);
+    srand(microtime() * 1000000);
+    shuffle($questionids);
+    
+    $chosenids = array();
+    while (($questionid = array_shift($questionids)) && $number > 0) {
+        $chosenids[] = $questionid;
+        $number -= 1;
+    }
+    offlinequiz_add_questionlist_to_group($chosenids, $offlinequiz);
+}
+
+/**
  * Add a page break after at particular position$.
  * @param string $layout the existinng layout, $offlinequiz->questions.
  * @param int $index the position into $layout where the empty page should be removed.
@@ -398,6 +451,24 @@ function offlinequiz_add_page_break_after($layout, $questionid) {
     return implode(',', $questionids);
 }
 
+/**
+ * Remove a page break after a particular question if it exists.
+ * @param string $layout the existinng layout, $offlinequiz->questions.
+ * @param int $qustionid the question to add the page break after.
+ * @return the updated layout
+ */
+function offlinequiz_remove_page_break_after($layout, $questionid) {
+    $questionids = explode(',', $layout);
+    $key = array_search($questionid, $questionids);
+    if ($key === false || !$questionid) {
+        return $layout;
+    }
+    // Only remove page break if it is not the last one.
+    if (intval($questionids[$key + 1]) == 0 && ($key - 1 < count($questionids))) {
+        unset($questionids[$key + 1]);
+    }
+    return implode(',', $questionids);
+}
 
 /**
  * Save changes to a question instance
@@ -477,13 +548,14 @@ function offlinequiz_update_question_instance($grade, $questionid, $offlinequiz)
                     }
 
                     // Now change the sumgrades in the offlinequiz results.
-                    foreach ($results as $result) {
-                        if ($result->usageid > 0) {
-                            $resultusage = question_engine::load_questions_usage_by_activity($result->usageid);
-                            $DB->set_field('offlinequiz_results', 'sumgrades', $resultusage->get_total_mark(),
-                                    array('id' => $result->id));
-                        }
-                    }
+                    // The results are changes with a call to offlinequiz_update_all_attempt_sumgrades()
+//                     foreach ($results as $result) {
+//                         if ($result->usageid > 0) {
+//                             $resultusage = question_engine::load_questions_usage_by_activity($result->usageid);
+//                             $DB->set_field('offlinequiz_results', 'sumgrades', $resultusage->get_total_mark(),
+//                                     array('id' => $result->id));
+//                         }
+//                     }
                 }
             }
         }
@@ -551,7 +623,7 @@ function offlinequiz_move_question_down($layout, $questionid) {
  * @param bool $offlinequiz_qbanktool  Indicates whether the question bank should be displayed
  * @param bool $hasattempts  Indicates whether the offlinequiz has attempts
  */
-function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $reordertool, $offlinequiz_qbanktool, $hasattempts, $defaultcategoryobj) {
+function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $reordertool, $gradetool, $offlinequiz_qbanktool, $hasattempts, $defaultcategoryobj) {
     global $CFG, $DB, $OUTPUT;
 
     $strorder = get_string('order');
@@ -566,6 +638,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
     $strmovedown = get_string('movedown');
     $strcopytogroup = get_string('add');
     $strsave = get_string('save', 'offlinequiz');
+    $strbulksave = get_string('bulksavegrades', 'offlinequiz');
     $strreorderquestions = get_string('reorderquestions', 'offlinequiz');
 
     $strselectall = get_string('selectall', 'offlinequiz');
@@ -599,7 +672,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
     if ($hasattempts || $offlinequiz->shufflequestions) {
         $pagingdisabled = 'disabled="disabled"';
     }
-    if ($hasattempts) {
+    if (($hasattempts) || ($offlinequiz->numgroups == 1)) {
         $copyingdisabled = 'disabled="disabled"';
     }
 
@@ -609,7 +682,11 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
             '<input type="submit" name="savechanges" value="' .
 
             $strreorderquestions . '" ' . $pagingdisabled . ' /></div>';
-    $reordercontrols1 = '<div class="addnewpagesafterselected">' .
+    $reordercontrols1 = '<div class="deletepagesafterselected">' .
+            '<input type="submit" name="deletepagesafterselected" value="' .
+            get_string('deletepagesafterselected', 'offlinequiz') . '"  ' .
+            $pagingdisabled . ' /></div>';
+    $reordercontrols1 .= '<div class="addnewpagesafterselected">' .
             '<input type="submit" name="addnewpagesafterselected" value="' .
             get_string('addnewpagesafterselected', 'offlinequiz') . '"  ' .
             $pagingdisabled . ' /></div>';
@@ -628,19 +705,20 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
     $d = '';
     $e = '';
     $f = '';
+
+    $letterstr = 'ABCDEFGHIJKL';
+
+    $c = '<select name="copyselectedtogrouptop" ' . $copyingdisabled . '>';
+    $d = '<select name="copyselectedtogroupbottom" ' . $copyingdisabled . '>';
+    $e = '<select name="copytogrouptop" ' . $copyingdisabled . '>';
+    $f = '<select name="copytogroupbottom" ' . $copyingdisabled . '>';
+
+    $c .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
+    $d .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
+    $e .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
+    $f .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
+
     if ($offlinequiz->numgroups > 1) {
-        $letterstr = 'ABCDEFGHIJKL';
-
-        $c = '<select name="copyselectedtogrouptop" ' . $copyingdisabled . '>';
-        $d = '<select name="copyselectedtogroupbottom" ' . $copyingdisabled . '>';
-        $e = '<select name="copytogrouptop" ' . $copyingdisabled . '>';
-        $f = '<select name="copytogroupbottom" ' . $copyingdisabled . '>';
-
-        $c .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
-        $d .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
-        $e .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
-        $f .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
-
         for ($i=1; $i<=$offlinequiz->numgroups; $i++) {
             if ($i != $offlinequiz->groupnumber) {
                 $c .= '<option value="' . $i . '">' . $letterstr[$i-1] . '</option>';
@@ -649,19 +727,17 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                 $f .= '<option value="' . $i . '">' . $letterstr[$i-1] . '</option>';
             }
         }
-        $c .= '</select>';
-        $d .= '</select>';
-        $e .= '</select>';
-        $f .= '</select>';
     }
+    $c .= '</select>';
+    $d .= '</select>';
+    $e .= '</select>';
+    $f .= '</select>';
 
     // Add the controls in case we are in reorder and paging mode.
     $reordercontrols2top = '<div class="moveselectedonpage">';
 
-    if ($offlinequiz->numgroups > 1) {
-        $reordercontrols2top .= get_string('copyselectedtogroup', 'offlinequiz', $c);
-    }
-    $reordercontrols2top .= '<input type="submit" name="savechanges" value="' .
+    $reordercontrols2top .= get_string('copyselectedtogroup', 'offlinequiz', $c) .
+            '<input type="submit" name="savechanges" value="' .
             $strcopytogroup . '" ' . $copyingdisabled . '/><br/>' .
             get_string('moveselectedonpage', 'offlinequiz', $a) .
             '<input type="submit" name="savechanges" value="' .
@@ -699,24 +775,20 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
 
     $reordercontrolsbottom = '<div class="reordercontrols">' .
             $reordercontrolssetdefaultsubmit .
-            $reordercontrols2bottom . $reordercontrols1 . $reordercontrols3 . "</div>";
+            $reordercontrols1 . $reordercontrols3 . $reordercontrols2bottom . "</div>";
 
     // Add the controls in case we are in question list editing mode
     $editcontrols2top = '';
-    if ($offlinequiz->numgroups > 1) {
-        $editcontrols2top = '<div class="moveselectedonpage">';
-        $editcontrols2top .= get_string('copytogroup', 'offlinequiz', $e);
-        $editcontrols2top .= '<input type="submit" name="savechanges" value="' .
-                $strcopytogroup . '" ' . $copyingdisabled . '/>' . '</div>';
-    }
+    $editcontrols2top = '<div class="moveselectedonpage">';
+    $editcontrols2top .= get_string('copytogroup', 'offlinequiz', $e);
+    $editcontrols2top .= '<input type="submit" name="savechanges" value="' .
+                 $strcopytogroup . '" ' . $copyingdisabled . '/>' . '</div>';
 
     $editcontrols2bottom = '';
-    if ($offlinequiz->numgroups > 1) {
-        $editcontrols2bottom = '<div class="moveselectedonpage">';
-        $editcontrols2bottom .= get_string('copytogroup', 'offlinequiz', $f);
-        $editcontrols2bottom .= '<input type="submit" name="savechanges" value="' .
-                $strcopytogroup . '" ' . $copyingdisabled . ' />' . '</div>';
-    }
+    $editcontrols2bottom = '<div class="moveselectedonpage">';
+    $editcontrols2bottom .= get_string('copytogroup', 'offlinequiz', $f);
+    $editcontrols2bottom .= '<input type="submit" name="savechanges" value="' .
+            $strcopytogroup . '" ' . $copyingdisabled . ' />' . '</div>';
 
     $editcontrolstop = '<div class="editcontrols">' .
             $editcontrols2top . "</div>";
@@ -729,7 +801,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
         echo html_writer::input_hidden_params($pageurl);
         echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         echo $reordercontrolstop;
-    } else {
+    } if (!$gradetool) {
         echo '<form method="post" action="edit.php" id="offlinequizquestions"><div>';
         echo html_writer::input_hidden_params($pageurl);
         echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
@@ -748,6 +820,13 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
 
     $returnurl = str_replace($CFG->wwwroot, '', $pageurl->out(false));
     $questiontotalcount = count($order);
+
+    if ($gradetool) {
+        echo '<form method="post" action="edit.php" class="offlinequizbulkgradesform">
+                <input type="hidden" name="sesskey" value="' . sesskey() . '" />' .
+                html_writer::input_hidden_params($pageurl) .
+                '<input type="hidden" name="savegrades" value="bulksavegrades" />';
+    }
 
     foreach ($order as $count => $qnum) {
 
@@ -846,73 +925,80 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
 
                 echo '    </div>';
                 echo '    <div class="content">';
-                echo '    <div class="questioncontrols">';
+                if (!$gradetool) {
+                    echo '    <div class="questioncontrols">';
 
-                if ($count != 0) {
-                    if (!$hasattempts) {
-                        $upbuttonclass = '';
-                        if ($count >= $lastindex - 1) {
-                            $upbuttonclass = 'upwithoutdown';
+                    if ($count != 0) {
+                        if (!$hasattempts) {
+                            $upbuttonclass = '';
+                            if ($count >= $lastindex - 1) {
+                                $upbuttonclass = 'upwithoutdown';
+                            }
+                            echo $OUTPUT->action_icon($pageurl->out(true,
+                                    array('up' => $question->id, 'sesskey'=>sesskey())),
+                                    new pix_icon('t/up', $strmoveup),
+                                    new component_action('click',
+                                            'M.core_scroll_manager.save_scroll_action'),
+                                    array('title' => $strmoveup));
                         }
-                        echo $OUTPUT->action_icon($pageurl->out(true,
-                                array('up' => $question->id, 'sesskey'=>sesskey())),
-                                new pix_icon('t/up', $strmoveup),
-                                new component_action('click',
-                                        'M.core_scroll_manager.save_scroll_action'),
-                                array('title' => $strmoveup));
-                    }
 
-                }
-                if ($count < $lastindex - 1) {
-                    if (!$hasattempts) {
-                        echo $OUTPUT->action_icon($pageurl->out(true,
-                                array('down' => $question->id, 'sesskey'=>sesskey())),
-                                new pix_icon('t/down', $strmovedown),
-                                new component_action('click',
-                                        'M.core_scroll_manager.save_scroll_action'),
-                                array('title' => $strmovedown));
                     }
-                }
-                if ($allowdelete && ($question->qtype == 'missingtype' ||
-                        question_has_capability_on($question, 'use', $question->category))) {
-                    // Remove from offlinequiz, not question delete.
-                    if (!$hasattempts) {
-                        echo $OUTPUT->action_icon($pageurl->out(true,
-                                array('remove' => $question->id, 'sesskey'=>sesskey())),
-                                new pix_icon('t/delete', $strremove),
-                                new component_action('click',
+                    if ($count < $lastindex - 1) {
+                        if (!$hasattempts) {
+                            echo $OUTPUT->action_icon($pageurl->out(true,
+                                    array('down' => $question->id, 'sesskey'=>sesskey())),
+                                    new pix_icon('t/down', $strmovedown),
+                                    new component_action('click',
                                         'M.core_scroll_manager.save_scroll_action'),
-                                array('title' => $strremove));
+                                    array('title' => $strmovedown));
+                        }
                     }
+                    if ($allowdelete && ($question->qtype == 'missingtype' ||
+                            question_has_capability_on($question, 'use', $question->category))) {
+                        // Remove from offlinequiz, not question delete.
+                        if (!$hasattempts) {
+                            echo $OUTPUT->action_icon($pageurl->out(true,
+                                    array('remove' => $question->id, 'sesskey'=>sesskey())),
+                                    new pix_icon('t/delete', $strremove),
+                                    new component_action('click',
+                                            'M.core_scroll_manager.save_scroll_action'),
+                                    array('title' => $strremove));
+                        }
+                    }
+                    echo '</div>'; // End div questioncontrols
                 }
-                echo '</div>'; // End div questioncontrols
-                if (!in_array($question->qtype, array('description', 'missingtype')) && !$reordertool) {
+
+                if (!in_array($question->qtype, array('description', 'missingtype')) && !$reordertool && !$gradetool) {
 
                     echo '<div class="points">
                     <form method="post" action="edit.php" class="offlinequizsavegradesform">
                     <div>
                     <fieldset class="invisiblefieldset" style="display: block;">
-                    <label for="inputq' . $question->id . '">' . $strgrade . '
-                    </label>:<br /> <input type="hidden" name="sesskey"
+                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>:<br />
+                    <input type="hidden" name="sesskey"
                     value="' . sesskey() . '" />' . html_writer::input_hidden_params($pageurl) . '
                     <input type="hidden" name="savechanges" value="save" />
                     <input type="text" name="g' . $question->id .
                     '" id="inputq' . $question->id .
                     '" size="' . ($offlinequiz->decimalpoints + 2) .
-                    '" value="' . format_float($offlinequiz->grades[$qnum], 2, true, true) .
+                    '" value="' . format_float($offlinequiz->grades[$qnum], $offlinequiz->decimalpoints, true, true) .
                     '" tabindex="' . ($lastindex + $qno) . '" />
                     <input type="submit" class="pointssubmitbutton" value="' . $strsave . '" />
                     </fieldset>';
-                    if ($question->qtype == 'random') {
-                        echo '<a href="' . $questionurl->out() .
-                        '" class="configurerandomquestion">' .
-                        get_string("configurerandomquestion", "offlinequiz") . '</a>';
-                    }
-
                     echo '      </div>
                     </form>
                     </div>';
 
+                } else if (!in_array($question->qtype, array('description', 'missingtype')) && $gradetool) {
+                    echo '<div class="points">
+                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>
+                    <input type="text" name="g' . $question->id .
+                    '" id="inputq' . $question->id .
+                    '" size="' . ($offlinequiz->decimalpoints + 2) .
+                    '" value="' . format_float($offlinequiz->grades[$qnum], $offlinequiz->decimalpoints, true, true) .
+                    '" tabindex="' . ($lastindex + $qno) . '" />';
+                    echo '      </div>';
+                    
                 } else if ($reordertool) {
                     if ($qnum) {
                         echo '<div class="qorder">';
@@ -924,18 +1010,10 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                 }
                 echo '<div class="questioncontentcontainer">';
 
-                if ($question->qtype == 'random') { // it is a random question
-                    if (!$reordertool) {
-                        offlinequiz_print_randomquestion($question, $pageurl, $offlinequiz, $offlinequiz_qbanktool);
-                    } else {
-                        offlinequiz_print_randomquestion_reordertool($question, $pageurl, $offlinequiz);
-                    }
-                } else { // it is a single question
-                    if (!$reordertool) {
-                        offlinequiz_print_singlequestion($question, $returnurl, $offlinequiz);
-                    } else {
-                        offlinequiz_print_singlequestion_reordertool($question, $returnurl, $offlinequiz);
-                    }
+                if ($reordertool) {
+                    offlinequiz_print_singlequestion_reordertool($question, $returnurl, $offlinequiz);
+                } else {
+                    offlinequiz_print_singlequestion($question, $returnurl, $offlinequiz);
                 }
                 echo '            </div></div></div></div>';
             }
@@ -943,7 +1021,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
         // A page break: end the existing page.
         if ($qnum == 0) {
             if ($pageopen) {
-                if (!$reordertool && !($offlinequiz->shufflequestions &&
+                if (!$reordertool && !$gradetool && !($offlinequiz->shufflequestions &&
                         $count < $questiontotalcount - 1)) {
                     offlinequiz_print_pagecontrols($offlinequiz, $pageurl, $pagecount,
                             $hasattempts, $defaultcategoryobj);
@@ -955,7 +1033,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                 }
                 echo "</div></div>";
 
-                if (!$reordertool && !$offlinequiz->shufflequestions) {
+                if (!$reordertool && !$gradetool && !$offlinequiz->shufflequestions) {
                     echo $OUTPUT->container_start('addpage');
                     $url = new moodle_url($pageurl->out_omit_querystring(),
                             array('cmid' => $offlinequiz->cmid, 'courseid' => $offlinequiz->course,
@@ -971,10 +1049,16 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
             }
         }
     }
+
+    if ($gradetool) {
+        echo '<center><input type="submit" class="bulksubmitbutton" value="' . $strbulksave . '" name="bulkgradesubmit" /></center>
+        </form>';
+    }
+
     if ($reordertool) {
         echo $reordercontrolsbottom;
         echo '</div></form>';
-    } else {
+    } else if (!$gradetool) {
         echo '<form method="post" action="edit.php" id="offlinequizquestions"><div>';
         echo html_writer::input_hidden_params($pageurl);
         echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
@@ -1056,93 +1140,6 @@ function offlinequiz_print_singlequestion($question, $returnurl, $offlinequiz) {
             offlinequiz_question_preview_button($offlinequiz, $question, true) . '</span>';
     echo "</div>\n";
 }
-/**
- * Print a given random question in offlinequiz for the edit tab of edit.php.
- * Meant to be used from offlinequiz_print_question_list()
- *
- * @param object $question A question object from the database questions table
- * @param object $questionurl The url of the question editing page as a moodle_url object
- * @param object $offlinequiz The offlinequiz in the context of which the question is being displayed
- * @param bool $offlinequiz_qbanktool Indicate to this function if the question bank window open
- */
-function offlinequiz_print_randomquestion(&$question, &$pageurl, &$offlinequiz, $offlinequiz_qbanktool) {
-    global $DB, $OUTPUT;
-    echo '<div class="offlinequiz_randomquestion">';
-
-    if (!$category = $DB->get_record('question_categories',
-            array('id' => $question->category))) {
-        echo $OUTPUT->notification('Random question category not found!');
-        return;
-    }
-
-    echo '<div class="randomquestionfromcategory">';
-    echo print_question_icon($question);
-    print_random_option_icon($question);
-    echo ' ' . get_string('randomfromcategory', 'offlinequiz') . '</div>';
-
-    $a = new stdClass();
-    $a->arrow = $OUTPUT->rarrow();
-    $strshowcategorycontents = get_string('showcategorycontents', 'offlinequiz', $a);
-
-    $openqbankurl = $pageurl->out(true, array('qbanktool' => 1,
-            'cat' => $category->id . ',' . $category->contextid));
-    $linkcategorycontents = ' <a href="' . $openqbankurl . '">' . $strshowcategorycontents . '</a>';
-
-    echo '<div class="randomquestioncategory">';
-    echo '<a href="' . $openqbankurl . '" title="' . $strshowcategorycontents . '">' .
-            $category->name . '</a>';
-    echo '<span class="questionpreview">' .
-            offlinequiz_question_preview_button($offlinequiz, $question, true) . '</span>';
-    echo '</div>';
-
-    $questionids = question_bank::get_qtype('random')->get_available_questions_from_category(
-            $category->id, $question->questiontext == '1', '0');
-    $questioncount = count($questionids);
-
-    echo '<div class="randomquestionqlist">';
-    if ($questioncount == 0) {
-        // No questions in category, give an error plus instructions
-        echo '<span class="error">';
-        print_string('noquestionsnotinuse', 'offlinequiz');
-        echo '</span>';
-        echo '<br />';
-
-        // Embed the link into the string with instructions
-        $a = new stdClass();
-        $a->catname = '<strong>' . $category->name . '</strong>';
-        $a->link = $linkcategorycontents;
-        echo get_string('addnewquestionsqbank', 'offlinequiz', $a);
-
-    } else {
-        // Category has questions
-
-        // Get a sample from the database,
-        $questionidstoshow = array_slice($questionids, 0, NUM_QS_TO_SHOW_IN_RANDOM);
-        $questionstoshow = $DB->get_records_list('question', 'id', $questionidstoshow,
-                '', 'id, qtype, name, questiontext, questiontextformat');
-
-        // list them,
-        echo '<ul>';
-        foreach ($questionstoshow as $question) {
-            echo '<li>' . offlinequiz_question_tostring($question, true) . '</li>';
-        }
-
-        // and then display the total number.
-        echo '<li class="totalquestionsinrandomqcategory">';
-        if ($questioncount > NUM_QS_TO_SHOW_IN_RANDOM) {
-            echo '... ';
-        }
-        print_string('totalquestionsinrandomqcategory', 'offlinequiz', $questioncount);
-        echo ' ' . $linkcategorycontents;
-        echo '</li>';
-        echo '</ul>';
-    }
-
-    echo '</div>';
-    echo '<div class="randomquestioncategorycount">';
-    echo '</div>';
-    echo '</div>';
-}
 
 /**
  * Print a given single question in offlinequiz for the reordertool tab of edit.php.
@@ -1161,56 +1158,6 @@ function offlinequiz_print_singlequestion_reordertool($question, $returnurl, $of
     echo '<span class="questionpreview">' .
             offlinequiz_question_action_icons($offlinequiz, $offlinequiz->cmid, $question, $returnurl) . '</span>';
     echo "</div>\n";
-}
-
-/**
- * Print a given random question in offlinequiz for the reordertool tab of edit.php.
- * Meant to be used from offlinequiz_print_question_list()
- *
- * @param object $question A question object from the database questions table
- * @param object $questionurl The url of the question editing page as a moodle_url object
- * @param object $offlinequiz The offlinequiz in the context of which the question is being displayed
- */
-function offlinequiz_print_randomquestion_reordertool(&$question, &$pageurl, &$offlinequiz) {
-    global $DB, $OUTPUT;
-
-    // Load the category, and the number of available questions in it.
-    if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
-        echo $OUTPUT->notification('Random question category not found!');
-        return;
-    }
-    $questioncount = count(question_bank::get_qtype(
-            'random')->get_available_questions_from_category(
-                    $category->id, $question->questiontext == '1', '0'));
-
-    $reordercheckboxlabel = '<label for="s' . $question->id . '">';
-    $reordercheckboxlabelclose = '</label>';
-
-    echo '<div class="offlinequiz_randomquestion">';
-    echo '<div class="randomquestionfromcategory">';
-    echo $reordercheckboxlabel;
-    echo print_question_icon($question);
-    print_random_option_icon($question);
-
-    if ($questioncount == 0) {
-        echo '<span class="error">';
-        print_string('empty', 'offlinequiz');
-        echo '</span> ';
-    }
-
-    print_string('random', 'offlinequiz');
-    echo ": $reordercheckboxlabelclose</div>";
-
-    echo '<div class="randomquestioncategory">';
-    echo $reordercheckboxlabel . $category->name . $reordercheckboxlabelclose;
-    echo '<span class="questionpreview">';
-    echo offlinequiz_question_preview_button($offlinequiz, $question, false);
-    echo '</span>';
-    echo "</div>";
-
-    echo '<div class="randomquestioncategorycount">';
-    echo '</div>';
-    echo '</div>';
 }
 
 /**
@@ -1240,20 +1187,34 @@ function print_random_option_icon($question) {
  * @param bool $return If true (default), return the output. If false, print it.
  */
 function offlinequiz_question_tostring($question, $showicon = false,
-        $showquestiontext = true, $return = true) {
+        $showquestiontext = true, $return = true, $shorttitle = false) {
     global $COURSE;
+
     $result = '';
-    $result .= '<span class="questionname">';
+
+    $formatoptions = new stdClass();
+    $formatoptions->noclean = true;
+    $formatoptions->para = false;
+    $questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
+    $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
+
+    $result .= '<span class="questionname" title="' . $questiontitle . '">';
+    if ($shorttitle && strlen($questiontitle) > 25) {
+        $questiontitle = shorten_text($questiontitle, 25, false, '...');
+    }
+    
     if ($showicon) {
         $result .= print_question_icon($question, true);
         echo ' ';
     }
-    $result .= shorten_text(format_string($question->name), 200) . '</span>';
+    
+    if ($shorttitle) {
+        $result .= $questiontitle;
+    } else {
+        $result .= shorten_text(format_string($question->name), 200) . '</span>';
+    }
+        
     if ($showquestiontext) {
-        $formatoptions = new stdClass();
-        $formatoptions->noclean = true;
-        $formatoptions->para = false;
-        $questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
         $result .= '<span class="questiontext" title="' . $questiontext . '">';
 
         $questiontext = shorten_text($questiontext, 200);
@@ -1404,7 +1365,7 @@ class question_bank_question_name_text_column extends question_bank_question_nam
         if ($labelfor) {
             echo '<label for="' . $labelfor . '">';
         }
-        echo offlinequiz_question_tostring($question, false, true, true);
+        echo offlinequiz_question_tostring($question, false, true, true, true);
         if ($labelfor) {
             echo '</label>';
         }

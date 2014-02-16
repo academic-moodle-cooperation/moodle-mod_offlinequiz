@@ -105,7 +105,7 @@ function offlinequiz_add_instance($offlinequiz) {
             return false;
         }
     } catch (Exception $e) {
-        print_error("ERROR: ".$e->debuginfo);
+        print_error("ERROR: " . $e->debuginfo);
     }
 
     // Do the processing required after an add or an update.
@@ -169,7 +169,7 @@ function offlinequiz_update_instance($offlinequiz) {
  */
 function offlinequiz_delete_instance($id) {
     global $DB, $CFG;
-
+    
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
     require_once($CFG->dirroot . '/calendar/lib.php');
 
@@ -765,7 +765,7 @@ function offlinequiz_cron() {
              WHERE time < :expiretime";
     $params = array('expiretime' => $timenow - 604800);
     
-    // First we get the differente IDs. 
+    // First we get the different IDs. 
     $ids = $DB->get_fieldset_sql($sql, $params);
     
     if (!empty($ids)) {
@@ -773,6 +773,34 @@ function offlinequiz_cron() {
 
         // Now we delete the records.
         $DB->delete_records_select('offlinequiz_hotspots', 'scannedpageid ' . $isql, $iparams);
+    }
+    
+    // Delete old temporary files not needed any longer.
+    $keepdays = get_config('offlinequiz', 'keepfilesfordays');
+    $keepseconds = $keepdays * 24 * 60 * 60;
+    
+    $sql = "SELECT id
+              FROM {offlinequiz_queue}
+             WHERE timecreated < :expiretime";
+    $params = array('expiretime' => $timenow - $keepseconds);
+
+    // First we get the IDs of cronjobs older than the configured number of days. 
+    $jobids = $DB->get_fieldset_sql($sql, $params);
+    foreach ($jobids as $jobid) {
+        $dirname = null;
+        // Delete all temporary files and the database entries.
+        if ($files = $DB->get_records('offlinequiz_queue_data', array('queueid' => $jobid))) {
+            foreach ($files as $file) {
+                if (empty($dirname)) {
+                    $path_parts = pathinfo($file->filename);
+                    $dirname = $path_parts['dirname'];
+                }
+                $DB->delete_records('offlinequiz_queue_data', array('id' => $file->id));
+            }
+            // Remove the temporary directory
+            echo "Removing dir " . $dirname . "\n";
+            remove_dir($dirname);
+        }
     }
     
     return true;
@@ -853,7 +881,7 @@ function offlinequiz_scale_used_anywhere($scaleid) {
 function offlinequiz_after_add_or_update($offlinequiz) {
     global $DB;
 
-    // create group entries if they don't exist.
+    // Create group entries if they don't exist.
     if (property_exists($offlinequiz, 'numgroups')) {
         for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
             if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'number' => $i))) {
@@ -1179,7 +1207,11 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
         // If the grade item is not hidden by the offlinequiz logic, then we need to
         // hide it if the offlinequiz is hidden from students.
         $cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id);
-        $params['hidden'] = !$cm->visible;
+        if ($cm) {
+            $params['hidden'] = !$cm->visible;
+        } else {
+            $params['hidden'] = !$offlinequiz->visible;
+        }
     }
 
     if ($grades  === 'reset') {

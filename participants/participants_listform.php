@@ -45,18 +45,19 @@ class offlinequiz_participantslistform extends moodleform {
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'participantshdr', $this->label);
 
-        $mform->addElement('hidden', 'mode');
-        $mform->setDefault('mode', 'editlists');
-        $mform->addElement('hidden', 'action');
-        $mform->setDefault('action', 'savelist');
-        $mform->addElement('hidden', 'listid');
-        $mform->setDefault('listid', '0');
-        $mform->addElement('hidden', 'list');
-        $mform->setDefault('list', '1');
-        $mform->addElement('hidden', 'q');
-        $mform->setDefault('q', $this->offlinequiz);
+        $mform->addElement('hidden', 'mode', 'editlists');
+        $mform->setType('mode', PARAM_ALPHA);
+        $mform->addElement('hidden', 'action', 'savelist');
+        $mform->setType('action', PARAM_ALPHA);
+        $mform->addElement('hidden', 'listid', 0);
+        $mform->setType('listid', PARAM_INT);
+        $mform->addElement('hidden', 'list', 1);
+        $mform->setType('list', PARAM_INT);
+        $mform->addElement('hidden', 'q', $this->offlinequiz);
+        $mform->setType('q', PARAM_INT);
 
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'40', 'maxlength'=>'255'));
+        $mform->setType('name', PARAM_TEXT);
 
         $this->add_action_buttons(false, get_string('submit'));
     }

@@ -47,7 +47,7 @@ class offlinequiz_html_translator
      * @param int $maxwidth The maximum width in pixels for images.
      * @return string The result string
      */
-    public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor, $maxwidth) {
+    public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor, $maxwidth, $format = 'pdf') {
         global $CFG;
 
         $fs = get_file_storage();
@@ -156,7 +156,7 @@ class offlinequiz_html_translator
                         } else if (!in_array($imagetype, $accepted)) {
                             $output .= get_string('imagenotjpg','offlinequiz',$imagefilename);
                         }
-                        
+
                         if ($imagewidth > 0) {
                             if ($imageheight > 0) {
                                 $fileheight = $imageheight;
@@ -167,17 +167,21 @@ class offlinequiz_html_translator
                         }
 
                         if ($teximage) {
-                            $factor = $fileheight / 20;
+                            if ($format == 'pdf') {
+                                $factor = $factor * 0.6;
+                            } else {
+                                $factor = $factor * 0.8;
+                            }
                         }
 
-                        $width = $filewidth / ($kfactor * $factor);
+                        $width = round($filewidth / ($kfactor * $factor));
                         	
                         if ($width > $maxwidth) {
                             $width = $maxwidth;
                         }
                         	
-                        $height = $fileheight * $width / $filewidth;
-                        	
+                        $height = round($fileheight * $width / $filewidth);
+
                         // Add filename to list of temporary files.
                         $this->tempfiles[] = $file;
                         	
@@ -204,9 +208,7 @@ class offlinequiz_html_translator
                 }
             }
             $output .= substr($string, strpos($string, '>')+1);
-            //print_object($output);
         }
-        //print_object($this->tempfiles);
         return $output;
     }
 

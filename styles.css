@@ -284,7 +284,7 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #page-mod-offlinequiz-edit .repaginatecommand {float:right;clear:right;padding-right:1em;}
 #page-mod-offlinequiz-edit div.reorder .reordercontrols .deleteselected{float:right;margin-right:1em;}
 #page-mod-offlinequiz-edit div.reorder div.question{padding-top:0.2em;}
-#page-mod-offlinequiz-edit div.reorder div.question div.qnum {width: 3.3em; padding-top:0.1em;}
+#page-mod-offlinequiz-edit div.reorder div.question div.qnum {width: 4em; padding-top:0.1em;}
 #page-mod-offlinequiz-edit .reorder div.question div.content {width:87%;float:left;position:relative;-webkit-border-radius:0.3em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.3em;border-radius-bottomleft:0;border-radius-topleft:0;line-height:1.2em;padding:0.1em;background-color:#F9F9F9;}
 #page-mod-offlinequiz-edit .reorder .questioncontentcontainer .offlinequiz_randomquestion {position:relative;}
 #page-mod-offlinequiz-edit .reorder div.question div.content div.offlinequiz_randomquestion {line-height:1em;}
@@ -314,9 +314,11 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #page-mod-offlinequiz-edit div.question div.qnum {display:block;float:left;width:1.4em;padding-right:0.3em;padding-left:0;z-index:99;text-align:right;color:#333;}
 #page-mod-offlinequiz-edit div.question div.questioncontainer{background-color:#ffc;}
 #page-mod-offlinequiz-edit div.editq div.question div.content{width:87%;float:left;position:relative;-webkit-border-radius:0.6em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.6em;border-radius-bottomleft:0;border-radius-topleft:0;line-height:1.4em;padding:0.5em;}
-#page-mod-offlinequiz-edit div.question div.content div.points{top:0.5em;border-left:#FFF solid 0.4em;width:8.5em;padding:0.2em;line-height:1em;max-width:30%;position:absolute;right:50px;-webkit-border-radius:0.2em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.2em;border-radius-bottomleft:0;border-radius-topleft:0;z-index:900;display:block;margin:0;background-color:#ddf;}
+#page-mod-offlinequiz-edit div.question div.content div.points {top:0.4em;border-left:#FFF solid 0.4em;width:9em;height:3em;padding:0.2em;line-height:1em;max-width:30%;position:absolute;right:60px;-webkit-border-radius:0.2em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.2em;border-radius-bottomleft:0;border-radius-topleft:0;z-index:900;display:block;margin:0;background-color:#ddf;}
 #page-mod-offlinequiz-edit div.question div.content div.points input{width:2em;padding:0;}
 #page-mod-offlinequiz-edit div.question div.content div.points input.pointssubmitbutton{width:auto;}
+#page-mod-offlinequiz-edit form.offlinequizbulkgradesform div.question div.content div.points {top:0.4em;border-left:#FFF solid 0.4em;width:13em;height:3em;padding:0.2em;line-height:1em;max-width:30%;position:absolute;right:10px;-webkit-border-radius:0.2em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.2em;border-radius-bottomleft:0;border-radius-topleft:0;z-index:900;display:block;margin:0;background-color:#ddf;}
+#page-mod-offlinequiz-edit form.offlinequizbulkgradesform div.question div.content div.points input{width:4em;padding:0;}
 #page-mod-offlinequiz-edit div.question div.content div.qorder {line-height:1em;max-width:30%;position:absolute;right:50px;-webkit-border-radius:0.2em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.2em;border-radius-bottomleft:0;border-radius-topleft:0;z-index:900;display:block;margin:0;background-color:#ddf;}
 #page-mod-offlinequiz-edit div.question div.content .editicon {width:15px;}
 #page-mod-offlinequiz-edit div.question div.content .singlequestion .questionname,
@@ -385,10 +387,9 @@ body.jsenabled #offlinequizcontentsblock .repaginatecommand #repaginatecommand {
 #page-mod-offlinequiz-edit #qtypechoicecontainer {display: none;}
 #page-mod-offlinequiz-edit #qtypechoicecontainer div.qtypes {height: 180px;}
 
-#page-mod-offlinequiz-edit .offlinequizcontents .noticebox {
-	  text-align: center;
-	  width: 95%;
-	  }
+#page-mod-offlinequiz-edit .offlinequizcontents .noticebox {padding-top:5px;padding-bottom:5px;text-align:center;width: 95%;}
+
+#page-mod-offlinequiz-edit div.maxgradewarning {font-size:14px;font-weight:bold;}
 
 #page-mod-offlinequiz-edit .questionbankwindow select#catmenu_jump{
 /* In Opera9, IE6 the width of the
@@ -629,8 +630,66 @@ a:hover
 #page-mod-offlinequiz-report table#questionstatistics div.commands {
 	float: right;
 }
+#page-mod-offlinequiz-report table#questionstatistics td.correct {
+	display: none;
+}
+#page-mod-offlinequiz-report table#questionstatistics td.partially {
+	display: none;
+}
+#page-mod-offlinequiz-report table#questionstatistics td.wrong {
+	display: none;
+}
+
+#page-mod-offlinequiz-report table#questionstatistics th.correct {
+	display: none;
+}
+#page-mod-offlinequiz-report table#questionstatistics th.partially {
+	display: none;
+}
+#page-mod-offlinequiz-report table#questionstatistics th.wrong {
+	display: none;
+}
 
 
+
+/* CSS for student view in mod_form.php */
+.Popup{     
+    display: none;
+    background: #fff;
+    left: 50%;
+    margin-left: -250px;
+    position: fixed;
+    top: 10px;
+    width: 600px;
+    height: 800px;
+    z-index: 3;
+    box-shadow: 0 0 10px #222;
+    padding: 10px;
+}
+#overlay{
+    display: none; 
+    background: -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.5) 100%); 
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0.5)));     
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
+    background: -o-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
+    background: -ms-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
+    : radial-gradient(ellipse at center,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#80000000',GradientType=1 );   
+    width: 100%;   
+    height: 100%;   
+    position: fixed;   
+    z-index: 2;   
+    top: 0px;
+    left: 0px; 
+}
+input#showviewbutton {
+	 display: none;
+}
+
+.jsenabled input#showviewbutton {
+	float: right;
+	display: block;
+}
 
 /* #page-mod-offlinequiz-report table#questionstatistics td.c0 { */
 /* 	width: 2em; */

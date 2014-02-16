@@ -27,11 +27,16 @@
  **/
 
 $string['pluginname'] = 'Offline-Test';
+$string['add'] = 'zur Gruppe hinzufügen';
 $string['addaquestion'] = 'Frage hinzufügen';
 $string['addlist'] = 'Anwesenheitsliste hinzufügen';
-$string['addnewpagesafterselected'] = 'Seitenumbrüche hinter der ausgewählten Frage hinzufügen';
+$string['addnewpagesafterselected'] = 'Seitenumbrüche hinter den ausgewählten Fragen hinzufügen';
 $string['addpagehere'] = 'Seite hier hinzufügen';
 $string['addparts'] = 'Teilnehmer/innen hinzufügen';
+$string['addrandom'] = 'Zufällig {$a} MC Frage(n) ';
+$string['addrandomfromcategory'] = 'Zufällig Fragen hinzufügen';
+$string['addarandomquestion'] = 'Zufällig Fragen hinzufügen';
+$string['addarandomquestion_help'] = 'Moodle fügt eine zufällige Auswahl an MC-Fragen (oder Alles-oder-Nichts MC Fragen) zur aktuellen Offline-Test Gruppe hinzu. Die Anzahl der Fragen, die hinzugefügt werden, muss ausgewählt werden. Die Fragen werden aus der aktuellen Kategorie (und, wenn erwünscht, aus deren Unter-Kategorien) ausgewählt.';
 $string['addtoofflinequiz'] = 'Zur Gruppe hinzufügen';
 $string['addtoqueue'] = 'Zur Warteschlange hinzufügen';
 $string['allinone'] = 'Unbegrenzt';
@@ -49,13 +54,16 @@ $string['attemptsnum'] = '{$a} Ergebnisse';
 $string['attemptsexist'] = 'Sie können keine Fragen mehr hinzufügen oder entfernen.';
 $string['attemptsonly'] = 'Nur Teilnehmer/innen mit Ergebnis anzeigen';
 $string['attendances'] = 'Anwesenheiten';
+$string['bulksavegrades'] = 'Bewertungen speichern';
 $string['cannoteditafterattempts'] = 'Sie können keine Fragen mehr hinzufügen oder löschen, weil schon vollständige Ergebnisse existieren ({$a})';
 $string['changed'] = 'Ergebnis hat sich geändert.';
 $string['checkparts'] = 'Ausgewählte Teilnehmer/innen als anwesend markieren';
 $string['checkuserid'] = 'Gruppe/Matrikelnummer überprüfen';
 $string['closebeforeopen'] = 'Konnte die Einstellungen nicht speichern. Die Beginnzeit für Berichte liegt nach der Endzeit.';
+$string['closestudentview'] = 'Studierendenansicht schließen';
 $string['closewindow'] = 'Fenster schließen';
 $string['configintro'] = 'Die Einstellungen, die Sie hier treffen werden als Standardwerte für neue Offline-Tests verwendet.';
+$string['configkeepfilesfordays'] = 'Stellen Sie ein, wie lange hochgeladene Bilddateien temporär gespeichert werden. Die Dateien sind für diese Zeit im Offline-Test Admin Bericht verfügbar.';
 $string['configonlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
 $string['configpapergray'] = 'Weißwert des Papieres, das für Antwortbögen verwendet wird.';
 $string['configshufflequestions'] = 'Wenn Sie diese Option aktivieren werden die Fragen jeder Offline-Test Gruppe nach dem Zufallsprinzip gemischt.';;
@@ -90,8 +98,11 @@ $string['CSVplus1format'] = 'Text-Format (komplett)';
 $string['darkgray'] = 'Dunkelgrau';
 $string['datanotsaved'] = 'Scanner-Einstellungen nicht gespeichert';
 $string['configdecimalplaces'] = 'Anzahl der Dezimalstellen, die bei Bewertungen angezeigt werden.';
+$string['decimalplaces'] = 'Dezimalstellen';
+$string['decimalplaces_help'] = 'Anzahl der Dezimalstellen, die bei Bewertungen angezeigt werden.';
 $string['deletelistcheck'] = 'Möchten Sie die ausgewählte Liste wirklich löschen?';
 $string['deleteresultcheck'] = 'Möchten Sie die ausgewählen Ergebnisse wirklich löschen?';
+$string['deletepagesafterselected'] = 'Seitenumbrüche hinter den ausgewählten Fragen entfernen';
 $string['deletepagecheck'] = 'Möchten Sie die ausgewählen Seiten wirklich löschen?';
 $string['deletepartcheck'] = 'Möchten Sie die ausgewählen Teilnehmer/innen wirklich löschen?';
 $string['deleteparticipantslist'] = 'Anwesenheitsliste löschen';
@@ -126,7 +137,7 @@ $string['errorreport'] = 'Importfehler-Bericht';
 $string['everythingon'] = 'Aktiviert';
 $string['Excelformat'] = 'Excel-Format';
 $string['fileformat'] = 'Dateiformat für Fragebögen';
-$string['fileformat_help'] = 'Wählen Sie aus, ob Sie die Fragenbögen als PDF- oder DOCX-Dokumente erzeugen möchten. Antwort- und Korrekturbögen werden immer im PDF Format erzeugt.';
+$string['fileformat_help'] = 'Wählen Sie aus, ob Sie die Fragenbögen als PDF- oder DOCX-Dokumente erzeugen möchten. Antwort- und Korrekturbögen werden immer im PDF-Format erzeugt.';
 $string['filesizetolarge'] = 'Einige Ihrer Dateien sind sehr groß und müssen während der Interpretation verkleinert werden. Bitte wählen Sie beim Scannen eine Auflösung zwischen 200 und 300 dpi und einen Schwarz-Weiß-Modus. Dadurch wird die Auswertung beim nächsten Mal deutlich beschleunigt!';
 $string['fontsize'] = 'Schriftgröße';
 $string['forautoanalysis'] = 'Zur automatischen Prüfungsauswertung';
@@ -143,7 +154,9 @@ $string['grade'] = 'Bewertung';
 $string['gradedon'] = 'Bewertet am';
 $string['gradedscannedform'] = 'Scannerbeleg mit Bewertung';
 $string['gradeiszero'] = 'Hinweis: Die beste Bewertung für den Offline-Test beträgt 0 Punkte!';
+$string['gradeswarning'] = 'Die Bewertungen für die Fragen müssen Zahlen sein!';
 $string['gradewarning'] = 'Die Bewertung für die Frage muss eine Zahl sein!';
+$string['gradingofflinequiz'] = 'Bewertungen';
 $string['gradingoptionsheading'] = 'Einstellungen für Bewertungen';
 $string['greeniscross'] = 'wird als Ankreuzung gewertet';
 $string['group'] = 'Gruppe';
@@ -197,6 +210,7 @@ $string['invigilator'] = 'Saalaufsicht';
 $string['ischecked'] = 'Teilnahme bestätigt';
 $string['isnotchecked'] = 'Teilnahme nicht bestätigt';
 $string['itemdata'] = 'Item-Daten';
+$string['keepfilesfordays'] = 'Tage der Aufbewahrung';
 $string['lightgray'] = 'Hellgrau';
 $string['linktoscannedform'] = 'Scannerbeleg ansehen';
 $string['listnotdetected'] = 'Barcode für Zuordnung der Anwesenheitsliste nicht erfassbar!';
@@ -228,6 +242,7 @@ $string['movecorners'] = 'Ziehen Sie die Eckmarkierungen per Drag-and-Drop zunä
 $string['moveselectedonpage'] = 'Verschieben der ausgewählten Fragen zur Seite: {$a}';
 $string['removeselected'] = 'Ausgewählte entfernen';
 $string['multianswersforsingle'] = 'Mehrere Antworten bei Einfachauswahl';
+$string['name'] = 'Name des Offline-Tests';
 $string['neededcorrection'] = '<strong>Achtung!</strong><br />&nbsp;<br />Einige Ihrer Markierungen mussten manuell korrigiert werden.
 Die aufgrund dieses Fehlers notwendige händische Nachbearbeitung verzögerte die Gesamtauswertung und die Bekanntgabe der Ergebnisse an alle Studierenden.
 <br />Die erfolgten Korrekturen sind als rot markierte Kästchen im folgenden Beleg zu sehen.
@@ -242,7 +257,8 @@ $string['nogroupdata'] = 'Keine Gruppenvorlage für {$a}';
 $string['nopages'] = 'Keine Seite importiert';
 $string['noparticipantsfound'] = 'Keine Teilnehmer/innen gefunden';
 $string['nopdfscreated'] = 'Formulare wurden noch nicht erstellt!';
-$string['noquestionsfound'] = 'Gruppe {$a} besitzt keine Fragen!';
+$string['noquestions'] = 'Einige Offline-Test-Gruppen enthalten keine Fragen. Bitte fügen Sie Fragen hinzu.';
+$string['noquestionsfound'] = 'Gruppe {$a} enthält keine Fragen!';
 $string['noquestionsonpage'] = 'Leere Seite';
 $string['noquestionselected'] = 'Keine Fragen ausgewählt!';
 $string['noresults'] = 'Es gibt keine Ergebnisse.';
@@ -281,6 +297,11 @@ $string['oneclickenroldesc'] = 'Wenn Sie diese Option aktivieren haben die Lehre
 $string['oneclickrole'] = 'Rolle für Einschreibung.';
 $string['oneclickroledesc'] = 'Wählen Sie hier die Rolle aus, die bei der 1-Click Einschreibung verwendet werden soll. Es können nur Rollen mit dem Archetyp "student" ausgewählt werden.';
 $string['onlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
+$string['orderandpaging'] = 'Reihenfolge und Seitenumbrüche';
+$string['orderandpaging_help'] = 'Die Zahlen 10, 20, 30, ... neben jeder Frage zeigt deren Reihenfolge an. Die Zahlenfolge in 10er-Schritten lässt Platz, um weitere Fragen einfügen zu können.
+Um die Reihenfolge der Fragen zu ändern, ändern Sie die Zahlen und klicken Sie auf das Kontrollfeld \'Neu sortieren\'.
+Um Seitenumbrüche nach bestimmten Fragen einzufügen, klicken Sie auf das Kontrollfeld \'Seitenumbrüche hinter den ausgewählten Fragen hinzufügen\'.
+Um Fragen über eine Reihe von Seiten anzuordnen, klicken Sie auf das Kontrollfeld  \'Neuer Seitenumbruch...\' und wählen Sie die gewünschte Anzahl von Fragen pro Seite.';
 $string['orderingofflinequiz'] = 'Reihenfolge und Seitenumbrüche';
 $string['otherresultexists'] = 'Ein abweichendes Ergebnis für {$a} existiert bereits. Import ignoriert! Löschen Sie das Ergebnis zuerst.';
 $string['otherpageexists'] = 'Die Seite {$a->page} wurde für Teilnehmer/in {$a->name} bereits erfolgreich ausgewertet. Import ignoriert!';
@@ -341,7 +362,7 @@ $string['questionsheet'] = 'Fragebogen';
 $string['questionsingroup'] = 'Fragen in Gruppe';
 $string['quizdate'] = 'Testdatum';
 $string['quizopenclose'] = 'Anfangs- und Endzeiten';
-$string['quizopenclose_help'] = 'StudentInnen können ihre Ergebnisse nur nach zwischen Anfangs- und Endzeit sehen.';
+$string['quizopenclose_help'] = 'StudentInnen können ihre Ergebnisse nur zwischen Anfangs- und Endzeit sehen.';
 $string['readjust'] = 'Neu adjustieren';
 $string['realydeletepdfs'] = 'Möchten Sie die Formulare wirklich löschen?';
 $string['realydeleteupdatepdf'] = 'Möchten Sie die Anwesenheitsliste wirklich löschen und aktualisieren?';
@@ -380,7 +401,7 @@ Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist u
  welche der angekreuzten Antwortalternativen richtig (grün hinterlegt) und welche falsch (rot hinterlegt) sind.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Punktezahl</b></td><td>
-Angezeigt werden Gruppe (bspw. C), Punktezahl (erreichte Punktezahl, Summe der Punkte der Fragen des Tests, erreichte %  bspw. 40/80 (50%) ) 
+Angezeigt werden Gruppe (bspw. C), Punktezahl (erreichte Punktezahl, Summe der Punkte der Fragen des Tests, erreichte %  bspw. 40/80 (50%)) 
 und Bewertung (bspw. 50 von maximal 100). Ist zusätzlich die Option "Das Ergebnis" ausgewählt, 
 wird auch für jede Frage die maximale Punktezahl und die erreichten Punkte angezeigt.
 </td></tr>
@@ -390,11 +411,11 @@ Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist u
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scannerbeleg</b></td><td>
 Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Antwortformular angezeigt. 
-Kästchen, die als Ankreuzungen gewertet wurden, sind grünen umrandet.
+Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scannerbeleg mit Bewertung</b></td><td>
 Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Formular angezeigt. 
-Kästchen, die als Ankreuzungen gewertet wurden, sind grünen umrandet.
+Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 Zusätzlich sind alle Kästchen, die fälschlicherweise angekreuzt wurden und solche, die fälschlicherweise nicht angekreuzt sind, rot hinterlegt. 
 Weiterhin befindet sich am rechten Rand eine Auflistung der erreichten Punkte pro Frage.
 </td></tr>
@@ -431,6 +452,7 @@ $string['showgrades_help'] = 'Diese Option steuert, ob die erzielbaren Punkte ei
 $string['showmissingattemptonly'] = 'Alle Anwesenden ohne Ergebnis anzeigen';
 $string['showmissingcheckonly'] = 'Alle Abwesenden mit Ergebnis anzeigen';
 $string['shownumpartsperpage'] = '{$a} Teilnehmer/innen pro Seite anzeigen';
+$string['showstudentview'] = 'Studierendenansicht anzeigen.';
 $string['shuffleanswers'] = 'Antworten neu mischen';
 $string['shuffleanswersagain'] = 'Antworten neu mischen';
 $string['shufflequestions'] = 'Fragen neu mischen';
@@ -438,7 +460,7 @@ $string['shufflequestionsagain'] = 'Fragen neu mischen';
 $string['shufflequestionsanswers'] = 'Fragen und Antworten mischen';
 $string['shufflequestionsselected'] = 'Fragen-Mischen wurde aktiviert. Deshalb sind einige Aktionen auf dieser Seite nicht verfügbar. Um dies zu ändern, bearbeiten Sie die Einstellungen, {$a}.';
 $string['shufflewithin'] =  'Antworten innerhalb der Fragen mischen';
-$string['shufflewithin_help'] = 'Wenn diese Auswahl aktiviert ist, werden für jede Frage in jeder Offline-Test Gruppe die Antworten innerhalb der Frage gemischt. ACHTUNG: Antworten werden nur für Fragen gemischt, für die das Mischen aktiviert wurde!';
+$string['shufflewithin_help'] = 'Wenn hier "Ja" ausgewählt ist, wird die Reihenfolge der Antwortalternativen pro Frage zufällig gewählt. Ist dieselbe Frage in zwei oder mehreren Gruppen des Offline-Tests eingebunden, wird für jede Gruppe die Antwortreihenfolge nach dem Zufallsprinzip festgelegt. ACHTUNG: Antworten werden nur bei Fragen gemischt, für die in den Einstellungen der Frage das Mischen aktiviert ist!';
 $string['signature'] = 'Unterschrift';
 $string['standard'] = 'Standard';
 $string['studycode'] = 'Studienkennzahl';

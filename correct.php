@@ -180,8 +180,11 @@ if ($action == 'cancel') {
     $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
     
     // Display a button to close the window and die.
+    echo '<html>';
+    echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
     echo "<center><input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('closewindow', 'offlinequiz')."\" name=\"submitbutton4\"
 onClick=\"self.close(); return false;\"></center>";
+    echo '</html>';
     die;
 
 // =============================================
@@ -230,14 +233,15 @@ onClick=\"self.close(); return false;\"><br />";
     $oldresultid = $scannedpage->resultid;
     $scannedpage = offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage, $coursecontext, $questionsperpage, $offlinequizconfig);
 
-    if ($oldresultid != $scannedpage->resultid) {
-        // Already process the answers but don't submit them.
+    if ($oldresultid != $scannedpage->resultid) { 
+        // A new result has been linked to the scanned page.
+        // Already process the answers but don't submit them yet.
         $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $questionsperpage, $coursecontext, false);
         $userchanged = 1;
     }
 
     if (!$overwrite) {
-        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
+        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, false, true);
 
         if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
             // Already process the answers but don't submit them.
@@ -321,8 +325,6 @@ onClick=\"self.close(); return false;\"><br />";
                     $page->resultid = $scannedpage->resultid;
                     $DB->set_field('offlinequiz_scanned_pages', 'resultid', $scannedpage->resultid, array('id' => $page->id));
 
-                    echo get_string('resubmitting', 'offlinequiz') . ' ' . $page->pagenumber . ' ... ';
- 
                     // Load the choices made before from the database. This might be empty.
                     $pagechoices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $page->id), 'slotnumber, choicenumber');
 
@@ -343,7 +345,6 @@ onClick=\"self.close(); return false;\"><br />";
                     $pageendindex = min($page->pagenumber * $questionsperpage, count($pageslots));
                     // Submit the choices of the other pages to the new result.
                     $page = offlinequiz_submit_scanned_page($offlinequiz, $page, $pagechoicesdata, $pagestartindex, $pageendindex);
-                    echo get_string('done', 'offlinequiz') . '<br/>';
                 }
             } 
 
@@ -693,6 +694,8 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
                     echo $OUTPUT->notification(get_string('userpageimported', 'offlinequiz', fullname($user) . " (" .
                             $user->{$offlinequizconfig->ID_field}.")"), 'notifysuccess');
                 }
+                echo '<html>';
+                echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
                 if ($overwrite) {
                     echo "<input type=\"button\" value=\"".get_string('closewindow')."\" onClick=\"window.opener.location.replace('" .
                             $CFG->wwwroot . '/mod/offlinequiz/review.php?q=' . $offlinequiz->id . '&resultid=' .
@@ -701,6 +704,7 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
                     echo "<input type=\"button\" value=\"".get_string('closewindow')."\" onClick=\"window.opener.location.reload(1);
                     self.close(); return false;\">";
                 }
+                echo '<html>';
                 return;
             }
         } else {
@@ -750,11 +754,12 @@ if ($group && $pagenumber > 0 and $pagenumber <= $group->numberofpages) {
 // OUTPUT THE PAGE HTML.
 // =======================================================================
 // echo $OUTPUT->header('','','','','',false,'','',false,'');
+echo '<html>';
 echo "<style>\n";
 echo "body {margin:0px; font-family:Arial,Verdana,Helvetica,sans-serif;}\n";
 echo ".imagebutton {width:250px; height:24px; text-align:left; margin-bottom:10px;}\n";
 echo "</style>\n";
-echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
+echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
 
 echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/jquery-1.4.3.min.js');
 echo html_writer::script('', $CFG->wwwroot.'/mod/offlinequiz/lib/jquery/ui/jquery.ui.core.js');
@@ -766,7 +771,7 @@ $javascript = "<script language=\"JavaScript\">
 function checkinput() {
  // Get all item elements. We have jquery!
  items = $('input[name^=\"item\"]');
- console.log(items);
+
  for (i=0; i < items.length; i++) {
   if (items[i].value == '-1') {
     parts = items[i].name.split('[');
@@ -788,15 +793,15 @@ function checkinput() {
 function set_userid(image, x, y) {
   for (i=0; i<=9; i++) {
     key = 'u'+x+i;
-    document.images[key].src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"
+    document.images[key].src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\";
   }
-  image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"
+  image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\";
   document.forms.cform.usernumber.value = document.forms.cform.usernumber.value.substr(0,x) + y + document.forms.cform.usernumber.value.substr(x+1);
 }
 
 function set_group(image, x) {
  for (i=0; i<=5; i++) {
-  document.images['g'+i].src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"
+  document.images['g'+i].src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\";
  }
  image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"
  document.forms.cform.groupnumber.value = x+1;
@@ -807,10 +812,10 @@ function set_group(image, x) {
 function set_item(image, x, y) {
   key = 'item['+x+'-'+y+']';
   if (document.forms.cform.elements[key].value == '1') {
-    image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"
+    image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\";
     document.forms.cform.elements[key].value = 0;
   } else {
-    image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"
+    image.src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\";
     document.forms.cform.elements[key].value = 1;
   }
 }
@@ -829,15 +834,15 @@ function submitReadjust() {
    }
  }
  if (!changed) {
-   alert('" . get_string('movecorners', 'offlinequiz') . "')
+   alert('" . get_string('movecorners', 'offlinequiz') . "');
  } else {
-  document.forms.cform.elements['action'].value='readjust'
+  document.forms.cform.elements['action'].value='readjust';
   document.forms.cform.submit();
  }
 }
 
 function submitCancel() {
-  document.forms.cform.elements['action'].value='cancel'
+  document.forms.cform.elements['action'].value='cancel';
   document.forms.cform.submit();
 }
 
@@ -847,7 +852,7 @@ function submitPage() {
     document.forms.cform.elements['c-'+i+'-x'].value = corner.style.left.replace('px','');
     document.forms.cform.elements['c-'+i+'-y'].value = corner.style.top.replace('px','');
   }
-  document.forms.cform.elements['action'].value='setpage'
+  document.forms.cform.elements['action'].value='setpage';
   document.forms.cform.submit();
 }
 
@@ -856,17 +861,17 @@ function submitCheckuser() {
     document.forms.cform.elements['c-'+i+'-x'].value = document.forms.cform.elements['c-old-'+i+'-x'].value;  // Reset possible readjustment.
     document.forms.cform.elements['c-'+i+'-y'].value = document.forms.cform.elements['c-old-'+i+'-y'].value;
   }
-  document.forms.cform.elements['action'].value='checkuser'
+  document.forms.cform.elements['action'].value='checkuser';
   document.forms.cform.submit();
 }
 
 function submitEnrol() {
-  document.forms.cform.elements['action'].value='enrol'
+  document.forms.cform.elements['action'].value='enrol';
   document.forms.cform.submit();
 }
 
 function submitRotated() {
-  document.forms.cform.elements['action'].value='rotate'
+  document.forms.cform.elements['action'].value='rotate';
   document.forms.cform.submit();
 }
 

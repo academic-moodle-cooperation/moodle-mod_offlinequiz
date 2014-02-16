@@ -157,7 +157,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 //             echo $OUTPUT->footer();
 //             die;
 //         }
-
         $reporturl = new moodle_url('/mod/offlinequiz/report.php', $pageoptions);
 
         $useallattempts = 0;
@@ -500,7 +499,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         // and the question statistics.
         $datumfromtable = $this->table->format_row($question);
 
-        // Set up the question info table.
+// Set up the question info table.
 //         $questioninfotable = new html_table();
 //         $questioninfotable->id = 'questioninfotable';
 //         $questioninfotable->align = array('left', 'right');
@@ -541,6 +540,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         unset($datumfromtable['frequency']);
         unset($datumfromtable['count']);
         unset($datumfromtable['fraction']);
+
         $labels = array(
             's' => get_string('attempts', 'offlinequiz_statistics'),
             'facility' => get_string('facility', 'offlinequiz_statistics'),
@@ -549,8 +549,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             'intended_weight' => get_string('intended_weight', 'offlinequiz_statistics'),
             'effective_weight' => get_string('effective_weight', 'offlinequiz_statistics'),
             'discrimination_index' => get_string('discrimination_index', 'offlinequiz_statistics'),
-            'discriminative_efficiency' =>
-                                get_string('discriminative_efficiency', 'offlinequiz_statistics')
+            'discriminative_efficiency' => get_string('discriminative_efficiency', 'offlinequiz_statistics'),
+            'correct' => get_string('correct', 'offlinequiz_statistics'),
+            'partially' => get_string('partially', 'offlinequiz_statistics'),
+            'wrong' => get_string('wrong', 'offlinequiz_statistics'),
         );
         foreach ($datumfromtable as $item => $value) {
             $questionstatstable->data[] = array($labels[$item], $value);
@@ -1133,7 +1135,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         // Recalculate sql again this time possibly including test for first attempt.
         list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(
-                $offlinequizid, $currentgroup, $groupstudents, $useallattempts);
+                $offlinequizid, $currentgroup, $groupstudents, $useallattempts, false, $offlinegroupid);
 
         // Median ...
         if ($s % 2 == 0) {
@@ -1202,11 +1204,15 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         if ($s > 1) {
             $p = count($qstats->questions); // Number of positions.
             if ($p > 1 && isset($k2)) {
-                $offlinequizstats->cic = (100 * $p / ($p -1)) *
-                        (1 - ($qstats->get_sum_of_mark_variance()) / $k2);
-                $offlinequizstats->errorratio = 100 * sqrt(1 - ($offlinequizstats->cic / 100));
-                $offlinequizstats->standarderror = $offlinequizstats->errorratio *
-                        $offlinequizstats->standarddeviation / 100;
+                if ($k2 == 0) {
+                    $offlinequizstats->cic = null;
+                    $offlinequizstats->errorratio = null;
+                    $offlinequizstats->standarderror = null;
+                } else {
+                    $offlinequizstats->cic = (100 * $p / ($p -1)) * (1 - ($qstats->get_sum_of_mark_variance()) / $k2);
+                    $offlinequizstats->errorratio = 100 * sqrt(1 - ($offlinequizstats->cic / 100));
+                    $offlinequizstats->standarderror = $offlinequizstats->errorratio * $offlinequizstats->standarddeviation / 100;
+                }
             }
         }
 

@@ -33,6 +33,7 @@ $string['deleteselectedpages'] = 'Ausgewählte Seiten löschen';
 $string['errorcouldnotgrab'] = 'Seite nicht erfasst';
 $string['errordifferentpage'] = 'Abweichende Seite existiert bereits';
 $string['errordoublepage'] = 'Seite existiert bereits';
+$string['errorfilenotfound'] = 'Datei nicht gefunden';
 $string['errorgrouperror'] = 'Falsche Gruppennummer';
 $string['errorinsecuremarkings'] = 'Ungenaue Markierungen';
 $string['errorinvalidpagenumber'] = 'Falsche Seitennummer';

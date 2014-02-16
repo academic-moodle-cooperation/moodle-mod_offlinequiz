@@ -29,7 +29,7 @@
  * up and down  Changes the order of questions and page breaks
  * addquestion  Adds a single question to the offlinequiz
  * add          Adds several selected questions to the offlinequiz
- * addrandom    Adds a certain number of random questions to the offlinequiz
+ * addrandom    Randomly adds a certain number of multichoice questions to the offlinequiz
  * repaginate   Re-paginates the offlinequiz
  * delete       Removes a question from the offlinequiz
  * savechanges  Saves the order and grades for questions in the offlinequiz
@@ -70,19 +70,43 @@ function module_specific_buttons($cmid, $cmoptions) {
  * (which is called from showbank())
  */
 function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmoptions) {
-    global $OUTPUT;
+    global $OUTPUT, $DB;
+    
     $out = '';
-    $catcontext = get_context_instance_by_id($category->contextid);
+    $catcontext = context::instance_by_id($category->contextid);
+    if (!$cm = get_coursemodule_from_id('offlinequiz', $cmid)) {
+        return $out;
+    }
+
     if (has_capability('moodle/question:useall', $catcontext)) {
         if ($cmoptions->hasattempts) {
             $disabled = ' disabled="disabled"';
         } else {
             $disabled = '';
         }
-        $randomusablequestions =
-        question_bank::get_qtype('random')->get_available_questions_from_category(
-                $category->id, $recurse);
-        $maxrand = count($randomusablequestions);
+
+        if ($recurse) {
+            $categoryids = question_categorylist($category->id);
+        } else {
+            $categoryids = array($category->id);
+        }
+
+        list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
+
+        $sql = "SELECT COUNT(id)
+              FROM {question} q
+             WHERE q.category $qcsql
+               AND q.parent = 0
+               AND q.hidden = 0
+               AND q.qtype IN ('multichoice', 'multichoiceset')
+               AND NOT EXISTS (SELECT 1 
+                                 FROM {offlinequiz_q_instances} oqi
+                                WHERE oqi.questionid = q.id
+                                  AND oqi.offlinequizid = :offlinequizid)";
+    
+        $qcparams['offlinequizid'] = $cm->instance;
+    
+        $maxrand = $DB->count_records_sql($sql, $qcparams);
         if ($maxrand > 0) {
             for ($i = 1; $i <= min(10, $maxrand); $i++) {
                 $randomcount[$i] = $i;
@@ -95,17 +119,16 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
             $disabled = ' disabled="disabled"';
         }
 
-        //      $out = '<strong><label for="menurandomcount">'.get_string('addrandomfromcategory', 'offlinequiz').
-        //                 '</label></strong><br />';
-        //      $attributes = array();
-        //      $attributes['disabled'] = $disabled ? 'disabled' : null;
-        //      $select = html_writer::select($randomcount, 'randomcount', '1', null, $attributes);
-        //      $out .= get_string('addrandom', 'offlinequiz', $select);
-        //      $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';
-        //      $out .= '<input type="hidden" name="categoryid" value="' . $category->id . '" />';
-        //      $out .= ' <input type="submit" name="addrandom" value="'.
-        //      get_string('addtoofflinequiz', 'offlinequiz').'"' . $disabled . ' />';
-        // $out .= $OUTPUT->help_icon('addarandomquestion', 'offlinequiz');
+        $out = '<strong><label for="menurandomcount">' . get_string('addrandomfromcategory', 'offlinequiz') . '</label></strong><br />';
+        $attributes = array();
+        $attributes['disabled'] = $disabled ? 'disabled' : null;
+        $select = html_writer::select($randomcount, 'randomcount', '1', null, $attributes);
+        $out .= get_string('addrandom', 'offlinequiz', $select);
+        $out .= '<input type="hidden" name="recurse" value="' . $recurse . '" />';
+        $out .= '<input type="hidden" name="categoryid" value="' . $category->id . '" />';
+        $out .= '<input type="submit" name="addrandom" value="' . get_string('add', 'offlinequiz') .
+        '"' . $disabled . ' />';
+        $out .= $OUTPUT->help_icon('addarandomquestion', 'offlinequiz');
     }
     return $out;
 }
@@ -113,6 +136,7 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
 $offlinequiz_reordertool = optional_param('reordertool', -1, PARAM_BOOL);
+$offlinequiz_gradetool = optional_param('gradetool', -1, PARAM_BOOL);
 $offlinequiz_qbanktool = optional_param('qbanktool', -1, PARAM_BOOL);
 $scrollpos = optional_param('scrollpos', '', PARAM_INT);
 
@@ -156,6 +180,9 @@ $PAGE->set_url($thispageurl);
 $pagetitle = get_string('editingofflinequiz', 'offlinequiz');
 if ($offlinequiz_reordertool) {
     $pagetitle = get_string('orderingofflinequiz', 'offlinequiz');
+}
+if ($offlinequiz_gradetool) {
+    $pagetitle = get_string('gradingofflinequiz', 'offlinequiz');
 }
 // Get the course object and related bits.
 $course = $DB->get_record('course', array('id' => $offlinequiz->course));
@@ -252,13 +279,38 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
 
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
     offlinequiz_delete_template_usages($offlinequiz);
-    //  redirect($afteractionurl);
+    redirect($afteractionurl);
+}
+
+if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
+    // Add random questions to the quiz.
+    $recurse = optional_param('recurse', 0, PARAM_BOOL);
+    $addonpage = optional_param('addonpage', 0, PARAM_INT);
+    $categoryid = required_param('categoryid', PARAM_INT);
+    $randomcount = required_param('randomcount', PARAM_INT);
+    offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount, $recurse);
+
+    $offlinequiz->grades = offlinequiz_get_all_question_grades($offlinequiz);
+    $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
+
+    redirect($afteractionurl);
 }
 
 if (optional_param('addnewpagesafterselected', null, PARAM_CLEAN) &&
         !empty($selectedquestionids) && confirm_sesskey()) {
     foreach ($selectedquestionids as $questionid) {
         $offlinequiz->questions = offlinequiz_add_page_break_after($offlinequiz->questions, $questionid);
+    }
+    offlinequiz_save_questions($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
+    redirect($afteractionurl);
+}
+
+if (optional_param('deletepagesafterselected', null, PARAM_CLEAN) &&
+        !empty($selectedquestionids) && confirm_sesskey()) {
+    foreach ($selectedquestionids as $questionid) {
+        $offlinequiz->questions = offlinequiz_remove_page_break_after($offlinequiz->questions, $questionid);
     }
     offlinequiz_save_questions($offlinequiz);
     offlinequiz_delete_template_usages($offlinequiz);
@@ -287,7 +339,7 @@ if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey())
     // TODO offlinequiz_delete_previews($offlinequiz);
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
     offlinequiz_delete_template_usages($offlinequiz);
-    //  redirect($afteractionurl);
+    redirect($afteractionurl);
 }
 
 if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
@@ -296,13 +348,49 @@ if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
     offlinequiz_remove_questionlist($offlinequiz, $selectedquestionids);
     offlinequiz_delete_template_usages($offlinequiz);
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
-    // redirect($afteractionurl);
+    redirect($afteractionurl);
 }
 
 $maxgradewrong = false;
 $gradewarning = false;
+$bulkgradewarning = false;
 
-if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
+$savechanges = optional_param('savechanges', '', PARAM_ALPHA);
+$savegrades = optional_param('savegrades', '', PARAM_ALPHA);
+
+if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
+    $rawdata = (array) data_submitted();
+
+    foreach ($rawdata as $key => $value) {
+        if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
+            if (is_numeric(str_replace(',', '.', $value))) {
+                // Parse input for question -> grades
+                $questionid = $matches[1];
+                $offlinequiz->grades[$questionid] = unformat_float($value);
+                offlinequiz_update_question_instance($offlinequiz->grades[$questionid], $questionid, $offlinequiz);
+            } else {
+                $bulkgradewarning = true;
+            }
+        }
+    }
+
+    $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+    // Redmine 983: Upgrade sumgrades for all other groups as well.
+    if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+        foreach ($groups as $group) {
+            if ($group->id != $offlinequiz->groupid) {
+                $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
+            }
+        }
+    }
+
+    offlinequiz_update_all_attempt_sumgrades($offlinequiz);
+    offlinequiz_update_grades($offlinequiz, 0, true);
+
+//    redirect($afteractionurl);
+}
+
+if ($savechanges && confirm_sesskey()) {
     $deletepreviews = false;
     $recomputesummarks = false;
 
@@ -502,7 +590,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         // offlinequiz_update_all_final_grades($offlinequiz);
         offlinequiz_update_grades($offlinequiz, 0, true);
     }
-    // redirect($afteractionurl);
+    //redirect($afteractionurl);
 }
 
 $questionbank->process_actions($thispageurl, $cm);
@@ -551,9 +639,17 @@ if ($offlinequiz_reordertool > -1) {
 } else {
     $offlinequiz_reordertool = get_user_preferences('offlinequiz_reordertab', 0);
 }
+if ($offlinequiz_gradetool > -1) {
+    $thispageurl->param('gradetool', $offlinequiz_gradetool);
+    set_user_preference('offlinequiz_gradetab', $offlinequiz_gradetool);
+} else {
+    $offlinequiz_gradetool = get_user_preferences('offlinequiz_gradetab', 0);
+}
 
 if ($offlinequiz_reordertool) {
     $mode = 'reorder';
+} else if ($offlinequiz_gradetool) {
+    $mode = 'grade';
 } else {
     $mode = 'edit';
 }
@@ -616,24 +712,6 @@ if ($docscreated) {
     echo "</div><br />\n";
 }
 
-if ($offlinequiz->grade == 0.0) {
-    echo "<div class=\"noticebox notifyproblem infobox\"><strong>";
-    echo $OUTPUT->notification(get_string('gradeiszero', 'offlinequiz'), 'notifyproblem');
-    echo '</strong></div><br/>';
-}
-
-if ($maxgradewrong) {
-    echo "<div class=\"noticebox notifyproblem infobox\"><b>";
-    echo $OUTPUT->notification(get_string('maxgradewarning', 'offlinequiz'), 'notifyproblem');
-    echo '</b></div><br/>';
-}
-
-if ($gradewarning) {
-    echo "<div class=\"noticebox notifyproblem infobox\">";
-    echo $OUTPUT->notification(get_string('gradewarning', 'offlinequiz'), 'notifyproblem');
-    echo '</div><br/>';
-}
-
 if ($offlinequiz->shufflequestions || $offlinequiz->docscreated || $hasscannedpages) {
     $repaginatingdisabledhtml = 'disabled="disabled"';
     $repaginatingdisabled = true;
@@ -661,7 +739,10 @@ for ($i=1; $i<=$offlinequiz->numgroups; $i++) {
 
 if ($offlinequiz_reordertool) {
     echo $OUTPUT->heading_with_help(get_string('orderingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
-            get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 'orderandpaging', 'quiz');
+            get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 'orderandpaging', 'offlinequiz');
+} else if ($offlinequiz_gradetool) {
+    echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
+            get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
 } else {
     echo $OUTPUT->heading(get_string('editingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name . ' (' .
             get_string('group') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 2);
@@ -682,6 +763,27 @@ offlinequiz_print_status_bar($offlinequiz);
 
 $tabindex = 0;
 offlinequiz_print_grading_form($offlinequiz, $thispageurl, $tabindex);
+
+if ($maxgradewrong) {
+    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+    echo $OUTPUT->notification(get_string('maxgradewarning', 'offlinequiz'), 'notifyproblem');
+    echo $OUTPUT->box_end();
+}
+if ($offlinequiz->grade == 0.0) {
+    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+    echo $OUTPUT->notification(get_string('gradeiszero', 'offlinequiz'), 'notifyproblem');
+    echo $OUTPUT->box_end();
+}
+if ($gradewarning) {
+    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+    echo $OUTPUT->notification(get_string('gradewarning', 'offlinequiz'), 'notifyproblem');
+    echo $OUTPUT->box_end();
+}
+if ($bulkgradewarning) {
+    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+    echo $OUTPUT->notification(get_string('gradeswarning', 'offlinequiz'), 'notifyproblem');
+    echo $OUTPUT->box_end();
+}
 
 $notifystrings = array();
 if ($hasscannedpages) {
@@ -735,7 +837,7 @@ if ($offlinequiz_reordertool) {
 
 }
 offlinequiz_print_question_list($offlinequiz, $thispageurl, true,
-        $offlinequiz_reordertool, $offlinequiz_qbanktool, $docscreated, $defaultcategoryobj);
+        $offlinequiz_reordertool, $offlinequiz_gradetool, $offlinequiz_qbanktool, $docscreated, $defaultcategoryobj);
 
 echo '</div>';
 

@@ -56,8 +56,8 @@ class offlinequiz_selectall_table extends flexible_table {
 
         foreach ($this->params as $name => $value) {
             echo '<input type="hidden" name="' . $name .'" value="' . $value . '" />';
-            echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         }
+        echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         echo '  <center>';
     }
 
