@@ -1,0 +1,157 @@
+\documentclass[12pt]{report}
+
+\usepackage{html}
+
+\setlength{\textwidth}{14.5cm}
+\setlength{\textheight}{26.0cm}
+
+\setlength{\topmargin}{-3.0cm}
+%% \setlength{\headheight}{0.0cm}
+%% \setlength{\oddsidemargin}{0.0cm} 
+%% \setlength{\evensidemargin}{0.0cm}
+
+\begin{document}
+
+\subsection{Information on Offline Quiz Statistics}
+
+\htmlref{Overview}{subsubsec:overview}\ \\
+\htmlref{Question Analysis}{subsubsec:questions}\ \\
+\htmlref{Definitions}{subsubsec:definitions}
+
+%=======================================================
+\subsection{Overview}
+\label{subsubsec:overview}
+
+We assume that a result exists for at least one student, i.e. $|S|>1$.
+
+\paragraph{Total number of complete graded results}
+Number of results taken into account for the statistics.
+
+\paragraph{Maximum Grade Achievable}
+The maximum grade that can be achieved by a student (best grade).
+
+\paragraph{Highest/Lowest Grade Achieved}
+The highest and the lowest grade achieved by a student.
+
+\paragraph{Average Grade}
+We calculate the average grade of all students relative to the maximum grade of the offline quiz.
+$\bar{T}=\frac{1}{|S|}\sum\limits_{s\in S}T_s$.
+
+\paragraph{Median}
+All grades in $T_s$ are sorted. If $|S|$ is odd the grade in the middle is displayed. If $|S|$ is even, the mean of the two middle grades is displayed.
+
+
+\paragraph{Standard Deviation}
+The standard deviation adjusted to the maximum grade of the offline quiz.
+
+$SD = \sqrt{V(T)} = \sqrt{\frac{1}{|S| - 1}\sum\limits_{s\in S}(T_s - \bar{T})^2}$.
+
+\paragraph{Skewness and Kurtosis}
+Skewness is a measure of the asymmetry in a distribution. Kurtosis tells you if your distribution has more of a bulge, but thinner tails, or vice-versa. 
+
+First, we calculate:
+
+$m_2=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^2}$
+
+$m_3=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^3}$
+
+$m_4=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^4}$\\
+
+Then we calculate:\\
+
+$k_2 = \frac{|S|}{|S| - 1}m_2 = V(T)$
+
+$k_3 = \frac{|S|^2}{(|S|-1)(|S|-2)} m_3$
+
+$k_4 = \frac{|S|^2}{(|S|-1)(|S|-2)(|S|-3)}\left((|S|+1)m_4-3(|S|-1)m_2^2\right)$\\
+
+Then the skewness is defined as:\\
+
+ $Skewness = \frac{k_3}{k_2^(3/2)}$\\
+
+the kurtosis is defined as:\\
+
+ $Kurtosis = \frac{k_4}{k_2^2}$
+
+
+\paragraph{Coefficient of Internal Consistency (Cronbach's Alpha)}
+The Coefficient of Internal Consistency (Cronbach's Alpha) is a measure for the internal consistency of a scale. It is commonly used as an estimate of the reliability of a psychometric test for a sample of examinees. It describes the  interrelatedness of the offline quiz questions. We calculate the Coefficient of Internal Consistency (CIC) as follows:
+
+$CIC=\frac{|I|}{|I|-1}\left(1-\frac{1}{V(T)}\sum\limits_{i\in I}V(x_i)\right)$.
+
+
+\paragraph{Error Ratio and Standard Error}
+
+These values have to do with estimating how reliable the test scores are.
+If you take the view that the score the student got on the test on the day is a combination
+ of their actual ability and a random error
+  (how lucky they were on the day of the test),
+   the the standard error is an estimate of the luck factor. So if SE ~= 10, and the student scored 60, then you can be quite confident
+    that their actual ability is between 50 and 70.\\
+
+The error ratio is calculated as:
+
+$ER=100*\sqrt{1-{CIC}}$.
+
+The standard error is calculated as:
+
+$SE=\frac{ER}{100}SD$
+
+\ \\
+
+\subsection{Question Analysis}
+\label{subsubsec:questions}
+
+\paragraph{Facility Index}
+The facility index is the average score of an item $i$ expressed as a percentage. If, for instance, two students have answered item $i$, where one student achieved $50\%$ and the other student achieved $100\%$, then the facility index is $75\%$.
+
+$F_i = 100\cdot\frac{\bar{x}_i - x_i(min)}{x_i(max) - x_i(min)}$. 
+
+\paragraph{Standard Deviation}
+The standard deviation of a question shows how much variation or dispersion exists from the mean grade of that question. 
+
+$SD_i = \frac{\sqrt{V(x_i)}}{x_i(max) - x_i(min)}$.
+
+\paragraph{Intended Question Weight}
+
+How much this question was supposed to contribute to determining the overall test score.
+
+$IQW_p = 100\frac{x_p(max) - x_p(min)}{T_{max} - T_{min}}$.\\
+
+\paragraph{Effective Question Weight}
+
+This is an estimate of what proportion of the variance in the students' test scores is due this question.
+
+$EQW_p = 100\frac{\sqrt{C(x_p, T)}}{\sum_{p \in P}\sqrt{C(x_p, T)}}.$\\
+
+ 
+\paragraph{Discrimination Index}
+This is the product moment correlation coefficient between $x_i$ and $X_i$, expressed on a percentage scale:
+
+$D_i= \frac{C(x_i, X_i)}{\sqrt{V(x_i)V(X_i)}}$.
+
+
+\subsection{Definitions}
+\label{subsubsec:definitions}
+\begin{itemize}
+\item $S$ is the set of students for which an offline quiz result exists. $|S|$ is the number of students in $S$.
+\item $I_s$ is the set of items (questions) that have been answered by a student $s\in S$ in an offline quiz.
+\item $S_i$ is the set of students that answered item (question) $i$.
+\item $x_i(s)$ is the result that student $s$ achieved for item $i$.
+\item $T_s = \sum\limits_{i\in I_s} x_i(s)$ is the complete result of student $s\in S$ adjusted to the maximum grade of the offline quiz.
+\item $x_i(max)$ is the maximum grade for item $i$ adjusted to the maximum grade of the offline quiz. 
+\item $x_i(min)$ is the minimum grade for item $i$ adjusted to the maximum grade of the offline quiz. 
+\item $T_{max}=\sum\limits_{i\in I} x_i(max)$ is the maximum grade of the offline quiz.
+\item $X_i(s) = T_s - x_i(s)$ is the remaining grade for student $s$ on item $i$.\\
+\item $\bar{x}_i = \frac{1}{|S_i|}\sum\limits_{s\in S_i}x_i(s)$ is the average grade for item $i$ for all students. Analogously for other values.
+\end{itemize}
+
+We assume that at least two students have answered item $i$, i.e. $|S_i| > 1$.
+Then we define the following values:
+\begin{itemize}
+\item $V(x_i) = \frac{1}{|S_i| - 1}\sum\limits_{s\in S_i} (x_i(s) - \bar{x}_i)^2$ is the variance of the grade for item $i$.
+\item $C(x_i, X_i) = \frac{1}{|S_i| - 1}\sum\limits_{s\in S_i}(x_i(s) - \bar{x}_i)(X_i(s) - \bar{X}_i)$ is the co-variance of $x_i$ and $X_i$.
+\end{document}
+
+%% 
+%% End of file `statistics_help_en.tex'.

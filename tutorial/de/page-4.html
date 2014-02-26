@@ -1,0 +1,105 @@
+<h3>4. Ankreuzen der Matrikelnummer</h3>
+
+<p>Die meisten Probleme bei der Auswertung entstehen durch falsch oder
+unvollständig angekreuzte Matrikelnummern.  Nehmen Sie sich deshalb am
+Ende dieser kleinen Lektion noch die Zeit und klicken Sie in der unten
+angezeigten Darstellung auf die richtigen Felder, um Ihre Matrikelnummer
+anzukreuzen. Übertragen Sie Ihre Matrikelnummer gewissenhaft mittels
+Kreuzmarkierung in die darunter befindlichen Spalten. Jede Spalte steht
+für eine Stelle der Matrikelnummer, jede Zeile für die Ziffer, die links
+bzw. rechts neben der Zeile steht.  Fehler beim Ausfüllen des
+Matrikelnummernblocks können die Auswertung Ihrer Prüfung verzögern bzw.
+die korrekte Zuordnung des Ergebnisses unmöglich machen.</p>
+
+<p>Einmal klicken auf ein Kästchen erzeugt ein Kreuz, ein zweites Mal klicken eine Ausstreichung.
+Wenn Sie von vorne anfangen wollen, müssen Sie <a href="javascript: document.location.reload()">die Seite neu laden</a>.</p>
+
+<script type="text/javascript">
+var matrix = new Array(<?php echo strlen($usernumber) ?>);
+for (a=1; a<=<?php echo strlen($usernumber) ?>; a++) {
+    matrix[a] = new Array(10);
+}
+
+function set_digit(image, i, j) {
+    if (image.src == '<?php echo $CFG->wwwroot ?>/mod/offlinequiz/tutorial/spacer_border.gif') {
+        image.src = '<?php echo $CFG->wwwroot ?>/mod/offlinequiz/tutorial/marked_border.gif';
+        matrix[j][i] = 1;
+    } else if (image.src == '<?php echo $CFG->wwwroot ?>/mod/offlinequiz/tutorial/marked_border.gif') {
+        image.src = '<?php echo $CFG->wwwroot ?>/mod/offlinequiz/tutorial/deleted_border.gif';
+        matrix[j][i] = 0;
+    } else if (image.src == '<?php echo $CFG->wwwroot ?>/mod/offlinequiz/tutorial/deleted_border.gif') {
+        image.src = '<?php echo $CFG->wwwroot ?>/mod/offlinequiz/tutorial/spacer_border.gif';
+        matrix[j][i] = 0;
+    }
+}
+
+function load_number() {
+    var retwert = '';
+    for (i=1; i<=<?php echo strlen($usernumber) ?>; i++) {
+         var number = 'I';
+         for (j=0; j<=9; j++) {
+              if (number != 'I' && matrix[i][j] == 1) {
+                  number = 'X';
+              } else if (matrix[i][j] == 1) {
+                  number = j;
+              }
+         }
+         if (number == 'I') number = 'X';
+         retwert = retwert + number;
+    }
+    document.forms.page4.answer.value = retwert;
+}
+
+</script>
+
+<div style="margin: 2em; width: 340px; height:430px; ">
+    <center><font size="+2"><b><span style="padding-right: 20px;">Matrikelnummer</span></b></font></center>
+    <div style="padding-left: 1.7em; padding-top: 0.3em; ">
+    <table cellpadding="2px" border="0" >
+      <tbody>
+        <?php
+    // write the top row with the border 
+    echo '<tr style="margin-bottom: 6px;"><td style="border-style: solid; padding-right: 10px; border-width: 0px 1px 0px 0px;"/>'; 
+       // style="background-image: url(matrikel2.gif); background-repeat:none;">';
+      for ($i=0; $i<strlen($usernumber); $i++) {
+          echo '<td style="border-style: solid; border-width: 1px 0px 1px 0px; vertical-align: middle;  text-align: center; padding-right: 10px; padding-bottom: 2px;';
+          if ($i < strlen($usernumber) - 1) {
+              echo 'background-image: url(matrikel2.gif); background-repeat: no-repeat; background-position: bottom;';
+          } else {
+              echo 'border-style: solid; border-width: 1px 1px 1px 0px;';
+          }
+          echo '"><font size="+3">'.$usernumber{$i}.'</font></td>';
+      }  
+    echo '<td/></tr>';
+
+// write rest of the table without borders but images 
+    echo '<tr><td style="padding-bottom: 8px;"/></tr>';
+
+      for ($i=0; $i<=9; $i++) { 
+          echo '<tr style="padding-top: 0.5em;  margin-left:1em;">'."\n";
+          echo '<td style="border: 0; padding-right: 6px;">'.$i.'</td>';
+          for ($j=1; $j<=$offlinequizconfig->ID_digits; $j++) { 
+              echo '<td style="border: 0; padding-right: 10px;">';
+              echo '<img src="spacer_border.gif" id="m-'.$i.'-'.$j.'" style="vertical-algin: top; align: left; cursor:pointer;" 
+                      onClick="set_digit(this, '.$i.', '.$j.')"></td>'."\n"; 
+              echo '</td>';
+          } 
+          echo '<td style="border: 0; padding-right: 6px;">'.$i.'</td>';
+          echo '</tr>';
+      }
+    ?>
+     </tbody>
+   </table>
+  </div>
+</div>
+<br/>
+<br/>
+
+<form action="index.php" method="get" id="page4" class="popupform">
+<input type="hidden" name="answer">
+<input type="hidden" name="id" value="<?php echo $id ?>">
+<input type="hidden" name="page" value="5">
+
+<p style="margin-left: 6em"><input type="submit" value="Weiter &gt;" onClick="load_number();"></p>
+</form>
+<p>&nbsp;</p><p>&nbsp;</p>

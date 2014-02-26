@@ -1,0 +1,27 @@
+<h3>3. The answer form</h3>
+
+<p>The answer form contains a block for your name (A), a block for the identification number (B) and a block for the answers (C).
+Fill in the boxes for name, signature and identification number first. Attention: The machine will not try to interpret your handwriting after
+the examination. These boxes are only for documentation and correction.</p>
+
+<p style="margin: 2em"><img src="bloecke.gif" width="520px" border="1"></p>
+
+<p>Mark the boxes for the identification number carefully. Be aware that the computer will need these marks to identify your result.
+Mistakes in the block for the identification number can leed to delays and misinterpretation.</p>
+
+<p>How is the computer assigning the answer form to the right person?</p>
+<form action="index.php" method="get" id="page3" class="popupform">
+<input type="hidden" name="id" value="<?php echo $id ?>">
+<input type="hidden" name="page" value="4">
+<table cellspacing=10 cellpadding=10 border=0 style="margin-left: 2em">
+<tr><td width=70px valign=top>a)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="2">
+&nbsp;&nbsp;&nbsp;</td><td>The system is reading your name with an optical character recognition software.</td></tr>
+<tr><td width=70px valign=top>b)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="3">
+&nbsp;&nbsp;&nbsp;</td><td>Your singature is scanned with the same software as finger prints in crime investigations.</td></tr>
+<tr><td width=70px valign=top>c)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="1">
+&nbsp;&nbsp;&nbsp;</td><td>Only the crosses in the boxes under your identification number are interpreted.</td></tr>
+<tr><td width=70px valign=top>d)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="4">
+&nbsp;&nbsp;&nbsp;</td><td>The system is reading your identification number with an optical character recognition software.</td></tr>
+<tr><td width=70px valign=top></td><td><input type="submit" value="Continue &gt;"></td></tr>
+</table>
+<p style="margin-left: 4em"></p></form>&nbsp;</p>

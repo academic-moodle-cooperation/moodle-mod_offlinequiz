@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/offlinequiz/report/statistics/db" VERSION="20131204" COMMENT="XMLDB file for Moodle mod/offlinequiz/report/statistics"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="offlinequiz_statistics" COMMENT="table to cache results from analysis done in statistics report for offlinequizzes.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="offlinegroupid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The ID of the offlinequiz group the statistics have been calculated for. Refers to table offlinequiz_groups. 0 or NULL means all groups."/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="allattempts" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="bool used to indicate whether these stats are for all attempts or just for the first."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="firstattemptscount" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="allattemptscount" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="firstattemptsavg" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="median" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="allattemptsavg" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="standarddeviation" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="skewness" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10"/>
+        <FIELD NAME="kurtosis" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="cic" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10"/>
+        <FIELD NAME="errorratio" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10"/>
+        <FIELD NAME="standarderror" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10"/>
+        <FIELD NAME="bestgrade" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The best grade achieved."/>
+        <FIELD NAME="worstgrade" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The worst grade achieved."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="offlinequiz_q_statistics" COMMENT="Table to cache analysis results for the individual questions.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizstatisticsid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="slot" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The position in the offlinequiz where this question appears"/>
+        <FIELD NAME="subquestion" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="s" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="effectiveweight" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="negcovar" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="discriminationindex" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="discriminativeefficiency" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="sd" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10"/>
+        <FIELD NAME="facility" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10"/>
+        <FIELD NAME="subquestions" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7"/>
+        <FIELD NAME="positions" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="positions in which this item appears. Only used for random questions."/>
+        <FIELD NAME="randomguessscore" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="An estimate of the score a student would get by guessing randomly."/>
+        <FIELD NAME="correct" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The number of attempts that answered this question correctly (100%)."/>
+        <FIELD NAME="partially" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The number of attempts that answered this quesiton partially correct (0-100%)."/>
+        <FIELD NAME="wrong" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The number of attempts that answered this question wrongly (&amp;lt;0%)."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="offlinequiz_q_response_stats" COMMENT="Table to cache analysis results for question responses.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizstatisticsid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="subqid" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="aid" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="response" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="rcount" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="credit" TYPE="number" LENGTH="15" NOTNULL="true" SEQUENCE="false" DECIMALS="5"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

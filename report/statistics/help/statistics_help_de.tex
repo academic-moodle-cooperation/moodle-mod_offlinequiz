@@ -1,0 +1,161 @@
+\documentclass[12pt]{report}
+\usepackage{german}
+\usepackage{html}
+
+\setlength{\textwidth}{14.5cm}
+\setlength{\textheight}{26.0cm}
+
+\setlength{\topmargin}{-3.0cm}
+%% \setlength{\headheight}{0.0cm}
+%% \setlength{\oddsidemargin}{0.0cm} 
+%% \setlength{\evensidemargin}{0.0cm}
+
+\begin{document}
+
+\subsection{Informationen zu Offline-Tests Statistiken}
+
+\htmlref{"Ubersicht}{subsubsec:overview}\ \\
+\htmlref{Fragenanalyse}{subsubsec:questions}\ \\
+\htmlref{Definitionen}{subsubsec:definitions}
+
+%=======================================================
+\subsection{"Ubersicht}
+\label{subsubsec:overview}
+
+Wir nehmen an, dass f"ur mindestens einen Studierenden ein Ergebnis existiert, d.h. $|S|>1$.
+
+\paragraph{Gesamtzahl an vollständig bewerteten Ergebnissen}
+Anzahl an ausgewertetn Ergebnissen.
+
+\paragraph{Maximal mögliche Bewertung}
+Maximale Punktezahl, die ein(e) TeilnehmerIn erreichen kann.
+
+\paragraph{Höchste/Niedrigste erreichte Bewertung}
+Höchste bzw. niedrigste erreiche Bewertung die von TeilnehmerInnen erreicht wurden.
+
+\paragraph{Durchschnittliche erreichte Bewertung}
+Wir berechnen den Durchschnitt aller Bewertungen (hochgerechnet auf die maximale Bewertung des Offline-Tests).
+
+$\bar{T}=\frac{1}{|S|}\sum\limits_{s\in S}T_s$.
+
+\paragraph{Median der Bewertungen}
+Alle Bewertungen ($T_s$) werden sortiert. Falls $|S|$ ungerade ist, wird der Wert in der Mitte genommen. Falls $|S|$ gerade ist, wird der Mittelwert der beiden Werte in der Mitte berechnet. 
+
+\paragraph{Standardabweichung}
+Die Standardabweichung aller Bewertungen (hochgerechnet auf die maximale Bewertung des Offline-Tests).
+
+$SD = \sqrt{V(T)} = \sqrt{\frac{1}{|S| - 1}\sum\limits_{s\in S}(T_s - \bar{T})^2}$.
+
+\paragraph{Schiefe und W"olbung der Bewertungsverteilung}
+
+Die Schiefe der Bewertungsverteilung (engl. skewness) beschreibt die "`Neigungsst"arke'' der statistischen Verteilung der Bewertungen. Sie zeigt an, ob und wie stark die Verteilung nach rechts (positive Schiefe) oder nach links (negative Schiefe) geneigt ist.
+Die W"olbung (engl. kurtosis) ist eine Ma"szahl f"ur die Steilheit bzw. "`Spitzigkeit'' der statistischen Verteilung der Bewertungen. Verteilungen mit geringer W"olbung streuen relativ gleichm"a"sig. Bei Verteilungen mit hoher W"olbung resultiert die Streuung mehr aus extremen, aber seltenen Ereignissen.
+
+Wir berechnen zuerst:
+
+$m_2=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^2}$
+
+$m_3=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^3}$
+
+$m_4=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^4}$\\
+
+Dann berechnen wir:\\
+
+$k_2 = \frac{|S|}{|S| - 1}m_2 = V(T)$
+
+$k_3 = \frac{|S|^2}{(|S|-1)(|S|-2)} m_3$
+
+$k_4 = \frac{|S|^2}{(|S|-1)(|S|-2)(|S|-3)}\left((|S|+1)m_4-3(|S|-1)m_2^2\right)$\\
+
+Dann ist die Schiefe der Bewertungsverteilung:\\
+
+ $Skewness = \frac{k_3}{k_2^(3/2)}$\\
+
+und die W"olbung der Bewertungsverteilung:\\
+
+ $Kurtosis = \frac{k_4}{k_2^2}$
+
+
+\paragraph{Koeffizient interner Konsistenz (Cronbachs Alpha)}
+Der Koeffizient interner Konsistenz (Cronbachs Alpha, oder Alpha) ist eine nach Lee Cronbach benannte Ma"szahl f"ur die interne Konsistenz einer Skala und bezeichnet das Ausma"s, in dem die Aufgaben bzw. Fragen einer Skala miteinander in Beziehung stehen (engl. interrelatedness). Es ist hingegen kein Ma"s f"ur die Homogenit"at oder Eindimensionalit"at einer Skala. Wir berechnen den Koeffizienten interner Konsistenz (CIC) wiefolgt:
+
+$CIC=\frac{|I|}{|I|-1}\left(1-\frac{1}{V(T)}\sum\limits_{i\in I}V(x_i)\right)$.
+
+\paragraph{Fehlerquotient (Error Ratio) und Standardfehler}
+Diese Werte geben Auskunft "uber die Zuverl"assigkeit der Testergebnisse.
+Wir nehmen an, dass das Ergebnis, das eine Studentin bei einem Test erzielt hat eine Kombination von
+tats"achlichem K"onnen und von Zufallsfehlern ist (wieviel Gl"uck hatte die Studentin). Der Standardfehler ist dann eine Sch"atzung des Gl"ucksanteils.
+Wenn der Standardfehler also z.B. ungef"ahr 10 ist und die Studentin 60 Punkte erreich hat, dann kann man annehmen, dass das eigentliche K"onnen zwischen
+50 und 70 Punkten liegt.\\
+    
+Der Fehlerquotient (als Prozentwert) wird berechnet als:
+
+$ER=100*\sqrt{1-CIC}$.
+
+Der Standardfehler wird wiefolgt berechnet:
+
+$SE=\frac{ER}{100}SD$
+
+
+%%=======================================================
+\subsection{Fragenanalyse}
+\label{subsubsec:questions}
+
+\paragraph{Leichtigkeits-Index}
+Der Leichtigkeits-Index (engl. facility index) beschreibt, wie leicht bzw. schwer eine Frage f"ur die Studierenden war. 
+Haben z.B. zwei Studierende ein Item $i$ beantwortet, wobei ein Studierender $50\%$ und der andere $100\%$ der Punkte erreicht hat, dann betr"agt der Leichtigkeits-Index $75\%$. Der Leichtigkeits-Index wird also prozentual ausgedr"uckt:
+
+$F_i = 100\cdot\frac{\bar{x}_i - x_i(min)}{x_i(max) - x_i(min)}$. 
+
+\paragraph{Standardabweichung}
+Die Standardabweichung einer Frage ist ein Ma"s f"ur die Streuung der erreichten Bewertungen f"ur diese Frage um die durchschnittliche Bewertung. 
+
+$SD_i = \frac{\sqrt{V(x_i)}}{x_i(max) - x_i(min)}$.
+
+\paragraph{Beabsichtigte Gewichtung}
+Gibt die Gewichtung der Frage im Test an, d.h. wieviel Prozent die Frage Gesamtergebnis beisteuert:
+
+$IQW_p = 100\frac{x_p(max) - x_p(min)}{T_{max} - T_{min}}$.\\
+
+\paragraph{Effektive Gewichtung}
+
+Die effektive Gewichtung ist ein Schätzung für den Anteil einer Frage an der Varianz der erreichten Bewertungen.
+
+$EQW_p = 100\frac{\sqrt{C(x_p, T)}}{\sum_{p \in P}\sqrt{C(x_p, T)}}.$\\
+
+\paragraph{Discrimination Index}
+Der Korrelations-Koeffizient zwischen $x_i$ and $X_i$ prozentual ausgedr"uckt:
+
+$D_i= \frac{C(x_i, X_i)}{\sqrt{V(x_i)V(X_i)}}$.
+
+
+\ \\
+
+%%=======================================================
+\subsection{Definitionen}
+\label{subsubsec:definitions}
+\begin{itemize}
+\item $S$ ist die Menge der Studenten f"ur die ein Ergebnis existiert. $|S|$ ist die Anzahl der Elemente in $S$.
+\item $I_s$ ist die Menge der Items (Fragen), die von den Studierenden $s\in S$ in einem Offline-Test beantwortet wurden.
+\item $S_i$ ist die Menge der Studierenden, die das Item (die Frage) $i$ beantwortet haben.
+\item $x_i(s)$ ist das Ergebnis, den der Studierende $s$ f"ur $i$ erreicht hat.
+\item $T_s = \sum\limits_{i\in I_s} x_i(s)$ ist das komplette Ergebnis f"ur den Studierenden $s\in S$ hochgerechnet auf die maximale Bewertung des Offline-Tests.
+\item $x_i(max)$ ist die maximale Bewertung f"ur Item $i$ hochgerechnet auf die maximale Bewertung des Offline-Tests. 
+\item $x_i(min)$ ist die minimale Bewertung f"ur Item $i$ hochgerechnet auf die maximale Bewertung des Offline-Tests. 
+\item $T_{max}=\sum\limits_{i\in I} x_i(max)$ ist die maximale Bewertung f"ur den Offline-Test.
+\item $X_i(s) = T_s - x_i(s)$ ist die restliche Bewertung f"ur einen Studierenden $s$ und ein Item $i$.
+\item $\bar{x}_i = \frac{1}{|S_i|}\sum\limits_{s\in S_i}x_i(s)$ ist die durchschnittliche Bewertung f"ur Item $i$ "uber alle Studierende. Analog f"ur andere Werte.
+\end{itemize}
+
+Wir nehmen an, dass mindestens zwei Studierende das Item $i$ beantwortet haben, d.h. $|S_i| > 1$.
+Dann sind:
+\begin{itemize}
+\item $V(x_i) = \frac{1}{|S_i| - 1}\sum\limits_{s\in S_i} (x_i(s) - \bar{x}_i)^2$ die Varianz der Bewertung f"ur Item $i$, und
+\item $C(x_i, X_i) = \frac{1}{|S_i| - 1}\sum\limits_{s\in S_i}(x_i(s) - \bar{x}_i)(X_i(s) - \bar{X}_i)$ die Kovarianz von $x_i$ und $X_i$.
+\end{itemize}
+
+\ \\
+\end{document}
+
+%% 
+%% End of file `statistics_help_de.tex'.

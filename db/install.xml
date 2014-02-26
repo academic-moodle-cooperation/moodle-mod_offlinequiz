@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/offlinequiz/db" VERSION="20131125" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="offlinequiz" COMMENT="Main information about each offlinequiz">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="pdfintro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="numgroups" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="2" SEQUENCE="false"/>
+        <FIELD NAME="decimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="2" SEQUENCE="false"/>
+        <FIELD NAME="review" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="questionsperpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="docscreated" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 iff the documents (question and answer sheets) have been created for an offline quiz."/>
+        <FIELD NAME="shufflequestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="papergray" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="650" SEQUENCE="false"/>
+        <FIELD NAME="fontsize" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="10" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="fileformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="showgrades" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="showtutorial" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for offlinequiz"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="offlinequiz_groups" COMMENT="Groups in offline quizzes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The offline quiz the group belongs to"/>
+        <FIELD NAME="number" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The number of the group (1...n)."/>
+        <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The sum of all grades of question instances in an offlineequiz group."/>
+        <FIELD NAME="numberofpages" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The number of pages of the answer document for a group."/>
+        <FIELD NAME="templateusageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Link to the group's template question usage in the question engine."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="offlinequizid" UNIQUE="false" FIELDS="offlinequizid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="offlinequiz_group_questions" COMMENT="The questions of an offlinequiz group">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Link to the offlinequiz."/>
+        <FIELD NAME="offlinegroupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The offlinequiz group the question belongs to."/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the question in the question base."/>
+        <FIELD NAME="position" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Position of the question in the question list (1...n)."/>
+        <FIELD NAME="pagenumber" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Number of the page of the answer document where the answers to this question will be found. The field will be filled when the answer documents are created."/>
+        <FIELD NAME="usageslot" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The slot of the question in the template usage of the group. This will be filled when after the usage template has been created."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="offlinequiz" UNIQUE="false" FIELDS="offlinequizid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="offlinequiz_q_instances" COMMENT="The questions instances of offlinequizzes.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the offlinequiz."/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="offlinequiz_scanned_pages" COMMENT="The pages of answer documents scanned by a teacher.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The offlinequiz the page belongs to."/>
+        <FIELD NAME="resultid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The result this page contributed to."/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="The file of the scanned page."/>
+        <FIELD NAME="warningfilename" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="ID of a warning file iff created by the teacher."/>
+        <FIELD NAME="groupnumber" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The (incomplete) number of the group (1...n)."/>
+        <FIELD NAME="userkey" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="(Incomplete) username of the user the scanned page belongs to."/>
+        <FIELD NAME="pagenumber" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The (incomplete) number of the page."/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The latest point in time the page was evaluated or modified."/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The status of the scanned page ( 'error', 'ok', 'submitted')."/>
+        <FIELD NAME="error" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The errorcode (in case status is 'error') as Moodle language string identifiers (insecuremarkings, unknownuser, unknowngroup, unkownusername, etc)."/>
+        <FIELD NAME="info" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Info text, e.g. the filename if a file could not be read at all."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="offlinequizid" UNIQUE="false" FIELDS="offlinequizid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="offlinequiz_choices" COMMENT="The choices made by users on scanned pages.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scannedpageid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The scanned page the choice belongs to."/>
+        <FIELD NAME="slotnumber" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="The group question the answer belongs to"/>
+        <FIELD NAME="choicenumber" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="The number of the choice  (1...n), i.e. the number of the answer, the choice belongs to."/>
+        <FIELD NAME="value" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="The choice made by the user (1 for 'marked', 0 for 'empty', -1 for 'unknown')."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="scannedpageid" UNIQUE="false" FIELDS="scannedpageid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="offlinequiz_page_corners" COMMENT="Contains the four corners for every page in offlinequiz_scanned_pages.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scannedpageid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the scanned page the corners belong to."/>
+        <FIELD NAME="x" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The x coordinate of the corner."/>
+        <FIELD NAME="y" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The y coordinate of the corner."/>
+        <FIELD NAME="position" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="The position of the corner (1 -&amp;gt;topleft, 2-&amp;gt;topright, 3-&amp;gt;bottomleft, 4-&amp;gt;bottomright)."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="offlinequiz_results" COMMENT="(Incomplete) results of students for an offlinequiz. Will be filled while answer documents are evaluated.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The offlinequiz the result belongs to."/>
+        <FIELD NAME="offlinegroupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The offlinequiz group the result belongs to."/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the user the result belongs to."/>
+        <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The sum of grades achieved in the attempt that led to a result."/>
+        <FIELD NAME="usageid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The question engine usage the result belongs to."/>
+        <FIELD NAME="teacherid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the teacher that evaluted the answer documents."/>
+        <FIELD NAME="attendant" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Whether the user was attendant or not, depending on the use of list of participants ('yes', 'no', 'scanonly')."/>
+        <FIELD NAME="status" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The status of the result ('complete', 'partial')."/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the result was created."/>
+        <FIELD NAME="timefinish" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The time the result was created. Just for code compatibility."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the result was modified."/>
+        <FIELD NAME="preview" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="preview mode."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="offlinequiz_userid_idx" UNIQUE="false" FIELDS="userid" COMMENT="Index on User ID for faster loading of results overview."/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="offlinequiz_p_lists" COMMENT="Lists for participants">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="number" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The number of the list."/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the PDF file in the files table."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="offlinequizid" UNIQUE="false" FIELDS="offlinequizid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="offlinequiz_participants" COMMENT="Checklist for the participants of an offline quiz">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="listid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="checked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="listid" UNIQUE="false" FIELDS="listid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="offlinequiz_scanned_p_pages" COMMENT="Stores information about scanned participants-list-pages.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the offlinequiz the page belongs to."/>
+        <FIELD NAME="listnumber" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The number of the list"/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="The ID of the image file in the files table."/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the page was scanned."/>
+        <FIELD NAME="status" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The status of the page."/>
+        <FIELD NAME="error" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The error of the page if status == error"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="offlinequiz_p_choices" COMMENT="The table contains the choices made on scanned lists of participants.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scannedppageid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the corresponding page in offlinequiz_scanned_p_pages."/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The ID of the user as recognised from the bar code."/>
+        <FIELD NAME="value" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The value of the  choice (1, 0, -1). -1 stands for insecure markings."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="offlinequiz_queue" COMMENT="list of cron jobs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="offlinequizid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The ID of the offlinequiz the job belongs to."/>
+        <FIELD NAME="importuserid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The ID of the user that imported the files of a job."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the job has been submitted."/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The status of a queue job ('new', 'processing', 'finished')."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="offlinequiz_queue_data" COMMENT="import data for cron jobs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="queueid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The ID of the queue job an entry belongs to."/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The status of a file ('new', 'ok', 'error'). In case of 'error', the error field contains the error message."/>
+        <FIELD NAME="error" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The error message (get_string label) in case the status is 'error'."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="offlinequiz_attempts" COMMENT="Stores various attempts on a offlinequiz">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="uniqueid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="offlinequiz" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="attempt" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="sumgrades" TYPE="float" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="layout" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sheet" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="preview" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for offlinequiz_attempts"/>
+        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_attempts" REFFIELDS="id"/>
+        <KEY NAME="offlinequiz" TYPE="foreign" FIELDS="offlinequiz" REFTABLE="offlinequiz" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="offlinequiz_reports" COMMENT="Lists all the installed offlinequiz reports and their display order and so on. No need to worry about deleting old records. Only records with an equivalent directory are displayed.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="name of the report, same as the directory name"/>
+        <FIELD NAME="displayorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="display order for report tabs"/>
+        <FIELD NAME="lastcron" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="timestamp when cron was last run for this report."/>
+        <FIELD NAME="cron" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 if there is no cron for this report (default) or the time between crons otherwise."/>
+        <FIELD NAME="capability" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Capability required to see this report. May be blank which means use the default of mod/quiz:viewreport. This is used when deciding which tabs to render."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name" UNIQUE="true" FIELDS="name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="offlinequiz_hotspots" COMMENT="Table to store the hotspots of scanned_pages for retrieval in correct.php.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scannedpageid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the scanned page."/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The key of the hotspot as defined in scanner.php"/>
+        <FIELD NAME="x" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="2" COMMENT="The x coordinate."/>
+        <FIELD NAME="y" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="2" COMMENT="The y-coordinate."/>
+        <FIELD NAME="blank" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether it is a blank hotspot."/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the data was stored. Needed for cleanup operation."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="scannedpageididx" UNIQUE="false" FIELDS="scannedpageid" COMMENT="Index on scannedpageid column."/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -1,0 +1,106 @@
+<script type="text/javascript">
+//<![CDATA[
+var userSummaries = Array(
+<?php
+$membercnt = count($potentialmembers);
+$i=1;
+foreach ($potentialmembers as $userid => $potentalmember) {
+
+    if (isset($usergroups[$userid])) {
+        $usergrouplist = '<ul>';
+
+        foreach ($usergroups[$userid] as $groupitem) {
+            $usergrouplist .= '<li>'.addslashes_js(format_string($groupitem->name)).'</li>';
+        }
+        $usergrouplist .= '</ul>';
+    }
+    else {
+        $usergrouplist = '';
+    }
+    echo "'$usergrouplist'";
+    if ($i < $membercnt) {
+        echo ', ';
+    }
+    $i++;
+}
+?>
+);
+//]]>
+</script>
+
+<div id="addmembersform">
+    <form id="assignform" method="post" action="participants.php">
+    <div>
+    <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
+    <input type="hidden" name="q" value="<?php echo $offlinequiz->id; ?>" />
+
+    <table cellpadding="6" class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">
+    <tr>
+    <td valign="top">
+         <label for="list"><?php p($strpreview) ?>:&nbsp;</label><br />
+         <select name="listid" id="listselect" style="width:15em" onChange="document.getElementById('assignform').submit();">
+          <?php  echo $listoptions ?>
+         </select>
+    </td>
+    <td></td>
+    <td valign="top">
+         <label for="group"><?php print_string('group') ?>:&nbsp;</label>
+         <select name="group" id="group" style="width:15em" onChange="document.getElementById('assignform').submit();">
+              <option value="0"><?php print_string('allgroups') ?></option>
+              <?php  echo $groupoptions ?>
+         </select><br />
+         <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
+         <input type="text" name="searchtext" id="searchtext" size="21" value="<?php p($searchtext, true) ?>" style="width:16em"
+                  onfocus ="getElementById('assignform').add.disabled=true;
+                            getElementById('assignform').remove.disabled=true;
+                            getElementById('assignform').removeselect.selectedIndex=-1;
+                            getElementById('assignform').addselect.selectedIndex=-1;"
+                  onkeydown = "var keyCode = event.which ? event.which : event.keyCode;
+                               if (keyCode == 13) {
+                                    getElementById('assignform').previoussearch.value=1;
+                                    getElementById('assignform').submit();
+                               } " />
+         <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
+    </td>
+    <tr>
+      <td valign="top">
+          <p>
+            <label for="removeselect"><?php print_string('existingmembers', 'group', $memberscount); //count($contextusers) ?></label>
+          </p>
+          <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
+                  onfocus="document.getElementById('assignform').add.disabled=true;
+                           document.getElementById('assignform').remove.disabled=false;
+                           document.getElementById('assignform').addselect.selectedIndex=-1;"
+                  onclick="this.focus();">
+          <?php echo $membersoptions ?>
+          </select></td>
+      <td valign="top">
+        <p class="arrow_button">
+            <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
+            <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>" title="<?php print_string('remove'); ?>" />
+        </p>
+      </td>
+      <td valign="top">
+          <p>
+            <label for="addselect"><?php print_string('potentialmembers', 'group', $potentialmemberscount); //$usercount ?></label>
+          </p>
+          <select name="addselect[]" size="20" id="addselect" multiple="multiple"
+                  onfocus="document.getElementById('assignform').add.disabled=false;
+                           document.getElementById('assignform').remove.disabled=true;
+                           document.getElementById('assignform').removeselect.selectedIndex=-1;"
+                  onclick="this.focus();">
+          <?php
+            if ($potentialmemberscount > MAX_USERS_PER_PAGE) {
+                echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
+                        .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
+            } else {
+                echo $potentialmembersoptions;
+            }
+          ?>
+         </select>
+       </td>
+    </tr>
+    </table>
+    </div>
+    </form>
+</div>

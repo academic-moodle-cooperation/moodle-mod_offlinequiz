@@ -1,0 +1,529 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>statistics_help_de</TITLE>
+<META NAME="description" CONTENT="statistics_help_de">
+<META NAME="keywords" CONTENT="statistics_help_de">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="statistics_help.css">
+
+</HEAD>
+
+<BODY >
+
+<P>
+
+<H2><A NAME="SECTION00001000000000000000">
+Informationen zu Offline-Tests Statistiken</A>
+</H2>
+
+<P>
+<A HREF="#subsubsec:overview">&#220;bersicht</A> 
+<BR><A HREF="#subsubsec:questions">Fragenanalyse</A> 
+<BR><A HREF="#subsubsec:definitions">Definitionen</A>
+
+<P>
+
+<H2><A NAME="SECTION00002000000000000000"></A>
+<A NAME="subsubsec:overview"></A>
+<BR>
+&#220;bersicht
+</H2>
+
+<P>
+Wir nehmen an, dass f&#252;r mindestens einen Studierenden ein Ergebnis existiert, d.h. <SPAN CLASS="MATH"><IMG
+ WIDTH="51" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$\vert S\vert&gt;1$"></SPAN>.
+
+<P>
+
+<H4><A NAME="SECTION00002010000000000000">
+Gesamtzahl an vollständig bewerteten Ergebnissen</A>
+</H4>
+Anzahl an ausgewertetn Ergebnissen.
+
+<P>
+
+<H4><A NAME="SECTION00002020000000000000">
+Maximal mögliche Bewertung</A>
+</H4>
+Maximale Punktezahl, die ein(e) TeilnehmerIn erreichen kann.
+
+<P>
+
+<H4><A NAME="SECTION00002030000000000000">
+Höchste/Niedrigste erreichte Bewertung</A>
+</H4>
+Höchste bzw. niedrigste erreiche Bewertung die von TeilnehmerInnen erreicht wurden.
+
+<P>
+
+<H4><A NAME="SECTION00002040000000000000">
+Durchschnittliche erreichte Bewertung</A>
+</H4>
+Wir berechnen den Durchschnitt aller Bewertungen (hochgerechnet auf die maximale Bewertung des Offline-Tests).
+
+<P>
+<!-- MATH
+ $\bar{T}=\frac{1}{|S|}\sum\limits_{s\in S}T_s$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="92" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$\bar{T}=\frac{1}{\vert S\vert}\sum\limits_{s\in S}T_s$"></SPAN>.
+
+<P>
+
+<H4><A NAME="SECTION00002050000000000000">
+Median der Bewertungen</A>
+</H4>
+Alle Bewertungen (<SPAN CLASS="MATH"><IMG
+ WIDTH="18" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img3.png"
+ ALT="$T_s$"></SPAN>) werden sortiert. Falls <SPAN CLASS="MATH"><IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$\vert S\vert$"></SPAN> ungerade ist, wird der Wert in der Mitte genommen. Falls <SPAN CLASS="MATH"><IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$\vert S\vert$"></SPAN> gerade ist, wird der Mittelwert der beiden Werte in der Mitte berechnet. 
+
+<P>
+
+<H4><A NAME="SECTION00002060000000000000">
+Standardabweichung</A>
+</H4>
+Die Standardabweichung aller Bewertungen (hochgerechnet auf die maximale Bewertung des Offline-Tests).
+
+<P>
+<!-- MATH
+ $SD = \sqrt{V(T)} = \sqrt{\frac{1}{|S| - 1}\sum\limits_{s\in S}(T_s - \bar{T})^2}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="245" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$SD = \sqrt{V(T)} = \sqrt{\frac{1}{\vert S\vert - 1}\sum\limits_{s\in S}(T_s - \bar{T})^2}$"></SPAN>.
+
+<P>
+
+<H4><A NAME="SECTION00002070000000000000">
+Schiefe und W&#246;lbung der Bewertungsverteilung</A>
+</H4>
+
+<P>
+Die Schiefe der Bewertungsverteilung (engl. skewness) beschreibt die ,,Neigungsst&#228;rke'' der statistischen Verteilung der Bewertungen. Sie zeigt an, ob und wie stark die Verteilung nach rechts (positive Schiefe) oder nach links (negative Schiefe) geneigt ist.
+Die W&#246;lbung (engl. kurtosis) ist eine Ma&#223;zahl f&#252;r die Steilheit bzw. ,,Spitzigkeit'' der statistischen Verteilung der Bewertungen. Verteilungen mit geringer W&#246;lbung streuen relativ gleichm&#228;&#223;ig. Bei Verteilungen mit hoher W&#246;lbung resultiert die Streuung mehr aus extremen, aber seltenen Ereignissen.
+
+<P>
+Wir berechnen zuerst:
+
+<P>
+<!-- MATH
+ $m_2=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^2}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="148" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img6.png"
+ ALT="$m_2=\frac{1}{\vert S\vert}\sum\limits_{s\in S}{(T_s - \bar{T})^2}$"></SPAN>
+
+<P>
+<!-- MATH
+ $m_3=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^3}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="148" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$m_3=\frac{1}{\vert S\vert}\sum\limits_{s\in S}{(T_s - \bar{T})^3}$"></SPAN>
+
+<P>
+<!-- MATH
+ $m_4=\frac{1}{|S|}\sum\limits_{s\in S}{(T_s - \bar{T})^4}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="148" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img8.png"
+ ALT="$m_4=\frac{1}{\vert S\vert}\sum\limits_{s\in S}{(T_s - \bar{T})^4}$"></SPAN>
+<BR>
+<P>
+Dann berechnen wir:
+<BR>
+<P>
+<!-- MATH
+ $k_2 = \frac{|S|}{|S| - 1}m_2 = V(T)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="144" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img9.png"
+ ALT="$k_2 = \frac{\vert S\vert}{\vert S\vert - 1}m_2 = V(T)$"></SPAN>
+
+<P>
+<!-- MATH
+ $k_3 = \frac{|S|^2}{(|S|-1)(|S|-2)} m_3$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="133" HEIGHT="39" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.png"
+ ALT="$k_3 = \frac{\vert S\vert^2}{(\vert S\vert-1)(\vert S\vert-2)} m_3$"></SPAN>
+
+<P>
+<!-- MATH
+ $k_4 = \frac{|S|^2}{(|S|-1)(|S|-2)(|S|-3)}\left((|S|+1)m_4-3(|S|-1)m_2^2\right)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="345" HEIGHT="39" ALIGN="MIDDLE" BORDER="0"
+ SRC="img11.png"
+ ALT="$k_4 = \frac{\vert S\vert^2}{(\vert S\vert-1)(\vert S\vert-2)(\vert S\vert-3)}\left((\vert S\vert+1)m_4-3(\vert S\vert-1)m_2^2\right)$"></SPAN>
+<BR>
+<P>
+Dann ist die Schiefe der Bewertungsverteilung:
+<BR>
+<P>
+<!-- MATH
+ $Skewness = \frac{k_3}{k_2^(3/2)}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="127" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ SRC="img12.png"
+ ALT="$Skewness = \frac{k_3}{k_2^(3/2)}$"></SPAN>
+<BR>
+<P>
+und die W&#246;lbung der Bewertungsverteilung:
+<BR>
+<P>
+<!-- MATH
+ $Kurtosis = \frac{k_4}{k_2^2}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="101" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ SRC="img13.png"
+ ALT="$Kurtosis = \frac{k_4}{k_2^2}$"></SPAN>
+
+<P>
+
+<H4><A NAME="SECTION00002080000000000000">
+Koeffizient interner Konsistenz (Cronbachs Alpha)</A>
+</H4>
+Der Koeffizient interner Konsistenz (Cronbachs Alpha, oder Alpha) ist eine nach Lee Cronbach benannte Ma&#223;zahl f&#252;r die interne Konsistenz einer Skala und bezeichnet das Ausma&#223;, in dem die Aufgaben bzw. Fragen einer Skala miteinander in Beziehung stehen (engl. interrelatedness). Es ist hingegen kein Ma&#223; f&#252;r die Homogenit&#228;t oder Eindimensionalit&#228;t einer Skala. Wir berechnen den Koeffizienten interner Konsistenz (CIC) wiefolgt:
+
+<P>
+<!-- MATH
+ $CIC=\frac{|I|}{|I|-1}\left(1-\frac{1}{V(T)}\sum\limits_{i\in I}V(x_i)\right)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="223" HEIGHT="53" ALIGN="MIDDLE" BORDER="0"
+ SRC="img14.png"
+ ALT="$CIC=\frac{\vert I\vert}{\vert I\vert-1}\left(1-\frac{1}{V(T)}\sum\limits_{i\in I}V(x_i)\right)$"></SPAN>.
+
+<P>
+
+<H4><A NAME="SECTION00002090000000000000">
+Fehlerquotient (Error Ratio) und Standardfehler</A>
+</H4>
+Diese Werte geben Auskunft &#252;ber die Zuverl&#228;ssigkeit der Testergebnisse.
+Wir nehmen an, dass das Ergebnis, das eine Studentin bei einem Test erzielt hat eine Kombination von
+tats&#228;chlichem K&#246;nnen und von Zufallsfehlern ist (wieviel Gl&#252;ck hatte die Studentin). Der Standardfehler ist dann eine Sch&#228;tzung des Gl&#252;cksanteils.
+Wenn der Standardfehler also z.B. ungef&#228;hr 10 ist und die Studentin 60 Punkte erreich hat, dann kann man annehmen, dass das eigentliche K&#246;nnen zwischen
+50 und 70 Punkten liegt.
+<BR>
+<P>
+Der Fehlerquotient (als Prozentwert) wird berechnet als:
+
+<P>
+<!-- MATH
+ $ER=100*\sqrt{1-CIC}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="158" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img15.png"
+ ALT="$ER=100*\sqrt{1-CIC}$"></SPAN>.
+
+<P>
+Der Standardfehler wird wiefolgt berechnet:
+
+<P>
+<!-- MATH
+ $SE=\frac{ER}{100}SD$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="90" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ SRC="img16.png"
+ ALT="$SE=\frac{ER}{100}SD$"></SPAN>
+
+<P>
+
+<H2><A NAME="SECTION00003000000000000000"></A>
+<A NAME="subsubsec:questions"></A>
+<BR>
+Fragenanalyse
+</H2>
+
+<P>
+
+<H4><A NAME="SECTION00003010000000000000">
+Leichtigkeits-Index</A>
+</H4>
+Der Leichtigkeits-Index (engl. facility index) beschreibt, wie leicht bzw. schwer eine Frage f&#252;r die Studierenden war. 
+Haben z.B. zwei Studierende ein Item <SPAN CLASS="MATH"><IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="$i$"></SPAN> beantwortet, wobei ein Studierender <SPAN CLASS="MATH"><IMG
+ WIDTH="32" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img18.png"
+ ALT="$50\%$"></SPAN> und der andere <SPAN CLASS="MATH"><IMG
+ WIDTH="39" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img19.png"
+ ALT="$100\%$"></SPAN> der Punkte erreicht hat, dann betr&#228;gt der Leichtigkeits-Index <SPAN CLASS="MATH"><IMG
+ WIDTH="32" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img20.png"
+ ALT="$75\%$"></SPAN>. Der Leichtigkeits-Index wird also prozentual ausgedr&#252;ckt:
+
+<P>
+<!-- MATH
+ $F_i = 100\cdot\frac{\bar{x}_i - x_i(min)}{x_i(max) - x_i(min)}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="164" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img21.png"
+ ALT="$F_i = 100\cdot\frac{\bar{x}_i - x_i(min)}{x_i(max) - x_i(min)}$"></SPAN>. 
+
+<P>
+
+<H4><A NAME="SECTION00003020000000000000">
+Standardabweichung</A>
+</H4>
+Die Standardabweichung einer Frage ist ein Ma&#223; f&#252;r die Streuung der erreichten Bewertungen f&#252;r diese Frage um die durchschnittliche Bewertung. 
+
+<P>
+<!-- MATH
+ $SD_i = \frac{\sqrt{V(x_i)}}{x_i(max) - x_i(min)}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="143" HEIGHT="48" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$SD_i = \frac{\sqrt{V(x_i)}}{x_i(max) - x_i(min)}$"></SPAN>.
+
+<P>
+
+<H4><A NAME="SECTION00003030000000000000">
+Beabsichtigte Gewichtung</A>
+</H4>
+Gibt die Gewichtung der Frage im Test an, d.h. wieviel Prozent die Frage Gesamtergebnis beisteuert:
+
+<P>
+<!-- MATH
+ $IQW_p = 100\frac{x_p(max) - x_p(min)}{T_{max} - T_{min}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="183" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$IQW_p = 100\frac{x_p(max) - x_p(min)}{T_{max} - T_{min}}$"></SPAN>.
+<BR>
+<P>
+
+<H4><A NAME="SECTION00003040000000000000">
+Effektive Gewichtung</A>
+</H4>
+
+<P>
+Die effektive Gewichtung ist ein Schätzung für den Anteil einer Frage an der Varianz der erreichten Bewertungen.
+
+<P>
+<!-- MATH
+ $EQW_p = 100\frac{\sqrt{C(x_p, T)}}{\sum_{p \in P}\sqrt{C(x_p, T)}}.$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="188" HEIGHT="48" ALIGN="MIDDLE" BORDER="0"
+ SRC="img24.png"
+ ALT="$EQW_p = 100\frac{\sqrt{C(x_p, T)}}{\sum_{p \in P}\sqrt{C(x_p, T)}}.$"></SPAN>
+<BR>
+<P>
+
+<H4><A NAME="SECTION00003050000000000000">
+Discrimination Index</A>
+</H4>
+Der Korrelations-Koeffizient zwischen <SPAN CLASS="MATH"><IMG
+ WIDTH="17" HEIGHT="27" ALIGN="MIDDLE" BORDER="0"
+ SRC="img25.png"
+ ALT="$x_i$"></SPAN> and <SPAN CLASS="MATH"><IMG
+ WIDTH="21" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img26.png"
+ ALT="$X_i$"></SPAN> prozentual ausgedr&#252;ckt:
+
+<P>
+<!-- MATH
+ $D_i= \frac{C(x_i, X_i)}{\sqrt{V(x_i)V(X_i)}}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="116" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img27.png"
+ ALT="$D_i= \frac{C(x_i, X_i)}{\sqrt{V(x_i)V(X_i)}}$"></SPAN>.
+
+<P>
+ 
+<BR>
+<P>
+
+<H2><A NAME="SECTION00004000000000000000"></A>
+<A NAME="subsubsec:definitions"></A>
+<BR>
+Definitionen
+</H2>
+
+<UL>
+<LI><SPAN CLASS="MATH"><IMG
+ WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img28.png"
+ ALT="$S$"></SPAN> ist die Menge der Studenten f&#252;r die ein Ergebnis existiert. <SPAN CLASS="MATH"><IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$\vert S\vert$"></SPAN> ist die Anzahl der Elemente in <SPAN CLASS="MATH"><IMG
+ WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img28.png"
+ ALT="$S$"></SPAN>.
+</LI>
+<LI><SPAN CLASS="MATH"><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="$I_s$"></SPAN> ist die Menge der Items (Fragen), die von den Studierenden <SPAN CLASS="MATH"><IMG
+ WIDTH="40" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img30.png"
+ ALT="$s\in S$"></SPAN> in einem Offline-Test beantwortet wurden.
+</LI>
+<LI><SPAN CLASS="MATH"><IMG
+ WIDTH="17" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img31.png"
+ ALT="$S_i$"></SPAN> ist die Menge der Studierenden, die das Item (die Frage) <SPAN CLASS="MATH"><IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="$i$"></SPAN> beantwortet haben.
+</LI>
+<LI><SPAN CLASS="MATH"><IMG
+ WIDTH="36" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img32.png"
+ ALT="$x_i(s)$"></SPAN> ist das Ergebnis, den der Studierende <SPAN CLASS="MATH"><IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img33.png"
+ ALT="$s$"></SPAN> f&#252;r <SPAN CLASS="MATH"><IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="$i$"></SPAN> erreicht hat.
+</LI>
+<LI><!-- MATH
+ $T_s = \sum\limits_{i\in I_s} x_i(s)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="95" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img34.png"
+ ALT="$T_s = \sum\limits_{i\in I_s} x_i(s)$"></SPAN> ist das komplette Ergebnis f&#252;r den Studierenden <SPAN CLASS="MATH"><IMG
+ WIDTH="40" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img30.png"
+ ALT="$s\in S$"></SPAN> hochgerechnet auf die maximale Bewertung des Offline-Tests.
+</LI>
+<LI><SPAN CLASS="MATH"><IMG
+ WIDTH="59" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img35.png"
+ ALT="$x_i(max)$"></SPAN> ist die maximale Bewertung f&#252;r Item <SPAN CLASS="MATH"><IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="$i$"></SPAN> hochgerechnet auf die maximale Bewertung des Offline-Tests. 
+</LI>
+<LI><SPAN CLASS="MATH"><IMG
+ WIDTH="56" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img36.png"
+ ALT="$x_i(min)$"></SPAN> ist die minimale Bewertung f&#252;r Item <SPAN CLASS="MATH"><IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="$i$"></SPAN> hochgerechnet auf die maximale Bewertung des Offline-Tests. 
+</LI>
+<LI><!-- MATH
+ $T_{max}=\sum\limits_{i\in I} x_i(max)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="130" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img37.png"
+ ALT="$T_{max}=\sum\limits_{i\in I} x_i(max)$"></SPAN> ist die maximale Bewertung f&#252;r den Offline-Test.
+</LI>
+<LI><!-- MATH
+ $X_i(s) = T_s - x_i(s)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="126" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img38.png"
+ ALT="$X_i(s) = T_s - x_i(s)$"></SPAN> ist die restliche Bewertung f&#252;r einen Studierenden <SPAN CLASS="MATH"><IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img33.png"
+ ALT="$s$"></SPAN> und ein Item <SPAN CLASS="MATH"><IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="$i$"></SPAN>.
+</LI>
+<LI><!-- MATH
+ $\bar{x}_i = \frac{1}{|S_i|}\sum\limits_{s\in S_i}x_i(s)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="118" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img39.png"
+ ALT="$\bar{x}_i = \frac{1}{\vert S_i\vert}\sum\limits_{s\in S_i}x_i(s)$"></SPAN> ist die durchschnittliche Bewertung f&#252;r Item <SPAN CLASS="MATH"><IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="$i$"></SPAN> &#252;ber alle Studierende. Analog f&#252;r andere Werte.
+</LI>
+</UL>
+
+<P>
+Wir nehmen an, dass mindestens zwei Studierende das Item <SPAN CLASS="MATH"><IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="$i$"></SPAN> beantwortet haben, d.h. <SPAN CLASS="MATH"><IMG
+ WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img40.png"
+ ALT="$\vert S_i\vert &gt; 1$"></SPAN>.
+Dann sind:
+
+<UL>
+<LI><!-- MATH
+ $V(x_i) = \frac{1}{|S_i| - 1}\sum\limits_{s\in S_i} (x_i(s) - \bar{x}_i)^2$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="204" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img41.png"
+ ALT="$V(x_i) = \frac{1}{\vert S_i\vert - 1}\sum\limits_{s\in S_i} (x_i(s) - \bar{x}_i)^2$"></SPAN> die Varianz der Bewertung f&#252;r Item <SPAN CLASS="MATH"><IMG
+ WIDTH="9" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="$i$"></SPAN>, und
+</LI>
+<LI><!-- MATH
+ $C(x_i, X_i) = \frac{1}{|S_i| - 1}\sum\limits_{s\in S_i}(x_i(s) - \bar{x}_i)(X_i(s) - \bar{X}_i)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="306" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img42.png"
+ ALT="$C(x_i, X_i) = \frac{1}{\vert S_i\vert - 1}\sum\limits_{s\in S_i}(x_i(s) - \bar{x}_i)(X_i(s) - \bar{X}_i)$"></SPAN> die Kovarianz von <SPAN CLASS="MATH"><IMG
+ WIDTH="17" HEIGHT="27" ALIGN="MIDDLE" BORDER="0"
+ SRC="img25.png"
+ ALT="$x_i$"></SPAN> und <SPAN CLASS="MATH"><IMG
+ WIDTH="21" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img26.png"
+ ALT="$X_i$"></SPAN>.
+</LI>
+</UL>
+
+<P>
+ 
+<BR>
+<BR>
+<HR>
+</BODY>
+</HTML>
