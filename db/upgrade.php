@@ -1091,5 +1091,5 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2013112500, 'offlinequiz');
     }
-    
+    return true;
 }
