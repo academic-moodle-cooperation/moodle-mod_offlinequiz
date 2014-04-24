@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.4
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -488,9 +488,8 @@ onClick=\"self.close(); return false;\"><br />";
     $scannedpage->userkey = null;
     $scannedpage->pagenumber = null;
     $scannedpage->groupnumber = null;
-    if (!$overwrite) {
-        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
-    }
+
+    $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
     $userkey = $scannedpage->userkey;
     $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
