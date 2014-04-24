@@ -367,7 +367,9 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
         $select = "SELECT " . $DB->sql_concat('u.id', "'#'", "IFNULL(qa.usageid, 0)") . " AS uniqueid,
         qa.id AS resultid, u.id, qa.usageid, qa.offlinegroupid, qa.status,
-        u.id AS userid, u.firstname, u.lastname, u.picture, u." .
+        u.id AS userid, u.firstname, u.lastname,
+        u.alternatename, u.middlename, u.firstnamephonetic, u.lastnamephonetic,
+        u.picture, u." .
         $offlinequizconfig->ID_field . ",
         qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ";
 

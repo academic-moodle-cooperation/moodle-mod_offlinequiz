@@ -99,22 +99,23 @@ $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 
 if (!$download) {
-    echo $OUTPUT->header();
 }
 
-// Only print headers and tabs if not asked to download data
-if (!$download) {
-    // Print the tabs
-    $currenttab = 'participants';
-    include('tabs.php');
-    echo $OUTPUT->heading(format_string($offlinequiz->name));
-}
 
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 
 switch($mode) {
     case 'editlists':
+        // Only print headers and tabs if not asked to download data
+        if (!$download && $action != 'savelist') {
+            echo $OUTPUT->header();
+            // Print the tabs
+            $currenttab = 'participants';
+            include('tabs.php');
+            echo $OUTPUT->heading(format_string($offlinequiz->name));
+        }
+        
         switch ($action) {
             case 'edit':
                 // Print the heading
@@ -212,6 +213,15 @@ switch($mode) {
                 $list = array_pop($lists);
             }
         }
+        // Only print headers and tabs if not asked to download data
+        if (!$download) {
+            echo $OUTPUT->header();
+            // Print the tabs
+            $currenttab = 'participants';
+            include('tabs.php');
+            echo $OUTPUT->heading(format_string($offlinequiz->name));
+        }
+        
         echo $OUTPUT->heading_with_help(get_string('participantsinlists', 'offlinequiz'), 'participants', 'offlinequiz');
         if (!empty($addselect) && confirm_sesskey()) {
             $record = new stdClass();
@@ -285,7 +295,8 @@ switch($mode) {
         list($rsql, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
         $params = array_merge($cparams, $rparams);
 
-        $sql = "SELECT DISTINCT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
+        $sql = "SELECT DISTINCT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname,
+                                u.alternatename, u.middlename, u.firstnamephonetic, u.lastnamephonetic
                   FROM {user} u, {offlinequiz_participants} p, {role_assignments} ra, {offlinequiz_p_lists} pl
                  WHERE ra.userid = u.id
                    AND p.listid = :listid
@@ -313,7 +324,8 @@ switch($mode) {
         $potentialmembersoptions = '';
         $memberlist = implode(',', $memberids);
 
-        $sql = "SELECT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
+        $sql = "SELECT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname,
+                       u.alternatename, u.middlename, u.firstnamephonetic, u.lastnamephonetic
                   FROM {user} u, {role_assignments} ra
                  WHERE ra.roleid $rsql
                    AND ra.userid = u.id
@@ -362,7 +374,13 @@ switch($mode) {
         include('participants/members.html');
         break;
     case 'attendances':
+        // Only print headers and tabs if not asked to download data
         if (!$download) {
+            echo $OUTPUT->header();
+            // Print the tabs
+            $currenttab = 'participants';
+            include('tabs.php');
+            echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading_with_help(get_string('attendances', 'offlinequiz'), 'participants', 'offlinequiz');
             if (!$lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), 'name ASC')) {
                 error('No list created for offlinequiz');
@@ -416,7 +434,15 @@ switch($mode) {
         if (!offlinequiz_partlist_created($offlinequiz)) {
             redirect('participants.php?q='.$offlinequiz->id, get_string('createlistfirst', 'offlinequiz'));
         }
-        echo $OUTPUT->heading_with_help(get_string('createpdfsparticipants', 'offlinequiz'), 'participants', 'offlinequiz');
+        // Only print headers and tabs if not asked to download data
+        if (!$download) {
+            echo $OUTPUT->header();
+            // Print the tabs
+            $currenttab = 'participants';
+            include('tabs.php');
+            echo $OUTPUT->heading(format_string($offlinequiz->name));
+            echo $OUTPUT->heading_with_help(get_string('createpdfsparticipants', 'offlinequiz'), 'participants', 'offlinequiz');
+        }
         // show update button
         ?>
 
@@ -497,7 +523,15 @@ switch($mode) {
             redirect('participants.php?mode=createpdf&amp;q='.$offlinequiz->id, get_string('createpdffirst', 'offlinequiz'));
         }
 
-        echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimport', 'offlinequiz');
+        // Only print headers and tabs if not asked to download data
+        if (!$download) {
+            echo $OUTPUT->header();
+            // Print the tabs
+            $currenttab = 'participants';
+            include('tabs.php');
+            echo $OUTPUT->heading(format_string($offlinequiz->name));
+            echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimport', 'offlinequiz');
+        }
         $report = new participants_report();
         $import_form = new offlinequiz_participants_upload_form($thispageurl);
 

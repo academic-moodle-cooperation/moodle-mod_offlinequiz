@@ -573,8 +573,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
     protected function render_question_text($question) {
         global $OUTPUT;
 
-        $text = question_rewrite_questiontext_preview_urls($question->questiontext,
-                $this->context->id, 'offlinequiz_statistics', $question->id);
+        $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                $question->contextid, 'question', 'questiontext', $question->id,
+                $this->context->id, 'quiz_statistics');
 
         return $OUTPUT->box(format_text($text, $question->questiontextformat,
                 array('noclean' => true, 'para' => false, 'overflowdiv' => true)),
@@ -589,14 +590,14 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         global $OUTPUT;
 
         if ($showimages) {
-            $text = question_rewrite_questiontext_preview_urls($question->questiontext,
-                    $this->context->id, 'offlinequiz_statistics', $question->id);
-            return '&nbsp;&nbsp;&nbsp;' . format_text($text, $question->questiontextformat,
-                    array('noclean' => true, 'para' => false, 'overflowdiv' => true));
+            $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                    $question->contextid, 'question', 'questiontext', $question->id,
+                    $this->context->id, 'quiz_statistics');
         } else {
-            return '&nbsp;&nbsp;&nbsp;' . format_text(html_to_text($question->questiontext), FORMAT_HTML,
-                    array('noclean' => true, 'para' => false, 'overflowdiv' => true));
+            $text = $question->questiontext;
         }
+        $questiontext = question_utils::to_plain_text($text, $question->questiontextformat, array('noclean' => true, 'para' => false, 'overflowdiv' => true));
+        return '&nbsp;&nbsp;&nbsp;' . $questiontext;
     }
     
     

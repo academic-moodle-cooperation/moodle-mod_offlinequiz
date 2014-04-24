@@ -1121,7 +1121,7 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
     // Add the list name to the title.
     $title .= ', '.offlinequiz_str_html_pdf($listname);
     $pdf->set_title($title);
-    $pdf->AliasNbPages();
+    // $pdf->AliasNbPages();
     $pdf->SetMargins(15, 25, 15);
     $pdf->SetAutoPageBreak(true, 20);
     $pdf->AddPage();
