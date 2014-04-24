@@ -1416,7 +1416,7 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
     if ($deletefiles) {
         return offlinequiz_delete_pdf_forms($offlinequiz);
     } else {
-        return true;
+        return offlinequiz;
     }
 }
 
