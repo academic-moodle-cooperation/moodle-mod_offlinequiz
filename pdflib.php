@@ -913,7 +913,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
         print_error('Too many answers in one question');
     }
     $pdf->userid = $USER->id;
-    $pdf->AliasNbPages();
+//    $pdf->AliasNbPages();
     $pdf->SetMargins(15, 20, 15);
     $pdf->SetAutoPageBreak(true, 20);
     $pdf->AddPage();
