@@ -643,6 +643,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     if ($question->maxgrade == 1) {
                         $pointstr = get_string('point', 'offlinequiz');
                     }
+                    // Indent the question grade like the answers.
                     $textrun = $section->createTextRun($level2);
                     $textrun->addText('(' . ($question->maxgrade + 0) . ' '. $pointstr .')', 'bStyle');
                 }
@@ -751,6 +752,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     if ($question->maxgrade == 1) {
                         $pointstr = get_string('point', 'offlinequiz');
                     }
+                    // Indent the question grade like the answers.
                     $textrun = $section->createTextRun($level2);
                     $textrun->addText('(' . ($question->maxgrade + 0) . ' '. $pointstr .')', 'bStyle');
                 }
