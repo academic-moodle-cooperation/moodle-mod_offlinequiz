@@ -57,8 +57,10 @@ function showStudentView() {
 	}
 	if (marks) {
 		imagefile1 = baseurl + '1';
-		imagefile1 = imagefile1 + "_marks"; 
-		imagefile2 = imagefile2 + "_marks"; 
+		imagefile1 = imagefile1 + "_marks";
+		if (imagefile2 != '') {
+			imagefile2 = imagefile2 + "_marks";
+		}
 	}
 	if (specificfeedback) {
 		imagefile2 = imagefile2 + "_specific";
