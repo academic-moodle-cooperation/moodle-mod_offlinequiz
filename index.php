@@ -73,17 +73,10 @@ $showclosingheader = false;
 $showfeedback = false;
 $therearesome = false; 
 foreach ($offlinequizzes as $offlinequiz) {
-    if ($offlinequiz->timeclose!=0) {
+    if ($offlinequiz->timeclose != 0) {
         $showclosingheader = true;
     }
-    $outoftime = false;
-    if ($offlinequiz->timeopen && $offlinequiz->timeopen > time()) {
-        $outoftime = true; 
-    }
-    if ($offlinequiz->timeclose && $offlinequiz->timeclose < time()) {
-        $outoftime = true;
-    }
-    if (!$outoftime) {
+    if ($offlinequiz->visible) {
         $therearesome = true;
     }
 }
