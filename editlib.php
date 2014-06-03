@@ -974,7 +974,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                     <form method="post" action="edit.php" class="offlinequizsavegradesform">
                     <div>
                     <fieldset class="invisiblefieldset" style="display: block;">
-                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>:<br />
+                    <label for="inputq' . $question->id . '">' . $strgrade . '</label>:<br />
                     <input type="hidden" name="sesskey"
                     value="' . sesskey() . '" />' . html_writer::input_hidden_params($pageurl) . '
                     <input type="hidden" name="savechanges" value="save" />
@@ -991,7 +991,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
 
                 } else if (!in_array($question->qtype, array('description', 'missingtype')) && $gradetool) {
                     echo '<div class="points">
-                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>
+                    <label for="inputq' . $question->id . '">' . $strgrade . '</label>
                     <input type="text" name="g' . $question->id .
                     '" id="inputq' . $question->id .
                     '" size="' . ($offlinequiz->decimalpoints + 2) .
