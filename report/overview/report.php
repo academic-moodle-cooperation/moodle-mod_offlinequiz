@@ -283,7 +283,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         } else if ($download=='CSV') {
             $filename .= ".csv";
 
-            header("Content-Type: application/download\n");
+            header("Content-Type: text/csv; charset=utf-8");
             header("Content-Disposition: attachment; filename=\"$filename\"");
             header("Expires: 0");
             header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
@@ -298,7 +298,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         } else if ($download == 'CSVplus1') {
             $filename .= ".csv";
 
-            header("Content-Type: application/download\n");
+            header("Content-Type: text/csv; charset=utf-8");
             header("Content-Disposition: attachment; filename=\"$filename\"");
             header("Expires: 0");
             header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
