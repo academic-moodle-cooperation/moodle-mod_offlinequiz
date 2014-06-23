@@ -556,7 +556,9 @@ a:hover
 #page-mod-offlinequiz-edit button, input.form-submit, input[type="button"], input[type="submit"], input[type="reset"] {
     margin: 0 0 10px 5px;
 }
-
+#page-mod-offlinequiz-edit label {
+	margin-bottom: 0px;
+}
 
 #page-mod-offlinequiz-createquiz div.answer img.texrender {
     vertical-align: middle;
