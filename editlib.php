@@ -991,7 +991,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
 
                 } else if (!in_array($question->qtype, array('description', 'missingtype')) && $gradetool) {
                     echo '<div class="points">
-                    <label for="inputq' . $question->id . '">' . $strgrade . '</label>
+                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>
                     <input type="text" name="g' . $question->id .
                     '" id="inputq' . $question->id .
                     '" size="' . ($offlinequiz->decimalpoints + 2) .
