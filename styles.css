@@ -554,7 +554,7 @@ a:hover
 	width: 12px;
 }
 #page-mod-offlinequiz-edit button, input.form-submit, input[type="button"], input[type="submit"], input[type="reset"] {
-    margin: 0 0 0 0;
+    margin: 0 0 10px 5px;
 }
 
 
