@@ -473,7 +473,9 @@ a:hover
 .ie6#page-mod-offlinequiz-edit .reorder .questioncontentcontainer .randomquestioncategory label{width: 35%;}
 .qnum label {padding-right: 0.25em;}
 
-
+#page-mod-offlinequiz-edit form#offlinequizquestions div.pagecontent div.qorder input {
+	width: 3em;
+}
 
 /** settings.php */
 #adminofflinequizreviewoptions {margin-bottom: 0.5em;}
