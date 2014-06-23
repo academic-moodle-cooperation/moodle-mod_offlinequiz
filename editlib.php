@@ -974,7 +974,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                     <form method="post" action="edit.php" class="offlinequizsavegradesform">
                     <div>
                     <fieldset class="invisiblefieldset" style="display: block;">
-                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label><br />
+                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>
                     <input type="hidden" name="sesskey"
                     value="' . sesskey() . '" />' . html_writer::input_hidden_params($pageurl) . '
                     <input type="hidden" name="savechanges" value="save" />
