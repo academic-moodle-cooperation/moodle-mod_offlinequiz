@@ -159,6 +159,7 @@ function offlinequiz_load_questions_usage_by_activity($qubaid) {
                    qa.variant,
                    qa.maxmark,
                    qa.minfraction,
+                   qa.maxfraction,
                    qa.flagged,
                    qa.questionsummary,
                    qa.rightanswer,
