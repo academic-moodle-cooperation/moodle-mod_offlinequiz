@@ -404,7 +404,7 @@ class offlinequiz_page_scanner {
                 }
                 pclose($handle);                                       // this is much faster then using php's imagick extension.
                 if (file_exists($newfile)) {
-                    unlink($file);
+//                   unlink($file);
                     $this->filename = $path_parts["filename"] . ".png";
                     $scannedpage->origfilename = $this->filename;
                     $this->sourcefile = $newfile;
@@ -431,7 +431,7 @@ class offlinequiz_page_scanner {
                 }
                 pclose($handle);
                 if (file_exists($newfile)) {
-                    unlink($file);
+//                    unlink($file);
                     $this->filename = $path_parts["filename"] . ".png";
                     $scannedpage->origfilename = $this->filename;
                     $this->sourcefile = $newfile;
@@ -478,9 +478,9 @@ class offlinequiz_page_scanner {
             $scannedpage->info = $this->filename;
         }
 
-        if (file_exists($file)) {
-            unlink($file);
-        }
+//         if (file_exists($file)) {
+//             unlink($file);
+//         }
         // if (file_exists($this->sourcefile))
         // unlink($this->sourcefile);
         return $scannedpage;
