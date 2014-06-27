@@ -199,7 +199,7 @@ $string['importfromto'] = 'Importing {$a->from} to {$a->to} of {$a->total}.';
 $string['import'] = 'Import';
 $string['import_help'] = '<p>
 You can import single scanned image files or several scanned image files in a ZIP-archive. The offline quiz module will process the image files in the background.
-File names are not relevant but should not contain special characters such as umlauts. Images should be JPGs, GIFs, PNGs
+File names are not relevant but should not contain special characters such as umlauts. Images should be GIFs, PNGs
 or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['importedon'] = 'Imported on';
 $string['importforms'] = 'Import answer forms';
@@ -355,7 +355,7 @@ Please avoid spots on the barcodes as they are used to identify the students.</p
 $string['partimport'] = 'Uploading lists of participants';
 $string['partimport_help'] = '<p>
 In this tab you can upload the filled-in lists of participants. You can upload single scanned image files or several scanned image files in a ZIP-archive. The offline quiz module will process the image files in the background.
-File names are not relevant but should not contain special characters such as umlauts. Images should be JPGs, GIFs, PNGs
+File names are not relevant but should not contain special characters such as umlauts. Images should be GIFs, PNGs
 or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['pdfdeletedforgroup'] = 'Form for group {$a} deleted';
 $string['pdfscreated'] = 'PDF forms have been created';
@@ -427,16 +427,18 @@ The text of the questions and answers will be shown to the students. They will s
 This option can only be activated if the option "The attempt" is activated. If activated, the students can see which of the chosen answers are correct (green background) or incorrect (red background).
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Marks</b></td><td>
-The grades (points) for the offline quiz will be shown. This option is only usefull if responses or scanned form are set.
+The group (e.g. B), scores (achieved grade, total grade for questions, achieved , e.g. 40/80 (50)) and the grade (e.g. 50 out of a maximum of 100) are displayed.
+Additionally, if "The attempt" is selected, the achieved score and the maximum score are shown for every question.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Right Answers</b></td><td>
-It is shown which answers are right or wrong. This option is only usefull if "The attempt" is set.
+It is shown which answers are correct or wrong. This option is only available if "The attempt" is set.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scanned form</b></td><td>
 The scanned answer forms are shown. Checked boxes are marked with green squares.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scanned form with grades</b></td><td>
-The scanned answer forms are shown. Checked boxes are marked with green squares. Wrong marks and missing marks are highlighted. A table with the grades is also shown. 
+The scanned answer forms are shown. Checked boxes are marked with green squares. Wrong marks and missing marks are highlighted. 
+Additionally, a table shows the maximum grade and the achieved grade for every question.
 </td></tr>
 </table>';
 

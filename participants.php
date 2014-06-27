@@ -520,7 +520,7 @@ switch($mode) {
         }
 
         if ($redirect) {
-            redirect('participants.php?mode=createpdf&amp;q='.$offlinequiz->id, get_string('createpdffirst', 'offlinequiz'));
+            redirect('participants.php?mode=createpdfs&amp;q=' . $offlinequiz->id, get_string('createpdffirst', 'offlinequiz'));
         }
 
         // Only print headers and tabs if not asked to download data
