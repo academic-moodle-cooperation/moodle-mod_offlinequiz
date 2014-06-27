@@ -256,7 +256,7 @@ function offlinequiz_convert_newline_docx($text) {
     // If the original text was only a newline, we don't have a first part.
     if (!empty($firstpart)) {
         if ($firstpart == '<br/>' || $firstpart == '<br />') {
-            $result = array('type' => 'newline');
+            $result = array(array('type' => 'newline'));
         } else {
             $result = offlinequiz_convert_bold_text_docx($firstpart);
         }
