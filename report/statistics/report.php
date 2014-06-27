@@ -786,7 +786,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
         // The statistics.
         foreach ($todisplay as $property => $format) {
-            if (!isset($offlinequizstats->$property) || empty($format[$property])) {
+            if (!isset($offlinequizstats->$property) || empty($format)) {
                 continue;
             }
             $value = $offlinequizstats->$property;
@@ -1369,7 +1369,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $questions, $subquestions, $offlinequiz->groupid);
             }
         }
-
         return array($offlinequizstats, $questions, $subquestions, $s);
     }
 
