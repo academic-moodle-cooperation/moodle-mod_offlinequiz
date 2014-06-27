@@ -284,7 +284,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     }
                     if ($offlinequiz->sumgrades == -1) {
                         echo $OUTPUT->notification('- ' . get_string('differentsumgrades', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
-                    } else if ($differentquestions) {
+                    } 
+                    if ($differentquestions) {
                         echo $OUTPUT->notification('- ' . get_string('differentquestions', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
                     }
                     if ($offlinequiz->sumgrades == -1 || $differentquestions) {
