@@ -142,13 +142,13 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 else {deselect_all_in(\'DIV\',null,\'tablecontainer\');}"/>', '', get_string('fullname'),
                 get_string($offlinequizconfig->ID_field), get_string('importedon', 'offlinequiz'), get_string('group'), get_string('grade', 'offlinequiz'));
 
+        $checked = array();
         // get participants list
         $withparticipants = false;
         if ($lists = $DB->get_records('offlinequiz_p_lists' , array('offlinequizid' => $offlinequiz->id))) {
             $withparticipants = true;
             $tablecolumns[] = 'checked';
             $tableheaders[] = get_string('present', 'offlinequiz');
-            $checked = array();
             foreach ($lists as $list) {
                 $participants = $DB->get_records('offlinequiz_participants', array('listid' => $list->id));
                 foreach ($participants as $participant) {
@@ -282,13 +282,14 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $rownum=1;
         } else if ($download=='CSV') {
             $filename .= ".csv";
-
+            header("Content-Encoding: UTF-8");
             header("Content-Type: text/csv; charset=utf-8");
             header("Content-Disposition: attachment; filename=\"$filename\"");
             header("Expires: 0");
             header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
             header("Pragma: public");
-
+            echo "\xEF\xBB\xBF"; // UTF-8 BOM
+            
             $headers = get_string($offlinequizconfig->ID_field) . ", " . get_string('fullname').", " .
                     get_string('importedon', 'offlinequiz') . ", ".get_string('group') . ", " . get_string('grade', 'offlinequiz');
             if (!empty($withparticipants)) {
@@ -297,12 +298,13 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             echo $headers." \n";
         } else if ($download == 'CSVplus1') {
             $filename .= ".csv";
-
+            header("Content-Encoding: UTF-8");
             header("Content-Type: text/csv; charset=utf-8");
             header("Content-Disposition: attachment; filename=\"$filename\"");
             header("Expires: 0");
             header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
             header("Pragma: public");
+            echo "\xEF\xBB\xBF"; // UTF-8 BOM
 
             // Print the table headers.
             echo get_string('firstname') . ',' . get_string('lastname') . ',' .
@@ -501,7 +503,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 } else {
                     $outputgrade = '-';
                 }
-                
+
                 if (!$download) {
                     if ($result->status == 'partial') {
                         $row[] = get_string('partial', 'offlinequiz');
@@ -518,7 +520,11 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 } else if ($download != 'CSVplus1') {
                     $row[] = $result->sumgrades === null ? '-' : $outputgrade;
                     if ($withparticipants) {
-                        $row[] = $checked[$result->userid] ?  get_string('ok') : '-';
+                        if (array_key_exists($result->userid, $checked)) {
+                            $row[] = $checked[$result->userid] ?  get_string('ok') : '-';
+                        } else {
+                            $row[] = '-';
+                        }
                     }
                 }
 
