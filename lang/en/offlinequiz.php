@@ -427,7 +427,7 @@ The text of the questions and answers will be shown to the students. They will s
 This option can only be activated if the option "The attempt" is activated. If activated, the students can see which of the chosen answers are correct (green background) or incorrect (red background).
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Marks</b></td><td>
-The group (e.g. B), scores (achieved grade, total grade for questions, achieved , e.g. 40/80 (50)) and the grade (e.g. 50 out of a maximum of 100) are displayed.
+The group (e.g. B), scores (achieved grade, total grade for questions, achieved in percent, e.g. 40/80 (50)) and the grade (e.g. 50 out of a maximum of 100) are displayed.
 Additionally, if "The attempt" is selected, the achieved score and the maximum score are shown for every question.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Right Answers</b></td><td>
