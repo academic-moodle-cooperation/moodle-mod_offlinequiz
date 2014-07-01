@@ -252,7 +252,9 @@ class offlinequiz_statistics_table extends flexible_table {
             return '';
         }
 
-        return format_float($question->_stats->sd*100 / $question->_stats->maxmark, 2) . '%';
+//        return format_float($question->_stats->sd*100 / $question->_stats->maxmark, 2) . '%';
+        // Redmine 1760: no percentage here.
+        return format_float($question->_stats->sd, 2);
     }
 
     /**
