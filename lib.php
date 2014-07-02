@@ -288,27 +288,39 @@ function offlinequiz_question_pluginfile($course, $context, $component,
 }
 
 /**
- * Serve questiontext files in the question text when they are displayed in this report.
+ * Serve questiontext files in the question text when they are displayed in a report.
  * 
- * @param context $context the context
- * @param int $questionid the question id
- * @param array $args remaining file args
- * @param bool $forcedownload
+ * @param context $previewcontext the quiz context
+ * @param int $questionid the question id.
+ * @param context $filecontext the file (question) context
+ * @param string $filecomponent the component the file belongs to.
+ * @param string $filearea the file area.
+ * @param array $args remaining file args.
+ * @param bool $forcedownload.
+ * @param array $options additional options affecting the file serving.
  */
-function offlinequiz_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload, array $options=array()) {
-    global $CFG;
+function offlinequiz_question_preview_pluginfile($previewcontext, $questionid, $filecontext, $filecomponent, $filearea,
+         $args, $forcedownload, $options = array()) { 
+     global $CFG;
 
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
     require_once($CFG->dirroot . '/lib/questionlib.php');
 
-    list($context, $course, $cm) = get_context_info_array($context->id);
+    list($context, $course, $cm) = get_context_info_array($previewcontext->id);
     require_login($course, false, $cm);
 
     // We assume that only trusted people can see this report. There is no real way to
     // validate questionid, because of the complexity of random questions.
     require_capability('mod/offlinequiz:viewreports', $context);
 
-    question_send_questiontext_file($questionid, $args, false, $options);
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/{$filecontext->id}/{$filecomponent}/{$filearea}/{$relativepath}";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        send_file_not_found();
+    }
+    error_log($file->get_filename());
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**
