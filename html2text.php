@@ -94,12 +94,12 @@ class offlinequiz_html_translator
 
                     $pluginfilename = str_replace('@@PLUGINFILE@@/', '', $pluginfilename);
                     $path_parts = pathinfo($pluginfilename);
-                    if (!empty($path_parts['dirname'])) {
+                    if (!empty($path_parts['dirname']) && $path_parts['dirname'] != '.') {
                         $filepath = '/' . $path_parts['dirname'] . '/';
                     } else {
                         $filepath = '/';
                     }
-                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath, $path_parts['basename'])) {
+                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath, rawurldecode($path_parts['basename']))) {
                         $imagefilename = $imagefile->get_filename();
                         // copy image content to temporary file
                         $path_parts = pathinfo($imagefilename);
