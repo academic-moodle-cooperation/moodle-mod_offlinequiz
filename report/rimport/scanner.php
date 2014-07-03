@@ -1591,6 +1591,43 @@ class offlinequiz_page_scanner {
         return $group;
     }
 
+    public function set_maxanswers($maxanswers, $scannedpage) {
+        if ($maxanswers > 26) {
+            $maxanswers = 26; // there won't be more than 26 answers or 96 questions on the sheet
+        }
+        $this->maxanswers = $maxanswers;
+        $this->formtype = 4;
+        
+        if ($maxanswers > 5) {
+            $this->formtype = 3;
+        }
+        if ($maxanswers > 7) {
+            $this->formtype = 2;
+        }
+        if ($maxanswers > 12) {
+            $this->formtype = 1;
+        }
+        if ($maxanswers > 26) {
+            error('To many answers in one question');
+        }
+        $this->numpages = ceil($this->maxquestions / ($this->formtype * 24));
+
+        $this->init_hotspots();
+        
+        // Check if we can adjust the image s.t. we can determine the hotspots.
+        if ($this->adjust(true, false, false, false, false, 0)) {
+            $scannedpage->status = 'ok';
+            $scannedpage->error = '';
+        } else {
+            $scannedpage->status = 'error';
+            $scannedpage->error = 'couldnotgrab';
+            $scannedpage->info = $this->filename;
+        }
+        
+        return $scannedpage;
+    }
+    
+    
     /**
      * Sets the group number to the one chosen by the user and calibrates correctly.
      *

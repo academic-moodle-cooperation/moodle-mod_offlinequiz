@@ -97,7 +97,15 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
             $scannedpage->error = 'grouperror';
         }
     }
-
+    
+    // =======================================================
+    // adjust the maxanswers of the scanner according to the offlinequiz group
+    // =======================================================
+    if ($group) {
+        $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($group));
+        $scannedpage = $scanner->set_maxanswers($maxanswers, $scannedpage);
+    }
+    
     // =======================================================
     // Check the user key (username, or userid, or other).
     // =======================================================
