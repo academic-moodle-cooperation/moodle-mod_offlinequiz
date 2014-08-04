@@ -425,10 +425,6 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
     $coursecontext = context_course::instance($courseid);
 
-    add_to_log($courseid, 'offlinequiz', 'createpdf question',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
-
     $pdf = new offlinequiz_question_pdf('P', 'mm', 'A4');
     $trans = new offlinequiz_html_translator();
 
@@ -880,10 +876,6 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     $fm->q = 0;
     $fm->a = 0;
 
-    add_to_log($courseid, 'offlinequiz', 'createpdf answer',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
-
     $tex_filter = new filter_tex($context, array());
 
     $pdf = new offlinequiz_answer_pdf('P', 'mm', 'A4');
@@ -1110,10 +1102,6 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
     if (empty($participants)) {
         return false;
     }
-
-    add_to_log($courseid, 'offlinequiz', 'create participants pdfs',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
 
     $pdf = new offlinequiz_participants_pdf('P', 'mm', 'A4');
     $pdf->listno = $list->number;

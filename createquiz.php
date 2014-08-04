@@ -465,6 +465,29 @@ if ($mode == 'preview') {
         // Remember that we have created the documents.
         $offlinequiz->docscreated = 1;
         $DB->set_field('offlinequiz', 'docscreated', 1, array('id' => $offlinequiz->id));
+        
+//     add_to_log($course->id, 'PLUGINNAME', 'LOGACTION', '...........', $objid, $cmid);
+    
+//     ...becomes...
+    
+//     $event = \FULLPLUGINNAME\event\EVENTNAME::create(array(
+//             'objectid' => $objid,
+//             'context' => context_module::instance($cmid)
+//     ));
+//     $event->trigger();
+    
+//     add_to_log($courseid, 'offlinequiz', 'createpdf question',
+//             "mod/offlinequiz.php?q=$offlinequiz->id",
+//             "$offlinequiz->id", $offlinequiz->id);
+        $params = array(
+            'context' => $context,
+            'other' => array(
+                    'offlinequizid' => $offlinequiz->id,
+                    'reportname' => $mode
+            )
+        );
+        $event = \mod_offlinequiz\event\docs_created::create($params);
+        $event->trigger();
     }
 }
 
