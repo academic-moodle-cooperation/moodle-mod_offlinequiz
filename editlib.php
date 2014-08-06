@@ -1282,19 +1282,12 @@ class question_bank_my_checkbox_column extends question_bank_checkbox_column {
             echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                     $question->id . '" id="checkq' . $question->id . '" value="1"/>';
         }
-//         if ($this->firstrow) {
-//             $PAGE->requires->js('/question/qengine.js');
-//             $module = array(
-//                 'name'      => 'qbank',
-//                 'fullpath'  => '/question/qbank.js',
-//                 'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
-//                 'strings'   => array(),
-//                 'async'     => false,
-//             );
-//             $PAGE->requires->js_init_call('question_bank.init_checkbox_column', array(get_string('selectall'),
-//                     get_string('deselectall'), 'checkq' . $question->id), false, $module);
-//             $this->firstrow = false;
-//         }
+        if ($this->firstrow) {
+            $PAGE->requires->strings_for_js(array('selectall', 'deselectall'), 'moodle');
+            $PAGE->requires->yui_module('moodle-question-qbankmanager', 'M.question.qbankmanager.init',
+                    array('checkq' . $question->id));
+            $this->firstrow = false;
+        }
     }
 }
 
@@ -1345,7 +1338,7 @@ class question_bank_add_to_offlinequiz_action_column extends question_bank_actio
     }
 
     public function get_required_fields() {
-        return array('q.id');
+        return array('q.id', 'q.createdby');
     }
 }
 
@@ -1418,11 +1411,22 @@ class offlinequiz_question_bank_view extends question_bank_view {
 
     protected function wanted_columns() {
         return array('addtoofflinequizaction', 'mycheckbox', 'myqtype', 'questionnametext',
-                'editaction', 'previewaction');
+                'editaction', 'copyaction', 'previewaction');
+    }
+
+    /**
+     * Specify the column heading
+     *
+     * @return string Column name for the heading
+     */
+    protected function heading_column() {
+        return 'questionnametext';
     }
 
     protected function default_sort() {
-        return array('qtype' => 1, 'questionnametext' => 1);
+        $this->requiredcolumns['myqtype'] = $this->knowncolumntypes['myqtype'];
+        $this->requiredcolumns['questionnametext'] = $this->knowncolumntypes['questionnametext'];
+        return array('myqtype' => 1, 'questionnametext' => 1);
     }
 
     /**
@@ -1457,11 +1461,12 @@ class offlinequiz_question_bank_view extends question_bank_view {
             return;
         }
 
-        // Display the current category.
-        if (!$category = $this->get_current_category($cat)) {
-            return;
-        }
-//         $this->print_category_info($category);
+// //        Display the current category.
+//         if (!$category = $this->get_current_category($cat)) {
+//             return;
+//         }
+//        $this->print_category_info($category);
+
         $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
         array_unshift($this->searchconditions,
                 new \core_question\bank\search\hidden_condition(!$showhidden));
