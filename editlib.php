@@ -1839,6 +1839,10 @@ function offlinequiz_print_choose_qtype_to_add_form($hiddenparams, array $allowe
             'description' => question_bank::get_qtype('description'),
             
     );
+    if (question_bank::is_qtype_installed('multichoiceset') && $mcset = question_bank::get_qtype('multichoiceset')) {
+        $realqtypes['multichoiceset'] = $mcset;
+    }
+
     $fakeqtypes = array();
 //     foreach (question_bank::get_creatable_qtypes() as $qtypename => $qtype) {
 //         if ($allowedqtypes && !in_array($qtypename, $allowedqtypes)) {
