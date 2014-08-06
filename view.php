@@ -99,9 +99,14 @@ if (has_capability('mod/offlinequiz:manage', $context)) {
     echo '</div>';
 }
 
-// write log entry
-add_to_log($course->id, 'offlinequiz', 'view', "view.php?id=$cm->id", $offlinequiz->name, $cm->id);
-
+// Log this request.
+$params = array(
+    'objectid' => $offlinequiz->id,
+    'context' => $context
+);
+$event = \mod_quiz\event\course_module_viewed::create($params);
+$event->add_record_snapshot('offlinequiz', $offlinequiz);
+$event->trigger();
 
 if (!empty($offlinequiz->time)) {
     echo '<div class="offlinequizinfo">'.userdate($offlinequiz->time).'</div>';

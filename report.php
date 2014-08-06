@@ -92,9 +92,6 @@ if (!is_readable("report/$mode/report.php")) {
     print_error('reportnotfound', 'offlinequiz', '', $mode);
 }
 
-add_to_log($course->id, 'offlinequiz', 'report', 'report.php?id=' . $cm->id . '&mode=' . $mode,
-        $offlinequiz->id, $cm->id);
-
 // Open the selected offlinequiz report and display it
 $file = $CFG->dirroot . '/mod/offlinequiz/report/' . $mode . '/report.php';
 if (is_readable($file)) {
@@ -111,3 +108,17 @@ $report->display($offlinequiz, $cm, $course);
 
 // Print footer
 echo $OUTPUT->footer();
+
+// Log that this report was viewed.
+$params = array(
+        'context' => $context,
+        'other' => array(
+                'offlinequizid' => $offlinequiz->id,
+                'reportname' => $mode
+        )
+);
+$event = \mod_offlinequiz\event\report_viewed::create($params);
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('offlinequiz', $offlinequiz);
+$event->trigger();
+
