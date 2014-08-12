@@ -350,7 +350,7 @@ if ($mode == 'preview') {
     // show/create the question forms for the offline groups.
     // ============================================================
     if (!$forcepdfnew) {
-        echo $OUTPUT->box_start('generalbox linkbox');
+        echo $OUTPUT->box_start('generalbox linkbox docsbox');
 
         foreach ($groups as $group) {
             $groupletter = $letterstr[$group->number -1];
@@ -394,7 +394,7 @@ if ($mode == 'preview') {
         // ============================================================
         // show/create the answer forms for all offline groups.
         // ============================================================
-        echo $OUTPUT->box_start('generalbox linkbox');
+        echo $OUTPUT->box_start('generalbox linkbox docsbox');
 
         echo $OUTPUT->notification(get_string('marginwarning', 'offlinequiz'));
         echo '<br/>';
@@ -430,7 +430,7 @@ if ($mode == 'preview') {
         // ============================================================
         // show/create the correction forms for all offline groups.
         // ============================================================
-        echo $OUTPUT->box_start('generalbox linkbox');
+        echo $OUTPUT->box_start('generalbox linkbox docsbox');
 
         foreach ($groups as $group) {
             $groupletter = $letterstr[$group->number -1];

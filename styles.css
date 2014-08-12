@@ -514,6 +514,10 @@ a:hover
     width: 90%;
 }
 
+#page-mod-offlinequiz-createquiz div.docsbox {
+     border-bottom: 1px solid #e3e3e3;
+}
+
 /* #page-mod-offlinequiz-report .errorpages { border-style: dotted;} */
 
 #page-mod-offlinequiz-report .errorpages .checkbox,
