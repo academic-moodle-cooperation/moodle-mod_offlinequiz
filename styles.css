@@ -218,7 +218,7 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-report table#attempts .cell{padding: 4px;}
 #page-mod-offlinequiz-report table#attempts .header .commands {display: inline;}
 #page-mod-offlinequiz-report table#attempts .picture {width: 40px;}
-#page-mod-offlinequiz-report table#attempts td {border-left-width: 1px;border-right-width: 1px;border-left-style: solid;border-right-style: solid;vertical-align: middle;}
+#page-mod-offlinequiz-report table#attempts td {border-left-width: 1px;border-right-width: 1px;border-left-style: solid;border-right-style: solid;vertical-align: middle; border-color: #DDD;}
 #page-mod-offlinequiz-report table#attempts th.userkey {text-align: center;}
 #page-mod-offlinequiz-report table#attempts td.userkey {text-align: center;}
 #page-mod-offlinequiz-report table#attempts th.timestart {text-align: center;}
@@ -573,14 +573,14 @@ a:hover
     color: #006699;
 }
 #page-mod-offlinequiz-report table#statsoverviewtable {
-    border: 1px solid #555555;
+    border: 1px solid #DDD;
     width: 50%;
 }
 #page-mod-offlinequiz-report table#statsoverviewtable .r1 {
     background-color: #F2F2F2;
 }
 #page-mod-offlinequiz-report table#questionstatstable {
-    border: 1px solid #555555;
+    border: 1px solid #DDD;
     width: 30em;
 }
 #page-mod-offlinequiz-report table#questionstatstable .r1 {
@@ -593,7 +593,7 @@ a:hover
     background-color: #F2F2F2;
 }
 #page-mod-offlinequiz-report table#statisticsquestiontable {
-    border: 1px solid #555555;
+    border: 1px solid #DDD;
     border-collapse: collapse; 
     width: 80%;
 }
