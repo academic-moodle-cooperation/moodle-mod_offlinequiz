@@ -623,7 +623,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                     // Remove all paragraph tags because they mess up the layout.
                     $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200);
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300);
 
                     if ($correction) {
                         if ($question->options->answers[$answer]->fraction > 0) {
@@ -759,7 +759,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                         // Remove all paragraph tags because they mess up the layout.
                         $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
                         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200); // $pdf->GetK());
+                        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300); // $pdf->GetK());
 
                         if ($correction) {
                             if ($question->options->answers[$answer]->fraction > 0) {
