@@ -284,7 +284,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     }
                     if ($offlinequiz->sumgrades == -1) {
                         echo $OUTPUT->notification('- ' . get_string('differentsumgrades', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
-                    } else if ($differentquestions) {
+                    } 
+                    if ($differentquestions) {
                         echo $OUTPUT->notification('- ' . get_string('differentquestions', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
                     }
                     if ($offlinequiz->sumgrades == -1 || $differentquestions) {
@@ -573,8 +574,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
     protected function render_question_text($question) {
         global $OUTPUT;
 
-        $text = question_rewrite_questiontext_preview_urls($question->questiontext,
-                $this->context->id, 'offlinequiz_statistics', $question->id);
+        $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                $question->contextid, 'question', 'questiontext', $question->id,
+                $this->context->id, 'quiz_statistics');
 
         return $OUTPUT->box(format_text($text, $question->questiontextformat,
                 array('noclean' => true, 'para' => false, 'overflowdiv' => true)),
@@ -589,14 +591,14 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         global $OUTPUT;
 
         if ($showimages) {
-            $text = question_rewrite_questiontext_preview_urls($question->questiontext,
-                    $this->context->id, 'offlinequiz_statistics', $question->id);
-            return '&nbsp;&nbsp;&nbsp;' . format_text($text, $question->questiontextformat,
-                    array('noclean' => true, 'para' => false, 'overflowdiv' => true));
+            $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                    $question->contextid, 'question', 'questiontext', $question->id,
+                    $this->context->id, 'quiz_statistics');
         } else {
-            return '&nbsp;&nbsp;&nbsp;' . format_text(html_to_text($question->questiontext), FORMAT_HTML,
-                    array('noclean' => true, 'para' => false, 'overflowdiv' => true));
+            $text = $question->questiontext;
         }
+        $questiontext = question_utils::to_plain_text($text, $question->questiontextformat, array('noclean' => true, 'para' => false, 'overflowdiv' => true));
+        return '&nbsp;&nbsp;&nbsp;' . $questiontext;
     }
     
     
@@ -784,7 +786,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
         // The statistics.
         foreach ($todisplay as $property => $format) {
-            if (!isset($offlinequizstats->$property) || empty($format[$property])) {
+            if (!isset($offlinequizstats->$property) || empty($format)) {
                 continue;
             }
             $value = $offlinequizstats->$property;
@@ -1367,7 +1369,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $questions, $subquestions, $offlinequiz->groupid);
             }
         }
-
         return array($offlinequizstats, $questions, $subquestions, $s);
     }
 

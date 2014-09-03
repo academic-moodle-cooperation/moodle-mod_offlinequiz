@@ -73,13 +73,13 @@ if ($currenttab == 'reports' && isset($mode)) {
     $inactive[] = 'reports';
     $activated[] = 'reports';
 
-    $allreports = get_list_of_plugins("mod/offlinequiz/report");
+    $allreports = core_component::get_plugin_list('offlinequiz');
 
     $reportlist = array('overview', 'rimport'); //  'regrade'  // Standard reports we want to show first
 
-    foreach ($allreports as $report) {
-        if (!in_array($report, $reportlist)) {
-            $reportlist[] = $report;
+    foreach ($allreports as $key => $path) {
+        if (!in_array($key, $reportlist)) {
+            $reportlist[] = $key;
         }
     }
 

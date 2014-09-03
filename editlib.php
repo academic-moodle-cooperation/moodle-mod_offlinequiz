@@ -974,7 +974,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                     <form method="post" action="edit.php" class="offlinequizsavegradesform">
                     <div>
                     <fieldset class="invisiblefieldset" style="display: block;">
-                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>:<br />
+                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>
                     <input type="hidden" name="sesskey"
                     value="' . sesskey() . '" />' . html_writer::input_hidden_params($pageurl) . '
                     <input type="hidden" name="savechanges" value="save" />
@@ -1195,7 +1195,8 @@ function offlinequiz_question_tostring($question, $showicon = false,
     $formatoptions = new stdClass();
     $formatoptions->noclean = true;
     $formatoptions->para = false;
-    $questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
+    //$questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
+    $questiontext = question_utils::to_plain_text($question->questiontext, $question->questiontextformat, array('noclean' => true, 'para' => false));
     $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
 
     $result .= '<span class="questionname" title="' . $questiontitle . '">';
@@ -1603,7 +1604,7 @@ class offlinequiz_question_bank_view extends question_bank_view {
         $strdelete = get_string('delete');
 
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
-        $catcontext = get_context_instance_by_id($contextid);
+        $catcontext = context::instance_by_id($contextid);
 
         $canadd = has_capability('moodle/question:add', $catcontext);
         $caneditall =has_capability('moodle/question:editall', $catcontext);

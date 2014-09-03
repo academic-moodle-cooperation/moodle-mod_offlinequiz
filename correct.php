@@ -210,8 +210,15 @@ onClick=\"self.close(); return false;\"><br />";
     //  if (!property_exists($scannedpage, 'groupnumber') || $scannedpage->groupnumber == 0) {
     $scanner->set_group($groupnumber);
     $scannedpage->groupnumber = $groupnumber;
-    // }
-
+    
+    // =======================================================
+    // adjust the maxanswers of the scanner according to the offlinequiz group
+    // =======================================================
+    if ($newgroup = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'number' => $groupnumber))) {
+        $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($newgroup));
+        $scannedpage = $scanner->set_maxanswers($maxanswers, $scannedpage);
+    }
+    
     $usernumber = required_param('usernumber', PARAM_TEXT);
 
     $xes = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';

@@ -256,7 +256,7 @@ function offlinequiz_convert_newline_docx($text) {
     // If the original text was only a newline, we don't have a first part.
     if (!empty($firstpart)) {
         if ($firstpart == '<br/>' || $firstpart == '<br />') {
-            $result = array('type' => 'newline');
+            $result = array(array('type' => 'newline'));
         } else {
             $result = offlinequiz_convert_bold_text_docx($firstpart);
         }
@@ -637,14 +637,15 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
                     $blocks = offlinequiz_convert_image_docx($answertext);
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
-
-                    if ($offlinequiz->showgrades) {
-                        $pointstr = get_string('points', 'grades');
-                        if ($question->maxgrade == 1) {
-                            $pointstr = get_string('point', 'offlinequiz');
-                        }
-                        $section->addText('(' . ($question->maxgrade + 0) . ' ' . $pointstr .')', 'bStyle');
+                }
+                if ($offlinequiz->showgrades) {
+                    $pointstr = get_string('points', 'grades');
+                    if ($question->maxgrade == 1) {
+                        $pointstr = get_string('point', 'offlinequiz');
                     }
+                    // Indent the question grade like the answers.
+                    $textrun = $section->createTextRun($level2);
+                    $textrun->addText('(' . ($question->maxgrade + 0) . ' '. $pointstr .')', 'bStyle');
                 }
             }
             $section->addTextBreak();
@@ -745,15 +746,17 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     $blocks = offlinequiz_convert_image_docx($answertext);
 
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
-                    
-                    if ($offlinequiz->showgrades) {
-                        $pointstr = get_string('points', 'grades');
-                        if ($question->maxgrade == 1) {
-                            $pointstr = get_string('point', 'offlinequiz');
-                        }
-                        $section->addText('(' . ($question->maxgrade + 0) . ' '. $pointstr .')', 'bStyle');
-                    }
                 }
+                if ($offlinequiz->showgrades) {
+                    $pointstr = get_string('points', 'grades');
+                    if ($question->maxgrade == 1) {
+                        $pointstr = get_string('point', 'offlinequiz');
+                    }
+                    // Indent the question grade like the answers.
+                    $textrun = $section->createTextRun($level2);
+                    $textrun->addText('(' . ($question->maxgrade + 0) . ' '. $pointstr .')', 'bStyle');
+                }
+
                 $section->addTextBreak();
                 $number++; 
                 // End if multichoice.

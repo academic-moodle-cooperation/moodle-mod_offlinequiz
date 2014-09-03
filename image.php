@@ -78,6 +78,7 @@ echo "<style>\n";
 echo "body {margin:0px; font-family:Arial,Verdana,Helvetica,sans-serif;}\n";
 echo ".imagebutton {width:250px; height:24px; text-align:left; margin-bottom:10px;}\n";
 echo "</style>\n";
+echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
 
 list($maxquestions, $maxanswers, $formtype, $questionsperpage) =  offlinequiz_get_question_numbers($offlinequiz, $groups);
 
