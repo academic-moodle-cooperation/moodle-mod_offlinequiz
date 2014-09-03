@@ -30,7 +30,7 @@ require_once("locallib.php");
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url('/mod/offlinequiz/index.php', array('id'=>$id));
+$PAGE->set_url('/mod/offlinequiz/index.php', array('id' => $id));
 $PAGE->set_pagelayout('incourse');
 
 if (!$course = $DB->get_record('course', array('id' => $id))) {
@@ -65,24 +65,28 @@ echo $OUTPUT->header();
 // Get all the appropriate data.
 if (!$offlinequizzes = get_all_instances_in_course('offlinequiz', $course)) {
     notice(get_string('thereareno', 'moodle', $strofflinequizzes), "../../course/view.php?id=$course->id");
+    echo $OUTPUT->footer();
     die;
 }
+
+$isteacher = has_capability('mod/offlinequiz:viewreports', $coursecontext);
 
 // Check if we need the closing date header.
 $showclosingheader = false;
 $showfeedback = false;
 $therearesome = false; 
 foreach ($offlinequizzes as $offlinequiz) {
-    if ($offlinequiz->timeclose != 0) {
+    if ($offlinequiz->timeclose != 0 ) {
         $showclosingheader = true;
     }
-    if ($offlinequiz->visible) {
+    if ($offlinequiz->visible || $isteacher) {
         $therearesome = true;
     }
 }
 
 if (!$therearesome) {
     notice(get_string('thereareno', 'moodle', $strofflinequizzes), "../../course/view.php?id=$course->id");
+    echo $OUTPUT->footer();
     die;
 }
 
