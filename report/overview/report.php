@@ -48,13 +48,14 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         // Only print headers if not asked to download data.
         if (!$download = optional_param('download', null, PARAM_TEXT)) {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, 'overview');
+            echo $OUTPUT->box_start('linkbox');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading(get_string('results', 'offlinequiz'));
             
             require_once($CFG->libdir . '/grouplib.php');
-            echo $OUTPUT->box_start('linkbox');
             echo groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/offlinequiz/report.php?id=' . $cm->id . '&mode=overview', true);
             echo $OUTPUT->box_end();
+            echo '<br/>';
         }
 
         $context = context_module::instance($cm->id);
