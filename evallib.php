@@ -41,7 +41,8 @@ require_once($CFG->libdir . '/filelib.php');
  * @param unknown_type $teacherid
  * @param unknown_type $coursecontext
  */
-function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $scanner, $scannedpage, $teacherid, $coursecontext, $autorotate = false, $recheckresult = false) {
+function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $scanner, $scannedpage,
+         $teacherid, $coursecontext, $autorotate = false, $recheckresult = false, $ignoremaxanswers = false) {
     global $DB, $CFG;
 
     $offlinequizconfig = get_config('offlinequiz');
@@ -99,11 +100,21 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
     }
     
     // =======================================================
-    // adjust the maxanswers of the scanner according to the offlinequiz group
+    // adjust the maxanswers of the scanner according to the offlinequiz group deterimined above
     // =======================================================
-    if ($group) {
+    if ($group && !$ignoremaxanswers) {
         $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($group));
-        $scannedpage = $scanner->set_maxanswers($maxanswers, $scannedpage);
+        if ( $maxanswers != $scanner->maxanswers ) {
+            // Create a completely new scanner.
+            $scanner = new offlinequiz_page_scanner($offlinequiz, $scanner->contextid, $scanner->maxquestions, $maxanswers);
+
+            $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $scanner->get_corners());
+         
+            // Recursively call this method this time ignoring the maxanswers change.
+            return offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage,
+                 $teacherid, $coursecontext, $autorotate, $recheckresult, true);
+        }
+//        $scannedpage = $scanner->set_maxanswers($maxanswers, $scannedpage);
     }
     
     // =======================================================

@@ -124,6 +124,7 @@ class offlinequiz_page_scanner {
     public $pattern3;      // contains the hotspot pattern for a cross moved to one of the corners
     public $pattern4;      // contains the hotspot pattern for a cross moved to one of the corners
     public $papergray;
+    public $corners;        // the corners as passed by evallib.php or correct.php.
     public $lowertrigger;
     public $uppertrigger;
     public $lowerwarning;
@@ -167,9 +168,6 @@ class offlinequiz_page_scanner {
         }
         if ($maxanswers > 12) {
             $this->formtype = 1;
-        }
-        if ($maxanswers > 26) {
-            error('To many answers in one question');
         }
         $this->numpages = ceil($maxquestions / ($this->formtype * 24));
     }
@@ -497,7 +495,8 @@ class offlinequiz_page_scanner {
         global $CFG, $OUTPUT;
 
         $this->offset = new oq_point();
-
+        // remember the corners passed. They are needed by set_maxanswers.
+        $this->corners = $corners;
         $this->insecure = false;
         $this->init_hotspots();
 
@@ -1607,15 +1606,20 @@ class offlinequiz_page_scanner {
         if ($maxanswers > 12) {
             $this->formtype = 1;
         }
-        if ($maxanswers > 26) {
-            error('To many answers in one question');
-        }
+
         $this->numpages = ceil($this->maxquestions / ($this->formtype * 24));
 
         $this->init_hotspots();
         
+        $corners = $this->corners;
+        if (!empty($corners)) {
+            $ok = $this->adjust(false, $corners[0], $corners[1], $corners[2], $corners[3], OQ_IMAGE_WIDTH, $scannedpage->id);
+        } else {
+            $ok = $this->adjust(true, false, false, false, false, 0, $scannedpage->id);
+        }
+
         // Check if we can adjust the image s.t. we can determine the hotspots.
-        if ($this->adjust(true, false, false, false, false, 0)) {
+        if ($ok) {
             $scannedpage->status = 'ok';
             $scannedpage->error = '';
         } else {
