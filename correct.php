@@ -248,7 +248,7 @@ onClick=\"self.close(); return false;\"><br />";
     }
 
     if (!$overwrite) {
-        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, false, true, false);
+        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
         if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
             // Already process the answers but don't submit them.
@@ -308,7 +308,7 @@ onClick=\"self.close(); return false;\"><br />";
         }
 
         // This should create a new result and set the resultid field of the scannedpage.
-        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, false, false, false);
+        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
         if ($scannedpage->resultid) {
 
@@ -370,7 +370,7 @@ onClick=\"self.close(); return false;\"><br />";
     //  $scannedpage = offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage, $coursecontext, $questionsperpage, $offlinequizconfig);
 
     if (!$overwrite) {
-        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, false, false, false);
+        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
         if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
             // Already process the answers but don't submit them.
@@ -458,7 +458,7 @@ onClick=\"self.close(); return false;\"><br />";
     $scannedpage->error = '';
 
     if (!$overwrite) {
-        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, false, false, false);
+        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
         if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
             // Already process the answers but don't submit them.
@@ -548,7 +548,7 @@ onClick=\"self.close(); return false;\"><br />";
     $scannedpage->error = '';
 
     // Now check the scanned page again. The user should be enrolled now.
-    $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, false, false, false);
+    $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
     $userkey = $scannedpage->userkey;
     $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
