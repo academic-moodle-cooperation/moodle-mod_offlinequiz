@@ -779,7 +779,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     srand(microtime()*1000000);
     $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
-    $tempfilename = $CFG->dataroot."/temp/offlinequiz/" . $unique . '.docx';
+    $tempfilename = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.docx';
+    check_dir_exists($CFG->dataroot . "/temp/offlinequiz", true, true);
     
     if (file_exists($tempfilename)) {
         unlink($tempfilename);
