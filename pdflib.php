@@ -382,29 +382,9 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf
  * @return string the number $num in the requested style.
  */
 function number_in_style($num, $style) {
-    switch($style) {
-        case 'abc':
-            $number = chr(ord('a') + $num);
-            break;
-        case 'ABCD':
-            $number = chr(ord('A') + $num);
-            break;
-        case '123':
-            $number = $num + 1;
-            break;
-        case 'iii':
-            $number = question_utils::int_to_roman($num + 1);
-            break;
-        case 'IIII':
-            $number = strtoupper(question_utils::int_to_roman($num + 1));
-            break;
-        case 'none':
-            return '';
-        default:
-                return 'ERR';
-    }
-    return $number;
+        return $number = chr(ord('a') + $num);
 }
+
 
 /**
  * Generates the PDF question/correction form for an offlinequiz group.
@@ -619,7 +599,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                     // Remove all paragraph tags because they mess up the layout.
                     $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200);
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300);
 
                     if ($correction) {
                         if ($question->options->answers[$answer]->fraction > 0) {
@@ -755,7 +735,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                         // Remove all paragraph tags because they mess up the layout.
                         $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
                         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200); // $pdf->GetK());
+                        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300); // $pdf->GetK());
 
                         if ($correction) {
                             if ($question->options->answers[$answer]->fraction > 0) {
@@ -976,6 +956,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
             continue;
         }
 
+        // Print the answer letters every 8 questions.
         if ($number % 8 == 0) {
             $pdf->SetFont('FreeSans', '', 8);
             $pdf->SetX(($col-1) * ($pdf->colwidth) + $offsetx + 5);

@@ -248,7 +248,7 @@ onClick=\"self.close(); return false;\"><br />";
     }
 
     if (!$overwrite) {
-        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, false, true);
+        $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
 
         if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
             // Already process the answers but don't submit them.

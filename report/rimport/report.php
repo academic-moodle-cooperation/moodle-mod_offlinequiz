@@ -194,15 +194,16 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
         $action = optional_param('action', '', PARAM_ACTION);
         if ($action != 'delete') {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, 'rimport');
-
             if (!$offlinequiz->docscreated) {
                 echo $OUTPUT->heading(format_string($offlinequiz->name));
                 echo $OUTPUT->heading(get_string('nopdfscreated', 'offlinequiz'));
                 return true;
             }
 
+            echo $OUTPUT->box_start('linkbox');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading_with_help(get_string('resultimport', 'offlinequiz'), 'import', 'offlinequiz');
+            echo $OUTPUT->box_end();
         }
 
         $import_form = new offlinequiz_upload_form($reporturl,
