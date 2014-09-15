@@ -1239,7 +1239,7 @@ function offlinequiz_question_tostring($question, $showicon = false,
 /**
  * A column type for the name of the question type.
  *
- * @copyright  2009 Tim Hunt
+ * @copyright  2012 Juergen Zimmer
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_my_question_type_column extends question_bank_question_type_column {
@@ -1265,7 +1265,7 @@ class question_bank_my_question_type_column extends question_bank_question_type_
 /**
  * A column with a checkbox for each question with name q{questionid}.
  *
- * @copyright  2009 Tim Hunt
+ * @copyright  2012 Juergen Zimmer
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_my_checkbox_column extends question_bank_checkbox_column {
