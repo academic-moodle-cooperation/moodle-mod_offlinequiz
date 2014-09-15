@@ -101,10 +101,10 @@ if (has_capability('mod/offlinequiz:manage', $context)) {
 
 // Log this request.
 $params = array(
-    'objectid' => $offlinequiz->id,
+    'objectid' => $cm->id,
     'context' => $context
 );
-$event = \mod_quiz\event\course_module_viewed::create($params);
+$event = \mod_offlinequiz\event\course_module_viewed::create($params);
 $event->add_record_snapshot('offlinequiz', $offlinequiz);
 $event->trigger();
 

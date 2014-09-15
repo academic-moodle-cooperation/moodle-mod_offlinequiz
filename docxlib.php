@@ -364,11 +364,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $groupletter = strtoupper($letterstr[$group->number - 1]);
 
     $coursecontext = context_course::instance($courseid);
-
-    add_to_log($courseid, 'offlinequiz', 'createdocx question',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
-    
+        
     PHPWord_Media::resetMedia();
     
     $docx = new PHPWord();

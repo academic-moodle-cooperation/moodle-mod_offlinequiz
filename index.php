@@ -39,8 +39,14 @@ if (!$course = $DB->get_record('course', array('id' => $id))) {
 
 $coursecontext = context_course::instance($id);
 require_login($course);
+$PAGE->set_pagelayout('incourse');
 
-add_to_log($course->id, "offlinequiz", "view all", "index.php?id=$course->id", "");
+// Log this request
+$params = array(
+        'context' => $coursecontext
+);
+$event = \mod_offlinequiz\event\course_module_instance_list_viewed::create($params);
+$event->trigger();
 
 // Print the header.
 $strofflinequizzes = get_string("modulenameplural", "offlinequiz");

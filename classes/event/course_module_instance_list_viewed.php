@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_offlinequiz course module viewed event.
+ * The mod_offlinequiz instance list viewed event.
  *
  * @package    mod_offlinequiz
  * @copyright  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
@@ -27,22 +27,13 @@ namespace mod_offlinequiz\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_offlinequiz course module viewed event class.
+ * The mod_offlinequiz instance list viewed event class.
  *
  * @package    mod_offlinequiz
  * @since      Moodle 2.7
  * @copyright  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_viewed extends \core\event\course_module_viewed {
-
-    /**
-     * Init method.
-     *
-     * @return void
-     */
-    protected function init() {
-        $this->data['objecttable'] = 'offlinequiz';
-        parent::init();
-    }
+class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
+    // No code required here as the parent class handles it all.
 }

@@ -320,9 +320,6 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     }
                     break;
                 default:
-                    if (!file_exists($CFG->filter_tex_pathconvert)) {
-                        $OUTPUT->notification(get_string('imagickwarning', 'offlinequiz'), 'notifyproblem');
-                    }
                     // print the table with answer forms that need correction
                     $this->print_error_report($offlinequiz);
                     // display the upload form
