@@ -18,7 +18,9 @@
  * The mod_offlinequiz course module viewed event.
  *
  * @package    mod_offlinequiz
- * @copyright  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @author  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since Moodle 2.7
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

@@ -105,7 +105,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                 ) 
                         );
                         $event = \mod_offlinequiz\event\attempt_deleted::create($params);
-                        $event->trigger ();
+                        $event->trigger();
                         
                         // Change the status of all related pages with error 'resultexists' to 'suspended'.
                         $user = $DB->get_record ( 'user', array (

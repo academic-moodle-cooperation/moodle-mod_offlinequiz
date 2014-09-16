@@ -18,7 +18,9 @@
  * The mod_offlinequiz attempt reviewed event.
  *
  * @package    mod_offlinequiz
- * @copyright  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @author  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since Moodle 2.7
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_offlinequiz\event;
@@ -45,7 +47,7 @@ class attempt_reviewed extends \core\event\base {
      * Init method.
      */
     protected function init() {
-        $this->data['objecttable'] = 'offlinequiz_attempts';
+        $this->data['objecttable'] = 'offlinequiz_results';
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
     }

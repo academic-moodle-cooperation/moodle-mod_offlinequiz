@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_offlinequiz edit page viewed event.
+ * The mod_offlinequiz results regraded event.
  *
  * @package    mod_offlinequiz
  * @author  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
@@ -23,13 +23,12 @@
  * @since Moodle 2.7
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 namespace mod_offlinequiz\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_offlinequiz edit page viewed event class.
+ * The mod_offlinequiz results regraded event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -39,15 +38,16 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package    mod_offlinequiz
  * @since      Moodle 2.7
- * @copyright  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright  2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class edit_page_viewed extends \core\event\base {
+class results_regraded extends \core\event\base {
 
     /**
      * Init method.
      */
     protected function init() {
+        $this->data['objecttable'] = 'offlinequiz';
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
@@ -58,7 +58,7 @@ class edit_page_viewed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventeditpageviewed', 'mod_offlinequiz');
+        return get_string('eventresultsregraded', 'mod_offlinequiz');
     }
 
     /**
@@ -67,8 +67,7 @@ class edit_page_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' viewed the edit page for the offlinequiz with " .
-            "the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' has regraded " . $this->other['numberofresults'] . " result(s) in the offline quiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -77,7 +76,7 @@ class edit_page_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/offlinequiz/edit.php', array('cmid' => $this->contextinstanceid));
+        return new \moodle_url('/mod/offlinequiz/report.php', array('id' => $this->objectid, 'mode' => 'regrade'));
     }
 
     /**
@@ -86,7 +85,7 @@ class edit_page_viewed extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'offlinequiz', 'editquestions', 'view.php?id=' . $this->contextinstanceid,
+        return array($this->courseid, 'offlinequiz', 'regrade', 'report.php?mode=regrade&id=' . $this->objectid,
             $this->other['offlinequizid'], $this->contextinstanceid);
     }
 
@@ -98,6 +97,10 @@ class edit_page_viewed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
+
+        if (!isset($this->other['numberofresults'])) {
+            throw new \coding_exception('The \'numberofresults\' value must be set in other.');
+        }
 
         if (!isset($this->other['offlinequizid'])) {
             throw new \coding_exception('The \'offlinequizid\' value must be set in other.');
