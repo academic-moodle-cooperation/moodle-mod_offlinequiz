@@ -61,8 +61,8 @@ class attempt_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' deleted the attempt with id '$this->objectid' belonging to the offlinequiz " .
-            "with the course module id '$this->contextinstanceid' for the user with id '$this->relateduserid'.";
+        return "The user with id '$this->userid' deleted the result with id '$this->objectid' belonging " .
+        "to the user with id '$this->relateduserid' in the offlinequiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -80,7 +80,7 @@ class attempt_deleted extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'offlinequiz', 'delete attempt', 'report.php?id=' . $this->contextinstanceid,
+        return array($this->courseid, 'offlinequiz', 'delete result', 'report.php?id=' . $this->contextinstanceid,
             $this->objectid, $this->contextinstanceid);
     }
 
@@ -97,8 +97,8 @@ class attempt_deleted extends \core\event\base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
 
-        if (!isset($this->other['offlinequizid'])) {
-            throw new \coding_exception('The \'offlinequizid\' value must be set in other.');
+        if (!isset($this->other['mode'])) {
+            throw new \coding_exception('The \'mode\' value must be set in other.');
         }
     }
 }

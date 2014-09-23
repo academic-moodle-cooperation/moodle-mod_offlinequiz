@@ -29,13 +29,15 @@ namespace mod_offlinequiz\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_offlinequiz report viewed event class.
+ * The mod_offlinequiz documents creation event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
  *      - int offlinequizid: the id of the offlinequiz.
  *      - string reportname: the name of the report.
+ *      - string doctype: the document type (PDF or DOCX).
+ *      
  * }
  *
  * @package    mod_offlinequiz
@@ -70,8 +72,8 @@ class docs_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' created the documents (PDFs) for the offlinequiz with " .
-            "the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' created the documents in format " . $this->other['doctype'] .
+        " for the offlinequiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -109,6 +111,10 @@ class docs_created extends \core\event\base {
 
         if (!isset($this->other['reportname'])) {
             throw new \coding_exception('The \'reportname\' value must be set in other.');
+        }
+
+        if (!isset($this->other['doctype'])) {
+            throw new \coding_exception('The \'doctype\' value must be set in other.');
         }
     }
 }

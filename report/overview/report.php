@@ -100,7 +100,6 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                 'relateduserid' => $todelete->userid,
                                 'context' => context_module::instance ( $cm->id ),
                                 'other' => array (
-                                        'offlinequizid' => $offlinequiz->id, 
                                         'mode' => 'overview' 
                                 ) 
                         );

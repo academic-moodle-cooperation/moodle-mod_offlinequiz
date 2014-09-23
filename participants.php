@@ -398,24 +398,44 @@ switch($mode) {
         }
         if ($action == 'uncheck' and $participantids = optional_param('participantid', array(), PARAM_INT)) {
             foreach ($participantids as $participantid) {
-
-                add_to_log($course->id, 'offlinequiz', 'uncheck participant', 'participants.php?id=' . $cm->id,
-                        $participantid, $cm->id);
-
                 if ($participantid) {
                     $DB->set_field('offlinequiz_participants', 'checked', 0, array('id' => $participantid));
                 }
+
+                // Log this event.
+                $userid = $DB->get_field('offlinequiz_participants', 'userid', array('id' => $participantid));
+                $params = array (
+                           'objectid' => $userid,
+                           'context' => context_module::instance( $cm->id ),
+                           'other' => array (
+                                   'mode' => 'attendances',
+                                   'offlinequizid' => $offlinequiz->id,
+                                   'type' => 'absent from' 
+                           ) 
+                   );
+                $event = \mod_offlinequiz\event\participant_manually_marked::create($params);
+                $event->trigger();
             }
         }
         if ($action == 'check' and $participantids = optional_param('participantid', array(), PARAM_INT)) {
             foreach ($participantids as $participantid) {
-
-                add_to_log($course->id, 'offlinequiz', 'check participant', 'participants.php?id=' . $cm->id,
-                        $participantid, $cm->id);
-
                 if ($participantid) {
                     $DB->set_field('offlinequiz_participants', 'checked', 1, array('id' => $participantid));
                 }
+
+                // Log this event.
+                $userid = $DB->get_field('offlinequiz_participants', 'userid', array('id' => $participantid));
+                $params = array (
+                           'objectid' => $userid,
+                           'context' => context_module::instance( $cm->id ),
+                           'other' => array (
+                                   'mode' => 'attendances',
+                                   'offlinequizid' => $offlinequiz->id,
+                                   'type' => 'present at' 
+                           ) 
+                   );
+                $event = \mod_offlinequiz\event\participant_manually_marked::create($params);
+                $event->trigger();
             }
         }
         // We redirect if no list has been created

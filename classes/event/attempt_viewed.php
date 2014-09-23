@@ -68,7 +68,7 @@ class attempt_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has viewed the attempt with id '$this->objectid' belonging to the user " .
+        return "The user with id '$this->userid' has viewed the result with id '$this->objectid' belonging to the user " .
             "with id '$this->relateduserid' for the offlinequiz with the course module id '$this->contextinstanceid'.";
     }
 

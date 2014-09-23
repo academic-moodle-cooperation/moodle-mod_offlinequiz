@@ -200,7 +200,8 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $page
 }
 
 /**
- * Remove a question from a offlinequiz
+ * Removes a question from a offlinequiz.
+ *
  * @param object $offlinequiz the offlinequiz object.
  * @param int $questionid The id of the question to be deleted.
  */
@@ -234,6 +235,12 @@ function offlinequiz_remove_question($offlinequiz, $questionid) {
     }
 }
 
+/**
+ * Removes a list of questions from the questions in an offlinequiz group.
+ *
+ * @param unknown $offlinequiz The offlinequiz object.
+ * @param unknown $questionids The list of question IDs.
+ */
 function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
     global $DB;
 
