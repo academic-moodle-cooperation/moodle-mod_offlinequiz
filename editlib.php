@@ -1203,7 +1203,7 @@ function offlinequiz_question_tostring($question, $showicon = false,
     $formatoptions->noclean = true;
     $formatoptions->para = false;
     //$questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
-    $questiontext = strip_tags($question_utils::to_plain_text($question->questiontext, $question->questiontextformat, array('noclean' => true, 'para' => false)));
+    $questiontext = strip_tags(question_utils::to_plain_text($question->questiontext, $question->questiontextformat, array('noclean' => true, 'para' => false)));
     $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
 
     $result .= '<span class="questionname" title="' . $questiontitle . '">';
