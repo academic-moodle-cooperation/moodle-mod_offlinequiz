@@ -163,6 +163,16 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
             @flush();@ob_flush();
         }
 
+        // Log this action.
+        $params = array (
+              'objectid' => $cm->id,
+               'context' => context_module::instance ( $cm->id ),
+                'other'  => array('numberofresults' => count($results),
+                                  'offlinequizid' => $offlinequiz->id)
+        );
+        $event = \mod_offlinequiz\event\results_regraded::create($params);
+        $event->trigger();
+        
         // Loop through all questions and recalculate $result->sumgrade
         //      $resultschanged = 0;
         //      foreach ($results as $result) {

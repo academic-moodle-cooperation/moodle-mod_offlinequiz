@@ -84,8 +84,6 @@ if (!$isteacher) {
     }
 }
 
-add_to_log($course->id, "offlinequiz", "review", "review.php?id=$cm->id&amp;resultid=$result->id", "$offlinequiz->id", "$cm->id");
-
 $strscore  = get_string("marks", "offlinequiz");
 $strgrade  = get_string("grade");
 $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -247,6 +245,20 @@ if ($options->attempt == question_display_options::VISIBLE || $isteacher) {
         echo $quba->render_question($slot, $options, $questionnumber);
     }
 }
+
+// Trigger an event for this review.
+$params = array(
+    'objectid' => $result->id,
+    'relateduserid' => $result->userid,
+    'courseid' => $course->id,
+    'context' => context_module::instance($cm->id),
+    'other' => array(
+        'offlinequizid' => $offlinequiz->id
+    )
+);
+$event = \mod_offlinequiz\event\attempt_reviewed::create($params);
+$event->add_record_snapshot('offlinequiz_results', $result);
+$event->trigger();
 
 // Print the navigation panel if required
 // $numpages = offlinequiz_number_of_pages(offlinequiz_get_group_questions($offlinequiz, $group->id));

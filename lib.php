@@ -545,6 +545,7 @@ function offlinequiz_supports($feature) {
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_USES_QUESTIONS:          return true;
 
         default: return null;
     }
@@ -953,28 +954,30 @@ function offlinequiz_update_events($offlinequiz) {
         $cmid = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $offlinequiz->course)->id;
     }
 
-    $event = new stdClass();
-    $event->name = $offlinequiz->name;
-    $event->description = format_module_intro('offlinequiz', $offlinequiz, $cmid);
-    // Events module won't show user events when the courseid is nonzero.
-    $event->courseid    = ($userid) ? 0 : $offlinequiz->course;
-    $event->groupid     = $groupid;
-    $event->userid      = $userid;
-    $event->modulename  = 'offlinequiz';
-    $event->instance    = $offlinequiz->id;
-    $event->timestart   = $timeopen;
-    $event->timeduration = max($timeclose - $timeopen, 0);
-    $event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
-    //$event->eventtype   = 'open';
-
-    if ($timeopen == $offlinequiz->time) {
+    if (!empty($timeopen)) {
+        $event = new stdClass();
         $event->name = $offlinequiz->name;
-    }
-    if ($timeopen == $offlinequiz->timeopen) {
-         $event->name = $offlinequiz->name . ' (' . get_string('reportstarts', 'offlinequiz') . ')';
-    }
+        $event->description = format_module_intro('offlinequiz', $offlinequiz, $cmid);
+        // Events module won't show user events when the courseid is nonzero.
+        $event->courseid    = ($userid) ? 0 : $offlinequiz->course;
+        $event->groupid     = $groupid;
+        $event->userid      = $userid;
+        $event->modulename  = 'offlinequiz';
+        $event->instance    = $offlinequiz->id;
+        $event->timestart   = $timeopen;
+        $event->timeduration = max($timeclose - $timeopen, 0);
+        $event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
+        // $event->eventtype   = 'open';
 
-    calendar_event::create($event);
+        if ($timeopen == $offlinequiz->time) {
+            $event->name = $offlinequiz->name;
+        }
+        if ($timeopen == $offlinequiz->timeopen) {
+            $event->name = $offlinequiz->name . ' (' . get_string('reportstarts', 'offlinequiz') . ')';
+        }
+
+        calendar_event::create($event);
+    }
 
     // Delete any leftover events.
     foreach ($oldevents as $badevent) {

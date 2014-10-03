@@ -364,11 +364,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $groupletter = strtoupper($letterstr[$group->number - 1]);
 
     $coursecontext = context_course::instance($courseid);
-
-    add_to_log($courseid, 'offlinequiz', 'createdocx question',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
-    
+        
     PHPWord_Media::resetMedia();
     
     $docx = new PHPWord();
@@ -789,13 +785,14 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $objWriter->save($tempfilename);
 
     // Prepare file record object.
+    $timestamp = date('Ymd_His', time());
     $fileinfo = array(
             'contextid' => $context->id, // ID of context.
             'component' => 'mod_offlinequiz',     // usually = table name.
             'filearea' => 'pdfs',     // usually = table name.
             'filepath' => '/',
             'itemid' => 0,           // usually = ID of row in table.
-            'filename' => $fileprefix . '-' . strtolower($groupletter) . '.docx'); // any filename
+            'filename' => $fileprefix . '-' . strtolower($groupletter) . '_' . $timestamp . '.docx'); // any filename
 
     // Delete existing old files, should actually not happen. 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],

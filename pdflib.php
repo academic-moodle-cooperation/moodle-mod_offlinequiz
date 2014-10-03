@@ -405,10 +405,6 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
     $coursecontext = context_course::instance($courseid);
 
-    add_to_log($courseid, 'offlinequiz', 'createpdf question',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
-
     $pdf = new offlinequiz_question_pdf('P', 'mm', 'A4');
     $trans = new offlinequiz_html_translator();
 
@@ -811,13 +807,14 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     }
 
     // Prepare file record object.
+    $timestamp = date('Ymd_His', time());
     $fileinfo = array(
             'contextid' => $context->id, // ID of context.
             'component' => 'mod_offlinequiz',     // usually = table name.
             'filearea' => 'pdfs',     // usually = table name.
             'filepath' => '/',
             'itemid' => 0,           // usually = ID of row in table.
-            'filename' => $fileprefix . '-' . strtolower($groupletter) . '.pdf'); // any filename
+            'filename' => $fileprefix . '-' . strtolower($groupletter) . '_' . $timestamp . '.pdf'); // any filename
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -859,10 +856,6 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     $fm = new stdClass();
     $fm->q = 0;
     $fm->a = 0;
-
-    add_to_log($courseid, 'offlinequiz', 'createpdf answer',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
 
     $tex_filter = new filter_tex($context, array());
 
@@ -1021,13 +1014,15 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     $fs = get_file_storage();
 
     // Prepare file record object.
+    $timestamp = date('Ymd_His', time());
     $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => 'answer-' . strtolower($groupletter) . '.pdf');
+            'filename' => 'answer-' . strtolower($groupletter) . '_' . $timestamp . '.pdf'); // any filename
+//            'filename' => 'answer-' . strtolower($groupletter) . '.pdf');
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -1091,10 +1086,6 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
     if (empty($participants)) {
         return false;
     }
-
-    add_to_log($courseid, 'offlinequiz', 'create participants pdfs',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
 
     $pdf = new offlinequiz_participants_pdf('P', 'mm', 'A4');
     $pdf->listno = $list->number;
@@ -1169,13 +1160,15 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
     $fs = get_file_storage();
 
     // Prepare file record object.
+    $timestamp = date('Ymd_His', time());
     $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => 'participants_' . $list->id . '.pdf');
+            'filename' => 'participants_' . $list->id . '_' . $timestamp . '.pdf');
+    //            'filename' => 'participants_' . $list->id . '.pdf');
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {

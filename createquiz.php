@@ -337,6 +337,21 @@ if ($mode == 'preview') {
             print_error('Some answer forms have already been analysed', "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=".sesskey());
         } else {
             $offlinequiz = offlinequiz_delete_pdf_forms($offlinequiz);
+            
+            $doctype = 'PDF';
+            if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
+                $doctype = 'DOCX';
+            }
+            $params = array(
+                'context' => $context,
+                'other' => array(
+                        'offlinequizid' => $offlinequiz->id,
+                        'reportname' => $mode,
+                        'doctype' => $doctype
+                )
+            );
+            $event = \mod_offlinequiz\event\docs_deleted::create($params);
+            $event->trigger();
         }
     }
 
@@ -465,6 +480,22 @@ if ($mode == 'preview') {
         // Remember that we have created the documents.
         $offlinequiz->docscreated = 1;
         $DB->set_field('offlinequiz', 'docscreated', 1, array('id' => $offlinequiz->id));
+
+        $doctype = 'PDF';
+        if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
+            $doctype = 'DOCX';
+        }
+        $params = array(
+            'context' => $context,
+            'other' => array(
+                    'offlinequizid' => $offlinequiz->id,
+                    'reportname' => $mode,
+                    'doctype' => $doctype
+
+            )
+        );
+        $event = \mod_offlinequiz\event\docs_created::create($params);
+        $event->trigger();
     }
 }
 
