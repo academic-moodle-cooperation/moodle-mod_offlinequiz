@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package    mod_offlinequiz
  * @since      Moodle 2.7
- * @copyright  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {

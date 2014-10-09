@@ -19,7 +19,7 @@
  *
  * @package   offlinequiz_statistics
  * @author    Juergen Zimmer
- * @copyright 2013 The University of Vienna
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
