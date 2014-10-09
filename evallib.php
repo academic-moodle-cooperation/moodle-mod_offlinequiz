@@ -106,9 +106,10 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
         $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($group));
         if ( $maxanswers != $scanner->maxanswers ) {
             // Create a completely new scanner.
+            $corners = $scanner->get_corners();
             $scanner = new offlinequiz_page_scanner($offlinequiz, $scanner->contextid, $scanner->maxquestions, $maxanswers);
 
-            $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $scanner->get_corners());
+            $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
          
             // Recursively call this method this time ignoring the maxanswers change.
             return offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage,
