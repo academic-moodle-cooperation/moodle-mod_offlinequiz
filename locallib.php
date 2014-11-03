@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -1040,7 +1040,7 @@ function offlinequiz_partlist_created($offlinequiz) {
  * An extension of question_display_options that includes the extra options used
  * by the offlinequiz.
  *
- * @copyright  2012 The University of Vienna
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_offlinequiz_display_options extends question_display_options {
@@ -1417,7 +1417,7 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
     if ($deletefiles) {
         return offlinequiz_delete_pdf_forms($offlinequiz);
     } else {
-        return offlinequiz;
+        return $offlinequiz;
     }
 }
 

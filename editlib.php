@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -1203,7 +1203,7 @@ function offlinequiz_question_tostring($question, $showicon = false,
     $formatoptions->noclean = true;
     $formatoptions->para = false;
     //$questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
-    $questiontext = question_utils::to_plain_text($question->questiontext, $question->questiontextformat, array('noclean' => true, 'para' => false));
+    $questiontext = strip_tags(question_utils::to_plain_text($question->questiontext, $question->questiontextformat, array('noclean' => true, 'para' => false)));
     $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
 
     $result .= '<span class="questionname" title="' . $questiontitle . '">';
@@ -1246,7 +1246,7 @@ function offlinequiz_question_tostring($question, $showicon = false,
 /**
  * A column type for the name of the question type.
  *
- * @copyright  2012 Juergen Zimmer
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_my_question_type_column extends question_bank_question_type_column {
@@ -1272,7 +1272,7 @@ class question_bank_my_question_type_column extends question_bank_question_type_
 /**
  * A column with a checkbox for each question with name q{questionid}.
  *
- * @copyright  2012 Juergen Zimmer
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_my_checkbox_column extends question_bank_checkbox_column {
@@ -1301,7 +1301,7 @@ class question_bank_my_checkbox_column extends question_bank_checkbox_column {
 /**
  * A column type for the add this question to the offlinequiz.
  *
- * @copyright  2012 Juergen Zimmer
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_add_to_offlinequiz_action_column extends question_bank_action_column_base {
@@ -1352,7 +1352,7 @@ class question_bank_add_to_offlinequiz_action_column extends question_bank_actio
 /**
  * A column type for the name followed by the start of the question text.
  *
- * @copyright  2012 Juergen Zimmer
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_question_name_text_column extends question_bank_question_name_column {
@@ -1384,7 +1384,7 @@ class question_bank_question_name_text_column extends question_bank_question_nam
 /**
  * Subclass to customise the view of the question bank for the offlinequiz editing screen.
  *
- * @copyright  2012 Juergen Zimmer
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_question_bank_view extends question_bank_view {

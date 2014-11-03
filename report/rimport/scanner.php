@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -95,7 +95,7 @@ class oq_point {
 /**
  * Class that contains all the routines and data to interprate scanned answer forms
  * 
- * @author Juergen Zimmer
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  *
  */
 class offlinequiz_page_scanner {

@@ -15,53 +15,50 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_offlinequiz report viewed event.
+ * The mod_offlinequiz question manually graded event.
  *
- * @package    mod_offlinequiz
+ * @package    core
  * @author  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright 2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since Moodle 2.7
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 namespace mod_offlinequiz\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_offlinequiz report viewed event class.
+ * The mod_offlinequiz event class for manual marking participants as present or absent.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
  *      - int offlinequizid: the id of the offlinequiz.
- *      - string reportname: the name of the report.
  * }
  *
- * @package    mod_offlinequiz
+ * @package    core
  * @since      Moodle 2.7
  * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_viewed extends \core\event\base {
+class participant_manually_marked extends \core\event\base {
 
     /**
      * Init method.
-     *
-     * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'r';
+        $this->data['objecttable'] = 'question';
+        $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
-     * Return localised event name.
+     * Returns localised general event name.
      *
      * @return string
      */
     public static function get_name() {
-        return get_string('eventreportviewed', 'mod_offlinequiz');
+        return get_string('eventparticipantmarked', 'mod_offlinequiz');
     }
 
     /**
@@ -70,18 +67,17 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' viewed the report '" . s($this->other['reportname']) . "' for the offlinequiz with " .
-            "the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' manually marked the user with id '$this->objectid' as " . $this->other['type'] .
+        " the offlinequiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**
-     * Get URL related to the action.
+     * Returns relevant URL.
      *
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/offlinequiz/report.php', array('id' => $this->contextinstanceid,
-            'mode' => $this->other['reportname']));
+        return new \moodle_url('/mod/offlinequiz/participants.php', array('mode' => 'attendances', 'id' => $this->contextinstanceid));
     }
 
     /**
@@ -90,8 +86,7 @@ class report_viewed extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'offlinequiz', 'report', 'report.php?id=' . $this->contextinstanceid . '&mode=' .
-            $this->other['reportname'], $this->other['offlinequizid'], $this->contextinstanceid);
+        return array($this->courseid, 'offlinequiz', 'manual participant', 'participant.php?mode=attendances', $this->other['offlinequizid'], $this->contextinstanceid);
     }
 
     /**
@@ -107,8 +102,9 @@ class report_viewed extends \core\event\base {
             throw new \coding_exception('The \'offlinequizid\' value must be set in other.');
         }
 
-        if (!isset($this->other['reportname'])) {
-            throw new \coding_exception('The \'reportname\' value must be set in other.');
+        if (!isset($this->other['type'])) {
+            throw new \coding_exception('The \'type\' value must be set in other.');
         }
+
     }
 }

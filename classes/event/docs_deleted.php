@@ -29,13 +29,15 @@ namespace mod_offlinequiz\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_offlinequiz report viewed event class.
+ * The mod_offlinequiz documents deletion event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
  *      - int offlinequizid: the id of the offlinequiz.
  *      - string reportname: the name of the report.
+ *      - string doctype: the document type (PDF or DOCX).
+ *      
  * }
  *
  * @package    mod_offlinequiz
@@ -43,7 +45,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_viewed extends \core\event\base {
+class docs_deleted extends \core\event\base {
 
     /**
      * Init method.
@@ -61,7 +63,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventreportviewed', 'mod_offlinequiz');
+        return get_string('eventdocsdeleted', 'mod_offlinequiz');
     }
 
     /**
@@ -70,8 +72,8 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' viewed the report '" . s($this->other['reportname']) . "' for the offlinequiz with " .
-            "the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' deleted the documents in format " . $this->other['doctype'] .
+        " for the offlinequiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -80,7 +82,7 @@ class report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/offlinequiz/report.php', array('id' => $this->contextinstanceid,
+        return new \moodle_url('/mod/offlinequiz/createquiz.php', array('id' => $this->contextinstanceid,
             'mode' => $this->other['reportname']));
     }
 
@@ -90,7 +92,7 @@ class report_viewed extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'offlinequiz', 'report', 'report.php?id=' . $this->contextinstanceid . '&mode=' .
+        return array($this->courseid, 'offlinequiz', 'deletepdfs', 'mod/offlinequiz/createquiz.php?id=' . $this->contextinstanceid . '&mode=' .
             $this->other['reportname'], $this->other['offlinequizid'], $this->contextinstanceid);
     }
 
@@ -109,6 +111,10 @@ class report_viewed extends \core\event\base {
 
         if (!isset($this->other['reportname'])) {
             throw new \coding_exception('The \'reportname\' value must be set in other.');
+        }
+
+        if (!isset($this->other['doctype'])) {
+            throw new \coding_exception('The \'doctype\' value must be set in other.');
         }
     }
 }
