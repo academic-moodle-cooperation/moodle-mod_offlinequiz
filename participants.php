@@ -201,7 +201,7 @@ switch($mode) {
         $searchtext = optional_param('searchtext', '', PARAM_RAW); // search string
         $listid = optional_param('listid', 0, PARAM_INT);
         $group = optional_param('group', 0, PARAM_INT);
-        $addselect = optional_param('addselect', array(), PARAM_RAW);
+        $addselect = optional_param_array('addselect', array(), PARAM_INT);
         $removeselect = optional_param('removeselect', '', PARAM_RAW);
 
         if (!$list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid))) {
@@ -396,7 +396,7 @@ switch($mode) {
             echo $OUTPUT->single_select($url, 'listid', $options, $listid);
             echo '<br />&nbsp;<br /></div>';
         }
-        if ($action == 'uncheck' and $participantids = optional_param('participantid', array(), PARAM_INT)) {
+        if ($action == 'uncheck' and $participantids = optional_param_array('participantid', array(), PARAM_INT)) {
             foreach ($participantids as $participantid) {
                 if ($participantid) {
                     $DB->set_field('offlinequiz_participants', 'checked', 0, array('id' => $participantid));
@@ -417,7 +417,7 @@ switch($mode) {
                 $event->trigger();
             }
         }
-        if ($action == 'check' and $participantids = optional_param('participantid', array(), PARAM_INT)) {
+        if ($action == 'check' and $participantids = optional_param_array('participantid', array(), PARAM_INT)) {
             foreach ($participantids as $participantid) {
                 if ($participantid) {
                     $DB->set_field('offlinequiz_participants', 'checked', 1, array('id' => $participantid));
