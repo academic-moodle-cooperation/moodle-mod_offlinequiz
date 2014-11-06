@@ -635,7 +635,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
 
     $strorder = get_string('order');
     $strquestionname = get_string('questionname', 'question');
-    $strgrade = get_string('grade');
+    $strgrade = get_string('markedoutof', 'question');
     $strremove = get_string('remove', 'offlinequiz');
     $stredit = get_string('edit');
     $strview = get_string('view');
