@@ -39,7 +39,7 @@ class offlinequiz_statistics_settings_form extends moodleform {
         $mform = $this->_form;
 
         $mform->addElement('header', 'preferencespage',
-                get_string('preferencespage', 'offlinequiz_overview'));
+                get_string('preferencespage', 'offlinequiz_statistics'));
 
 //         $options = array();
 //         $options[0] = get_string('attemptsfirst', 'offlinequiz_statistics');
@@ -49,6 +49,6 @@ class offlinequiz_statistics_settings_form extends moodleform {
 //         $mform->setDefault('useallattempts', 0);
 
         $mform->addElement('submit', 'submitbutton',
-                get_string('preferencessave', 'offlinequiz_overview'));
+                get_string('preferencessave', 'offlinequiz_statistics'));
     }
 }
