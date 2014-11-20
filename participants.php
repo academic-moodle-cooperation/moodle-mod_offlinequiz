@@ -389,7 +389,7 @@ switch($mode) {
             foreach ($lists as $option) {
                 $options[$option->id] = $option->name;
             }
-            $listid = optional_param('listid', '', PARAM_INT);
+            $listid = optional_param('listid', 0, PARAM_INT);
             echo '<div align="center">' . get_string('participantslist', 'offlinequiz') . ':&nbsp;';
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                     array('q' => $offlinequiz->id, 'mode' => 'attendances'));

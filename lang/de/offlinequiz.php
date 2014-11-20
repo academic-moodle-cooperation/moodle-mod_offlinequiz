@@ -232,7 +232,7 @@ $string['linktoscannedform'] = 'Scannerbeleg ansehen';
 $string['listnotdetected'] = 'Barcode für Zuordnung der Anwesenheitsliste nicht erfassbar!';
 $string['logdeleted'] = 'Log-Eintrag {$a} gelöscht.';
 $string['logourl'] = 'Logo URL';
-$string['logourldesc'] = 'URL zu einer Bilddatei die also Logo auf den Antwortbögen angezeigt wird. <b>Die maximal erlaubte Größe des Bildes beträgt 520x140 Pixel</b>. Bei größeren Bildern können die Antwortbögen nicht ausgewertet werden!';
+$string['logourldesc'] = 'URL zu einer Bilddatei die also Logo auf den Antwortbögen angezeigt wird, z.B. <b>http://www.meinserver.at/verzeichnis/logo.png</b> oder <b>../pfad/logo.png</b>. Die maximal erlaubte Größe des Bildes beträgt 520x140 Pixel. Bei größeren Bildern können die Antwortbögen nicht ausgewertet werden!';
 $string['lowertrigger'] = 'Unterer Grenzwert';
 $string['lowertriggerzero'] = 'Unterer Grenzwert ist null';
 $string['lowerwarning'] = 'Unterer Warnwert';
@@ -241,6 +241,7 @@ $string['marginwarning'] = 'Bitte drucken Sie die folgenden Antwortbögen ohne z
 $string['marks'] = 'Punktezahl';
 $string['matrikel'] = 'Matrikelnummer';
 $string['maxgradewarning'] = 'Die beste Bewertung muss eine Zahl sein!';
+$string['membersinplist'] = '{$a->count} Teilnehmer/innen in Anwesenheitsliste <a href="{$a->url}">{$a->name}</a>';
 $string['missingimagefile'] = 'Bilddatei fehlt';
 $string['missingitemdata'] = 'Fehlende Antwort/en für {$a}';
 $string['missinglogdata'] = 'Logdaten für existierendes Ergebnis fehlen.';
@@ -336,6 +337,10 @@ $string['papergray'] = 'Weißwert des Papiers';
 $string['papergray_help'] = 'Wenn die eingescannten Dokumente zu dunkel oder zu hell sind, können Sie das mit diesem Parameter korrigieren. 
 Im Idealfall sind Ihre Scannerbelege allerdings zweifärbig, also schwarz-weiße PNG-, GIF- oder TIF-Dateien. Die Komprimierung von JPG-Dateien führt immer zu Bildverlusten. 
 Dieses Format ist deshalb zu vermeiden.';
+$string['partcheckedwithresult'] = '{$a} anwesende Teilnehmer/innen mit Ergebnis';
+$string['partcheckedwithoutresult'] = '<a href="{$a->url}">{$a->count} anwesende Teilnehmer/innen ohne Ergebnis</a>';
+$string['partuncheckedwithresult'] = '<a href="{$a->url}">{$a->count} abwesende Teilnehmer/innen mit Ergebnis</a>';
+$string['partuncheckedwithoutresult'] = '{$a} abwesende Teilnehmer/innen ohne Ergebnis';
 $string['participantslist'] = 'Anwesenheitsliste';
 $string['participantslists'] = 'Anwesenheitslisten';
 $string['participants'] = 'Teilnehmer/innen';
