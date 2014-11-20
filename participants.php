@@ -389,7 +389,7 @@ switch($mode) {
             foreach ($lists as $option) {
                 $options[$option->id] = $option->name;
             }
-            $listid = optional_param('listid', '', PARAM_INT);
+            $listid = optional_param('listid', 0, PARAM_INT);
             echo '<div align="center">' . get_string('participantslist', 'offlinequiz') . ':&nbsp;';
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                     array('q' => $offlinequiz->id, 'mode' => 'attendances'));
@@ -499,6 +499,8 @@ switch($mode) {
             if (!property_exists($list, 'filename') ||  !$list->filename ||
                     !$pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $list->filename)) {
                 $pdffile = offlinequiz_create_pdf_participants($offlinequiz, $course->id, $list, $context);
+                $list->filename = $pdffile->get_filename();
+                $DB->update_record('offlinequiz_p_lists', $list);
             }
 
             // show downloadlink
