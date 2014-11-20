@@ -499,6 +499,8 @@ switch($mode) {
             if (!property_exists($list, 'filename') ||  !$list->filename ||
                     !$pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $list->filename)) {
                 $pdffile = offlinequiz_create_pdf_participants($offlinequiz, $course->id, $list, $context);
+                $list->filename = $pdffile->get_filename();
+                $DB->update_record('offlinequiz_p_lists', $list);
             }
 
             // show downloadlink

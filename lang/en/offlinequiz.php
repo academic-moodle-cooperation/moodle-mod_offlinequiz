@@ -259,6 +259,7 @@ $string['marginwarning'] = 'Please print the following PDF files without additio
 $string['marks'] = 'Marks';
 $string['matrikel'] = 'Matrikelnummer';
 $string['maxgradewarning'] = 'The maximum grade has to be a number!';
+$string['membersinplist'] = '{$a->count} participants in {$a->name}';
 $string['missingimagefile'] = 'Missing image file';
 $string['missingitemdata'] = 'Missing answer(s) for user {$a}';
 $string['missinglogdata'] = 'Missing logdata for existing result.';

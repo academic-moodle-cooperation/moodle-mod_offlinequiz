@@ -117,7 +117,7 @@ if (has_capability('mod/offlinequiz:view', $context)) {
     if (trim(strip_tags($offlinequiz->intro))) {
         $formatoptions = new stdClass();
         $formatoptions->noclean = true;
-        echo $OUTPUT->box(format_text($offlinequiz->intro, FORMAT_MOODLE, $formatoptions), 'generalbox', 'intro');
+        echo $OUTPUT->box(format_text($offlinequiz->intro, $offlinequiz->introformat, $formatoptions), 'generalbox', 'intro');
     }
 }
 
@@ -163,6 +163,30 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
         echo html_writer::link($url, get_string('numattemptsverify', 'offlinequiz', $errorcount));
     }
     echo '</div>';
+    
+    // Redmine 1971: New info about list of participants.
+    if ($plists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id))) {
+        $firstlist = array_shift($plists);
+        array_unshift($plists, $firstlist);
+        $fs = get_file_storage();
+
+        // Only produce output if the PDF files have been created.
+        if (property_exists($firstlist, 'filename') && $firstlist->filename &&
+                    $pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $firstlist->filename)) {
+
+            echo '<div class="box generalbox linkbox">';
+            foreach ($plists as $listid => $plist) {
+                $membercount = $DB->count_records('offlinequiz_participants', array('listid' => $plist->id));
+                echo html_writer::span(get_string('membersinplist', 'offlinequiz', array('count' => $membercount, 'name' => $plist->name)));                
+                echo '<br />';
+            }
+            echo '</div>';
+            if ($ppages = $DB->get_records('offlinequiz_scanned_p_pages', array('offlinequizid' => $offlinequiz->id))) {
+                
+            }
+        }
+        
+    } 
 
 } else if (has_capability('mod/offlinequiz:attempt', $context)) {
     $select = "SELECT *
