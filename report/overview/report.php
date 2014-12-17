@@ -350,7 +350,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 $headers .= ", " . get_string ( 'present', 'offlinequiz' );
             }
             echo $headers . " \n";
-        } else if ($download == 'CSVplus1') {
+        } else if ($download == 'CSVplus1' || $download == 'CSVpluspoints') {
             $filename .= ".csv";
             header ( "Content-Encoding: UTF-8" );
             header ( "Content-Type: text/csv; charset=utf-8" );
@@ -575,7 +575,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     if ($withparticipants) {
                         $row [] = ! empty ( $checked [$result->userid] ) ? "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/tick.gif\" alt=\"" . get_string ( 'ischecked', 'offlinequiz' ) . "\">" : "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/cross.gif\" alt=\"" . get_string ( 'isnotchecked', 'offlinequiz' ) . "\">";
                     }
-                } else if ($download != 'CSVplus1') {
+                } else if ($download != 'CSVplus1'  || $download == 'CSVpluspoints') {
                     $row [] = $result->sumgrades === null ? '-' : $outputgrade;
                     if ($withparticipants) {
                         if (array_key_exists ( $result->userid, $checked )) {
@@ -598,11 +598,9 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 } else if ($download == 'CSV') {
                     $text = implode ( ',', $row );
                     echo $text . "\n";
-                } else if ($download == 'CSVplus1') {
-                    $text = $row [1] . ',' . $row [2] . ',' . $row [0] . ',' . $groups [$result->offlinegroupid]->number;
-                    if ($pages = $DB->get_records ( 'offlinequiz_scanned_pages', array (
-                            'resultid' => $result->resultid 
-                    ), 'pagenumber ASC' )) {
+                } else if ($download == 'CSVplus1' || $download == 'CSVpluspoints') {
+                    $text = $row[1] . ',' . $row[2] . ',' . $row[0] . ',' . $groups[$result->offlinegroupid]->number;
+                    if ($pages = $DB->get_records ( 'offlinequiz_scanned_pages', array ('resultid' => $result->resultid), 'pagenumber ASC' )) {
                         foreach ( $pages as $page ) {
                             if ($page->status == 'ok' || $page->status == 'submitted') {
                                 $choices = $DB->get_records ( 'offlinequiz_choices', array (
@@ -638,6 +636,18 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                         }
                     }
                     echo $text . "\n";
+                    
+                    if ($download == 'CSVpluspoints') {
+                        $text = $row[1] . ',' . $row[2] . ',' . $row[0] . ',' . $groups[$result->offlinegroupid]->number;
+                        $quba = question_engine::load_questions_usage_by_activity($result->usageid);
+                        $slots = $quba->get_slots();
+                        foreach ($slots as $slot) {
+                            $slotquestion = $quba->get_question($slot);
+                            $attempt = $quba->get_question_attempt($slot);
+                            $text .= ',' . format_float($attempt->get_mark(), $offlinequiz->decimalpoints, false);
+                        }
+                        echo $text . "\n";
+                    }
                 }
             } // end foreach ($results...
         } else if (! $download) {
@@ -656,11 +666,12 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 echo ' <input type="hidden" name="noheader" value="yes" />';
                 echo ' <table class="boxaligncenter"><tr><td>';
                 $options = array (
-                        'CSV' => get_string ( 'CSVformat', 'offlinequiz' ),
-                        'ODS' => get_string ( 'ODSformat', 'offlinequiz' ),
-                        'Excel' => get_string ( 'Excelformat', 'offlinequiz' ),
-                        'CSVplus1' => get_string ( 'CSVplus1format', 'offlinequiz' ) 
-                );
+                        'CSV' => get_string('CSVformat', 'offlinequiz'),
+                        'ODS' => get_string('ODSformat', 'offlinequiz'),
+                        'Excel' => get_string('Excelformat', 'offlinequiz'),
+                        'CSVplus1' => get_string('CSVplus1format', 'offlinequiz'),
+                        'CSVpluspoints' => get_string('CSVpluspointsformat', 'offlinequiz')
+                        );
                 print_string ( 'downloadresultsas', 'offlinequiz' );
                 echo "</td><td>";
                 // $downloadurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report')
@@ -677,10 +688,10 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 echo "</td>\n";
                 echo '</tr></table></form>';
             }
-        } else if ($download == 'Excel' or $download == 'ODS') {
+        } else if ($download == 'Excel' || $download == 'ODS') {
             $workbook->close ();
             exit ();
-        } else if ($download == 'CSV' or $download == 'CSVplus1') {
+        } else if ($download == 'CSV' || $download == 'CSVplus1' || $download == 'CSVpluspoints') {
             exit ();
         }
         

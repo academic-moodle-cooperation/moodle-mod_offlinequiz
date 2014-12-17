@@ -103,6 +103,7 @@ $string['createquiz'] = 'Create forms';
 $string['csvfile'] = 'CSV file';
 $string['CSVformat'] = 'CSV format';
 $string['CSVplus1format'] = 'CSV format (raw data)';
+$string['CSVpluspointsformat'] = 'CSV format points (raw data)';
 $string['darkgray'] = 'Dark grey';
 $string['datanotsaved'] = 'Could not save settings';
 $string['configdecimalplaces'] ='Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
