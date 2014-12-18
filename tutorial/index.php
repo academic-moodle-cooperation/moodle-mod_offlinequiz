@@ -107,7 +107,7 @@ if (!file_exists($CFG->dirroot."/mod/offlinequiz/tutorial/$lang/page-$page.html"
 echo '<table cellspacing=4 cellpadding=10 border=0>
           <tr><td width="200px" valign="top">';
 require($CFG->dirroot."/mod/offlinequiz/tutorial/$lang/menu.html");
-echo '</td><td width="300px">';
+echo '</td><td width="400px">';
 
 $answer = optional_param('answer', null, PARAM_RAW);
 if (!empty($answer)) {
