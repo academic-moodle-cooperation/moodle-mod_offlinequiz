@@ -308,6 +308,7 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #page-mod-offlinequiz-edit .questioncontentcontainer div.randomquestionqlist ul li span{display:inline;}
 #page-mod-offlinequiz-edit .questioncontentcontainer a { text-decoration:none;}
 #page-mod-offlinequiz-edit .questioncontentcontainer div.singlequestion a{ text-decoration:none;}
+#page-mod-offlinequiz-edit .questioncontentcontainer div.singlequestion img.smallicon { vertical-align: baseline;}
 
 #page-mod-offlinequiz-edit .questioncontentcontainer .randomquestioncategory{font-weight:bold;}
 
