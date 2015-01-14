@@ -525,6 +525,11 @@ a:hover
 
 #page-mod-offlinequiz-createquiz div.docsbox {
      border-bottom: 1px solid #e3e3e3;
+     clear: both;
+}
+
+#page-mod-offlinequiz-createquiz div.downloadalllink {
+	float: right;
 }
 
 /* #page-mod-offlinequiz-report .errorpages { border-style: dotted;} */

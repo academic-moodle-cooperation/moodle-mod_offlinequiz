@@ -36,6 +36,7 @@ $q = optional_param('q', 0, PARAM_INT);                 // or offlinequiz ID
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // reshuffle questions
 $forcepdfnew = optional_param('forcepdfnew', false, PARAM_BOOL); // recreate pdfs
 $mode = optional_param('mode', 'preview', PARAM_ALPHA);        // mode
+$downloadall = optional_param('downloadall' , false, PARAM_BOOL);
 
 $letterstr = 'ABCDEFGHIJKL';
 
@@ -101,12 +102,46 @@ if ($node = $PAGE->settingsnav->find('mod_offlinequiz_createquiz', navigation_no
     $node->make_active();
 }
 
+if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+    print_error('There are no offlinequiz groups', "edit.php?q=$offlinequiz->id$amp;sesskey=".sesskey());
+}
+
+// Redmine 2131: Handle download all before any HTML output is produced.
+if ($downloadall && $offlinequiz->docscreated) {
+    $fs = get_file_storage();
+    
+    // Simply pack all files in the 'pdfs' filearea in a ZIP file.
+    $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
+    $timestamp = date('Ymd_His', time());
+    $shortname = $DB->get_field('course', 'shortname', array('id' => $offlinequiz->course));
+    $zipfilename = clean_filename($shortname . '_' . $offlinequiz->name . '_' . $timestamp . '.zip');
+    $tempzip = tempnam($CFG->tempdir . '/', 'offlinequizzip');
+    $filelist = array();
+    
+    foreach ($files as $file) {
+        $filename = $file->get_filename();
+        if ($filename != '.') {
+            $path = '';
+            if (0 === strpos($filename, 'form-')) {
+                $path = get_string('questionsheet', 'offlinequiz');
+            } else if (0 === strpos($filename, 'answer-')) {
+                $path = get_string('answerform', 'offlinequiz');
+            } else {
+                $path = get_string('correctionform', 'offlinequiz');
+            }
+            $path = clean_filename($path);
+            $filelist[$path . '/' . $filename] = $file;
+        }
+    }
+   
+    $zipper = new zip_packer();
+
+    if ($zipper->archive_to_pathname($filelist, $tempzip)) {
+        send_temp_file($tempzip, $zipfilename);
+    }
+}
+
 // Print the page header
-// $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
-//    ? $OUTPUT->update_module_button($cm->id, 'offlinequiz') : "";
-
-// $PAGE->set_button($strupdatemodule);
-
 echo $OUTPUT->header();
 
 // Print the offlinequiz name heading and tabs for teacher
@@ -115,10 +150,6 @@ $currenttab = 'createofflinequiz';
 require('tabs.php');
 
 // echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
-
-if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
-    print_error('There are no offlinequiz groups', "edit.php?q=$offlinequiz->id$amp;sesskey=".sesskey());
-}
 
 $hasscannedpages = offlinequiz_has_scanned_pages($offlinequiz->id);
 
@@ -331,7 +362,7 @@ if ($mode == 'preview') {
 
     $fs = get_file_storage();
 
-    // Delete the PDF forms if forcepdfnew and if there are not scanned pages yet.
+    // Delete the PDF forms if forcepdfnew and if there are no scanned pages yet.
     if ($forcepdfnew) {
         if ($hasscannedpages) {
             print_error('Some answer forms have already been analysed', "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=".sesskey());
@@ -365,6 +396,15 @@ if ($mode == 'preview') {
     // show/create the question forms for the offline groups.
     // ============================================================
     if (!$forcepdfnew) {
+        // Redmine 2131: Add download all link.
+        $downloadallurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/createquiz.php', 
+                array('q' => $offlinequiz->id,
+                        'mode' => 'createpdfs',
+                        'downloadall' => 1)); 
+        echo html_writer::start_div('downloadalllink');
+        echo html_writer::link($downloadallurl->out(false), get_string('downloadallzip', 'offlinequiz'));
+        echo html_writer::end_div();
+
         echo $OUTPUT->box_start('generalbox linkbox docsbox');
 
         foreach ($groups as $group) {
