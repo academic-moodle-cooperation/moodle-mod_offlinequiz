@@ -630,7 +630,8 @@ function offlinequiz_move_question_down($layout, $questionid) {
  * @param bool $offlinequiz_qbanktool  Indicates whether the question bank should be displayed
  * @param bool $hasattempts  Indicates whether the offlinequiz has attempts
  */
-function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $reordertool, $gradetool, $offlinequiz_qbanktool, $hasattempts, $defaultcategoryobj) {
+function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $reordertool,
+        $gradetool, $offlinequiz_qbanktool, $hasattempts, $defaultcategoryobj) {
     global $CFG, $DB, $OUTPUT;
 
     $strorder = get_string('order');
