@@ -117,17 +117,17 @@ if ($downloadall && $offlinequiz->docscreated) {
     $zipfilename = clean_filename($shortname . '_' . $offlinequiz->name . '_' . $timestamp . '.zip');
     $tempzip = tempnam($CFG->tempdir . '/', 'offlinequizzip');
     $filelist = array();
-    
+
     foreach ($files as $file) {
         $filename = $file->get_filename();
         if ($filename != '.') {
             $path = '';
             if (0 === strpos($filename, 'form-')) {
-                $path = get_string('questionsheet', 'offlinequiz');
+                $path = get_string('questionforms', 'offlinequiz');
             } else if (0 === strpos($filename, 'answer-')) {
-                $path = get_string('answerform', 'offlinequiz');
+                $path = get_string('answerforms', 'offlinequiz');
             } else {
-                $path = get_string('correctionform', 'offlinequiz');
+                $path = get_string('correctionforms', 'offlinequiz');
             }
             $path = clean_filename($path);
             $filelist[$path . '/' . $filename] = $file;
