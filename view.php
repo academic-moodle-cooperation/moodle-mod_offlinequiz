@@ -194,8 +194,11 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
                          WHERE listid $lsql";
                 $participants = $DB->get_records_sql($psql, $lparams);
                 
-                $results = $DB->get_records_select('offlinequiz_results', 'offlinequizid = :offlinequizid',
-                        array('offlinequizid' => $offlinequiz->id), '', 'userid');
+                $results = $DB->get_records_select('offlinequiz_results',
+                        'offlinequizid = :offlinequizid AND status = :status',
+                        array('offlinequizid' => $offlinequiz->id,
+                                'status' => 'complete'
+                        ), '', 'userid');
 
                 $checkedwithresult = 0;
                 $checkedwithoutresult = 0;
