@@ -199,15 +199,10 @@ function offlinequiz_delete_instance($id) {
         }
     }
 
-    $tables_to_purge = array(
-            'offlinequiz_groups' => 'offlinequizid',
-            'offlinequiz_q_instances' => 'offlinequizid',
-            'offlinequiz' => 'id'
-    );
-
-    foreach ($tables_to_purge as $table => $keyfield) {
-        if (! $DB->delete_records($table, array($keyfield => $offlinequiz->id))) {
-            $result = false;
+    if ($events = $DB->get_records('event', array('modulename' => 'offlinequiz', 'instance' => $offlinequiz->id))) {
+        foreach ($events as $event) {
+            $event = calendar_event::load($event);
+            $event->delete();
         }
     }
 
@@ -218,10 +213,19 @@ function offlinequiz_delete_instance($id) {
         }
     }
 
-    if ($events = $DB->get_records('event', array('modulename' => 'offlinequiz', 'instance' => $offlinequiz->id))) {
-        foreach ($events as $event) {
-            $event = calendar_event::load($event);
-            $event->delete();
+    // Remove the grade item.
+    offlinequiz_grade_item_delete($offlinequiz);
+
+    // All the tables with no dependencies...
+    $tables_to_purge = array(
+            'offlinequiz_groups' => 'offlinequizid',
+            'offlinequiz_q_instances' => 'offlinequizid',
+            'offlinequiz' => 'id'
+    );
+
+    foreach ($tables_to_purge as $table => $keyfield) {
+        if (! $DB->delete_records($table, array($keyfield => $offlinequiz->id))) {
+            $result = false;
         }
     }
 
