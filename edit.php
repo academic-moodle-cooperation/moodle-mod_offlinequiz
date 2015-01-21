@@ -719,7 +719,7 @@ if ($docscreated) {
     echo "</div><br />\n";
 }
 
-if ($offlinequiz->shufflequestions || $offlinequiz->docscreated || $hasscannedpages) {
+if ($offlinequiz->shufflequestions) {
     $repaginatingdisabledhtml = 'disabled="disabled"';
     $repaginatingdisabled = true;
     $offlinequiz->questions = offlinequiz_clean_layout(offlinequiz_repaginate($offlinequiz->questions, $offlinequiz->questionsperpage), true);
