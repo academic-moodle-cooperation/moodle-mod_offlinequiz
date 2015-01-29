@@ -560,21 +560,24 @@ onClick=\"self.close(); return false;\"><br />";
     foreach ($otherpages as $otherpage) {
         $otherpage->status = 'suspended';
         $otherpage->error = '';
-//         $tempscanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
-//         $tempcorners = array();
-//         if ($dbcorners = $DB->get_records('offlinequiz_page_corners', array('scannedpageid' => $otherpage->id), 'position')) {
-//             foreach ($dbcorners as $corner) {
-//                 $tempcorners[] = new oq_point($corner->x, $corner->y);
-//             }
-//         } else {
-//            Define some default corners.
-//             $tempcorners[0] = new oq_point(55, 39);
-//             $tempcorners[1] = new oq_point(805, 49);
-//             $tempcorners[2] = new oq_point(44, 1160);
-//             $tempcorners[3] = new oq_point(805, 1160);
-//         }
-//         $tempscanner->load_stored_image($otherpage->filename, $tempcorners);
-//         $otherpage = offlinequiz_check_scanned_page($offlinequiz, $tempscanner, $otherpage, $USER->id, $coursecontext);
+        $tempscanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
+        $tempcorners = array();
+        if ($dbcorners = $DB->get_records('offlinequiz_page_corners', array('scannedpageid' => $otherpage->id), 'position')) {
+            foreach ($dbcorners as $corner) {
+                $tempcorners[] = new oq_point($corner->x, $corner->y);
+            }
+        } else {
+            $tempcorners[0] = new oq_point(55, 39);
+            $tempcorners[1] = new oq_point(805, 49);
+            $tempcorners[2] = new oq_point(44, 1160);
+            $tempcorners[3] = new oq_point(805, 1160);
+        }
+        $tempscanner->load_stored_image($otherpage->filename, $tempcorners);
+        $otherpage = offlinequiz_check_scanned_page($offlinequiz, $tempscanner, $otherpage, $USER->id, $coursecontext);
+        if ($otherpage->status == 'ok') {
+            $otherpage = offlinequiz_process_scanned_page($offlinequiz, $tempscanner, $otherpage, $USER->id, $questionsperpage, $coursecontext, true);
+        }
+        
         $DB->update_record('offlinequiz_scanned_pages', $otherpage);        
     }
     
