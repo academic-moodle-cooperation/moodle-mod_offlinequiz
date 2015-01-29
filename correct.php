@@ -459,8 +459,8 @@ onClick=\"self.close(); return false;\"><br />";
 
     if (!$overwrite) {
         $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
-
-        if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
+ 
+       if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
             // Already process the answers but don't submit them.
             $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $questionsperpage, $coursecontext, false);
 
@@ -544,6 +544,41 @@ onClick=\"self.close(); return false;\"><br />";
         }
     }
     
+    // Now we look for other pages with that user and reset their status.
+    $sql = "SELECT *
+              FROM {offlinequiz_scanned_pages}
+             WHERE offlinequizid = :offlinequizid
+               AND status = 'error'
+               AND error = 'usernotincourse'
+               AND userkey = :currentuserkey               
+               AND id <> :currentpageid";
+    $params = array('offlinequizid' => $offlinequiz->id,
+            'currentuserkey' => $scannedpage->userkey,
+            'currentpageid' => $scannedpage->id);
+
+    $otherpages = $DB->get_records_sql($sql, $params);
+    foreach ($otherpages as $otherpage) {
+        $otherpage->status = 'ok';
+        $otherpage->error = '';
+        $tempscanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
+        $tempcorners = array();
+        if ($dbcorners = $DB->get_records('offlinequiz_page_corners', array('scannedpageid' => $otherpage->id), 'position')) {
+            foreach ($dbcorners as $corner) {
+                $tempcorners[] = new oq_point($corner->x, $corner->y);
+            }
+        } else {
+            // Define some default corners.
+            $tempcorners[0] = new oq_point(55, 39);
+            $tempcorners[1] = new oq_point(805, 49);
+            $tempcorners[2] = new oq_point(44, 1160);
+            $tempcorners[3] = new oq_point(805, 1160);
+        }
+        $tempscanner->load_stored_image($otherpage->filename, $tempcorners);
+        $otherpage = offlinequiz_check_scanned_page($offlinequiz, $tempscanner, $otherpage, $USER->id, $coursecontext);
+        $DB->update_record('offlinequiz_scanned_pages', $otherpage);        
+    }
+    
+    // Now reset the status of the original page and check it again.
     $scannedpage->status = 'ok';
     $scannedpage->error = '';
 
