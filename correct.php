@@ -558,7 +558,7 @@ onClick=\"self.close(); return false;\"><br />";
 
     $otherpages = $DB->get_records_sql($sql, $params);
     foreach ($otherpages as $otherpage) {
-        $otherpage->status = 'suspended';
+        $otherpage->status = 'ok';
         $otherpage->error = '';
         $tempscanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
         $tempcorners = array();
