@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2012 The University of Vienna
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -97,15 +97,7 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
             $scannedpage->error = 'grouperror';
         }
     }
-    
-    // =======================================================
-    // adjust the maxanswers of the scanner according to the offlinequiz group
-    // =======================================================
-    if ($group) {
-        $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($group));
-        $scannedpage = $scanner->set_maxanswers($maxanswers, $scannedpage);
-    }
-    
+
     // =======================================================
     // Check the user key (username, or userid, or other).
     // =======================================================

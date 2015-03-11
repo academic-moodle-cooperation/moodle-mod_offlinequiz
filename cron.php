@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2012 The University of Vienna
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -153,10 +153,9 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                     $scannedpage = $scanner->load_image($data->filename);
                     if ($scannedpage->status == 'ok') {
                         echo 'job ' . $job->id . ': image loaded ' . $scannedpage->filename . "\n";
-                        // We don't need this little hack to get the real filename. We keep the file originally uploaded for a number of days. It is then deleted by the offlinequiz cron() in lib.php.
-                        // load_image() appends a counter suffix in case a file already exists, it also renames files in case of format conversion..
-//                        $data->filename = $dirname . '/' . $scannedpage->origfilename;
-//                        $DB->update_record('offlinequiz_queue_data', $data);
+                        // Little hack to get the real filename. load_image() appends a counter suffix in case a file already exists...
+                        $data->filename = $dirname . '/' . $scannedpage->origfilename;
+                        $DB->update_record('offlinequiz_queue_data', $data);
                     } else if ($scannedpage->error == 'filenotfound') {
                         echo 'job ' . $job->id . ': image file not found: ' . $scannedpage->filename . "\n";
                     }

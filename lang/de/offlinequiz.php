@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2012 The University of Vienna
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -185,7 +185,7 @@ $string['import'] = 'Importieren';
 $string['import_help'] = '<p>
 Sie können entweder mehrere eingescannte Bilddateien in einer ZIP-Datei
 oder einzelne Bilddateien importieren. Das Offline-Test Modul wird die Bilder im Hintergrund automatisch auswerten.
-Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als GIF-,
+Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als JPG-, GIF-,
 PNG- oder TIF-Datei vorliegen. Eine Punktdichte zwischen 200 und 300 DPI wird empfohlen.</p>';
 $string['importisfinished'] = 'Der Import für den Offline-Test {$a} ist beendet.';
 $string['importlinkresults'] = 'Link zu den Ergebnissen: {$a}';
@@ -299,7 +299,7 @@ $string['oneclickroledesc'] = 'Wählen Sie hier die Rolle aus, die bei der 1-Cli
 $string['onlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
 $string['orderandpaging'] = 'Reihenfolge und Seitenumbrüche';
 $string['orderandpaging_help'] = 'Die Zahlen 10, 20, 30, ... neben jeder Frage zeigt deren Reihenfolge an. Die Zahlenfolge in 10er-Schritten lässt Platz, um weitere Fragen einfügen zu können.
-Um die Reihenfolge der Fragen zu ändern, ändern Sie die Zahlen und klicken Sie auf das Kontrollfeld \'Neuanordnung der Fragen\'.
+Um die Reihenfolge der Fragen zu ändern, ändern Sie die Zahlen und klicken Sie auf das Kontrollfeld \'Neu sortieren\'.
 Um Seitenumbrüche nach bestimmten Fragen einzufügen, klicken Sie auf das Kontrollfeld \'Seitenumbrüche hinter den ausgewählten Fragen hinzufügen\'.
 Um Fragen über eine Reihe von Seiten anzuordnen, klicken Sie auf das Kontrollfeld  \'Neuer Seitenumbruch...\' und wählen Sie die gewünschte Anzahl von Fragen pro Seite.';
 $string['orderingofflinequiz'] = 'Reihenfolge und Seitenumbrüche';
@@ -338,7 +338,7 @@ $string['partimport'] = 'Importieren von Anwesenheitslisten';
 $string['partimport_help'] = '<p> Hier können Sie die ausgefüllten Anwesenheitslisten importieren.
 Sie können entweder mehrere eingescannte Bilddateien in einer ZIP-Datei
 oder einzelne Bilddateien importieren. Das Offline-Test Modul wird die Bilder im Hintergrund automatisch auswerten.
-Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als GIF-,
+Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als JPG-, GIF-,
 PNG- oder TIF-Datei vorliegen. Eine Punktdichte zwischen 200 und 300 DPI wird empfohlen.</p>';
 $string['pdfdeletedforgroup'] = 'Fragebogen für Gruppe {$a} gelöscht';
 $string['pdfintro'] = 'Zusatzinformation';
@@ -391,7 +391,7 @@ $string['reviewofresult'] = 'Ergebnis';
 $string['reviewopens'] = 'Bericht beginnt';
 $string['reviewoptions'] = 'Prüfungseinsicht';
 $string['reviewoptionsheading'] = 'Einstellungen für die Prüfungseinsicht';
-$string['reviewoptions_help'] = 'Diese Optionen regeln, welche Informationen Studierende bei der Prüfungseinsicht einsehen dürfen. Im Detail bedeuten die Optionen:
+$string['reviewoptions_help'] = 'Diese Optionen regeln welche Informationen Studierende bei der Prüfungseinsicht einsehen dürfen. Im Detail bedeuten die Optionen:
 <table>
 <tr><td style="vertical-align: top;"><b>Das Ergebnis</b></td><td>
 Studierende sehen Fragetexte, Antworttexte und welche Antworten sie angekreuzt haben.
@@ -403,7 +403,7 @@ Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist u
 <tr><td style="vertical-align: top;"><b>Punktezahl</b></td><td>
 Angezeigt werden Gruppe (bspw. C), Punktezahl (erreichte Punktezahl, Summe der Punkte der Fragen des Tests, erreichte %  bspw. 40/80 (50%)) 
 und Bewertung (bspw. 50 von maximal 100). Ist zusätzlich die Option "Das Ergebnis" ausgewählt, 
-werden auch für jede Frage die maximale Punktezahl und die erreichten Punkte angezeigt.
+wird auch für jede Frage die maximale Punktezahl und die erreichten Punkte angezeigt.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Richtige Antwort</b></td><td>
 Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist und bewirkt, dass zusätzlich unter jeder Frage die Nummern der richtigen Antworten angezeigt werden
@@ -417,7 +417,7 @@ Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Formular angezeigt. 
 Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 Zusätzlich sind alle Kästchen, die fälschlicherweise angekreuzt wurden und solche, die fälschlicherweise nicht angekreuzt sind, rot hinterlegt. 
-Des Weiteren befindet sich am rechten Rand eine Auflistung der erreichten Punkte pro Frage.
+Weiterhin befindet sich am rechten Rand eine Auflistung der erreichten Punkte pro Frage.
 </td></tr>
 </table>';
 

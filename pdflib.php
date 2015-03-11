@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2012 The University of Vienna
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -913,7 +913,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
         print_error('Too many answers in one question');
     }
     $pdf->userid = $USER->id;
-//    $pdf->AliasNbPages();
+    $pdf->AliasNbPages();
     $pdf->SetMargins(15, 20, 15);
     $pdf->SetAutoPageBreak(true, 20);
     $pdf->AddPage();
@@ -1121,7 +1121,7 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
     // Add the list name to the title.
     $title .= ', '.offlinequiz_str_html_pdf($listname);
     $pdf->set_title($title);
-    // $pdf->AliasNbPages();
+    $pdf->AliasNbPages();
     $pdf->SetMargins(15, 25, 15);
     $pdf->SetAutoPageBreak(true, 20);
     $pdf->AddPage();

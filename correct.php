@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2012 The University of Vienna
  * @since         Moodle 2.4
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -210,15 +210,8 @@ onClick=\"self.close(); return false;\"><br />";
     //  if (!property_exists($scannedpage, 'groupnumber') || $scannedpage->groupnumber == 0) {
     $scanner->set_group($groupnumber);
     $scannedpage->groupnumber = $groupnumber;
-    
-    // =======================================================
-    // adjust the maxanswers of the scanner according to the offlinequiz group
-    // =======================================================
-    if ($newgroup = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'number' => $groupnumber))) {
-        $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($newgroup));
-        $scannedpage = $scanner->set_maxanswers($maxanswers, $scannedpage);
-    }
-    
+    // }
+
     $usernumber = required_param('usernumber', PARAM_TEXT);
 
     $xes = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';

@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2012 The University of Vienna
  * @since         Moodle 2.2
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
@@ -73,10 +73,17 @@ $showclosingheader = false;
 $showfeedback = false;
 $therearesome = false; 
 foreach ($offlinequizzes as $offlinequiz) {
-    if ($offlinequiz->timeclose != 0) {
+    if ($offlinequiz->timeclose!=0) {
         $showclosingheader = true;
     }
-    if ($offlinequiz->visible) {
+    $outoftime = false;
+    if ($offlinequiz->timeopen && $offlinequiz->timeopen > time()) {
+        $outoftime = true; 
+    }
+    if ($offlinequiz->timeclose && $offlinequiz->timeclose < time()) {
+        $outoftime = true;
+    }
+    if (!$outoftime) {
         $therearesome = true;
     }
 }
