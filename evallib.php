@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,7 +41,8 @@ require_once($CFG->libdir . '/filelib.php');
  * @param unknown_type $teacherid
  * @param unknown_type $coursecontext
  */
-function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $scanner, $scannedpage, $teacherid, $coursecontext, $autorotate = false, $recheckresult = false) {
+function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $scanner, $scannedpage,
+         $teacherid, $coursecontext, $autorotate = false, $recheckresult = false, $ignoremaxanswers = false) {
     global $DB, $CFG;
 
     $offlinequizconfig = get_config('offlinequiz');
@@ -97,7 +98,26 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
             $scannedpage->error = 'grouperror';
         }
     }
+    
+    // =======================================================
+    // adjust the maxanswers of the scanner according to the offlinequiz group deterimined above
+    // =======================================================
+    if ($group && !$ignoremaxanswers) {
+        $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($group));
+        if ( $maxanswers != $scanner->maxanswers ) {
+            // Create a completely new scanner.
+            $corners = $scanner->get_corners();
+            $scanner = new offlinequiz_page_scanner($offlinequiz, $scanner->contextid, $scanner->maxquestions, $maxanswers);
 
+            $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
+         
+            // Recursively call this method this time ignoring the maxanswers change.
+            return offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage,
+                 $teacherid, $coursecontext, $autorotate, $recheckresult, true);
+        }
+//        $scannedpage = $scanner->set_maxanswers($maxanswers, $scannedpage);
+    }
+    
     // =======================================================
     // Check the user key (username, or userid, or other).
     // =======================================================
@@ -147,7 +167,8 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
     }
 
     // =======================================================
-    // Check whether there is already a scanned page or even a completed result with the same group, userid, etc.
+    // If we have a valid userkey, a group and a page number then we can 
+    // check whether there is already a scanned page or even a completed result with the same group, userid, etc.
     if (($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') && $user && $group && $page) {
         $resultexists = false;
         if (!property_exists($scannedpage, 'resultid') || !$scannedpage->resultid || $recheckresult) {

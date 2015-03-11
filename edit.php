@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -194,8 +194,15 @@ $questionbank = new offlinequiz_question_bank_view($contexts, $thispageurl, $cou
 $questionbank->set_offlinequiz_has_attempts($docscreated);
 
 // Log this visit.
-add_to_log($cm->course, 'offlinequiz', 'editquestions',
-        "view.php?id=$cm->id", "$offlinequiz->id", $cm->id);
+$params = array(
+    'courseid' => $course->id,
+    'context' => $contexts->lowest(),
+    'other' => array(
+        'offlinequizid' => $offlinequiz->id
+    )
+);
+$event = \mod_offlinequiz\event\edit_page_viewed::create($params);
+$event->trigger();
 
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
@@ -712,7 +719,7 @@ if ($docscreated) {
     echo "</div><br />\n";
 }
 
-if ($offlinequiz->shufflequestions || $offlinequiz->docscreated || $hasscannedpages) {
+if ($offlinequiz->shufflequestions) {
     $repaginatingdisabledhtml = 'disabled="disabled"';
     $repaginatingdisabled = true;
     $offlinequiz->questions = offlinequiz_clean_layout(offlinequiz_repaginate($offlinequiz->questions, $offlinequiz->questionsperpage), true);

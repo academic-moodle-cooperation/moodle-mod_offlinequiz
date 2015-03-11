@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -99,9 +99,14 @@ if (has_capability('mod/offlinequiz:manage', $context)) {
     echo '</div>';
 }
 
-// write log entry
-add_to_log($course->id, 'offlinequiz', 'view', "view.php?id=$cm->id", $offlinequiz->name, $cm->id);
-
+// Log this request.
+$params = array(
+    'objectid' => $cm->id,
+    'context' => $context
+);
+$event = \mod_offlinequiz\event\course_module_viewed::create($params);
+$event->add_record_snapshot('offlinequiz', $offlinequiz);
+$event->trigger();
 
 if (!empty($offlinequiz->time)) {
     echo '<div class="offlinequizinfo">'.userdate($offlinequiz->time).'</div>';
@@ -112,7 +117,7 @@ if (has_capability('mod/offlinequiz:view', $context)) {
     if (trim(strip_tags($offlinequiz->intro))) {
         $formatoptions = new stdClass();
         $formatoptions->noclean = true;
-        echo $OUTPUT->box(format_text($offlinequiz->intro, FORMAT_MOODLE, $formatoptions), 'generalbox', 'intro');
+        echo $OUTPUT->box(format_text($offlinequiz->intro, $offlinequiz->introformat, $formatoptions), 'generalbox', 'intro');
     }
 }
 
@@ -158,6 +163,86 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
         echo html_writer::link($url, get_string('numattemptsverify', 'offlinequiz', $errorcount));
     }
     echo '</div>';
+    
+    // Redmine 1971: New info about lists of participants.
+    if ($plists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id))) {
+        $firstlist = array_shift($plists);
+        array_unshift($plists, $firstlist);
+        $fs = get_file_storage();
+
+        // Only print info if the PDF files have been created.
+        if (property_exists($firstlist, 'filename') && $firstlist->filename &&
+                    $pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $firstlist->filename)) {
+
+            echo '<br/><div class="box generalbox linkbox">';
+            $listids = array();
+            foreach ($plists as $listid => $plist) {
+                $membercount = $DB->count_records('offlinequiz_participants', array('listid' => $plist->id));
+                $listurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
+                        array('q' => $offlinequiz->id, 'mode' => 'attendances', 'listid' => $plist->id));
+                echo html_writer::span(get_string('membersinplist', 'offlinequiz',
+                        array('count' => $membercount, 'name' => $plist->name, 'url' => $listurl->out())));                
+                echo '<br />';
+                $listids[] = $plist->id;
+            }
+            // Only print additional info if there are some scanned participant lists that have be uploaded.
+            if ($ppages = $DB->get_records('offlinequiz_scanned_p_pages', array('offlinequizid' => $offlinequiz->id))) {
+                // First get all participants on the lists.
+                list($lsql, $lparams) = $DB->get_in_or_equal($listids);
+                $psql = "SELECT *
+                          FROM {offlinequiz_participants}
+                         WHERE listid $lsql";
+                $participants = $DB->get_records_sql($psql, $lparams);
+                
+                $results = $DB->get_records_select('offlinequiz_results',
+                        'offlinequizid = :offlinequizid AND status = :status',
+                        array('offlinequizid' => $offlinequiz->id,
+                                'status' => 'complete'
+                        ), '', 'userid');
+
+                $checkedwithresult = 0;
+                $checkedwithoutresult = 0;
+                $uncheckedwithresult = 0;
+                $uncheckedwithoutresult = 0;
+                foreach ($participants as $participant) {
+                    if ($participant->checked) {
+                        if (array_key_exists($participant->userid, $results)) {
+                            $checkedwithresult++;
+                        } else {
+                            $checkedwithoutresult++;
+                        }
+                    } else {
+                        if (array_key_exists($participant->userid, $results)) {
+                            $uncheckedwithresult++;
+                        } else {
+                            $uncheckedwithoutresult++;
+                        }
+                    }
+                }
+
+                $checkedwithoutresulturl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
+                    array('q' => $offlinequiz->id, 'mode' => 'attendances', 'checkoption' => 1));
+                $uncheckedwithresulturl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
+                    array('q' => $offlinequiz->id, 'mode' => 'attendances', 'checkoption' => 2));
+
+                echo '<br />';
+                echo html_writer::span(get_string('partcheckedwithresult', 'offlinequiz', $checkedwithresult));
+                echo '<br />';
+                echo html_writer::span(get_string('partcheckedwithoutresult', 'offlinequiz',
+                        array('count' => $checkedwithoutresult, 'url' => $checkedwithoutresulturl->out())));
+                echo '<br />';
+                echo html_writer::span(get_string('partuncheckedwithresult', 'offlinequiz',
+                        array('count' => $uncheckedwithresult, 'url' => $uncheckedwithresulturl->out())));
+                echo '<br />';
+                echo html_writer::span(get_string('partuncheckedwithoutresult', 'offlinequiz', $uncheckedwithoutresult));
+
+                foreach ($plists as $listid => $plist) {
+                    $membercount = $DB->count_records('offlinequiz_participants', array('listid' => $plist->id));
+                }
+            }
+            echo '</div>';
+        }
+    }
 
 } else if (has_capability('mod/offlinequiz:attempt', $context)) {
     $select = "SELECT *

@@ -1,5 +1,5 @@
 <?PHP
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -46,6 +46,7 @@ $string['allstudents'] = 'Alle Teilnehmer/innen anzeigen';
 $string['alwaysavailable'] = 'Immer verfügbar';
 $string['analysis'] = 'Ergebnisanalyse';
 $string['answerform'] = 'Antwortbogen';
+$string['answerforms'] = 'Antwortboegen';
 $string['answerformforgroup'] = 'Antwortbogen für Gruppe {$a}';
 $string['answerpdfxy'] = 'Antwortbogen ({$a->maxquestions} Fragen / {$a->maxanswers} Antworten je Frage)';
 $string['areyousureremoveselected'] = 'Wollen Sie wirklich alle ausgewählten Fragen entfernen?';
@@ -76,6 +77,8 @@ $string['copyselectedtogroup'] = 'Ausgewählte Fragen zu Gruppe {$a} ';
 $string['copytogroup'] = 'Alle Fragen zu Gruppe {$a} ';
 $string['correcterror'] = 'korrigieren';
 $string['correctforgroup'] = 'Korrekturbogen für Gruppe {$a}';
+$string['correctionform'] = 'Korrekturbogen';
+$string['correctionforms'] = 'Korrekturboegen';
 $string['correctionoptionsheading'] = 'Einstellungen für Korrektur von Antworbögen.';
 $string['correctupdated'] = 'Korrekturbogen für Gruppe {$a} angepasst.';
 $string['correct'] = 'richtig';
@@ -93,8 +96,9 @@ $string['createpdfsparticipants'] = 'Anwesenheitslisten: PDFs herunterladen';
 $string['createquestionandadd'] = 'Frage erzeugen und zum Test hinzufügen.';
 $string['createquiz'] = 'Formulare erstellen';
 $string['csvfile'] = 'CSV-Datei';
-$string['CSVformat'] = 'Text-Format';
-$string['CSVplus1format'] = 'Text-Format (komplett)';
+$string['CSVformat'] = 'CSV-Format';
+$string['CSVplus1format'] = 'CSV-Format (komplett)';
+$string['CSVpluspointsformat'] = 'CSV-Format Punkte (komplett)';
 $string['darkgray'] = 'Dunkelgrau';
 $string['datanotsaved'] = 'Scanner-Einstellungen nicht gespeichert';
 $string['configdecimalplaces'] = 'Anzahl der Dezimalstellen, die bei Bewertungen angezeigt werden.';
@@ -114,6 +118,7 @@ $string['deleteupdatepdf'] = 'Formulare löschen und aktualisieren';
 $string['done'] = 'erledigt';
 $string['difficultytitle'] = 'Gesamt';
 $string['displayoptions'] = 'Einstellungen für die Darstellung';
+$string['downloadallzip'] = 'Alle Dateien als ZIP herunterladen';
 $string['downloadpartpdf'] = 'PDF-Formular für die Anwesenheitsliste \'{$a}\' herunterladen';
 $string['downloadpdfs'] = 'Formulare herunterladen';
 $string['downloadresultsas'] = 'Ergebnisse herunterladen als: ';
@@ -134,6 +139,22 @@ $string['emptygroups'] = 'Einige Offline-Test-Gruppen enthalten keine Fragen. Bi
 $string['enroluser'] = 'Teilnehmer/in einschreiben';
 $string['erroraccessingreport'] = 'Sie haben nicht genügend Rechte, um diesen Bericht einzusehen.';
 $string['errorreport'] = 'Importfehler-Bericht';
+$string['eventattemptdeleted'] = 'Offline-Test Ergebnis gelöscht';
+$string['eventattemptpreviewstarted'] = 'Offline-Test Preview gestarted';
+$string['eventattemptreviewed'] = 'Offline-Test Ergebnis angesehen';
+$string['eventattemptsummaryviewed'] = 'Offline-Test Ergebnisübersicht angesehen';
+$string['eventattemptviewed'] = 'Offline-Test Ergebnis angesehen';
+$string['eventdocscreated'] = 'Offline-Test Frage- und Antwortbögen erzeugt';
+$string['eventdocsdeleted'] = 'Offline-Test Frage- und Antwortbögen gelöscht';
+$string['eventeditpageviewed'] = 'Offline-Test Bearbeiten-Seite angezeigt';
+$string['eventofflinequizattemptsubmitted'] = 'Offline-Test Ergebnis erzeugt';
+$string['eventoverridecreated'] = 'Offline-Test Überschreibung erzeugt';
+$string['eventoverridedeleted'] = 'Offline-Test Überschreibung gelöscht';
+$string['eventoverrideupdated'] = 'Offline-Test Überschreibung geändert';
+$string['eventparticipantmarked'] = 'Offline-Test Anwesenheit manuell geändert';
+$string['eventquestionmanuallygraded'] = 'Frage manuell bewertet';
+$string['eventreportviewed'] = 'Offline-Test Bericht angesehen';
+$string['eventresultsregraded'] = 'Offline-Test Ergebnisse neu bewertet';
 $string['everythingon'] = 'Aktiviert';
 $string['Excelformat'] = 'Excel-Format';
 $string['fileformat'] = 'Dateiformat für Fragebögen';
@@ -185,7 +206,7 @@ $string['import'] = 'Importieren';
 $string['import_help'] = '<p>
 Sie können entweder mehrere eingescannte Bilddateien in einer ZIP-Datei
 oder einzelne Bilddateien importieren. Das Offline-Test Modul wird die Bilder im Hintergrund automatisch auswerten.
-Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als JPG-, GIF-,
+Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als GIF-,
 PNG- oder TIF-Datei vorliegen. Eine Punktdichte zwischen 200 und 300 DPI wird empfohlen.</p>';
 $string['importisfinished'] = 'Der Import für den Offline-Test {$a} ist beendet.';
 $string['importlinkresults'] = 'Link zu den Ergebnissen: {$a}';
@@ -216,7 +237,7 @@ $string['linktoscannedform'] = 'Scannerbeleg ansehen';
 $string['listnotdetected'] = 'Barcode für Zuordnung der Anwesenheitsliste nicht erfassbar!';
 $string['logdeleted'] = 'Log-Eintrag {$a} gelöscht.';
 $string['logourl'] = 'Logo URL';
-$string['logourldesc'] = 'URL zu einer Bilddatei die also Logo auf den Antwortbögen angezeigt wird. <b>Die maximal erlaubte Größe des Bildes beträgt 520x140 Pixel</b>. Bei größeren Bildern können die Antwortbögen nicht ausgewertet werden!';
+$string['logourldesc'] = 'URL zu einer Bilddatei die als Logo auf den Antwortbögen angezeigt wird, z.B. <b>http://www.meinserver.at/verzeichnis/logo.png</b> oder <b>../pfad/logo.png</b>. Die maximal erlaubte Größe des Bildes beträgt 520x140 Pixel. Bei größeren Bildern können die Antwortbögen nicht ausgewertet werden!';
 $string['lowertrigger'] = 'Unterer Grenzwert';
 $string['lowertriggerzero'] = 'Unterer Grenzwert ist null';
 $string['lowerwarning'] = 'Unterer Warnwert';
@@ -225,6 +246,7 @@ $string['marginwarning'] = 'Bitte drucken Sie die folgenden Antwortbögen ohne z
 $string['marks'] = 'Punktezahl';
 $string['matrikel'] = 'Matrikelnummer';
 $string['maxgradewarning'] = 'Die beste Bewertung muss eine Zahl sein!';
+$string['membersinplist'] = '{$a->count} Teilnehmer/innen in Anwesenheitsliste <a href="{$a->url}">{$a->name}</a>';
 $string['missingimagefile'] = 'Bilddatei fehlt';
 $string['missingitemdata'] = 'Fehlende Antwort/en für {$a}';
 $string['missinglogdata'] = 'Logdaten für existierendes Ergebnis fehlen.';
@@ -299,7 +321,7 @@ $string['oneclickroledesc'] = 'Wählen Sie hier die Rolle aus, die bei der 1-Cli
 $string['onlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
 $string['orderandpaging'] = 'Reihenfolge und Seitenumbrüche';
 $string['orderandpaging_help'] = 'Die Zahlen 10, 20, 30, ... neben jeder Frage zeigt deren Reihenfolge an. Die Zahlenfolge in 10er-Schritten lässt Platz, um weitere Fragen einfügen zu können.
-Um die Reihenfolge der Fragen zu ändern, ändern Sie die Zahlen und klicken Sie auf das Kontrollfeld \'Neu sortieren\'.
+Um die Reihenfolge der Fragen zu ändern, ändern Sie die Zahlen und klicken Sie auf das Kontrollfeld \'Neuanordnung der Fragen\'.
 Um Seitenumbrüche nach bestimmten Fragen einzufügen, klicken Sie auf das Kontrollfeld \'Seitenumbrüche hinter den ausgewählten Fragen hinzufügen\'.
 Um Fragen über eine Reihe von Seiten anzuordnen, klicken Sie auf das Kontrollfeld  \'Neuer Seitenumbruch...\' und wählen Sie die gewünschte Anzahl von Fragen pro Seite.';
 $string['orderingofflinequiz'] = 'Reihenfolge und Seitenumbrüche';
@@ -320,6 +342,10 @@ $string['papergray'] = 'Weißwert des Papiers';
 $string['papergray_help'] = 'Wenn die eingescannten Dokumente zu dunkel oder zu hell sind, können Sie das mit diesem Parameter korrigieren. 
 Im Idealfall sind Ihre Scannerbelege allerdings zweifärbig, also schwarz-weiße PNG-, GIF- oder TIF-Dateien. Die Komprimierung von JPG-Dateien führt immer zu Bildverlusten. 
 Dieses Format ist deshalb zu vermeiden.';
+$string['partcheckedwithresult'] = '{$a} anwesende Teilnehmer/innen mit Ergebnis';
+$string['partcheckedwithoutresult'] = '<a href="{$a->url}">{$a->count} anwesende Teilnehmer/innen ohne Ergebnis</a>';
+$string['partuncheckedwithresult'] = '<a href="{$a->url}">{$a->count} abwesende Teilnehmer/innen mit Ergebnis</a>';
+$string['partuncheckedwithoutresult'] = '{$a} abwesende Teilnehmer/innen ohne Ergebnis';
 $string['participantslist'] = 'Anwesenheitsliste';
 $string['participantslists'] = 'Anwesenheitslisten';
 $string['participants'] = 'Teilnehmer/innen';
@@ -338,7 +364,7 @@ $string['partimport'] = 'Importieren von Anwesenheitslisten';
 $string['partimport_help'] = '<p> Hier können Sie die ausgefüllten Anwesenheitslisten importieren.
 Sie können entweder mehrere eingescannte Bilddateien in einer ZIP-Datei
 oder einzelne Bilddateien importieren. Das Offline-Test Modul wird die Bilder im Hintergrund automatisch auswerten.
-Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als JPG-, GIF-,
+Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bidler müssen als GIF-,
 PNG- oder TIF-Datei vorliegen. Eine Punktdichte zwischen 200 und 300 DPI wird empfohlen.</p>';
 $string['pdfdeletedforgroup'] = 'Fragebogen für Gruppe {$a} gelöscht';
 $string['pdfintro'] = 'Zusatzinformation';
@@ -357,6 +383,7 @@ $string['previewquestion'] = 'Vorschau der Frage';
 $string['questionanalysis'] = 'Schwierigkeitsübersicht';
 $string['questionanalysistitle'] = 'Schwierigkeitsübersicht';
 $string['questionbankcontents'] = 'Die Frage-Reihe beinhaltet';
+$string['questionforms'] = 'Frageboegen';
 $string['questionname'] = 'Frage';
 $string['questionsheet'] = 'Fragebogen';
 $string['questionsingroup'] = 'Fragen in Gruppe';
@@ -391,7 +418,7 @@ $string['reviewofresult'] = 'Ergebnis';
 $string['reviewopens'] = 'Bericht beginnt';
 $string['reviewoptions'] = 'Prüfungseinsicht';
 $string['reviewoptionsheading'] = 'Einstellungen für die Prüfungseinsicht';
-$string['reviewoptions_help'] = 'Diese Optionen regeln welche Informationen Studierende bei der Prüfungseinsicht einsehen dürfen. Im Detail bedeuten die Optionen:
+$string['reviewoptions_help'] = 'Diese Optionen regeln, welche Informationen Studierende bei der Prüfungseinsicht einsehen dürfen. Im Detail bedeuten die Optionen:
 <table>
 <tr><td style="vertical-align: top;"><b>Das Ergebnis</b></td><td>
 Studierende sehen Fragetexte, Antworttexte und welche Antworten sie angekreuzt haben.
@@ -403,7 +430,7 @@ Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist u
 <tr><td style="vertical-align: top;"><b>Punktezahl</b></td><td>
 Angezeigt werden Gruppe (bspw. C), Punktezahl (erreichte Punktezahl, Summe der Punkte der Fragen des Tests, erreichte %  bspw. 40/80 (50%)) 
 und Bewertung (bspw. 50 von maximal 100). Ist zusätzlich die Option "Das Ergebnis" ausgewählt, 
-wird auch für jede Frage die maximale Punktezahl und die erreichten Punkte angezeigt.
+werden auch für jede Frage die maximale Punktezahl und die erreichten Punkte angezeigt.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Richtige Antwort</b></td><td>
 Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist und bewirkt, dass zusätzlich unter jeder Frage die Nummern der richtigen Antworten angezeigt werden
@@ -417,7 +444,7 @@ Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Formular angezeigt. 
 Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 Zusätzlich sind alle Kästchen, die fälschlicherweise angekreuzt wurden und solche, die fälschlicherweise nicht angekreuzt sind, rot hinterlegt. 
-Weiterhin befindet sich am rechten Rand eine Auflistung der erreichten Punkte pro Frage.
+Des Weiteren befindet sich am rechten Rand eine Auflistung der erreichten Punkte pro Frage.
 </td></tr>
 </table>';
 

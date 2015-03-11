@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -99,22 +99,23 @@ $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 
 if (!$download) {
-    echo $OUTPUT->header();
 }
 
-// Only print headers and tabs if not asked to download data
-if (!$download) {
-    // Print the tabs
-    $currenttab = 'participants';
-    include('tabs.php');
-    echo $OUTPUT->heading(format_string($offlinequiz->name));
-}
 
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 
 switch($mode) {
     case 'editlists':
+        // Only print headers and tabs if not asked to download data
+        if (!$download && $action != 'savelist') {
+            echo $OUTPUT->header();
+            // Print the tabs
+            $currenttab = 'participants';
+            include('tabs.php');
+            echo $OUTPUT->heading(format_string($offlinequiz->name));
+        }
+        
         switch ($action) {
             case 'edit':
                 // Print the heading
@@ -200,7 +201,7 @@ switch($mode) {
         $searchtext = optional_param('searchtext', '', PARAM_RAW); // search string
         $listid = optional_param('listid', 0, PARAM_INT);
         $group = optional_param('group', 0, PARAM_INT);
-        $addselect = optional_param('addselect', array(), PARAM_RAW);
+        $addselect = optional_param_array('addselect', array(), PARAM_INT);
         $removeselect = optional_param('removeselect', '', PARAM_RAW);
 
         if (!$list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid))) {
@@ -212,6 +213,15 @@ switch($mode) {
                 $list = array_pop($lists);
             }
         }
+        // Only print headers and tabs if not asked to download data
+        if (!$download) {
+            echo $OUTPUT->header();
+            // Print the tabs
+            $currenttab = 'participants';
+            include('tabs.php');
+            echo $OUTPUT->heading(format_string($offlinequiz->name));
+        }
+        
         echo $OUTPUT->heading_with_help(get_string('participantsinlists', 'offlinequiz'), 'participants', 'offlinequiz');
         if (!empty($addselect) && confirm_sesskey()) {
             $record = new stdClass();
@@ -285,7 +295,8 @@ switch($mode) {
         list($rsql, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
         $params = array_merge($cparams, $rparams);
 
-        $sql = "SELECT DISTINCT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
+        $sql = "SELECT DISTINCT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname,
+                                u.alternatename, u.middlename, u.firstnamephonetic, u.lastnamephonetic
                   FROM {user} u, {offlinequiz_participants} p, {role_assignments} ra, {offlinequiz_p_lists} pl
                  WHERE ra.userid = u.id
                    AND p.listid = :listid
@@ -313,7 +324,8 @@ switch($mode) {
         $potentialmembersoptions = '';
         $memberlist = implode(',', $memberids);
 
-        $sql = "SELECT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
+        $sql = "SELECT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname,
+                       u.alternatename, u.middlename, u.firstnamephonetic, u.lastnamephonetic
                   FROM {user} u, {role_assignments} ra
                  WHERE ra.roleid $rsql
                    AND ra.userid = u.id
@@ -362,7 +374,13 @@ switch($mode) {
         include('participants/members.html');
         break;
     case 'attendances':
+        // Only print headers and tabs if not asked to download data
         if (!$download) {
+            echo $OUTPUT->header();
+            // Print the tabs
+            $currenttab = 'participants';
+            include('tabs.php');
+            echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading_with_help(get_string('attendances', 'offlinequiz'), 'participants', 'offlinequiz');
             if (!$lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), 'name ASC')) {
                 error('No list created for offlinequiz');
@@ -371,33 +389,53 @@ switch($mode) {
             foreach ($lists as $option) {
                 $options[$option->id] = $option->name;
             }
-            $listid = optional_param('listid', '', PARAM_INT);
+            $listid = optional_param('listid', 0, PARAM_INT);
             echo '<div align="center">' . get_string('participantslist', 'offlinequiz') . ':&nbsp;';
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                     array('q' => $offlinequiz->id, 'mode' => 'attendances'));
             echo $OUTPUT->single_select($url, 'listid', $options, $listid);
             echo '<br />&nbsp;<br /></div>';
         }
-        if ($action == 'uncheck' and $participantids = optional_param('participantid', array(), PARAM_INT)) {
+        if ($action == 'uncheck' and $participantids = optional_param_array('participantid', array(), PARAM_INT)) {
             foreach ($participantids as $participantid) {
-
-                add_to_log($course->id, 'offlinequiz', 'uncheck participant', 'participants.php?id=' . $cm->id,
-                        $participantid, $cm->id);
-
                 if ($participantid) {
                     $DB->set_field('offlinequiz_participants', 'checked', 0, array('id' => $participantid));
                 }
+
+                // Log this event.
+                $userid = $DB->get_field('offlinequiz_participants', 'userid', array('id' => $participantid));
+                $params = array (
+                           'objectid' => $userid,
+                           'context' => context_module::instance( $cm->id ),
+                           'other' => array (
+                                   'mode' => 'attendances',
+                                   'offlinequizid' => $offlinequiz->id,
+                                   'type' => 'absent from' 
+                           ) 
+                   );
+                $event = \mod_offlinequiz\event\participant_manually_marked::create($params);
+                $event->trigger();
             }
         }
-        if ($action == 'check' and $participantids = optional_param('participantid', array(), PARAM_INT)) {
+        if ($action == 'check' and $participantids = optional_param_array('participantid', array(), PARAM_INT)) {
             foreach ($participantids as $participantid) {
-
-                add_to_log($course->id, 'offlinequiz', 'check participant', 'participants.php?id=' . $cm->id,
-                        $participantid, $cm->id);
-
                 if ($participantid) {
                     $DB->set_field('offlinequiz_participants', 'checked', 1, array('id' => $participantid));
                 }
+
+                // Log this event.
+                $userid = $DB->get_field('offlinequiz_participants', 'userid', array('id' => $participantid));
+                $params = array (
+                           'objectid' => $userid,
+                           'context' => context_module::instance( $cm->id ),
+                           'other' => array (
+                                   'mode' => 'attendances',
+                                   'offlinequizid' => $offlinequiz->id,
+                                   'type' => 'present at' 
+                           ) 
+                   );
+                $event = \mod_offlinequiz\event\participant_manually_marked::create($params);
+                $event->trigger();
             }
         }
         // We redirect if no list has been created
@@ -416,7 +454,15 @@ switch($mode) {
         if (!offlinequiz_partlist_created($offlinequiz)) {
             redirect('participants.php?q='.$offlinequiz->id, get_string('createlistfirst', 'offlinequiz'));
         }
-        echo $OUTPUT->heading_with_help(get_string('createpdfsparticipants', 'offlinequiz'), 'participants', 'offlinequiz');
+        // Only print headers and tabs if not asked to download data
+        if (!$download) {
+            echo $OUTPUT->header();
+            // Print the tabs
+            $currenttab = 'participants';
+            include('tabs.php');
+            echo $OUTPUT->heading(format_string($offlinequiz->name));
+            echo $OUTPUT->heading_with_help(get_string('createpdfsparticipants', 'offlinequiz'), 'participants', 'offlinequiz');
+        }
         // show update button
         ?>
 
@@ -449,10 +495,15 @@ switch($mode) {
                 $list->filename = null;
             }
 
+            $pdffile = null;
             // create PDF file if necessary
             if (!property_exists($list, 'filename') ||  !$list->filename ||
                     !$pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $list->filename)) {
                 $pdffile = offlinequiz_create_pdf_participants($offlinequiz, $course->id, $list, $context);
+                if (!empty($pdffile)) {
+                    $list->filename = $pdffile->get_filename();
+                }
+                $DB->update_record('offlinequiz_p_lists', $list);
             }
 
             // show downloadlink
@@ -494,10 +545,18 @@ switch($mode) {
         }
 
         if ($redirect) {
-            redirect('participants.php?mode=createpdf&amp;q='.$offlinequiz->id, get_string('createpdffirst', 'offlinequiz'));
+            redirect('participants.php?mode=createpdfs&amp;q=' . $offlinequiz->id, get_string('createpdffirst', 'offlinequiz'));
         }
 
-        echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimport', 'offlinequiz');
+        // Only print headers and tabs if not asked to download data
+        if (!$download) {
+            echo $OUTPUT->header();
+            // Print the tabs
+            $currenttab = 'participants';
+            include('tabs.php');
+            echo $OUTPUT->heading(format_string($offlinequiz->name));
+            echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimport', 'offlinequiz');
+        }
         $report = new participants_report();
         $import_form = new offlinequiz_participants_upload_form($thispageurl);
 

@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2012 University of Vienna
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -48,8 +48,10 @@ class offlinequiz_html_translator
      * @return string The result string
      */
     public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor, $maxwidth, $format = 'pdf') {
-        global $CFG;
+        global $CFG, $DB;
 
+        require_once($CFG->dirroot.'/filter/tex/lib.php');
+        require_once($CFG->dirroot.'/filter/tex/latex.php');
         $fs = get_file_storage();
 
         $output = $input;
@@ -81,6 +83,7 @@ class offlinequiz_html_translator
                 $imageheight = 0;
             }
 
+            $imagefilename = '';
             if (array_key_exists('src', $attributes) && strlen($attributes['src']) > 10) {
                 $pluginfilename = $attributes['src'];
                 $imageurl = false;
@@ -91,12 +94,12 @@ class offlinequiz_html_translator
 
                     $pluginfilename = str_replace('@@PLUGINFILE@@/', '', $pluginfilename);
                     $path_parts = pathinfo($pluginfilename);
-                    if (!empty($path_parts['dirname'])) {
+                    if (!empty($path_parts['dirname']) && $path_parts['dirname'] != '.') {
                         $filepath = '/' . $path_parts['dirname'] . '/';
                     } else {
                         $filepath = '/';
                     }
-                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath, $path_parts['basename'])) {
+                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath, rawurldecode($path_parts['basename']))) {
                         $imagefilename = $imagefile->get_filename();
                         // copy image content to temporary file
                         $path_parts = pathinfo($imagefilename);
@@ -112,9 +115,38 @@ class offlinequiz_html_translator
                     }
                 } else if (count($parts) > 1) {
                     $teximagefile = $CFG->dataroot . '/filter/tex/' . $parts[1];
+                    if (!file_exists($teximagefile)) {
+                        // Create the TeX image if it does not exist yet.
+                        $md5 = str_replace(".{$CFG->filter_tex_convertformat}", '', $parts[1]);
+                        if ($texcache = $DB->get_record('cache_filters', array('filter' => 'tex', 'md5key' => $md5))) {
+                            if (!file_exists($CFG->dataroot . '/filter/tex')) {
+                                make_upload_directory('filter/tex');
+                            }
+
+                            // Try and render with latex first.
+                            $latex = new latex();
+                            $density = $CFG->filter_tex_density;
+                            $background = $CFG->filter_tex_latexbackground;
+                            $texexp = $texcache->rawtext; // the entities are now decoded before inserting to DB
+                            $latex_path = $latex->render($texexp, $md5, 12, $density, $background);
+                            if ($latex_path) {
+                                copy($latex_path, $teximagefile);
+                                $latex->clean_up($md5);
+                            } else {
+                                // Failing that, use mimetex
+                                $texexp = $texcache->rawtext;
+                                $texexp = str_replace('&lt;', '<', $texexp);
+                                $texexp = str_replace('&gt;', '>', $texexp);
+                                $texexp = preg_replace('!\r\n?!', ' ', $texexp);
+                                $texexp = '\Large '.$texexp;
+                                $cmd = filter_tex_get_cmd($teximagefile, $texexp);
+                                system($cmd, $status);
+                            }
+                        }
+                    }
                     $path_parts = pathinfo($teximagefile);
 
-                    $file = $CFG->dataroot."/temp/offlinequiz/".$unique.'.'.strtolower($path_parts["extension"]);
+                    $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($path_parts["extension"]);
                     clearstatcache();
                     if (!check_dir_exists($CFG->dataroot."/temp/offlinequiz", true, true)) {
                         print_error("Could not create data directory");
@@ -130,7 +162,7 @@ class offlinequiz_html_translator
 
                 if (!$imageurl) {
                     if (!file_exists($file)) {
-                        $output .= get_string('imagenotfound','offlinequiz', $imagefilename);
+                        $output .= get_string('imagenotfound', 'offlinequiz', $file);
                     } else {
                         // use imagemagick to remove alpha channel and reduce resolution of large images
                         $imageinfo = getimagesize($file);
@@ -153,9 +185,7 @@ class offlinequiz_html_translator
                                 $filewidth  = $imageinfo[0];
                                 $fileheight = $imageinfo[1];
                             }
-                        } else if (!in_array($imagetype, $accepted)) {
-                            $output .= get_string('imagenotjpg','offlinequiz',$imagefilename);
-                        }
+                        } 
 
                         if ($imagewidth > 0) {
                             if ($imageheight > 0) {
@@ -168,9 +198,9 @@ class offlinequiz_html_translator
 
                         if ($teximage) {
                             if ($format == 'pdf') {
-                                $factor = $factor * 0.6;
+                                $factor = $factor * 1.2;
                             } else {
-                                $factor = $factor * 0.8;
+                                $factor = $factor * 1.5;
                             }
                         }
 

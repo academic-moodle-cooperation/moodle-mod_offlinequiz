@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -92,9 +92,6 @@ if (!is_readable("report/$mode/report.php")) {
     print_error('reportnotfound', 'offlinequiz', '', $mode);
 }
 
-add_to_log($course->id, 'offlinequiz', 'report', 'report.php?id=' . $cm->id . '&mode=' . $mode,
-        $offlinequiz->id, $cm->id);
-
 // Open the selected offlinequiz report and display it
 $file = $CFG->dirroot . '/mod/offlinequiz/report/' . $mode . '/report.php';
 if (is_readable($file)) {
@@ -111,3 +108,17 @@ $report->display($offlinequiz, $cm, $course);
 
 // Print footer
 echo $OUTPUT->footer();
+
+// Log that this report was viewed.
+$params = array(
+        'context' => $context,
+        'other' => array(
+                'offlinequizid' => $offlinequiz->id,
+                'reportname' => $mode
+        )
+);
+$event = \mod_offlinequiz\event\report_viewed::create($params);
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('offlinequiz', $offlinequiz);
+$event->trigger();
+

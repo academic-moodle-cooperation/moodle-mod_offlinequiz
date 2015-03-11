@@ -1,6 +1,6 @@
 <?php
 
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  * Offlinequiz statistics report, table for showing statistics of each question and its answers.
  *
  * @package   offlinequiz_statistics
- * @copyright 2013 Juergen Zimmer
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,7 @@ require_once($CFG->libdir.'/tablelib.php');
  * This table has one row for each question in the offlinequiz, with sub-rows when
  * random questions appear. There are columns for the various statistics.
  *
- * @copyright 2013 Juergen Zimmer
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_question_answer_statistics_table extends flexible_table {
@@ -347,7 +347,9 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
             return '';
         }
 
-        return format_float($question->_stats->sd*100 / $question->_stats->maxmark, 2) . '%';
+//        return format_float($question->_stats->sd*100 / $question->_stats->maxmark, 2) . '%';
+        // Redmine 1760: no percentage here.
+        return format_float($question->_stats->sd, 2);        
     }
 
     /**

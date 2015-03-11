@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -256,7 +256,7 @@ function offlinequiz_convert_newline_docx($text) {
     // If the original text was only a newline, we don't have a first part.
     if (!empty($firstpart)) {
         if ($firstpart == '<br/>' || $firstpart == '<br />') {
-            $result = array('type' => 'newline');
+            $result = array(array('type' => 'newline'));
         } else {
             $result = offlinequiz_convert_bold_text_docx($firstpart);
         }
@@ -364,11 +364,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $groupletter = strtoupper($letterstr[$group->number - 1]);
 
     $coursecontext = context_course::instance($courseid);
-
-    add_to_log($courseid, 'offlinequiz', 'createdocx question',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
-    
+        
     PHPWord_Media::resetMedia();
     
     $docx = new PHPWord();
@@ -637,14 +633,15 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
                     $blocks = offlinequiz_convert_image_docx($answertext);
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
-
-                    if ($offlinequiz->showgrades) {
-                        $pointstr = get_string('points', 'grades');
-                        if ($question->maxgrade == 1) {
-                            $pointstr = get_string('point', 'offlinequiz');
-                        }
-                        $section->addText('(' . ($question->maxgrade + 0) . ' ' . $pointstr .')', 'bStyle');
+                }
+                if ($offlinequiz->showgrades) {
+                    $pointstr = get_string('points', 'grades');
+                    if ($question->maxgrade == 1) {
+                        $pointstr = get_string('point', 'offlinequiz');
                     }
+                    // Indent the question grade like the answers.
+                    $textrun = $section->createTextRun($level2);
+                    $textrun->addText('(' . ($question->maxgrade + 0) . ' '. $pointstr .')', 'bStyle');
                 }
             }
             $section->addTextBreak();
@@ -745,15 +742,17 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     $blocks = offlinequiz_convert_image_docx($answertext);
 
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
-                    
-                    if ($offlinequiz->showgrades) {
-                        $pointstr = get_string('points', 'grades');
-                        if ($question->maxgrade == 1) {
-                            $pointstr = get_string('point', 'offlinequiz');
-                        }
-                        $section->addText('(' . ($question->maxgrade + 0) . ' '. $pointstr .')', 'bStyle');
-                    }
                 }
+                if ($offlinequiz->showgrades) {
+                    $pointstr = get_string('points', 'grades');
+                    if ($question->maxgrade == 1) {
+                        $pointstr = get_string('point', 'offlinequiz');
+                    }
+                    // Indent the question grade like the answers.
+                    $textrun = $section->createTextRun($level2);
+                    $textrun->addText('(' . ($question->maxgrade + 0) . ' '. $pointstr .')', 'bStyle');
+                }
+
                 $section->addTextBreak();
                 $number++; 
                 // End if multichoice.
@@ -786,13 +785,14 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $objWriter->save($tempfilename);
 
     // Prepare file record object.
+    $timestamp = date('Ymd_His', time());
     $fileinfo = array(
             'contextid' => $context->id, // ID of context.
             'component' => 'mod_offlinequiz',     // usually = table name.
             'filearea' => 'pdfs',     // usually = table name.
             'filepath' => '/',
             'itemid' => 0,           // usually = ID of row in table.
-            'filename' => $fileprefix . '-' . strtolower($groupletter) . '.docx'); // any filename
+            'filename' => $fileprefix . '-' . strtolower($groupletter) . '_' . $timestamp . '.docx'); // any filename
 
     // Delete existing old files, should actually not happen. 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],

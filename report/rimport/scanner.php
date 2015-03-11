@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -95,7 +95,7 @@ class oq_point {
 /**
  * Class that contains all the routines and data to interprate scanned answer forms
  * 
- * @author Juergen Zimmer
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  *
  */
 class offlinequiz_page_scanner {
@@ -124,6 +124,7 @@ class offlinequiz_page_scanner {
     public $pattern3;      // contains the hotspot pattern for a cross moved to one of the corners
     public $pattern4;      // contains the hotspot pattern for a cross moved to one of the corners
     public $papergray;
+    public $corners;        // the corners as passed by evallib.php or correct.php.
     public $lowertrigger;
     public $uppertrigger;
     public $lowerwarning;
@@ -167,9 +168,6 @@ class offlinequiz_page_scanner {
         }
         if ($maxanswers > 12) {
             $this->formtype = 1;
-        }
-        if ($maxanswers > 26) {
-            error('To many answers in one question');
         }
         $this->numpages = ceil($maxquestions / ($this->formtype * 24));
     }
@@ -404,7 +402,7 @@ class offlinequiz_page_scanner {
                 }
                 pclose($handle);                                       // this is much faster then using php's imagick extension.
                 if (file_exists($newfile)) {
-                    unlink($file);
+//                   unlink($file);
                     $this->filename = $path_parts["filename"] . ".png";
                     $scannedpage->origfilename = $this->filename;
                     $this->sourcefile = $newfile;
@@ -431,7 +429,7 @@ class offlinequiz_page_scanner {
                 }
                 pclose($handle);
                 if (file_exists($newfile)) {
-                    unlink($file);
+//                    unlink($file);
                     $this->filename = $path_parts["filename"] . ".png";
                     $scannedpage->origfilename = $this->filename;
                     $this->sourcefile = $newfile;
@@ -478,9 +476,9 @@ class offlinequiz_page_scanner {
             $scannedpage->info = $this->filename;
         }
 
-        if (file_exists($file)) {
-            unlink($file);
-        }
+//         if (file_exists($file)) {
+//             unlink($file);
+//         }
         // if (file_exists($this->sourcefile))
         // unlink($this->sourcefile);
         return $scannedpage;
@@ -497,7 +495,8 @@ class offlinequiz_page_scanner {
         global $CFG, $OUTPUT;
 
         $this->offset = new oq_point();
-
+        // remember the corners passed. They are needed by set_maxanswers.
+        $this->corners = $corners;
         $this->insecure = false;
         $this->init_hotspots();
 
@@ -1591,6 +1590,48 @@ class offlinequiz_page_scanner {
         return $group;
     }
 
+    public function set_maxanswers($maxanswers, $scannedpage) {
+        if ($maxanswers > 26) {
+            $maxanswers = 26; // there won't be more than 26 answers or 96 questions on the sheet
+        }
+        $this->maxanswers = $maxanswers;
+        $this->formtype = 4;
+        
+        if ($maxanswers > 5) {
+            $this->formtype = 3;
+        }
+        if ($maxanswers > 7) {
+            $this->formtype = 2;
+        }
+        if ($maxanswers > 12) {
+            $this->formtype = 1;
+        }
+
+        $this->numpages = ceil($this->maxquestions / ($this->formtype * 24));
+
+        $this->init_hotspots();
+        
+        $corners = $this->corners;
+        if (!empty($corners)) {
+            $ok = $this->adjust(false, $corners[0], $corners[1], $corners[2], $corners[3], OQ_IMAGE_WIDTH, $scannedpage->id);
+        } else {
+            $ok = $this->adjust(true, false, false, false, false, 0, $scannedpage->id);
+        }
+
+        // Check if we can adjust the image s.t. we can determine the hotspots.
+        if ($ok) {
+            $scannedpage->status = 'ok';
+            $scannedpage->error = '';
+        } else {
+            $scannedpage->status = 'error';
+            $scannedpage->error = 'couldnotgrab';
+            $scannedpage->info = $this->filename;
+        }
+        
+        return $scannedpage;
+    }
+    
+    
     /**
      * Sets the group number to the one chosen by the user and calibrates correctly.
      *

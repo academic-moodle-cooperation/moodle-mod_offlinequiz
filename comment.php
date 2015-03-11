@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -59,11 +59,6 @@ require_login($course->id, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/offlinequiz:grade', $context);
 
-// Log this action.
-add_to_log($course->id, 'offlinequiz', 'manualgrade', 'comment.php?resultid=' .
-        $result->id . '&slot=' . $slot,
-        $result->offlinequizid, $cm->id);
-
 // load the questions needed by page
 if (!$quba = question_engine::load_questions_usage_by_activity($result->usageid)) {
     print_error('Could not load question usage');
@@ -89,6 +84,20 @@ if (data_submitted() && confirm_sesskey()) {
         $result->sumgrades = $quba->get_total_mark();
         $result->timemodified = time();
         $DB->update_record('offlinequiz_results', $result);
+
+        // Log this action.
+        $params = array(
+            'objectid' => $slotquestion->id,
+            'courseid' => $course->id,
+            'context' => context_module::instance($cm->id),
+            'other' => array(
+                'offlinequizid' => $offlinequiz->id,
+                'resultid' => $result->id,
+                'slot' => $slot
+            )
+        );
+        $event = \mod_offlinequiz\event\question_manually_graded::create($params);
+        $event->trigger();
 
         // update the gradebook
         offlinequiz_update_grades($offlinequiz);

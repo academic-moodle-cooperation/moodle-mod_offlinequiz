@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -83,8 +83,6 @@ if (!$isteacher) {
         print_error("This is not your result!", 'view.php?q=' . $offlinequiz->id);
     }
 }
-
-add_to_log($course->id, "offlinequiz", "review", "review.php?id=$cm->id&amp;resultid=$result->id", "$offlinequiz->id", "$cm->id");
 
 $strscore  = get_string("marks", "offlinequiz");
 $strgrade  = get_string("grade");
@@ -247,6 +245,20 @@ if ($options->attempt == question_display_options::VISIBLE || $isteacher) {
         echo $quba->render_question($slot, $options, $questionnumber);
     }
 }
+
+// Trigger an event for this review.
+$params = array(
+    'objectid' => $result->id,
+    'relateduserid' => $result->userid,
+    'courseid' => $course->id,
+    'context' => context_module::instance($cm->id),
+    'other' => array(
+        'offlinequizid' => $offlinequiz->id
+    )
+);
+$event = \mod_offlinequiz\event\attempt_reviewed::create($params);
+$event->add_record_snapshot('offlinequiz_results', $result);
+$event->trigger();
 
 // Print the navigation panel if required
 // $numpages = offlinequiz_number_of_pages(offlinequiz_get_group_questions($offlinequiz, $group->id));

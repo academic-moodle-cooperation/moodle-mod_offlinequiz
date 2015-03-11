@@ -1,5 +1,5 @@
 <?PHP
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -51,6 +51,7 @@ $string['alwaysavailable'] = 'Always available';
 $string['analysis'] = 'Item analysis';
 $string['answerformforgroup'] = 'Answer form for group {$a}';
 $string['answerform'] = 'Form for answers';
+$string['answerforms'] = 'Answers forms';
 $string['answerpdfxy'] = 'Form for answers ({$a}->maxquestions questions / {$a}->maxanswers options)';
 $string['areyousureremoveselected'] = 'Are you sure you want to remove all the selected questions?';
 $string['attemptexists'] = 'Attempt exists';
@@ -85,6 +86,8 @@ $string['copy'] = 'Copy';
 $string['correct'] = 'correct';
 $string['correcterror'] = 'solve';
 $string['correctforgroup'] = 'Correct answers for Group {$a}';
+$string['correctionform'] = 'Correction';
+$string['correctionforms'] = 'Correction forms';
 $string['correctionoptionsheading'] = 'Correction options.';
 $string['correctupdated'] = 'Updated correction form for group {$a}.';
 $string['couldnotgrab'] = 'Could not grab image {$a}';
@@ -103,10 +106,11 @@ $string['createquiz'] = 'Create forms';
 $string['csvfile'] = 'CSV file';
 $string['CSVformat'] = 'CSV format';
 $string['CSVplus1format'] = 'CSV format (raw data)';
+$string['CSVpluspointsformat'] = 'CSV format points (raw data)';
 $string['darkgray'] = 'Dark grey';
 $string['datanotsaved'] = 'Could not save settings';
 $string['configdecimalplaces'] ='Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
-$string['decimalplaces'] = 'decimal places';
+$string['decimalplaces'] = 'Decimal places';
 $string['decimalplaces_help'] ='Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
 $string['deletelistcheck'] = 'Do you really want to delete the selected list and all it\'s participants?';
 $string['deleteresultcheck'] = 'Do you really want to delete the selected results?';
@@ -125,6 +129,7 @@ $string['difficultytitlediff'] = 'Difference';
 $string['difficultytitle'] = 'Difficulty';
 $string['displayoptions'] = 'Display options';
 $string['done'] = 'done';
+$string['downloadallzip'] = 'Download all files as ZIP';
 $string['downloadpartpdf'] = 'Download PDF file for list \'{$a}\'';
 $string['downloadpdfs'] = 'Download documents';
 $string['downloadresultsas'] = 'Download results as: ';
@@ -148,12 +153,28 @@ $string['emptygroups'] = 'Some offline quiz groups are empty. Please add some qu
 $string['enroluser'] = 'Enrol user';
 $string['erroraccessingreport'] = 'You are not allowed to view this report.';
 $string['errorreport'] = 'Report of import errors';
+$string['eventattemptdeleted'] = 'Offline quiz attempt deleted';
+$string['eventattemptpreviewstarted'] = 'Offline quiz attempt preview started';
+$string['eventattemptreviewed'] = 'Offline quiz attempt reviewed';
+$string['eventattemptsummaryviewed'] = 'Offline quiz attempt summary viewed';
+$string['eventattemptviewed'] = 'Offline quiz attempt viewed';
+$string['eventdocscreated'] = 'Offline quiz question and answer forms created';
+$string['eventdocsdeleted'] = 'Offline quiz question and answer forms deleted';
+$string['eventeditpageviewed'] = 'Offline quiz edit page viewed';
+$string['eventofflinequizattemptsubmitted'] = 'Offline quiz attempt submitted';
+$string['eventoverridecreated'] = 'Offline quiz override created';
+$string['eventoverridedeleted'] = 'Offline quiz override deleted';
+$string['eventoverrideupdated'] = 'Offline quiz override updated';
+$string['eventparticipantmarked'] = 'Offline quiz participant marked manually';
+$string['eventquestionmanuallygraded'] = 'Question manually graded';
+$string['eventreportviewed'] = 'Offline quiz report viewed';
+$string['eventresultsregraded'] = 'Offline quiz results regraded';
 $string['everythingon'] = 'enabled';
 $string['Excelformat'] = 'Excel format';
 $string['fileformat'] = 'Format for question sheets';
 $string['fileformat_help'] = 'Choose whether you want your question sheets in PDF or DOCX format. Answer forms and correction sheets will always be generated in PDF format.';
 $string['filesizetolarge'] = 'Some of your image files are very large. The dimensions will be resized during the interpretation. Please try to scan with a resolution between 200 and 300 dpi and in black and white mode. This will speed up the interpretation next time.';
-$string['fontsize'] = 'PDF fontsize';
+$string['fontsize'] = 'Fontsize';
 $string['forautoanalysis'] = 'For automatic analysis';
 $string['formforcorrection'] = 'Correction form for group {$a}';
 $string['formforgroup'] = 'Question form for group {$a}';
@@ -199,7 +220,7 @@ $string['importfromto'] = 'Importing {$a->from} to {$a->to} of {$a->total}.';
 $string['import'] = 'Import';
 $string['import_help'] = '<p>
 You can import single scanned image files or several scanned image files in a ZIP-archive. The offline quiz module will process the image files in the background.
-File names are not relevant but should not contain special characters such as umlauts. Images should be JPGs, GIFs, PNGs
+File names are not relevant but should not contain special characters such as umlauts. Images should be GIFs, PNGs
 or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['importedon'] = 'Imported on';
 $string['importforms'] = 'Import answer forms';
@@ -234,7 +255,7 @@ $string['linktoscannedform'] = 'View scanned form';
 $string['listnotdetected'] = 'Could not detect barcode for list!';
 $string['logdeleted'] = 'Log entry {$a} deleted.';
 $string['logourl'] = 'Logo URL';
-$string['logourldesc'] = 'URL of an image file that is displayed on the top right corner of answer forms. <b>The maximum allowed size is 520x140 pixels</b>. Answer forms cannot be evaluated if the image exceeds the maximum size!';
+$string['logourldesc'] = 'URL of an image file that is displayed on the top right corner of answer forms, i.e. <b>http://www.yoursite.tld/mylogo.png</b> or <b>../path/to/your/logo.png</b>. The maximum allowed size is 520x140 pixels. Answer forms cannot be evaluated if the image exceeds the maximum size!';
 $string['lowertrigger'] = 'Lower second boundary';
 $string['lowertriggerzero'] = 'Lower second boundary is zero';
 $string['lowerwarning'] = 'Lower first boundary';
@@ -243,6 +264,7 @@ $string['marginwarning'] = 'Please print the following PDF files without additio
 $string['marks'] = 'Marks';
 $string['matrikel'] = 'Matrikelnummer';
 $string['maxgradewarning'] = 'The maximum grade has to be a number!';
+$string['membersinplist'] = '{$a->count} participants in <a href="{$a->url}">{$a->name}</a>';
 $string['missingimagefile'] = 'Missing image file';
 $string['missingitemdata'] = 'Missing answer(s) for user {$a}';
 $string['missinglogdata'] = 'Missing logdata for existing result.';
@@ -260,7 +282,7 @@ $string['multipleanswers'] = 'Choose at least one answer.';
 $string['moodleprocessing'] = 'Let Moodle process data';
 $string['movecorners'] = 'Change the positions of the corner markings first. Use drag and drop.';
 $string['multianswersforsingle'] = 'Multiple answers for single choice question';
-$string['name'] = 'Offline Quiz name';
+$string['name'] = 'Offline quiz name';
 $string['neededcorrection'] = '<strong>Attention: Some of your markings needed manual correction. Have a look at the red squares in the following picture.
 <br />This implied manual intervention by a teacher and delayed the publishing of the offline quiz results!</strong>';
 $string['newgrade'] = 'Graded';
@@ -344,6 +366,10 @@ $string['pagenotdetected'] = 'Could not detect barcode for page!';
 $string['pagesizeparts'] = 'Participants shown per page:';
 $string['papergray'] = 'White value of paper';
 $string['papergray_help'] = 'If the white parts of your scanned answer forms are very dark you can correct this by setting this value to dark grey.';
+$string['partcheckedwithresult'] = '{$a} checked participants with result';
+$string['partcheckedwithoutresult'] = '<a href="{$a->url}">{$a->count} checked participants without result</a>';
+$string['partuncheckedwithresult'] = '<a href="{$a->url}">{$a->count} unchecked participants with result</a>';
+$string['partuncheckedwithoutresult'] = '{$a} unchecked participants without result';
 $string['participantslist'] = 'List of participants';
 $string['participantslists'] = 'Participants';
 $string['participants'] = 'Participants';
@@ -355,7 +381,7 @@ Please avoid spots on the barcodes as they are used to identify the students.</p
 $string['partimport'] = 'Uploading lists of participants';
 $string['partimport_help'] = '<p>
 In this tab you can upload the filled-in lists of participants. You can upload single scanned image files or several scanned image files in a ZIP-archive. The offline quiz module will process the image files in the background.
-File names are not relevant but should not contain special characters such as umlauts. Images should be JPGs, GIFs, PNGs
+File names are not relevant but should not contain special characters such as umlauts. Images should be GIFs, PNGs
 or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['pdfdeletedforgroup'] = 'Form for group {$a} deleted';
 $string['pdfscreated'] = 'PDF forms have been created';
@@ -374,6 +400,7 @@ $string['previewquestion'] = 'Preview question';
 $string['questionanalysis'] = 'Difficulty analysis';
 $string['questionanalysistitle'] = 'Difficulty Analysis Table';
 $string['questionbankcontents'] = 'Question bank contents';
+$string['questionforms'] = 'Question forms';
 $string['questionname'] = 'Question name';
 $string['questionsheet'] = 'Question sheet';
 $string['questionsin'] = 'Questions in';
@@ -427,16 +454,18 @@ The text of the questions and answers will be shown to the students. They will s
 This option can only be activated if the option "The attempt" is activated. If activated, the students can see which of the chosen answers are correct (green background) or incorrect (red background).
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Marks</b></td><td>
-The grades (points) for the offline quiz will be shown. This option is only usefull if responses or scanned form are set.
+The group (e.g. B), scores (achieved grade, total grade for questions, achieved in percent, e.g. 40/80 (50)) and the grade (e.g. 50 out of a maximum of 100) are displayed.
+Additionally, if "The attempt" is selected, the achieved score and the maximum score are shown for every question.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Right Answers</b></td><td>
-It is shown which answers are right or wrong. This option is only usefull if "The attempt" is set.
+It is shown which answers are correct or wrong. This option is only available if "The attempt" is set.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scanned form</b></td><td>
 The scanned answer forms are shown. Checked boxes are marked with green squares.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scanned form with grades</b></td><td>
-The scanned answer forms are shown. Checked boxes are marked with green squares. Wrong marks and missing marks are highlighted. A table with the grades is also shown. 
+The scanned answer forms are shown. Checked boxes are marked with green squares. Wrong marks and missing marks are highlighted. 
+Additionally, a table shows the maximum grade and the achieved grade for every question.
 </td></tr>
 </table>';
 

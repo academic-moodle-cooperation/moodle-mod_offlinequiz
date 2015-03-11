@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -199,15 +199,10 @@ function offlinequiz_delete_instance($id) {
         }
     }
 
-    $tables_to_purge = array(
-            'offlinequiz_groups' => 'offlinequizid',
-            'offlinequiz_q_instances' => 'offlinequizid',
-            'offlinequiz' => 'id'
-    );
-
-    foreach ($tables_to_purge as $table => $keyfield) {
-        if (! $DB->delete_records($table, array($keyfield => $offlinequiz->id))) {
-            $result = false;
+    if ($events = $DB->get_records('event', array('modulename' => 'offlinequiz', 'instance' => $offlinequiz->id))) {
+        foreach ($events as $event) {
+            $event = calendar_event::load($event);
+            $event->delete();
         }
     }
 
@@ -218,10 +213,19 @@ function offlinequiz_delete_instance($id) {
         }
     }
 
-    if ($events = $DB->get_records('event', array('modulename' => 'offlinequiz', 'instance' => $offlinequiz->id))) {
-        foreach ($events as $event) {
-            $event = calendar_event::load($event);
-            $event->delete();
+    // Remove the grade item.
+    offlinequiz_grade_item_delete($offlinequiz);
+
+    // All the tables with no dependencies...
+    $tables_to_purge = array(
+            'offlinequiz_groups' => 'offlinequizid',
+            'offlinequiz_q_instances' => 'offlinequizid',
+            'offlinequiz' => 'id'
+    );
+
+    foreach ($tables_to_purge as $table => $keyfield) {
+        if (! $DB->delete_records($table, array($keyfield => $offlinequiz->id))) {
+            $result = false;
         }
     }
 
@@ -288,27 +292,39 @@ function offlinequiz_question_pluginfile($course, $context, $component,
 }
 
 /**
- * Serve questiontext files in the question text when they are displayed in this report.
+ * Serve questiontext files in the question text when they are displayed in a report.
  * 
- * @param context $context the context
- * @param int $questionid the question id
- * @param array $args remaining file args
- * @param bool $forcedownload
+ * @param context $previewcontext the quiz context
+ * @param int $questionid the question id.
+ * @param context $filecontext the file (question) context
+ * @param string $filecomponent the component the file belongs to.
+ * @param string $filearea the file area.
+ * @param array $args remaining file args.
+ * @param bool $forcedownload.
+ * @param array $options additional options affecting the file serving.
  */
-function offlinequiz_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload, array $options=array()) {
-    global $CFG;
+function offlinequiz_question_preview_pluginfile($previewcontext, $questionid, $filecontext, $filecomponent, $filearea,
+         $args, $forcedownload, $options = array()) { 
+     global $CFG;
 
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
     require_once($CFG->dirroot . '/lib/questionlib.php');
 
-    list($context, $course, $cm) = get_context_info_array($context->id);
+    list($context, $course, $cm) = get_context_info_array($previewcontext->id);
     require_login($course, false, $cm);
 
     // We assume that only trusted people can see this report. There is no real way to
     // validate questionid, because of the complexity of random questions.
     require_capability('mod/offlinequiz:viewreports', $context);
 
-    question_send_questiontext_file($questionid, $args, false, $options);
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/{$filecontext->id}/{$filecomponent}/{$filearea}/{$relativepath}";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        send_file_not_found();
+    }
+    error_log($file->get_filename());
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**
@@ -533,6 +549,7 @@ function offlinequiz_supports($feature) {
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_USES_QUESTIONS:          return true;
 
         default: return null;
     }
@@ -941,28 +958,30 @@ function offlinequiz_update_events($offlinequiz) {
         $cmid = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $offlinequiz->course)->id;
     }
 
-    $event = new stdClass();
-    $event->name = $offlinequiz->name;
-    $event->description = format_module_intro('offlinequiz', $offlinequiz, $cmid);
-    // Events module won't show user events when the courseid is nonzero.
-    $event->courseid    = ($userid) ? 0 : $offlinequiz->course;
-    $event->groupid     = $groupid;
-    $event->userid      = $userid;
-    $event->modulename  = 'offlinequiz';
-    $event->instance    = $offlinequiz->id;
-    $event->timestart   = $timeopen;
-    $event->timeduration = max($timeclose - $timeopen, 0);
-    $event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
-    //$event->eventtype   = 'open';
-
-    if ($timeopen == $offlinequiz->time) {
+    if (!empty($timeopen)) {
+        $event = new stdClass();
         $event->name = $offlinequiz->name;
-    }
-    if ($timeopen == $offlinequiz->timeopen) {
-         $event->name = $offlinequiz->name . ' (' . get_string('reportstarts', 'offlinequiz') . ')';
-    }
+        $event->description = format_module_intro('offlinequiz', $offlinequiz, $cmid);
+        // Events module won't show user events when the courseid is nonzero.
+        $event->courseid    = ($userid) ? 0 : $offlinequiz->course;
+        $event->groupid     = $groupid;
+        $event->userid      = $userid;
+        $event->modulename  = 'offlinequiz';
+        $event->instance    = $offlinequiz->id;
+        $event->timestart   = $timeopen;
+        $event->timeduration = max($timeclose - $timeopen, 0);
+        $event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
+        // $event->eventtype   = 'open';
 
-    calendar_event::create($event);
+        if ($timeopen == $offlinequiz->time) {
+            $event->name = $offlinequiz->name;
+        }
+        if ($timeopen == $offlinequiz->timeopen) {
+            $event->name = $offlinequiz->name . ' (' . get_string('reportstarts', 'offlinequiz') . ')';
+        }
+
+        calendar_event::create($event);
+    }
 
     // Delete any leftover events.
     foreach ($oldevents as $badevent) {

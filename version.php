@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,17 +21,18 @@
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
- * @package       mod
- * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @package       mod_offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at> <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2013112500;         // If version == 0 then module will not be installed
-$module->requires = 2013051400;         // Requires this Moodle version
-$module->component = 'mod_offlinequiz'; // Full name of the plugin (used for diagnostics)
+$module->version  = 2014092301;
+$module->release   = "2014-09-15"; 	    // User-friendly version number
+$module->maturity  = MATURITY_STABLE;
+$module->requires = 2014051202;         // Requires this Moodle version
 $module->cron     = 3600;               // Period for cron to check this module (secs)
+$module->component = 'mod_offlinequiz'; // Full name of the plugin (used for diagnostics)

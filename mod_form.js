@@ -18,8 +18,8 @@
  * 
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.4
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,8 +57,10 @@ function showStudentView() {
 	}
 	if (marks) {
 		imagefile1 = baseurl + '1';
-		imagefile1 = imagefile1 + "_marks"; 
-		imagefile2 = imagefile2 + "_marks"; 
+		imagefile1 = imagefile1 + "_marks";
+		if (imagefile2 != '') {
+			imagefile2 = imagefile2 + "_marks";
+		}
 	}
 	if (specificfeedback) {
 		imagefile2 = imagefile2 + "_specific";

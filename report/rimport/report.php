@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.1
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -194,15 +194,16 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
         $action = optional_param('action', '', PARAM_ACTION);
         if ($action != 'delete') {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, 'rimport');
-
             if (!$offlinequiz->docscreated) {
                 echo $OUTPUT->heading(format_string($offlinequiz->name));
                 echo $OUTPUT->heading(get_string('nopdfscreated', 'offlinequiz'));
                 return true;
             }
 
+            echo $OUTPUT->box_start('linkbox');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading_with_help(get_string('resultimport', 'offlinequiz'), 'import', 'offlinequiz');
+            echo $OUTPUT->box_end();
         }
 
         $import_form = new offlinequiz_upload_form($reporturl,
@@ -319,9 +320,6 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     }
                     break;
                 default:
-                    if (!file_exists($CFG->filter_tex_pathconvert)) {
-                        $OUTPUT->notification(get_string('imagickwarning', 'offlinequiz'), 'notifyproblem');
-                    }
                     // print the table with answer forms that need correction
                     $this->print_error_report($offlinequiz);
                     // display the upload form

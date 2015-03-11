@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  * Offlinequiz statistics report class.
  *
  * @package   offlinequiz_statistics
- * @author    Juergen Zimmer
- * @copyright 2013 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/responseanalysi
  * a offlinequiz, compared to the whole offlinequiz. It also provides a drill-down to more
  * detailed information about each question.
  *
- * @copyright 2013 The University of Vienna
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_statistics_report extends offlinequiz_default_report {
@@ -284,7 +284,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     }
                     if ($offlinequiz->sumgrades == -1) {
                         echo $OUTPUT->notification('- ' . get_string('differentsumgrades', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
-                    } else if ($differentquestions) {
+                    } 
+                    if ($differentquestions) {
                         echo $OUTPUT->notification('- ' . get_string('differentquestions', 'offlinequiz_statistics', implode(', ', $sumgrades)), 'notifynote');
                     }
                     if ($offlinequiz->sumgrades == -1 || $differentquestions) {
@@ -573,8 +574,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
     protected function render_question_text($question) {
         global $OUTPUT;
 
-        $text = question_rewrite_questiontext_preview_urls($question->questiontext,
-                $this->context->id, 'offlinequiz_statistics', $question->id);
+        $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                $question->contextid, 'question', 'questiontext', $question->id,
+                $this->context->id, 'quiz_statistics');
 
         return $OUTPUT->box(format_text($text, $question->questiontextformat,
                 array('noclean' => true, 'para' => false, 'overflowdiv' => true)),
@@ -589,14 +591,14 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         global $OUTPUT;
 
         if ($showimages) {
-            $text = question_rewrite_questiontext_preview_urls($question->questiontext,
-                    $this->context->id, 'offlinequiz_statistics', $question->id);
-            return '&nbsp;&nbsp;&nbsp;' . format_text($text, $question->questiontextformat,
-                    array('noclean' => true, 'para' => false, 'overflowdiv' => true));
+            $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                    $question->contextid, 'question', 'questiontext', $question->id,
+                    $this->context->id, 'quiz_statistics');
         } else {
-            return '&nbsp;&nbsp;&nbsp;' . format_text(html_to_text($question->questiontext), FORMAT_HTML,
-                    array('noclean' => true, 'para' => false, 'overflowdiv' => true));
+            $text = $question->questiontext;
         }
+        $questiontext = question_utils::to_plain_text($text, $question->questiontextformat, array('noclean' => true, 'para' => false, 'overflowdiv' => true));
+        return '&nbsp;&nbsp;&nbsp;' . $questiontext;
     }
     
     
@@ -784,7 +786,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
         // The statistics.
         foreach ($todisplay as $property => $format) {
-            if (!isset($offlinequizstats->$property) || empty($format[$property])) {
+            if (!isset($offlinequizstats->$property) || empty($format)) {
                 continue;
             }
             $value = $offlinequizstats->$property;
@@ -856,6 +858,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 //         $qtable->question_setup($reporturl, $question, $responesstats);
         $letterstr = 'abcdefghijklmnopqrstuvwxyz';
         $counter = 0;
+        $counter2 = 0;
+
         foreach ($responesstats->responseclasses as $partid => $partclasses) {
             $rowdata = new stdclass();
             $partcounter = 0;
@@ -864,9 +868,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 $responsesdata = $responesstats->responses[$partid][$responseclassid];
 
                 if (empty($responsesdata)) {
-                    if ($responseclass->responseclass != get_string('noresponse', 'question')) {
-                        $rowdata->part = $letterstr[$counter] . ')';
-                    }
+//                    if ($responseclass->responseclass != get_string('noresponse', 'question')) {
+                    $rowdata->part = $letterstr[$counter++] . ')';
+//                    }
                     $rowdata->response = $responseclass->responseclass;
                     $rowdata->response = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->response);
                     $rowdata->fraction = $responseclass->fraction;
@@ -877,7 +881,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     } else if ($rowdata->fraction < 0) {
                         $classname = 'redrow';
                     }
-                    if ($counter == 0 && $partcounter == 0) {
+                    if ($counter2 == 0 && $partcounter == 0) {
                         if ($this->table->is_downloading()) {
                             $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
                             $rowdata->name = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->name);
@@ -887,11 +891,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     } else {
                         $rowdata->name = '';
                     }
-                    if ($counter == 0 && $partcounter > 0 && $responseclass->responseclass != get_string('noresponse', 'question')) {
-                        $rowdata->part = $letterstr[$partcounter] . ')';
-                    } else {
-                        $rowdata->part = '';
-                    }
+//                     if ($counter == 0 && $partcounter > 0 && $responseclass->responseclass != get_string('noresponse', 'question')) {
+//                         $rowdata->part = $letterstr[$partcounter] . ')';
+//                     } else {
+//                         $rowdata->part = '';
+//                    }
 
                     $rowdata->s = '';
                     $rowdata->facility = '';
@@ -908,6 +912,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $rowdata->response = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->response);
                         $rowdata->fraction = $data->fraction;
                         $rowdata->count = $data->count;
+                        $rowdata->part = $letterstr[$counter++] . ')';
+
                         $classname = '';
                         if ($rowdata->fraction > 0) {
                             $classname = 'greenrow';
@@ -915,7 +921,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                             $classname = 'redrow';
                         }
                         
-                        if ($counter == 0 && $partcounter == 0) {
+                        if ($counter2 == 0 && $partcounter == 0) {
                             if ($this->table->is_downloading()) {
                                 $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
                                 $rowdata->name = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"), array('', '', '', ''), $rowdata->name);
@@ -924,11 +930,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                             }
                         } else {
                             $rowdata->name = '';
-                        }
-                        if ($counter == 0 && $response != get_string('noresponse', 'question')) {
-                            $rowdata->part = $letterstr[$partcounter] . ')';
-                        } else {
-                            $part = '';
                         }
                         $rowdata->s = '';
                         $rowdata->facility = '';
@@ -942,7 +943,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     }
                 }
             }
-            $counter++;
+            $counter2++;
         }
     }
 
@@ -1368,7 +1369,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $questions, $subquestions, $offlinequiz->groupid);
             }
         }
-
         return array($offlinequizstats, $questions, $subquestions, $s);
     }
 

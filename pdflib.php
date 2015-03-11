@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -382,29 +382,9 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf
  * @return string the number $num in the requested style.
  */
 function number_in_style($num, $style) {
-    switch($style) {
-        case 'abc':
-            $number = chr(ord('a') + $num);
-            break;
-        case 'ABCD':
-            $number = chr(ord('A') + $num);
-            break;
-        case '123':
-            $number = $num + 1;
-            break;
-        case 'iii':
-            $number = question_utils::int_to_roman($num + 1);
-            break;
-        case 'IIII':
-            $number = strtoupper(question_utils::int_to_roman($num + 1));
-            break;
-        case 'none':
-            return '';
-        default:
-                return 'ERR';
-    }
-    return $number;
+        return $number = chr(ord('a') + $num);
 }
+
 
 /**
  * Generates the PDF question/correction form for an offlinequiz group.
@@ -424,10 +404,6 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     $groupletter = strtoupper($letterstr[$group->number - 1]);
 
     $coursecontext = context_course::instance($courseid);
-
-    add_to_log($courseid, 'offlinequiz', 'createpdf question',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
 
     $pdf = new offlinequiz_question_pdf('P', 'mm', 'A4');
     $trans = new offlinequiz_html_translator();
@@ -623,7 +599,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                     // Remove all paragraph tags because they mess up the layout.
                     $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200);
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300);
 
                     if ($correction) {
                         if ($question->options->answers[$answer]->fraction > 0) {
@@ -759,7 +735,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                         // Remove all paragraph tags because they mess up the layout.
                         $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
                         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 200); // $pdf->GetK());
+                        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300); // $pdf->GetK());
 
                         if ($correction) {
                             if ($question->options->answers[$answer]->fraction > 0) {
@@ -831,13 +807,14 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     }
 
     // Prepare file record object.
+    $timestamp = date('Ymd_His', time());
     $fileinfo = array(
             'contextid' => $context->id, // ID of context.
             'component' => 'mod_offlinequiz',     // usually = table name.
             'filearea' => 'pdfs',     // usually = table name.
             'filepath' => '/',
             'itemid' => 0,           // usually = ID of row in table.
-            'filename' => $fileprefix . '-' . strtolower($groupletter) . '.pdf'); // any filename
+            'filename' => $fileprefix . '-' . strtolower($groupletter) . '_' . $timestamp . '.pdf'); // any filename
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -880,10 +857,6 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     $fm->q = 0;
     $fm->a = 0;
 
-    add_to_log($courseid, 'offlinequiz', 'createpdf answer',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
-
     $tex_filter = new filter_tex($context, array());
 
     $pdf = new offlinequiz_answer_pdf('P', 'mm', 'A4');
@@ -913,7 +886,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
         print_error('Too many answers in one question');
     }
     $pdf->userid = $USER->id;
-    $pdf->AliasNbPages();
+//    $pdf->AliasNbPages();
     $pdf->SetMargins(15, 20, 15);
     $pdf->SetAutoPageBreak(true, 20);
     $pdf->AddPage();
@@ -984,6 +957,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
             continue;
         }
 
+        // Print the answer letters every 8 questions.
         if ($number % 8 == 0) {
             $pdf->SetFont('FreeSans', '', 8);
             $pdf->SetX(($col-1) * ($pdf->colwidth) + $offsetx + 5);
@@ -1040,13 +1014,15 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     $fs = get_file_storage();
 
     // Prepare file record object.
+    $timestamp = date('Ymd_His', time());
     $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => 'answer-' . strtolower($groupletter) . '.pdf');
+            'filename' => 'answer-' . strtolower($groupletter) . '_' . $timestamp . '.pdf'); // any filename
+//            'filename' => 'answer-' . strtolower($groupletter) . '.pdf');
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -1111,17 +1087,13 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
         return false;
     }
 
-    add_to_log($courseid, 'offlinequiz', 'create participants pdfs',
-            "mod/offlinequiz.php?q=$offlinequiz->id",
-            "$offlinequiz->id", $offlinequiz->id);
-
     $pdf = new offlinequiz_participants_pdf('P', 'mm', 'A4');
     $pdf->listno = $list->number;
     $title = offlinequiz_str_html_pdf($offlinequiz->name);
     // Add the list name to the title.
     $title .= ', '.offlinequiz_str_html_pdf($listname);
     $pdf->set_title($title);
-    $pdf->AliasNbPages();
+    // $pdf->AliasNbPages();
     $pdf->SetMargins(15, 25, 15);
     $pdf->SetAutoPageBreak(true, 20);
     $pdf->AddPage();
@@ -1188,13 +1160,15 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
     $fs = get_file_storage();
 
     // Prepare file record object.
+    $timestamp = date('Ymd_His', time());
     $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => 'participants_' . $list->id . '.pdf');
+            'filename' => 'participants_' . $list->id . '_' . $timestamp . '.pdf');
+    //            'filename' => 'participants_' . $list->id . '.pdf');
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {

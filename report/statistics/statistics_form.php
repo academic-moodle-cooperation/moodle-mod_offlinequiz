@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * Offlinequiz statistics settings form definition.
  *
  * @package   offlinequiz_statistics
- * @copyright 2013 The University of Vienna
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/formslib.php');
 /**
  * This is the settings form for the offlinequiz statistics report.
  *
- * @copyright 2013 The University of Vienna
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_statistics_settings_form extends moodleform {
@@ -39,7 +39,7 @@ class offlinequiz_statistics_settings_form extends moodleform {
         $mform = $this->_form;
 
         $mform->addElement('header', 'preferencespage',
-                get_string('preferencespage', 'offlinequiz_overview'));
+                get_string('preferencespage', 'offlinequiz_statistics'));
 
 //         $options = array();
 //         $options[0] = get_string('attemptsfirst', 'offlinequiz_statistics');
@@ -49,6 +49,6 @@ class offlinequiz_statistics_settings_form extends moodleform {
 //         $mform->setDefault('useallattempts', 0);
 
         $mform->addElement('submit', 'submitbutton',
-                get_string('preferencessave', 'offlinequiz_overview'));
+                get_string('preferencessave', 'offlinequiz_statistics'));
     }
 }

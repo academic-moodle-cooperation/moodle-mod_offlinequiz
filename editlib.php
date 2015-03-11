@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -200,7 +200,8 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $page
 }
 
 /**
- * Remove a question from a offlinequiz
+ * Removes a question from a offlinequiz.
+ *
  * @param object $offlinequiz the offlinequiz object.
  * @param int $questionid The id of the question to be deleted.
  */
@@ -234,6 +235,12 @@ function offlinequiz_remove_question($offlinequiz, $questionid) {
     }
 }
 
+/**
+ * Removes a list of questions from the questions in an offlinequiz group.
+ *
+ * @param unknown $offlinequiz The offlinequiz object.
+ * @param unknown $questionids The list of question IDs.
+ */
 function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
     global $DB;
 
@@ -623,12 +630,13 @@ function offlinequiz_move_question_down($layout, $questionid) {
  * @param bool $offlinequiz_qbanktool  Indicates whether the question bank should be displayed
  * @param bool $hasattempts  Indicates whether the offlinequiz has attempts
  */
-function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $reordertool, $gradetool, $offlinequiz_qbanktool, $hasattempts, $defaultcategoryobj) {
+function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $reordertool,
+        $gradetool, $offlinequiz_qbanktool, $hasattempts, $defaultcategoryobj) {
     global $CFG, $DB, $OUTPUT;
 
     $strorder = get_string('order');
     $strquestionname = get_string('questionname', 'question');
-    $strgrade = get_string('grade');
+    $strgrade = get_string('markedoutof', 'question');
     $strremove = get_string('remove', 'offlinequiz');
     $stredit = get_string('edit');
     $strview = get_string('view');
@@ -974,7 +982,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                     <form method="post" action="edit.php" class="offlinequizsavegradesform">
                     <div>
                     <fieldset class="invisiblefieldset" style="display: block;">
-                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>:<br />
+                    <label for="inputq' . $question->id . '">' . $strgrade . ':</label>
                     <input type="hidden" name="sesskey"
                     value="' . sesskey() . '" />' . html_writer::input_hidden_params($pageurl) . '
                     <input type="hidden" name="savechanges" value="save" />
@@ -1195,7 +1203,8 @@ function offlinequiz_question_tostring($question, $showicon = false,
     $formatoptions = new stdClass();
     $formatoptions->noclean = true;
     $formatoptions->para = false;
-    $questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
+    //$questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
+    $questiontext = strip_tags(question_utils::to_plain_text($question->questiontext, $question->questiontextformat, array('noclean' => true, 'para' => false)));
     $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
 
     $result .= '<span class="questionname" title="' . $questiontitle . '">';
@@ -1238,7 +1247,7 @@ function offlinequiz_question_tostring($question, $showicon = false,
 /**
  * A column type for the name of the question type.
  *
- * @copyright  2009 Tim Hunt
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_my_question_type_column extends question_bank_question_type_column {
@@ -1264,7 +1273,7 @@ class question_bank_my_question_type_column extends question_bank_question_type_
 /**
  * A column with a checkbox for each question with name q{questionid}.
  *
- * @copyright  2009 Tim Hunt
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_my_checkbox_column extends question_bank_checkbox_column {
@@ -1282,16 +1291,9 @@ class question_bank_my_checkbox_column extends question_bank_checkbox_column {
                     $question->id . '" id="checkq' . $question->id . '" value="1"/>';
         }
         if ($this->firstrow) {
-            $PAGE->requires->js('/question/qengine.js');
-            $module = array(
-                'name'      => 'qbank',
-                'fullpath'  => '/question/qbank.js',
-                'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
-                'strings'   => array(),
-                'async'     => false,
-            );
-            $PAGE->requires->js_init_call('question_bank.init_checkbox_column', array(get_string('selectall'),
-                    get_string('deselectall'), 'checkq' . $question->id), false, $module);
+            $PAGE->requires->strings_for_js(array('selectall', 'deselectall'), 'moodle');
+            $PAGE->requires->yui_module('moodle-question-qbankmanager', 'M.question.qbankmanager.init',
+                    array('checkq' . $question->id));
             $this->firstrow = false;
         }
     }
@@ -1300,7 +1302,7 @@ class question_bank_my_checkbox_column extends question_bank_checkbox_column {
 /**
  * A column type for the add this question to the offlinequiz.
  *
- * @copyright  2012 Juergen Zimmer
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_add_to_offlinequiz_action_column extends question_bank_action_column_base {
@@ -1344,14 +1346,14 @@ class question_bank_add_to_offlinequiz_action_column extends question_bank_actio
     }
 
     public function get_required_fields() {
-        return array('q.id');
+        return array('q.id', 'q.createdby');
     }
 }
 
 /**
  * A column type for the name followed by the start of the question text.
  *
- * @copyright  2012 Juergen Zimmer
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_question_name_text_column extends question_bank_question_name_column {
@@ -1383,14 +1385,16 @@ class question_bank_question_name_text_column extends question_bank_question_nam
 /**
  * Subclass to customise the view of the question bank for the offlinequiz editing screen.
  *
- * @copyright  2012 Juergen Zimmer
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_question_bank_view extends question_bank_view {
     protected $offlinequizhasattempts = false;
     /** @var object the offlinequiz settings. */
     protected $offlinequiz = false;
-
+    /** @var int The maximum displayed length of the category info. */
+    const MAX_TEXT_LENGTH = 200;
+    
     /**
      * Constructor
      * @param question_edit_contexts $contexts
@@ -1415,11 +1419,22 @@ class offlinequiz_question_bank_view extends question_bank_view {
 
     protected function wanted_columns() {
         return array('addtoofflinequizaction', 'mycheckbox', 'myqtype', 'questionnametext',
-                'editaction', 'previewaction');
+                'editaction', 'copyaction', 'previewaction');
+    }
+
+    /**
+     * Specify the column heading
+     *
+     * @return string Column name for the heading
+     */
+    protected function heading_column() {
+        return 'questionnametext';
     }
 
     protected function default_sort() {
-        return array('qtype' => 1, 'questionnametext' => 1);
+        $this->requiredcolumns['myqtype'] = $this->knowncolumntypes['myqtype'];
+        $this->requiredcolumns['questionnametext'] = $this->knowncolumntypes['questionnametext'];
+        return array('myqtype' => 1, 'questionnametext' => 1);
     }
 
     /**
@@ -1454,24 +1469,32 @@ class offlinequiz_question_bank_view extends question_bank_view {
             return;
         }
 
-        // Display the current category.
-        if (!$category = $this->get_current_category($cat)) {
-            return;
-        }
-        $this->print_category_info($category);
+// //        Display the current category.
+//         if (!$category = $this->get_current_category($cat)) {
+//             return;
+//         }
+//        $this->print_category_info($category);
 
+        $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
+        array_unshift($this->searchconditions,
+                new \core_question\bank\search\hidden_condition(!$showhidden));
+        array_unshift($this->searchconditions,
+                new \core_question\bank\search\category_condition($cat, $recurse,
+                        $editcontexts, $this->baseurl, $this->course, self::MAX_TEXT_LENGTH));
+        
+        
         echo $OUTPUT->box_start('generalbox questionbank');
-
-        $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
-                $this->baseurl, $cat);
-
+//         $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
+//                 $this->baseurl, $cat);
+        $this->display_options_form($showquestiontext);
+        
         // continues with list of questions
         $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname),
                 $this->baseurl, $cat, $this->cm, $recurse, $page,
                 $perpage, $showhidden, $showquestiontext,
                 $this->contexts->having_cap('moodle/question:add'));
 
-        $this->display_options($recurse, $showhidden, $showquestiontext);
+//        $this->display_options($recurse, $showhidden, $showquestiontext);
         echo $OUTPUT->box_end();
     }
 
@@ -1484,6 +1507,12 @@ class offlinequiz_question_bank_view extends question_bank_view {
         print_string('selectcategoryabove', 'question');
         echo "</b></p>";
         echo $OUTPUT->box_end();
+    }
+
+    protected function display_options_form($showquestiontext, $scriptpath = '/mod/offlinequiz/edit.php',
+            $showtextoption = false) {
+        // Overridden just to change the default values of the arguments.
+        parent::display_options_form($showquestiontext, $scriptpath, $showtextoption);
     }
 
     protected function print_category_info($category) {
@@ -1603,7 +1632,7 @@ class offlinequiz_question_bank_view extends question_bank_view {
         $strdelete = get_string('delete');
 
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
-        $catcontext = get_context_instance_by_id($contextid);
+        $catcontext = context::instance_by_id($contextid);
 
         $canadd = has_capability('moodle/question:add', $catcontext);
         $caneditall =has_capability('moodle/question:editall', $catcontext);
@@ -1796,46 +1825,87 @@ function offlinequiz_print_status_bar($offlinequiz) {
     echo html_writer::tag('div', implode(' | ', $bits), array('class' => 'statusbar'));
 }
 
-
-function offlinequiz_print_choose_qtype_to_add_form($hiddenparams) {
+/**
+ * Print a form to let the user choose which question type to add.
+ * When the form is submitted, it goes to the question.php script.
+ * @param $hiddenparams hidden parameters to add to the form, in addition to
+ *      the qtype radio buttons.
+ * @param $allowedqtypes optional list of qtypes that are allowed. If given, only
+ *      those qtypes will be shown. Example value array('description', 'multichoice').
+ */
+function offlinequiz_print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null, $enablejs = true) {
     global $CFG, $PAGE, $OUTPUT;
 
-    echo '<div id="chooseqtypehead" class="hd">' . "\n";
-    echo $OUTPUT->heading(get_string('chooseqtypetoadd', 'question'), 3);
-    echo "</div>\n";
-    echo '<div id="chooseqtype">' . "\n";
-    echo '<form action="' . $CFG->wwwroot . '/question/question.php" method="get"><div id="qtypeformdiv">' . "\n";
-    foreach ($hiddenparams as $name => $value) {
-        echo '<input type="hidden" name="' . s($name) . '" value="' . s($value) . '" />' . "\n";
+    if ($enablejs) {
+        // Add the chooser.
+        $PAGE->requires->yui_module('moodle-question-chooser',
+            'M.question.init_chooser',
+            array(array('courseid' => $PAGE->course->id))
+        );
     }
-    echo "</div>\n";
-    echo '<div class="qtypes">' . "\n";
-    echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
-    echo '<div class="realqtypes">' . "\n";
-    print_qtype_to_add_option(question_bank::get_qtype('multichoice'));
-    if (question_bank::is_qtype_installed('multichoiceset') && $mcset = question_bank::get_qtype('multichoiceset')) {
-        print_qtype_to_add_option($mcset);
-    }
-    print_qtype_to_add_option(question_bank::get_qtype('description'));
-    echo "</div>\n";
-
-    echo "</div>\n";
-    echo '<div class="submitbuttons">' . "\n";
-    echo '<input type="submit" value="' . get_string('next') . '" id="chooseqtype_submit" />' . "\n";
-    echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
-    echo "</div></form>\n";
-    echo "</div>\n";
- 
-    $PAGE->requires->js('/question/qengine.js');
-    $module = array(
-            'name'      => 'qbank',
-            'fullpath'  => '/question/qbank.js',
-            'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
-            'strings'   => array(),
-            'async'     => false,
+    $realqtypes = array('multichoice' => question_bank::get_qtype('multichoice'),
+            'description' => question_bank::get_qtype('description'),
+            
     );
-    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'), false, $module);
+    if (question_bank::is_qtype_installed('multichoiceset') && $mcset = question_bank::get_qtype('multichoiceset')) {
+        $realqtypes['multichoiceset'] = $mcset;
+    }
+
+    $fakeqtypes = array();
+//     foreach (question_bank::get_creatable_qtypes() as $qtypename => $qtype) {
+//         if ($allowedqtypes && !in_array($qtypename, $allowedqtypes)) {
+//             continue;
+//         }
+//         if ($qtype->is_real_question_type()) {
+//             $realqtypes[] = $qtype;
+//         } else {
+//             $fakeqtypes[] = $qtype;
+//         }
+//     }
+
+    $renderer = $PAGE->get_renderer('question', 'bank');
+    echo $renderer->qbank_chooser($realqtypes, $fakeqtypes, $PAGE->course, $hiddenparams);
 }
+
+// function offlinequiz_print_choose_qtype_to_add_form($hiddenparams) {
+//     global $cfg, $page, $output;
+
+//     echo '<div id="chooseqtypehead" class="hd">' . "\n";
+//     echo $output->heading(get_string('chooseqtypetoadd', 'question'), 3);
+//     echo "</div>\n";
+//     echo '<div id="chooseqtype">' . "\n";
+//     echo '<form action="' . $cfg->wwwroot . '/question/question.php" method="get"><div id="qtypeformdiv">' . "\n";
+//     foreach ($hiddenparams as $name => $value) {
+//         echo '<input type="hidden" name="' . s($name) . '" value="' . s($value) . '" />' . "\n";
+//     }
+//     echo "</div>\n";
+//     echo '<div class="qtypes">' . "\n";
+//     echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
+//     echo '<div class="realqtypes">' . "\n";
+//     print_qtype_to_add_option(question_bank::get_qtype('multichoice'));
+//     if (question_bank::is_qtype_installed('multichoiceset') && $mcset = question_bank::get_qtype('multichoiceset')) {
+//       print_qtype_to_add_option($mcset);
+//     }
+ //  print_qtype_to_add_option(question_bank::get_qtype('description'));
+//     echo "</div>\n";
+
+//     echo "</div>\n";
+//     echo '<div class="submitbuttons">' . "\n";
+//     echo '<input type="submit" value="' . get_string('next') . '" id="chooseqtype_submit" />' . "\n";
+//     echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
+//     echo "</div></form>\n";
+//     echo "</div>\n";
+ 
+//     $page->requires->js('/question/qengine.js');
+//     $module = array(
+//             'name'      => 'qbank',
+//             'fullpath'  => '/question/qbank.js',
+//             'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
+//             'strings'   => array(),
+//             'async'     => false,
+//     );
+//     $page->requires->js_init_call('qtype_chooser.init', array('chooseqtype'), false, $module);
+// }
 
 /**
  * Print a button for creating a new question. This will open question/addquestion.php,

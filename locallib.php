@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer
- * @copyright     2012 The University of Vienna
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -159,6 +159,7 @@ function offlinequiz_load_questions_usage_by_activity($qubaid) {
                    qa.variant,
                    qa.maxmark,
                    qa.minfraction,
+                   qa.maxfraction,
                    qa.flagged,
                    qa.questionsummary,
                    qa.rightanswer,
@@ -1039,7 +1040,7 @@ function offlinequiz_partlist_created($offlinequiz) {
  * An extension of question_display_options that includes the extra options used
  * by the offlinequiz.
  *
- * @copyright  2012 The University of Vienna
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_offlinequiz_display_options extends question_display_options {
@@ -1416,7 +1417,7 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
     if ($deletefiles) {
         return offlinequiz_delete_pdf_forms($offlinequiz);
     } else {
-        return true;
+        return $offlinequiz;
     }
 }
 
@@ -1461,9 +1462,10 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
         echo $number.')&nbsp;&nbsp;';
     }
     echo '    </span>';
-
-    $text = question_rewrite_questiontext_preview_urls($question->questiontext,
-            $context->id, 'offlinequiz', $question->id);
+    
+    $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+            $question->contextid, 'question', 'questiontext', $question->id,
+            $context->id, 'offlinequiz');
 
     // Remove leading paragraph tags because the cause a line break after the question number.
     $text = preg_replace('!^<p>!i', '', $text);
@@ -1553,7 +1555,8 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
     list($rsql, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
     $params = array_merge($cparams, $rparams);
 
-    $sql = "SELECT p.id, p.userid, p.listid, u.".$offlinequizconfig->ID_field.", u.firstname, u.lastname, u.picture, p.checked
+    $sql = "SELECT p.id, p.userid, p.listid, u.".$offlinequizconfig->ID_field.", u.firstname, u.lastname,
+                   u.alternatename, u.middlename, u.firstnamephonetic, u.lastnamephonetic, u.picture, p.checked
               FROM {offlinequiz_participants} p,
                    {offlinequiz_p_lists} pl,
                    {user} u,
@@ -1797,7 +1800,9 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
     list($rsql, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
     $params = array_merge($cparams, $rparams);
 
-    $sql = "SELECT p.id, p.userid, p.listid, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname, u.picture, p.checked
+    $sql = "SELECT p.id, p.userid, p.listid, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname,
+                   u.alternatename, u.middlename, u.firstnamephonetic, u.lastnamephonetic,
+                   u.picture, p.checked
              FROM {offlinequiz_participants} p,
                   {offlinequiz_p_lists} pl,
                   {user} u,
