@@ -1450,8 +1450,11 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
  * @param int $number
  * @param object $context
  */
-function offlinequiz_print_question_preview($question, $choiceorder, $number, $context) {
+function offlinequiz_print_question_preview($question, $choiceorder, $number, $context, $page) {
     global $CFG, $DB;
+    
+    require_once($CFG->dirroot . '/filter/mathjaxloader/filter.php' );
+    
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
 
     echo '<div id="q' . $question->id . '" class="preview">
@@ -1471,20 +1474,33 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     $text = preg_replace('!^<p>!i', '', $text);
 
     // Filter only for tex formulas.
-    $tex_filter = null;
+    $texfilter = null;
+    $mathjaxfilter = null;
     $filters = filter_get_active_in_context($context);
+    
+    if (array_key_exists('mathjaxloader', $filters)) {
+        $mathjaxfilter = new filter_mathjaxloader($context, array());
+        $mathjaxfilter->setup($page, $context);
+    }   
     if (array_key_exists('tex', $filters)) {
-        $tex_filter = new filter_tex($context, array());
+        $texfilter = new filter_tex($context, array());
     }
-
-    if ($tex_filter) {
-        $text = $tex_filter->filter($text);
+    if ($mathjaxfilter) {
+        $text = $mathjaxfilter->filter($text);
         if ($question->qtype != 'description') {
             foreach ($choiceorder as $key => $answer) {
-                $question->options->answers[$answer]->answer = $tex_filter->filter($question->options->answers[$answer]->answer);
+                $question->options->answers[$answer]->answer = $mathjaxfilter->filter($question->options->answers[$answer]->answer);
+            }
+        }
+    } else if ($texfilter) {
+        $text = $texfilter->filter($text);
+        if ($question->qtype != 'description') {
+            foreach ($choiceorder as $key => $answer) {
+                $question->options->answers[$answer]->answer = $texfilter->filter($question->options->answers[$answer]->answer);
             }
         }
     }
+
     echo $text;
 
     echo '  </div>';
@@ -1496,8 +1512,8 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
         foreach ($choiceorder as $key => $answer) {
             $answertext = $question->options->answers[$answer]->answer;
             // filter only for tex formulas
-            /* if ($tex_filter) { */
-            /*  $answertext = $tex_filter->filter($answertext); */
+            /* if ($texfilter) { */
+            /*  $answertext = $texfilter->filter($answertext); */
             /* } */
 
             // remove all HTML comments (typically from MS Office).

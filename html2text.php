@@ -90,6 +90,7 @@ class offlinequiz_html_translator
                 $teximage = false;
                 $pluginfile = false;
                 $parts = preg_split("!$CFG->wwwroot/filter/tex/pix.php/!", $pluginfilename);
+
                 if (preg_match('!@@PLUGINFILE@@/!', $pluginfilename)) {
 
                     $pluginfilename = str_replace('@@PLUGINFILE@@/', '', $pluginfilename);
@@ -168,7 +169,7 @@ class offlinequiz_html_translator
                         $imageinfo = getimagesize($file);
                         $filewidth  = $imageinfo[0];
                         $fileheight = $imageinfo[1];
-
+print_object($CFG);
                         if (file_exists($CFG->filter_tex_pathconvert)) {
                             $newfile = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '_c.png';
                             $resize = '';
