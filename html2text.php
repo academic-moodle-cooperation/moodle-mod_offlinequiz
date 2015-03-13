@@ -118,7 +118,9 @@ class offlinequiz_html_translator
                     $teximagefile = $CFG->dataroot . '/filter/tex/' . $parts[1];
                     if (!file_exists($teximagefile)) {
                         // Create the TeX image if it does not exist yet.
-                        $md5 = str_replace(".{$CFG->filter_tex_convertformat}", '', $parts[1]);
+                        $convertformat = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
+                        		'name' => 'convertformat'));
+                        $md5 = str_replace(".{$convertformat}", '', $parts[1]);
                         if ($texcache = $DB->get_record('cache_filters', array('filter' => 'tex', 'md5key' => $md5))) {
                             if (!file_exists($CFG->dataroot . '/filter/tex')) {
                                 make_upload_directory('filter/tex');
@@ -126,8 +128,10 @@ class offlinequiz_html_translator
 
                             // Try and render with latex first.
                             $latex = new latex();
-                            $density = $CFG->filter_tex_density;
-                            $background = $CFG->filter_tex_latexbackground;
+                            $density = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
+                        		'name' => 'density'));
+                            $background = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
+                        		'name' => 'latexbackground'));
                             $texexp = $texcache->rawtext; // the entities are now decoded before inserting to DB
                             $latex_path = $latex->render($texexp, $md5, 12, $density, $background);
                             if ($latex_path) {
@@ -161,6 +165,7 @@ class offlinequiz_html_translator
 
                 $factor = 2; // per default show images half sized
 
+
                 if (!$imageurl) {
                     if (!file_exists($file)) {
                         $output .= get_string('imagenotfound', 'offlinequiz', $file);
@@ -169,15 +174,17 @@ class offlinequiz_html_translator
                         $imageinfo = getimagesize($file);
                         $filewidth  = $imageinfo[0];
                         $fileheight = $imageinfo[1];
-print_object($CFG);
-                        if (file_exists($CFG->filter_tex_pathconvert)) {
+                        $pathconvert = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
+                        		'name' => 'pathconvert'));
+                        
+                        if (file_exists($pathconvert)) {
                             $newfile = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '_c.png';
                             $resize = '';
                             $percent = round(200000000 / ($filewidth * $fileheight));
                             if ($percent < 100) {
                                 $resize = ' -resize '.$percent.'%';
                             }
-                            $handle = popen($CFG->filter_tex_pathconvert . ' ' . $file . $resize . ' -background white -flatten +matte ' . $newfile, 'r');
+                            $handle = popen($pathconvert . ' ' . $file . $resize . ' -background white -flatten +matte ' . $newfile, 'r');
                             pclose($handle);
                             $this->tempfiles[] = $file;
                             $file = $newfile;
