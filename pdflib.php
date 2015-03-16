@@ -689,7 +689,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
                 // Filter only for tex formulas.
                 if (!empty($tex_filter)) {
-                    $questiontext = $tex_filter->filter($questiontext);
+                	$questiontext = $tex_filter->filter($questiontext);
                 }
 
                 // Remove all HTML comments (typically from MS Office).

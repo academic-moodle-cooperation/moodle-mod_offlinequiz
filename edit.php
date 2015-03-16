@@ -190,8 +190,12 @@ if (!$course) {
     print_error('invalidcourseid', 'error');
 }
 
-$questionbank = new offlinequiz_question_bank_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
+// Get the question bank view.
+require_once($CFG->dirroot . '/mod/offlinequiz/classes/question/bank/custom_view.php');
+$questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
 $questionbank->set_offlinequiz_has_attempts($docscreated);
+$questionbank->process_actions($thispageurl, $cm);
+
 
 // Log this visit.
 $params = array(
