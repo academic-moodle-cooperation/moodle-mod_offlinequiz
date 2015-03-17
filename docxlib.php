@@ -544,11 +544,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     // we need a mapping from question IDs to slots, assuming that each question occurs only once.
     $slots = $templateusage->get_slots();
 
-    $tex_filter = null;
-    $filters = filter_get_active_in_context($context);
-    if (array_key_exists('tex', $filters)) {
-        $tex_filter = new filter_tex($context, array());
-    }
+    $tex_filter = new filter_tex($context, array());
 
     // Create the docx question numbering. This is only created once since we number all questions from 1...n
     $questionnumbering = new PHPWord_Numbering_AbstractNumbering("Question-level", array(
@@ -583,6 +579,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
             // Remove <font> tags.
             $questiontext = preg_replace("/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext);
+
+            // Remove <script> tags that are created by mathjax preview.
+            $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
 
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
@@ -619,6 +618,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
                     // Remove all paragraph tags because they mess up the layout.
                     $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
+                    // Remove <script> tags that are created by mathjax preview.
+                    $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
                     $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 0.6, 200, 'docx');
 //                    $answertext = '     ' . $letterstr[$key] . ') ' . $answertext;
@@ -682,6 +683,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // Remove <font> tags.
             $questiontext = preg_replace("/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext);
 
+            // Remove <script> tags that are created by mathjax preview.
+            $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
+
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
@@ -725,6 +729,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
                     // Remove all paragraph tags because they mess up the layout.
                     $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
+                    // Remove <script> tags that are created by mathjax preview.
+                    $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
                     $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 0.6, 200, 'docx');
 //                    $answertext = '     ' . $letterstr[$key] . ') ' . $answertext;
