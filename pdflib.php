@@ -564,6 +564,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             // Remove <font> tags.
             $questiontext = preg_replace("/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext);
 
+            // Remove <script> tags that are created by mathjax preview.
+            $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
+
             // Remove all class info from paragraphs because TCPDF won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
@@ -594,6 +597,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                     $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
                     // Remove all paragraph tags because they mess up the layout.
                     $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
+                    // Remove <script> tags that are created by mathjax preview.
+                    $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
                     $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300);
 
@@ -698,6 +703,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 // Remove <font> tags.
                 $questiontext = preg_replace("/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext);
 
+                // Remove <script> tags that are created by mathjax preview.
+                $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
+
                 // Remove all class info from paragraphs because TCPDF won't use CSS.
                 $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
@@ -730,6 +738,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
                         // Remove all paragraph tags because they mess up the layout.
                         $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
+                        // Remove <script> tags that are created by mathjax preview.
+                        $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
                         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
                         $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300); // $pdf->GetK());
 
