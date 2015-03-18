@@ -127,7 +127,7 @@ class offlinequiz_html_translator
 
                             // Try and render with latex first.
                             $latex = new latex();
-                            $density = $DB->get_config('filter_tex', 'density');
+                            $density = get_config('filter_tex', 'density');
                             $background = get_config('filter_tex', 'latexbackground');
                             $texexp = $texcache->rawtext; // the entities are now decoded before inserting to DB
                             $latex_path = $latex->render($texexp, $md5, 12, $density, $background);
