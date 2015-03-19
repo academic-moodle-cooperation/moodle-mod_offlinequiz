@@ -544,11 +544,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     // we need a mapping from question IDs to slots, assuming that each question occurs only once.
     $slots = $templateusage->get_slots();
 
-    $tex_filter = null;
-    $filters = filter_get_active_in_context($context);
-    if (array_key_exists('tex', $filters)) {
-        $tex_filter = new filter_tex($context, array());
-    }
+    $tex_filter = new filter_tex($context, array());
 
     // Create the docx question numbering. This is only created once since we number all questions from 1...n
     $questionnumbering = new PHPWord_Numbering_AbstractNumbering("Question-level", array(
