@@ -92,8 +92,9 @@ class docs_deleted extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'offlinequiz', 'deletepdfs', 'mod/offlinequiz/createquiz.php?id=' . $this->contextinstanceid . '&mode=' .
-            $this->other['reportname'], $this->other['offlinequizid'], $this->contextinstanceid);
+        return array($this->courseid, 'offlinequiz', 'deletepdfs', 'mod/offlinequiz/createquiz.php?id=' .
+                $this->contextinstanceid . '&mode=' .
+                $this->other['reportname'], $this->other['offlinequizid'], $this->contextinstanceid);
     }
 
     /**

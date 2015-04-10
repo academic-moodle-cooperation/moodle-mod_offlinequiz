@@ -67,7 +67,8 @@ class results_regraded extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has regraded " . $this->other['numberofresults'] . " result(s) in the offline quiz with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' has regraded " . $this->other['numberofresults'] .
+         " result(s) in the offline quiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**
