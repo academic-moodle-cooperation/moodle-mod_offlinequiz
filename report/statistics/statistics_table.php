@@ -94,9 +94,6 @@ class offlinequiz_statistics_table extends flexible_table {
             $headers[] = get_string('standarddeviationq', 'offlinequiz_statistics');
         }
 
-//         $columns[] = 'random_guess_score';
-//         $headers[] = get_string('random_guess_score', 'offlinequiz_statistics');
-
         $columns[] = 'intended_weight';
         $headers[] = get_string('intended_weight', 'offlinequiz_statistics');
 
@@ -109,13 +106,10 @@ class offlinequiz_statistics_table extends flexible_table {
         // Redmine 1302: New table columns s.t. the data can be exported.
         $columns[] = 'correct';
         $headers[] = get_string('correct', 'offlinequiz_statistics');
-        $columns[] = 'partially'; 
-        $headers[] = get_string('partially', 'offlinequiz_statistics');       
+        $columns[] = 'partially';
+        $headers[] = get_string('partially', 'offlinequiz_statistics');
         $columns[] = 'wrong';
         $headers[] = get_string('wrong', 'offlinequiz_statistics');
-                
-//         $columns[] = 'discriminative_efficiency';
-//         $headers[] = get_string('discriminative_efficiency', 'offlinequiz_statistics');
 
         $this->define_columns($columns);
         $this->define_headers($headers);
@@ -125,14 +119,13 @@ class offlinequiz_statistics_table extends flexible_table {
         $this->column_class('s', 's');
         $this->column_class('facility', 'facility');
         $this->column_class('sd', 'numcol');
-        //$this->column_class('random_guess_score', 'numcol');
+
         $this->column_class('intended_weight', 'numcol');
         $this->column_class('effective_weight', 'numcol');
         $this->column_class('discrimination_index', 'numcol');
         $this->column_class('correct', 'correct');
         $this->column_class('partially', 'partially');
         $this->column_class('wrong', 'wrong');
-//        $this->column_class('discriminative_efficiency', 'numcol');
 
         // Set up the table.
         $this->define_baseurl($reporturl->out());
@@ -252,23 +245,9 @@ class offlinequiz_statistics_table extends flexible_table {
             return '';
         }
 
-//        return format_float($question->_stats->sd*100 / $question->_stats->maxmark, 2) . '%';
         // Redmine 1760: no percentage here.
         return format_float($question->_stats->sd, 2);
     }
-
-    /**
-     * An estimate of the fraction a student would get by guessing randomly.
-     * @param object $question containst the data to display.
-     * @return string contents of this table cell.
-     */
-//     protected function col_random_guess_score($question) {
-//         if (is_null($question->_stats->randomguessscore)) {
-//             return '';
-//         }
-
-//         return format_float($question->_stats->randomguessscore * 100, 2).'%';
-//     }
 
     /**
      * The intended question weight. Maximum mark for the question as a percentage
@@ -326,19 +305,6 @@ class offlinequiz_statistics_table extends flexible_table {
     }
 
     /**
-     * Discrimination efficiency, similar to, but different from, the Discrimination index.
-     * @param object $question containst the data to display.
-     * @return string contents of this table cell.
-     */
-//     protected function col_discriminative_efficiency($question) {
-//         if (!is_numeric($question->_stats->discriminativeefficiency)) {
-//             return '';
-//         }
-
-//         return format_float($question->_stats->discriminativeefficiency, 2) . '%';
-//     }
-
-    /**
      * This method encapsulates the test for wheter a question should be considered dubious.
      * @param object question the question object with a property _stats which
      * includes all the stats for the question.
@@ -349,7 +315,6 @@ class offlinequiz_statistics_table extends flexible_table {
             return false;
         }
 
-//        return $question->_stats->discriminativeefficiency < 15;
         return $question->_stats->discriminationindex < 0;
     }
 
@@ -366,11 +331,11 @@ class offlinequiz_statistics_table extends flexible_table {
             echo html_writer::end_tag('div');
         }
     }
-    
-        /**
+
+    /**
      * This function is not part of the public api.
      */
-    function download_buttons() {
+    public function download_buttons() {
         if ($this->is_downloadable() && !$this->is_downloading()) {
             $downloadoptions = $this->get_download_menu();
 

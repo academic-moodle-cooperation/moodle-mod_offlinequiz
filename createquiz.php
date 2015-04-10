@@ -31,11 +31,11 @@ require_once('locallib.php');
 require_once('pdflib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
-$id = optional_param('id', 0, PARAM_INT);               // Course Module ID
-$q = optional_param('q', 0, PARAM_INT);                 // or offlinequiz ID
-$forcenew = optional_param('forcenew', false, PARAM_BOOL); // reshuffle questions
-$forcepdfnew = optional_param('forcepdfnew', false, PARAM_BOOL); // recreate pdfs
-$mode = optional_param('mode', 'preview', PARAM_ALPHA);        // mode
+$id = optional_param('id', 0, PARAM_INT);               // Course Module ID.
+$q = optional_param('q', 0, PARAM_INT);                 // Or offlinequiz ID.
+$forcenew = optional_param('forcenew', false, PARAM_BOOL); // Reshuffle questions.
+$forcepdfnew = optional_param('forcepdfnew', false, PARAM_BOOL); // Recreate PDFs.
+$mode = optional_param('mode', 'preview', PARAM_ALPHA);        // Mode.
 $downloadall = optional_param('downloadall' , false, PARAM_BOOL);
 
 $letterstr = 'ABCDEFGHIJKL';
@@ -75,18 +75,12 @@ $offlinequiz->cmid = $cm->id;
 
 $coursecontext = context_course::instance($course->id);
 
-// We redirect students to info
+// We redirect students to info.
 if (!has_capability('mod/offlinequiz:createofflinequiz', $context)) {
     redirect('view.php?q='.$offlinequiz->id);
 }
 
-// if not in all group questions have been set up yet redirect to edit.php
-// TODO
-/* $emptygroups=offlinequiz_empty_groups ($offlinequiz->id); */
-/* if (count($emptygroups) > 0 and has_capability('mod/offlinequiz:manage', $context)) { */
-/*     redirect('edit.php?cmid='.$quiz->id.'&amp;groupid='.$emptygroups[0]); */
-/* } */
-
+// If not in all group questions have been set up yet redirect to edit.php.
 offlinequiz_load_useridentification();
 
 $strpreview = get_string('createquiz', 'offlinequiz');
@@ -95,21 +89,22 @@ $strofflinequizzes = get_string("modulenameplural", "offlinequiz");
 $PAGE->set_url('/mod/offlinequiz/createquiz.php?id=' . $cm->id);
 $PAGE->set_title($strpreview);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('report'); // or 'admin'?
+$PAGE->set_pagelayout('report'); // Or 'admin'.
 $PAGE->set_cacheable(true);
 
 if ($node = $PAGE->settingsnav->find('mod_offlinequiz_createquiz', navigation_node::TYPE_SETTING)) {
     $node->make_active();
 }
 
-if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0,
+        $offlinequiz->numgroups)) {
     print_error('There are no offlinequiz groups', "edit.php?q=$offlinequiz->id$amp;sesskey=".sesskey());
 }
 
 // Redmine 2131: Handle download all before any HTML output is produced.
 if ($downloadall && $offlinequiz->docscreated) {
     $fs = get_file_storage();
-    
+
     // Simply pack all files in the 'pdfs' filearea in a ZIP file.
     $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
     $timestamp = date('Ymd_His', time());
@@ -133,7 +128,7 @@ if ($downloadall && $offlinequiz->docscreated) {
             $filelist[$path . '/' . $filename] = $file;
         }
     }
-   
+
     $zipper = new zip_packer();
 
     if ($zipper->archive_to_pathname($filelist, $tempzip)) {
@@ -141,15 +136,13 @@ if ($downloadall && $offlinequiz->docscreated) {
     }
 }
 
-// Print the page header
+// Print the page header.
 echo $OUTPUT->header();
 
-// Print the offlinequiz name heading and tabs for teacher
+// Print the offlinequiz name heading and tabs for teacher.
 $currenttab = 'createofflinequiz';
 
 require('tabs.php');
-
-// echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
 $hasscannedpages = offlinequiz_has_scanned_pages($offlinequiz->id);
 
@@ -159,9 +152,9 @@ if ($offlinequiz->grade == 0) {
     echo '</strong></div>';
 }
 
-// Preview
+// Preview.
 if ($mode == 'preview') {
-    // Print shuffle again buttons
+    // Print shuffle again buttons.
     if (!$offlinequiz->docscreated && !$hasscannedpages) {
 
         echo $OUTPUT->heading(get_string('formspreview', 'offlinequiz'));
@@ -176,11 +169,14 @@ if ($mode == 'preview') {
 
         echo '<div class="controlbuttons linkbox">';
         if ($offlinequiz->shufflequestions and $offlinequiz->shuffleanswers) {
-            echo $OUTPUT->single_button($buttonurl,  get_string('shufflequestionsanswers', 'offlinequiz').' / '.get_string('reloadquestionlist', 'offlinequiz'), 'post');
+            echo $OUTPUT->single_button($buttonurl,  get_string('shufflequestionsanswers', 'offlinequiz').' / ' .
+                    get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else if ($offlinequiz->shufflequestions) {
-            echo $OUTPUT->single_button($buttonurl,  get_string('shufflequestions', 'offlinequiz').' / '.get_string('reloadquestionlist', 'offlinequiz'), 'post');
+            echo $OUTPUT->single_button($buttonurl,  get_string('shufflequestions', 'offlinequiz').' / ' .
+                    get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else if ($offlinequiz->shuffleanswers) {
-            echo $OUTPUT->single_button($buttonurl,  get_string('shuffleanswers', 'offlinequiz').' / '.get_string('reloadquestionlist', 'offlinequiz'), 'post');
+            echo $OUTPUT->single_button($buttonurl,  get_string('shuffleanswers', 'offlinequiz').' / ' .
+                    get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else {
             echo $OUTPUT->single_button($buttonurl,  get_string('reloadquestionlist', 'offlinequiz'));
         }
@@ -190,24 +186,23 @@ if ($mode == 'preview') {
         echo $OUTPUT->box_end();
     }
 
-    // Shuffle again if no scanned pages
+    // Shuffle again if no scanned pages.
     if ($forcenew) {
         if ($offlinequiz->docscreated || $hasscannedpages) {
             echo $OUTPUT->notification(get_string('formsexist', 'offlinequiz'), 'notifyproblem');
         } else {
             $offlinequiz = offlinequiz_delete_template_usages($offlinequiz);
-            $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups);
+            $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
+                      '*', 0, $offlinequiz->numgroups);
         }
     }
 
     $done = 0;
-    // Process group data
+    // Process group data.
     foreach ($groups as $group) {
         $groupletter = $letterstr[$group->number - 1];
 
-        // $progressbar->update($done++, sizeof($groups), 'foobar');
-
-        // Print the group heading
+        // Print the group heading.
         echo $OUTPUT->heading(get_string('previewforgroup', 'offlinequiz', $groupletter));
 
         echo $OUTPUT->box_start('generalbox groupcontainer');
@@ -238,7 +233,7 @@ if ($mode == 'preview') {
                    AND q.id = i.questionid
                    AND q.category=c.id";
 
-        // Load the questions
+        // Load the questions.
         if (!$questions = $DB->get_records_sql($sql, $params)) {
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/edit.php',
                     array('cmid' => $cm->id, 'groupnumber' => $group->number, 'noquestions' => 1));
@@ -247,12 +242,12 @@ if ($mode == 'preview') {
             echo $OUTPUT->box_end();
             continue;
         }
-        // Load the question type specific information
+        // Load the question type specific information.
         if (!get_question_options($questions)) {
             print_error('Could not load question options');
         }
 
-        // get or create a question usage for this offline group
+        // Get or create a question usage for this offline group.
         if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
             echo $OUTPUT->notification(get_string('missingquestions', 'offlinequiz'), 'notifyproblem');
             echo $OUTPUT->box_end();
@@ -265,8 +260,7 @@ if ($mode == 'preview') {
             echo $OUTPUT->box_end();
         }
 
-        // $pagequestions = explode(',', offlinequiz_get_group_questions($offlinequiz, $group->id));
-        // we need a mapping from question IDs to slots, assuming that each question occurs only once.
+        // We need a mapping from question IDs to slots, assuming that each question occurs only once..
         $questionslots = array();
         foreach ($slots as $qid => $slot) {
             $questionslots[$templateusage->get_question($slot)->id] = $slot;
@@ -278,7 +272,7 @@ if ($mode == 'preview') {
                 $slotquestion = $templateusage->get_question($slot);
                 $question = $questions[$slotquestion->id];
                 $attempt = $templateusage->get_question_attempt($slot);
-                $order = $slotquestion->get_order($attempt);  // order
+                $order = $slotquestion->get_order($attempt);  // Order.
                 offlinequiz_print_question_preview($question, $order, $questionnumber, $context, $PAGE);
                 // Note: we don't have description questions in quba slots.
                 $questionnumber++;
@@ -286,7 +280,8 @@ if ($mode == 'preview') {
         } else {
             foreach ($pagequestions as $myquestion) {
                 if ($myquestion == 0) {
-                    echo '<center>//---------------------- ' . get_string('newpage', 'offlinequiz') . ' ----------------//</center>';
+                    echo '<center>//---------------------- ' . get_string('newpage', 'offlinequiz') .
+                         ' ----------------//</center>';
                 } else {
                     $question = $questions[$myquestion];
 
@@ -295,10 +290,10 @@ if ($mode == 'preview') {
                         $slot = $questionslots[$myquestion];
                         $slotquestion = $templateusage->get_question($slot);
                         $attempt = $templateusage->get_question_attempt($slot);
-                        $order = $slotquestion->get_order($attempt);  // order
+                        $order = $slotquestion->get_order($attempt);  // Order.
                     }
 
-                    // use our own function to print the preview.
+                    // Use our own function to print the preview.
                     offlinequiz_print_question_preview($question, $order, $questionnumber, $context, $PAGE);
                     if ($question->qtype != 'description') {
                         $questionnumber++;
@@ -308,14 +303,14 @@ if ($mode == 'preview') {
         }
 
         echo $OUTPUT->box_end();
-    }// end foreach
+    }// End foreach.
 
-    // ==============================================================
-    //  TAB for creating, downloading and deleting PDF forms
-    // ==============================================================
+    // O==============================================================.
+    // O TAB for creating, downloading and deleting PDF forms.
+    // O==============================================================.
 } else if ($mode=='createpdfs') {
 
-    // Print the heading
+    // Print the heading.
     echo $OUTPUT->heading(get_string('downloadpdfs', 'offlinequiz'));
 
     $emptygroups = offlinequiz_get_empty_groups($offlinequiz);
@@ -347,7 +342,8 @@ if ($mode == 'preview') {
         } else {
             ?>
             <div class="singlebutton linkbox">
-    	        <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=".$offlinequiz->id."&mode=createpdfs" ?>" method="POST">
+    	        <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=" . $offlinequiz->id .
+                      "&mode=createpdfs" ?>" method="POST">
                     <div>
     			        <input type="hidden" name="forcepdfnew" value="1" /> 
 			            <input type="submit" value="<?php echo get_string('deletepdfs', 'offlinequiz') ?>"
@@ -358,17 +354,18 @@ if ($mode == 'preview') {
             <?php
         }
         echo $OUTPUT->box_end();
-    } // end if (!$completedresults
+    } // End if (!$completedresults.
 
     $fs = get_file_storage();
 
     // Delete the PDF forms if forcepdfnew and if there are no scanned pages yet.
     if ($forcepdfnew) {
         if ($hasscannedpages) {
-            print_error('Some answer forms have already been analysed', "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=".sesskey());
+            print_error('Some answer forms have already been analysed',
+                "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey());
         } else {
             $offlinequiz = offlinequiz_delete_pdf_forms($offlinequiz);
-            
+
             $doctype = 'PDF';
             if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                 $doctype = 'DOCX';
@@ -387,20 +384,20 @@ if ($mode == 'preview') {
     }
 
 
-    // options for the popup_action
+    // Options for the popup_action.
     $options = array();
-    $options['height'] = 1200; // optional
-    $options['width'] = 1170; // optional
+    $options['height'] = 1200; // Optional.
+    $options['width'] = 1170; // Optional.
 
-    // ============================================================
-    // show/create the question forms for the offline groups.
-    // ============================================================
+    // O============================================================.
+    // O show/create the question forms for the offline groups.
+    // O============================================================.
     if (!$forcepdfnew) {
         // Redmine 2131: Add download all link.
-        $downloadallurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/createquiz.php', 
+        $downloadallurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/createquiz.php',
                 array('q' => $offlinequiz->id,
                         'mode' => 'createpdfs',
-                        'downloadall' => 1)); 
+                        'downloadall' => 1));
         echo html_writer::start_div('downloadalllink');
         echo html_writer::link($downloadallurl->out(false), get_string('downloadallzip', 'offlinequiz'));
         echo html_writer::end_div();
@@ -412,7 +409,8 @@ if ($mode == 'preview') {
 
             if (!$offlinequiz->docscreated) {
                 if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
-                    print_error("Missing data for group ".$groupletter, "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey());
+                    print_error("Missing data for group ".$groupletter,
+                        "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey());
                 }
 
                 if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
@@ -428,7 +426,8 @@ if ($mode == 'preview') {
                     $suffix = '.pdf';
                 }
                 // We have to retrieve the filename from the {files} table because it has a time stamp in it.
-                // A better (but more complicated) way would be to set the date in the function offlinequiz_question_pluginfile() in lib.php
+                // A better (but more complicated) way would be to set the date in the
+                // function offlinequiz_question_pluginfile() in lib.php.
                 $sqllike = $DB->sql_like('filename', ':filename');
                 $sql = "SELECT filename
                           FROM {files}
@@ -436,22 +435,22 @@ if ($mode == 'preview') {
                            AND component = 'mod_offlinequiz'
                            AND filearea = 'pdfs'
                            AND itemid = 0
-                           AND filepath = '/' 
+                           AND filepath = '/'
                            AND " . $sqllike;
                 $params = array('contextid' => $context->id,
                         'filename' => 'form-' . strtolower($groupletter) . '%' . $suffix);
                 $filename = $DB->get_field_sql($sql, $params);
-    		    $questionfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $filename);
+                $questionfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $filename);
             }
-            
+
             if ($questionfile) {
                 $filestring = get_string('formforgroup', 'offlinequiz', $groupletter);
                 if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                     $filestring = get_string('formforgroupdocx', 'offlinequiz', $groupletter);
                 }
-                $url = "$CFG->wwwroot/pluginfile.php/" . $questionfile->get_contextid() . '/' . $questionfile->get_component() . '/' .
-                        $questionfile->get_filearea() . '/' . $questionfile->get_itemid() . '/' . $questionfile->get_filename() . '?forcedownload=1';
-                
+                $url = "$CFG->wwwroot/pluginfile.php/" . $questionfile->get_contextid() . '/' . $questionfile->get_component() .
+                            '/' . $questionfile->get_filearea() . '/' . $questionfile->get_itemid() . '/' .
+                            $questionfile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, $filestring);
                 echo '<br />&nbsp;<br />';
                 @flush();@ob_flush();
@@ -461,9 +460,9 @@ if ($mode == 'preview') {
         }
         echo $OUTPUT->box_end();
 
-        // ============================================================
-        // show/create the answer forms for all offline groups.
-        // ============================================================
+        // O============================================================.
+        // O Show/create the answer forms for all offline groups.
+        // O============================================================.
         echo $OUTPUT->box_start('generalbox linkbox docsbox');
 
         echo $OUTPUT->notification(get_string('marginwarning', 'offlinequiz'));
@@ -473,11 +472,13 @@ if ($mode == 'preview') {
             $groupletter = $letterstr[$group->number -1];
 
             if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
-                print_error("Missing data for group " . $groupletter, "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey());
+                print_error("Missing data for group " . $groupletter,
+                    "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey());
             }
 
             if (!$offlinequiz->docscreated) {
-                $answerpdffile = offlinequiz_create_pdf_answer(offlinequiz_get_maxanswers($offlinequiz, array($group)), $templateusage, $offlinequiz, $group, $course->id, $context);
+                $answerpdffile = offlinequiz_create_pdf_answer(offlinequiz_get_maxanswers($offlinequiz, array($group)),
+                    $templateusage, $offlinequiz, $group, $course->id, $context);
             } else {
                 $sqllike = $DB->sql_like('filename', ':filename');
                 $sql = "SELECT filename
@@ -486,7 +487,7 @@ if ($mode == 'preview') {
                            AND component = 'mod_offlinequiz'
                            AND filearea = 'pdfs'
                            AND itemid = 0
-                           AND filepath = '/' 
+                           AND filepath = '/'
                            AND " . $sqllike;
                 $params = array('contextid' => $context->id,
                         'filename' => 'answer-' . strtolower($groupletter) . '%.pdf');
@@ -495,10 +496,10 @@ if ($mode == 'preview') {
             }
 
             if ($answerpdffile) {
-                $url = "$CFG->wwwroot/pluginfile.php/" . $answerpdffile->get_contextid() . '/' . $answerpdffile->get_component() . '/' .
-                        $answerpdffile->get_filearea() . '/' . $answerpdffile->get_itemid() . '/' . $answerpdffile->get_filename() . '?forcedownload=1';
+                $url = "$CFG->wwwroot/pluginfile.php/" . $answerpdffile->get_contextid() . '/' .
+                        $answerpdffile->get_component() . '/' . $answerpdffile->get_filearea() . '/' .
+                        $answerpdffile->get_itemid() . '/' . $answerpdffile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, get_string('answerformforgroup', 'offlinequiz', $groupletter));
-                // , new popup_action('click', $url, 'answer' . $answerpdffile->get_id(), $options));
                 echo '<br />&nbsp;<br />';
                 @flush();@ob_flush();
             } else {
@@ -509,20 +510,22 @@ if ($mode == 'preview') {
 
         echo $OUTPUT->box_end();
 
-        // ============================================================
-        // show/create the correction forms for all offline groups.
-        // ============================================================
+        // O============================================================.
+        // O Show/create the correction forms for all offline groups.
+        // O============================================================.
         echo $OUTPUT->box_start('generalbox linkbox docsbox');
 
         foreach ($groups as $group) {
             $groupletter = $letterstr[$group->number -1];
 
             if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
-                print_error("Missing data for group ".$groupletter, "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey());
+                print_error("Missing data for group " . $groupletter,
+                    "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey());
             }
 
             if (!$offlinequiz->docscreated) {
-                $correctpdffile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group, $course->id, $context, true);
+                $correctpdffile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group,
+                                     $course->id, $context, true);
             } else {
                 $sqllike = $DB->sql_like('filename', ':filename');
                 $sql = "SELECT filename
@@ -531,7 +534,7 @@ if ($mode == 'preview') {
                            AND component = 'mod_offlinequiz'
                            AND filearea = 'pdfs'
                            AND itemid = 0
-                           AND filepath = '/' 
+                           AND filepath = '/'
                            AND " . $sqllike;
                 $params = array('contextid' => $context->id,
                         'filename' => 'correction-' . strtolower($groupletter) . '%.pdf');
@@ -540,10 +543,10 @@ if ($mode == 'preview') {
             }
 
             if ($correctpdffile) {
-                $url = "$CFG->wwwroot/pluginfile.php/" . $correctpdffile->get_contextid() . '/' . $correctpdffile->get_component() . '/' .
-                        $correctpdffile->get_filearea() . '/' . $correctpdffile->get_itemid() . '/' . $correctpdffile->get_filename() . '?forcedownload=1';
+                $url = "$CFG->wwwroot/pluginfile.php/" . $correctpdffile->get_contextid() . '/' .
+                        $correctpdffile->get_component() . '/' . $correctpdffile->get_filearea() . '/' .
+                        $correctpdffile->get_itemid() . '/' . $correctpdffile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, get_string('formforcorrection', 'offlinequiz', $groupletter));
-                // , new popup_action('click', $url, 'correction' . $correctpdffile->get_id(), $options));
 
                 echo '<br />&nbsp;<br />';
                 @flush();@ob_flush();
@@ -578,5 +581,5 @@ if ($mode == 'preview') {
     }
 }
 
-// Finish the page
+// Finish the page.
 echo $OUTPUT->footer();

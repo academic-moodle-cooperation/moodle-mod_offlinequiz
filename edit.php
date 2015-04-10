@@ -71,7 +71,7 @@ function module_specific_buttons($cmid, $cmoptions) {
  */
 function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmoptions) {
     global $OUTPUT, $DB;
-    
+
     $out = '';
     $catcontext = context::instance_by_id($category->contextid);
     if (!$cm = get_coursemodule_from_id('offlinequiz', $cmid)) {
@@ -99,13 +99,13 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
                AND q.parent = 0
                AND q.hidden = 0
                AND q.qtype IN ('multichoice', 'multichoiceset')
-               AND NOT EXISTS (SELECT 1 
+               AND NOT EXISTS (SELECT 1
                                  FROM {offlinequiz_q_instances} oqi
                                 WHERE oqi.questionid = q.id
                                   AND oqi.offlinequizid = :offlinequizid)";
-    
+
         $qcparams['offlinequizid'] = $cm->instance;
-    
+
         $maxrand = $DB->count_records_sql($sql, $qcparams);
         if ($maxrand > 0) {
             for ($i = 1; $i <= min(10, $maxrand); $i++) {
@@ -119,7 +119,8 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
             $disabled = ' disabled="disabled"';
         }
 
-        $out = '<strong><label for="menurandomcount">' . get_string('addrandomfromcategory', 'offlinequiz') . '</label></strong><br />';
+        $out = '<strong><label for="menurandomcount">' . get_string('addrandomfromcategory', 'offlinequiz') .
+               '</label></strong><br />';
         $attributes = array();
         $attributes['disabled'] = $disabled ? 'disabled' : null;
         $select = html_writer::select($randomcount, 'randomcount', '1', null, $attributes);
@@ -216,12 +217,6 @@ if (empty($offlinequiz->grades)) {
 }
 
 // Process commands.
-// if ($offlinequiz->shufflequestions) {
-//  // Strip page breaks before processing actions, so that re-ordering works
-//  // as expected when shuffle questions is on.
-//  $offlinequiz->questions = offlinequiz_repaginate($offlinequiz->questions, 0);
-//  offlinequiz_save_questions($offlinequiz);
-// }
 
 // Get the list of question ids had their check-boxes ticked.
 $selectedquestionids = array();
@@ -239,14 +234,14 @@ if ($scrollpos) {
 if (($up = optional_param('up', false, PARAM_INT)) && confirm_sesskey()) {
     $offlinequiz->questions = offlinequiz_move_question_up($offlinequiz->questions, $up);
     offlinequiz_save_questions($offlinequiz);
-	offlinequiz_delete_template_usages($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
 
 if (($down = optional_param('down', false, PARAM_INT)) && confirm_sesskey()) {
     $offlinequiz->questions = offlinequiz_move_question_down($offlinequiz->questions, $down);
     offlinequiz_save_questions($offlinequiz);
-	offlinequiz_delete_template_usages($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
 
@@ -256,7 +251,7 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     $offlinequiz->questions = offlinequiz_repaginate($offlinequiz->questions, $questionsperpage );
 
     offlinequiz_save_questions($offlinequiz);
-	offlinequiz_delete_template_usages($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
 
@@ -265,7 +260,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     // Add a single question to the current offlinequiz.
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     offlinequiz_add_question_to_group($addquestion, $offlinequiz, $addonpage);
-    // TODO offlinequiz_delete_previews($offlinequiz);
+    // TODO offlinequiz_delete_previews($offlinequiz).
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
     $offlinequiz->grades = offlinequiz_get_all_question_grades($offlinequiz);
     $thispageurl->param('lastchanged', $addquestion);
@@ -347,7 +342,7 @@ if (($deleteemptypage !== false) && confirm_sesskey()) {
 $remove = optional_param('remove', false, PARAM_INT);
 if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey()) {
     offlinequiz_remove_question($offlinequiz, $remove);
-    // TODO offlinequiz_delete_previews($offlinequiz);
+    // TODO offlinequiz_delete_previews($offlinequiz).
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
     offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
@@ -375,7 +370,7 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
     foreach ($rawdata as $key => $value) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
             if (is_numeric(str_replace(',', '.', $value))) {
-                // Parse input for question -> grades
+                // Parse input for question -> grades.
                 $questionid = $matches[1];
                 $offlinequiz->grades[$questionid] = unformat_float($value);
                 offlinequiz_update_question_instance($offlinequiz->grades[$questionid], $questionid, $offlinequiz);
@@ -387,7 +382,8 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
 
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
     // Redmine 983: Upgrade sumgrades for all other groups as well.
-    if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+    if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
+            '*', 0, $offlinequiz->numgroups)) {
         foreach ($groups as $group) {
             if ($group->id != $offlinequiz->groupid) {
                 $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
@@ -397,16 +393,14 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
 
     offlinequiz_update_all_attempt_sumgrades($offlinequiz);
     offlinequiz_update_grades($offlinequiz, 0, true);
-
-//    redirect($afteractionurl);
 }
 
 if ($savechanges && confirm_sesskey()) {
     $deletepreviews = false;
     $recomputesummarks = false;
 
-    $oldquestions = explode(',', $offlinequiz->questions); // the questions in the old order
-    $questions = array(); // for questions in the new order
+    $oldquestions = explode(',', $offlinequiz->questions); // The questions in the old order.
+    $questions = array(); // For questions in the new order.
     $rawdata = (array) data_submitted();
     $moveonpagequestions = array();
 
@@ -430,9 +424,9 @@ if ($savechanges && confirm_sesskey()) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
             if (is_numeric(str_replace(',', '.', $value))) {
 
-                // Parse input for question -> grades
+                // Parse input for question -> grades.
                 $questionid = $matches[1];
-                $offlinequiz->grades[$questionid] = unformat_float($value); 
+                $offlinequiz->grades[$questionid] = unformat_float($value);
                 offlinequiz_update_question_instance($offlinequiz->grades[$questionid], $questionid, $offlinequiz);
                 $deletepreviews = false;
                 $recomputesummarks = true;
@@ -440,7 +434,7 @@ if ($savechanges && confirm_sesskey()) {
                 $gradewarning = true;
             }
         } else if (preg_match('!^o(pg)?([0-9]+)$!', $key, $matches)) {
-            // Parse input for ordering info
+            // Parse input for ordering info.
             $questionid = $matches[2];
             // Make sure two questions don't overwrite each other. If we get a second
             // question with the same position, shift the second one along to the next gap.
@@ -458,7 +452,7 @@ if ($savechanges && confirm_sesskey()) {
         }
     }
 
-    // If ordering info was given, reorder the questions
+    // If ordering info was given, reorder the questions.
     if ($questions) {
         ksort($questions);
         $questions[] = 0;
@@ -522,7 +516,7 @@ if ($savechanges && confirm_sesskey()) {
         }
     }
 
-    // Copy all question of the current group to another group
+    // Copy all question of the current group to another group.
     if ($copytogrouptop) {
         if ($newgroup = offlinequiz_get_group($offlinequiz, $copytogrouptop)) {
             $currentgroupid = $offlinequiz->groupid;
@@ -546,7 +540,7 @@ if ($savechanges && confirm_sesskey()) {
             $offlinequiz->questions = $currentquestions;
         }
     }
-    // Copy all question of the current group to another group
+    // Copy all question of the current group to another group.
     if ($copytogroupbottom) {
         if ($newgroup = offlinequiz_get_group($offlinequiz, $copytogroupbottom)) {
             $currentgroupid = $offlinequiz->groupid;
@@ -571,7 +565,7 @@ if ($savechanges && confirm_sesskey()) {
         }
     }
 
-    // If rescaling is required save the new maximum
+    // If rescaling is required save the new maximum.
     $maxgrade = optional_param('maxgrade', -1, PARAM_RAW);
     if (is_numeric(str_replace(',', '.', $maxgrade))) {
         if ($maxgrade >= 0) {
@@ -588,20 +582,18 @@ if ($savechanges && confirm_sesskey()) {
     if ($recomputesummarks) {
         $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
         // Redmine 983: Upgrade sumgrades for all other groups as well.
-        if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+        if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
+                'number', '*', 0, $offlinequiz->numgroups)) {
             foreach ($groups as $group) {
                 if ($group->id != $offlinequiz->groupid) {
                     $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
                 }
             }
         }
-        
+
         offlinequiz_update_all_attempt_sumgrades($offlinequiz);
-        // NOTE: We don't need this because we don't have a module-specific grade table
-        // offlinequiz_update_all_final_grades($offlinequiz);
         offlinequiz_update_grades($offlinequiz, 0, true);
     }
-    //redirect($afteractionurl);
 }
 
 $questionbank->process_actions($thispageurl, $cm);
@@ -617,7 +609,6 @@ $node = $PAGE->settingsnav->find('mod_offlinequiz_edit', navigation_node::TYPE_S
 if ($node) {
     $node->make_active();
 }
-// $PAGE->requires->css('/mod/offlinequiz/styles.css');
 
 echo $OUTPUT->header();
 
@@ -726,7 +717,8 @@ if ($docscreated) {
 if ($offlinequiz->shufflequestions) {
     $repaginatingdisabledhtml = 'disabled="disabled"';
     $repaginatingdisabled = true;
-    $offlinequiz->questions = offlinequiz_clean_layout(offlinequiz_repaginate($offlinequiz->questions, $offlinequiz->questionsperpage), true);
+    $offlinequiz->questions = offlinequiz_clean_layout(offlinequiz_repaginate($offlinequiz->questions,
+            $offlinequiz->questionsperpage), true);
 } else {
     $repaginatingdisabledhtml = '';
     $repaginatingdisabled = false;
@@ -750,14 +742,14 @@ for ($i=1; $i<=$offlinequiz->numgroups; $i++) {
 
 if ($offlinequiz_reordertool) {
     echo $OUTPUT->heading_with_help(get_string('orderingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
-            get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 'orderandpaging', 'offlinequiz');
+            get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')',
+                'orderandpaging', 'offlinequiz');
 } else if ($offlinequiz_gradetool) {
     echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
             get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
 } else {
     echo $OUTPUT->heading(get_string('editingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name . ' (' .
             get_string('group') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 2);
-    // echo $OUTPUT->help_icon('editingofflinequiz', 'offlinequiz', get_string('basicideasofofflinequiz', 'offlinequiz'));
 }
 
 /* Print the group choice select */

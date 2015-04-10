@@ -33,9 +33,8 @@ class offlinequiz_upload_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
         // -------------------------------------------------------------------------------
-        // $mform->addElement('header', 'uploadfilehdr', '');
 
-        // The file to import
+        // The file to import.
         $mform->addElement('header', 'importfileupload', get_string('importforms', 'offlinequiz_rimport'));
 
         $mform->addElement('filepicker', 'newfile', get_string('ziporimagefile', 'offlinequiz_rimport'), null,
@@ -46,10 +45,5 @@ class offlinequiz_upload_form extends moodleform {
 
         // Submit button.
         $mform->addElement('submit', 'submitbutton', get_string('import', 'offlinequiz_rimport'));
-
-        //         // Set a template for the format select elements
-        //         $renderer = $mform->defaultRenderer();
-        //         $template = "{help} {element}\n";
-        //         $renderer->setGroupElementTemplate($template, 'format');
     }
 }

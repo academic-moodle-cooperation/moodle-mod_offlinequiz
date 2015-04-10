@@ -1174,8 +1174,8 @@ if ($sheetloaded) {
                 }
             }
             $questioncounter++;
-        }
-    } // End if (!empty($group...
+        } // End if.
+    } // End if (!empty($group .
 }
 ?>
 

@@ -41,7 +41,7 @@ $coursecontext = context_course::instance($id);
 require_login($course);
 $PAGE->set_pagelayout('incourse');
 
-// Log this request
+// Log this request.
 $params = array(
         'context' => $coursecontext
 );
@@ -80,7 +80,7 @@ $isteacher = has_capability('mod/offlinequiz:viewreports', $coursecontext);
 // Check if we need the closing date header.
 $showclosingheader = false;
 $showfeedback = false;
-$therearesome = false; 
+$therearesome = false;
 foreach ($offlinequizzes as $offlinequiz) {
     if ($offlinequiz->timeclose != 0 ) {
         $showclosingheader = true;

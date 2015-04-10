@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -57,7 +56,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
     public function set_questiondata($questiondata) {
         $this->questiondata = $questiondata;
     }
-    
+
     /**
      * Set up the columns and headers and other properties of the table and then
      * call flexible_table::setup() method.
@@ -114,9 +113,6 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
             $headers[] = get_string('standarddeviationq', 'offlinequiz_statistics');
         }
 
-//         $columns[] = 'random_guess_score';
-//         $headers[] = get_string('random_guess_score', 'offlinequiz_statistics');
-
         $columns[] = 'intended_weight';
         $headers[] = get_string('intended_weight', 'offlinequiz_statistics');
 
@@ -126,17 +122,14 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         $columns[] = 'discrimination_index';
         $headers[] = get_string('discrimination_index', 'offlinequiz_statistics');
 
-//         $columns[] = 'discriminative_efficiency';
-//         $headers[] = get_string('discriminative_efficiency', 'offlinequiz_statistics');
-
         // Redmine 1302: New table columns s.t. the data can be exported.
         $columns[] = 'correct';
         $headers[] = get_string('correct', 'offlinequiz_statistics');
-        $columns[] = 'partially'; 
-        $headers[] = get_string('partially', 'offlinequiz_statistics');       
+        $columns[] = 'partially';
+        $headers[] = get_string('partially', 'offlinequiz_statistics');
         $columns[] = 'wrong';
         $headers[] = get_string('wrong', 'offlinequiz_statistics');
-        
+
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->sortable(false);
@@ -148,11 +141,11 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         $this->column_class('s', 'numcol');
         $this->column_class('facility', 'numcol');
         $this->column_class('sd', 'numcol');
-        //$this->column_class('random_guess_score', 'numcol');
+
         $this->column_class('intended_weight', 'numcol');
         $this->column_class('effective_weight', 'numcol');
         $this->column_class('discrimination_index', 'numcol');
-//        $this->column_class('discriminative_efficiency', 'numcol');
+
         $this->column_class('correct', 'correct');
         $this->column_class('partially', 'partially');
         $this->column_class('wrong', 'wrong');
@@ -176,7 +169,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
     protected function col_number($question) {
         if (property_exists($question, 'number')) {
             return $question->number;
-        } 
+        }
         return '';
     }
 
@@ -211,7 +204,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @param object $question containst the data to display.
      * @return string contents of this table cell.
      */
-    protected function col_qtype($question) { 
+    protected function col_qtype($question) {
         if (property_exists($question, 'qtype') && $question->qtype) {
             return question_bank::get_qtype_name($question->qtype);
         } else {
@@ -260,7 +253,6 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         if (property_exists($question, 'response') && property_exists($question, 'part')) {
             if ($this->is_downloading()) {
                 return $this->format_text($question->part . ' ' . $question->response);
-//                return format_text(strip_tags($question->part . ' ' . $question->response), FORMAT_PLAIN);
             } else {
                 return format_text(html_to_text($question->part . ' ' . $question->response));
             }
@@ -310,7 +302,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         return format_float(100.0 * $response->count / $this->questiondata->_stats->s, $this->offlinequiz->decimalpoints) . '%';
     }
 
-    
+
     /**
      * The number of attempts at this question.
      * @param object $question containst the data to display.
@@ -347,23 +339,9 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
             return '';
         }
 
-//        return format_float($question->_stats->sd*100 / $question->_stats->maxmark, 2) . '%';
         // Redmine 1760: no percentage here.
-        return format_float($question->_stats->sd, 2);        
+        return format_float($question->_stats->sd, 2);
     }
-
-    /**
-     * An estimate of the fraction a student would get by guessing randomly.
-     * @param object $question containst the data to display.
-     * @return string contents of this table cell.
-     */
-//     protected function col_random_guess_score($question) {
-//         if (is_null($question->_stats->randomguessscore)) {
-//             return '';
-//         }
-
-//         return format_float($question->_stats->randomguessscore * 100, 2).'%';
-//     }
 
     /**
      * The intended question weight. Maximum mark for the question as a percentage
@@ -427,21 +405,8 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
     }
 
     /**
-     * Discrimination efficiency, similar to, but different from, the Discrimination index.
-     * @param object $question containst the data to display.
-     * @return string contents of this table cell.
-     */
-//     protected function col_discriminative_efficiency($question) {
-//         if (!is_numeric($question->_stats->discriminativeefficiency)) {
-//             return '';
-//         }
-
-//         return format_float($question->_stats->discriminativeefficiency, 2) . '%';
-//     }
-
-    /**
      * This method encapsulates the test for whether a question should be considered dubious.
-     * 
+     *
      * @param object question the question object with a property _stats which
      * includes all the stats for the question.
      * @return bool is this question possibly not pulling it's weight?
@@ -467,11 +432,11 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
             echo html_writer::end_tag('div');
         }
     }
-    
+
     /**
      * This function is not part of the public api.
      */
-    function download_buttons() {
+    public function download_buttons() {
         if ($this->is_downloadable() && !$this->is_downloading()) {
             $downloadoptions = $this->get_download_menu();
 

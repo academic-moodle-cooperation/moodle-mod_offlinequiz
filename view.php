@@ -30,8 +30,8 @@ require_once($CFG->libdir  . '/gradelib.php');
 require_once($CFG->libdir  . '/completionlib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
-$id = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$q  = optional_param('q', 0, PARAM_INT);  // offlinequiz instance ID - it should be named as the first character of the module
+$id = optional_param('id', 0, PARAM_INT); // Course_module ID, or.
+$q  = optional_param('q', 0, PARAM_INT);  // Offlinequiz instance ID.
 $edit = optional_param('edit', -1, PARAM_BOOL);
 
 if ($id) {
@@ -60,16 +60,16 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 $coursecontext = context_course::instance($course->id);
 
-// Print the page header
+// Print the page header.
 $PAGE->set_url('/mod/offlinequiz/view.php', array('id' => $cm->id));
 $PAGE->set_title($offlinequiz->name);
 $PAGE->set_heading($course->shortname);
 $PAGE->set_pagelayout('report');
 
-// Output starts here
+// Output starts here.
 echo $OUTPUT->header();
 
-// Print the page header
+// Print the page header.
 if ($edit != -1 and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
 }
@@ -82,7 +82,7 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
 
 echo $OUTPUT->heading(format_string($offlinequiz->name));
 
-// if not in all group questions have been output a link to edit.php
+// If not in all group questions have been output a link to edit.php.
 $emptygroups = offlinequiz_get_empty_groups($offlinequiz);
 
 if (has_capability('mod/offlinequiz:manage', $context)) {
@@ -113,11 +113,12 @@ if (!empty($offlinequiz->time)) {
 }
 
 if (has_capability('mod/offlinequiz:view', $context)) {
-    // Print offlinequiz description
+    // Print offlinequiz description.
     if (trim(strip_tags($offlinequiz->intro))) {
         $formatoptions = new stdClass();
         $formatoptions->noclean = true;
-        echo $OUTPUT->box(format_text($offlinequiz->intro, $offlinequiz->introformat, $formatoptions), 'generalbox', 'intro');
+        echo $OUTPUT->box(format_text($offlinequiz->intro, $offlinequiz->introformat, $formatoptions),
+                'generalbox', 'intro');
     }
 }
 
@@ -126,7 +127,6 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
     if (!$students = get_enrolled_users($coursecontext, 'mod/offlinequiz:attempt')) {
         $resultcount = false;
     } else {
-        // list($cids, $params) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(),  SQL_PARAMS_NAMED);
         $params = array();
         $params['offlinequizid'] = $offlinequiz->id;
 
@@ -163,7 +163,7 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
         echo html_writer::link($url, get_string('numattemptsverify', 'offlinequiz', $errorcount));
     }
     echo '</div>';
-    
+
     // Redmine 1971: New info about lists of participants.
     if ($plists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id))) {
         $firstlist = array_shift($plists);
@@ -181,7 +181,7 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
                 $listurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                         array('q' => $offlinequiz->id, 'mode' => 'attendances', 'listid' => $plist->id));
                 echo html_writer::span(get_string('membersinplist', 'offlinequiz',
-                        array('count' => $membercount, 'name' => $plist->name, 'url' => $listurl->out())));                
+                        array('count' => $membercount, 'name' => $plist->name, 'url' => $listurl->out())));
                 echo '<br />';
                 $listids[] = $plist->id;
             }
@@ -193,7 +193,7 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
                           FROM {offlinequiz_participants}
                          WHERE listid $lsql";
                 $participants = $DB->get_records_sql($psql, $lparams);
-                
+
                 $results = $DB->get_records_select('offlinequiz_results',
                         'offlinequizid = :offlinequizid AND status = :status',
                         array('offlinequizid' => $offlinequiz->id,
@@ -270,7 +270,7 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
         if (!empty($offlinequiz->time) and $offlinequiz->time < time()) {
             echo '<div class="offlinequizinfo">' . get_string('nogradesseelater', 'offlinequiz', fullname($USER)).'</div>';
         } else if ($offlinequiz->showtutorial) {
-            // jz: UNIVIS-15097
+            // JZ: UNIVIS-15097.
             echo '<br/><div class="offlinequizinfo">';
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial/index.php',
                     array('id' => $cm->id));
@@ -280,5 +280,5 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
     }
 }
 
-// Finish the page
+// Finish the page.
 echo $OUTPUT->footer();

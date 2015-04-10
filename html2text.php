@@ -35,7 +35,7 @@ class offlinequiz_html_translator
     public function __construct() {
         $this->tempfiles = array();
     }
-    
+
     /**
      * Function to replace @@PLUGINFILE@@ references to image files by local file:// URLs.
      *
@@ -55,7 +55,7 @@ class offlinequiz_html_translator
         $fs = get_file_storage();
 
         $output = $input;
-        $strings = preg_split("/<img/i",$output);
+        $strings = preg_split("/<img/i", $output);
         $output = array_shift($strings);
         foreach ($strings as $string) {
             // Define a unique temporary name for each image file.
@@ -66,8 +66,8 @@ class offlinequiz_html_translator
             $attributestrings = explode(' ', $imagetag);
             $attributes = array();
             foreach ($attributestrings as $attributestring) {
-                $valuepair = explode('=',$attributestring);
-                if (sizeof($valuepair) > 1 && strlen(trim($valuepair[0])) > 0) {
+                $valuepair = explode('=', $attributestring);
+                if (count($valuepair) > 1 && strlen(trim($valuepair[0])) > 0) {
                     $attributes[strtolower(trim($valuepair[0]))] = str_replace('"', '', str_replace("'", '', $valuepair[1]));
                 }
             }
@@ -100,9 +100,10 @@ class offlinequiz_html_translator
                     } else {
                         $filepath = '/';
                     }
-                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath, rawurldecode($path_parts['basename']))) {
+                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath,
+                            rawurldecode($path_parts['basename']))) {
                         $imagefilename = $imagefile->get_filename();
-                        // copy image content to temporary file
+                        // Copy image content to temporary file.
                         $path_parts = pathinfo($imagefilename);
                         $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($path_parts["extension"]);
                         clearstatcache();
@@ -119,7 +120,7 @@ class offlinequiz_html_translator
                     if (!file_exists($teximagefile)) {
                         // Create the TeX image if it does not exist yet.
                         $convertformat = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                        		'name' => 'convertformat'));
+                                'name' => 'convertformat'));
                         $md5 = str_replace(".{$convertformat}", '', $parts[1]);
                         if ($texcache = $DB->get_record('cache_filters', array('filter' => 'tex', 'md5key' => $md5))) {
                             if (!file_exists($CFG->dataroot . '/filter/tex')) {
@@ -129,16 +130,16 @@ class offlinequiz_html_translator
                             // Try and render with latex first.
                             $latex = new latex();
                             $density = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                        		'name' => 'density'));
+                                'name' => 'density'));
                             $background = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                        		'name' => 'latexbackground'));
-                            $texexp = $texcache->rawtext; // the entities are now decoded before inserting to DB
+                                'name' => 'latexbackground'));
+                            $texexp = $texcache->rawtext; // The entities are now decoded before inserting to DB.
                             $latex_path = $latex->render($texexp, $md5, 12, $density, $background);
                             if ($latex_path) {
                                 copy($latex_path, $teximagefile);
                                 $latex->clean_up($md5);
                             } else {
-                                // Failing that, use mimetex
+                                // Failing that, use mimetex.
                                 $texexp = $texcache->rawtext;
                                 $texexp = str_replace('&lt;', '<', $texexp);
                                 $texexp = str_replace('&gt;', '>', $texexp);
@@ -159,24 +160,23 @@ class offlinequiz_html_translator
                     copy($teximagefile, $file);
                     $teximage = true;
                 } else {
-                    // Image file URL
+                    // Image file URL.
                     $imageurl = true;
                 }
 
-                $factor = 2; // per default show images half sized
-
+                $factor = 2; // Per default show images half sized.
 
                 if (!$imageurl) {
                     if (!file_exists($file)) {
                         $output .= get_string('imagenotfound', 'offlinequiz', $file);
                     } else {
-                        // use imagemagick to remove alpha channel and reduce resolution of large images
+                        // Use imagemagick to remove alpha channel and reduce resolution of large images.
                         $imageinfo = getimagesize($file);
                         $filewidth  = $imageinfo[0];
                         $fileheight = $imageinfo[1];
                         $pathconvert = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                        		'name' => 'pathconvert'));
-                        
+                                          'name' => 'pathconvert'));
+
                         if (file_exists($pathconvert)) {
                             $newfile = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '_c.png';
                             $resize = '';
@@ -184,7 +184,8 @@ class offlinequiz_html_translator
                             if ($percent < 100) {
                                 $resize = ' -resize '.$percent.'%';
                             }
-                            $handle = popen($pathconvert . ' ' . $file . $resize . ' -background white -flatten +matte ' . $newfile, 'r');
+                            $handle = popen($pathconvert . ' ' . $file . $resize . ' -background white -flatten +matte ' .
+                                    $newfile, 'r');
                             pclose($handle);
                             $this->tempfiles[] = $file;
                             $file = $newfile;
@@ -193,7 +194,7 @@ class offlinequiz_html_translator
                                 $filewidth  = $imageinfo[0];
                                 $fileheight = $imageinfo[1];
                             }
-                        } 
+                        }
 
                         if ($imagewidth > 0) {
                             if ($imageheight > 0) {
@@ -213,23 +214,24 @@ class offlinequiz_html_translator
                         }
 
                         $width = round($filewidth / ($kfactor * $factor));
-                        	
+
                         if ($width > $maxwidth) {
                             $width = $maxwidth;
                         }
-                        	
+
                         $height = round($fileheight * $width / $filewidth);
 
                         // Add filename to list of temporary files.
                         $this->tempfiles[] = $file;
-                        	
-                        // In answer texts we want a line break to avoid the picture going above the line
+
+                        // In answer texts we want a line break to avoid the picture going above the line.
                         if ($filearea == 'answer') {
                             $output .= '<br/>';
                         }
-                        	
-                        // Finally, add the image tag for tcpdf
-                        $output.= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' . $height .'"/>';
+
+                        // Finally, add the image tag for tcpdf.
+                        $output.= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' .
+                            $height .'"/>';
                     }
                 } else {
 
@@ -239,7 +241,8 @@ class offlinequiz_html_translator
                             $width = $maxwidth;
                         }
                         $height = $imageheight * $width / $imagewidth;
-                        $output.= '<img src="' . $pluginfilename . '" align="middle" width="' . $width . '" height="' . $height .'"/>';
+                        $output.= '<img src="' . $pluginfilename . '" align="middle" width="' . $width . '" height="' .
+                            $height .'"/>';
                     } else {
                         $output.= '<img src="' . $pluginfilename . '" align="middle"/>';
                     }
