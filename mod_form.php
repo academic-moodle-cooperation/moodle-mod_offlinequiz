@@ -141,12 +141,14 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         // ------------------------------------------------------------------------------
 
         if (!$offlinequiz || !$offlinequiz->docscreated) {
-            $mform->addElement('htmleditor', 'pdfintro', get_string('pdfintro', 'offlinequiz'), array('rows' => 20));
+            $mform->addElement('editor', 'pdfintro', get_string('pdfintro', 'offlinequiz'), array('rows' => 20),
+                     array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true,
+                      'context' => $this->context));
         } else {
             $mform->addElement('static', 'pdfintro', get_string('pdfintro', 'offlinequiz'), $offlinequiz->pdfintro);
         }
         $mform->setType('pdfintro', PARAM_RAW);
-        $mform->setDefault('pdfintro', get_string('pdfintrotext', 'offlinequiz'));
+        $mform->setDefault('pdfintro', array('text' =>  get_string('pdfintrotext', 'offlinequiz')));
         $mform->addHelpButton('pdfintro', 'pdfintro', "offlinequiz");
 
         unset($options);
