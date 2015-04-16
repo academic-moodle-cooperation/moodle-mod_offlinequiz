@@ -46,8 +46,11 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         offlinequiz_load_useridentification ();
         $offlinequizconfig = get_config ( 'offlinequiz' );
 
-        // Only print headers if not asked to download data.
-        if (! $download = optional_param ( 'download', null, PARAM_TEXT )) {
+        // Deal with actions.
+        $action = optional_param ( 'action', '', PARAM_ACTION );
+        
+        // Only print headers if not asked to download data or delete data.
+        if ((! $download = optional_param ( 'download', null, PARAM_TEXT )) && ! $action == 'delete') {
             $this->print_header_and_tabs ( $cm, $course, $offlinequiz, 'overview' );
             echo $OUTPUT->box_start ( 'linkbox' );
             echo $OUTPUT->heading ( format_string ( $offlinequiz->name ) );
@@ -73,9 +76,6 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         }
 
         $answerletters = 'abcdefghijklmnopqrstuvwxyz';
-
-        // Deal with actions.
-        $action = optional_param ( 'action', '', PARAM_ACTION );
 
         if ($action == 'delete' && confirm_sesskey ()) {
 
