@@ -95,7 +95,6 @@ M.mod_offlinequiz.timer = {
     update: function() {
         var Y = M.mod_offlinequiz.timer.Y;
         var secondsleft = Math.floor((M.mod_offlinequiz.timer.endtime - new Date().getTime())/1000);
-        
         // If this is a preview and time expired, display timeleft 0 and don't renew the timer.
         if (M.mod_offlinequiz.timer.preview && secondsleft < 0) {
             Y.one('#offlinequiz-time-left').setContent('0:00:00');

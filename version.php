@@ -30,9 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2014092301;
-$module->release   = "2014-09-15"; 	    // User-friendly version number
+$module->version  = 2015031601;
+$module->release   = "2015-03-16";      // User-friendly version number.
 $module->maturity  = MATURITY_STABLE;
-$module->requires = 2014051202;         // Requires this Moodle version
-$module->cron     = 3600;               // Period for cron to check this module (secs)
-$module->component = 'mod_offlinequiz'; // Full name of the plugin (used for diagnostics)
+$module->requires = 2014111000;         // Requires this Moodle version.
+$module->cron     = 3600;               // Period for cron to check this module (secs).
+$module->component = 'mod_offlinequiz'; // Full name of the plugin (used for diagnostics).

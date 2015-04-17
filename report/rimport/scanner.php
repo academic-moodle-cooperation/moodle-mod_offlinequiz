@@ -26,23 +26,23 @@
  *
  */
 
-define("A3_WIDTH", "2100");                    // paper size
+define("A3_WIDTH", "2100");                    // Paper size.
 define("A3_HEIGHT", "2970");
-define("LAYER_WIDTH", "1815");                 // active layer from corner cross to corner cross
+define("LAYER_WIDTH", "1815");                 // Active layer from corner cross to corner cross.
 define("LAYER_HEIGHT", "2723");
 
-define("MAX_BORDER", "110");                   // max. black margin of rotated scan sheet
-define("MIN_BORDER", "20");                    // width of white margin that will be ignored
-define("CROSS_WIDTH", "34");                   // width of the little corner cross
-define("CORNER_SPOT_WIDTH_VERTICAL", "300");   // the width of the area where we search for the little corner cross verticaly
-define("CORNER_SPOT_WIDTH_HORIZONTAL", "250"); // the width of the area where we search for the little corner cross horizontaly
+define("MAX_BORDER", "110");                   // Max. black margin of rotated scan sheet.
+define("MIN_BORDER", "20");                    // Width of white margin that will be ignored.
+define("CROSS_WIDTH", "34");                   // Width of the little corner cross.
+define("CORNER_SPOT_WIDTH_VERTICAL", "300");   // The width of the area where we search for the little corner cross verticaly.
+define("CORNER_SPOT_WIDTH_HORIZONTAL", "250"); // The width of the area where we search for the little corner cross horizontaly.
 
-define("BOX_OUTER_WIDTH", "54");               // outer width of the little boxes
-define("BOX_INNER_WIDTH", "28");               // inner width of the little boxes
+define("BOX_OUTER_WIDTH", "54");               // Outer width of the little boxes.
+define("BOX_INNER_WIDTH", "28");               // Inner width of the little boxes.
 
 /**
- * A class for points in cartesian system that can rotate and zoom
- * 
+ * A class for points in cartesian system that can rotate and zoom.
+ *
  */
 class oq_point {
     public $x;
@@ -51,7 +51,7 @@ class oq_point {
 
     /**
      * Constructor
-     * 
+     *
      * @param unknown_type $x
      * @param unknown_type $y
      * @param unknown_type $blank
@@ -81,7 +81,7 @@ class oq_point {
 
     /**
      * Zooms the point's distance from center 0/0
-     * 
+     *
      * @param unknown_type $x
      * @param unknown_type $y
      */
@@ -94,7 +94,7 @@ class oq_point {
 
 /**
  * Class that contains all the routines and data to interprate scanned answer forms
- * 
+ *
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  *
  */
@@ -117,14 +117,14 @@ class offlinequiz_page_scanner {
     public $zoomx;
     public $zoomy;
     public $alpha;
-    public $hotspots;      // we store all the points in this array. This makes it easy to rotate them all together.
-    public $pattern;       // contains the hotspot pattern for a cross
-    public $pattern1;      // contains the hotspot pattern for a cross moved to one of the corners
-    public $pattern2;      // contains the hotspot pattern for a cross moved to one of the corners
-    public $pattern3;      // contains the hotspot pattern for a cross moved to one of the corners
-    public $pattern4;      // contains the hotspot pattern for a cross moved to one of the corners
+    public $hotspots;      // We store all the points in this array. This makes it easy to rotate them all together.
+    public $pattern;       // contains the hotspot pattern for a cross.
+    public $pattern1;      // Contains the hotspot pattern for a cross moved to one of the corners.
+    public $pattern2;      // Contains the hotspot pattern for a cross moved to one of the corners.
+    public $pattern3;      // Contains the hotspot pattern for a cross moved to one of the corners.
+    public $pattern4;      // Contains the hotspot pattern for a cross moved to one of the corners.
     public $papergray;
-    public $corners;        // the corners as passed by evallib.php or correct.php.
+    public $corners;       // The corners as passed by evallib.php or correct.php.
     public $lowertrigger;
     public $uppertrigger;
     public $lowerwarning;
@@ -133,15 +133,15 @@ class offlinequiz_page_scanner {
     public $lowerleft;
     public $upperright;
     public $lowerright;
-    public $insecure;      // this flag is set if one of the boxes is between value and warning level
-    public $blankbox;      // this flag is set if one of the boxes could not be grabbed
+    public $insecure;      // This flag is set if one of the boxes is between value and warning level.
+    public $blankbox;      // This flag is set if one of the boxes could not be grabbed.
     public $ontop;
     public $page;
     public $cache;
 
     /**
      * Constructor
-     * 
+     *
      * @param unknown_type $offlinequiz
      * @param unknown_type $contextid
      * @param unknown_type $maxquestions
@@ -149,7 +149,7 @@ class offlinequiz_page_scanner {
      */
     public function __construct($offlinequiz, $contextid, $maxquestions, $maxanswers) {
         if ($maxanswers > 26) {
-            $maxanswers = 26; // there won't be more than 26 answers or 96 questions on the sheet
+            $maxanswers = 26; // There won't be more than 26 answers or 96 questions on the sheet.
         }
         $this->maxanswers = $maxanswers;
         $this->maxquestions = $maxquestions;
@@ -174,7 +174,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Initialises all the hotspots to be checked.
-     * 
+     *
      */
     public function init_hotspots() {
         global $CFG;
@@ -182,25 +182,27 @@ class offlinequiz_page_scanner {
         $this->hotspots = array();
         $offlinequizconfig = get_config('offlinequiz');
 
-        for ($x=0; $x<=($offlinequizconfig->ID_digits - 1); $x++) {                  // load hotspots for usernumber
+        // Load hotspots for usernumber.
+        for ($x=0; $x<=($offlinequizconfig->ID_digits - 1); $x++) {
             for ($y=0; $y<=9; $y++) {
                 $point = new oq_point(($x*65)+1247, ($y*60)+306);
                 $this->hotspots["u$x$y"] = $point;
             }
         }
 
-        for ($i=0; $i<=5; $i++) {                 // load hotspots for group
+        // Load hotspots for group.
+        for ($i=0; $i<=5; $i++) {
             $point = new oq_point(($i*95)+274, 440);
             $this->hotspots["g$i"] = $point;
         }
 
-        $point = new oq_point(436, 804);          // the black box in the middle
-        $this->hotspots['deleted'] =$point;       // to check if we grabbed it right and to get upper trigger and papergray.
+        $point = new oq_point(436, 804);          // The black box in the middle.
+        $this->hotspots['deleted'] =$point;       // To check if we grabbed it right and to get upper trigger and papergray..
 
-        $point = new oq_point(436, 640);          // the box with the cross in the middle
-        $this->hotspots['cross'] =$point;         // to get lower trigger.
+        $point = new oq_point(436, 640);          // The box with the cross in the middle.
+        $this->hotspots['cross'] =$point;         // To get lower trigger.
 
-        switch ($this->formtype) {                // load hotspots for answers
+        switch ($this->formtype) {                // Load hotspots for answers.
             case 1:
                 $colwidth = 26 * 65;
                 break;
@@ -244,8 +246,8 @@ class offlinequiz_page_scanner {
     }
 
     /**
-     * Creates a check pattern 
-     * 
+     * Creates a check pattern
+     *
      */
     public function init_pattern() {
         if ($this->zoomx > $this->zoomy) {
@@ -254,16 +256,18 @@ class offlinequiz_page_scanner {
             $a = BOX_INNER_WIDTH * $this->zoomy + 2;
         }
         $this->pattern = array();
-        $width = $a / 6;                                            // calculate dimensions of the pattern
-        $halfwidth = round($a / 12);                                // halfwidth for pattern1-4
-        $length = round($width * 2);                                //
-        $width = round($width);                                     // xxxx      width=4
-        for ($i=0; $i<=$a; $i++) {                                  // xxxxx
-            $start = $i - $width;                                   // xxxxxx                    a=dimension of square
-            for ($j=0; $j<=$length; $j++) {                         // xxxxxxx
-                if ($start+$j>=0 and $start+$j<=$a) {               //  xxxxxxx  length=8
-                    $this->pattern[($start+$j)][$i] = 1;            // this line creates the line from upper left to lower right corner
-                    $this->pattern[($start+$j)][($a-$i)] = 1;       // this line creates the line from upper right to lower left corner
+        $width = $a / 6;                                // Calculate dimensions of the pattern.
+        $halfwidth = round($a / 12);                    // Halfwidth for pattern1-4.
+        $length = round($width * 2);
+        $width = round($width);                         // XXXX      width=4.
+        for ($i=0; $i<=$a; $i++) {                      // XXXXX.
+            $start = $i - $width;                       // XXXXXX                    a=dimension of square.
+            for ($j=0; $j<=$length; $j++) {             // XXXXXXX.
+                if ($start+$j>=0 and $start+$j<=$a) {   // XXXXXXXX  length=8.
+                    // This line creates the line from upper left to lower right corner.
+                    $this->pattern[($start+$j)][$i] = 1;
+                    // This line creates the line from upper right to lower left corner.
+                    $this->pattern[($start+$j)][($a-$i)] = 1;
                 }
             }
         }
@@ -351,7 +355,7 @@ class offlinequiz_page_scanner {
 
         $imageinfo = getimagesize($file);
 
-        // reduce resolution of large images
+        // Reduce resolution of large images.
         $percent = round(300000 / $imageinfo['0']);
         if ($percent > 0 && $percent < 100) {
             $handle = popen("convert '" . $file . "' -resize " . $percent . "% '" . $file . "'", 'r');
@@ -359,7 +363,7 @@ class offlinequiz_page_scanner {
             $imageinfo = getimagesize($file);
         }
 
-        $this->zoomx = $imageinfo['0'] / A3_WIDTH;  // first estimation of zoom factor, will be adjusted later
+        $this->zoomx = $imageinfo['0'] / A3_WIDTH;  // First estimation of zoom factor, will be adjusted later.
         $this->zoomy = $imageinfo['1'] / A3_HEIGHT;
         $type = $imageinfo['2'];
 
@@ -389,20 +393,22 @@ class offlinequiz_page_scanner {
                     $this->image = imagecreatefrompng($file);
                 } else {
                     $scannedpage->status = 'error';
-                    $scannedpage->error = 'pngnotsupported'; 
+                    $scannedpage->error = 'pngnotsupported';
                     $scannedpage->info = $this->filename;
                     return $scannedpage;
                 }
                 break;
             case IMAGETYPE_TIFF_II:
                 $newfile = $path_parts["dirname"] . '/' . $path_parts["filename"] . ".png";
-                $handle = popen("convert '" . $file . "' '" . $newfile . "' ", 'r');        // converting the tiff file to png format via imagemagick 
+                // Converting the tiff file to png format via imagemagick.
+                // This is much faster then using php's imagick extension.
+                $handle = popen("convert '" . $file . "' '" . $newfile . "' ", 'r');
                 fread($handle, 1);
                 while (!feof($handle)) {
+                    fread($handle, 1);
                 }
-                pclose($handle);                                       // this is much faster then using php's imagick extension.
+                pclose($handle);
                 if (file_exists($newfile)) {
-//                   unlink($file);
                     $this->filename = $path_parts["filename"] . ".png";
                     $scannedpage->origfilename = $this->filename;
                     $this->sourcefile = $newfile;
@@ -423,13 +429,14 @@ class offlinequiz_page_scanner {
                 break;
             case IMAGETYPE_TIFF_MM:
                 $newfile = $path_parts["dirname"] . '/' . $path_parts["filename"] . ".png";
-                $handle = popen("convert '" . $file . "' '" . $newfile . "' ", 'r');  // converting the tiff file to png format via imagemagick 
+                // Converting the tiff file to png format via imagemagick.
+                $handle = popen("convert '" . $file . "' '" . $newfile . "' ", 'r');
                 fread($handle, 100);
                 while (!feof($handle)) {
+                    fread($handle, 100);
                 }
                 pclose($handle);
                 if (file_exists($newfile)) {
-//                    unlink($file);
                     $this->filename = $path_parts["filename"] . ".png";
                     $scannedpage->origfilename = $this->filename;
                     $this->sourcefile = $newfile;
@@ -456,17 +463,17 @@ class offlinequiz_page_scanner {
         }
 
         $file_record = array(
-                'contextid' => $this->contextid,      // ID of context
-                'component' => 'mod_offlinequiz', // usually = table name
-                'filearea'  => 'imagefiles',      // usually = table name
-                'itemid'    => 0,                 // usually = ID of row in table
-                'filepath'  => '/',               // any path beginning and ending in /
-                'filename'  => $this->filename); // any filename
+                'contextid' => $this->contextid,      // ID of context.
+                'component' => 'mod_offlinequiz', // Usually = table name.
+                'filearea'  => 'imagefiles',      // Usually = table name.
+                'itemid'    => 0,                 // Usually = ID of row in table.
+                'filepath'  => '/',               // Any path beginning and ending in.
+                'filename'  => $this->filename); // Any filename.
 
         $storedfile = $this->save_image($file_record, $this->sourcefile);
         $scannedpage->filename = $storedfile->get_filename();
 
-        // check if we can adjust the image s.t. we can determine the hotspots.
+        // Check if we can adjust the image s.t. we can determine the hotspots.
         if ($this->adjust(true, false, false, false, false, 0)) {
             $scannedpage->status = 'ok';
             $scannedpage->error = '';
@@ -476,11 +483,6 @@ class offlinequiz_page_scanner {
             $scannedpage->info = $this->filename;
         }
 
-//         if (file_exists($file)) {
-//             unlink($file);
-//         }
-        // if (file_exists($this->sourcefile))
-        // unlink($this->sourcefile);
         return $scannedpage;
     }
 
@@ -495,7 +497,7 @@ class offlinequiz_page_scanner {
         global $CFG, $OUTPUT;
 
         $this->offset = new oq_point();
-        // remember the corners passed. They are needed by set_maxanswers.
+        // Remember the corners passed. They are needed by set_maxanswers.
         $this->corners = $corners;
         $this->insecure = false;
         $this->init_hotspots();
@@ -512,16 +514,8 @@ class offlinequiz_page_scanner {
 
         $this->sourcefile = $file;
 
-        $this->zoomx = $imagesize['width'] / A3_WIDTH;  // first estimation of zoom factor, will be adjusted later
+        $this->zoomx = $imagesize['width'] / A3_WIDTH;  // First estimation of zoom factor, will be adjusted later.
         $this->zoomy = $imagesize['height'] / A3_HEIGHT;
-
-        //      $contenthash = $file->get_contenthash();
-        //      $l1 = $contenthash[0].$contenthash[1];
-        //      $l2 = $contenthash[2].$contenthash[3];
-        //      $location = $CFG->dataroot . "/filedir/$l1/$l2/$contenthash";
-        //      $imagesize = getimagesize($location);
-        //      $path_parts = pathinfo($location);
-        //      $this->filename = $path_parts['filename'] . '.' . $path_parts['extension'];
 
         $this->image = imagecreatefromstring($file->get_content());
         if (count($corners) > 3) {
@@ -534,7 +528,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Saves an image in the Moodle file space. Extends the filename in case the file already exists.
-     * 
+     *
      * @param unknown_type $file_record
      * @param unknown_type $sourcefile
      * @param unknown_type $postfix
@@ -639,7 +633,7 @@ class offlinequiz_page_scanner {
         $positiony = $point->y + $this->offset->y;
         $lastx = BOX_OUTER_WIDTH * $this->zoomx / 2 + $positionx;
         $lasty = BOX_OUTER_WIDTH * $this->zoomy + $positiony;
-        // number of black dots that have to be found
+        // Number of black dots that have to be found.
         $numtofind = round(BOX_OUTER_WIDTH * $this->zoomy * 0.5);
 
         for ($x = $positionx; $x <= $lastx; $x++) {
@@ -669,7 +663,7 @@ class offlinequiz_page_scanner {
         $positiony = $point->y + $this->offset->y;
         $lastx = BOX_OUTER_WIDTH * $this->zoomx + $positionx;
         $lasty = BOX_OUTER_WIDTH * $this->zoomy + $positiony;
-        // number of black dots that have to be found
+        // Number of black dots that have to be found.
         $numtofind = round(BOX_OUTER_WIDTH * $this->zoomx * 0.5);
 
         for ($y = $positiony; $y <= $lasty; $y++) {
@@ -717,8 +711,8 @@ class offlinequiz_page_scanner {
     }
 
     /**
-     * Sets the page number of this scanner. This has to be used if the user actively chooses a page number. 
-     * 
+     * Sets the page number of this scanner. This has to be used if the user actively chooses a page number.
+     *
      * @param unknown_type $page
      * @return number|Ambigous <number, unknown, boolean, string>
      */
@@ -740,7 +734,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Returns the number of questions on the current page.
-     * 
+     *
      */
     public function get_questions_on_page() {
         return $this->questionsonpage;
@@ -788,16 +782,16 @@ class offlinequiz_page_scanner {
             $entry->x = $hotspot->x;
             $entry->y = $hotspot->y;
             $entry->time = $timenow;
-            
+
             if ($hotspot->blank) {
-                $entry->blank = 1; 
+                $entry->blank = 1;
             } else {
                 $entry->blank = 0;
             }
             $DB->insert_record('offlinequiz_hotspots', $entry);
         }
     }
-    
+
     /**
      * Function to restore the hotspots from DB records in offlinequiz_hotspots.
      *
@@ -811,7 +805,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Moves the hotspots according to rotation and zooming.
-     * 
+     *
      */
     public function move_hotspots() {
         foreach ($this->hotspots as $point) {
@@ -821,10 +815,10 @@ class offlinequiz_page_scanner {
     }
 
     /**
-     * Determines the black value of a hotspot. 
+     * Determines the black value of a hotspot.
      * Returns 0 if empty, 1 if marked, 2 if deleted, 3 if insecure.
-     * If return is true, it returns the percentage of black pixels found 
-     * 
+     * If return is true, it returns the percentage of black pixels found
+     *
      * @param unknown_type $point
      * @param unknown_type $return
      * @return number
@@ -917,7 +911,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Marks the hotspot with red square for student warnings.
-     * 
+     *
      * @param unknown_type $point
      */
     public function mark_hotspot($point) {
@@ -936,7 +930,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Creates an image with red markings to inform student about problems interpreting his markings.
-     * 
+     *
      * @param unknown_type $wrong_usernumber
      * @param unknown_type $right_usernumber
      * @param unknown_type $wrong_group
@@ -944,13 +938,13 @@ class offlinequiz_page_scanner {
      * @param unknown_type $wrong_items
      */
     public function create_warning_image($wrong_usernumber, $right_usernumber, $wrong_group, $right_group, $wrong_items) {
-        // mark errors in usernumber
+        // Mark errors in usernumber.
         for ($i = 0; $i < strlen($wrong_usernumber); $i++) {
             if (substr($wrong_usernumber, $i, 1) != substr($right_usernumber, $i, 1)) {
                 $this->mark_hotspot($this->hotspots["u$i".substr($right_usernumber, $i, 1)]);
             }
         }
-        // mark errors in group, not realy necessary, because there should always be premarked correctly
+        // Mark errors in group, not realy necessary, because there should always be premarked correctly.
         if ($wrong_group != $right_group) {
             $index = $right_group - 1;
             $this->mark_hotspot($this->hotspots["g$index"]);
@@ -985,12 +979,12 @@ class offlinequiz_page_scanner {
                 $this->sourcefile = $temp_dst;
 
                 $file_record = array(
-                        'contextid' => $this->contextid,      // ID of context
-                        'component' => 'mod_offlinequiz', // usually = table name
-                        'filearea'  => 'imagefiles',      // usually = table name
-                        'itemid'    => 0,                 // usually = ID of row in table
-                        'filepath'  => '/',               // any path beginning and ending in /
-                        'filename'  => $this->filename . '_rotated'); // any filename
+                        'contextid' => $this->contextid,  // ID of context.
+                        'component' => 'mod_offlinequiz', // Usually = table name.
+                        'filearea'  => 'imagefiles',      // Usually = table name.
+                        'itemid'    => 0,                 // Usually = ID of row in table.
+                        'filepath'  => '/',               // Any path beginning and ending in.
+                        'filename'  => $this->filename . '_rotated'); // Any filename.
 
                 $newfile = $this->save_image($file_record, $this->sourcefile);
 
@@ -1021,12 +1015,12 @@ class offlinequiz_page_scanner {
             $this->sourcefile = $temp_dst;
 
             $file_record = array(
-                    'contextid' => $this->contextid,      // ID of context
-                    'component' => 'mod_offlinequiz', // usually = table name
-                    'filearea'  => 'imagefiles',      // usually = table name
-                    'itemid'    => 0,                 // usually = ID of row in table
-                    'filepath'  => '/',               // any path beginning and ending in /
-                    'filename'  => $this->filename . 'rotated'); // any filename
+                    'contextid' => $this->contextid,  // ID of context.
+                    'component' => 'mod_offlinequiz', // Usually = table name.
+                    'filearea'  => 'imagefiles',      // Usually = table name.
+                    'itemid'    => 0,                 // Usually = ID of row in table.
+                    'filepath'  => '/',               // Any path beginning and ending in.
+                    'filename'  => $this->filename . 'rotated'); // Any filename.
 
             $newfile = $this->save_image($file_record, $this->sourcefile);
             unlink($temp_dst);
@@ -1074,7 +1068,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Returns true if pixel color is lower than paper gray.
-     * 
+     *
      * @param unknown_type $x
      * @param unknown_type $y
      * @return boolean
@@ -1082,7 +1076,7 @@ class offlinequiz_page_scanner {
     public function pixel_is_black($x, $y) {
         global $CFG;
 
-        if ($x >= imagesx($this->image) or $x >= imagesy($this->image)) { // point is out of range
+        if ($x >= imagesx($this->image) or $x >= imagesy($this->image)) { // Point is out of range.
             return false;
         }
         $rgb = imagecolorsforindex($this->image, imagecolorat($this->image, $x, $y));
@@ -1098,7 +1092,7 @@ class offlinequiz_page_scanner {
     /**
      * Determines the value of a bar code.
      * Given a starting point, this function returns the number (base converted into decimal) of the bar code.
-     * 
+     *
      * @param unknown_type $point
      * @return string|boolean
      */
@@ -1113,7 +1107,7 @@ class offlinequiz_page_scanner {
 
         $values = array();
 
-        // scan first line
+        // Scan first line.
         $data = array();
         for ($x = $positionx; $x <= $lastx; $x++) {
             if ($this->pixel_is_black($x, $y)) {
@@ -1146,7 +1140,7 @@ class offlinequiz_page_scanner {
             }
         }
 
-        // scan second line
+        // Scan second line.
         $data = array();
         $y -= BOX_INNER_WIDTH * $this->zoomy / 4;
         for ($x=$positionx; $x<=$lastx; $x++) {
@@ -1180,7 +1174,7 @@ class offlinequiz_page_scanner {
             }
         }
 
-        // scan third line
+        // Scan third line.
         $data = array();
         $y += BOX_INNER_WIDTH * $this->zoomy / 2;
         for ($x=$positionx; $x<=$lastx; $x++) {
@@ -1214,7 +1208,7 @@ class offlinequiz_page_scanner {
             }
         }
 
-        // if two values are equal, return them, else false
+        // If two values are equal, return them, else false.
         if ($values[0] == $values[1]) {
             return base_convert($values[0], 2, 10);
         } else if ($values[1] == $values[2]) {
@@ -1242,7 +1236,7 @@ class offlinequiz_page_scanner {
         $i = 0;
         $numtofind = round(MIN_BORDER * $this->zoomx);
         $found = false;
-        while (!$found and $i< MAX_BORDER * $this->zoomx) {   // searching for first white in upper left corner
+        while (!$found and $i< MAX_BORDER * $this->zoomx) {   // Searching for first white in upper left corner.
             if (!$this->pixel_is_black($xstart + $xfactor * $i, $ystart + $yfactor * $i)) {
                 $numtofind-=1;
             }
@@ -1255,8 +1249,9 @@ class offlinequiz_page_scanner {
         $ystart = $ystart + $yfactor * $i;
         $i = 0;
         $found = false;
-        $numtofind = round(CROSS_WIDTH * $this->zoomy / 2);          // number of lines that have to be found (otherwise it is just the shit of a fly)
-        while (!$found and $i < CORNER_SPOT_WIDTH_VERTICAL * $this->zoomy) {  // scanning for cross verticaly
+        // Number of lines that have to be found (otherwise it is just the shit of a fly).
+        $numtofind = round(CROSS_WIDTH * $this->zoomy / 2);
+        while (!$found and $i < CORNER_SPOT_WIDTH_VERTICAL * $this->zoomy) {  // Scanning for cross verticaly.
             $i++;
             $whiteline = true;
             for ($j=0; $j<CORNER_SPOT_WIDTH_HORIZONTAL * $this->zoomx; $j++) {
@@ -1277,7 +1272,7 @@ class offlinequiz_page_scanner {
         $i = 0;
         $found = false;
         $numtofind = round(CROSS_WIDTH * $this->zoomx / 2);
-        while (!$found and $i < CORNER_SPOT_WIDTH_HORIZONTAL * $this->zoomx) {  // scanning for cross horizontal
+        while (!$found and $i < CORNER_SPOT_WIDTH_HORIZONTAL * $this->zoomx) {  // Scanning for cross horizontal.
             $i++;
             $whiteline = true;
             for ($j = 0; $j < CORNER_SPOT_WIDTH_VERTICAL * $this->zoomy; $j++) {
@@ -1314,7 +1309,7 @@ class offlinequiz_page_scanner {
      * Find upper right corner cross.
      * @return Ambigous <boolean, oq_point>
      */
-    private function get_upper_right() {//
+    private function get_upper_right() {
         return $this->get_corner(imagesx($this->image) - 1, 0, -1, 1);
     }
 
@@ -1345,13 +1340,17 @@ class offlinequiz_page_scanner {
         $export = array();
         $factor = OQ_IMAGE_WIDTH / imagesx($this->image);
 
-        $point = new oq_point(($this->upperleft->x) * $factor - 2 * $this->zoomx, ($this->upperleft->y) * $factor - 2 * $this->zoomy);
+        $point = new oq_point(($this->upperleft->x) * $factor - 2 * $this->zoomx,
+                ($this->upperleft->y) * $factor - 2 * $this->zoomy);
         $export[0] = $point;
-        $point = new oq_point(($this->upperright->x) * $factor - 2 * $this->zoomx, ($this->upperright->y) * $factor - 2 * $this->zoomy);
+        $point = new oq_point(($this->upperright->x) * $factor - 2 * $this->zoomx,
+                ($this->upperright->y) * $factor - 2 * $this->zoomy);
         $export[1] = $point;
-        $point = new oq_point(($this->lowerleft->x) * $factor - 2 * $this->zoomx, ($this->lowerleft->y) * $factor - 2 * $this->zoomy);
+        $point = new oq_point(($this->lowerleft->x) * $factor - 2 * $this->zoomx,
+                ($this->lowerleft->y) * $factor - 2 * $this->zoomy);
         $export[2] = $point;
-        $point = new oq_point(($this->lowerright->x) * $factor - 2 * $this->zoomx, ($this->lowerright->y) * $factor - 2 * $this->zoomy);
+        $point = new oq_point(($this->lowerright->x) * $factor - 2 * $this->zoomx,
+                ($this->lowerright->y) * $factor - 2 * $this->zoomy);
         $export[3] = $point;
 
         return $export;
@@ -1371,24 +1370,28 @@ class offlinequiz_page_scanner {
      */
     public function adjust($check, $upperleft, $upperright, $lowerleft, $lowerright, $width, $scannedpageid = null) {
         global $DB;
-        
-        if (imagesx($this->image) > imagesy($this->image)) {  // flip image if landscape orientation
-            // downsize large pictures first if it is not send from correct.php (width != 0)
+
+        if (imagesx($this->image) > imagesy($this->image)) {  // Flip image if landscape orientation.
+            // Downsize large pictures first if it is not send from correct.php (width != 0).
             if (imagesy($this->image) > 3000 and empty($width)) {
                 $dest = imagecreatetruecolor(A3_HEIGHT, A3_WIDTH);
-                imagecopyresampled($dest, $this->image, 0, 0, 0, 0, A3_HEIGHT, A3_WIDTH, imagesy($this->image), imagesx($this->image));
+                imagecopyresampled($dest, $this->image, 0, 0, 0, 0, A3_HEIGHT, A3_WIDTH,
+                imagesy($this->image), imagesx($this->image));
                 $this->image = $dest;
             }
             $this->rotate_90();
-            $this->zoomx = imagesx($this->image) / A3_WIDTH;  // first estimation of zoom factor, will be adjusted later
+            // First estimation of zoom factor, will be adjusted later.
+            $this->zoomx = imagesx($this->image) / A3_WIDTH;
             $this->zoomy = imagesy($this->image) / A3_HEIGHT;
         } else {
-            // downsize large pictures if it is not send from correct.php (width != 0)
+            // Downsize large pictures if it is not send from correct.php (width != 0).
             if (imagesx($this->image) > 3000 and empty($width)) {
                 $dest=imagecreatetruecolor(A3_WIDTH, A3_HEIGHT);
-                imagecopyresampled($dest, $this->image, 0, 0, 0, 0, A3_WIDTH, A3_HEIGHT, imagesx($this->image), imagesy($this->image));
+                imagecopyresampled($dest, $this->image, 0, 0, 0, 0, A3_WIDTH, A3_HEIGHT,
+                imagesx($this->image), imagesy($this->image));
                 $this->image = $dest;
-                $this->zoomx = imagesx($this->image) / A3_WIDTH;  // first estimation of zoom factor, will be adjusted later
+                // First estimation of zoom factor, will be adjusted later.
+                $this->zoomx = imagesx($this->image) / A3_WIDTH;
                 $this->zoomy = imagesy($this->image) / A3_HEIGHT;
             }
         }
@@ -1412,20 +1415,19 @@ class offlinequiz_page_scanner {
         if (!$this->upperleft) {
             $return = false;
         } else if ($check) {
-            // we check if it is on top only if it is not from correct.php or participants_correct.php
+            // We check if it is on top only if it is not from correct.php or participants_correct.php.
             $blackpix = 0;
             $halfwidth = round(BOX_INNER_WIDTH * $this->zoomx / 2);
-            for ($i = 0; $i <= $halfwidth; $i++) {    // we use the black box down left to indicate if we should rotate by 180 deg if it is on top
+            // We use the black box down left to indicate if we should rotate by 180 deg if it is on top.
+            for ($i = 0; $i <= $halfwidth; $i++) {
                 if ($this->pixel_is_black($this->upperleft->x + $i + 2, $this->upperleft->y + $i + 2)) {
                     $blackpix++;
                 }
             }
             if ($blackpix/$halfwidth > 0.5) {
-                // remember that we rotated it. In case of grab error it should be saved
+                // Remember that we rotated it. In case of grab error it should be saved
                 // in the original orientation.
                 $this->ontop = true;
-                //              $this->rotate_180();
-                //              $this->upperleft = $this->get_upper_left();
             }
         }
 
@@ -1463,7 +1465,8 @@ class offlinequiz_page_scanner {
         }
 
         // Now set angle and exact zoom factors.
-        if ($this->upperright->x == $this->upperleft->x or $this->lowerleft->y == $this->upperleft->y) {  // avoid division by zero
+        // Avoid division by zero.
+        if ($this->upperright->x == $this->upperleft->x or $this->lowerleft->y == $this->upperleft->y) {
             $this->alpha = 0;
         } else {
             $alpha1 = rad2deg(atan(($this->upperright->y - $this->upperleft->y) / ($this->upperright->x - $this->upperleft->x)));
@@ -1484,7 +1487,7 @@ class offlinequiz_page_scanner {
 
         if ($scannedpageid && $hotspots = $DB->get_records('offlinequiz_hotspots', array('scannedpageid' => $scannedpageid))) {
             $this->restore_hotspots($hotspots);
-        } else {                
+        } else {
             $this->adjust_hotspots();
         }
 
@@ -1493,7 +1496,7 @@ class offlinequiz_page_scanner {
         return $return;
     }
 
-    
+
     /**
      * Set the 4 trigger values.
      * @param unknown_type $empty
@@ -1519,7 +1522,7 @@ class offlinequiz_page_scanner {
         $usernumber = '';
         for ($i = 0; $i < $offlinequizconfig->ID_digits; $i++) {
             $found = 0;
-            $value = 'X';                   // if we cannot read the value, set it to X
+            $value = 'X';                   // If we cannot read the value, set it to X.
             $insecure = false;
             for ($j=0; $j<=9; $j++) {
                 $spotvalue = $this->hotspot_value($this->hotspots["u$i$j"]);
@@ -1532,7 +1535,7 @@ class offlinequiz_page_scanner {
                 }
             }
             if ($found > 1 or $insecure) {
-                $value = 'X';              // if we get more than one value, set it to X
+                $value = 'X';              // If we get more than one value, set it to X.
                 $this->insecure = true;
             }
 
@@ -1553,7 +1556,7 @@ class offlinequiz_page_scanner {
         $groupspots = array();
         $value = 0;
 
-        // get all the group hotspot values and select the biggest value
+        // Get all the group hotspot values and select the biggest value.
         for ($i=0; $i <= 5; $i++) {
             $groupspots[$i] = $this->hotspot_value($this->hotspots["g$i"], true);
             if ($groupspots[$i] > $value) {
@@ -1562,7 +1565,7 @@ class offlinequiz_page_scanner {
             }
         }
 
-        // now we go through all the group hotspots (except the one picked before)
+        // Now we go through all the group hotspots (except the one picked before)
         // and look for another hotspot with the second biggest percentage of black pixels.
         $value = 0;
         for ($i=0; $i <= 5; $i++) {
@@ -1570,13 +1573,13 @@ class offlinequiz_page_scanner {
                 $value = $groupspots[$i];
             }
         }
-        // check for correction and set to insecure
+        // Check for correction and set to insecure.
         if ($value > 15) {
             $insecure = true;
         } else {
             $insecure = false;
         }
-        // we calibrate with the second biggest value as 'empty' and the biggest value as 'cross'
+        // We calibrate with the second biggest value as 'empty' and the biggest value as 'cross'
         // JZ: This doesn't make any sense!
         if (!$this->calibrated) {
             $this->calibrate($value, $groupspots[$group]);
@@ -1592,11 +1595,11 @@ class offlinequiz_page_scanner {
 
     public function set_maxanswers($maxanswers, $scannedpage) {
         if ($maxanswers > 26) {
-            $maxanswers = 26; // there won't be more than 26 answers or 96 questions on the sheet
+            $maxanswers = 26; // There won't be more than 26 answers or 96 questions on the sheet.
         }
         $this->maxanswers = $maxanswers;
         $this->formtype = 4;
-        
+
         if ($maxanswers > 5) {
             $this->formtype = 3;
         }
@@ -1610,7 +1613,7 @@ class offlinequiz_page_scanner {
         $this->numpages = ceil($this->maxquestions / ($this->formtype * 24));
 
         $this->init_hotspots();
-        
+
         $corners = $this->corners;
         if (!empty($corners)) {
             $ok = $this->adjust(false, $corners[0], $corners[1], $corners[2], $corners[3], OQ_IMAGE_WIDTH, $scannedpage->id);
@@ -1627,11 +1630,11 @@ class offlinequiz_page_scanner {
             $scannedpage->error = 'couldnotgrab';
             $scannedpage->info = $this->filename;
         }
-        
+
         return $scannedpage;
     }
-    
-    
+
+
     /**
      * Sets the group number to the one chosen by the user and calibrates correctly.
      *
@@ -1639,14 +1642,14 @@ class offlinequiz_page_scanner {
      */
     public function set_group($group) {
 
-        // we compute min, max and medium values
+        // We compute min, max and medium values.
         $groupspots = array();
 
         $maxvalue = 0;
         $minvalue = 100;
         $mediumvalue = 0;
 
-        // get all the group hotspot values as percents and select the minimum and maximum value
+        // Get all the group hotspot values as percents and select the minimum and maximum value.
         for ($i=0; $i <= 5; $i++) {
             $groupspots[$i] = $this->hotspot_value($this->hotspots["g$i"], true);
             if ($groupspots[$i] > $maxvalue) {
@@ -1667,7 +1670,7 @@ class offlinequiz_page_scanner {
         if ($mediumvalue == 0) {
             $mediumvalue = $maxvalue;
         }
-        // we assume that minvalue is empty, and mediumvalue is a cross
+        // We assume that minvalue is empty, and mediumvalue is a cross.
         $this->calibrate($minvalue, $mediumvalue);
     }
 
@@ -1697,7 +1700,7 @@ class offlinequiz_page_scanner {
     }
 
     /**
-     * Returns true if this scanner is insecure about some markings. 
+     * Returns true if this scanner is insecure about some markings.
      * @return boolean
      */
     public function is_insecure() {

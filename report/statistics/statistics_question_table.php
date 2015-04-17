@@ -74,24 +74,11 @@ class offlinequiz_statistics_question_table extends flexible_table {
         $columns = array();
         $headers = array();
 
-//        if ($responsestats->has_subparts()) {
-            $columns[] = 'part';
-            $headers[] = ''; // get_string('partofquestion', 'offlinequiz_statistics');
-//        }
+        $columns[] = 'part';
+        $headers[] = '';
 
-//         if ($responsestats->has_response_classes()) {
-//             $columns[] = 'responseclass';
-//             $headers[] = get_string('modelresponse', 'offlinequiz_statistics');
-
-//             if ($responsestats->has_actual_responses()) {
-//                 $columns[] = 'response';
-//                 $headers[] = get_string('actualresponse', 'offlinequiz_statistics');
-//             }
-
-//         } else {
-            $columns[] = 'response';
-            $headers[] = get_string('response', 'offlinequiz_statistics');
-//        }
+        $columns[] = 'response';
+        $headers[] = get_string('response', 'offlinequiz_statistics');
 
         $columns[] = 'fraction';
         $headers[] = get_string('optiongrade', 'offlinequiz_statistics');

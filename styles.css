@@ -24,7 +24,7 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  **/
- 
+
 #page-mod-offlinequiz-attempt #page .controls,
 #page-mod-offlinequiz-summary #page .controls,
 #page-mod-offlinequiz-review #page .controls {text-align: center;margin: 8px auto;}
@@ -608,7 +608,7 @@ a:hover
 }
 #page-mod-offlinequiz-report table#statisticsquestiontable {
     border: 1px solid #DDD;
-    border-collapse: collapse; 
+    border-collapse: collapse;
     width: 80%;
 }
 #page-mod-offlinequiz-report table#statisticsquestiontable .r1 {
@@ -643,7 +643,7 @@ a:hover
 }
 #page-mod-offlinequiz-report table#questionstatistics td.cell {
 	border: 1px solid #DDDDDD;
-    border-collapse: collapse; 
+    border-collapse: collapse;
 }
 #page-mod-offlinequiz-report div.no-overflow table#statisticsquestiontable th.header {
 	border: 1px solid #DDDDDD;
@@ -680,7 +680,7 @@ a:hover
 
 
 /* CSS for student view in mod_form.php */
-.Popup{     
+.Popup{
     display: none;
     background: #fff;
     left: 50%;
@@ -694,20 +694,20 @@ a:hover
     padding: 10px;
 }
 #overlay{
-    display: none; 
-    background: -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.5) 100%); 
-    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0.5)));     
-    background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
-    background: -o-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
-    background: -ms-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
-    : radial-gradient(ellipse at center,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);     
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#80000000',GradientType=1 );   
-    width: 100%;   
-    height: 100%;   
-    position: fixed;   
-    z-index: 2;   
+    display: none;
+    background: -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.5) 100%);
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0.5)));
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);
+    background: -o-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);
+    background: -ms-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);
+    : radial-gradient(ellipse at center,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#80000000',GradientType=1 );
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 2;
     top: 0px;
-    left: 0px; 
+    left: 0px;
 }
 input#showviewbutton {
 	 display: none;
@@ -743,4 +743,3 @@ input#showviewbutton {
 /* #page-mod-offlinequiz-report div.no-overflow table th.c3 { */
 /* 	width: 40em; */
 /* } */
-  

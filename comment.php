@@ -29,12 +29,12 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once('locallib.php');
 
-$resultid = required_param('resultid', PARAM_INT); // result id
-$slot = required_param('slot', PARAM_INT); // question number in result
+$resultid = required_param('resultid', PARAM_INT); // Result ID.
+$slot = required_param('slot', PARAM_INT); // Question number in result.
 
 $PAGE->set_url('/mod/offlinequiz/comment.php', array('resultid' => $resultid, 'slot' => $slot));
 
-// get all the data from the DB
+// Get all the data from the DB.
 if (! $result = $DB->get_record("offlinequiz_results", array("id" => $resultid))) {
     print_error("No such result ID exists");
 }
@@ -59,14 +59,14 @@ require_login($course->id, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/offlinequiz:grade', $context);
 
-// load the questions needed by page
+// Load the questions needed by page.
 if (!$quba = question_engine::load_questions_usage_by_activity($result->usageid)) {
     print_error('Could not load question usage');
 }
 
 $slotquestion = $quba->get_question($slot);
 
-// Print the page header
+// Print the page header.
 $PAGE->set_pagelayout('popup');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($slotquestion->name));
@@ -74,13 +74,13 @@ echo $OUTPUT->heading(format_string($slotquestion->name));
 // Process any data that was submitted.
 if (data_submitted() && confirm_sesskey()) {
     if (optional_param('submit', false, PARAM_BOOL)) {
-        // set the mark in the quba's slot
+        // Set the mark in the quba's slot.
         $transaction = $DB->start_delegated_transaction();
         $quba->process_all_actions(time());
         question_engine::save_questions_usage_by_activity($quba);
         $transaction->allow_commit();
 
-        // set the result's total mark (sumgrades)
+        // Set the result's total mark (sumgrades).
         $result->sumgrades = $quba->get_total_mark();
         $result->timemodified = time();
         $DB->update_record('offlinequiz_results', $result);
@@ -99,7 +99,7 @@ if (data_submitted() && confirm_sesskey()) {
         $event = \mod_offlinequiz\event\question_manually_graded::create($params);
         $event->trigger();
 
-        // update the gradebook
+        // Update the gradebook.
         offlinequiz_update_grades($offlinequiz);
         echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
         close_window(2, true);

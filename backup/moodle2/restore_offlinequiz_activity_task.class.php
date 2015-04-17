@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/backup/moodle2/restore_offlinequi
 
 
 /**
- * offlinequiz restore task that provides all the settings and steps to perform one
+ * Offlinequiz restore task that provides all the settings and steps to perform one
  * complete restore of the activity
  *
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
@@ -45,14 +45,14 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
      * Define (add) particular settings this activity can have
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
+        // No particular settings for this activity.
     }
 
     /**
      * Define (add) particular steps this activity can have
      */
     protected function define_my_steps() {
-        // offlinequiz only has one structure step
+        // Offlinequiz only has one structure step.
         $this->add_step(new restore_offlinequiz_activity_structure_step('offlinequiz_structure', 'offlinequiz.xml'));
     }
 
@@ -114,11 +114,6 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
                 'participants.php?id={course_module}', '{offlinequiz}');
         $rules[] = new restore_log_rule('offlinequiz', 'check_participant',
                 'participants.php?id={course_module}', '{offlinequiz}');
-
-        //         $rules[] = new restore_log_rule('offlinequiz', 'edit override',
-        //                 'overrideedit.php?id={offlinequiz_override}', '{offlinequiz}');
-        //         $rules[] = new restore_log_rule('offlinequiz', 'delete override',
-        //                 'overrides.php.php?cmid={course_module}', '{offlinequiz}');
         $rules[] = new restore_log_rule('offlinequiz', 'addcategory',
                 'view.php?id={course_module}', '{question_category}');
         $rules[] = new restore_log_rule('offlinequiz', 'view summary',
@@ -131,39 +126,39 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
                 'view.php?id={course_module}', '{offlinequiz}');
 
         // All the ones calling to review.php have two rules to handle both old and new urls
-        // in any case they are always converted to new urls on restore
-        // TODO: In Moodle 2.x (x >= 5) kill the old rules
+        // in any case they are always converted to new urls on restore.
+        // TODO: In Moodle 2.x (x >= 5) kill the old rules.
         // Note we are using the 'offlinequiz_attempt_id' mapping because that is the
-        // one containing the offlinequiz_attempt->ids old an new for offlinequiz-attempt
+        // one containing the offlinequiz_attempt->ids old an new for offlinequiz-attempt.
         $rules[] = new restore_log_rule('offlinequiz', 'attempt',
                 'review.php?id={course_module}&resultid={offlinequiz_attempt}', '{offlinequiz}',
                 null, null, 'review.php?attempt={offlinequiz_attempt}');
-        // old an new for offlinequiz-submit
+        // Old an new for offlinequiz-submit.
         $rules[] = new restore_log_rule('offlinequiz', 'submit',
                 'review.php?id={course_module}&attempt={offlinequiz_attempt_id}', '{offlinequiz}',
                 null, null, 'review.php?attempt={offlinequiz_attempt_id}');
         $rules[] = new restore_log_rule('offlinequiz', 'submit',
                 'review.php?attempt={offlinequiz_attempt_id}', '{offlinequiz}');
-        // old an new for offlinequiz-review
-        // old an new for offlinequiz-start attemp
+        // Old an new for offlinequiz-review.
+        // Old an new for offlinequiz-start attempt.
         $rules[] = new restore_log_rule('offlinequiz', 'start attempt',
                 'review.php?id={course_module}&attempt={offlinequiz_attempt_id}', '{offlinequiz}',
                 null, null, 'review.php?attempt={offlinequiz_attempt_id}');
         $rules[] = new restore_log_rule('offlinequiz', 'start attempt',
                 'review.php?attempt={offlinequiz_attempt_id}', '{offlinequiz}');
-        // old an new for offlinequiz-close attemp
+        // Old an new for offlinequiz-close attempt.
         $rules[] = new restore_log_rule('offlinequiz', 'close attempt',
                 'review.php?id={course_module}&attempt={offlinequiz_attempt_id}', '{offlinequiz}',
                 null, null, 'review.php?attempt={offlinequiz_attempt_id}');
         $rules[] = new restore_log_rule('offlinequiz', 'close attempt',
                 'review.php?attempt={offlinequiz_attempt_id}', '{offlinequiz}');
-        // old an new for offlinequiz-continue attempt
+        // Old an new for offlinequiz-continue attempt.
         $rules[] = new restore_log_rule('offlinequiz', 'continue attempt',
                 'review.php?id={course_module}&attempt={offlinequiz_attempt_id}', '{offlinequiz}',
                 null, null, 'review.php?attempt={offlinequiz_attempt_id}');
         $rules[] = new restore_log_rule('offlinequiz', 'continue attempt',
                 'review.php?attempt={offlinequiz_attempt_id}', '{offlinequiz}');
-        // old an new for offlinequiz-continue attemp
+        // Old an new for offlinequiz-continue attempt.
         $rules[] = new restore_log_rule('offlinequiz', 'continue attemp',
                 'review.php?id={course_module}&attempt={offlinequiz_attempt_id}', '{offlinequiz}',
                 null, 'continue attempt', 'review.php?attempt={offlinequiz_attempt_id}');

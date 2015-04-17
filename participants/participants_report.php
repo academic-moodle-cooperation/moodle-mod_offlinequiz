@@ -56,7 +56,7 @@ class participants_report {
                 'strreallydel' => addslashes(get_string('deletepagecheck', 'offlinequiz')));
         $table = new offlinequiz_selectall_table('mod-offlinequiz-participants-error', 'participants.php', $tableparams);
 
-        // Add extra limits due to initials bar
+        // Add extra limits due to initials bar.
         list($ttest, $tparams) = $table->get_sql_where();
 
         if (!empty($ttest)) {
@@ -73,7 +73,7 @@ class participants_report {
             $total  = $DB->count_records_sql($countsql, $cparams);
         }
 
-        // Define table columns
+        // Define table columns.
         $tablecolumns = array('checkbox', 'time' , 'error', 'scan');
         $tableheaders = array('', get_string('importedon', 'offlinequiz_rimport'), get_string('error'), '');
 
@@ -88,23 +88,23 @@ class participants_report {
         $table->set_attribute('id', 'logs');
         $table->set_attribute('class', 'generaltable generalbox');
 
-        // Start working -- this is necessary as soon as the niceties are over
+        // Start working -- this is necessary as soon as the niceties are over.
         $table->setup();
         if ($sort = $table->get_sql_sort()) {
             $sql.=' ORDER BY '.$sort;
         }
 
-        $table->initialbars($totalinitials>20);
+        $table->initialbars($totalinitials > 20);
         $strtimeformat = get_string('strftimedatetime');
 
         if (!$pages = $DB->get_records_sql($sql, $params)) {
             return;
         }
 
-        // options for the popup_action
+        // Options for the popup_action.
         $options = array();
-        $options['height'] = 1200; // optional
-        $options['width'] = 1170; // optional
+        $options['height'] = 1200; // Optional.
+        $options['width'] = 1170; // Optional.
         $options['resizable'] = false;
 
         $counter = 1;
@@ -130,7 +130,7 @@ class participants_report {
 
         echo $OUTPUT->heading(get_string('errorreport', 'offlinequiz'), 3, '');
 
-        // Print table
+        // Print table.
         $table->print_html();
     }
 }

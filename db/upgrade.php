@@ -1006,7 +1006,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // offlinequiz savepoint reached
         upgrade_mod_savepoint(true, 2013012500, 'offlinequiz');
     }
-    
+
     if ($oldversion < 2013041600) {
 
         // Rename field question on table offlinequiz_q_instances to questionid
@@ -1032,9 +1032,9 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // offlinequiz savepoint reached
         upgrade_mod_savepoint(true, 2013041601, 'offlinequiz');
     }
-    
+
     if ($oldversion < 2013061300) {
-    
+
         // Define table offlinequiz_hotspots to be created.
         $table = new xmldb_table('offlinequiz_hotspots');
 
@@ -1057,37 +1057,37 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-    
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2013061300, 'offlinequiz');
     }
-    
+
     if ($oldversion < 2013110800) {
-    
+
         // Define field timecreated to be added to offlinequiz_queue.
         $table = new xmldb_table('offlinequiz_queue');
         $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'importuserid');
-    
+
         // Conditionally launch add field timecreated.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-    
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2013110800, 'offlinequiz');
     }
 
     if ($oldversion < 2013112500) {
-    
+
         // Define index offlinequiz_userid_idx (not unique) to be added to offlinequiz_results.
         $table = new xmldb_table('offlinequiz_results');
         $index = new xmldb_index('offlinequiz_userid_idx', XMLDB_INDEX_NOTUNIQUE, array('userid'));
-    
+
         // Conditionally launch add index offlinequiz_userid_idx.
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
-    
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2013112500, 'offlinequiz');
     }

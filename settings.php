@@ -35,32 +35,28 @@ if ($ADMIN->fulltree) {
     // Introductory explanation that all the settings are defaults for the add offlinequiz form.
     $settings->add(new admin_setting_heading('offlinequizintro', '', get_string('configintro', 'offlinequiz')));
 
-    // User identification
+    // User identification.
     $settings->add(new admin_setting_configtext('offlinequiz/useridentification',
             get_string('useridentification', 'offlinequiz'), get_string('configuseridentification', 'offlinequiz'),
             '[7]=idnumber' , PARAM_RAW, 30));
 
-    // Shuffle questions
+    // Shuffle questions.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/shufflequestions',
             get_string('shufflequestions', 'offlinequiz'), get_string('configshufflequestions', 'offlinequiz'),
             array('value' => 0, 'adv' => false)));
 
-    // Shuffle within questions
+    // Shuffle within questions.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/shuffleanswers',
             get_string('shufflewithin', 'offlinequiz'), get_string('configshufflewithin', 'offlinequiz'),
             array('value' => 1, 'adv' => false)));
 
-    // Logo image URL setting
+    // Logo image URL setting.
     $settings->add(new admin_setting_configtext('offlinequiz/logourl', get_string('logourl', 'offlinequiz'),
             get_string('logourldesc', 'offlinequiz'), '', PARAM_URL));
 
     // Admin setting to disable display of copyright statement.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/showcopyright', get_string('showcopyright', 'offlinequiz'),
             get_string('showcopyrightdesc', 'offlinequiz'), 1));
-
-    // Review options
-    //  $default = mod_offlinequiz_admin_review_setting::all_on();
-    //  $settings->add(new mod_offlinequiz_admin_review_setting('offlinequiz/review', 'review', '', $default));
 
     // Review options.
     $settings->add(new admin_setting_heading('reviewheading',
@@ -104,14 +100,14 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configselect('offlinequiz/papergray', get_string('papergray', 'offlinequiz'),
             get_string('configpapergray', 'offlinequiz'), array('value' => 670, 'fix' => true), $options));
-    
+
     $settings->add(new admin_setting_heading('correctionheading',
             get_string('correctionoptionsheading', 'offlinequiz'), ''));
 
     // Admin setting to allow teachers to enrol users with one click while correcting answer forms.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/oneclickenrol', get_string('oneclickenrol', 'offlinequiz'),
             get_string('oneclickenroldesc', 'offlinequiz'), 0));
-    
+
     $studentroles = $DB->get_records('role', array('archetype' => 'student'), 'sortorder');
     $options = array();
     $default = null;
@@ -129,7 +125,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configselect('offlinequiz/oneclickrole', get_string('oneclickrole', 'offlinequiz'),
             get_string('oneclickroledesc', 'offlinequiz'), array('value' => $default, 'fix' => true), $options));
-    
+
     $settings->add(new admin_setting_configtext('offlinequiz/keepfilesfordays', get_string('keepfilesfordays', 'offlinequiz'),
              get_string('configkeepfilesfordays', 'offlinequiz'), 8, PARAM_INT));
 }

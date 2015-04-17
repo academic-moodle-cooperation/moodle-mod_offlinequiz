@@ -31,7 +31,7 @@ function offlinequiz_statistics_init_doublescroll(Y) {
     jQuery(document).ready(function($) {
 		$('#tablecontainer > div.no-overflow').doubleScroll();
 	});
-	
+
 	$(window).resize(function() {
 		width = $('#tablecontainer > div.no-overflow').width();
 		$('div.suwala-doubleScroll-scroll-wrapper').width(width);
