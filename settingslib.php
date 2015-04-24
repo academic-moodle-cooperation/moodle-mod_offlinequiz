@@ -34,15 +34,14 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_offlinequiz_admin_review_setting extends admin_setting {
-    /**#@+
+    /**
      * @var integer should match the constants defined in {@link mod_offlinequiz_display_options}.
      * again, copied for performance reasons.
      */
-    const DURING =            0x10000;
+    const DURING = 0x10000;
     const IMMEDIATELY_AFTER = 0x01000;
-    const LATER_WHILE_OPEN =  0x00100;
-    const AFTER_CLOSE =       0x00010;
-    /**#@-*/
+    const LATER_WHILE_OPEN = 0x00100;
+    const AFTER_CLOSE = 0x00010;
 
     /**
      * @var boolean|null forced checked / disabled attributes for the during time.
@@ -59,11 +58,9 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
                 'attempt' => get_string('theattempt', 'offlinequiz'),
                 'correctness' => get_string('whethercorrect', 'question'),
                 'marks' => get_string('marks', 'offlinequiz'),
-//                'feedback' => get_string('feedback', 'question'),
                 'specificfeedback' => get_string('specificfeedback', 'question'),
                 'generalfeedback' => get_string('generalfeedback', 'question'),
                 'rightanswer' => get_string('rightanswer', 'question'),
-//                'overallfeedback' => get_string('overallfeedback', 'offlinequiz'),
                 'sheet' => get_string('scannedform', 'offlinequiz'),
                 'gradedsheet' => get_string('gradedscannedform', 'offlinequiz')
                 );
@@ -87,15 +84,11 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
      * @return int all times.
      */
     public static function all_on() {
-        // self::DURING | self::IMMEDIATELY_AFTER | self::LATER_WHILE_OPEN |
         return self::AFTER_CLOSE;
     }
 
     protected static function times() {
         return array(
-        //             self::DURING => get_string('reviewduring', 'offlinequiz'),
-        //      		self::IMMEDIATELY_AFTER => get_string('reviewimmediately', 'offlinequiz'),
-        //             self::LATER_WHILE_OPEN => get_string('reviewopen', 'offlinequiz'),
                 self::AFTER_CLOSE => ''
         );
     }

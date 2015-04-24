@@ -59,10 +59,10 @@ define('OQ_STATUS_PROCESSED', 3);
 define('OQ_STATUS_NEEDS_CORRECTION', 4);
 define('OQ_STATUS_DOUBLE', 5);
 
-/*
- * If start and end date for the offline quiz are more than this many seconds apart
- * they will be represented by two separate events in the calendar.
- */
+
+// If start and end date for the offline quiz are more than this many seconds apart
+// they will be represented by two separate events in the calendar.
+
 define('OFFLINEQUIZ_MAX_EVENT_LENGTH', 5 * 24 * 60 * 60); // 5 days.
 
 // FUNCTIONS.

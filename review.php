@@ -40,8 +40,8 @@ if (!$offlinequiz = $DB->get_record("offlinequiz", array("id" => $result->offlin
     print_error("The offlinequiz with id $result->offlinequiz belonging to result $result is missing");
 }
 
-$offlinequiz->optionflags =0;
-$offlinequiz->penaltyscheme =0;
+$offlinequiz->optionflags = 0;
+$offlinequiz->penaltyscheme = 0;
 
 if (!$group = $DB->get_record("offlinequiz_groups", array('id' => $result->offlinegroupid))) {
     print_error("The offlinequiz group belonging to result $result is miss1ing");

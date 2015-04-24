@@ -179,9 +179,12 @@ if ($currenttab == 'statistics' and isset($statmode)) {
     $row[] = new tabobject('questionstats', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
             array('mode' => 'statistics', 'statmode' => 'questionstats', 'offlinegroup' => $offlinegroup)),
             get_string('questionstats', 'offlinequiz_statistics'));
-    $row[] = new tabobject('questionandanswerstats', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' .
-            $offlinequiz->id, array('mode' => 'statistics', 'statmode' => 'questionandanswerstats', 'offlinegroup' => $offlinegroup)),
-            get_string('questionandanswerstats', 'offlinequiz_statistics'));
+    $row[] = new tabobject('questionandanswerstats',
+                           new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
+                                          array('mode' => 'statistics',
+                                                'statmode' => 'questionandanswerstats',
+                                                'offlinegroup' => $offlinegroup)),
+                           get_string('questionandanswerstats', 'offlinequiz_statistics'));
 
     $tabs[] = $row;
 }
