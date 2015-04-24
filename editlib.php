@@ -54,14 +54,14 @@ function offlinequiz_add_question_to_group($id, $offlinequiz, $page = 0) {
 
     $questions = explode(',', offlinequiz_clean_layout($offlinequiz->questions));
 
-    // Don't add the same question twice
+    // Don't add the same question twice.
     if (in_array($id, $questions)) {
         return false;
     }
 
-    // Remove ending page break if it is not needed
+    // Remove ending page break if it is not needed.
     if ($breaks = array_keys($questions, 0)) {
-        // Determine location of the last two page breaks
+        // Determine location of the last two page breaks.
         $end = end($breaks);
         $last = prev($breaks);
         $last = $last ? $last : -1;
@@ -71,43 +71,44 @@ function offlinequiz_add_question_to_group($id, $offlinequiz, $page = 0) {
     }
     if (is_int($page) && $page >= 1) {
         $numofpages = offlinequiz_number_of_pages($offlinequiz->questions);
-        if ($numofpages<$page) {
-            // The page specified does not exist in offlinequiz
+        if ($numofpages < $page) {
+            // The page specified does not exist in offlinequiz.
             $page = 0;
         } else {
-            // Add ending page break - the following logic requires doing this at this point
+            // Add ending page break - the following logic requires doing this at this point.
             $questions[] = 0;
+            $questionsnew = array();
             $currentpage = 1;
             $addnow = false;
             foreach ($questions as $question) {
                 if ($question == 0) {
                     $currentpage++;
                     // The current page is the one after the one we want to add on,
-                    // so we add the question before adding the current page.
+                    // So we add the question before adding the current page.
                     if ($currentpage == $page + 1) {
-                        $questions_new[] = $id;
+                        $questionsnew[] = $id;
                     }
                 }
-                $questions_new[] = $question;
+                $questionsnew[] = $question;
             }
-            $questions = $questions_new;
+            $questions = $questionsnew;
         }
     }
     if ($page == 0) {
-        // add question
+        // Add question.
         $questions[] = $id;
-        // add ending page break
+        // Add ending page break.
         $questions[] = 0;
     }
 
-    // Save new questionslist in database
+    // Save new questionslist in database.
     $offlinequiz->questions = implode(',', $questions);
 
     offlinequiz_save_questions($offlinequiz);
 
     // Only add a new question instance if there isn't already one.
     if (!$instance = $DB->get_record('offlinequiz_q_instances', array('offlinequizid' => $offlinequiz->id, 'questionid' => $id))) {
-        // Add the new question instance if it doesn't already exist
+        // Add the new question instance if it doesn't already exist.
         $instance = new stdClass();
         $instance->offlinequizid = $offlinequiz->id;
         $instance->questionid = $id;
@@ -135,15 +136,15 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $page
 
     $questions = explode(',', offlinequiz_clean_layout($offlinequiz->questions));
 
-    // don't add the same question twice
+    // Don't add the same question twice.
     foreach ($questionids as $id) {
         if (in_array($id, $questions)) {
             continue;
         }
 
-        // remove ending page break if it is not needed
+        // Remove ending page break if it is not needed.
         if ($breaks = array_keys($questions, 0)) {
-            // determine location of the last two page breaks
+            // Determine location of the last two page breaks.
             $end = end($breaks);
             $last = prev($breaks);
             $last = $last ? $last : -1;
@@ -153,37 +154,39 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $page
         }
         if (is_int($page) && $page >= 1) {
             $numofpages = offlinequiz_number_of_pages($offlinequiz->questions);
-            if ($numofpages<$page) {
-                // The page specified does not exist in offlinequiz
+            if ($numofpages < $page) {
+                // The page specified does not exist in offlinequiz.
                 $page = 0;
             } else {
-                // add ending page break - the following logic requires doing this at this point
+                // Add ending page break - the following logic requires doing this at this point.
                 $questions[] = 0;
+                $questionsnew = array();
                 $currentpage = 1;
                 $addnow = false;
                 foreach ($questions as $question) {
                     if ($question == 0) {
                         $currentpage++;
                         // The current page is the one after the one we want to add on,
-                        // so we add the question before adding the current page.
+                        // So we add the question before adding the current page.
                         if ($currentpage == $page + 1) {
-                            $questions_new[] = $id;
+                            $questionsnew[] = $id;
                         }
                     }
-                    $questions_new[] = $question;
+                    $questionsnew[] = $question;
                 }
-                $questions = $questions_new;
+                $questions = $questionsnew;
             }
         }
         if ($page == 0) {
-            // add question
+            // Add question.
             $questions[] = $id;
-            // add ending page break
+            // Add ending page break.
             $questions[] = 0;
         }
         // Only add a new question instance if there isn't already one.
-        if (!$instance = $DB->get_record('offlinequiz_q_instances', array('offlinequizid' => $offlinequiz->id, 'questionid' => $id))) {
-            // Add the new question instance if it doesn't already exist
+        if (!$instance = $DB->get_record('offlinequiz_q_instances',
+                                         array('offlinequizid' => $offlinequiz->id, 'questionid' => $id))) {
+            // Add the new question instance if it doesn't already exist.
             $instance = new stdClass();
             $instance->offlinequizid = $offlinequiz->id;
             $instance->questionid = $id;
@@ -193,7 +196,7 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $page
         }
     }
 
-    // Save new questionslist in database
+    // Save new questionslist in database.
     $offlinequiz->questions = implode(',', $questions);
 
     offlinequiz_save_questions($offlinequiz);
@@ -228,7 +231,7 @@ function offlinequiz_remove_question($offlinequiz, $questionid) {
 
     $otherusages = $DB->get_records_sql($otherusagesql, $params);
 
-    // Question instances can only be deleted if the question is not used in any offlinequiz group
+    // Question instances can only be deleted if the question is not used in any offlinequiz group.
     if (!$otherusages) {
         $DB->delete_records('offlinequiz_q_instances',
                 array('offlinequizid' => $offlinequiz->id, 'questionid' => $questionid));
@@ -261,7 +264,7 @@ function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
 
         $otherusages = $DB->get_records_sql($otherusagesql, $params);
 
-        // Question instances can only be deleted if the question is not used in any offlinequiz group
+        // Question instances can only be deleted if the question is not used in any offlinequiz group.
         if (!$otherusages) {
             $DB->delete_records('offlinequiz_q_instances',
                     array('offlinequizid' => $offlinequiz->id, 'questionid' => $questionid));
@@ -316,9 +319,9 @@ function offlinequiz_add_offlinequiz_question($id, $offlinequiz, $page = 0) {
         return false;
     }
 
-    // remove ending page break if it is not needed
+    // Remove ending page break if it is not needed.
     if ($breaks = array_keys($questions, 0)) {
-        // determine location of the last two page breaks
+        // Determine location of the last two page breaks.
         $end = end($breaks);
         $last = prev($breaks);
         $last = $last ? $last : -1;
@@ -328,37 +331,38 @@ function offlinequiz_add_offlinequiz_question($id, $offlinequiz, $page = 0) {
     }
     if (is_int($page) && $page >= 1) {
         $numofpages = offlinequiz_number_of_pages($offlinequiz->questions);
-        if ($numofpages<$page) {
-            // the page specified does not exist in offlinequiz
+        if ($numofpages < $page) {
+            // The page specified does not exist in offlinequiz.
             $page = 0;
         } else {
-            // add ending page break - the following logic requires doing
-            // this at this point
+            // Add ending page break - the following logic requires doing.
+            // This at this point.
             $questions[] = 0;
+            $questionsnew = array();
             $currentpage = 1;
             $addnow = false;
             foreach ($questions as $question) {
                 if ($question == 0) {
                     $currentpage++;
                     // The current page is the one after the one we want to add on,
-                    // so we add the question before adding the current page.
+                    // So we add the question before adding the current page.
                     if ($currentpage == $page + 1) {
-                        $questions_new[] = $id;
+                        $questionsnew[] = $id;
                     }
                 }
-                $questions_new[] = $question;
+                $questionsnew[] = $question;
             }
-            $questions = $questions_new;
+            $questions = $questionsnew;
         }
     }
     if ($page == 0) {
-        // add question
+        // Add question.
         $questions[] = $id;
-        // add ending page break
+        // Add ending page break.
         $questions[] = 0;
     }
 
-    // Save new questionslist in database
+    // Save new questionslist in database.
     $offlinequiz->questions = implode(',', $questions);
     offlinequiz_save_questions($offlinequiz);
 
@@ -372,7 +376,7 @@ function offlinequiz_add_offlinequiz_question($id, $offlinequiz, $page = 0) {
 
 /**
  * Randomly add a number of multichoice questions to an offlinequiz group.
- * 
+ *
  * @param unknown_type $offlinequiz
  * @param unknown_type $addonpage
  * @param unknown_type $categoryid
@@ -404,17 +408,17 @@ function offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid,
                AND q.parent = 0
                AND q.hidden = 0
                AND q.qtype IN ('multichoice', 'multichoiceset')
-               AND NOT EXISTS (SELECT 1 
+               AND NOT EXISTS (SELECT 1
                                  FROM {offlinequiz_q_instances} oqi
                                 WHERE oqi.questionid = q.id
                                   AND oqi.offlinequizid = :offlinequizid)";
-    
+
     $qcparams['offlinequizid'] = $offlinequiz->id;
-    
+
     $questionids = $DB->get_fieldset_sql($sql, $qcparams);
     srand(microtime() * 1000000);
     shuffle($questionids);
-    
+
     $chosenids = array();
     while (($questionid = array_shift($questionids)) && $number > 0) {
         $chosenids[] = $questionid;
@@ -503,7 +507,8 @@ function offlinequiz_update_question_instance($grade, $questionid, $offlinequiz)
         $instance->grade = $grade;
         $DB->update_record('offlinequiz_q_instances', $instance);
 
-        $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups);
+        $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0,
+                                   $offlinequiz->numgroups);
 
         foreach ($groups as $group) {
 
@@ -519,15 +524,10 @@ function offlinequiz_update_question_instance($grade, $questionid, $offlinequiz)
                     }
                 }
                 if ($slot) {
-                    // update the grade in the template usage
+                    // Update the grade in the template usage.
                     question_engine::set_max_mark_in_attempts(new qubaid_list(array($group->templateusageid)), $slot, $grade);
 
-                    /*
-                     // Update the grade in the student attempts/results
-                    // NOTE: The following created very inefficient subqueries in MySQL and had to be replaced by our own code.
-                    question_engine::set_max_mark_in_attempts(new result_qubaids_for_offlinequiz($offlinequiz->id, $group->id), $slot, $grade);
-                    */
-
+                    // Update the grade in the student attempts/results.
                     // First get the IDs of the question usages that correspond to the results in this group.
                     $results = $DB->get_records('offlinequiz_results',
                             array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id));
@@ -553,16 +553,6 @@ function offlinequiz_update_question_instance($grade, $questionid, $offlinequiz)
 
                         $DB->execute($sql, $params);
                     }
-
-                    // Now change the sumgrades in the offlinequiz results.
-                    // The results are changes with a call to offlinequiz_update_all_attempt_sumgrades()
-//                     foreach ($results as $result) {
-//                         if ($result->usageid > 0) {
-//                             $resultusage = question_engine::load_questions_usage_by_activity($result->usageid);
-//                             $DB->set_field('offlinequiz_results', 'sumgrades', $resultusage->get_total_mark(),
-//                                     array('id' => $result->id));
-//                         }
-//                     }
                 }
             }
         }
@@ -612,7 +602,7 @@ function offlinequiz_move_question_up($layout, $questionid) {
  * @return the updated layout
  */
 function offlinequiz_move_question_down($layout, $questionid) {
-    return _offlinequiz_move_question($layout, $questionid, +1);
+    return _offlinequiz_move_question($layout, $questionid, 1);
 }
 
 /**
@@ -627,11 +617,11 @@ function offlinequiz_move_question_down($layout, $questionid) {
  *     for links returning to the current page, as a moodle_url object
  * @param bool $allowdelete Indicates whether the delete icons should be displayed
  * @param bool $reordertool  Indicates whether the reorder tool should be displayed
- * @param bool $offlinequiz_qbanktool  Indicates whether the question bank should be displayed
+ * @param bool $offlinequizqbanktool  Indicates whether the question bank should be displayed
  * @param bool $hasattempts  Indicates whether the offlinequiz has attempts
  */
 function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $reordertool,
-        $gradetool, $offlinequiz_qbanktool, $hasattempts, $defaultcategoryobj) {
+        $gradetool, $offlinequizqbanktool, $hasattempts, $defaultcategoryobj) {
     global $CFG, $DB, $OUTPUT;
 
     $strorder = get_string('order');
@@ -727,12 +717,12 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
     $f .= '<option value="0">' . get_string('selectagroup', 'offlinequiz') . '</option>';
 
     if ($offlinequiz->numgroups > 1) {
-        for ($i=1; $i<=$offlinequiz->numgroups; $i++) {
+        for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
             if ($i != $offlinequiz->groupnumber) {
-                $c .= '<option value="' . $i . '">' . $letterstr[$i-1] . '</option>';
-                $d .= '<option value="' . $i . '">' . $letterstr[$i-1] . '</option>';
-                $e .= '<option value="' . $i . '">' . $letterstr[$i-1] . '</option>';
-                $f .= '<option value="' . $i . '">' . $letterstr[$i-1] . '</option>';
+                $c .= '<option value="' . $i . '">' . $letterstr[$i - 1] . '</option>';
+                $d .= '<option value="' . $i . '">' . $letterstr[$i - 1] . '</option>';
+                $e .= '<option value="' . $i . '">' . $letterstr[$i - 1] . '</option>';
+                $f .= '<option value="' . $i . '">' . $letterstr[$i - 1] . '</option>';
             }
         }
     }
@@ -772,7 +762,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
         $reordercontrols3 = '<a href="javascript:select_all_in(\'FORM\', null, ' .
                 '\'offlinequizquestions\');" >' .
                 $strselectall . '</a> /';
-        $reordercontrols3.=    ' <a href="javascript:deselect_all_in(\'FORM\', ' .
+        $reordercontrols3 .= ' <a href="javascript:deselect_all_in(\'FORM\', ' .
                 'null, \'offlinequizquestions\');">' .
                 $strselectnone . '</a>';
     }
@@ -785,7 +775,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
             $reordercontrolssetdefaultsubmit .
             $reordercontrols1 . $reordercontrols3 . $reordercontrols2bottom . "</div>";
 
-    // Add the controls in case we are in question list editing mode
+    // Add the controls in case we are in question list editing mode.
     $editcontrols2top = '';
     $editcontrols2top = '<div class="moveselectedonpage">';
     $editcontrols2top .= get_string('copytogroup', 'offlinequiz', $e);
@@ -842,7 +832,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
         $reordercheckboxlabel = '';
         $reordercheckboxlabelclose = '';
 
-        // If the questiontype is missing change the question type
+        // If the questiontype is missing change the question type.
         if ($qnum && !array_key_exists($qnum, $questions)) {
             $fakequestion = new stdClass();
             $fakequestion->id = $qnum;
@@ -878,7 +868,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                 if ($allowdelete) {
                     echo '<div class="offlinequizpagedelete">';
                     echo $OUTPUT->action_icon($pageurl->out(true,
-                            array('deleteemptypage' => $count - 1, 'sesskey'=>sesskey())),
+                            array('deleteemptypage' => $count - 1, 'sesskey' => sesskey())),
                             new pix_icon('t/delete', $strremove),
                             new component_action('click',
                                     'M.core_scroll_manager.save_scroll_action'),
@@ -943,7 +933,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                                 $upbuttonclass = 'upwithoutdown';
                             }
                             echo $OUTPUT->action_icon($pageurl->out(true,
-                                    array('up' => $question->id, 'sesskey'=>sesskey())),
+                                    array('up' => $question->id, 'sesskey' => sesskey())),
                                     new pix_icon('t/up', $strmoveup),
                                     new component_action('click',
                                             'M.core_scroll_manager.save_scroll_action'),
@@ -954,7 +944,7 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                     if ($count < $lastindex - 1) {
                         if (!$hasattempts) {
                             echo $OUTPUT->action_icon($pageurl->out(true,
-                                    array('down' => $question->id, 'sesskey'=>sesskey())),
+                                    array('down' => $question->id, 'sesskey' => sesskey())),
                                     new pix_icon('t/down', $strmovedown),
                                     new component_action('click',
                                         'M.core_scroll_manager.save_scroll_action'),
@@ -966,14 +956,14 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                         // Remove from offlinequiz, not question delete.
                         if (!$hasattempts) {
                             echo $OUTPUT->action_icon($pageurl->out(true,
-                                    array('remove' => $question->id, 'sesskey'=>sesskey())),
+                                    array('remove' => $question->id, 'sesskey' => sesskey())),
                                     new pix_icon('t/delete', $strremove),
                                     new component_action('click',
                                             'M.core_scroll_manager.save_scroll_action'),
                                     array('title' => $strremove));
                         }
                     }
-                    echo '</div>'; // End div questioncontrols
+                    echo '</div>'; // End div questioncontrols.
                 }
 
                 if (!in_array($question->qtype, array('description', 'missingtype')) && !$reordertool && !$gradetool) {
@@ -1006,12 +996,12 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                     '" value="' . format_float($offlinequiz->grades[$qnum], $offlinequiz->decimalpoints, true, true) .
                     '" tabindex="' . ($lastindex + $qno) . '" />';
                     echo '      </div>';
-                    
+
                 } else if ($reordertool) {
                     if ($qnum) {
                         echo '<div class="qorder">';
                         echo '  <input type="text" name="o' . $question->id .
-                        '" size="2" value="' . (10*$count + 10) .
+                        '" size="2" value="' . (10 * $count + 10) .
                         '" tabindex="' . ($lastindex + $qno) . '" />';
                         echo '</div>';
                     }
@@ -1035,9 +1025,9 @@ function offlinequiz_print_question_list($offlinequiz, $pageurl, $allowdelete, $
                             $hasattempts, $defaultcategoryobj);
                 } else if ($count < $questiontotalcount - 1) {
                     // Do not include the last page break for reordering
-                    // To avoid creating a new extra page in the end
+                    // To avoid creating a new extra page in the end.
                     echo '<input type="hidden" name="opg' . $pagecount . '" size="2" value="' .
-                            (10*$count + 10) . '" />';
+                            (10 * $count + 10) . '" />';
                 }
                 echo "</div></div>";
 
@@ -1096,7 +1086,7 @@ function offlinequiz_print_pagecontrols($offlinequiz, $pageurl, $page, $hasattem
         $defaultcategoryid = $defaultcategoryobj->id;
     }
 
-    // Create the url the question page will return to
+    // Create the url the question page will return to.
     $returnurladdtoofflinequiz = new moodle_url($pageurl, array('addonpage' => $page));
 
     // Print a button linking to the choose question type page.
@@ -1203,26 +1193,27 @@ function offlinequiz_question_tostring($question, $showicon = false,
     $formatoptions = new stdClass();
     $formatoptions->noclean = true;
     $formatoptions->para = false;
-    //$questiontext = strip_tags(format_text($question->questiontext, $question->questiontextformat, $formatoptions, $COURSE->id));
-    $questiontext = strip_tags(question_utils::to_plain_text($question->questiontext, $question->questiontextformat, array('noclean' => true, 'para' => false)));
+
+    $questiontext = strip_tags(question_utils::to_plain_text($question->questiontext, $question->questiontextformat,
+                                                             array('noclean' => true, 'para' => false)));
     $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
 
     $result .= '<span class="questionname" title="' . $questiontitle . '">';
     if ($shorttitle && strlen($questiontitle) > 25) {
         $questiontitle = shorten_text($questiontitle, 25, false, '...');
     }
-    
+
     if ($showicon) {
         $result .= print_question_icon($question, true);
         echo ' ';
     }
-    
+
     if ($shorttitle) {
         $result .= $questiontitle;
     } else {
         $result .= shorten_text(format_string($question->name), 200) . '</span>';
     }
-        
+
     if ($showquestiontext) {
         $result .= '<span class="questiontext" title="' . $questiontext . '">';
 
@@ -1266,7 +1257,6 @@ class question_bank_my_question_type_column extends question_bank_question_type_
         } else {
             echo $PAGE->get_renderer('question', 'bank')->qtype_icon($question->qtype);
         }
-//    echo print_question_icon($question);
     }
 }
 
@@ -1318,7 +1308,7 @@ class question_bank_add_to_offlinequiz_action_column extends question_bank_actio
     }
 
     protected function display_content($question, $rowclasses) {
-        // for RTL languages: switch right and left arrows
+        // For RTL languages: switch right and left arrows.
         if (right_to_left()) {
             $movearrow = 't/removeright';
         } else {
@@ -1329,7 +1319,7 @@ class question_bank_add_to_offlinequiz_action_column extends question_bank_actio
         } else {
             $disabled = false;
         }
-        
+
         $this->print_icon($movearrow, $this->stradd, $this->qbank->add_to_offlinequiz_url($question->id), $disabled);
     }
 
@@ -1394,7 +1384,7 @@ class offlinequiz_question_bank_view extends question_bank_view {
     protected $offlinequiz = false;
     /** @var int The maximum displayed length of the category info. */
     const MAX_TEXT_LENGTH = 200;
-    
+
     /**
      * Constructor
      * @param question_edit_contexts $contexts
@@ -1469,32 +1459,22 @@ class offlinequiz_question_bank_view extends question_bank_view {
             return;
         }
 
-// //        Display the current category.
-//         if (!$category = $this->get_current_category($cat)) {
-//             return;
-//         }
-//        $this->print_category_info($category);
-
         $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
         array_unshift($this->searchconditions,
                 new \core_question\bank\search\hidden_condition(!$showhidden));
         array_unshift($this->searchconditions,
                 new \core_question\bank\search\category_condition($cat, $recurse,
                         $editcontexts, $this->baseurl, $this->course, self::MAX_TEXT_LENGTH));
-        
-        
+
         echo $OUTPUT->box_start('generalbox questionbank');
-//         $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
-//                 $this->baseurl, $cat);
         $this->display_options_form($showquestiontext);
-        
-        // continues with list of questions
+
+        // Continues with list of questions.
         $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname),
                 $this->baseurl, $cat, $this->cm, $recurse, $page,
                 $perpage, $showhidden, $showquestiontext,
                 $this->contexts->having_cap('moodle/question:add'));
 
-//        $this->display_options($recurse, $showhidden, $showquestiontext);
         echo $OUTPUT->box_end();
     }
 
@@ -1544,9 +1524,10 @@ class offlinequiz_question_bank_view extends question_bank_view {
         echo '</div></noscript></fieldset></form>';
     }
 
-    /* overriding the function for gettting the question list.
+    /**
+     * Overriding the function for gettting the question list.
      * The queries returns multichoice and description questions only.
-    **/
+     */
     protected function build_query_sql($category, $recurse, $showhidden) {
         global $DB;
 
@@ -1595,7 +1576,7 @@ class offlinequiz_question_bank_view extends question_bank_view {
         $tests[] = 'q.category ' . $catidtest;
         $this->sqlparams = $params;
 
-        // JZ: For Offlinequizzes we only want to see multichoice and description questions
+        // JZ: For Offlinequizzes we only want to see multichoice and description questions.
         $tests[] = "(q.qtype = 'multichoice' OR q.qtype = 'multichoiceset' OR q.qtype = 'description')";
 
         // Build the SQL.
@@ -1635,9 +1616,9 @@ class offlinequiz_question_bank_view extends question_bank_view {
         $catcontext = context::instance_by_id($contextid);
 
         $canadd = has_capability('moodle/question:add', $catcontext);
-        $caneditall =has_capability('moodle/question:editall', $catcontext);
-        $canuseall =has_capability('moodle/question:useall', $catcontext);
-        $canmoveall =has_capability('moodle/question:moveall', $catcontext);
+        $caneditall = has_capability('moodle/question:editall', $catcontext);
+        $canuseall = has_capability('moodle/question:useall', $catcontext);
+        $canmoveall = has_capability('moodle/question:moveall', $catcontext);
 
         $this->create_new_question_form($category, $canadd);
 
@@ -1650,9 +1631,9 @@ class offlinequiz_question_bank_view extends question_bank_view {
         $questions = $this->load_page_questions($page, $perpage);
 
         echo '<div class="categorypagingbarcontainer">';
-        $pageing_url = new moodle_url('edit.php');
-        $r = $pageing_url->params($pageurl->params());
-        $pagingbar = new paging_bar($totalnumber, $page, $perpage, $pageing_url);
+        $pageingurl = new moodle_url('edit.php');
+        $r = $pageingurl->params($pageurl->params());
+        $pagingbar = new paging_bar($totalnumber, $page, $perpage, $pageingurl);
         $pagingbar->pagevar = 'qpage';
         echo $OUTPUT->render($pagingbar);
         echo '</div>';
@@ -1683,11 +1664,11 @@ class offlinequiz_question_bank_view extends question_bank_view {
         echo $OUTPUT->render($pagingbar);
         if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
             if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
-                $url = new moodle_url('edit.php', ($pageurl->params()+array('qperpage'=>1000)));
-                $showall = '<a href="'.$url.'">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+                $url = new moodle_url('edit.php', ($pageurl->params() + array('qperpage' => 1000)));
+                $showall = '<a href="' . $url . '">' . get_string('showall', 'moodle', $totalnumber) . '</a>';
             } else {
-                $url = new moodle_url('edit.php', ($pageurl->params()+array('qperpage'=>DEFAULT_QUESTIONS_PER_PAGE)));
-                $showall = '<a href="'.$url.'">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
+                $url = new moodle_url('edit.php', ($pageurl->params() + array('qperpage' => DEFAULT_QUESTIONS_PER_PAGE)));
+                $showall = '<a href="' . $url . '">' . get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
             }
             echo "<div class='paging'>$showall</div>";
         }
@@ -1695,13 +1676,13 @@ class offlinequiz_question_bank_view extends question_bank_view {
 
         echo '<div class="modulespecificbuttonscontainer">';
         if ($caneditall || $canmoveall || $canuseall) {
-            echo '<strong>&nbsp;'.get_string('withselected', 'question').':</strong><br />';
+            echo '<strong>&nbsp;' . get_string('withselected', 'question').':</strong><br />';
 
             if (function_exists('module_specific_buttons')) {
                 echo module_specific_buttons($this->cm->id, $cmoptions);
             }
 
-            // print delete and move selected question
+            // Print delete and move selected question.
             if ($caneditall) {
                 echo '<input type="submit" name="deleteselected" value="' . $strdelete . "\" />\n";
             }
@@ -1794,13 +1775,7 @@ function offlinequiz_print_status_bar($offlinequiz) {
             $dates[] = get_string('offlinequizwillopen', 'offlinequiz', userdate($offlinequiz->timeopen));
         }
     }
-    /* if ($offlinequiz->timeclose > 0) { */
-    /*  if ($timenow > $offlinequiz->timeclose) { */
-    /*      $dates[] = get_string('offlinequizclosed', 'offlinequiz', userdate($offlinequiz->timeclose)); */
-    /*  } else { */
-    /*      $dates[] = get_string('offlinequizcloseson', 'offlinequiz', userdate($offlinequiz->timeclose)); */
-    /*  } */
-    /* } */
+
     if (empty($dates)) {
         $dates[] = get_string('alwaysavailable', 'offlinequiz');
     }
@@ -1845,67 +1820,17 @@ function offlinequiz_print_choose_qtype_to_add_form($hiddenparams, array $allowe
     }
     $realqtypes = array('multichoice' => question_bank::get_qtype('multichoice'),
             'description' => question_bank::get_qtype('description'),
-            
+
     );
     if (question_bank::is_qtype_installed('multichoiceset') && $mcset = question_bank::get_qtype('multichoiceset')) {
         $realqtypes['multichoiceset'] = $mcset;
     }
 
     $fakeqtypes = array();
-//     foreach (question_bank::get_creatable_qtypes() as $qtypename => $qtype) {
-//         if ($allowedqtypes && !in_array($qtypename, $allowedqtypes)) {
-//             continue;
-//         }
-//         if ($qtype->is_real_question_type()) {
-//             $realqtypes[] = $qtype;
-//         } else {
-//             $fakeqtypes[] = $qtype;
-//         }
-//     }
 
     $renderer = $PAGE->get_renderer('question', 'bank');
     echo $renderer->qbank_chooser($realqtypes, $fakeqtypes, $PAGE->course, $hiddenparams);
 }
-
-// function offlinequiz_print_choose_qtype_to_add_form($hiddenparams) {
-//     global $cfg, $page, $output;
-
-//     echo '<div id="chooseqtypehead" class="hd">' . "\n";
-//     echo $output->heading(get_string('chooseqtypetoadd', 'question'), 3);
-//     echo "</div>\n";
-//     echo '<div id="chooseqtype">' . "\n";
-//     echo '<form action="' . $cfg->wwwroot . '/question/question.php" method="get"><div id="qtypeformdiv">' . "\n";
-//     foreach ($hiddenparams as $name => $value) {
-//         echo '<input type="hidden" name="' . s($name) . '" value="' . s($value) . '" />' . "\n";
-//     }
-//     echo "</div>\n";
-//     echo '<div class="qtypes">' . "\n";
-//     echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
-//     echo '<div class="realqtypes">' . "\n";
-//     print_qtype_to_add_option(question_bank::get_qtype('multichoice'));
-//     if (question_bank::is_qtype_installed('multichoiceset') && $mcset = question_bank::get_qtype('multichoiceset')) {
-//       print_qtype_to_add_option($mcset);
-//     }
- //  print_qtype_to_add_option(question_bank::get_qtype('description'));
-//     echo "</div>\n";
-
-//     echo "</div>\n";
-//     echo '<div class="submitbuttons">' . "\n";
-//     echo '<input type="submit" value="' . get_string('next') . '" id="chooseqtype_submit" />' . "\n";
-//     echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
-//     echo "</div></form>\n";
-//     echo "</div>\n";
- 
-//     $page->requires->js('/question/qengine.js');
-//     $module = array(
-//             'name'      => 'qbank',
-//             'fullpath'  => '/question/qbank.js',
-//             'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
-//             'strings'   => array(),
-//             'async'     => false,
-//     );
-//     $page->requires->js_init_call('qtype_chooser.init', array('chooseqtype'), false, $module);
-// }
 
 /**
  * Print a button for creating a new question. This will open question/addquestion.php,
@@ -1924,7 +1849,7 @@ function offlinequiz_create_new_question_button($categoryid, $params, $caption, 
     static $choiceformprinted = false;
     $params['category'] = $categoryid;
     $url = new moodle_url('/question/addquestion.php', $params);
-    echo $OUTPUT->single_button($url, $caption, 'get', array('disabled'=>$disabled, 'title'=>$tooltip));
+    echo $OUTPUT->single_button($url, $caption, 'get', array('disabled' => $disabled, 'title' => $tooltip));
 
     if (!$choiceformprinted) {
         echo '<div id="qtypechoicecontainer">';

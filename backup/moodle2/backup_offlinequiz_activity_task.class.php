@@ -73,16 +73,16 @@ class backup_offlinequiz_activity_task extends backup_activity_task {
         $base = preg_quote($CFG->wwwroot, '/');
 
         // Link to the list of offlinequizzes.
-        $search="/(".$base."\/mod\/offlinequiz\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@OFFLINEQUIZINDEX*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/offlinequiz\/index.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@OFFLINEQUIZINDEX*$2@$', $content);
 
         // Link to offlinequiz view by moduleid.
-        $search="/(".$base."\/mod\/offlinequiz\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@OFFLINEQUIZVIEWBYID*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/offlinequiz\/view.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@OFFLINEQUIZVIEWBYID*$2@$', $content);
 
         // Link to offlinequiz view by offlinequizid.
-        $search="/(".$base."\/mod\/offlinequiz\/view.php\?q\=)([0-9]+)/";
-        $content= preg_replace($search, '$@OFFLINEQUIZVIEWBYQ*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/offlinequiz\/view.php\?q\=)([0-9]+)/";
+        $content = preg_replace($search, '$@OFFLINEQUIZVIEWBYQ*$2@$', $content);
 
         return $content;
     }

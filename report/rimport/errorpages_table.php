@@ -93,7 +93,7 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
         echo '&nbsp;&nbsp;';
         $options = array('check' => get_string('checkparts', 'offlinequiz'),
                 'uncheck' => get_string('uncheckparts', 'offlinequiz'));
-        echo html_writer::select($options, 'action', '', array(''=>'choosedots'),
+        echo html_writer::select($options, 'action', '', array('' => 'choosedots'),
                 array('onchange' => 'this.form.submit(); return true;'));
 
         // Choose_from_menu($options, 'action', '', get_string('withselected', 'offlinequiz'),

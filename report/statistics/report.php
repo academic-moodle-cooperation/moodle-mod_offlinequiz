@@ -456,7 +456,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $letterstr = 'ABCDEFGH';
         $prefix = get_string('statisticsforgroup', 'offlinequiz_statistics');
         foreach ($groups as $group) {
-            $options[$group->number] = $prefix . ' ' . $letterstr[$group->number -1];
+            $options[$group->number] = $prefix . ' ' . $letterstr[$group->number - 1];
         }
         $urlparams = array('id' => $cm->id, 'mode' => 'statistics', 'statmode' => $pageoptions['statmode']);
         if (key_exists('offlinegroup', $pageoptions)) {
@@ -712,7 +712,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     'bestgrade' => 'scale_to_maxgrade',
                     'worstgrade' => 'scale_to_maxgrade',
                     'allattemptsavg' => 'scale_to_maxgrade',
-                    'median' =>  'scale_to_maxgrade',
+                    'median' => 'scale_to_maxgrade',
                     'standarddeviation' => 'scale_to_maxgrade', // The 'summarks_as_percentage'.
                     'skewness' => 'number_format',
                     'kurtosis' => 'number_format',
@@ -1103,16 +1103,16 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         // Median ...
         if ($s % 2 == 0) {
             // An even number of attempts.
-            $limitoffset = $s/2 - 1;
+            $limitoffset = $s / 2 - 1;
             $limit = 2;
         } else {
-            $limitoffset = floor($s/2);
+            $limitoffset = floor($s / 2);
             $limit = 1;
         }
         $sql = "SELECT id, sumgrades
-                FROM $fromqa
-                WHERE $whereqa
-                ORDER BY sumgrades";
+                  FROM $fromqa
+                 WHERE $whereqa
+              ORDER BY sumgrades";
 
         $medianmarks = $DB->get_records_sql_menu($sql, $qaparams, $limitoffset, $limit);
 
@@ -1127,7 +1127,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     SUM(POWER((offlinequiza.sumgrades - $mean), 4)) AS power4
                     FROM $fromqa
                     WHERE $whereqa";
-            $params = array('mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean)+$qaparams;
+            $params = array('mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean) + $qaparams;
 
             $powers = $DB->get_record_sql($sql, $params, MUST_EXIST);
 
@@ -1141,22 +1141,22 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             if ($s > 2) {
                 // See http://docs.moodle.org/dev/
                 //      Offlinequiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis.
-                $m2= $powers->power2 / $s;
-                $m3= $powers->power3 / $s;
-                $m4= $powers->power4 / $s;
+                $m2 = $powers->power2 / $s;
+                $m3 = $powers->power3 / $s;
+                $m4 = $powers->power4 / $s;
 
-                $k2= $s*$m2/($s-1);
-                $k3= $s*$s*$m3/(($s-1)*($s-2));
+                $k2 = $s * $m2 / ($s - 1);
+                $k3 = $s * $s * $m3 / (($s - 1) * ($s - 2));
                 if ($k2) {
-                    $offlinequizstats->skewness = $k3 / (pow($k2, 3/2));
+                    $offlinequizstats->skewness = $k3 / (pow($k2, 3 / 2));
                 }
             }
 
             // Kurtosis.
             if ($s > 3) {
-                $k4= $s*$s*((($s+1)*$m4)-(3*($s-1)*$m2*$m2))/(($s-1)*($s-2)*($s-3));
+                $k4 = $s * $s * ((($s + 1) * $m4) - (3 * ($s - 1) * $m2 * $m2)) / (($s - 1) * ($s - 2) * ($s - 3));
                 if ($k2) {
-                    $offlinequizstats->kurtosis = $k4 / ($k2*$k2);
+                    $offlinequizstats->kurtosis = $k4 / ($k2 * $k2);
                 }
             }
         }
@@ -1172,7 +1172,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     $offlinequizstats->errorratio = null;
                     $offlinequizstats->standarderror = null;
                 } else {
-                    $offlinequizstats->cic = (100 * $p / ($p -1)) * (1 - ($qstats->get_sum_of_mark_variance()) / $k2);
+                    $offlinequizstats->cic = (100 * $p / ($p - 1)) * (1 - ($qstats->get_sum_of_mark_variance()) / $k2);
                     $offlinequizstats->errorratio = 100 * sqrt(1 - ($offlinequizstats->cic / 100));
                     $offlinequizstats->standarderror = $offlinequizstats->errorratio * $offlinequizstats->standarddeviation / 100;
                 }

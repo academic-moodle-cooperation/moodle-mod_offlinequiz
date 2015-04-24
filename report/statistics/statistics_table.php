@@ -232,7 +232,7 @@ class offlinequiz_statistics_table extends flexible_table {
             return '';
         }
 
-        return format_float($question->_stats->facility*100, 2) . '%';
+        return format_float($question->_stats->facility * 100, 2) . '%';
     }
 
     /**

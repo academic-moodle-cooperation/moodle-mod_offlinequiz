@@ -1,5 +1,5 @@
 <?php
-// This file is for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz_statistics for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -62,8 +62,6 @@ $string['errorrandom'] = 'Es ist ein Fehler bei den Daten des Unterthemas aufget
 $string['errorratio'] = 'Fehlerquotient';
 $string['errorstatisticsquestions'] = 'Fehler beim Ermitteln von Daten zur Berechnung der Statistiken für Fragebewertungen';
 $string['facility'] = 'Leichtigkeitsindex';
-//$string['firstattemptsavg'] = 'Durchschnitt bei erstem Versuch';
-//$string['firstattemptscount'] = 'Anzahl der vollständig bewerteten Ergebnisse';
 $string['frequency'] = 'Frequenz';
 $string['intended_weight'] = 'Beabsichtigte Gewichtung';
 $string['kurtosis'] = 'Wölbung der Bewertungsverteilung (Kurtosis)';

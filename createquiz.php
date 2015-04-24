@@ -308,7 +308,7 @@ if ($mode == 'preview') {
     // O==============================================================.
     // O TAB for creating, downloading and deleting PDF forms.
     // O==============================================================.
-} else if ($mode=='createpdfs') {
+} else if ($mode == 'createpdfs') {
 
     // Print the heading.
     echo $OUTPUT->heading(get_string('downloadpdfs', 'offlinequiz'));
@@ -317,7 +317,7 @@ if ($mode == 'preview') {
     if (!empty($emptygroups)) {
         echo $OUTPUT->box_start('linkbox');
         foreach ($emptygroups as $groupnumber) {
-            $groupletter = $letterstr[$groupnumber -1];
+            $groupletter = $letterstr[$groupnumber - 1];
             echo $OUTPUT->notification(get_string('noquestionsfound', 'offlinequiz', $groupletter), 'notifyproblem');
         }
         echo $OUTPUT->notification(get_string('nopdfscreated', 'offlinequiz'), 'notifyproblem');
@@ -405,7 +405,7 @@ if ($mode == 'preview') {
         echo $OUTPUT->box_start('generalbox linkbox docsbox');
 
         foreach ($groups as $group) {
-            $groupletter = $letterstr[$group->number -1];
+            $groupletter = $letterstr[$group->number - 1];
 
             if (!$offlinequiz->docscreated) {
                 if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
@@ -469,7 +469,7 @@ if ($mode == 'preview') {
         echo '<br/>';
 
         foreach ($groups as $group) {
-            $groupletter = $letterstr[$group->number -1];
+            $groupletter = $letterstr[$group->number - 1];
 
             if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
                 print_error("Missing data for group " . $groupletter,
@@ -516,7 +516,7 @@ if ($mode == 'preview') {
         echo $OUTPUT->box_start('generalbox linkbox docsbox');
 
         foreach ($groups as $group) {
-            $groupletter = $letterstr[$group->number -1];
+            $groupletter = $letterstr[$group->number - 1];
 
             if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
                 print_error("Missing data for group " . $groupletter,

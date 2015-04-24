@@ -204,26 +204,26 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             echo $OUTPUT->box_end();
         }
 
-        $import_form = new offlinequiz_upload_form($reporturl,
+        $importform = new offlinequiz_upload_form($reporturl,
                 array('offlinequiz' => $offlinequiz, 'context' => $this->context));
 
         // Has the user submitted a file?
-        if ($fromform = $import_form->get_data() && confirm_sesskey()) {
+        if ($fromform = $importform->get_data() && confirm_sesskey()) {
             // File checks out ok.
             $fileisgood = false;
 
             // Work out if this is an uploaded file
             // or one from the filesarea.
-            $realfilename = $import_form->get_new_filename('newfile');
+            $realfilename = $importform->get_new_filename('newfile');
             // Create a unique temp dir.
-            srand(microtime()*1000000);
+            srand(microtime() * 1000000);
             $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
             $dirname = "{$CFG->tempdir}/offlinequiz/import/$unique";
             check_dir_exists($dirname, true, true);
 
             $importfile = $dirname . '/' . $realfilename;
 
-            if (!$result = $import_form->save_file('newfile', $importfile, true)) {
+            if (!$result = $importform->save_file('newfile', $importfile, true)) {
                 throw new moodle_exception('uploadproblem');
             }
 
@@ -322,7 +322,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     // Print the table with answer forms that need correction.
                     $this->print_error_report($offlinequiz);
                     // Display the upload form.
-                    $import_form->display();
+                    $importform->display();
             }
         }
     }

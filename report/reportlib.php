@@ -52,7 +52,7 @@ function offlinequiz_report_list($context) {
     $reports = $DB->get_records('offlinequiz_reports', null, 'displayorder DESC', 'name, capability');
     $reportdirs = get_plugin_list('offlinequiz');
 
-    // Order the reports tab in descending order of displayorder
+    // Order the reports tab in descending order of displayorder.
     $reportcaps = array();
     foreach ($reports as $key => $report) {
         if (array_key_exists($report->name, $reportdirs)) {
@@ -60,7 +60,7 @@ function offlinequiz_report_list($context) {
         }
     }
 
-    // Add any other reports, which are on disc but not in the DB, on the end
+    // Add any other reports, which are on disc but not in the DB, on the end.
     foreach ($reportdirs as $reportname => $notused) {
         if (!isset($reportcaps[$reportname])) {
             $reportcaps[$reportname] = null;
@@ -75,21 +75,9 @@ function offlinequiz_report_list($context) {
             $reportlist[] = $name;
         }
     }
-    //     $reportlist = array();
-    //     $capability = 'mod/offlinequiz:viewreports';
-    //     if (has_capability($capability, $context)) {
-    //     	$reportlist = array('overview', 'rimport', 'regrade');
-    //     }
+
     return $reportlist;
 }
-
-// /**
-//  * Get the default report for the current user.
-//  * @param object $context the offlinequiz context.
-//  */
-// function offlinequiz_report_default_report($context) {
-//     return reset(offlinequiz_report_list($context));
-// }
 
 function offlinequiz_report_unindex($datum) {
     if (!$datum) {
@@ -137,25 +125,7 @@ function offlinequiz_report_get_significant_questions($offlinequiz) {
         $questions[$id]->number = $number;
         $number += $questions[$id]->length;
     }
-    
-//     $qsbyslot = array();
-//     $number = 1;
-//     foreach (explode(',', $questionids) as $key => $id) {
-//         if (!array_key_exists($id, $questions)) {
-//             continue;
-//         }
 
-//         $slot = $key + 1;
-//         $question = $questions[$id];
-//         $question->slot = $slot;
-//         $question->number = $number;
-
-//         $qsbyslot[$slot] = $question;
-
-//         $number += $question->length;
-//     }
-
-//     return $qsbyslot;
     return $questions;
 }
 

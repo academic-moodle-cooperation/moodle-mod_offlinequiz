@@ -58,7 +58,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
                      JOIN {user} u on u.id = res.userid
                     WHERE res.offlinequizid = :offlinequizid
                       AND res.status = 'complete'";
-        $resparams =  array('offlinequizid' => $offlinequiz->id);
+        $resparams = array('offlinequizid' => $offlinequiz->id);
 
         if (!$results = $DB->get_records_sql($ressql, $resparams)) {
             $url = new moodle_url('/mod/offlinequiz/report.php', array('id' => $cm->id));

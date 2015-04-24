@@ -71,7 +71,7 @@ $PAGE->set_pagelayout('report');
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 
-list($maxquestions, $maxanswers, $formtype, $questionsperpage) =  offlinequiz_get_question_numbers($offlinequiz, $groups);
+list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $groups);
 
 // Get the corners either from the request parameters of from the offlinequiz_page_corners table.
 $corners = array();
@@ -704,7 +704,7 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
                     $group->number,
                     $changed);
 
-            $file_record = array(
+            $filerecord = array(
                     'contextid' => $context->id,
                     'component' => 'mod_offlinequiz',
                     'filearea'  => 'imagefiles',
@@ -713,15 +713,15 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
                     'filename'  => $scanner->filename . '_warning');
 
             // Create a unique temp dir.
-            srand(microtime()*1000000);
+            srand(microtime() * 1000000);
             $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
             $dirname = "{$CFG->tempdir}/offlinequiz/import/$unique";
             check_dir_exists($dirname, true, true);
 
-            $warningpathname = $dirname . '/' . $file_record['filename'];
+            $warningpathname = $dirname . '/' . $filerecord['filename'];
 
             imagepng($scanner->image, $warningpathname);
-            $newfile = $scanner->save_image($file_record, $warningpathname);
+            $newfile = $scanner->save_image($filerecord, $warningpathname);
             $scannedpage->warningfilename = $newfile->get_filename();
 
             $DB->set_field('offlinequiz_scanned_pages', 'warningfilename', $newfile->get_filename(),
@@ -1121,8 +1121,8 @@ if ($sheetloaded) {
         if (!$groupnumber || $groupnumber > $offlinequiz->numgroups) {
             echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/blue.gif\" border=\"0\" id=\"g$x\"" .
               " style=\"position:absolute; top:" .
-              $hotspot->y."px; left:" . $hotspot->x."px; cursor:pointer\" onClick=\"set_group(this, $x)\">";
-        } else if ($groupnumber == $x+1) {
+              $hotspot->y . "px; left:" . $hotspot->x . "px; cursor:pointer\" onClick=\"set_group(this, $x)\">";
+        } else if ($groupnumber == $x + 1) {
             echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\" border=\"0\" id=\"g$x\"" .
               " style=\"position:absolute; top:" .
               $hotspot->y."px; left:" . $hotspot->x."px; cursor:pointer\" onClick=\"set_group(this, $x)\">";

@@ -136,9 +136,9 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
 
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
-$offlinequiz_reordertool = optional_param('reordertool', -1, PARAM_BOOL);
-$offlinequiz_gradetool = optional_param('gradetool', -1, PARAM_BOOL);
-$offlinequiz_qbanktool = optional_param('qbanktool', -1, PARAM_BOOL);
+$offlinequizreordertool = optional_param('reordertool', -1, PARAM_BOOL);
+$offlinequizgradetool = optional_param('gradetool', -1, PARAM_BOOL);
+$offlinequizqbanktool = optional_param('qbanktool', -1, PARAM_BOOL);
 $scrollpos = optional_param('scrollpos', '', PARAM_INT);
 
 list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
@@ -160,8 +160,8 @@ if ($groupnumber === -1) {
 $offlinequiz->groupnumber = $groupnumber;
 $thispageurl->param('groupnumber', $offlinequiz->groupnumber);
 
-if ($offlinequiz_group = offlinequiz_get_group($offlinequiz, $groupnumber)) {
-    $offlinequiz->groupid = $offlinequiz_group->id;
+if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
+    $offlinequiz->groupid = $offlinequizgroup->id;
     $groupquestions = offlinequiz_get_group_questions($offlinequiz);
     $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions);
     // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
@@ -179,10 +179,10 @@ $docscreated = $offlinequiz->docscreated;
 $PAGE->set_url($thispageurl);
 
 $pagetitle = get_string('editingofflinequiz', 'offlinequiz');
-if ($offlinequiz_reordertool) {
+if ($offlinequizreordertool) {
     $pagetitle = get_string('orderingofflinequiz', 'offlinequiz');
 }
-if ($offlinequiz_gradetool) {
+if ($offlinequizgradetool) {
     $pagetitle = get_string('gradingofflinequiz', 'offlinequiz');
 }
 // Get the course object and related bits.
@@ -635,22 +635,22 @@ $PAGE->requires->js_init_call('offlinequiz_edit_init', null, false, $module);
 $currenttab = 'editq';
 
 // See if we are in re-order mode or in edit mode.
-if ($offlinequiz_reordertool > -1) {
-    $thispageurl->param('reordertool', $offlinequiz_reordertool);
-    set_user_preference('offlinequiz_reordertab', $offlinequiz_reordertool);
+if ($offlinequizreordertool > -1) {
+    $thispageurl->param('reordertool', $offlinequizreordertool);
+    set_user_preference('offlinequiz_reordertab', $offlinequizreordertool);
 } else {
-    $offlinequiz_reordertool = get_user_preferences('offlinequiz_reordertab', 0);
+    $offlinequizreordertool = get_user_preferences('offlinequiz_reordertab', 0);
 }
-if ($offlinequiz_gradetool > -1) {
-    $thispageurl->param('gradetool', $offlinequiz_gradetool);
-    set_user_preference('offlinequiz_gradetab', $offlinequiz_gradetool);
+if ($offlinequizgradetool > -1) {
+    $thispageurl->param('gradetool', $offlinequizgradetool);
+    set_user_preference('offlinequiz_gradetab', $offlinequizgradetool);
 } else {
-    $offlinequiz_gradetool = get_user_preferences('offlinequiz_gradetab', 0);
+    $offlinequizgradetool = get_user_preferences('offlinequiz_gradetab', 0);
 }
 
-if ($offlinequiz_reordertool) {
+if ($offlinequizreordertool) {
     $mode = 'reorder';
-} else if ($offlinequiz_gradetool) {
+} else if ($offlinequizgradetool) {
     $mode = 'grade';
 } else {
     $mode = 'edit';
@@ -659,15 +659,15 @@ if ($offlinequiz_reordertool) {
 require_once('tabs.php');
 
 // See if the user wants to see the questionbank or not.
-if ($offlinequiz_qbanktool > -1) {
-    $thispageurl->param('qbanktool', $offlinequiz_qbanktool);
-    set_user_preference('offlinequiz_qbanktool_open', $offlinequiz_qbanktool);
+if ($offlinequizqbanktool > -1) {
+    $thispageurl->param('qbanktool', $offlinequizqbanktool);
+    set_user_preference('offlinequiz_qbanktool_open', $offlinequizqbanktool);
 } else {
-    $offlinequiz_qbanktool = get_user_preferences('offlinequiz_qbanktool_open', 1);
+    $offlinequizqbanktool = get_user_preferences('offlinequiz_qbanktool_open', 1);
 }
 
 
-if ($offlinequiz_qbanktool) {
+if ($offlinequizqbanktool) {
     $bankclass = '';
     $offlinequizcontentsclass = '';
 } else {
@@ -723,7 +723,7 @@ if ($offlinequiz->shufflequestions) {
     $repaginatingdisabledhtml = '';
     $repaginatingdisabled = false;
 }
-if ($offlinequiz_reordertool) {
+if ($offlinequizreordertool) {
     echo '<div class="repaginatecommand"><button id="repaginatecommand" ' .
             $repaginatingdisabledhtml.'>'.
             get_string('repaginatecommand', 'offlinequiz').'...</button>';
@@ -735,16 +735,16 @@ $letterstr = 'ABCDEFGHIJKL';
 $groupletters = array();
 $groupoptions = array();
 
-for ($i=1; $i<=$offlinequiz->numgroups; $i++) {
-    $groupletters[$i] = $letterstr[$i-1];
-    $groupoptions[$i] = get_string('questionsingroup', 'offlinequiz') . ' ' . $letterstr[$i-1];
+for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
+    $groupletters[$i] = $letterstr[$i - 1];
+    $groupoptions[$i] = get_string('questionsingroup', 'offlinequiz') . ' ' . $letterstr[$i - 1];
 }
 
-if ($offlinequiz_reordertool) {
+if ($offlinequizreordertool) {
     echo $OUTPUT->heading_with_help(get_string('orderingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
             get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')',
                 'orderandpaging', 'offlinequiz');
-} else if ($offlinequiz_gradetool) {
+} else if ($offlinequizgradetool) {
     echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
             get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
 } else {
@@ -805,7 +805,7 @@ if (!empty($notifystrings)) {
     echo $OUTPUT->box('<p>' . implode('</p><p>', $notifystrings) . '</p>', 'statusdisplay');
 }
 
-if ($offlinequiz_reordertool) {
+if ($offlinequizreordertool) {
     $perpage = array();
     $perpage[0] = get_string('allinone', 'offlinequiz');
     for ($i = 1; $i <= 50; ++$i) {
@@ -833,14 +833,14 @@ if ($offlinequiz_reordertool) {
 }
 
 // Display the list of questions in the offlinequiz group.
-if ($offlinequiz_reordertool) {
+if ($offlinequizreordertool) {
     echo '<div class="reorder">';
 } else {
     echo '<div class="editq">';
 
 }
 offlinequiz_print_question_list($offlinequiz, $thispageurl, true,
-        $offlinequiz_reordertool, $offlinequiz_gradetool, $offlinequiz_qbanktool, $docscreated, $defaultcategoryobj);
+        $offlinequizreordertool, $offlinequizgradetool, $offlinequizqbanktool, $docscreated, $defaultcategoryobj);
 
 echo '</div>';
 

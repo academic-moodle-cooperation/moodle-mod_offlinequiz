@@ -138,8 +138,8 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
                 // We remember the directory name to be able to remove it later.
                 if (empty($dirname)) {
-                    $path_parts = pathinfo($data->filename);
-                    $dirname = $path_parts['dirname'];
+                    $pathparts = pathinfo($data->filename);
+                    $dirname = $pathparts['dirname'];
                 }
 
                 set_time_limit(120);
@@ -231,7 +231,7 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
             echo date('Y-m-d-H:i') . ": Import queue with id $job->id imported.\n\n";
 
-            if ($user = $DB->get_record('user',  array('id' =>$job->importuserid))) {
+            if ($user = $DB->get_record('user',  array('id' => $job->importuserid))) {
                 $mailtext = get_string('importisfinished', 'offlinequiz', format_text($offlinequiz->name, FORMAT_PLAIN));
 
                 // How many pages have been imported successfully.
