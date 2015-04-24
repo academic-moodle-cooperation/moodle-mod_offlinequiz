@@ -63,7 +63,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         }
 
         // Name.
-        $mform->addElement('text', 'name', get_string('name', 'offlinequiz'), array('size'=>'64'));
+        $mform->addElement('text', 'name', get_string('name', 'offlinequiz'), array('size' => '64'));
 
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -75,10 +75,10 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         // Introduction.
         $this->add_intro_editor(false, get_string('introduction', 'offlinequiz'));
 
-        $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), array('optional'=>true));
+        $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), array('optional' => true));
 
         if (!$offlinequiz || !$offlinequiz->docscreated) {
-            for ($i=1; $i<=6; $i++) {
+            for ($i = 1; $i <= 6; $i++) {
                 $groupmenu[$i] = "$i";
             }
             $mform->addElement('select', 'numgroups', get_string('numbergroups', 'offlinequiz'), $groupmenu);
@@ -148,7 +148,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $mform->addElement('static', 'pdfintro', get_string('pdfintro', 'offlinequiz'), $offlinequiz->pdfintro);
         }
         $mform->setType('pdfintro', PARAM_RAW);
-        $mform->setDefault('pdfintro', array('text' =>  get_string('pdfintrotext', 'offlinequiz')));
+        $mform->setDefault('pdfintro', array('text' => get_string('pdfintrotext', 'offlinequiz')));
         $mform->addHelpButton('pdfintro', 'pdfintro', "offlinequiz");
 
         unset($options);
@@ -174,7 +174,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'reviewoptionshdr', get_string("reviewoptions", "offlinequiz"));
         $mform->addHelpButton('reviewoptionshdr', 'reviewoptions', 'offlinequiz');
 
-        $closedoptionsgrp =array();
+        $closedoptionsgrp = array();
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'attemptclosed', '', get_string('theattempt', 'offlinequiz'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'correctnessclosed', '', get_string('whethercorrect', 'question'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'marksclosed', '', get_string('marks', 'offlinequiz'));

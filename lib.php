@@ -37,36 +37,35 @@ defined('MOODLE_INTERNAL') || die();
 //  global as this file can be included inside a function scope. However, using the global variables
 //  at the module level is not recommended.
 
-// CONSTANTS
+// CONSTANTS.
 
-//  * The different review options are stored in the bits of $offlinequiz->review.
-//  * These constants help to extract the options.
-//  * Originally this method was copied from the Moodle 1.9 quiz module. We use:
-//  * 111111100000000000
-define('OFFLINEQUIZ_REVIEW_ATTEMPT',          0x1000);  // Show responses
-define('OFFLINEQUIZ_REVIEW_MARKS',            0x2000);  // Show scores
-define('OFFLINEQUIZ_REVIEW_SPECIFICFEEDBACK', 0x4000);  // Show feedback
-define('OFFLINEQUIZ_REVIEW_RIGHTANSWER',      0x8000);  // Show correct answers
-define('OFFLINEQUIZ_REVIEW_GENERALFEEDBACK',  0x10000); // Show general feedback
-define('OFFLINEQUIZ_REVIEW_SHEET',            0x20000); // Show scanned sheet
-define('OFFLINEQUIZ_REVIEW_CORRECTNESS',      0x40000); // Show scanned sheet
-define('OFFLINEQUIZ_REVIEW_GRADEDSHEET',      0x800); // Show scanned sheet
+// The different review options are stored in the bits of $offlinequiz->review.
+// These constants help to extract the options.
+// Originally this method was copied from the Moodle 1.9 quiz module. We use:
+// 111111100000000000.
+define('OFFLINEQUIZ_REVIEW_ATTEMPT',          0x1000);  // Show responses.
+define('OFFLINEQUIZ_REVIEW_MARKS',            0x2000);  // Show scores.
+define('OFFLINEQUIZ_REVIEW_SPECIFICFEEDBACK', 0x4000);  // Show feedback.
+define('OFFLINEQUIZ_REVIEW_RIGHTANSWER',      0x8000);  // Show correct answers.
+define('OFFLINEQUIZ_REVIEW_GENERALFEEDBACK',  0x10000); // Show general feedback.
+define('OFFLINEQUIZ_REVIEW_SHEET',            0x20000); // Show scanned sheet.
+define('OFFLINEQUIZ_REVIEW_CORRECTNESS',      0x40000); // Show scanned sheet.
+define('OFFLINEQUIZ_REVIEW_GRADEDSHEET',      0x800); // Show scanned sheet.
 
-// Define constants for cron job status
+// Define constants for cron job status.
 define('OQ_STATUS_PENDING', 1);
 define('OQ_STATUS_OPERATING', 2);
 define('OQ_STATUS_PROCESSED', 3);
 define('OQ_STATUS_NEEDS_CORRECTION', 4);
 define('OQ_STATUS_DOUBLE', 5);
 
-
 /*
- * @var int If start and end date for the offline quiz are more than this many seconds apart
- * they will be represented by two separate events in the calendar
+ * If start and end date for the offline quiz are more than this many seconds apart
+ * they will be represented by two separate events in the calendar.
  */
-define('OFFLINEQUIZ_MAX_EVENT_LENGTH', 5*24*60*60); // 5 days.
+define('OFFLINEQUIZ_MAX_EVENT_LENGTH', 5 * 24 * 60 * 60); // 5 days.
 
-// FUNCTIONS
+// FUNCTIONS.
 
 /**
  * Given an object containing all the necessary data,
@@ -130,7 +129,7 @@ function offlinequiz_update_instance($offlinequiz) {
     $offlinequiz->timemodified = time();
     $offlinequiz->id = $offlinequiz->instance;
 
-    // Remember the old values of the shuffle settings
+    // Remember the old values of the shuffle settings.
     $shufflequestions = $DB->get_field('offlinequiz', 'shufflequestions', array('id' => $offlinequiz->id));
     $shuffleanswers = $DB->get_field('offlinequiz', 'shuffleanswers', array('id' => $offlinequiz->id));
 
@@ -142,7 +141,7 @@ function offlinequiz_update_instance($offlinequiz) {
 
     // Update the database.
     if (! $DB->update_record('offlinequiz', $offlinequiz)) {
-        return false;  // some error occurred
+        return false;  // Some error occurred.
     }
 
     // Do the processing required after an add or an update.
@@ -169,7 +168,7 @@ function offlinequiz_update_instance($offlinequiz) {
  */
 function offlinequiz_delete_instance($id) {
     global $DB, $CFG;
-    
+
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
     require_once($CFG->dirroot . '/calendar/lib.php');
 
@@ -217,13 +216,13 @@ function offlinequiz_delete_instance($id) {
     offlinequiz_grade_item_delete($offlinequiz);
 
     // All the tables with no dependencies...
-    $tables_to_purge = array(
+    $tablestopurge = array(
             'offlinequiz_groups' => 'offlinequizid',
             'offlinequiz_q_instances' => 'offlinequizid',
             'offlinequiz' => 'id'
     );
 
-    foreach ($tables_to_purge as $table => $keyfield) {
+    foreach ($tablestopurge as $table => $keyfield) {
         if (! $DB->delete_records($table, array($keyfield => $offlinequiz->id))) {
             $result = false;
         }
@@ -269,7 +268,7 @@ function offlinequiz_question_pluginfile($course, $context, $component,
 
     list($context, $course, $cm) = get_context_info_array($context->id);
     require_login($course, false, $cm);
-    
+
     if (!has_capability('mod/offlinequiz:viewreports', $context)) {
         // If the user is not a teacher then check whether a complete result exists.
         if (!$result = $DB->get_record('offlinequiz_results', array('usageid' => $qubaid, 'status' => 'complete'))) {
@@ -293,7 +292,7 @@ function offlinequiz_question_pluginfile($course, $context, $component,
 
 /**
  * Serve questiontext files in the question text when they are displayed in a report.
- * 
+ *
  * @param context $previewcontext the quiz context
  * @param int $questionid the question id.
  * @param context $filecontext the file (question) context
@@ -304,7 +303,7 @@ function offlinequiz_question_pluginfile($course, $context, $component,
  * @param array $options additional options affecting the file serving.
  */
 function offlinequiz_question_preview_pluginfile($previewcontext, $questionid, $filecontext, $filecomponent, $filearea,
-         $args, $forcedownload, $options = array()) { 
+         $args, $forcedownload, $options = array()) {
      global $CFG;
 
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
@@ -323,20 +322,17 @@ function offlinequiz_question_preview_pluginfile($previewcontext, $questionid, $
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         send_file_not_found();
     }
-    error_log($file->get_filename());
     send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**
  * Serve image files in the answer text when they are displayed in the preview
- * 
+ *
  * @param context $context the context
  * @param int $answerid the answer id
  * @param array $args remaining file args
  * @param bool $forcedownload
  */
-// questiontext url http://131.130.103.117/mod_offlinequiz/pluginfile.php/1365/question/questiontext_preview/offlinequiz/7894/thomas1.jpg
-//                  http://131.130.103.117/mod_offlinequiz/pluginfile.php/1365/question/answertext_preview/offlinequiz/32080/P1070019.JPG
 function offlinequiz_answertext_preview_pluginfile($context, $answerid, $args, $forcedownload, array $options=array()) {
     global $CFG;
 
@@ -355,7 +351,7 @@ function offlinequiz_answertext_preview_pluginfile($context, $answerid, $args, $
 
 /**
  * Send a file in the text of an answer.
- * 
+ *
  * @param int $questionid the question id
  * @param array $args the remaining file arguments (file path).
  * @param bool $forcedownload whether the user must be forced to download the file.
@@ -399,7 +395,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
         return false;
     }
 
-    // 'pdfs' area is served by pluginfile.php
+    // The file area 'pdfs' is served by pluginfile.php.
     $fileareas = array('pdfs', 'imagefiles');
     if (!in_array($filearea, $fileareas)) {
         return false;
@@ -424,7 +420,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
         }
     } else {
 
-        // Get the corresponding scanned pages. There might be several in case an image file is used twice
+        // Get the corresponding scanned pages. There might be several in case an image file is used twice.
         if (!$scannedpages = $DB->get_records('offlinequiz_scanned_pages',
                 array('offlinequizid' => $offlinequiz->id, 'warningfilename' => $file->get_filename()))) {
             if (!$scannedpages = $DB->get_records('offlinequiz_scanned_pages', array('offlinequizid' => $offlinequiz->id,
@@ -444,14 +440,14 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
                 return false;
             }
 
-            // check whether the student is allowed to see scanned sheets.
+            // Check whether the student is allowed to see scanned sheets.
             $options = offlinequiz_get_review_options($offlinequiz, $result, $context);
             if ($options->sheetfeedback == question_display_options::HIDDEN and
                     $options->gradedsheetfeedback == question_display_options::HIDDEN) {
                 return false;
             }
 
-            // if we found a page of a complete result that belongs to the user, we can send the file.
+            // If we found a page of a complete result that belongs to the user, we can send the file.
             if ($result->userid == $USER->id) {
                 send_stored_file($file, 86400, 0, $forcedownload);
                 return true;
@@ -462,16 +458,16 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
 
 /**
  * Return a list of page types
- * 
+ *
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
 function offlinequiz_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    $module_pagetype = array(
-            'mod-offlinequiz-*'=>get_string('page-mod-offlinequiz-x', 'offlinequiz'),
-            'mod-offlinequiz-edit'=>get_string('page-mod-offlinequiz-edit', 'offlinequiz'));
-    return $module_pagetype;
+    $modulepagetype = array(
+            'mod-offlinequiz-*' => get_string('page-mod-offlinequiz-x', 'offlinequiz'),
+            'mod-offlinequiz-edit' => get_string('page-mod-offlinequiz-edit', 'offlinequiz'));
+    return $modulepagetype;
 }
 
 /**
@@ -496,7 +492,7 @@ function offlinequiz_num_attempt_summary($offlinequiz, $cm, $returnzero = false,
              WHERE offlinequizid = :offlinequizid
                AND status = 'complete'";
 
-    $numattempts = $DB->count_records_sql($sql, array('offlinequizid'=> $offlinequiz->id));
+    $numattempts = $DB->count_records_sql($sql, array('offlinequizid' => $offlinequiz->id));
     if ($numattempts || $returnzero) {
         return get_string('attemptsnum', 'offlinequiz', $numattempts);
     }
@@ -534,24 +530,35 @@ function offlinequiz_attempt_summary_link_to_reports($offlinequiz, $cm, $context
 
 /**
  * Check for features supported by offlinequizzes.
- * 
+ *
  * @param string $feature FEATURE_xx constant for requested feature
  * @return bool True if offlinequiz supports feature
  */
 function offlinequiz_supports($feature) {
     switch($feature) {
-        case FEATURE_GROUPS:                  return true;
-        case FEATURE_GROUPINGS:               return true;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return false;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
-        case FEATURE_GRADE_HAS_GRADE:         return true;
-        case FEATURE_GRADE_OUTCOMES:          return true;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_USES_QUESTIONS:          return true;
+        case FEATURE_GROUPS:
+            return true;
+        case FEATURE_GROUPINGS:
+            return true;
+        case FEATURE_GROUPMEMBERSONLY:
+            return true;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return false;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_GRADE_OUTCOMES:
+            return true;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_USES_QUESTIONS:
+          return true;
 
-        default: return null;
+        default:
+            return null;
     }
 }
 
@@ -579,20 +586,7 @@ function offlinequiz_process_options(&$offlinequiz) {
 
     $offlinequiz->timemodified = time();
 
-    // offlinequiz open time.
-    //  if (empty($offlinequiz->timeopen)) {
-    //      $offlinequiz->preventlate = 0;
-    //  }
-
-    // Set trigger values to default
-    //         if (empty($offlinequiz->lowertrigger) or $offlinequiz->lowertrigger == 0) {
-    //             $offlinequiz->lowertrigger = $CFG->offlinequiz_lowertrigger;
-    //         }
-    //         if (empty($offlinequiz->uppertrigger) or $offlinequiz->uppertrigger == 0) {
-    //             $offlinequiz->uppertrigger = $CFG->offlinequiz_uppertrigger;
-    //        }
-
-    // offlinequiz name. (Make up a default if one was not given.)
+    // Offlinequiz name. (Make up a default if one was not given).
     if (empty($offlinequiz->name)) {
         if (empty($offlinequiz->intro)) {
             $offlinequiz->name = get_string('modulename', 'offlinequiz');
@@ -601,12 +595,6 @@ function offlinequiz_process_options(&$offlinequiz) {
         }
     }
     $offlinequiz->name = trim($offlinequiz->name);
-
-    //  // Time limit. (Get rid of it if the checkbox was not ticked.)
-    //  if (empty($offlinequiz->timelimitenable)) {
-    //      $offlinequiz->timelimit = 0;
-    //  }
-    //  $offlinequiz->timelimit = round($offlinequiz->timelimit);
 
     // Settings that get combined to go into the optionflags column.
     $offlinequiz->optionflags = 0;
@@ -670,7 +658,7 @@ function offlinequiz_process_options(&$offlinequiz) {
  * Used for user activity reports.
  * $return->time = the time they did it
  * $return->info = a short text description
- * 
+ *
  * @param unknown_type $course
  * @param unknown_type $user
  * @param unknown_type $mod
@@ -697,7 +685,7 @@ function offlinequiz_user_outline($course, $user, $mod, $offlinequiz) {
 /**
  * Print a detailed representation of what a user has done with
  * a given particular instance of this module, for user activity reports.
- * 
+ *
  * @param unknown_type $course
  * @param unknown_type $user
  * @param unknown_type $mod
@@ -710,7 +698,8 @@ function offlinequiz_user_complete($course, $user, $mod, $offlinequiz) {
     if ($results = $DB->get_records('offlinequiz_results', array('userid' => $user->id, 'offlinequiz' => $offlinequiz->id))) {
         if ($offlinequiz->grade && $offlinequiz->sumgrades &&
                 $grade = $DB->get_record('offlinequiz_results', array('userid' => $user->id, 'offlinequiz' => $offlinequiz->id))) {
-            echo get_string('grade') . ': ' . round($grade->grade, $offlinequiz->decimalpoints) . '/' . $offlinequiz->grade . '<br />';
+            echo get_string('grade') . ': ' . round($grade->grade, $offlinequiz->decimalpoints) .
+                '/' . $offlinequiz->grade . '<br />';
         }
         foreach ($results as $result) {
             echo get_string('result', 'offlinequiz') . ': ';
@@ -730,7 +719,7 @@ function offlinequiz_user_complete($course, $user, $mod, $offlinequiz) {
 
 /**
  * Check whether some of the questions given are used in any offlinequiz.
- * 
+ *
  * @param array $questionids of question IDs.
  * @return bool whether any of these questions are used by any instance of this module.
  */
@@ -738,7 +727,6 @@ function offlinequiz_questions_in_use($questionids) {
     global $DB, $CFG;
     require_once($CFG->libdir . '/questionlib.php');
 
-    
     list($test, $params) = $DB->get_in_or_equal($questionids);
     return $DB->record_exists_select('offlinequiz_q_instances',
             'questionid ' . $test, $params) || question_engine::questions_in_use(
@@ -750,14 +738,14 @@ function offlinequiz_questions_in_use($questionids) {
  * Given a course and a time, this module should find recent activity
  * that has occurred in offlinequiz activities and print it out.
  * Return true if there was output, or false is there was none.
- * 
+ *
  * @param unknown_type $course
  * @param unknown_type $viewfullnames
  * @param unknown_type $timestart
  * @return boolean
  */
 function offlinequiz_print_recent_mod_activity($course, $viewfullnames, $timestart) {
-    return false;  //  True if anything was printed, otherwise false
+    return false;  //  True if anything was printed, otherwise false.
 }
 
 /**
@@ -766,11 +754,11 @@ function offlinequiz_print_recent_mod_activity($course, $viewfullnames, $timesta
  * as sending out mail, toggling flags etc ...
  *
  * Note: The evaluation of answer forms is done by a separate cron job using the script mod/offlinequiz/cron.php.
- *    
+ *
  **/
 function offlinequiz_cron() {
     global $DB;
-    
+
     cron_execute_plugin_type('offlinequiz', 'offlinequiz reports');
 
     // Remove all saved hotspot data that is older than 7 days.
@@ -781,27 +769,27 @@ function offlinequiz_cron() {
               FROM {offlinequiz_hotspots}
              WHERE time < :expiretime";
     $params = array('expiretime' => $timenow - 604800);
-    
-    // First we get the different IDs. 
+
+    // First we get the different IDs.
     $ids = $DB->get_fieldset_sql($sql, $params);
-    
+
     if (!empty($ids)) {
         list($isql, $iparams) = $DB->get_in_or_equal($ids);
 
         // Now we delete the records.
         $DB->delete_records_select('offlinequiz_hotspots', 'scannedpageid ' . $isql, $iparams);
     }
-    
+
     // Delete old temporary files not needed any longer.
     $keepdays = get_config('offlinequiz', 'keepfilesfordays');
     $keepseconds = $keepdays * 24 * 60 * 60;
-    
+
     $sql = "SELECT id
               FROM {offlinequiz_queue}
              WHERE timecreated < :expiretime";
     $params = array('expiretime' => $timenow - $keepseconds);
 
-    // First we get the IDs of cronjobs older than the configured number of days. 
+    // First we get the IDs of cronjobs older than the configured number of days.
     $jobids = $DB->get_fieldset_sql($sql, $params);
     foreach ($jobids as $jobid) {
         $dirname = null;
@@ -809,17 +797,17 @@ function offlinequiz_cron() {
         if ($files = $DB->get_records('offlinequiz_queue_data', array('queueid' => $jobid))) {
             foreach ($files as $file) {
                 if (empty($dirname)) {
-                    $path_parts = pathinfo($file->filename);
-                    $dirname = $path_parts['dirname'];
+                    $pathparts = pathinfo($file->filename);
+                    $dirname = $pathparts['dirname'];
                 }
                 $DB->delete_records('offlinequiz_queue_data', array('id' => $file->id));
             }
-            // Remove the temporary directory
+            // Remove the temporary directory.
             echo "Removing dir " . $dirname . "\n";
             remove_dir($dirname);
         }
     }
-    
+
     return true;
 }
 
@@ -836,16 +824,16 @@ function offlinequiz_cron() {
 function offlinequiz_get_participants($offlinequizid) {
     global $CFG, $DB;
 
-    // Get users from offlinequiz results
-    $us_attempts = $DB->get_records_sql("
+    // Get users from offlinequiz results.
+    $usattempts = $DB->get_records_sql("
             SELECT DISTINCT u.id, u.id
               FROM {user} u,
                    {offlinequiz_results} r
              WHERE r.offlinequizid = '$offlinequizid'
                AND (u.id = r.userid OR u.id = r.teacherid");
 
-    // Return us_attempts array (it contains an array of unique users)
-    return $us_attempts;
+    // Return us_attempts array (it contains an array of unique users).
+    return $usattempts;
 }
 
 /**
@@ -912,7 +900,7 @@ function offlinequiz_after_add_or_update($offlinequiz) {
     }
 
     offlinequiz_update_events($offlinequiz);
-    
+
     offlinequiz_grade_item_update($offlinequiz);
     return;
 }
@@ -934,11 +922,11 @@ function offlinequiz_update_events($offlinequiz) {
     // Load the old events relating to this offlinequiz.
     $conds = array('modulename' => 'offlinequiz',
                    'instance' => $offlinequiz->id);
-    
+
     if (!empty($override)) {
         // Only load events for this override.
-        $conds['groupid'] = isset($override->groupid)?  $override->groupid : 0;
-        $conds['userid'] = isset($override->userid)?  $override->userid : 0;
+        $conds['groupid'] = isset($override->groupid) ? $override->groupid : 0;
+        $conds['userid'] = isset($override->userid) ? $override->userid : 0;
     }
     $oldevents = $DB->get_records('event', $conds);
 
@@ -950,7 +938,7 @@ function offlinequiz_update_events($offlinequiz) {
     if ($offlinequiz->time) {
         $timeopen = $offlinequiz->time;
     }
-    
+
     // Only add open/close events if they differ from the offlinequiz default.
     if (!empty($offlinequiz->coursemodule)) {
         $cmid = $offlinequiz->coursemodule;
@@ -971,7 +959,6 @@ function offlinequiz_update_events($offlinequiz) {
         $event->timestart   = $timeopen;
         $event->timeduration = max($timeclose - $timeopen, 0);
         $event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
-        // $event->eventtype   = 'open';
 
         if ($timeopen == $offlinequiz->time) {
             $event->name = $offlinequiz->name;
@@ -1082,7 +1069,7 @@ function offlinequiz_format_grade($offlinequiz, $grade) {
  */
 function offlinequiz_format_question_grade($offlinequiz, $grade) {
     global $CFG;
-    
+
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
     if (empty($offlinequiz->questiondecimalpoints)) {
@@ -1107,7 +1094,8 @@ function offlinequiz_get_user_grades($offlinequiz, $userid=0) {
     global $CFG, $DB;
 
     $maxgrade = $offlinequiz->grade;
-    $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups);
+    $groups = $DB->get_records('offlinequiz_groups',
+                               array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups);
 
     $user = $userid ? " AND userid =  $userid " : "";
 
@@ -1178,7 +1166,7 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
     require_once($CFG->libdir . '/questionlib.php');
 
     if (array_key_exists('cmidnumber', $offlinequiz)) {
-        // may not be always present
+        // May not be always present.
         $params = array('itemname' => $offlinequiz->name, 'idnumber' => $offlinequiz->cmidnumber);
     } else {
         $params = array('itemname' => $offlinequiz->name);
@@ -1195,7 +1183,7 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
         $params['gradetype'] = GRADE_TYPE_NONE;
     }
 
-    // description by Juergen Zimmer (Tim Hunt):
+    // Description by Juergen Zimmer (Tim Hunt):
     // 1. If the offlinequiz is set to not show grades while the offlinequiz is still open,
     //    and is set to show grades after the offlinequiz is closed, then create the
     //    grade_item with a show-after date that is the offlinequiz close date.
@@ -1216,9 +1204,9 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
             $params['hidden'] = 1;
         }
     } else {
-        // a) both open and closed enabled
-        // b) open enabled, closed disabled - we can not "hide after",
-        //    grades are kept visible even after closing
+        // A) both open and closed enabled
+        // B) open enabled, closed disabled - we can not "hide after",
+        //    grades are kept visible even after closing.
         $params['hidden'] = 0;
     }
 
@@ -1233,30 +1221,30 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
         }
     }
 
-    if ($grades  === 'reset') {
+    if ($grades === 'reset') {
         $params['reset'] = true;
         $grades = null;
     }
 
-    $gradebook_grades = grade_get_grades($offlinequiz->course, 'mod', 'offlinequiz', $offlinequiz->id);
-    if (!empty($gradebook_grades->items)) {
-        $grade_item = $gradebook_grades->items[0];
-        if ($grade_item->hidden) {
+    $gradebookgrades = grade_get_grades($offlinequiz->course, 'mod', 'offlinequiz', $offlinequiz->id);
+    if (!empty($gradebookgrades->items)) {
+        $gradeitem = $gradebookgrades->items[0];
+        if ($gradeitem->hidden) {
             $params['hidden'] = 1;
         }
-        if ($grade_item->locked) {
-            $confirm_regrade = optional_param('confirm_regrade', 0, PARAM_INT);
-            if (!$confirm_regrade) {
+        if ($gradeitem->locked) {
+            $confirmregrade = optional_param('confirm_regrade', 0, PARAM_INT);
+            if (!$confirmregrade) {
                 if (!AJAX_SCRIPT) {
                     $message = get_string('gradeitemislocked', 'grades');
-                    $back_link = $CFG->wwwroot . '/mod/offlinequiz/edit.php?q=' . $offlinequiz->id .
+                    $backlink = $CFG->wwwroot . '/mod/offlinequiz/edit.php?q=' . $offlinequiz->id .
                     '&amp;mode=overview';
-                    $regrade_link = qualified_me() . '&amp;confirm_regrade=1';
+                    $regradelink = qualified_me() . '&amp;confirm_regrade=1';
                     echo $OUTPUT->box_start('generalbox', 'notice');
                     echo '<p>'. $message .'</p>';
                     echo $OUTPUT->container_start('buttons');
-                    echo $OUTPUT->single_button($regrade_link, get_string('regradeanyway', 'grades'));
-                    echo $OUTPUT->single_button($back_link,  get_string('cancel'));
+                    echo $OUTPUT->single_button($regradelink, get_string('regradeanyway', 'grades'));
+                    echo $OUTPUT->single_button($backlink,  get_string('cancel'));
                     echo $OUTPUT->container_end();
                     echo $OUTPUT->box_end();
                 }
@@ -1314,7 +1302,7 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
         $beforekey = $keys[$i + 1];
     }
 
-    if (has_capability('mod/offlinequiz:manage', $PAGE->cm->context)) { 
+    if (has_capability('mod/offlinequiz:manage', $PAGE->cm->context)) {
         $node = navigation_node::create(get_string('groupquestions', 'offlinequiz'),
                 new moodle_url('/mod/offlinequiz/edit.php', array('cmid' => $PAGE->cm->id)),
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_edit',

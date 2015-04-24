@@ -65,7 +65,7 @@ M.mod_offlinequiz.timer = {
      */
     init: function(Y, start, preview) {
         M.mod_offlinequiz.timer.Y = Y;
-        M.mod_offlinequiz.timer.endtime = new Date().getTime() + start*1000;
+        M.mod_offlinequiz.timer.endtime = new Date().getTime() + start * 1000;
         M.mod_offlinequiz.timer.preview = preview;
         M.mod_offlinequiz.timer.update();
         Y.one('#offlinequiz-timer').setStyle('display', 'block');
@@ -94,7 +94,7 @@ M.mod_offlinequiz.timer = {
     // Function to update the clock with the current time left, and submit the offlinequiz if necessary.
     update: function() {
         var Y = M.mod_offlinequiz.timer.Y;
-        var secondsleft = Math.floor((M.mod_offlinequiz.timer.endtime - new Date().getTime())/1000);
+        var secondsleft = Math.floor((M.mod_offlinequiz.timer.endtime - new Date().getTime()) / 1000);
         // If this is a preview and time expired, display timeleft 0 and don't renew the timer.
         if (M.mod_offlinequiz.timer.preview && secondsleft < 0) {
             Y.one('#offlinequiz-time-left').setContent('0:00:00');
@@ -124,10 +124,10 @@ M.mod_offlinequiz.timer = {
         }
 
         // Update the time display.
-        var hours = Math.floor(secondsleft/3600);
-        secondsleft -= hours*3600;
-        var minutes = Math.floor(secondsleft/60);
-        secondsleft -= minutes*60;
+        var hours = Math.floor(secondsleft / 3600);
+        secondsleft -= hours * 3600;
+        var minutes = Math.floor(secondsleft / 60);
+        secondsleft -= minutes * 60;
         var seconds = secondsleft;
         Y.one('#offlinequiz-time-left').setContent(hours + ':' +
                 M.mod_offlinequiz.timer.two_digit(minutes) + ':' +
@@ -295,6 +295,6 @@ M.mod_offlinequiz.secure_window = {
             } else {
                 window.location.href = url;
             }
-        }, delay*1000);
+        }, delay * 1000);
     }
 };

@@ -81,7 +81,7 @@ echo ".imagebutton {width:250px; height:24px; text-align:left; margin-bottom:10p
 echo "</style>\n";
 echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
 
-list($maxquestions, $maxanswers, $formtype, $questionsperpage) =  offlinequiz_get_question_numbers($offlinequiz, $groups);
+list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $groups);
 
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
@@ -200,14 +200,14 @@ if ($sheetloaded) {
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
                             "\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/missing.png\" border=\"0\"" .
                             " id=\"a-$slotindex-$key\" style=\"position:absolute; top:".
-                            ($hotspot->y-2)."px; left:".($hotspot->x-2)."px;\">";
+                            ($hotspot->y - 2) . "px; left:".($hotspot->x - 2)."px;\">";
                 } else if ($answers[$answerid]->fraction <= 0 and $choicesdata[$slot][$key]->value == 1) {
                     // The student crossed an answer that is wrong.
                     echo "<img title=\"".get_string('question') . ' ' .
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
                             "\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/wrong.png\" border=\"0\"" .
                             " id=\"a-$slotindex-$key\" style=\"position:absolute; top:" .
-                            ($hotspot->y-2)."px; left:".($hotspot->x-2)."px;\">";
+                            ($hotspot->y - 2)."px; left:".($hotspot->x - 2)."px;\">";
                 }
             }
             $questioncounter++;

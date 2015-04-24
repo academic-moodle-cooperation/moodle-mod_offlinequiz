@@ -94,18 +94,18 @@ class offlinequiz_html_translator
                 if (preg_match('!@@PLUGINFILE@@/!', $pluginfilename)) {
 
                     $pluginfilename = str_replace('@@PLUGINFILE@@/', '', $pluginfilename);
-                    $path_parts = pathinfo($pluginfilename);
-                    if (!empty($path_parts['dirname']) && $path_parts['dirname'] != '.') {
-                        $filepath = '/' . $path_parts['dirname'] . '/';
+                    $pathparts = pathinfo($pluginfilename);
+                    if (!empty($pathparts['dirname']) && $pathparts['dirname'] != '.') {
+                        $filepath = '/' . $pathparts['dirname'] . '/';
                     } else {
                         $filepath = '/';
                     }
                     if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath,
-                            rawurldecode($path_parts['basename']))) {
+                            rawurldecode($pathparts['basename']))) {
                         $imagefilename = $imagefile->get_filename();
                         // Copy image content to temporary file.
-                        $path_parts = pathinfo($imagefilename);
-                        $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($path_parts["extension"]);
+                        $pathparts = pathinfo($imagefilename);
+                        $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($pathparts["extension"]);
                         clearstatcache();
                         if (!check_dir_exists($CFG->dataroot."/temp/offlinequiz", true, true)) {
                             print_error("Could not create data directory");
@@ -113,7 +113,7 @@ class offlinequiz_html_translator
                         $imagefile->copy_content_to($file);
                         $pluginfile = true;
                     } else {
-                        $output .= 'Image file not found ' . $path_parts['dirname'] . '/' . $path_parts['basename'];
+                        $output .= 'Image file not found ' . $pathparts['dirname'] . '/' . $pathparts['basename'];
                     }
                 } else if (count($parts) > 1) {
                     $teximagefile = $CFG->dataroot . '/filter/tex/' . $parts[1];
@@ -134,9 +134,9 @@ class offlinequiz_html_translator
                             $background = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
                                 'name' => 'latexbackground'));
                             $texexp = $texcache->rawtext; // The entities are now decoded before inserting to DB.
-                            $latex_path = $latex->render($texexp, $md5, 12, $density, $background);
-                            if ($latex_path) {
-                                copy($latex_path, $teximagefile);
+                            $latexpath = $latex->render($texexp, $md5, 12, $density, $background);
+                            if ($latexpath) {
+                                copy($latexpath, $teximagefile);
                                 $latex->clean_up($md5);
                             } else {
                                 // Failing that, use mimetex.
@@ -150,9 +150,9 @@ class offlinequiz_html_translator
                             }
                         }
                     }
-                    $path_parts = pathinfo($teximagefile);
+                    $pathparts = pathinfo($teximagefile);
 
-                    $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($path_parts["extension"]);
+                    $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($pathparts["extension"]);
                     clearstatcache();
                     if (!check_dir_exists($CFG->dataroot."/temp/offlinequiz", true, true)) {
                         print_error("Could not create data directory");
@@ -230,7 +230,7 @@ class offlinequiz_html_translator
                         }
 
                         // Finally, add the image tag for tcpdf.
-                        $output.= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' .
+                        $output .= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' .
                             $height .'"/>';
                     }
                 } else {
@@ -241,14 +241,14 @@ class offlinequiz_html_translator
                             $width = $maxwidth;
                         }
                         $height = $imageheight * $width / $imagewidth;
-                        $output.= '<img src="' . $pluginfilename . '" align="middle" width="' . $width . '" height="' .
+                        $output .= '<img src="' . $pluginfilename . '" align="middle" width="' . $width . '" height="' .
                             $height .'"/>';
                     } else {
-                        $output.= '<img src="' . $pluginfilename . '" align="middle"/>';
+                        $output .= '<img src="' . $pluginfilename . '" align="middle"/>';
                     }
                 }
             }
-            $output .= substr($string, strpos($string, '>')+1);
+            $output .= substr($string, strpos($string, '>') + 1);
         }
         return $output;
     }
