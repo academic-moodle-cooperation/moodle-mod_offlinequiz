@@ -43,13 +43,14 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
      */
     public function init_hotspots() {
         $this->hotspots = array();
-
-        for ($i=0; $i<=NUMBERS_PER_PAGE; $i++) {   // Load hotspots for the crosses.
-            $point = new oq_point(116, 142+79.8*$i);
+        // Load hotspots for the crosses.
+        for ($i = 0; $i <= NUMBERS_PER_PAGE; $i++) {
+            $point = new oq_point(116, 142 + 79.8 * $i);
             $this->hotspots["p$i"] = $point;
         }
 
-        for ($i=1; $i<=NUMBERS_PER_PAGE; $i++) {   // Load hotspots for the barcodes.
+        // Load hotspots for the barcodes.
+        for ($i = 1; $i <= NUMBERS_PER_PAGE; $i++) {
             $point = new oq_point(1564, 142 + 79.8 * $i);
             $this->hotspots["b$i"] = $point;
         }
@@ -115,7 +116,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
         $export = array();
         $factory = $width / imagesx($this->image);
 
-        for ($i=1; $i<=NUMBERS_PER_PAGE; $i++) {
+        for ($i = 1; $i <= NUMBERS_PER_PAGE; $i++) {
             if (!$this->hotspots["p$i"]->blank) {
                 $point = new oq_point(($this->hotspots["p$i"]->x + $this->offset->x) * $width / imagesx($this->image),
                           ($this->hotspots["p$i"]->y + $this->offset->y) * $factory);
@@ -137,7 +138,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
         $export = array();
         $factory = $width / imagesx($this->image);
 
-        for ($i=1; $i<=NUMBERS_PER_PAGE; $i++) {
+        for ($i = 1; $i <= NUMBERS_PER_PAGE; $i++) {
             if (!$this->hotspots["b$i"]->blank) {
                 $point = new oq_point(($this->hotspots["b$i"]->x + $this->offset->x) * $width / imagesx($this->image),
                         ($this->hotspots["b$i"]->y + $this->offset->y) * $factory);

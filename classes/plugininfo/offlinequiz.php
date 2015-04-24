@@ -46,7 +46,7 @@ class offlinequiz extends base {
 
         // Do the opposite of db/install.php scripts - deregister the report.
 
-        $DB->delete_records('offlinequiz_reports', array('name'=>$this->name));
+        $DB->delete_records('offlinequiz_reports', array('name' => $this->name));
 
         parent::uninstall_cleanup();
     }

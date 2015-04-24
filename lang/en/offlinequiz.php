@@ -29,7 +29,7 @@
 $string['modulename'] = 'Offline Quiz';
 $string['modulenameplural'] = 'Offline Quizzes';
 $string['addaquestion'] = 'Add a question ...';
-$string['pluginname']= 'Offlinequiz';
+$string['pluginname'] = 'Offlinequiz';
 $string['add'] = 'Add';
 $string['addlist'] = 'Add list';
 $string['addnewpagesafterselected'] = 'Add page breaks after selected questions';
@@ -109,9 +109,9 @@ $string['CSVplus1format'] = 'CSV format (raw data)';
 $string['CSVpluspointsformat'] = 'CSV format points (raw data)';
 $string['darkgray'] = 'Dark grey';
 $string['datanotsaved'] = 'Could not save settings';
-$string['configdecimalplaces'] ='Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
+$string['configdecimalplaces'] = 'Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
 $string['decimalplaces'] = 'Decimal places';
-$string['decimalplaces_help'] ='Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
+$string['decimalplaces_help'] = 'Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
 $string['deletelistcheck'] = 'Do you really want to delete the selected list and all it\'s participants?';
 $string['deleteresultcheck'] = 'Do you really want to delete the selected results?';
 $string['deletepagesafterselected'] = 'Remove page breaks after selected questions';
@@ -271,8 +271,8 @@ $string['missinglogdata'] = 'Missing logdata for existing result.';
 $string['missingquestion'] = 'This question no longer seems to exist';
 $string['missinguserid'] = 'Missing user identification number! Could not read barcode!';
 $string['modulename_help'] = 'This module allows the teacher to design offline quizzes consisting of multiple choice questions.
-These questions are kept in the Moodle question bank and can be re-used within courses and even between courses. 
-The offline quizzes can be downloaded as PDF files. The students mark their answers on form sheets. The form sheets are scanned and the answers imported into the system. 
+These questions are kept in the Moodle question bank and can be re-used within courses and even between courses.
+The offline quizzes can be downloaded as PDF files. The students mark their answers on form sheets. The form sheets are scanned and the answers imported into the system.
 For further information see http://offline-tests.univie.ac.at';
 $string['moveselectedonpage'] = 'Move selected questions to page: {$a}';
 $string['copyselectedtogroup'] = 'Add selected questions to group: {$a}';
@@ -391,7 +391,7 @@ $string['pdfintro_help'] = 'This information will be printed on the first page o
 $string['pdfintrotext'] = '<b>How do I mark correctly?</b><br />This answer form will be scanned automatically. Please do not fold or spot. Use a black or blue pen to mark the fields. If you want to correct a marking, completeley fill the box with color. This field will be interpreted like an empty box.<br />';
 $string['pdfintrotoolarge'] = 'The introduction is too long (max. 2000 characters).';
 $string['pearlywhite'] = 'Pearly white';
-$string['pluginadministration']='Offline quiz administration';
+$string['pluginadministration'] = 'Offline quiz administration';
 $string['point'] = 'point';
 $string['present'] = 'present';
 $string['previewforgroup'] = 'Preview for group {$a}';
@@ -444,7 +444,7 @@ $string['reviewofresult'] = 'Review of result';
 $string['reviewopens'] = 'Review opens';
 $string['reviewoptions'] = 'Students may view';
 $string['reviewoptionsheading'] = 'Review options';
-$string['reviewoptions_help'] = 'With these options you can control what the students may see after the results were imported. 
+$string['reviewoptions_help'] = 'With these options you can control what the students may see after the results were imported.
 You can also define start and end time for the results report. The checkboxes mean:
 <table>
 <tr><td style="vertical-align: top;"><b>The attempt</b></td><td>
@@ -464,7 +464,7 @@ It is shown which answers are correct or wrong. This option is only available if
 The scanned answer forms are shown. Checked boxes are marked with green squares.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scanned form with grades</b></td><td>
-The scanned answer forms are shown. Checked boxes are marked with green squares. Wrong marks and missing marks are highlighted. 
+The scanned answer forms are shown. Checked boxes are marked with green squares. Wrong marks and missing marks are highlighted.
 Additionally, a table shows the maximum grade and the achieved grade for every question.
 </td></tr>
 </table>';
@@ -506,7 +506,7 @@ $string['shownumpartsperpage'] = 'Show {$a} participants per page';
 $string['starttutorial'] = 'Information zum Prüfungsablauf ansehen';
 $string['showstudentview'] = 'Show student view.';
 $string['showtutorial'] = 'Show an offline quiz tutorial to students.';
-$string['showtutorial_help'] = 'This option determines whether students can see a tutorial about the basics of offline quizzes. 
+$string['showtutorial_help'] = 'This option determines whether students can see a tutorial about the basics of offline quizzes.
 The tutorial provides information about how to handle the different types of documents in offline quizzes. In an interactive part they learn how to tick their student ID correctly.<br />
 <b>Please note:</b><br />
 If you set this option to "Yes" but hide the offline quiz the link to the tutorial will not be visible. In this case you can add a link to the tutorial on the course page.';

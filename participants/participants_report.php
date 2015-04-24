@@ -91,7 +91,7 @@ class participants_report {
         // Start working -- this is necessary as soon as the niceties are over.
         $table->setup();
         if ($sort = $table->get_sql_sort()) {
-            $sql.=' ORDER BY '.$sort;
+            $sql .= ' ORDER BY ' . $sort;
         }
 
         $table->initialbars($totalinitials > 20);

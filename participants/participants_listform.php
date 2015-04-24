@@ -56,7 +56,7 @@ class offlinequiz_participantslistform extends moodleform {
         $mform->addElement('hidden', 'q', $this->offlinequiz);
         $mform->setType('q', PARAM_INT);
 
-        $mform->addElement('text', 'name', get_string('name'), array('size'=>'40', 'maxlength'=>'255'));
+        $mform->addElement('text', 'name', get_string('name'), array('size' => '40', 'maxlength' => '255'));
         $mform->setType('name', PARAM_TEXT);
 
         $this->add_action_buttons(false, get_string('submit'));

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -71,7 +71,7 @@ $string['configshufflequestions'] = 'Wenn Sie diese Option aktivieren werden die
 $string['configshufflewithin'] = 'Wenn Sie diese Option aktivieren, werden die Antworten jeder Multple-Choice Frage nach dem Zufallsprinzip gemischt.';
 $string['configshufflequestionsanswers'] = 'Antworten mischen blah blah';
 $string['configuseridentification'] = 'Eine Formel, die die Identifikation von NutzerInnen beschreibt. Diese Formel wird verwendet, um hochgeladene Antwortbögen den richtigen NutzerInnen zuzuordnen.';
-$string['pluginadministration']='Offline-Test Administration';
+$string['pluginadministration'] = 'Offline-Test Administration';
 $string['copyright'] = 'Diese Seite ist nur zu Ihrer persönlichen Information. Wie jeder andere Text auch unterliegen Prüfungsfragen den Bestimmungen des Urheberrechts. Es ist Ihnen nicht gestattet, Fragen zu kopieren oder an andere weiterzugeben. Zuwiderhandeln kann belangt werden.';
 $string['copyselectedtogroup'] = 'Ausgewählte Fragen zu Gruppe {$a} ';
 $string['copytogroup'] = 'Alle Fragen zu Gruppe {$a} ';
@@ -123,10 +123,6 @@ $string['downloadpartpdf'] = 'PDF-Formular für die Anwesenheitsliste \'{$a}\' h
 $string['downloadpdfs'] = 'Formulare herunterladen';
 $string['downloadresultsas'] = 'Ergebnisse herunterladen als: ';
 $string['editingofflinequiz'] = 'Fragenlisten bearbeiten';
-// $string['editingofflinequiz_help'] = 'When creating an offline quiz, the main concepts are:
-// *
-// * The offline quiz, containing questions over one or more pages
-// * The question bank, which stores copies of all questions organised into categories';
 $string['editlist'] = 'Anwesenheitsliste bearbeiten';
 $string['editlists'] = 'Anwesenheitslisten';
 $string['editofflinequiz'] = 'Gruppenfragen bearbeiten';
@@ -254,10 +250,10 @@ $string['missingquestion'] = 'Diese Frage scheint nicht mehr zu existieren';
 $string['missinguserid'] = 'Identifikationsnummer fehlt! Barcode konnte nicht gelesen werden!';
 $string['modulename'] = 'Offline-Test';
 $string['modulenameplural'] = 'Offline-Tests';
-$string['modulename_help'] = 'Dieses Modul erlaubt die Erstellung von Fragebogen-Tests mit Multiple-Choice-Fragen. 
-Die Fragen werden in der Moodle-Fragendatenbank gespeichert und können in anderen Offline- und Online-Tests wiederverwendet werden. 
-Das Modul erstellt Frage- und Antwortbögen, die als PDF- oder DOCX-Dateien heruntergeladen werden können. Auf den ausgedruckten Antwortbögen werden die Antworten von den Studierenden angekreuzt. 
-Die Resultate werden eigescannt und in das Moodle System importiert. 
+$string['modulename_help'] = 'Dieses Modul erlaubt die Erstellung von Fragebogen-Tests mit Multiple-Choice-Fragen.
+Die Fragen werden in der Moodle-Fragendatenbank gespeichert und können in anderen Offline- und Online-Tests wiederverwendet werden.
+Das Modul erstellt Frage- und Antwortbögen, die als PDF- oder DOCX-Dateien heruntergeladen werden können. Auf den ausgedruckten Antwortbögen werden die Antworten von den Studierenden angekreuzt.
+Die Resultate werden eigescannt und in das Moodle System importiert.
 Eine detaillierte Beschreibung des Moduls finden Sie auf der Webseite: http://offline-tests.univie.ac.at';
 $string['moodleprocessing'] = 'Belege durch Moodle auswerten';
 $string['movecorners'] = 'Ziehen Sie die Eckmarkierungen per Drag-and-Drop zunächst in die richtige Position.';
@@ -339,8 +335,8 @@ $string['pagenumberimported'] = 'Bogen {$a} der Anwesenheitsliste importiert';
 $string['pagenotdetected'] = 'Barcode für Zuordnung der Seite nicht erfassbar!';
 $string['pagesizeparts'] = 'Einträge pro Seite:';
 $string['papergray'] = 'Weißwert des Papiers';
-$string['papergray_help'] = 'Wenn die eingescannten Dokumente zu dunkel oder zu hell sind, können Sie das mit diesem Parameter korrigieren. 
-Im Idealfall sind Ihre Scannerbelege allerdings zweifärbig, also schwarz-weiße PNG-, GIF- oder TIF-Dateien. Die Komprimierung von JPG-Dateien führt immer zu Bildverlusten. 
+$string['papergray_help'] = 'Wenn die eingescannten Dokumente zu dunkel oder zu hell sind, können Sie das mit diesem Parameter korrigieren.
+Im Idealfall sind Ihre Scannerbelege allerdings zweifärbig, also schwarz-weiße PNG-, GIF- oder TIF-Dateien. Die Komprimierung von JPG-Dateien führt immer zu Bildverlusten.
 Dieses Format ist deshalb zu vermeiden.';
 $string['partcheckedwithresult'] = '{$a} anwesende Teilnehmer/innen mit Ergebnis';
 $string['partcheckedwithoutresult'] = '<a href="{$a->url}">{$a->count} anwesende Teilnehmer/innen ohne Ergebnis</a>';
@@ -428,8 +424,8 @@ Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist u
  welche der angekreuzten Antwortalternativen richtig (grün hinterlegt) und welche falsch (rot hinterlegt) sind.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Punktezahl</b></td><td>
-Angezeigt werden Gruppe (bspw. C), Punktezahl (erreichte Punktezahl, Summe der Punkte der Fragen des Tests, erreichte %  bspw. 40/80 (50%)) 
-und Bewertung (bspw. 50 von maximal 100). Ist zusätzlich die Option "Das Ergebnis" ausgewählt, 
+Angezeigt werden Gruppe (bspw. C), Punktezahl (erreichte Punktezahl, Summe der Punkte der Fragen des Tests, erreichte %  bspw. 40/80 (50%))
+und Bewertung (bspw. 50 von maximal 100). Ist zusätzlich die Option "Das Ergebnis" ausgewählt,
 werden auch für jede Frage die maximale Punktezahl und die erreichten Punkte angezeigt.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Richtige Antwort</b></td><td>
@@ -437,13 +433,13 @@ Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist u
  (Bsp.: "Die richtige Antwort lautet: a, c").
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scannerbeleg</b></td><td>
-Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Antwortformular angezeigt. 
+Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Antwortformular angezeigt.
 Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scannerbeleg mit Bewertung</b></td><td>
-Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Formular angezeigt. 
+Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Formular angezeigt.
 Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
-Zusätzlich sind alle Kästchen, die fälschlicherweise angekreuzt wurden und solche, die fälschlicherweise nicht angekreuzt sind, rot hinterlegt. 
+Zusätzlich sind alle Kästchen, die fälschlicherweise angekreuzt wurden und solche, die fälschlicherweise nicht angekreuzt sind, rot hinterlegt.
 Des Weiteren befindet sich am rechten Rand eine Auflistung der erreichten Punkte pro Frage.
 </td></tr>
 </table>';
@@ -486,7 +482,7 @@ $string['shufflequestions'] = 'Fragen neu mischen';
 $string['shufflequestionsagain'] = 'Fragen neu mischen';
 $string['shufflequestionsanswers'] = 'Fragen und Antworten mischen';
 $string['shufflequestionsselected'] = 'Fragen-Mischen wurde aktiviert. Deshalb sind einige Aktionen auf dieser Seite nicht verfügbar. Um dies zu ändern, bearbeiten Sie die Einstellungen, {$a}.';
-$string['shufflewithin'] =  'Antworten innerhalb der Fragen mischen';
+$string['shufflewithin'] = 'Antworten innerhalb der Fragen mischen';
 $string['shufflewithin_help'] = 'Wenn hier "Ja" ausgewählt ist, wird die Reihenfolge der Antwortalternativen pro Frage zufällig gewählt. Ist dieselbe Frage in zwei oder mehreren Gruppen des Offline-Tests eingebunden, wird für jede Gruppe die Antwortreihenfolge nach dem Zufallsprinzip festgelegt. ACHTUNG: Antworten werden nur bei Fragen gemischt, für die in den Einstellungen der Frage das Mischen aktiviert ist!';
 $string['signature'] = 'Unterschrift';
 $string['standard'] = 'Standard';
@@ -494,11 +490,11 @@ $string['studycode'] = 'Studienkennzahl';
 $string['starttutorial'] = 'Information zum Prüfungsablauf ansehen';
 $string['showtutorial'] = 'Tutorial zum Prüfungsablauf anzeigen';
 $string['showtutorialdescription'] = 'Sie können das Tutorial auch mit der folgenden URL auf der Kursseite verlinken:';
-$string['showtutorial_help'] = 'Mit dieser Option können Sie für Ihre Studierenden ein Tutorial zum Prüfungsablauf anzeigen lassen. 
-Darin erhalten die Studierenden grundlegende Informationen zu den Prüfungsunterlagen und zum Ausfüllen des Antwortbogens. 
+$string['showtutorial_help'] = 'Mit dieser Option können Sie für Ihre Studierenden ein Tutorial zum Prüfungsablauf anzeigen lassen.
+Darin erhalten die Studierenden grundlegende Informationen zu den Prüfungsunterlagen und zum Ausfüllen des Antwortbogens.
 Außerdem können sie das korrekte Ankreuzen der Matrikelnummer interaktiv üben.<br />
 <b>Bitte beachten Sie:</b><br />
-Falls Sie diese Option auf "Ja" setzen, die Prüfung aber ausblenden, wird der Link zum Tutorial trotzdem nicht sichtbar sein. 
+Falls Sie diese Option auf "Ja" setzen, die Prüfung aber ausblenden, wird der Link zum Tutorial trotzdem nicht sichtbar sein.
 In diesem Fall können Sie das Tutorial auf der Startseite verlinken.';
 $string['statistics'] = 'Statistik';
 $string['statisticsplural'] = 'Statistiken';
