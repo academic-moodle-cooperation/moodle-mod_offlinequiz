@@ -199,7 +199,8 @@ $string['importerror23'] = 'Teilnehmer/in nicht in Liste';
 $string['importerror24'] = 'Liste nicht erfasst';
 $string['importfromto'] = 'Importiere {$a->from} bis {$a->to} von {$a->total}';
 $string['import'] = 'Importieren';
-$string['import_help'] = '<p>
+$string['importnew'] = 'Importieren';
+$string['importnew_help'] = '<p>
 Sie können entweder mehrere eingescannte Bilddateien in einer ZIP-Datei
 oder einzelne Bilddateien importieren. Das Offline-Test Modul wird die Bilder im Hintergrund automatisch auswerten.
 Die Namen der Bilddateien sollten keine Sonderzeichen (Umlaute etc.) enthalten. Die Bilder müssen als GIF-,

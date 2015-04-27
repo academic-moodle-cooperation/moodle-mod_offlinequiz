@@ -362,7 +362,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
             // Back to overview link.
             echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
-                    get_string('backtoofflinequizreport', 'offlinequiz_statistics') . '</a>',
+                    get_string('backtoquestionsandanswers', 'offlinequiz_statistics') . '</a>',
                     'backtomainstats boxaligncenter generalbox boxwidthnormal mdl-align');
 
         } else if ($qid) {
@@ -377,7 +377,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
             // Back to overview link.
             echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
-                    get_string('backtoofflinequizreport', 'offlinequiz_statistics') . '</a>',
+                    get_string('backtoquestionsandanswers', 'offlinequiz_statistics') . '</a>',
                     'boxaligncenter generalbox boxwidthnormal mdl-align');
 
         } else if ($this->table->is_downloading()) {

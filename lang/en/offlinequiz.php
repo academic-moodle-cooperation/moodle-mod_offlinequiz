@@ -218,7 +218,8 @@ $string['importerror23'] = 'User not in list';
 $string['importerror24'] = 'List not detected';
 $string['importfromto'] = 'Importing {$a->from} to {$a->to} of {$a->total}.';
 $string['import'] = 'Import';
-$string['import_help'] = '<p>
+$string['importnew'] = 'Import';
+$string['importnew_help'] = '<p>
 You can import single scanned image files or several scanned image files in a ZIP-archive. The offline quiz module will process the image files in the background.
 File names are not relevant but should not contain special characters such as umlauts. Images should be GIFs, PNGs
 or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
