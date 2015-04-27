@@ -363,7 +363,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             // Back to overview link.
             echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
                     get_string('backtoquestionsandanswers', 'offlinequiz_statistics') . '</a>',
-                    'backtomainstats boxaligncenter generalbox boxwidthnormal mdl-align');
+                    'backtomainstats boxaligncenter backlinkbox generalbox boxwidthnormal mdl-align');
 
         } else if ($qid) {
             // Report on an individual sub-question indexed questionid.
@@ -378,7 +378,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             // Back to overview link.
             echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
                     get_string('backtoquestionsandanswers', 'offlinequiz_statistics') . '</a>',
-                    'boxaligncenter generalbox boxwidthnormal mdl-align');
+                    'boxaligncenter backlinkbox generalbox boxwidthnormal mdl-align');
 
         } else if ($this->table->is_downloading()) {
             // Downloading overview report.
