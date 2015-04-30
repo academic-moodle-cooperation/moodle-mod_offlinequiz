@@ -71,7 +71,14 @@ $PAGE->set_pagelayout('report');
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 
-list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $groups);
+// Determine the maxanswers and maxquestions for the scannedpage.
+$selectedgroups = $groups;
+if ($overwrite && $scannedpage->resultid) {
+    $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid));
+    $resultgroup = $DB->get_record('offlinequiz_groups', array('id' => $result->offlinegroupid));
+    $selectedgroups = array($resultgroup);
+}
+list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $selectedgroups);
 
 // Get the corners either from the request parameters of from the offlinequiz_page_corners table.
 $corners = array();

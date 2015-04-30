@@ -731,7 +731,7 @@ function offlinequiz_check_different_result($scannedpage) {
  */
 function offlinequiz_get_question_numbers($offlinequiz, $groups) {
     $maxquestions = offlinequiz_get_maxquestions($offlinequiz, $groups);
-    $maxanswers = offlinequiz_get_maxanswers($offlinequiz);
+    $maxanswers = offlinequiz_get_maxanswers($offlinequiz, $groups);
 
     // Determine the form type (number of columns).
     $formtype = 4;
