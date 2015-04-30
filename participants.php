@@ -559,7 +559,7 @@ switch($mode) {
             $currenttab = 'participants';
             include('tabs.php');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
-            echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimport', 'offlinequiz');
+            echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimportnew', 'offlinequiz');
         }
         $report = new participants_report();
         $importform = new offlinequiz_participants_upload_form($thispageurl);

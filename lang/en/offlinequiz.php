@@ -379,8 +379,8 @@ $string['participants_help'] = '<p>Lists of participants are designed for large 
 You can add users to different lists. Each list could, for instance, contain the participants in a particular room. The participants can be members of a special group. A group registration tool can be used for creating those groups.
 Lists of participants can be downloaded as PDF documents, printed and marked with crosses just like the answer forms of offline quizzes. Afterwards they can be uploaded and the marked students will be marked as present in the database.
 Please avoid spots on the barcodes as they are used to identify the students.</p>';
-$string['partimport'] = 'Uploading lists of participants';
-$string['partimport_help'] = '<p>
+$string['partimportnew'] = 'Uploading lists of participants';
+$string['partimportnew_help'] = '<p>
 In this tab you can upload the filled-in lists of participants. You can upload single scanned image files or several scanned image files in a ZIP-archive. The offline quiz module will process the image files in the background.
 File names are not relevant but should not contain special characters such as umlauts. Images should be GIFs, PNGs
 or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
