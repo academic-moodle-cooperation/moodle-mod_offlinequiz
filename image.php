@@ -80,12 +80,12 @@ echo ".imagebutton {width:250px; height:24px; text-align:left; margin-bottom:10p
 echo "</style>\n";
 echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
 
-list($maxquestions, $maxanswers, $formtype, $questionsperpage) =  offlinequiz_get_question_numbers($offlinequiz, $groups);
-
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 
 $group = $groups[$result->offlinegroupid];
+
+list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, array($group));
 
 $offlinequizconfig->papergray = $offlinequiz->papergray;
 
