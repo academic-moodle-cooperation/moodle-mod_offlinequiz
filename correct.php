@@ -797,7 +797,7 @@ if (!empty($slots)) {
                 $itemdata[$slot][$key] = $choicesdata[$slot][$key]->value;
             } else {
                 // Otherwise the choice is undetermined.
-                $itemdata[$slot][$key] = -1;
+                $itemdata[$slot][$key] = 0;
             }
         }
     }
@@ -933,6 +933,9 @@ function submitRotated() {
   document.forms.cform.submit();
 }
 
+function toggleImage() {
+    img = $('#scannedimage').toggle();
+}
 </script>";
 
 echo $javascript;
@@ -941,7 +944,7 @@ $fs = get_file_storage();
 $imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename);
 
 // Print image of the form sheet.
-echo '<img name="formimage" src="' . $CFG->wwwroot . "/pluginfile.php/$context->id/mod_offlinequiz/imagefiles/0/" .
+echo '<img id="scannedimage" name="formimage" src="' . $CFG->wwwroot . "/pluginfile.php/$context->id/mod_offlinequiz/imagefiles/0/" .
    $imagefile->get_filename() .'" border="1" width="' . OQ_IMAGE_WIDTH .
    '" style="position:absolute; top:0px; left:0px; display: block;">';
 
@@ -974,6 +977,8 @@ echo "<div style=\"position:absolute; top:10px; left:" . (OQ_IMAGE_WIDTH + 10) .
 echo "<div style=\"margin:4px;margin-bottom:8px\"><u>";
 print_string('actions');
 echo ":</u></div>\n";
+//echo "<input class=\"imagebutton\" type=\"button\" value=\"toggle image\" name=\"submitbutton40\"
+//nClick=\"toggleImage(); return false;\"><br />";
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
 onClick=\"submitCancel(); return false;\"><br />";
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('rotate', 'offlinequiz')."\" name=\"submitbutton5\"
@@ -1063,7 +1068,7 @@ foreach ($corners as $key => $hotspot) {
 
 foreach ($corners as $key => $hotspot) {
     echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/corner.gif\" border=\"0\" name=\"c-$key\" id=\"c-$key\"
-    style=\"position:absolute; top:".($hotspot->y - 7)."px; left:".($hotspot->x - 7)."px; cursor:move;\">";
+    style=\"position:absolute; top:".($hotspot->y - 7)."px; left:".($hotspot->x - 7)."px; cursor:move; z-index:100;\">";
 }
 
 
@@ -1110,15 +1115,15 @@ if ($sheetloaded) {
         if (substr($usernumber, $x, 1) == 'X') {
             echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/blue.gif\" border=\"0\" id=\"u$x$y\" title=\"" . $y .
             "\" style=\"position:absolute; top:".$hotspot->y."px; left:".
-            $hotspot->x."px; cursor:pointer\" onClick=\"set_userid(this, $x, $y)\">";
+            $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_userid(this, $x, $y)\">";
         } else if (!empty($usernumber) and substr($usernumber, $x, 1) == $y) {
             echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\" border=\"0\" id=\"u$x$y\" title=\"" . $y .
             "\" style=\"position:absolute; top:".$hotspot->y."px; left:".
-            $hotspot->x."px; cursor:pointer\" onClick=\"set_userid(this, $x, $y)\">";
+            $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_userid(this, $x, $y)\">";
         } else {
             echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\" border=\"0\" id=\"u$x$y\" title=\"" . $y .
             "\" style=\"position:absolute; top:".$hotspot->y."px; left:".
-            $hotspot->x."px; cursor:pointer\" onClick=\"set_userid(this, $x, $y)\">";
+            $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_userid(this, $x, $y)\">";
         }
     }
 
@@ -1128,15 +1133,15 @@ if ($sheetloaded) {
         if (!$groupnumber || $groupnumber > $offlinequiz->numgroups) {
             echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/blue.gif\" border=\"0\" id=\"g$x\"" .
               " style=\"position:absolute; top:" .
-              $hotspot->y . "px; left:" . $hotspot->x . "px; cursor:pointer\" onClick=\"set_group(this, $x)\">";
+              $hotspot->y . "px; left:" . $hotspot->x . "px; cursor:pointer;  z-index: 100;\" onClick=\"set_group(this, $x)\">";
         } else if ($groupnumber == $x + 1) {
             echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\" border=\"0\" id=\"g$x\"" .
               " style=\"position:absolute; top:" .
-              $hotspot->y."px; left:" . $hotspot->x."px; cursor:pointer\" onClick=\"set_group(this, $x)\">";
+              $hotspot->y."px; left:" . $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_group(this, $x)\">";
         } else {
             echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\" border=\"0\" id=\"g$x\"" .
               " style=\"position:absolute; top:" .
-              $hotspot->y."px; left:" . $hotspot->x."px; cursor:pointer\" onClick=\"set_group(this, $x)\">";
+              $hotspot->y."px; left:" . $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_group(this, $x)\">";
         }
     }
 
@@ -1167,17 +1172,17 @@ if ($sheetloaded) {
                     echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/blue.gif\" title=\"" . $slot . ' ' .
                             $letterstr[$key] . "\" border=\"0\" id=\"a-$slot-$key\"" .
                             " style=\"position:absolute; top:".$hotspot->y."px; left:".
-                            $hotspot->x."px; cursor:pointer;\" onClick=\"set_item(this, $slot, $key)\">";
+                            $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_item(this, $slot, $key)\">";
                 } else if ($itemdata[$slot][$key] == 1) {
                     echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"  title=\"" . $slot . ' ' .
                             $letterstr[$key] . "\" border=\"0\" id=\"a-$slot-$key\"" .
                             " style=\"position:absolute; top:".$hotspot->y."px; left:".
-                            $hotspot->x."px; cursor:pointer;\" onClick=\"set_item(this, $slot, $key)\">";
+                            $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_item(this, $slot, $key)\">";
                 } else {
                     echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"  title=\"" . $slot . ' ' .
                             $letterstr[$key] . "\" border=\"0\" id=\"a-$slot-$key\"" .
                             " style=\"position:absolute; top:".$hotspot->y."px; left:".
-                            $hotspot->x."px; cursor:pointer;\" onClick=\"set_item(this, $slot, $key)\">";
+                            $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_item(this, $slot, $key)\">";
                 }
             }
             $questioncounter++;

@@ -259,14 +259,14 @@ class offlinequiz_page_scanner {
         $width = $a / 6;                                // Calculate dimensions of the pattern.
         $halfwidth = round($a / 12);                    // Halfwidth for pattern1-4.
         $length = round($width * 2);
-        $width = round($width);                         // XXXX      width=4.
-        for ($i = 0; $i <= $a; $i++) {                      // XXXXX.
-            $start = $i - $width;                       // XXXXXX                    a=dimension of square.
-            for ($j = 0; $j <= $length; $j++) {             // XXXXXXX.
+        $width = round($width);                                 // XXXX      width=4.
+        for ($i = 0; $i <= $a; $i++) {                          // XXXXX.
+            $start = $i - $width;                               // XXXXXX    a=dimension of square.
+            for ($j = 0; $j <= $length; $j++) {                 // XXXXXXX.
                 if ($start + $j >= 0 and $start + $j <= $a) {   // XXXXXXXX  length=8.
-                    // This line creates the line from upper left to lower right corner.
+                    // This creates the line from upper left to lower right corner.
                     $this->pattern[($start + $j)][$i] = 1;
-                    // This line creates the line from upper right to lower left corner.
+                    // This creates the line from upper right to lower left corner.
                     $this->pattern[($start + $j)][($a - $i)] = 1;
                 }
             }
@@ -816,14 +816,18 @@ class offlinequiz_page_scanner {
 
     /**
      * Determines the black value of a hotspot.
-     * Returns 0 if empty, 1 if marked, 2 if deleted, 3 if insecure.
+     * Returns 
+     *    0 if empty, 
+     *    1 if marked, 
+     *    2 if deleted, 
+     *    3 if insecure.
      * If return is true, it returns the percentage of black pixels found
      *
      * @param unknown_type $point
      * @param unknown_type $return
      * @return number
      */
-    public function hotspot_value($point, $return = false) {
+    public function hotspot_value($point, $return = false, $name = '') {
         global $CFG;
 
         $numpoints = 0;
@@ -878,10 +882,20 @@ class offlinequiz_page_scanner {
         if ($return) {
             return $percent;
         }
+//         if ($name == 'a-13-2') {
+//         	error_log('a-2-2 ' . $percent);
+//         	error_log('lowertrigger ' . $this->lowertrigger);
+//         	error_log('lowerwarning ' . $this->lowerwarning);
+//         	error_log('uppertrigger ' . $this->uppertrigger);
+//         	error_log('upperwarning ' . $this->upperwarning);        	
+//         }
+        
         if ($percent >= $this->uppertrigger) {
             return 2;
         } else if ($percent >= $this->upperwarning) {
-            if ($patternout[0] == 0 or $patternout[1] == 0 or $patternout[2] == 0 or $patternout[3] == 0 or $patternout[4] == 0) {
+            if ($patternout[0] == 0 or $patternout[1] == 0
+            		or $patternout[2] == 0 or $patternout[3] == 0
+            		or $patternout[4] == 0) {
                 return 1;
             }
             $patternfactor = $patternin[0] / $patternout[0];
@@ -894,15 +908,16 @@ class offlinequiz_page_scanner {
             if ($patternfactor > 2.6) {
                 return 1;
             } else if ($patternfactor2 > 2.8) {
-                return 1;
-            } else if ($patternfactor < 1.4 or $patternfactor2 < 1.7) {
+                 return 1;
+			} else if ($patternfactor < 1.4 or $patternfactor2 < 1.7) {
+            //} else if ($patternfactor < 2.45 or $patternfactor2 < 2.8) {          
                 return 2;
             } else {
-                return 3;
+                return 1;
             }
-        } else if ($percent >= $this->lowertrigger) {
-            return 1;
-        } else if ($percent >= $this->lowerwarning) {
+        } else if ($percent >= $this->lowertrigger * 100) {
+              return 1;
+        } else if ($percent >= $this->lowerwarning * 100) {
             return 3;
         } else {
             return 0;
@@ -1506,7 +1521,7 @@ class offlinequiz_page_scanner {
         $this->lowerwarning = $empty + ($cross - $empty) * 0.2;
         $this->lowertrigger = $this->lowerwarning + (($cross - $this->lowerwarning) * 0.2);
         $this->upperwarning = $cross + ((100 - $cross) * 0.2);
-        $this->uppertrigger = $cross + ((100 - $cross) * 0.63);
+        $this->uppertrigger = $cross + ((100 - $cross) * 0.74);
         $this->calibrated = true;
     }
 
@@ -1684,7 +1699,7 @@ class offlinequiz_page_scanner {
         for ($number = 0; $number < $this->questionsonpage; $number++) {
             $row = array();
             for ($i = 0; $i < $this->maxanswers; $i++) {
-                $spotvalue = $this->hotspot_value($this->hotspots["a-$number-$i"]);
+                $spotvalue = $this->hotspot_value($this->hotspots["a-$number-$i"], false,  "a-$number-$i");
                 if ($spotvalue == 1) {
                     $row[] = 'marked';
                 } else if ($spotvalue == 3) {
