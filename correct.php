@@ -944,7 +944,8 @@ $fs = get_file_storage();
 $imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename);
 
 // Print image of the form sheet.
-echo '<img id="scannedimage" name="formimage" src="' . $CFG->wwwroot . "/pluginfile.php/$context->id/mod_offlinequiz/imagefiles/0/" .
+echo '<img id="scannedimage" name="formimage" src="' . $CFG->wwwroot .
+   "/pluginfile.php/$context->id/mod_offlinequiz/imagefiles/0/" .
    $imagefile->get_filename() .'" border="1" width="' . OQ_IMAGE_WIDTH .
    '" style="position:absolute; top:0px; left:0px; display: block;">';
 
@@ -977,8 +978,6 @@ echo "<div style=\"position:absolute; top:10px; left:" . (OQ_IMAGE_WIDTH + 10) .
 echo "<div style=\"margin:4px;margin-bottom:8px\"><u>";
 print_string('actions');
 echo ":</u></div>\n";
-//echo "<input class=\"imagebutton\" type=\"button\" value=\"toggle image\" name=\"submitbutton40\"
-//nClick=\"toggleImage(); return false;\"><br />";
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
 onClick=\"submitCancel(); return false;\"><br />";
 echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('rotate', 'offlinequiz')."\" name=\"submitbutton5\"

@@ -882,20 +882,13 @@ class offlinequiz_page_scanner {
         if ($return) {
             return $percent;
         }
-//         if ($name == 'a-13-2') {
-//         	error_log('a-2-2 ' . $percent);
-//         	error_log('lowertrigger ' . $this->lowertrigger);
-//         	error_log('lowerwarning ' . $this->lowerwarning);
-//         	error_log('uppertrigger ' . $this->uppertrigger);
-//         	error_log('upperwarning ' . $this->upperwarning);        	
-//         }
-        
+
         if ($percent >= $this->uppertrigger) {
             return 2;
         } else if ($percent >= $this->upperwarning) {
             if ($patternout[0] == 0 or $patternout[1] == 0
-            		or $patternout[2] == 0 or $patternout[3] == 0
-            		or $patternout[4] == 0) {
+               or $patternout[2] == 0 or $patternout[3] == 0
+               or $patternout[4] == 0) {
                 return 1;
             }
             $patternfactor = $patternin[0] / $patternout[0];
@@ -909,8 +902,8 @@ class offlinequiz_page_scanner {
                 return 1;
             } else if ($patternfactor2 > 2.8) {
                  return 1;
-			} else if ($patternfactor < 1.4 or $patternfactor2 < 1.7) {
-            //} else if ($patternfactor < 2.45 or $patternfactor2 < 2.8) {          
+            } else if ($patternfactor < 1.4 or $patternfactor2 < 1.7) {
+                // Was } else if ($patternfactor < 2.45 or $patternfactor2 < 2.8) { .
                 return 2;
             } else {
                 return 1;
