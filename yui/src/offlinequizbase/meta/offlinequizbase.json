@@ -1,0 +1,8 @@
+{
+    "moodle-mod_offlinequiz-offlinequizbase": {
+        "requires": [
+            "base",
+            "node"
+        ]
+    }
+}

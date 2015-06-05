@@ -1,0 +1,11 @@
+{
+    "moodle-mod_offlinequiz-randomquestion": {
+        "requires": [
+            "base",
+            "event",
+            "node",
+            "io",
+            "moodle-core-notification-dialogue"
+        ]
+    }
+}

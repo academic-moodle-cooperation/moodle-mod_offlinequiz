@@ -1,0 +1,12 @@
+{
+    "name": "moodle-mod_offlinequiz-toolboxes",
+    "builds": {
+        "moodle-mod_offlinequiz-toolboxes": {
+            "jsfiles": [
+                "toolbox.js",
+                "resource.js",
+                "section.js"
+            ]
+        }
+    }
+}

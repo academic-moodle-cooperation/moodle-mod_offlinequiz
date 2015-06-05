@@ -1,0 +1,9 @@
+{
+    "moodle-mod_offlinequiz-modform": {
+        "requires": [
+            "base",
+            "node",
+            "event"
+        ]
+    }
+}

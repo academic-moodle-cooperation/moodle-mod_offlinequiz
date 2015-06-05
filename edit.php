@@ -44,7 +44,12 @@
  */
 
 require_once('../../config.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/editlib.php');
+//require_once($CFG->dirroot . '/mod/offlinequiz/editlib.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/addrandomform.php');
+
+require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/question/category_class.php');
 
 
@@ -191,12 +196,8 @@ if (!$course) {
     print_error('invalidcourseid', 'error');
 }
 
-// Get the question bank view.
-require_once($CFG->dirroot . '/mod/offlinequiz/classes/question/bank/custom_view.php');
-$questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
-$questionbank->set_offlinequiz_has_attempts($docscreated);
-$questionbank->process_actions($thispageurl, $cm);
-
+$offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
+$structure = $offlinequizobj->get_structure();
 
 // Log this visit.
 $params = array(
@@ -596,9 +597,19 @@ if ($savechanges && confirm_sesskey()) {
     }
 }
 
+// Get the question bank view.
+require_once($CFG->dirroot . '/mod/offlinequiz/classes/question/bank/custom_view.php');
+$questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
+$questionbank->set_offlinequiz_has_scanned_pages($docscreated);
 $questionbank->process_actions($thispageurl, $cm);
 
 // End of command processing =====================================================.
+
+$PAGE->set_pagelayout('incourse');
+$PAGE->set_pagetype('mod-offlinequiz-edit');
+
+$output = $PAGE->get_renderer('mod_offlinequiz', 'edit');
+
 $PAGE->requires->skip_link_to('questionbank',
         get_string('skipto', 'access', get_string('questionbank', 'question')));
 $PAGE->requires->skip_link_to('offlinequizcontentsblock',
@@ -620,16 +631,18 @@ $numberoflisteners = max(offlinequiz_number_of_pages($offlinequiz->questions), 1
 for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
     $offlinequizeditconfig->dialoglisteners[] = 'addrandomdialoglaunch_' . $pageiter;
 }
+
+
 $PAGE->requires->data_for_js('offlinequiz_edit_config', $offlinequizeditconfig);
 $PAGE->requires->js('/question/qengine.js');
-$module = array(
-    'name'      => 'mod_offlinequiz_edit',
-    'fullpath'  => '/mod/offlinequiz/edit.js',
-    'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
-    'strings'   => array(),
-    'async'     => false,
-);
-$PAGE->requires->js_init_call('offlinequiz_edit_init', null, false, $module);
+//$module = array(
+//     'name'      => 'mod_offlinequiz_edit',
+//     'fullpath'  => '/mod/offlinequiz/edit.js',
+//     'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
+//     'strings'   => array(),
+//     'async'     => false,
+// );
+// $PAGE->requires->js_init_call('offlinequiz_edit_init', null, false, $module);
 
 // Print the tabs to switch mode.
 $currenttab = 'editq';
@@ -675,37 +688,6 @@ if ($offlinequizqbanktool) {
     $offlinequizcontentsclass = 'offlinequizwhenbankcollapsed';
 }
 
-echo '<div class="questionbankwindow ' . $bankclass . 'block">';
-echo '<div class="header"><div class="title"><h2>';
-echo get_string('questionbankcontents', 'offlinequiz') .
-' <a href="' . $thispageurl->out(true, array('qbanktool' => '1')) .
-'" id="showbankcmd">[' . get_string('show').
-']</a>
-<a href="' . $thispageurl->out(true, array('qbanktool' => '0')) .
-'" id="hidebankcmd">[' . get_string('hide').
-']</a>';
-echo '</h2></div></div><div class="content">';
-
-echo '<span id="questionbank"></span>';
-echo '<div class="container">';
-echo ' <div id="module" class="module">';
-echo '  <div class="bd">';
-
-// Display question bank.
-$questionbank->display('editq',
-        $pagevars['qpage'],
-        $pagevars['qperpage'],
-        $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'],
-        $pagevars['qbshowtext']);
-
-echo '  </div>';
-echo ' </div>';
-echo '</div>';
-
-echo '</div></div>';
-
-echo '<div class="offlinequizcontents ' . $offlinequizcontentsclass . '" id="offlinequizcontentsblock">';
-
 if ($docscreated) {
     echo "<div class=\"noticebox infobox\">\n";
     echo " <a href=\"createquiz.php?mode=createpdfs&amp;q=$offlinequiz->instance\">" .
@@ -713,6 +695,46 @@ if ($docscreated) {
     get_string("attemptsexist", "offlinequiz")."<br />".get_string("regradinginfo", "offlinequiz");
     echo "</div><br />\n";
 }
+
+// Questions wrapper start.
+echo html_writer::start_tag('div', array('class' => 'mod-quiz-edit-content'));
+
+echo $output->edit_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars);
+
+// Questions wrapper end.
+echo html_writer::end_tag('div');
+
+// echo '<div class="questionbankwindow ' . $bankclass . 'block">';
+// echo '<div class="header"><div class="title"><h2>';
+// echo get_string('questionbankcontents', 'offlinequiz') .
+// ' <a href="' . $thispageurl->out(true, array('qbanktool' => '1')) .
+// '" id="showbankcmd">[' . get_string('show').
+// ']</a>
+// <a href="' . $thispageurl->out(true, array('qbanktool' => '0')) .
+// '" id="hidebankcmd">[' . get_string('hide').
+// ']</a>';
+// echo '</h2></div></div><div class="content">';
+
+// echo '<span id="questionbank"></span>';
+// echo '<div class="container">';
+// echo ' <div id="module" class="module">';
+// echo '  <div class="bd">';
+
+// // Display question bank.
+// $questionbank->display('editq',
+//         $pagevars['qpage'],
+//         $pagevars['qperpage'],
+//         $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'],
+//         $pagevars['qbshowtext']);
+
+// echo '  </div>';
+// echo ' </div>';
+// echo '</div>';
+
+// echo '</div></div>';
+
+// echo '<div class="offlinequizcontents ' . $offlinequizcontentsclass . '" id="offlinequizcontentsblock">';
+
 
 if ($offlinequiz->shufflequestions) {
     $repaginatingdisabledhtml = 'disabled="disabled"';
@@ -730,121 +752,121 @@ if ($offlinequizreordertool) {
     echo '</div>';
 }
 
-// Compute the offlinequiz group letters.
-$letterstr = 'ABCDEFGHIJKL';
-$groupletters = array();
-$groupoptions = array();
+// //Compute the offlinequiz group letters.
+// $letterstr = 'ABCDEFGHIJKL';
+// $groupletters = array();
+// $groupoptions = array();
 
-for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
-    $groupletters[$i] = $letterstr[$i - 1];
-    $groupoptions[$i] = get_string('questionsingroup', 'offlinequiz') . ' ' . $letterstr[$i - 1];
-}
+// for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
+//     $groupletters[$i] = $letterstr[$i - 1];
+//     $groupoptions[$i] = get_string('questionsingroup', 'offlinequiz') . ' ' . $letterstr[$i - 1];
+// }
 
-if ($offlinequizreordertool) {
-    echo $OUTPUT->heading_with_help(get_string('orderingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
-            get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')',
-                'orderandpaging', 'offlinequiz');
-} else if ($offlinequizgradetool) {
-    echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
-            get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
-} else {
-    echo $OUTPUT->heading(get_string('editingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name . ' (' .
-            get_string('group') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 2);
-}
+// if ($offlinequizreordertool) {
+//     echo $OUTPUT->heading_with_help(get_string('orderingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
+//             get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')',
+//                 'orderandpaging', 'offlinequiz');
+// } else if ($offlinequizgradetool) {
+//     echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
+//             get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
+// } else {
+//     echo $OUTPUT->heading(get_string('editingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name . ' (' .
+//             get_string('group') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')', 2);
+// }
 
-/* Print the group choice select */
+// /* Print the group choice select */
 
-$groupurl = $thispageurl;
+// $groupurl = $thispageurl;
 
-echo '<br/><br/>';
-echo "<div class=\"groupchoice\">";
-echo $OUTPUT->single_select($groupurl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
-echo '</div><br/>';
-/*---------------------------*/
+// echo '<br/><br/>';
+// echo "<div class=\"groupchoice\">";
+// echo $OUTPUT->single_select($groupurl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
+// echo '</div><br/>';
+// /*---------------------------*/
 
-offlinequiz_print_status_bar($offlinequiz);
+// offlinequiz_print_status_bar($offlinequiz);
 
-$tabindex = 0;
-offlinequiz_print_grading_form($offlinequiz, $thispageurl, $tabindex);
+// $tabindex = 0;
+// offlinequiz_print_grading_form($offlinequiz, $thispageurl, $tabindex);
 
-if ($maxgradewrong) {
-    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
-    echo $OUTPUT->notification(get_string('maxgradewarning', 'offlinequiz'), 'notifyproblem');
-    echo $OUTPUT->box_end();
-}
-if ($offlinequiz->grade == 0.0) {
-    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
-    echo $OUTPUT->notification(get_string('gradeiszero', 'offlinequiz'), 'notifyproblem');
-    echo $OUTPUT->box_end();
-}
-if ($gradewarning) {
-    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
-    echo $OUTPUT->notification(get_string('gradewarning', 'offlinequiz'), 'notifyproblem');
-    echo $OUTPUT->box_end();
-}
-if ($bulkgradewarning) {
-    echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
-    echo $OUTPUT->notification(get_string('gradeswarning', 'offlinequiz'), 'notifyproblem');
-    echo $OUTPUT->box_end();
-}
+// if ($maxgradewrong) {
+//     echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+//     echo $OUTPUT->notification(get_string('maxgradewarning', 'offlinequiz'), 'notifyproblem');
+//     echo $OUTPUT->box_end();
+// }
+// if ($offlinequiz->grade == 0.0) {
+//     echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+//     echo $OUTPUT->notification(get_string('gradeiszero', 'offlinequiz'), 'notifyproblem');
+//     echo $OUTPUT->box_end();
+// }
+// if ($gradewarning) {
+//     echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+//     echo $OUTPUT->notification(get_string('gradewarning', 'offlinequiz'), 'notifyproblem');
+//     echo $OUTPUT->box_end();
+// }
+// if ($bulkgradewarning) {
+//     echo $OUTPUT->box_start('noticebox notifyproblem infobox maxgradewarning');
+//     echo $OUTPUT->notification(get_string('gradeswarning', 'offlinequiz'), 'notifyproblem');
+//     echo $OUTPUT->box_end();
+// }
 
-$notifystrings = array();
-if ($hasscannedpages) {
-    $reviewlink = offlinequiz_attempt_summary_link_to_reports($offlinequiz, $cm, $contexts->lowest());
-    $notifystrings[] = get_string('cannoteditafterattempts', 'offlinequiz', $reviewlink);
-}
+// $notifystrings = array();
+// if ($hasscannedpages) {
+//     $reviewlink = offlinequiz_attempt_summary_link_to_reports($offlinequiz, $cm, $contexts->lowest());
+//     $notifystrings[] = get_string('cannoteditafterattempts', 'offlinequiz', $reviewlink);
+// }
 
-if ($offlinequiz->shufflequestions) {
-    $updateurl = new moodle_url("$CFG->wwwroot/course/mod.php",
-            array('return' => 'true', 'update' => $offlinequiz->cmid, 'sesskey' => sesskey()));
-    $updatelink = '<a href="'.$updateurl->out().'">' . get_string('updatethis', '',
-            get_string('modulename', 'offlinequiz')) . '</a>';
-    $notifystrings[] = get_string('shufflequestionsselected', 'offlinequiz', $updatelink);
-}
-if (!empty($notifystrings)) {
-    echo $OUTPUT->box('<p>' . implode('</p><p>', $notifystrings) . '</p>', 'statusdisplay');
-}
+// if ($offlinequiz->shufflequestions) {
+//     $updateurl = new moodle_url("$CFG->wwwroot/course/mod.php",
+//             array('return' => 'true', 'update' => $offlinequiz->cmid, 'sesskey' => sesskey()));
+//     $updatelink = '<a href="'.$updateurl->out().'">' . get_string('updatethis', '',
+//             get_string('modulename', 'offlinequiz')) . '</a>';
+//     $notifystrings[] = get_string('shufflequestionsselected', 'offlinequiz', $updatelink);
+// }
+// if (!empty($notifystrings)) {
+//     echo $OUTPUT->box('<p>' . implode('</p><p>', $notifystrings) . '</p>', 'statusdisplay');
+// }
 
-if ($offlinequizreordertool) {
-    $perpage = array();
-    $perpage[0] = get_string('allinone', 'offlinequiz');
-    for ($i = 1; $i <= 50; ++$i) {
-        $perpage[$i] = $i;
-    }
-    $gostring = get_string('go');
-    echo '<div id="repaginatedialog"><div class="hd">';
-    echo get_string('repaginatecommand', 'offlinequiz');
-    echo '</div><div class="bd">';
-    echo '<form action="edit.php" method="post">';
-    echo '<fieldset class="invisiblefieldset">';
-    echo html_writer::input_hidden_params($thispageurl);
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    // YUI does not submit the value of the submit button so we need to add the value.
-    echo '<input type="hidden" name="repaginate" value="'.$gostring.'" />';
-    $attributes = array();
-    $attributes['disabled'] = $repaginatingdisabledhtml ? 'disabled' : null;
-    $select = html_writer::select(
-            $perpage, 'questionsperpage', $offlinequiz->questionsperpage, null, $attributes);
-    print_string('repaginate', 'offlinequiz', $select);
-    echo '<div class="offlinequizquestionlistcontrols">';
-    echo ' <input type="submit" name="repaginate" value="'. $gostring . '" ' .
-            $repaginatingdisabledhtml.' />';
-    echo '</div></fieldset></form></div></div>';
-}
+// if ($offlinequizreordertool) {
+//     $perpage = array();
+//     $perpage[0] = get_string('allinone', 'offlinequiz');
+//     for ($i = 1; $i <= 50; ++$i) {
+//         $perpage[$i] = $i;
+//     }
+//     $gostring = get_string('go');
+//     echo '<div id="repaginatedialog"><div class="hd">';
+//     echo get_string('repaginatecommand', 'offlinequiz');
+//     echo '</div><div class="bd">';
+//     echo '<form action="edit.php" method="post">';
+//     echo '<fieldset class="invisiblefieldset">';
+//     echo html_writer::input_hidden_params($thispageurl);
+//     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+// //    YUI does not submit the value of the submit button so we need to add the value.
+//     echo '<input type="hidden" name="repaginate" value="'.$gostring.'" />';
+//     $attributes = array();
+//     $attributes['disabled'] = $repaginatingdisabledhtml ? 'disabled' : null;
+//     $select = html_writer::select(
+//             $perpage, 'questionsperpage', $offlinequiz->questionsperpage, null, $attributes);
+//     print_string('repaginate', 'offlinequiz', $select);
+//     echo '<div class="offlinequizquestionlistcontrols">';
+//     echo ' <input type="submit" name="repaginate" value="'. $gostring . '" ' .
+//             $repaginatingdisabledhtml.' />';
+//     echo '</div></fieldset></form></div></div>';
+// }
 
-// Display the list of questions in the offlinequiz group.
-if ($offlinequizreordertool) {
-    echo '<div class="reorder">';
-} else {
-    echo '<div class="editq">';
+// //Display the list of questions in the offlinequiz group.
+// if ($offlinequizreordertool) {
+//     echo '<div class="reorder">';
+// } else {
+//     echo '<div class="editq">';
 
-}
-offlinequiz_print_question_list($offlinequiz, $thispageurl, true,
-        $offlinequizreordertool, $offlinequizgradetool, $offlinequizqbanktool, $docscreated, $defaultcategoryobj);
+// }
+// offlinequiz_print_question_list($offlinequiz, $thispageurl, true,
+//         $offlinequizreordertool, $offlinequizgradetool, $offlinequizqbanktool, $docscreated, $defaultcategoryobj);
 
-echo '</div>';
+// echo '</div>';
 
-// Close <div class="offlinequizcontents">.
-echo '</div>';
+// // Close <div class="offlinequizcontents">.
+// echo '</div>';
 
 echo $OUTPUT->footer();

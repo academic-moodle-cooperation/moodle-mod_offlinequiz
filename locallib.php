@@ -1192,7 +1192,7 @@ function offlinequiz_get_combined_reviewoptions($offlinequiz) {
 
     return array($someoptions, $alloptions);
 }
-
+    
 /**
  * Creates HTML code for a question edit button, used by editlib.php
  *
@@ -1409,8 +1409,8 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
 
         // Empty pagenumbers and usage slots.
         $sql = "UPDATE {offlinequiz_group_questions}
-                   SET usageslot = NULL,
-                       pagenumber = NULL
+                   SET slot = NULL,
+                       page = NULL
                  WHERE offlinequizid = :offlinequizid
                  ";
         $params = array('offlinequizid' => $offlinequiz->id);
@@ -1953,4 +1953,146 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
         $workbook->close();
     }
     exit;
+}
+
+/**
+ * Creates a textual representation of a question for display.
+ *
+ * @param object $question A question object from the database questions table
+ * @param bool $showicon If true, show the question's icon with the question. False by default.
+ * @param bool $showquestiontext If true (default), show question text after question name.
+ *       If false, show only question name.
+ * @param bool $return If true (default), return the output. If false, print it.
+ */
+function offlinequiz_question_tostring($question, $showicon = false,
+        $showquestiontext = true, $return = true, $shorttitle = false) {
+    global $COURSE;
+
+    $result = '';
+
+    $formatoptions = new stdClass();
+    $formatoptions->noclean = true;
+    $formatoptions->para = false;
+
+    $questiontext = strip_tags(question_utils::to_plain_text($question->questiontext, $question->questiontextformat,
+                                                             array('noclean' => true, 'para' => false)));
+    $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
+
+    $result .= '<span class="questionname" title="' . $questiontitle . '">';
+    if ($shorttitle && strlen($questiontitle) > 25) {
+        $questiontitle = shorten_text($questiontitle, 25, false, '...');
+    }
+
+    if ($showicon) {
+        $result .= print_question_icon($question, true);
+        echo ' ';
+    }
+
+    if ($shorttitle) {
+        $result .= $questiontitle;
+    } else {
+        $result .= shorten_text(format_string($question->name), 200) . '</span>';
+    }
+
+    if ($showquestiontext) {
+        $result .= '<span class="questiontext" title="' . $questiontext . '">';
+
+        $questiontext = shorten_text($questiontext, 200);
+
+        if (!empty($questiontext)) {
+            $result .= $questiontext;
+        } else {
+            $result .= '<span class="error">';
+            $result .= get_string('questiontextisempty', 'offlinequiz');
+            $result .= '</span>';
+        }
+        $result .= '</span>';
+    }
+    if ($return) {
+        return $result;
+    } else {
+        echo $result;
+    }
+}
+
+/**
+ * Add a question to a offlinequiz group
+ *
+ * Adds a question to a offlinequiz by updating $offlinequiz as well as the
+ * offlinequiz and offlinequiz_question_instances tables. It also adds a page break
+ * if required.
+ * @param int $id The id of the question to be added
+ * @param object $offlinequiz The extended offlinequiz object as used by edit.php
+ *      This is updated by this function
+ * @param int $page Which page in offlinequiz to add the question on. If 0 (default),
+ *      add at the end
+ * @return bool false if the question was already in the offlinequiz
+ */
+function offlinequiz_add_question_to_group($id, $offlinequiz, $page = 0) {
+    global $DB;
+
+    $questions = explode(',', offlinequiz_clean_layout($offlinequiz->questions));
+
+    // Don't add the same question twice.
+    if (in_array($id, $questions)) {
+        return false;
+    }
+
+    // Remove ending page break if it is not needed.
+    if ($breaks = array_keys($questions, 0)) {
+        // Determine location of the last two page breaks.
+        $end = end($breaks);
+        $last = prev($breaks);
+        $last = $last ? $last : -1;
+        if (!$offlinequiz->questionsperpage || (($end - $last - 1) < $offlinequiz->questionsperpage)) {
+            array_pop($questions);
+        }
+    }
+    if (is_int($page) && $page >= 1) {
+        $numofpages = offlinequiz_number_of_pages($offlinequiz->questions);
+        if ($numofpages < $page) {
+            // The page specified does not exist in offlinequiz.
+            $page = 0;
+        } else {
+            // Add ending page break - the following logic requires doing this at this point.
+            $questions[] = 0;
+            $questionsnew = array();
+            $currentpage = 1;
+            $addnow = false;
+            foreach ($questions as $question) {
+                if ($question == 0) {
+                    $currentpage++;
+                    // The current page is the one after the one we want to add on,
+                    // So we add the question before adding the current page.
+                    if ($currentpage == $page + 1) {
+                        $questionsnew[] = $id;
+                    }
+                }
+                $questionsnew[] = $question;
+            }
+            $questions = $questionsnew;
+        }
+    }
+    if ($page == 0) {
+        // Add question.
+        $questions[] = $id;
+        // Add ending page break.
+        $questions[] = 0;
+    }
+
+    // Save new questionslist in database.
+    $offlinequiz->questions = implode(',', $questions);
+
+    offlinequiz_save_questions($offlinequiz);
+
+    // Only add a new question instance if there isn't already one.
+    if (!$instance = $DB->get_record('offlinequiz_q_instances', array('offlinequizid' => $offlinequiz->id, 'questionid' => $id))) {
+        // Add the new question instance if it doesn't already exist.
+        $instance = new stdClass();
+        $instance->offlinequizid = $offlinequiz->id;
+        $instance->questionid = $id;
+        $instance->grade = $DB->get_field('question', 'defaultmark', array('id' => $id));
+
+        $DB->insert_record('offlinequiz_q_instances', $instance);
+    }
 }

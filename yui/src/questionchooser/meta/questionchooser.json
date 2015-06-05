@@ -1,0 +1,9 @@
+{
+    "moodle-mod_offlinequiz-questionchooser": {
+        "requires": [
+            "moodle-core-chooserdialogue",
+            "moodle-mod_offlinequiz-util",
+            "querystring-parse"
+        ]
+    }
+}

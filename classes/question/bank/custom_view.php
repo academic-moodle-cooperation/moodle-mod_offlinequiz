@@ -106,12 +106,12 @@ class custom_view extends \core_question\bank\view {
     }
 
     /**
-     * Let the question bank display know whether the offlinequiz has been attempted,
+     * Let the question bank display know whether the offlinequiz has scanned pages,
      * hence whether some bits of UI, like the add this question to the offlinequiz icon,
      * should be displayed.
-     * @param bool $offlinequizhasattempts whether the offlinequiz has attempts.
+     * @param bool $offlinequizhasattempts whether the offlinequiz has scanned pages.
      */
-    public function set_offlinequiz_has_attempts($offlinequizhasattempts) {
+    public function set_offlinequiz_has_scanned_pages($offlinequizhasattempts) {
         $this->offlinequizhasattempts = $offlinequizhasattempts;
         if ($offlinequizhasattempts && isset($this->visiblecolumns['addtoofflinequizaction'])) {
             unset($this->visiblecolumns['addtoofflinequizaction']);

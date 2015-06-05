@@ -1330,3 +1330,21 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
 
     question_extend_settings_navigation($offlinequiznode, $PAGE->cm->context)->trim_if_empty();
 }
+
+/**
+ * Determine the correct number of decimal places required to format a grade.
+ *
+ * @param object $offlinequiz The offlinequiz table row, only $offlinequiz->decimalpoints is used.
+ * @return integer
+ */
+function offlinequiz_get_grade_format($offlinequiz) {
+    if (empty($offlinequiz->questiondecimalpoints)) {
+        $offlinequiz->questiondecimalpoints = -1;
+    }
+
+    if ($offlinequiz->questiondecimalpoints == -1) {
+        return $offlinequiz->decimalpoints;
+    }
+
+    return $offlinequiz->questiondecimalpoints;
+}
