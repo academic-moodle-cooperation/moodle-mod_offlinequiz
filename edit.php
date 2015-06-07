@@ -81,6 +81,8 @@ if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     print_error('invalidgroupnumber', 'offlinequiz');
 }
 
+$offlinequiz->sumgrades = offlinequiz_get_group_sumgrades($offlinequiz);
+
 $offlinequizhasattempts = offlinequiz_has_scanned_pages($offlinequiz->id);
 
 $PAGE->set_url($thispageurl);
