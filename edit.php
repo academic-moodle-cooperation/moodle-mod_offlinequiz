@@ -69,7 +69,7 @@ if ($groupnumber === -1) {
 }
 
 $offlinequiz->groupnumber = $groupnumber;
-$thispageurl->param('groupnumber', $offlinequiz->groupnumber);
+//$thispageurl->param('groupnumber', $offlinequiz->groupnumber);
 
 // Load the offlinequiz group and set the groupid in the offlinequiz object.
 if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
@@ -224,6 +224,13 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
 
 $PAGE->requires->data_for_js('offlinequiz_edit_config', $offlinequizeditconfig);
 $PAGE->requires->js('/question/qengine.js');
+
+$currenttab = 'editq';
+$mode = 'edit';
+require_once('tabs.php');
+
+
+//offlinequiz_print_status_bar($offlinequiz);
 
 // Questions wrapper start.
 echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content'));

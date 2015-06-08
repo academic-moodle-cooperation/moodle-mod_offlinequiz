@@ -59,6 +59,7 @@ class edit_renderer extends \plugin_renderer_base {
                 get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
 
         // Information at the top.
+        $output .= $this->offlinequiz_group_selector($offlinequizobj->get_offlinequiz(), $pageurl);
         $output .= $this->offlinequiz_state_warnings($structure);
         $output .= $this->offlinequiz_information($structure);
         $output .= $this->maximum_grade_input($offlinequizobj->get_offlinequiz(), $this->page->url);
@@ -111,6 +112,36 @@ class edit_renderer extends \plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * 
+     * @param unknown $offlinequiz
+     * @return string
+     */
+    public function offlinequiz_group_selector($offlinequiz, $pageurl) {
+        global $OUTPUT;
+        
+        $result = '';
+        // Print the group choice select. 
+
+        // Compute the offlinequiz group letters.
+        $letterstr = 'ABCDEFGHIJKL';
+        $groupletters = array();
+        $groupoptions = array();
+
+        for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
+            $groupletters[$i] = $letterstr[$i - 1];
+            $groupoptions[$i] = get_string('questionsingroup', 'offlinequiz') . ' ' . $letterstr[$i - 1];
+        }
+
+        $result .= html_writer::empty_tag('br');
+        $result .= html_writer::start_div('groupchoice');
+        $result .= $OUTPUT->single_select($pageurl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
+        $result .= html_writer::end_div();
+        $result .= html_writer::empty_tag('br');
+        /*---------------------------*/
+        return $result;
+    }
+    
     /**
      * Render any warnings that might be required about the state of the offlinequiz,
      * e.g. if it has been attempted, or if the shuffle questions option is

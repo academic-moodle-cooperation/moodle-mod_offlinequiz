@@ -1166,6 +1166,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                             array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id), 'position');
                     // For every group we start on page 1.
                     $currentpage = 1;
+                    $currentslot = 1;
                     foreach ($groupquestions as $groupquestion) {
                         $needsupdate = false; 
                         if ($groupquestion->questionid == 0) {
@@ -1187,9 +1188,14 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                             $groupquestion->page = $currentpage;
                             $needsupdate = true;
                         }
+                        if (!$groupquestion->slot) {
+                            $groupquestion->slot = $currentslot;
+                            $needsupdate = true;
+                        }
                         if ($needsupdate) {
                             $DB->update_record('offlinequiz_group_questions', $groupquestion);
                         }
+                        $currentslot++;
                     }
                 }    
 
