@@ -156,7 +156,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage);
         }
     }
-    offlinequiz_delete_previews($offlinequiz);
+    // offlinequiz_delete_previews($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     redirect($afteractionurl);
 }
@@ -170,7 +170,7 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     $randomcount = required_param('randomcount', PARAM_INT);
     offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount, $recurse);
 
-    offlinequiz_delete_previews($offlinequiz);
+    // offlinequiz_delete_previews($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     redirect($afteractionurl);
 }
