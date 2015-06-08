@@ -381,7 +381,6 @@ class structure {
 
         $slots = $this->populate_missing_questions($slots);
 
-        print_object($slots);
         $this->questions = array();
         $this->slots = array();
         $this->slotsinorder = array();
@@ -412,6 +411,7 @@ class structure {
 
         $this->populate_slots_with_sectionids();
         $this->populate_question_numbers();
+        //print_object($this->slotsinorder);
     }
 
     /**
@@ -708,8 +708,8 @@ class structure {
 
         $offlinequizslots = $DB->get_records('offlinequiz_group_questions',
                  array('offlinequizid' => $offlinequiz->id,
-                       'offlinegoupid' => $offlinequiz->groupid), 'slot');
-        $repaginate = new \mod_offlinequiz\repaginate($offlinequiz->id, $offlinequizslots);
+                       'offlinegroupid' => $offlinequiz->groupid), 'slot');
+        $repaginate = new \mod_offlinequiz\repaginate($offlinequiz->id, $offlinequiz->groupid, $offlinequizslots);
         $repaginate->repaginate_slots($offlinequizslots[$slotid]->slot, $type);
         $slots = $this->refresh_page_numbers_and_update_db($offlinequiz);
 

@@ -59,7 +59,7 @@ $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
 // Determine groupid.
-$groupnumber    = optional_param('groupnumber', -1, PARAM_INT);
+$groupnumber    = optional_param('groupnumber', 1, PARAM_INT);
 if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
     $groupnumber = $SESSION->question_pagevars['groupnumber'];
 }
@@ -71,12 +71,13 @@ if ($groupnumber === -1) {
 $offlinequiz->groupnumber = $groupnumber;
 $thispageurl->param('groupnumber', $offlinequiz->groupnumber);
 
+// Load the offlinequiz group and set the groupid in the offlinequiz object.
 if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     $offlinequiz->groupid = $offlinequizgroup->id;
     $groupquestions = offlinequiz_get_group_questions($offlinequiz);
-    $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions);
+    // $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions, $offlinequiz->groupid);
     // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
-    $offlinequiz->questions = offlinequiz_clean_layout($groupquestions, empty($purequestions));
+    $offlinequiz->questions = $groupquestions;
 } else {
     print_error('invalidgroupnumber', 'offlinequiz');
 }
@@ -126,8 +127,8 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     // Re-paginate the offlinequiz.
     $structure->check_can_be_edited();
     $questionsperpage = optional_param('questionsperpage', $offlinequiz->questionsperpage, PARAM_INT);
-    offlinequiz_repaginate_questions($offlinequiz->id, $questionsperpage );
-    offlinequiz_delete_previews($offlinequiz);
+    offlinequiz_repaginate_questions($offlinequiz->id, $offlinequiz->groupid, $questionsperpage );
+    //offlinequiz_delete_previews($offlinequiz);
     redirect($afteractionurl);
 }
 
@@ -137,7 +138,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     offlinequiz_require_question_use($addquestion);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage);
-    offlinequiz_delete_previews($offlinequiz);
+    //offlinequiz_delete_previews($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     $thispageurl->param('lastchanged', $addquestion);
     redirect($afteractionurl);

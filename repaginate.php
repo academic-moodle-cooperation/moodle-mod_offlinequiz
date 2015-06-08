@@ -27,11 +27,12 @@ require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
 $cmid = required_param('cmid', PARAM_INT);
 $offlinequizid = required_param('offlinequizid', PARAM_INT);
+$offlinegroupid = required_param('offlinegroupid', PARAM_INT);
 $slotnumber = required_param('slot', PARAM_INT);
 $repagtype = required_param('repag', PARAM_INT);
 
 require_sesskey();
-$offlinequizobj = offlinequiz::create($offlinequizid);
+$offlinequizobj = offlinequiz::create($offlinequizid, $offlinegroupid);
 require_login($offlinequizobj->get_course(), false, $offlinequizobj->get_cm());
 require_capability('mod/offlinequiz:manage', $offlinequizobj->get_context());
 if (offlinequiz_has_scanned_pages($offlinequizid)) {
@@ -42,7 +43,7 @@ if (offlinequiz_has_scanned_pages($offlinequizid)) {
 }
 
 $slotnumber++;
-$repage = new \mod_offlinequiz\repaginate($offlinequizid);
+$repage = new \mod_offlinequiz\repaginate($offlinequizid, $offlinegroupid);
 $repage->repaginate_slots($slotnumber, $repagtype);
 
 $structure = $offlinequizobj->get_structure();

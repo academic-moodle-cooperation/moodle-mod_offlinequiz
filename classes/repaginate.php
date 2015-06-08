@@ -43,22 +43,30 @@ class repaginate {
 
     /** @var int the id of the offlinequiz being manipulated. */
     private $offlinequizid;
-    /** @var array the offlinequiz_slots for that offlinequiz. */
+
+    /** @var int the id of the offlinequiz group being manipulated. */
+    private $offlinegroupid;
+
+    /** @var array the offlinequiz_group_questions for that offlinequiz and that offline group. */
     private $slots;
 
     /**
      * Constructor.
-     * @param int $offlinequizid the id of the offlinequiz being manipulated.
-     * @param stdClass[] $slots the offlinequiz_slots for that offlinequiz.
+     * @param int $offlinequizid the ID of the offlinequiz being manipulated.
+     * @param int $offlinequizid the ID of the offlinequiz group being manipulated.
+     * @param stdClass[] $slots the offlinequiz_group_questions for that offlinequiz.
      */
-    public function __construct($offlinequizid = 0, $slots = null) {
+    public function __construct($offlinequizid = 0, $offlinegroupid = 0, $slots = null) {
         global $DB;
         $this->offlinequizid = $offlinequizid;
+        $this->offlinegroupid = $offlinegroupid;
         if (!$this->offlinequizid) {
             $this->slots = array();
         }
         if (!$slots) {
-            $this->slots = $DB->get_records('offlinequiz_slots', array('offlinequizid' => $this->offlinequizid), 'slot');
+            $this->slots = $DB->get_records('offlinequiz_group_questions',
+                    array('offlinequizid' => $this->offlinequizid,
+                          'offlinegroupid' => $this->offlinegroupid), 'slot');
         } else {
             $this->slots = $slots;
         }
@@ -130,7 +138,9 @@ class repaginate {
      */
     public function repaginate_slots($nextslotnumber, $type) {
         global $DB;
-        $this->slots = $DB->get_records('offlinequiz_slots', array('offlinequizid' => $this->offlinequizid), 'slot');
+        $this->slots = $DB->get_records('offlinequiz_group_questions',
+                array('offlinequizid' => $this->offlinequizid,
+                      'offlinegroupid' => $this->offlinegroupid), 'slot');
         $nextslot = null;
         $newslots = array();
         foreach ($this->slots as $slot) {
@@ -140,7 +150,7 @@ class repaginate {
                 $nextslot = $this->repaginate_next_slot($nextslotnumber, $type);
 
                 // Update DB.
-                $DB->update_record('offlinequiz_slots', $nextslot, true);
+                $DB->update_record('offlinequiz_group_questions', $nextslot, true);
 
                 // Update returning object.
                 $newslots[$slot->id] = $nextslot;
@@ -225,7 +235,7 @@ class repaginate {
             }
             // Update DB.
             if ($dbupdate) {
-                $DB->update_record('offlinequiz_slots', $slot);
+                $DB->update_record('offlinequiz_group_questions', $slot);
             }
             $newslots[$slot->id] = $slot;
         }

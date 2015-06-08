@@ -170,6 +170,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         params.sesskey = M.cfg.sesskey;
         params.courseid = this.get('courseid');
         params.offlinequizid = this.get('offlinequizid');
+        params.offlinegroupid = this.get('offlinegroupid');        
         params['class'] = 'section';
         params.field = 'move';
         params.id = dragnodeid;
@@ -246,6 +247,9 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
             value: null
         },
         offlinequizid: {
+            value: null
+        },
+        offlinegroupid: {
             value: null
         },
         ajaxurl: {

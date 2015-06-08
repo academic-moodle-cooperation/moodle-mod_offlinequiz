@@ -417,6 +417,9 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         },
         offlinequizid : {
             'value' : 0
+        },
+        offlinegroupid : {
+        	'value' : 0
         }
     }
 });

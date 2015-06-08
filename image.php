@@ -150,7 +150,7 @@ if ($sheetloaded) {
 
     if ($options->gradedsheetfeedback) {
 
-        $layout = offlinequiz_get_group_questions($offlinequiz, $group->id, true);
+        $layout = offlinequiz_get_group_questions($offlinequiz, $group->id);
         $questionids = explode(',', $layout);
 
         list($qsql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');

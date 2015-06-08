@@ -137,6 +137,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         params.sesskey = M.cfg.sesskey;
         params.courseid = this.get('courseid');
         params.offlinequizid = this.get('offlinequizid');
+        params.offlinegroupid = this.get('offlinegroupid');
         params['class'] = 'resource';
         params.field = 'move';
         params.id = Number(Y.Moodle.mod_offlinequiz.util.slot.getId(dragnode));
@@ -227,6 +228,9 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
             value: null
         },
         offlinequizid: {
+            value: null
+        },
+        offlinegroupid: {
             value: null
         },
         ajaxurl: {

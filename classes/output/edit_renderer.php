@@ -879,11 +879,13 @@ class edit_renderer extends \plugin_renderer_base {
         $config->pagehtml = $this->new_page_template($structure, $contexts, $pagevars, $pageurl);
         $config->addpageiconhtml = $this->add_page_icon_template($structure, $offlinequiz);
 
+        //print_object($offlinequiz);
         $this->page->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
                 'M.mod_offlinequiz.init_resource_toolbox',
                 array(array(
                         'courseid' => $course->id,
                         'offlinequizid' => $offlinequiz->id,
+                        'offlinegroupid' => $offlinequiz->groupid,
                         'ajaxurl' => $config->resourceurl,
                         'config' => $config,
                 ))

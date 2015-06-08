@@ -171,6 +171,9 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         offlinequizid : {
             'value' : 0
         },
+        offlinegroupid : {
+            'value' : 0
+        },
         format : {
             'value' : 'topics'
         }

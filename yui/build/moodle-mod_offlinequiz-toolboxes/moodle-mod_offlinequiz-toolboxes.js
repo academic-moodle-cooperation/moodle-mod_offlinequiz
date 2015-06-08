@@ -106,6 +106,7 @@ Y.extend(TOOLBOX, Y.Base, {
         data.sesskey = M.cfg.sesskey;
         data.courseid = this.get('courseid');
         data.offlinequizid = this.get('offlinequizid');
+        data.offlinegroupid = this.get('offlinegroupid');
 
         var uri = M.cfg.wwwroot + this.get('ajaxurl');
 
@@ -181,13 +182,23 @@ Y.extend(TOOLBOX, Y.Base, {
         },
 
         /**
-         * The Moodle course format.
+         * The ID of the offlinequiz being edited.
          *
-         * @attribute format
-         * @default 'topics'
-         * @type String
+         * @attribute offlinequizid
+         * @default 0
+         * @type Number
          */
         offlinequizid: {
+            'value': 0
+        },
+        /**
+         * The ID of the offlinequiz group being edited.
+         *
+         * @attribute offlinequizid
+         * @default 0
+         * @type Number
+         */
+        offlinegroupid: {
             'value': 0
         },
         /**
@@ -631,6 +642,9 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         },
         offlinequizid : {
             'value' : 0
+        },
+        offlinegroupid : {
+        	'value' : 0
         }
     }
 });
@@ -811,6 +825,9 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
             'value' : 0
         },
         offlinequizid : {
+            'value' : 0
+        },
+        offlinegroupid : {
             'value' : 0
         },
         format : {

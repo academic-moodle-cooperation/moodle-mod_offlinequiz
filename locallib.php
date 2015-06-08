@@ -195,12 +195,11 @@ function offlinequiz_load_questions_usage_by_activity($qubaid) {
 
 /**
  *
- * @param unknown_type $offlinequiz
- * @param unknown_type $groupid
- * @param unknown_type $questionsonly
+ * @param int $offlinequiz
+ * @param int $groupid
  * @return string
  */
-function offlinequiz_get_group_questions($offlinequiz, $groupid = 0, $questionsonly = false) {
+function offlinequiz_get_group_questions($offlinequiz, $groupid = 0) {
     global $DB;
 
     if (!$groupid) {
@@ -210,12 +209,9 @@ function offlinequiz_get_group_questions($offlinequiz, $groupid = 0, $questionso
     $sql = "SELECT questionid
               FROM {offlinequiz_group_questions}
              WHERE offlinequizid = :offlinequizid
-               AND offlinegroupid = :offlinegroupid";
-
-    if ($questionsonly) {
-        $sql .= " AND questionid <> 0 ";
-    }
-    $sql .= "ORDER BY position ASC";
+               AND offlinegroupid = :offlinegroupid
+          ORDER BY position ASC ";
+    
     $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $groupid);
     $questions = $DB->get_fieldset_sql($sql, $params);
 
@@ -319,7 +315,7 @@ function offlinequiz_get_maxquestions($offlinequiz, $groups) {
     $maxquestions = 0;
     foreach ($groups as $group) {
 
-        $layout = offlinequiz_get_group_questions($offlinequiz, $group->id, true);
+        $layout = offlinequiz_get_group_questions($offlinequiz, $group->id);
         $questionids = explode(',', $layout);
 
         list($qsql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED);
@@ -405,6 +401,36 @@ function offlinequiz_get_maxanswers($offlinequiz, $groups = array()) {
     }
 }
 
+
+/**
+ * Repaginate the questions in a offlinequiz
+ * @param int $offlinequizid the id of the offlinequiz to repaginate.
+ * @param int $slotsperpage number of items to put on each page. 0 means unlimited.
+ */
+function offlinequiz_repaginate_questions($offlinequizid, $offlinegroupid, $slotsperpage) {
+    global $DB;
+    $trans = $DB->start_delegated_transaction();
+
+    $slots = $DB->get_records('offlinequiz_group_questions',
+            array('offlinequizid' => $offlinequizid, 'offlinegroupid' => $offlinegroupid),
+            'slot');
+
+    $currentpage = 1;
+    $slotsonthispage = 0;
+    foreach ($slots as $slot) {
+        if ($slotsonthispage && $slotsonthispage == $slotsperpage) {
+            $currentpage += 1;
+            $slotsonthispage = 0;
+        }
+        if ($slot->page != $currentpage) {
+            $DB->set_field('offlinequiz_group_questions', 'page', $currentpage,
+                    array('id' => $slot->id));
+        }
+        $slotsonthispage += 1;
+    }
+
+    $trans->allow_commit();
+}
 
 /**
  * Re-paginates the offlinequiz layout
@@ -740,56 +766,56 @@ function offlinequiz_load_useridentification() {
     set_config('ID_field', $field, 'offlinequiz');
 }
 
-/**
- * Clean the question layout from various possible anomalies:
- * - Remove consecutive ","'s
- * - Remove duplicate question id's
- * - Remove extra "," from beginning and end
- * - Finally, add a ",0" in the end if there is none
- *
- * @param $string $layout the offlinequiz layout to clean up, usually from $offlinequiz->questions.
- * @param bool $removeemptypages If true, remove empty pages from the offlinequiz. False by default.
- * @return $string the cleaned-up layout
- */
-function offlinequiz_clean_layout($layout, $removeemptypages = false) {
-    // Remove repeated ','s. This can happen when a restore fails to find the right
-    // id to relink to.
-    $layout = preg_replace('/,{2,}/', ',', trim(trim($layout), ','));
-    // Remove duplicate question ids.
-    $layout = explode(',', $layout);
-    $cleanerlayout = array();
-    $seen = array();
-    foreach ($layout as $item) {
-        if ($item == 0) {
-            $cleanerlayout[] = '0';
-        } else if (!in_array($item, $seen)) {
-            $cleanerlayout[] = $item;
-            $seen[] = $item;
-        }
-    }
+// /**
+//  * Clean the question layout from various possible anomalies:
+//  * - Remove consecutive ","'s
+//  * - Remove duplicate question id's
+//  * - Remove extra "," from beginning and end
+//  * - Finally, add a ",0" in the end if there is none
+//  *
+//  * @param $string $layout the offlinequiz layout to clean up, usually from $offlinequiz->questions.
+//  * @param bool $removeemptypages If true, remove empty pages from the offlinequiz. False by default.
+//  * @return $string the cleaned-up layout
+//  */
+// function offlinequiz_clean_layout($layout, $removeemptypages = false) {
+// //    Remove repeated ','s. This can happen when a restore fails to find the right
+// //    id to relink to.
+//     $layout = preg_replace('/,{2,}/', ',', trim(trim($layout), ','));
+// //    Remove duplicate question ids.
+//     $layout = explode(',', $layout);
+//     $cleanerlayout = array();
+//     $seen = array();
+//     foreach ($layout as $item) {
+//         if ($item == 0) {
+//             $cleanerlayout[] = '0';
+//         } else if (!in_array($item, $seen)) {
+//             $cleanerlayout[] = $item;
+//             $seen[] = $item;
+//         }
+//     }
 
-    if ($removeemptypages) {
-        // Avoid duplicate page breaks.
-        $layout = $cleanerlayout;
-        $cleanerlayout = array();
-        $stripfollowingbreaks = true; // Ensure breaks are stripped from the start.
-        foreach ($layout as $item) {
-            if ($stripfollowingbreaks && $item == 0) {
-                continue;
-            }
-            $cleanerlayout[] = $item;
-            $stripfollowingbreaks = $item == 0;
-        }
-    }
+//     if ($removeemptypages) {
+// //       Avoid duplicate page breaks.
+//         $layout = $cleanerlayout;
+//         $cleanerlayout = array();
+//         $stripfollowingbreaks = true; // Ensure breaks are stripped from the start.
+//         foreach ($layout as $item) {
+//             if ($stripfollowingbreaks && $item == 0) {
+//                 continue;
+//             }
+//             $cleanerlayout[] = $item;
+//             $stripfollowingbreaks = $item == 0;
+//         }
+//     }
 
-    // Add a page break at the end if there is none.
-    if (end($cleanerlayout) !== '0') {
-        $cleanerlayout[] = '0';
-    }
+// //    Add a page break at the end if there is none.
+//     if (end($cleanerlayout) !== '0') {
+//         $cleanerlayout[] = '0';
+//     }
 
-    $result = implode(',', $cleanerlayout);
-    return $result;
-}
+//     $result = implode(',', $cleanerlayout);
+//     return $result;
+// }
 
 
 /**

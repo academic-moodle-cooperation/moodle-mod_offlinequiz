@@ -28,6 +28,7 @@ if (!defined('AJAX_SCRIPT')) {
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
 
 // Initialise ALL the incoming parameters here, up front.
 $offlinequizid     = required_param('offlinequizid', PARAM_INT);
@@ -88,7 +89,7 @@ switch($requestmethod) {
                     case 'move':
                         require_capability('mod/offlinequiz:manage', $modcontext);
                         $structure->move_slot($id, $previousid, $page);
-                        offlinequiz_delete_previews($offlinequiz);
+                        // offlinequiz_delete_previews($offlinequiz);
                         echo json_encode(array('visible' => true));
                         break;
 
@@ -104,7 +105,7 @@ switch($requestmethod) {
                         $slot = $structure->get_slot_by_id($id);
                         if ($structure->update_slot_maxmark($offlinequizobj, $slot, $maxmark)) {
                             // Grade has really changed.
-                            offlinequiz_delete_previews($offlinequiz);
+                            // offlinequiz_delete_previews($offlinequiz);
                             offlinequiz_update_sumgrades($offlinequiz);
                             offlinequiz_update_all_attempt_sumgrades($offlinequiz);
                             offlinequiz_update_all_final_grades($offlinequiz);
@@ -139,7 +140,7 @@ switch($requestmethod) {
                     throw new moodle_exception('AJAX commands.php: Bad slot ID '.$id);
                 }
                 $structure->remove_slot($offlinequiz, $slot->slot);
-                offlinequiz_delete_previews($offlinequiz);
+                // offlinequiz_delete_previews($offlinequiz);
                 offlinequiz_update_sumgrades($offlinequiz);
                 echo json_encode(array('newsummarks' => offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades),
                             'deleted' => true, 'newnumquestions' => $structure->get_question_count()));
