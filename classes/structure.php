@@ -381,6 +381,7 @@ class structure {
 
         $slots = $this->populate_missing_questions($slots);
 
+        print_object($slots);
         $this->questions = array();
         $this->slots = array();
         $this->slotsinorder = array();

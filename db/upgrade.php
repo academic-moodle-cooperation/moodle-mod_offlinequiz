@@ -1140,12 +1140,80 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2015060502, 'offlinequiz');
     }
     
+    if ($oldversion < 2015060900) {
+    
+        //  This upgrade migrates old offlinequiz_q_instances grades (maxgrades) to new 
+        // maxmark field in offlinequiz_group_questions.
+        // It also deletes group questions with questionid 0 (pagebreaks) and inserts the 
+        // correct page number instead. 
+        
+        $numofflinequizzes = $DB->count_records('offlinequiz');
+        if ($numofflinequizzes > 0) {
+            $pbar = new progress_bar('offlinequizquestionstoslots', 500, true);
+
+            $transaction = $DB->start_delegated_transaction();
+    
+            $numberdone = 0;
+            $offlinequizzes = $DB->get_recordset('offlinequiz', null, 'id', 'id, numgroups');
+            foreach ($offlinequizzes as $offlinequiz) {
+                $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
+                        'number', '*', 0, $offlinequiz->numgroups);
+                $questioninstances = $DB->get_records('offlinequiz_q_instances',
+                        array('offlinequizid' => $offlinequiz->id), 'questionid', 'questionid, grade');
+                
+                foreach ($groups as $group) {
+                    $groupquestions = $DB->get_records('offlinequiz_group_questions',
+                            array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id), 'position');
+                    // For every group we start on page 1.
+                    $currentpage = 1;
+                    foreach ($groupquestions as $groupquestion) {
+                        $needsupdate = false; 
+                        if ($groupquestion->questionid == 0) {
+                            // We remove the old pagebreaks with questionid==0.
+                            $DB->delete_records('offlinequiz_group_questions', array('id' => $groupquestion->id));
+                            $currentpage++;
+                            continue;
+                        }
+                        // If the maxmarks in the question instances differs from the default maxmark (1)
+                        // of the offlinequiz_group_questions then change it.
+                        if (array_key_exists($groupquestion->questionid, $questioninstances)
+                            && ($maxmark = floatval($questioninstances[$groupquestion->questionid]->grade))
+                            && abs(floatval($groupquestion->maxmark) - $maxmark) > 0.001) {
+                                $groupquestion->maxmark = $maxmark;
+                                $needsupdate = true;
+                        }
+                        // If the page number is not correct, then change it.
+                        if ($groupquestion->page != $currentpage) {
+                            $groupquestion->page = $currentpage;
+                            $needsupdate = true;
+                        }
+                        if ($needsupdate) {
+                            $DB->update_record('offlinequiz_group_questions', $groupquestion);
+                        }
+                    }
+                }    
+
+                // Done with this offlinequiz. Update progress bar.
+                $numberdone++;
+                $pbar->update($numberdone, $numofflinequizzes,
+                        "Upgrading offlinequiz group questions - {$numberdone}/{$numofflinequizzes}.");
+
+            }
+            $transaction->allow_commit();
+        }
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015060900, 'offlinequiz');
+    }
+    
     
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
-    
+    // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the 
+    //      position field to find new pages and insert them.
+    //      Adapt offlinequiz code to handle missing zeros as pagebreaks.
     
 /*    
-    if ($oldversion < 2015060500) {
+    if ($oldversion < 2015060500)
+     {
     
         // Define table offlinequiz_q_instances to be renamed to offlinequiz_slots.
         $table = new xmldb_table('offlinequiz_q_instances');

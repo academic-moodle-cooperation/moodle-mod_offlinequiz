@@ -155,6 +155,7 @@ $string['editingofflinequiz_help'] = 'When creating an offline quiz, the main co
 
 $string['editofflinequiz'] = 'Edit offline quiz';
 $string['editingofflinequizx'] = 'Editing offline quiz: {$a}';
+$string['editmaxmark'] = 'Edit maximum mark';
 $string['editorder'] = 'Edit order';
 $string['editparticipants'] = 'Edit participants';
 $string['editquestion'] = 'Edit question';
@@ -276,6 +277,7 @@ $string['marginwarning'] = 'Please print the following PDF files without additio
 $string['marks'] = 'Marks';
 $string['matrikel'] = 'Matrikelnummer';
 $string['maxgradewarning'] = 'The maximum grade has to be a number!';
+$string['maxmark'] = 'Maximum mark';
 $string['membersinplist'] = '{$a->count} participants in <a href="{$a->url}">{$a->name}</a>';
 $string['missingimagefile'] = 'Missing image file';
 $string['missingitemdata'] = 'Missing answer(s) for user {$a}';
