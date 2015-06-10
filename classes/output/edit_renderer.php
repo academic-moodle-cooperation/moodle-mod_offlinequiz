@@ -117,7 +117,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param unknown $offlinequiz
      * @return string
      */
-    public function offlinequiz_group_selector($offlinequiz, $pageurl) {
+    public function offlinequiz_group_selector($offlinequiz, \moodle_url $pageurl) {
         global $OUTPUT;
         
         $result = '';
@@ -133,9 +133,11 @@ class edit_renderer extends \plugin_renderer_base {
             $groupoptions[$i] = get_string('questionsingroup', 'offlinequiz') . ' ' . $letterstr[$i - 1];
         }
 
+        $selecturl = unserialize(serialize($pageurl));
+        //$selecturl->remove_params('groupnumber');
         $result .= html_writer::empty_tag('br');
         $result .= html_writer::start_div('groupchoice');
-        $result .= $OUTPUT->single_select($pageurl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
+        $result .= $OUTPUT->single_select($selecturl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
         $result .= html_writer::end_div();
         $result .= html_writer::empty_tag('br');
         /*---------------------------*/
@@ -510,13 +512,14 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Get section, page, slotnumber and maxmark.
         $actions = array();
-
         // Add a new question to the offlinequiz.
         $returnurl = new \moodle_url($pageurl, array('addonpage' => $page));
         $params = array('returnurl' => $returnurl->out_as_local_url(false),
-                'cmid' => $structure->get_cmid(), 'category' => $questioncategoryid,
-                'addonpage' => $page, 'appendqnumstring' => 'addquestion');
-
+                'cmid' => $structure->get_cmid(),
+                'category' => $questioncategoryid,
+                'addonpage' => $page,
+                'appendqnumstring' => 'addquestion');
+        
         $actions['addaquestion'] = new \action_menu_link_secondary(
             new \moodle_url('/question/addquestion.php', $params),
             new \pix_icon('t/add', $str->addaquestion, 'moodle', array('class' => 'iconsmall', 'title' => '')),
@@ -531,7 +534,8 @@ class edit_renderer extends \plugin_renderer_base {
         $actions['questionbank'] = new \action_menu_link_secondary($pageurl, $icon, $str->questionbank, $attributes);
 
         // Add a random question.
-        $returnurl = new \moodle_url('/mod/offlinequiz/edit.php', array('cmid' => $structure->get_cmid(), 'data-addonpage' => $page));
+        $returnurl = new \moodle_url('/mod/offlinequiz/edit.php',
+                array('cmid' => $structure->get_cmid(), 'groupnumber' => $pageurl->get_param('groupnumber'), 'data-addonpage' => $page));
         $params = array('returnurl' => $returnurl, 'cmid' => $structure->get_cmid(), 'appendqnumstring' => 'addarandomquestion');
         $url = new \moodle_url('/mod/offlinequiz/addrandom.php', $params);
         $icon = new \pix_icon('t/add', $str->addarandomquestion, 'moodle', array('class' => 'iconsmall', 'title' => ''));

@@ -38,6 +38,7 @@ class custom_view extends \core_question\bank\view {
     protected $offlinequizhasattempts = false;
     /** @var \stdClass the offlinequiz settings. */
     protected $offlinequiz = false;
+
     /** @var int The maximum displayed length of the category info. */
     const MAX_TEXT_LENGTH = 200;
 
@@ -127,7 +128,8 @@ class custom_view extends \core_question\bank\view {
         $params = $this->baseurl->params();
         $params['addquestion'] = $questionid;
         $params['sesskey'] = sesskey();
-        return new \moodle_url('/mod/offlinequiz/edit.php', $params);
+        $addurl = new \moodle_url($this->baseurl, $params);
+        return $addurl;
     }
 
     /**

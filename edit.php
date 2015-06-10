@@ -69,7 +69,7 @@ if ($groupnumber === -1) {
 }
 
 $offlinequiz->groupnumber = $groupnumber;
-//$thispageurl->param('groupnumber', $offlinequiz->groupnumber);
+$thispageurl->param('groupnumber', $offlinequiz->groupnumber);
 
 // Load the offlinequiz group and set the groupid in the offlinequiz object.
 if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {

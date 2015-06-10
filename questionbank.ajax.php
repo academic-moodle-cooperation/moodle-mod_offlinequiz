@@ -36,6 +36,19 @@ list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
 $course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
 
+// Determine groupid.
+$groupnumber    = optional_param('groupnumber', 1, PARAM_INT);
+if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
+    $groupnumber = $SESSION->question_pagevars['groupnumber'];
+}
+
+if ($groupnumber === -1) {
+    $groupnumber = 1;
+}
+
+$offlinequiz->groupnumber = $groupnumber;
+$thispageurl->param('groupnumber', $offlinequiz->groupnumber);
+
 // Create offlinequiz question bank view.
 $questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
 $questionbank->set_offlinequiz_has_scanned_pages(offlinequiz_has_scanned_pages($offlinequiz->id));
