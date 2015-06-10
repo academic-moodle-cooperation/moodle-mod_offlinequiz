@@ -734,6 +734,13 @@ input#showviewbutton {
     margin-left: 0.2em;
 }
 
+#page-mod-offlinequiz-edit .section .activity.forgrading .actions input.gradeinput {
+    margin: 0px;
+    padding: 0px 2px 0px 0px;
+    text-align: right;
+    vertical-align: top;
+}
+
 #page-mod-offlinequiz-edit .mod_offlinequiz_edit_forms {
     display: none;
 }

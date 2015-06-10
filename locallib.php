@@ -693,6 +693,76 @@ function offlinequiz_delete_result($resultid, $context) {
     }
 }
 
+/**
+ * Save new maxgrade to a question instance
+ *
+ * Saves changes to the question grades in the offlinequiz_question_instances table.
+ * This function does not update 'sumgrades' in the offlinequiz table.
+ *
+ * @param int $offlinequiz  The offlinequiz to update / add the instances for.
+ * @param int $questionid  The id of the question
+ * @param int grade    The maximal grade for the question
+ */
+function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade) {
+    global $DB;
+
+    $groupquestionids = $DB->get_fieldset_select('offlinequiz_group_questions', 'id',
+                    'offlinequizid = :offlinequizid AND questionid = :questionid',
+                    array('offlinequizid' => $offlinequiz->id, 'questionid' => $questionid));
+    
+    foreach ($groupquestionids as $groupquestionid) {
+        $DB->set_field('offlinequiz_group_questions', 'maxmark', $grade, array('id' => $groupquestionid));
+    }
+
+    $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0,
+                $offlinequiz->numgroups);
+
+    // TODO This could be made faster by setting all grades for all slots in one go.
+    foreach ($groups as $group) {
+
+        if ($group->templateusageid) {
+           $templateusage = question_engine::load_questions_usage_by_activity($group->templateusageid);
+           $slots = $templateusage->get_slots();
+
+           $slot = 0;
+           foreach ($slots as $thisslot) {
+               if ($templateusage->get_question($thisslot)->id == $questionid) {
+                   $slot = $thisslot;
+                   break;
+               }
+           }
+           if ($slot) {
+               // Update the grade in the template usage.
+               question_engine::set_max_mark_in_attempts(new qubaid_list(array($group->templateusageid)), $slot, $grade);
+               // Update the grade in the student attempts/results.
+               // First get the IDs of the question usages that correspond to the results in this group.
+               $results = $DB->get_records('offlinequiz_results',
+                       array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id));
+               $qubaids = array();
+               foreach ($results as $result) {
+                   if ($result->usageid > 0) {
+                       $qubaids[] = $result->usageid;
+                   }
+               }
+
+               if (!empty($qubaids)) {
+                  list($usql, $params) = $DB->get_in_or_equal($qubaids, SQL_PARAMS_NAMED, 'quba');
+                  // Then update only those IDs. Hopefully, there is an index on the field questionusageid.
+                  $sql = "UPDATE {question_attempts}
+                             SET maxmark = :maxmark
+                           WHERE questionusageid $usql
+                             AND slot = :slot";
+
+                  $params['slot'] = $slot;
+                  $params['maxmark'] = $grade;
+
+                  $DB->execute($sql, $params);
+               }
+           }
+        }
+    }
+}
+
 
 /**
  * Update the sumgrades field of the results in an offline quiz.

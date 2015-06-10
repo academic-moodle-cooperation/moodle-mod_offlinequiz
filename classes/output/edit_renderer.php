@@ -143,8 +143,10 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= $this->offlinequiz_group_selector($offlinequizobj->get_offlinequiz(), $pageurl);
         $output .= $this->offlinequiz_information($structure);
         $output .= $this->maximum_grade_input($offlinequizobj->get_offlinequiz(), $this->page->url);
+        $output .= html_writer::tag('br', '');
         $output .= $this->total_marks($offlinequizobj->get_offlinequiz());
 
+        $output .= $this->start_grading_form($offlinequizobj->get_offlinequiz(), $pageurl);
         // Show the questions organised into sections and pages.
         $output .= $this->start_section_list();
         // Show the questions in one form for single submit.
@@ -159,7 +161,25 @@ class edit_renderer extends \plugin_renderer_base {
             $output .= $this->end_section();
         }
         $output .= $this->end_section_list();
+        $output .= $this->end_grading_form();
         
+        return $output;
+    }
+    
+    private function start_grading_form($offlinequiz, $pageurl) {
+        $output = '';
+        $output .= '<form method="post" action="edit.php" class="offlinequizbulkgradesform">';
+        $output .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+        $output .= html_writer::input_hidden_params($pageurl);
+        $output .= '<input type="hidden" name="savegrades" value="bulksavegrades" />';
+        return $output;
+    }
+    
+    private function end_grading_form() {
+        
+        $output = '<center><input type="submit" class="bulksubmitbutton" value="' .
+                get_string('bulksavegrades', 'offlinequiz') . '" name="bulkgradesubmit" /></center>
+                </form>';
         return $output;
     }
     
@@ -185,7 +205,7 @@ class edit_renderer extends \plugin_renderer_base {
         }
 
         $selecturl = unserialize(serialize($pageurl));
-        //$selecturl->remove_params('groupnumber');
+        $selecturl->remove_params('groupnumber');
         $result .= html_writer::empty_tag('br');
         $result .= html_writer::start_div('groupchoice');
         $result .= $OUTPUT->single_select($selecturl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
@@ -480,15 +500,6 @@ class edit_renderer extends \plugin_renderer_base {
     public function question_row_for_grading(structure $structure, $question, $contexts, $pagevars, $pageurl) {
         $output = '';
 
-//        $output .= $this->page_row($structure, $question, $contexts, $pagevars, $pageurl);
-
-        // Page split/join icon.
-//         $joinhtml = '';
-//         if ($structure->can_be_edited() && !$structure->is_last_slot_in_offlinequiz($question->slot)) {
-//             $joinhtml = $this->page_split_join_button($structure->get_offlinequiz(),
-//                     $question, !$structure->is_last_slot_on_page($question->slot));
-//         }
-
         // Question HTML.
         $questionhtml = $this->question_for_grading($structure, $question, $pageurl);
         $questionclasses = 'activity forgrading ' . $question->qtype . ' qtype_' . $question->qtype . ' slot';
@@ -746,9 +757,11 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Action icons.
         $questionicons = '';
-   //     $questionicons .= '<label for="inputq' . $question->id . '">' .  get_string('maxmark', 'offlinequiz') . ':</label>';
-        $input = '<input id="inputq' . $question->id . '" type="text" value="1" size="4" name="g' . $question->id . '">';
-        $questionicons .=  html_writer::span($input, 'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($structure->get_offlinequiz()));      
+        $input = '<input class="gradeinput" id="inputq' . $question->id .
+                '" type="text" value="' . offlinequiz_format_grade($structure->get_offlinequiz(), $question->maxmark) .
+                '" size="4" name="g' . $question->id . '"/>';
+        $questionicons .=  html_writer::span($input,
+                'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($structure->get_offlinequiz()));      
 //        $questionicons .= $this->marked_out_of_field($structure->get_offlinequiz(), $question);
 
         $output .= html_writer::span($questionicons, 'actions'); // Required to add js spinner icon.

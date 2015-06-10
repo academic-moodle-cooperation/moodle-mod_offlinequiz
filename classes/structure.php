@@ -699,23 +699,26 @@ class structure {
         $groupids = $DB->get_fieldset_select('offlinequiz_groups', 'id',
                 'offlinequizid = :offlinequizid AND id <> :currentid',
                 array('offlinequizid' => $offlinequiz->id, 'currentid' => $currentgroupid));
-        list($gsql, $params) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, 'grp');
+        $params = array();
+        if ($groupids) {
+            list($gsql, $params) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, 'grp');
         
-        $sql = "SELECT *
-                  FROM {offlinequiz_group_questions}
-                 WHERE offlinequizid = :offlinequizid
-                   AND offlinegroupid $gsql
-                   AND questionid = :questionid ";
+            $sql = "SELECT *
+                      FROM {offlinequiz_group_questions}
+                     WHERE offlinequizid = :offlinequizid
+                       AND offlinegroupid $gsql
+                       AND questionid = :questionid ";
 
-        $params['offlinequizid'] = $offlinequiz->id;
-        $params['questionid'] = $slot->questionid;
+            $params['offlinequizid'] = $offlinequiz->id;
+            $params['questionid'] = $slot->questionid;
 
-        $otherslots = $DB->get_records_sql($sql, $params);
-        foreach ($otherslots as $otherslot) {
-            $otherslot->maxmark = $maxmark;
-            $DB->update_record('offlinequiz_group_questions', $otherslot);
+            $otherslots = $DB->get_records_sql($sql, $params);
+            foreach ($otherslots as $otherslot) {
+                $otherslot->maxmark = $maxmark;
+                $DB->update_record('offlinequiz_group_questions', $otherslot);
+            }
         }
-
+        
         // Now look at the maxmark of attemps.
         \question_engine::set_max_mark_in_attempts(new \result_qubaids_for_offlinequiz($slot->offlinequizid, $slot->offlinegroupid),
                 $slot->slot, $maxmark);

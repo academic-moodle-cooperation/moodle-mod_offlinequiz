@@ -147,8 +147,14 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     $structure->check_can_be_edited();
     offlinequiz_require_question_use($addquestion);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
-    offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage);
-    //offlinequiz_delete_previews($offlinequiz);
+    // If the question is already in another group, take the maxmark of that.
+    if ($maxmark = $DB->get_field('offlinequiz_group_questions', 'maxmark',
+            array('offlinequizid' => $offlinequiz->id, 'questionid' => $addquestion))) {
+        offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage, $maxmark);
+    } else {
+        offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage);
+    }
+    // offlinequiz_delete_previews($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     $thispageurl->param('lastchanged', $addquestion);
     redirect($afteractionurl);
@@ -163,7 +169,13 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
         if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
             $key = $matches[1];
             offlinequiz_require_question_use($key);
-            offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage);
+            // If the question is already in another group, take the maxmark of that.
+            if ($maxmark = $DB->get_field('offlinequiz_group_questions', 'maxmark',
+                    array('offlinequizid' => $offlinequiz->id, 'questionid' => $key))) {
+                offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage, $maxmark);
+            } else {
+                offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage);
+            }
         }
     }
     // offlinequiz_delete_previews($offlinequiz);
@@ -195,6 +207,40 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         offlinequiz_update_grades($offlinequiz, 0, true);
     }
 
+    redirect($afteractionurl);
+}
+
+$savegrades = optional_param('savegrades', '', PARAM_ALPHA);
+
+if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
+    $rawdata = (array) data_submitted();
+
+    foreach ($rawdata as $key => $value) {
+        if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
+            if (is_numeric(str_replace(',', '.', $value))) {
+                // Parse input for question -> grades.
+                $questionid = $matches[1];
+                $offlinequiz->grades[$questionid] = unformat_float($value);
+                offlinequiz_update_question_instance($offlinequiz, $questionid, $offlinequiz->grades[$questionid]);
+            } else {
+                $bulkgradewarning = true;
+            }
+        }
+    }
+
+    $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+    // Redmine 983: Upgrade sumgrades for all other groups as well.
+    if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
+            '*', 0, $offlinequiz->numgroups)) {
+            foreach ($groups as $group) {
+                if ($group->id != $offlinequiz->groupid) {
+                    $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
+                }
+            }
+    }
+
+    offlinequiz_update_all_attempt_sumgrades($offlinequiz);
+    offlinequiz_update_grades($offlinequiz, 0, true);
     redirect($afteractionurl);
 }
 
