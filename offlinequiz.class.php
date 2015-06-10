@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/accesslib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/classes/structure.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/accessmanager.php');
 
 use mod_offlinequiz\structure;
 
@@ -82,10 +83,11 @@ class offlinequiz {
      * @param int $userid the the userid.
      * @return offlinequiz the new offlinequiz object
      */
-    public static function create($offlinequizid, $userid = null) {
+    public static function create($offlinequizid, $offlinegroupid, $userid = null) {
         global $DB;
 
         $offlinequiz = offlinequiz_access_manager::load_offlinequiz_and_settings($offlinequizid);
+        $offlinequiz->groupid = $offlinegroupid;
         $course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $course->id, false, MUST_EXIST);
 

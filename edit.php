@@ -58,6 +58,15 @@ list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
+// See if we do bulk grade editing.
+$offlinequizgradetool = optional_param('gradetool', -1, PARAM_BOOL);
+if ($offlinequizgradetool > -1) {
+    $thispageurl->param('gradetool', $offlinequizgradetool);
+    set_user_preference('offlinequiz_gradetab', $offlinequizgradetool);
+} else {
+    $offlinequizgradetool = get_user_preferences('offlinequiz_gradetab', 0);
+}
+
 // Determine groupid.
 $groupnumber    = optional_param('groupnumber', 1, PARAM_INT);
 if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
@@ -227,16 +236,31 @@ $PAGE->requires->data_for_js('offlinequiz_edit_config', $offlinequizeditconfig);
 $PAGE->requires->js('/question/qengine.js');
 
 $currenttab = 'editq';
-$mode = 'edit';
-require_once('tabs.php');
+if ($offlinequizgradetool) {
+    $mode = 'grade';
+} else {
+    $mode = 'edit';
+}
 
+require_once('tabs.php');
 
 //offlinequiz_print_status_bar($offlinequiz);
 
 // Questions wrapper start.
 echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content'));
 
-echo $output->edit_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars);
+$letterstr = 'ABCDEFGHIJKL';
+$groupletters = array();
+
+for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
+    $groupletters[$i] = $letterstr[$i - 1];
+}
+
+if ($offlinequizgradetool) {
+    echo $output->edit_grades_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars, $groupletters);
+} else {
+    echo $output->edit_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars, $groupletters);
+}
 
 // Questions wrapper end.
 echo html_writer::end_tag('div');

@@ -658,6 +658,9 @@ input#showviewbutton {
     left: 5em;
     width: 100%;
 }
+#page-mod-offlinequiz-edit ul.slots li.section li.activity.forgrading .activityinstance {
+    left: 3em;
+}
 #page-mod-offlinequiz-edit.dir-rtl ul.slots li.section li.activity .activityinstance {
     left: auto;
     right: 5em;
@@ -665,6 +668,9 @@ input#showviewbutton {
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .mod-indent-outer {
     padding-left: 22px;
+}
+#page-mod-offlinequiz-edit ul.slots li.section li.activity.forgrading .mod-indent-outer {
+    padding-left: 4px;
 }
 #page-mod-offlinequiz-edit.dir-rtl ul.slots li.section li.activity .mod-indent-outer {
     padding-left: 0;
@@ -698,11 +704,15 @@ input#showviewbutton {
 }
 #page-mod-offlinequiz-edit #categoryquestions .questionname,
 #page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .questionname {
-  font-weight: bold;
+    font-weight: bold;
     color: #555;
+    margin-right: 0.5em;
+    vertical-align: middle; 
 }
+
 #page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .questiontext {
     color: #555;
+    vertical-align: middle; 
 }
 #page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .mod_offlinequiz_random_qbank_link {
     font-size: 0.8em;
@@ -721,6 +731,7 @@ input#showviewbutton {
     white-space: nowrap;
     background: #e6e6e6;
     padding: 0.1em 0;
+    margin-left: 0.2em;
 }
 
 #page-mod-offlinequiz-edit .mod_offlinequiz_edit_forms {

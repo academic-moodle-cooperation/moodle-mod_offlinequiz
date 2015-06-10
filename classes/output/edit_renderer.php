@@ -38,7 +38,7 @@ use \html_writer;
  * @since Moodle 2.7
  */
 class edit_renderer extends \plugin_renderer_base {
-
+    
     /**
      * Render the edit page
      *
@@ -50,12 +50,15 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function edit_page(\offlinequiz $offlinequizobj, structure $structure,
-            \question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars) {
+            \question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
+        $offlinequiz = $offlinequizobj->get_offlinequiz();
         $output = '';
 
         // Page title.
         $output .= $this->heading_with_help(get_string('editingofflinequizx', 'offlinequiz',
-                format_string($offlinequizobj->get_offlinequiz_name())), 'editingofflinequiz', 'offlinequiz', '',
+                format_string($offlinequizobj->get_offlinequiz_name())) .
+                ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
+                'editingofflinequiz', 'offlinequiz', '',
                 get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
 
         // Information at the top.
@@ -112,6 +115,54 @@ class edit_renderer extends \plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Render the edit grade page
+     *
+     * @param \offlinequiz $offlinequizobj object containing all the offlinequiz settings information.
+     * @param structure $structure object containing the structure of the offlinequiz.
+     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param \moodle_url $pageurl the canonical URL of this page.
+     * @param array $pagevars the variables from {@link question_edit_setup()}.
+     * @return string HTML to output.
+     */
+    public function edit_grades_page(\offlinequiz $offlinequizobj, structure $structure,
+            \question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
+        
+        $offlinequiz = $offlinequizobj->get_offlinequiz();
+
+        $output = '';
+
+        // Page title.
+        $output .= $this->heading_with_help(
+                get_string('gradingofflinequizx', 'offlinequiz', format_string($offlinequizobj->get_offlinequiz_name())) .
+                ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
+                'editingofflinequiz', 'offlinequiz', '',  get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
+///echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
+//             get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
+        // Information at the top.
+        $output .= $this->offlinequiz_group_selector($offlinequizobj->get_offlinequiz(), $pageurl);
+        $output .= $this->offlinequiz_information($structure);
+        $output .= $this->maximum_grade_input($offlinequizobj->get_offlinequiz(), $this->page->url);
+        $output .= $this->total_marks($offlinequizobj->get_offlinequiz());
+
+        // Show the questions organised into sections and pages.
+        $output .= $this->start_section_list();
+        // Show the questions in one form for single submit.
+        $sections = $structure->get_offlinequiz_sections();
+        foreach ($sections as $section) {
+            $output .= $this->start_section($section);
+            $questionhtml = '';
+            foreach ($structure->get_questions_in_section($section->id) as $question) {
+                $questionhtml .=  $this->question_row_for_grading($structure, $question, $contexts, $pagevars, $pageurl);
+            }
+            $output .= html_writer::tag('ul', $questionhtml, array('class' => 'section img-text'));
+            $output .= $this->end_section();
+        }
+        $output .= $this->end_section_list();
+        
+        return $output;
+    }
+    
     /**
      * 
      * @param unknown $offlinequiz
@@ -426,6 +477,38 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
+    public function question_row_for_grading(structure $structure, $question, $contexts, $pagevars, $pageurl) {
+        $output = '';
+
+//        $output .= $this->page_row($structure, $question, $contexts, $pagevars, $pageurl);
+
+        // Page split/join icon.
+//         $joinhtml = '';
+//         if ($structure->can_be_edited() && !$structure->is_last_slot_in_offlinequiz($question->slot)) {
+//             $joinhtml = $this->page_split_join_button($structure->get_offlinequiz(),
+//                     $question, !$structure->is_last_slot_on_page($question->slot));
+//         }
+
+        // Question HTML.
+        $questionhtml = $this->question_for_grading($structure, $question, $pageurl);
+        $questionclasses = 'activity forgrading ' . $question->qtype . ' qtype_' . $question->qtype . ' slot';
+
+        $output .= html_writer::tag('li', $questionhtml ,
+                array('class' => $questionclasses, 'id' => 'slot-' . $question->slotid));
+
+        return $output;
+    }
+
+    /**
+     * Displays one question with the surrounding controls.
+     *
+     * @param structure $structure object containing the structure of the offlinequiz.
+     * @param \stdClass $question data from the question and offlinequiz_slots tables.
+     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param \moodle_url $pageurl the canonical URL of this page.
+     * @return string HTML to output.
+     */
     public function page_row(structure $structure, $question, $contexts, $pagevars, $pageurl) {
         $output = '';
 
@@ -610,7 +693,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= $questionname;
 
         // Closing the tag which contains everything but edit icons. Content part of the module should not be part of this.
-        $output .= html_writer::end_tag('div'); // .activityinstance.
+        $output .= html_writer::end_div(); // .activityinstance.
 
         // Action icons.
         $questionicons = '';
@@ -628,6 +711,55 @@ class edit_renderer extends \plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Display a question for grading tab.
+     *
+     * @param structure $structure object containing the structure of the offlinequiz.
+     * @param \stdClass $question data from the question and offlinequiz_slots tables.
+     * @param \moodle_url $pageurl the canonical URL of this page.
+     * @return string HTML to output.
+     */
+    public function question_for_grading(structure $structure, $question, \moodle_url $pageurl) {
+        $output = '';
+
+        $output .= html_writer::start_tag('div');
+
+        $output .= html_writer::start_div('mod-indent-outer');
+        $output .= $this->question_number($question->displayednumber);
+
+        // This div is used to indent the content.
+        $output .= html_writer::div('', 'mod-indent');
+
+        // Display the link to the question (or do nothing if question has no url).
+        if ($question->qtype == 'random') {
+            $questionname = $this->random_question($structure, $question, $pageurl);
+        } else {
+            $questionname = $this->question_name($structure, $question, $pageurl);
+        }
+
+        // Start the div for the activity title, excluding the edit icons.
+        $output .= html_writer::start_div('activityinstance');
+        $output .= $questionname;
+
+        // Closing the tag which contains everything but edit icons. Content part of the module should not be part of this.
+        $output .= html_writer::end_div(); // .activityinstance.
+
+        // Action icons.
+        $questionicons = '';
+   //     $questionicons .= '<label for="inputq' . $question->id . '">' .  get_string('maxmark', 'offlinequiz') . ':</label>';
+        $input = '<input id="inputq' . $question->id . '" type="text" value="1" size="4" name="g' . $question->id . '">';
+        $questionicons .=  html_writer::span($input, 'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($structure->get_offlinequiz()));      
+//        $questionicons .= $this->marked_out_of_field($structure->get_offlinequiz(), $question);
+
+        $output .= html_writer::span($questionicons, 'actions'); // Required to add js spinner icon.
+
+        // End of indentation div.
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('div');
+
+        return $output;
+    }
+    
     /**
      * Render the move icon.
      *
@@ -709,8 +841,13 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function page_split_join_button($offlinequiz, $question, $insertpagebreak) {
-        $url = new \moodle_url('repaginate.php', array('cmid' => $offlinequiz->cmid, 'offlinequizid' => $offlinequiz->id,
-                    'slot' => $question->slot, 'repag' => $insertpagebreak ? 2 : 1, 'sesskey' => sesskey()));
+        $url = new \moodle_url('repaginate.php',
+                array('cmid' => $offlinequiz->cmid,
+                      'offlinequizid' => $offlinequiz->id,
+                      'offlinegroupid' => $offlinequiz->groupid,
+                      'slot' => $question->slot,
+                      'repag' => $insertpagebreak ? 2 : 1,
+                      'sesskey' => sesskey()));
 
         if ($insertpagebreak) {
             $title = get_string('addpagebreak', 'offlinequiz');
@@ -766,7 +903,7 @@ class edit_renderer extends \plugin_renderer_base {
         // Display the link itself.
         $activitylink = $icon . html_writer::tag('span', $editicon . $instancename, array('class' => 'instancename'));
         $output .= html_writer::link($editurl, $activitylink,
-                array('title' => get_string('editquestion', 'offlinequiz').' '.$title));
+                array('title' => get_string('editquestion', 'offlinequiz'). ' '. $title));
 
         return $output;
     }

@@ -154,7 +154,7 @@ $string['editingofflinequiz_help'] = 'When creating an offline quiz, the main co
 * The question bank, which stores copies of all questions organised into categories';
 
 $string['editofflinequiz'] = 'Edit offline quiz';
-$string['editingofflinequizx'] = 'Editing offline quiz: {$a}';
+$string['editingofflinequizx'] = 'Edit offline quiz: {$a}';
 $string['editmaxmark'] = 'Edit maximum mark';
 $string['editorder'] = 'Edit order';
 $string['editparticipants'] = 'Edit participants';
@@ -206,6 +206,7 @@ $string['gradeiszero'] = 'Note: The maximum grade for this offline quiz is 0 poi
 $string['gradeswarning'] = 'The question grades have to be numbers!';
 $string['gradewarning'] = 'The question grade has to be a number!';
 $string['gradingofflinequiz'] = 'Grades';
+$string['gradingofflinequizx'] = 'Grades: {$a}';
 $string['gradingoptionsheading'] = 'Grading options';
 $string['greeniscross'] = 'counted as a cross';
 $string['rediswrong'] = 'wrong cross or missing cross';

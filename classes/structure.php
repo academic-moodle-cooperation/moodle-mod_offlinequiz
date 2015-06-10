@@ -216,6 +216,14 @@ class structure {
     }
 
     /**
+     * Get offlinequiz slots.
+     * @return \stdClass[] the slots in this offlinequiz.
+     */
+    public function get_slots_in_order() {
+        return $this->slotsinorder;
+    }
+    
+    /**
      * Is this slot the first one on its page?
      * @param int $slotnumber the index of the slot in question.
      * @return bool whether this slot the first one on its page.

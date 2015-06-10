@@ -24,6 +24,7 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
 
 $cmid = required_param('cmid', PARAM_INT);
 $offlinequizid = required_param('offlinequizid', PARAM_INT);
@@ -33,8 +34,11 @@ $repagtype = required_param('repag', PARAM_INT);
 
 require_sesskey();
 $offlinequizobj = offlinequiz::create($offlinequizid, $offlinegroupid);
+$group = $DB->get_record('offlinequiz_groups', array('id' => $offlinegroupid));
+
 require_login($offlinequizobj->get_course(), false, $offlinequizobj->get_cm());
 require_capability('mod/offlinequiz:manage', $offlinequizobj->get_context());
+
 if (offlinequiz_has_scanned_pages($offlinequizid)) {
     $reportlink = offlinequiz_attempt_summary_link_to_reports($offlinequizobj->get_offlinequiz(),
                     $offlinequizobj->get_cm(), $offlinequizobj->get_context());
@@ -49,4 +53,6 @@ $repage->repaginate_slots($slotnumber, $repagtype);
 $structure = $offlinequizobj->get_structure();
 $slots = $structure->refresh_page_numbers_and_update_db($structure->get_offlinequiz());
 
-redirect(new moodle_url('edit.php', array('cmid' => $offlinequizobj->get_cmid())));
+redirect(new moodle_url('edit.php',
+    array('cmid' => $offlinequizobj->get_cmid(),
+          'groupnumber' => $group->number)));
