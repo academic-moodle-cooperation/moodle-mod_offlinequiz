@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
 
 // Initialise ALL the incoming parameters here, up front.
 $offlinequizid     = required_param('offlinequizid', PARAM_INT);
-$offlinegroupid = require_param('offlinegroupid', PARAM_INT);
+$offlinegroupid = required_param('offlinegroupid', PARAM_INT);
 $class      = required_param('class', PARAM_ALPHA);
 $field      = optional_param('field', '', PARAM_ALPHA);
 $instanceid = optional_param('instanceId', 0, PARAM_INT);
@@ -53,7 +53,7 @@ $PAGE->set_url('/mod/offlinequiz/edit-rest.php',
 require_sesskey();
 
 $offlinequiz = $DB->get_record('offlinequiz', array('id' => $offlinequizid), '*', MUST_EXIST);
-if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
+if ($offlinequizgroup = $DB->get_record('offlinequiz_groups', array('id' => $offlinegroupid))){
     $offlinequiz->groupid = $offlinequizgroup->id;
 } else {
     print_error('invalidgroupnumber', 'offlinequiz');

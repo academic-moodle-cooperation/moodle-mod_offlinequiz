@@ -94,7 +94,6 @@ $course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MU
 $offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
 $structure = $offlinequizobj->get_structure();
 
-print_object($structure->get_slots());
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
 
@@ -103,7 +102,7 @@ $params = array(
     'courseid' => $course->id,
     'context' => $contexts->lowest(),
     'other' => array(
-        'offlinequizid' => $offlinequiz->id
+        'offlinequizid' => $offlinequiz->id,
     )
 );
 $event = \mod_offlinequiz\event\edit_page_viewed::create($params);

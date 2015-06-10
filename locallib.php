@@ -206,6 +206,11 @@ function offlinequiz_get_group_question_ids($offlinequiz, $groupid = 0) {
         $groupid = $offlinequiz->groupid;
     }
 
+    // This query only makes sense if it is restricted to a offline group.
+    if (!$groupid) {
+        return '';
+    }
+
     $sql = "SELECT questionid
               FROM {offlinequiz_group_questions}
              WHERE offlinequizid = :offlinequizid
@@ -343,6 +348,7 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
         $lastslotbefore = 0;
         foreach (array_reverse($slots) as $otherslot) {
             if ($otherslot->page > $page) {
+                // Increase the slot number of the other slot.
                 $DB->set_field('offlinequiz_group_questions', 'slot', $otherslot->slot + 1, array('id' => $otherslot->id));
             } else {
                 $lastslotbefore = $otherslot->slot;
@@ -377,27 +383,30 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
  * @param array $questionids an array of question IDs.
  * @return .
  */
-function offlinequiz_save_questions($offlinequiz, $questionids = null) {
-    global $DB;
+// function offlinequiz_save_questions($offlinequiz, $questionids = null) {
+//     global $DB;
 
-    if (empty($questionids)) {
-        $questionids = explode(',', $offlinequiz->questions);
-    }
+//     if (empty($questionids)) {
+//         $questionids = explode(',', $offlinequiz->questions);
+//     }
 
-    $DB->delete_records('offlinequiz_group_questions', array('offlinequizid' => $offlinequiz->id,
-            'offlinegroupid' => $offlinequiz->groupid));
+//     // Delete all offline group questions.
+//     $DB->delete_records('offlinequiz_group_questions', array('offlinequizid' => $offlinequiz->id,
+//             'offlinegroupid' => $offlinequiz->groupid));
 
-    $position = 1;
-    foreach ($questionids as $qid) {
-        $data = new stdClass();
-        $data->offlinequizid = $offlinequiz->id;
-        $data->offlinegroupid = $offlinequiz->groupid;
-        $data->questionid = $qid;
-        $data->position = $position++;
+//     // Then insert them from scratch.
+//     $position = 1;
+//     foreach ($questionids as $qid) {
+//         $data = new stdClass();
+//         $data->offlinequizid = $offlinequiz->id;
+//         $data->offlinegroupid = $offlinequiz->groupid;
+//         $data->questionid = $qid;
+//         $data->slot = $position;
+//         $data->position = $position++;
 
-        $DB->insert_record('offlinequiz_group_questions', $data);
-    }
-}
+//         $DB->insert_record('offlinequiz_group_questions', $data);
+//     }
+// }
 
 /**
  * returns the maximum number of questions in a set of offline groups
@@ -1010,17 +1019,13 @@ function offlinequiz_count_multichoice_questions(question_usage_by_activity $que
 function offlinequiz_get_group_sumgrades($offlinequiz) {
     global $DB;
 
-    $sql = 'SELECT COALESCE((SELECT SUM(grade)
-              FROM {offlinequiz_q_instances} oqi,
-                   {offlinequiz_group_questions} ogq
-             WHERE oqi.offlinequizid = :offlinequizid1
-               AND ogq.questionid = oqi.questionid
-               AND ogq.offlinequizid = :offlinequizid2
-               AND ogq.offlinegroupid = :groupid1) , 0)';
+    $sql = 'SELECT COALESCE((SELECT SUM(maxmark)
+              FROM {offlinequiz_group_questions} ogq
+             WHERE ogq.offlinequizid = :offlinequizid
+               AND ogq.offlinegroupid = :groupid) , 0)';
 
-    $params = array('offlinequizid1' => $offlinequiz->id,
-            'offlinequizid2' => $offlinequiz->id,
-            'groupid1' => $offlinequiz->groupid);
+    $params = array('offlinequizid' => $offlinequiz->id,
+            'groupid' => $offlinequiz->groupid);
 
     $sumgrades = $DB->get_field_sql($sql, $params);
     return $sumgrades;
@@ -2152,71 +2157,71 @@ function offlinequiz_question_tostring($question, $showicon = false,
  *      add at the end
  * @return bool false if the question was already in the offlinequiz
  */
-function offlinequiz_add_question_to_group($id, $offlinequiz, $page = 0) {
-    global $DB;
+// function offlinequiz_add_question_to_group($id, $offlinequiz, $page = 0) {
+//     global $DB;
 
-    $questions = explode(',', offlinequiz_clean_layout($offlinequiz->questions));
+//     $questions = explode(',', offlinequiz_clean_layout($offlinequiz->questions));
 
-    // Don't add the same question twice.
-    if (in_array($id, $questions)) {
-        return false;
-    }
+//     // Don't add the same question twice.
+//     if (in_array($id, $questions)) {
+//         return false;
+//     }
 
-    // Remove ending page break if it is not needed.
-    if ($breaks = array_keys($questions, 0)) {
-        // Determine location of the last two page breaks.
-        $end = end($breaks);
-        $last = prev($breaks);
-        $last = $last ? $last : -1;
-        if (!$offlinequiz->questionsperpage || (($end - $last - 1) < $offlinequiz->questionsperpage)) {
-            array_pop($questions);
-        }
-    }
-    if (is_int($page) && $page >= 1) {
-        $numofpages = offlinequiz_number_of_pages($offlinequiz->questions);
-        if ($numofpages < $page) {
-            // The page specified does not exist in offlinequiz.
-            $page = 0;
-        } else {
-            // Add ending page break - the following logic requires doing this at this point.
-            $questions[] = 0;
-            $questionsnew = array();
-            $currentpage = 1;
-            $addnow = false;
-            foreach ($questions as $question) {
-                if ($question == 0) {
-                    $currentpage++;
-                    // The current page is the one after the one we want to add on,
-                    // So we add the question before adding the current page.
-                    if ($currentpage == $page + 1) {
-                        $questionsnew[] = $id;
-                    }
-                }
-                $questionsnew[] = $question;
-            }
-            $questions = $questionsnew;
-        }
-    }
-    if ($page == 0) {
-        // Add question.
-        $questions[] = $id;
-        // Add ending page break.
-        $questions[] = 0;
-    }
+//     // Remove ending page break if it is not needed.
+//     if ($breaks = array_keys($questions, 0)) {
+//         // Determine location of the last two page breaks.
+//         $end = end($breaks);
+//         $last = prev($breaks);
+//         $last = $last ? $last : -1;
+//         if (!$offlinequiz->questionsperpage || (($end - $last - 1) < $offlinequiz->questionsperpage)) {
+//             array_pop($questions);
+//         }
+//     }
+//     if (is_int($page) && $page >= 1) {
+//         $numofpages = offlinequiz_number_of_pages($offlinequiz->questions);
+//         if ($numofpages < $page) {
+//             // The page specified does not exist in offlinequiz.
+//             $page = 0;
+//         } else {
+//             // Add ending page break - the following logic requires doing this at this point.
+//             $questions[] = 0;
+//             $questionsnew = array();
+//             $currentpage = 1;
+//             $addnow = false;
+//             foreach ($questions as $question) {
+//                 if ($question == 0) {
+//                     $currentpage++;
+//                     // The current page is the one after the one we want to add on,
+//                     // So we add the question before adding the current page.
+//                     if ($currentpage == $page + 1) {
+//                         $questionsnew[] = $id;
+//                     }
+//                 }
+//                 $questionsnew[] = $question;
+//             }
+//             $questions = $questionsnew;
+//         }
+//     }
+//     if ($page == 0) {
+//         // Add question.
+//         $questions[] = $id;
+//         // Add ending page break.
+//         $questions[] = 0;
+//     }
 
-    // Save new questionslist in database.
-    $offlinequiz->questions = implode(',', $questions);
+//     // Save new questionslist in database.
+//     $offlinequiz->questions = implode(',', $questions);
 
-    offlinequiz_save_questions($offlinequiz);
+//     offlinequiz_save_questions($offlinequiz);
 
-    // Only add a new question instance if there isn't already one.
-    if (!$instance = $DB->get_record('offlinequiz_q_instances', array('offlinequizid' => $offlinequiz->id, 'questionid' => $id))) {
-        // Add the new question instance if it doesn't already exist.
-        $instance = new stdClass();
-        $instance->offlinequizid = $offlinequiz->id;
-        $instance->questionid = $id;
-        $instance->grade = $DB->get_field('question', 'defaultmark', array('id' => $id));
+//     // Only add a new question instance if there isn't already one.
+//     if (!$instance = $DB->get_record('offlinequiz_q_instances', array('offlinequizid' => $offlinequiz->id, 'questionid' => $id))) {
+//         // Add the new question instance if it doesn't already exist.
+//         $instance = new stdClass();
+//         $instance->offlinequizid = $offlinequiz->id;
+//         $instance->questionid = $id;
+//         $instance->grade = $DB->get_field('question', 'defaultmark', array('id' => $id));
 
-        $DB->insert_record('offlinequiz_q_instances', $instance);
-    }
-}
+//         $DB->insert_record('offlinequiz_q_instances', $instance);
+//     }
+// }

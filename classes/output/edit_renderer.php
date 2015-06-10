@@ -929,6 +929,7 @@ class edit_renderer extends \plugin_renderer_base {
                 array(array(
                         'courseid' => $course->id,
                         'offlinequizid' => $offlinequiz->id,
+                        'offlinegroupid' => $offlinequiz->groupid,
                         'format' => $course->format,
                         'ajaxurl' => $config->sectionurl,
                         'config' => $config,
@@ -939,6 +940,7 @@ class edit_renderer extends \plugin_renderer_base {
                 array(array(
                         'courseid' => $course->id,
                         'offlinequizid' => $offlinequiz->id,
+                        'offlinegroupid' => $offlinequiz->groupid,
                         'ajaxurl' => $config->sectionurl,
                         'config' => $config,
                 )), null, true);
@@ -947,6 +949,7 @@ class edit_renderer extends \plugin_renderer_base {
                 array(array(
                         'courseid' => $course->id,
                         'offlinequizid' => $offlinequiz->id,
+                        'offlinegroupid' => $offlinequiz->groupid,
                         'ajaxurl' => $config->resourceurl,
                         'config' => $config,
                 )), null, true);
