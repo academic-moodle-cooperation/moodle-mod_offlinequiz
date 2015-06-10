@@ -46,14 +46,14 @@ class structure {
 
     /**
      * @var \stdClass[] the questions in this offlinequiz. Contains the row from the questions
-     * table, with the data from the offlinequiz_slots table added, and also question_categories.contextid.
+     * table, with the data from the offlinequiz_group_questions table added, and also question_categories.contextid.
      */
     protected $questions = array();
 
-    /** @var \stdClass[] offlinequiz_slots.id => the offlinequiz_slots rows for this offlinequiz, agumented by sectionid. */
+    /** @var \stdClass[] offlinequiz_group_questions.id => the offlinequiz_group_questions rows for this offlinequiz, agumented by sectionid. */
     protected $slots = array();
 
-    /** @var \stdClass[] offlinequiz_slots.slot => the offlinequiz_slots rows for this offlinequiz, agumented by sectionid. */
+    /** @var \stdClass[] offlinequiz_group_questions.slot => the offlinequiz_group_questions rows for this offlinequiz, agumented by sectionid. */
     protected $slotsinorder = array();
 
     /**
@@ -105,7 +105,7 @@ class structure {
      * Get the information about the question with this id.
      * @param int $questionid The question id.
      * @return \stdClass the data from the questions table, augmented with
-     * question_category.contextid, and the offlinequiz_slots data for the question in this offlinequiz.
+     * question_category.contextid, and the offlinequiz_group_questions data for the question in this offlinequiz.
      */
     public function get_question_by_id($questionid) {
         return $this->questions[$questionid];
@@ -115,7 +115,7 @@ class structure {
      * Get the information about the question in a given slot.
      * @param int $slotnumber the index of the slot in question.
      * @return \stdClass the data from the questions table, augmented with
-     * question_category.contextid, and the offlinequiz_slots data for the question in this offlinequiz.
+     * question_category.contextid, and the offlinequiz_group_questions data for the question in this offlinequiz.
      */
     public function get_question_in_slot($slotnumber) {
         return $this->questions[$this->slotsinorder[$slotnumber]->questionid];
@@ -178,7 +178,7 @@ class structure {
      */
     public function can_be_edited() {
         if ($this->canbeedited === null) {
-            $this->canbeedited = !offlinequiz_has_scanned_pages($this->offlinequizobj->get_offlinequizid());
+            $this->canbeedited = !$this->offlinequizobj->get_offlinequiz()->docscreated;
         }
         return $this->canbeedited;
     }
@@ -251,7 +251,7 @@ class structure {
 
     /**
      * Get the final slot in the offlinequiz.
-     * @return \stdClass the offlinequiz_slots for for the final slot in the offlinequiz.
+     * @return \stdClass the offlinequiz_group_questions for for the final slot in the offlinequiz.
      */
     public function get_last_slot() {
         return end($this->slotsinorder);
@@ -260,11 +260,11 @@ class structure {
     /**
      * Get a slot by it's id. Throws an exception if it is missing.
      * @param int $slotid the slot id.
-     * @return \stdClass the requested offlinequiz_slots row.
+     * @return \stdClass the requested offlinequiz_group_questions row.
      */
     public function get_slot_by_id($slotid) {
         if (!array_key_exists($slotid, $this->slots)) {
-            throw new \coding_exception('The \'slotid\' could not be found.');
+            throw new \coding_exception('The \'slotid\' ' . $slotid . ' could not be found.');
         }
         return $this->slots[$slotid];
     }
@@ -554,7 +554,7 @@ class structure {
 
         foreach ($emptypages as $page) {
             $DB->execute("
-                    UPDATE {offlinequiz_slots}
+                    UPDATE {offlinequiz_group_questions}
                        SET page = page - 1
                      WHERE offlinequizid = ?
                        AND offlinegroupid = ?
@@ -663,11 +663,11 @@ class structure {
     /**
      * Change the max mark for a slot.
      *
-     * Saves changes to the question grades in the offlinequiz_slots table and any
+     * Saves changes to the question grades in the offlinequiz_group_questions table and any
      * corresponding question_attempts.
      * It does not update 'sumgrades' in the offlinequiz table.
      *
-     * @param \stdClass $slot row from the offlinequiz_slots table.
+     * @param \stdClass $slot row from the offlinequiz_group_questions table.
      * @param float $maxmark the new maxmark.
      * @return bool true if the new grade is different from the old one.
      */
@@ -682,7 +682,33 @@ class structure {
 
         $trans = $DB->start_delegated_transaction();
         $slot->maxmark = $maxmark;
-        $DB->update_record('offlinequiz_slots', $slot);
+        $DB->update_record('offlinequiz_group_questions', $slot);
+        
+        // We also need to update the maxmark for this question in other offlinequiz groups.
+        $offlinequiz = $this->offlinequizobj->get_offlinequiz();
+        $currentgroupid = $offlinequiz->groupid;
+        
+        $groupids = $DB->get_fieldset_select('offlinequiz_groups', 'id',
+                'offlinequizid = :offlinequizid AND id <> :currentid',
+                array('offlinequizid' => $offlinequiz->id, 'currentid' => $currentgroupid));
+        list($gsql, $params) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, 'grp');
+        
+        $sql = "SELECT *
+                  FROM {offlinequiz_group_questions}
+                 WHERE offlinequizid = :offlinequizid
+                   AND offlinegroupid $gsql
+                   AND questionid = :questionid ";
+
+        $params['offlinequizid'] = $offlinequiz->id;
+        $params['questionid'] = $slot->questionid;
+
+        $otherslots = $DB->get_records_sql($sql, $params);
+        foreach ($otherslots as $otherslot) {
+            $otherslot->maxmark = $maxmark;
+            $DB->update_record('offlinequiz_group_questions', $otherslot);
+        }
+
+        // Now look at the maxmark of attemps.
         \question_engine::set_max_mark_in_attempts(new \result_qubaids_for_offlinequiz($slot->offlinequizid, $slot->offlinegroupid),
                 $slot->slot, $maxmark);
         $trans->allow_commit();
@@ -693,7 +719,7 @@ class structure {
     /**
      * Add/Remove a pagebreak.
      *
-     * Saves changes to the slot page relationship in the offlinequiz_slots table and reorders the paging
+     * Saves changes to the slot page relationship in the offlinequiz_group_questions table and reorders the paging
      * for subsequent slots.
      *
      * @param \stdClass $offlinequiz the offlinequiz object.

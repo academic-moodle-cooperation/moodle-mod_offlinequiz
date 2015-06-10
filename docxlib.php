@@ -528,10 +528,6 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Restore the question sessions to their most recent states.
     // Creating new sessions where required.
-
-    if ($last = array_pop($pagequestions) != '0') {
-        print_error('Last item is not pagebreak');
-    }
     $number = 1;
 
     // We need a mapping from question IDs to slots, assuming that each question occurs only once.
@@ -593,9 +589,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 // Save the usage slot in the group questions table.
-                $DB->set_field('offlinequiz_group_questions', 'usageslot', $slot,
-                        array('offlinequizid' => $offlinequiz->id,
-                                'offlinegroupid' => $group->id, 'questionid' => $question->id));
+//                 $DB->set_field('offlinequiz_group_questions', 'usageslot', $slot,
+//                         array('offlinequizid' => $offlinequiz->id,
+//                                 'offlinegroupid' => $group->id, 'questionid' => $question->id));
 
                 // There is only a slot for multichoice questions.
                 $attempt = $templateusage->get_question_attempt($slot);
@@ -695,9 +691,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 $slot = $questionslots[$myquestion];
 
                 // Save the usage slot in the group questions table.
-                $DB->set_field('offlinequiz_group_questions', 'usageslot', $slot,
-                        array('offlinequizid' => $offlinequiz->id,
-                                'offlinegroupid' => $group->id, 'questionid' => $question->id));
+//                 $DB->set_field('offlinequiz_group_questions', 'usageslot', $slot,
+//                         array('offlinequizid' => $offlinequiz->id,
+//                                 'offlinegroupid' => $group->id, 'questionid' => $question->id));
 
                 // Now retrieve the order of the answers.
                 $slotquestion = $templateusage->get_question($slot);
@@ -749,11 +745,14 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     srand(microtime() * 1000000);
     $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
-    $tempfilename = $CFG->dataroot."/temp/offlinequiz/" . $unique . '.docx';
+    
+    $tempfilename = $CFG->dataroot . '/temp/offlinequiz/' . $unique . '.docx';
+    check_dir_exists($CFG->dataroot . '/temp/offlinequiz', true, true);
 
     if (file_exists($tempfilename)) {
         unlink($tempfilename);
     }
+
     // Save file.
     $objwriter = PHPWord_IOFactory::createWriter($docx, 'Word2007');
     $objwriter->save($tempfilename);

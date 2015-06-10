@@ -74,7 +74,7 @@ $offlinequiz->groupnumber = $groupnumber;
 // Load the offlinequiz group and set the groupid in the offlinequiz object.
 if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     $offlinequiz->groupid = $offlinequizgroup->id;
-    $groupquestions = offlinequiz_get_group_questions($offlinequiz);
+    $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
     // $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions, $offlinequiz->groupid);
     // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
     $offlinequiz->questions = $groupquestions;
@@ -85,6 +85,7 @@ if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
 $offlinequiz->sumgrades = offlinequiz_get_group_sumgrades($offlinequiz);
 
 $offlinequizhasattempts = offlinequiz_has_scanned_pages($offlinequiz->id);
+$docscreated = $offlinequiz->docscreated;
 
 $PAGE->set_url($thispageurl);
 
@@ -93,6 +94,7 @@ $course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MU
 $offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
 $structure = $offlinequizobj->get_structure();
 
+print_object($structure->get_slots());
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
 
@@ -181,7 +183,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     $maxgrade = unformat_float(optional_param('maxgrade', -1, PARAM_RAW));
     if ($maxgrade >= 0) {
         offlinequiz_set_grade($maxgrade, $offlinequiz);
-        offlinequiz_update_all_final_grades($offlinequiz);
+//        offlinequiz_update_all_final_grades($offlinequiz);
         offlinequiz_update_grades($offlinequiz, 0, true);
     }
 
@@ -190,7 +192,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
 // Get the question bank view.
 $questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
-$questionbank->set_offlinequiz_has_scanned_pages($offlinequizhasattempts);
+$questionbank->set_offlinequiz_has_scanned_pages($docscreated);
 $questionbank->process_actions($thispageurl, $cm);
 
 // End of process commands =====================================================.
