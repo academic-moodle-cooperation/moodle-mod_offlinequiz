@@ -643,6 +643,15 @@ input#showviewbutton {
     min-width: 5.45em;
 }
 
+#page-mod-offlinequiz-edit div.copyselected {
+	display: inline-block;
+
+	margin-left: 30px;
+}
+/* #page-mod-offlinequiz-edit .menucopyselectedtogrouptop { */
+/*     font-size: 1em;	 */
+/* } */
+
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .edit_icon,
 #page-mod-offlinequiz-edit ul.slots li.section li.activity a.preview,
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .editing_delete,
@@ -650,12 +659,21 @@ input#showviewbutton {
     margin: 0 2px;
 }
 
+#page-mod-offlinequiz-edit ul.slots li.section li.activity .question_checkbox {
+	position: absolute;
+    left: 0px;
+}
+
+#page-mod-offlinequiz-edit ul.slots li.section li.activity .editing_move {
+    left: 15px;
+}
+
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .activityinstance {
     display: block;
     min-height: 1.7em;
     position: absolute;
     top: 0;
-    left: 5em;
+    left: 6em;
     width: 100%;
 }
 #page-mod-offlinequiz-edit ul.slots li.section li.activity.forgrading .activityinstance {
@@ -667,7 +685,7 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .mod-indent-outer {
-    padding-left: 22px;
+    padding-left: 35px;
 }
 #page-mod-offlinequiz-edit ul.slots li.section li.activity.forgrading .mod-indent-outer {
     padding-left: 4px;

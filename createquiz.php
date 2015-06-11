@@ -207,32 +207,20 @@ if ($mode == 'preview') {
 
         echo $OUTPUT->box_start('generalbox groupcontainer');
 
-        $layout = offlinequiz_get_group_questions($offlinequiz, $group->id);
-
-        $pagequestions = explode(',', $layout);
-        $questionlist = explode(',', str_replace(',0', '', $layout));
-
-        if (!$questionlist) {
-            $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/edit.php',
-                    array('cmid' => $cm->id, 'groupnumber' => $group->number, 'noquestions' => 1));
-            echo html_writer::link($url,  get_string('noquestionsfound', 'offlinequiz', $groupletter),
-                    array('class' => 'notifyproblem'));
-            echo $OUTPUT->box_end();
-            continue;
-        }
-
-        list($qsql, $params) = $DB->get_in_or_equal($questionlist);
-        $params[] = $offlinequiz->id;
-
-        $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance, c.contextid
-                  FROM {question} q,
-                       {offlinequiz_q_instances} i,
-                       {question_categories} c
-                 WHERE q.id $qsql
-                   AND i.offlinequizid = ?
-                   AND q.id = i.questionid
-                   AND q.category=c.id";
-
+        // Load all the questions needed for this offline quiz group.
+        $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark 
+              FROM {offlinequiz_group_questions} ogq,
+                   {question} q,
+                   {question_categories} c
+             WHERE ogq.offlinequizid = :offlinequizid
+               AND ogq.offlinegroupid = :offlinegroupid
+               AND q.id = ogq.questionid
+               AND q.category = c.id
+          ORDER BY ogq.slot ASC ";
+        $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
+ 
+        $questions = $DB->get_records_sql($sql, $params);
+        
         // Load the questions.
         if (!$questions = $DB->get_records_sql($sql, $params)) {
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/edit.php',
@@ -267,39 +255,20 @@ if ($mode == 'preview') {
         }
 
         $questionnumber = 1;
-        if ($offlinequiz->shufflequestions) {
-            foreach ($slots as $slot) {
-                $slotquestion = $templateusage->get_question($slot);
-                $question = $questions[$slotquestion->id];
-                $attempt = $templateusage->get_question_attempt($slot);
-                $order = $slotquestion->get_order($attempt);  // Order.
-                offlinequiz_print_question_preview($question, $order, $questionnumber, $context, $PAGE);
-                // Note: we don't have description questions in quba slots.
-                $questionnumber++;
-            }
-        } else {
-            foreach ($pagequestions as $myquestion) {
-                if ($myquestion == 0) {
-                    echo '<center>//---------------------- ' . get_string('newpage', 'offlinequiz') .
+        $currentpage = 1;
+        foreach ($slots as $slot) {
+            $slotquestion = $templateusage->get_question($slot);
+            $question = $questions[$slotquestion->id];
+            if (!$offlinequiz->shufflequestions && $question->page > $currentpage) {
+                echo '<center>//---------------------- ' . get_string('newpage', 'offlinequiz') .
                          ' ----------------//</center>';
-                } else {
-                    $question = $questions[$myquestion];
-
-                    $order = array();
-                    if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                        $slot = $questionslots[$myquestion];
-                        $slotquestion = $templateusage->get_question($slot);
-                        $attempt = $templateusage->get_question_attempt($slot);
-                        $order = $slotquestion->get_order($attempt);  // Order.
-                    }
-
-                    // Use our own function to print the preview.
-                    offlinequiz_print_question_preview($question, $order, $questionnumber, $context, $PAGE);
-                    if ($question->qtype != 'description') {
-                        $questionnumber++;
-                    }
-                }
+                $currentpage++;
             }
+            $attempt = $templateusage->get_question_attempt($slot);
+            $order = $slotquestion->get_order($attempt);  // Order.
+            offlinequiz_print_question_preview($question, $order, $questionnumber, $context, $PAGE);
+            // Note: we don't have description questions in quba slots.
+            $questionnumber++;
         }
 
         echo $OUTPUT->box_end();

@@ -52,6 +52,11 @@ require_once($CFG->dirroot . '/question/category_class.php');
 // this page otherwise they would go in question_edit_setup.
 $scrollpos = optional_param('scrollpos', '', PARAM_INT);
 
+// Patch problem with nested forms and category parameter, otherwise question_edit_setup has problems.
+if(array_key_exists('savechanges', $_POST) && $_POST['savechanges']) {
+    unset($_POST['category']);
+}
+
 list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
         question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
 
@@ -148,9 +153,10 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     offlinequiz_require_question_use($addquestion);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     // If the question is already in another group, take the maxmark of that.
-    if ($maxmark = $DB->get_field('offlinequiz_group_questions', 'maxmark',
+    if ($maxmarks = $DB->get_fieldset_select('offlinequiz_group_questions', 'maxmark',
+            'offlinequizid = :offlinequizid AND questionid = :questionid', 
             array('offlinequizid' => $offlinequiz->id, 'questionid' => $addquestion))) {
-        offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage, $maxmark);
+        offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage, $maxmarks[0]);
     } else {
         offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage);
     }
@@ -170,9 +176,10 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             $key = $matches[1];
             offlinequiz_require_question_use($key);
             // If the question is already in another group, take the maxmark of that.
-            if ($maxmark = $DB->get_field('offlinequiz_group_questions', 'maxmark',
+            if ($maxmarks = $DB->get_fieldset_select('offlinequiz_group_questions', 'maxmark',
+                    'offlinequizid = :offlinequizid AND questionid = :questionid',
                     array('offlinequizid' => $offlinequiz->id, 'questionid' => $key))) {
-                offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage, $maxmark);
+                offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage, $maxmarks[0]);
             } else {
                 offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage);
             }
@@ -199,6 +206,33 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
 
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
+    // Parameter to copy selected questions to another group.
+    $copyselectedtogroup = optional_param('copyselectedtogrouptop', 0, PARAM_INT);
+
+    if ($copyselectedtogroup) {
+        
+        // Get the list of question ids had their check-boxes ticked.
+        $selectedquestionids = array();
+        $params = (array) data_submitted();
+        foreach ($params as $key => $value) {
+            if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
+                $selectedquestionids[] = $matches[1];
+            }
+        } 
+
+        if (($selectedquestionids) && ($newgroup = offlinequiz_get_group($offlinequiz, $copyselectedtogroup))) {
+            $fromofflinegroup = optional_param('fromofflinegroup', 0, PARAM_INT);
+
+            offlinequiz_add_questionlist_to_group($selectedquestionids, $offlinequiz, $newgroup, $fromofflinegroup);
+
+            offlinequiz_update_sumgrades($offlinequiz, $newgroup->id);
+            // Delete the templates, just to be sure.
+            offlinequiz_delete_template_usages($offlinequiz);
+        }
+        redirect($afteractionurl);
+    }
+    
+    
     // If rescaling is required save the new maximum.
     $maxgrade = unformat_float(optional_param('maxgrade', -1, PARAM_RAW));
     if ($maxgrade >= 0) {
@@ -220,8 +254,8 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
             if (is_numeric(str_replace(',', '.', $value))) {
                 // Parse input for question -> grades.
                 $questionid = $matches[1];
-                $offlinequiz->grades[$questionid] = unformat_float($value);
-                offlinequiz_update_question_instance($offlinequiz, $questionid, $offlinequiz->grades[$questionid]);
+//                $offlinequiz->grades[$questionid] = unformat_float($value);
+                offlinequiz_update_question_instance($offlinequiz, $questionid, unformat_float($value));
             } else {
                 $bulkgradewarning = true;
             }
