@@ -43,6 +43,7 @@ $string['addquestionfrombanktopage'] = 'Add from the question bank to page {$a}'
 $string['addrandom'] = 'Randomly add {$a} multiple choice question(s) ';
 $string['addrandomfromcategory'] = 'Randomly add questions';
 $string['addrandomquestion'] = 'Add random question';
+$string['addrandomquestiontoofflinequiz'] = 'Adding questions to offlinequiz {$a->name} (group {$a->group})';
 $string['addrandomquestiontopage'] = 'Add a random question to page {$a}';
 $string['addarandomquestion'] = 'Randomly add questions';
 $string['addarandomquestion_help'] = 'Moodle adds a random selection of multiple choice questions (or all-or-nothing multiple-choice questions) to the current offline quiz group. The number of questions added can be set. The questions are chosen from the current question category (and, if selected, its sub-categories).';

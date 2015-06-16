@@ -37,6 +37,7 @@ $string['addrandom'] = 'Zufällig {$a} MC Frage(n) ';
 $string['addrandomfromcategory'] = 'Zufällig Fragen hinzufügen';
 $string['addarandomquestion'] = 'Zufällig Fragen hinzufügen';
 $string['addarandomquestion_help'] = 'Moodle fügt eine zufällige Auswahl an MC-Fragen (oder Alles-oder-Nichts MC Fragen) zur aktuellen Offline-Test Gruppe hinzu. Die Anzahl der Fragen, die hinzugefügt werden, muss ausgewählt werden. Die Fragen werden aus der aktuellen Kategorie (und, wenn erwünscht, aus deren Unter-Kategorien) ausgewählt.';
+$string['addrandomquestiontoofflinequiz'] = 'Fragen hinzufügen zu Offline-Test {$a->name} (Gruppe {$a->group})';
 $string['addrandomquestiontopage'] = 'Zufällig Fragen zur Seite {$a} hinzufügen';
 $string['addtoofflinequiz'] = 'hinzufügen';
 $string['addtoqueue'] = 'Zur Warteschlange hinzufügen';

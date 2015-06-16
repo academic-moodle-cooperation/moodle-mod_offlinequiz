@@ -2323,22 +2323,26 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
         $number -= 1;
     }
     
-    // Get the old maxmarks in case questions are already in other offlinequiz groups.
-    list($qsql, $params) = $DB->get_in_or_equal($chosenids, SQL_PARAMS_NAMED);
-    
-    $sql = "SELECT id, questionid, maxmark
-              FROM {offlinequiz_group_questions}
-             WHERE offlinequizid = :offlinequizid
-               AND questionid $qsql";
-    $params['offlinequizid'] = $offlinequiz->id;
-    
-    $slots = $DB->get_records_sql($sql, $params);
     $maxmarks = array();
-    foreach ($slots as $slot) {
-        if (!array_key_exists($slot->questionid, $maxmarks)) {
-            $maxmarks[$slot->questionid] = $slot->maxmark;
+    if ($chosenids) {
+        // Get the old maxmarks in case questions are already in other offlinequiz groups.
+        list($qsql, $params) = $DB->get_in_or_equal($chosenids, SQL_PARAMS_NAMED);
+    
+        $sql = "SELECT id, questionid, maxmark
+                  FROM {offlinequiz_group_questions}
+                 WHERE offlinequizid = :offlinequizid
+                   AND questionid $qsql";
+        $params['offlinequizid'] = $offlinequiz->id;
+    
+        if ($slots = $DB->get_records_sql($sql, $params)) {
+            foreach ($slots as $slot) {
+                if (!array_key_exists($slot->questionid, $maxmarks)) {
+                    $maxmarks[$slot->questionid] = $slot->maxmark;
+                }
+            }
         }
     }
+
     offlinequiz_add_questionlist_to_group($chosenids, $offlinequiz, $offlinegroup, null, $maxmarks);
 }
 

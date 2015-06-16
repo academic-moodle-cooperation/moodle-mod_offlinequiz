@@ -148,8 +148,9 @@ echo $OUTPUT->header();
 if (!$offlinequizname = $DB->get_field($cm->modname, 'name', array('id' => $cm->instance))) {
             print_error('invalidcoursemodule');
 }
-
-echo $OUTPUT->heading(get_string('addrandomquestiontoofflinequiz', 'offlinequiz', $offlinequizname), 2);
+$groupletters = 'ABCDEFGHIJKL';
+echo $OUTPUT->heading(get_string('addrandomquestiontoofflinequiz', 'offlinequiz',
+        array('name' => $offlinequizname, 'group' => $groupletters[$offlinequiz->groupnumber - 1])), 2);
 $mform->display();
 echo $OUTPUT->footer();
 
