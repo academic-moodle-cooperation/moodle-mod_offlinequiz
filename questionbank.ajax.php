@@ -49,6 +49,17 @@ if ($groupnumber === -1) {
 $offlinequiz->groupnumber = $groupnumber;
 $thispageurl->param('groupnumber', $offlinequiz->groupnumber);
 
+// Load the offlinequiz group and set the groupid in the offlinequiz object.
+if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
+    $offlinequiz->groupid = $offlinequizgroup->id;
+    $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
+    // $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions, $offlinequiz->groupid);
+    // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
+    $offlinequiz->questions = $groupquestions;
+} else {
+    print_error('invalidgroupnumber', 'offlinequiz');
+}
+
 // Create offlinequiz question bank view.
 $questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
 $questionbank->set_offlinequiz_has_scanned_pages(offlinequiz_has_scanned_pages($offlinequiz->id));

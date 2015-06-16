@@ -46,11 +46,30 @@ class add_action_column extends \core_question\bank\action_column_base {
         return 'addtoofflinequizaction';
     }
 
+    protected function print_icon($icon, $title, $url, $disabled = false) {
+        global $OUTPUT;
+        if (!$disabled) {
+            echo '<a title="' . $title . '" href="' . $url . '">';
+        } else {
+            echo '<span class="greyed">';
+        }
+        echo '<img src="' . $OUTPUT->pix_url($icon) . '" class="iconsmall" alt="' . $title . '" />';
+        if (!$disabled) {
+            echo '</a>';
+        } else {
+            echo '</span>';
+        }
+    }
+
     protected function display_content($question, $rowclasses) {
         if (!question_has_capability_on($question, 'use')) {
             return;
         }
-        $this->print_icon('t/add', $this->stradd, $this->qbank->add_to_offlinequiz_url($question->id));
+        $disabled = false;
+        if ($this->qbank->offlinequiz_contains($question->id)) {
+            $disabled = true; 
+        }
+        $this->print_icon('t/add', $this->stradd, $this->qbank->add_to_offlinequiz_url($question->id), $disabled);
     }
 
     public function get_required_fields() {

@@ -167,6 +167,7 @@ $string['formsexist'] = 'Formulare bereits erstellt.';
 $string['formsheetsettings'] = 'Formulareinstellungen';
 $string['formspreview'] = 'Vorschau für Formulare';
 $string['formwarning'] = 'Für die festgelegte Fragen- bzw. Antwortanzahl ist kein Antwortbogen definiert. Bitte kontaktieren Sie den Systemadministrator.';
+$string['fromquestionbank'] = 'Aus der Fragensammlung';
 $string['functiondisabledbysecuremode'] = 'Diese Funktionalität ist deaktiviert';
 $string['generatepdfform'] = 'Fragebogen';
 $string['grade'] = 'Bewertung';

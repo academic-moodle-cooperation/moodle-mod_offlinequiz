@@ -132,6 +132,17 @@ class custom_view extends \core_question\bank\view {
         return $addurl;
     }
 
+    public function offlinequiz_contains($questionid) {
+        global $CFG, $DB;
+        
+        error_log("contains " . $questionid);
+        if (in_array($questionid, $this->offlinequiz->questions)) {
+            error_log("contains true");
+            return true;
+        }
+        return false; 
+    }
+    
     /**
      * Renders the html question bank (same as display, but returns the result).
      *

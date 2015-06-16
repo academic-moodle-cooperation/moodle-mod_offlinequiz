@@ -870,6 +870,12 @@ table#categoryquestions {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+#page-mod-offlinequiz-edit #categoryquestions .questionnametext .greyed,
+#page-mod-offlinequiz-edit #categoryquestions .addtoofflinequizaction .greyed,
+#page-mod-offlinequiz-edit #categoryquestions .qtype .greyed {
+	opacity: 0.4;
+}
+
 .dir-rtl #categoryquestions .questiontext {
     padding-left: 0;
     padding-right: 0.3em;

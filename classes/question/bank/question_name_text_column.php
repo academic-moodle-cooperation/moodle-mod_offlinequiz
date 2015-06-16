@@ -39,7 +39,11 @@ class question_name_text_column extends \core_question\bank\question_name_column
     }
 
     protected function display_content($question, $rowclasses) {
-        echo '<div>';
+        $class = '';
+        if ($this->qbank->offlinequiz_contains($question->id)) {
+            $class = 'greyed';
+        }
+        echo '<div class="'. $class . '">';
         $labelfor = $this->label_for($question);
         if ($labelfor) {
             echo '<label for="' . $labelfor . '">';
