@@ -135,9 +135,7 @@ class custom_view extends \core_question\bank\view {
     public function offlinequiz_contains($questionid) {
         global $CFG, $DB;
         
-        error_log("contains " . $questionid);
         if (in_array($questionid, $this->offlinequiz->questions)) {
-            error_log("contains true");
             return true;
         }
         return false; 
