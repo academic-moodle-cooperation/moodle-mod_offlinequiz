@@ -63,17 +63,22 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Information at the top.
         $output .= $this->offlinequiz_group_selector($offlinequiz, $pageurl);
-        $output .= $this->offlinequiz_state_warnings($structure);
         $output .= $this->offlinequiz_information($structure);
         $output .= $this->maximum_grade_input($offlinequiz, $this->page->url);
+        $output .= $this->offlinequiz_state_warnings($structure);
 
-        // Start form for question checkboxes
-        $output .= $this->start_add_to_group_form($offlinequiz, $pageurl);
         
         $output .= $this->repaginate_button($structure, $pageurl, $offlinequiz);
         $output .= $this->total_marks($offlinequiz);
 
+        // Start form for question checkboxes
+        $output .= $this->start_add_to_group_form($offlinequiz, $pageurl);
+        // Add buttons for adding selected to another group and for removing selected. 
+        $output .= $this->select_all_links($structure);
+        $output .= $this->add_to_group_button($structure, $offlinequiz,  $pageurl);
+        $output .= $this->remove_selected_button($structure, $offlinequiz,  $pageurl);
                 
+
         // Show the questions organised into sections and pages.
         $output .= $this->start_section_list();
 
@@ -147,13 +152,13 @@ class edit_renderer extends \plugin_renderer_base {
 ///echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
 //             get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
         // Information at the top.
-        $output .= $this->offlinequiz_group_selector($offlinequizobj->get_offlinequiz(), $pageurl);
+        $output .= $this->offlinequiz_group_selector($offlinequiz, $pageurl);
         $output .= $this->offlinequiz_information($structure);
-        $output .= $this->maximum_grade_input($offlinequizobj->get_offlinequiz(), $this->page->url);
-        $output .= html_writer::tag('br', '');
-        $output .= $this->total_marks($offlinequizobj->get_offlinequiz());
+        $output .= html_writer::div('<br/>', 'clear');
+        $output .= $this->maximum_grade_input($offlinequiz, $this->page->url);
+        $output .= $this->total_marks($offlinequiz);
 
-        $output .= $this->start_grading_form($offlinequizobj->get_offlinequiz(), $pageurl);
+        $output .= $this->start_grading_form($offlinequiz, $pageurl);
         // Show the questions organised into sections and pages.
         $output .= $this->start_section_list();
         // Show the questions in one form for single submit.
@@ -237,7 +242,7 @@ class edit_renderer extends \plugin_renderer_base {
     public function offlinequiz_group_selector($offlinequiz, \moodle_url $pageurl) {
         global $OUTPUT;
         
-        $result = '';
+        $output = '';
         // Print the group choice select. 
 
         // Compute the offlinequiz group letters.
@@ -252,13 +257,13 @@ class edit_renderer extends \plugin_renderer_base {
 
         $selecturl = unserialize(serialize($pageurl));
         $selecturl->remove_params('groupnumber');
-        $result .= html_writer::empty_tag('br');
-        $result .= html_writer::start_div('groupchoice');
-        $result .= $OUTPUT->single_select($selecturl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
-        $result .= html_writer::end_div();
-        $result .= html_writer::empty_tag('br');
+        //$output .= html_writer::empty_tag('br');
+        $output .= html_writer::start_div('groupchoice');
+        $output .= $OUTPUT->single_select($selecturl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
+        $output .= html_writer::end_div();
+        //$output .= html_writer::empty_tag('br');
         /*---------------------------*/
-        return $result;
+        return $output;
     }
     
     /**
@@ -273,14 +278,15 @@ class edit_renderer extends \plugin_renderer_base {
         $warnings = $structure->get_edit_page_warnings();
 
         if (empty($warnings)) {
-            return '';
+            return $this->box('', 'emptystatusdisplay');
         }
 
         $output = array();
         foreach ($warnings as $warning) {
             $output[] = \html_writer::tag('p', $warning);
         }
-        return $this->box(implode("\n", $output), 'statusdisplay');
+        $result = $this->box(implode("\n", $output), 'statusdisplay');
+        return $result;
     }
 
     /**
@@ -358,11 +364,8 @@ class edit_renderer extends \plugin_renderer_base {
             $this->page->requires->yui_module('moodle-mod_offlinequiz-repaginate', 'M.mod_offlinequiz.repaginate.init');
         }
 
-        
-        $moveselectedbutton = $this->add_to_group_button($structure, $offlinequiz,  $pageurl);
-
         return html_writer::tag('div',
-                html_writer::empty_tag('input', $buttonoptions) . $moveselectedbutton, $containeroptions);
+                html_writer::empty_tag('input', $buttonoptions), $containeroptions);
     }
 
     /**
@@ -395,6 +398,50 @@ class edit_renderer extends \plugin_renderer_base {
         return html_writer::div($formcontent, '', array('id' => 'repaginatedialog'));
     }
 
+
+    private function select_all_links($structure) {
+        $output = '';
+    
+        if ($structure->can_be_edited()) {
+            
+//             $output .= '<input type="checkbox" id="sall" name="sall" ' .
+//                ' onClick="javascript:if (this.checked){deselect_all_in(\'FORM\', null, \'offlinequizbulkcopyform\'); this.checked = null} else {select_all_in(\'FORM\', null, \'offlinequizbulkcopyform\');}">';
+//             $output .= get_string('selectall', 'offlinequiz');
+//             $output .= '</a>';    
+            $output .= html_writer::start_div('selectall');  
+            $output .= '<a href="javascript:select_all_in(\'FORM\', null, ' . '\'offlinequizbulkcopyform\');" >' .
+                        get_string('selectall', 'offlinequiz') . '</a> /';
+            $output .=    ' <a href="javascript:deselect_all_in(\'FORM\', ' .
+                    'null, \'offlinequizbulkcopyform\');">' .
+                    get_string('selectnone', 'offlinequiz') . '</a>';
+            $output .= html_writer::end_div();
+        }
+        return $output;
+    }
+
+    private function remove_selected_button($structure) {
+        $containeroptions = array(
+                'class'  => 'removeselected',
+                'cmid'   => $structure->get_cmid()
+        );
+
+        $buttonoptions = array(
+            'type'  => 'submit',
+            'name'  => 'offlinequizdeleteselected',
+            'id'    => 'removeselectedcommand',
+            'onClick' => 'return confirm(\'' .  get_string('areyousureremoveselected', 'offlinequiz') . '\');',
+            'value' => get_string('removeselected', 'offlinequiz')
+        );
+
+        if (!$structure->can_be_repaginated()) {
+            $buttonoptions['disabled'] = 'disabled';
+        } 
+        
+        return html_writer::tag('div',
+                html_writer::empty_tag('input', $buttonoptions), $containeroptions);        
+        
+    }
+    
     /**
      * Render the total marks available for the offlinequiz.
      *
@@ -571,21 +618,6 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function page_row(structure $structure, $question, $contexts, $pagevars, $pageurl) {
         $output = '';
-
-
-        if ($question->slot == 1 && $structure->can_be_edited()) {
-            
-//             $output .= '<input type="checkbox" id="sall" name="sall" ' .
-//                ' onClick="javascript:if (this.checked){deselect_all_in(\'FORM\', null, \'offlinequizbulkcopyform\'); this.checked = null} else {select_all_in(\'FORM\', null, \'offlinequizbulkcopyform\');}">';
-//             $output .= get_string('selectall', 'offlinequiz');
-//             $output .= '</a>';      
-            $output .= '<a href="javascript:select_all_in(\'FORM\', null, ' . '\'offlinequizbulkcopyform\');" >' .
-                        get_string('selectall', 'offlinequiz') . '</a> /';
-            $output .=    ' <a href="javascript:deselect_all_in(\'FORM\', ' .
-                    'null, \'offlinequizbulkcopyform\');">' .
-                    get_string('selectnone', 'offlinequiz') . '</a>';
-        }
-
         
         // Put page in a span for easier styling.
         $page = html_writer::tag('span', get_string('page') . ' ' . $question->page,
@@ -627,7 +659,7 @@ class edit_renderer extends \plugin_renderer_base {
         $menu = new \action_menu();
         $menu->set_alignment(\action_menu::TR, \action_menu::BR);
         $menu->set_constraint('.mod-offlinequiz-edit-content');
-        $trigger = html_writer::tag('span', get_string('add', 'offlinequiz'), array('class' => 'add-menu'));
+        $trigger = html_writer::tag('span', get_string('add'), array('class' => 'add-menu'));
         $menu->set_menu_trigger($trigger);
         // The menu appears within an absolutely positioned element causing width problems.
         // Make sure no-wrap is set so that we don't get a squashed menu.
@@ -665,8 +697,8 @@ class edit_renderer extends \plugin_renderer_base {
         $questioncategoryid = question_get_category_id_from_pagevars($pagevars);
         static $str;
         if (!isset($str)) {
-            $str = get_strings(array('addaquestion', 'addarandomquestion',
-                    'addarandomselectedquestion', 'questionbank'), 'offlinequiz');
+            $str = get_strings(array('addnewquestion', 'addarandomquestion',
+                    'addarandomselectedquestion', 'fromquestionbank'), 'offlinequiz');
         }
 
         // Get section, page, slotnumber and maxmark.
@@ -679,18 +711,18 @@ class edit_renderer extends \plugin_renderer_base {
                 'addonpage' => $page,
                 'appendqnumstring' => 'addquestion');
         
-        $actions['addaquestion'] = new \action_menu_link_secondary(
+        $actions['addnewquestion'] = new \action_menu_link_secondary(
             new \moodle_url('/question/addquestion.php', $params),
-            new \pix_icon('t/add', $str->addaquestion, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-            $str->addaquestion, array('class' => 'cm-edit-action addquestion', 'data-action' => 'addquestion')
+            new \pix_icon('t/add', $str->addnewquestion, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+            $str->addnewquestion, array('class' => 'cm-edit-action addquestion', 'data-action' => 'addquestion')
         );
 
         // Call question bank.
-        $icon = new \pix_icon('t/add', $str->questionbank, 'moodle', array('class' => 'iconsmall', 'title' => ''));
+        $icon = new \pix_icon('t/add', $str->fromquestionbank, 'moodle', array('class' => 'iconsmall', 'title' => ''));
         $title = get_string('addquestionfrombanktopage', 'offlinequiz', $page);
         $attributes = array('class' => 'cm-edit-action questionbank',
                 'data-header' => $title, 'data-action' => 'questionbank', 'data-addonpage' => $page);
-        $actions['questionbank'] = new \action_menu_link_secondary($pageurl, $icon, $str->questionbank, $attributes);
+        $actions['questionbank'] = new \action_menu_link_secondary($pageurl, $icon, $str->fromquestionbank, $attributes);
 
         // Add a random question.
         $returnurl = new \moodle_url('/mod/offlinequiz/edit.php',
@@ -826,7 +858,7 @@ class edit_renderer extends \plugin_renderer_base {
         $questionicons = '';
         $input = '<input class="gradeinput" id="inputq' . $question->id .
                 '" type="text" value="' . offlinequiz_format_grade($structure->get_offlinequiz(), $question->maxmark) .
-                '" size="4" name="g' . $question->id . '"/>';
+                '" size="4" tabindex="' . $question->slot . '" name="g' . $question->id . '"/>';
         $questionicons .=  html_writer::span($input,
                 'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($structure->get_offlinequiz()));      
 //        $questionicons .= $this->marked_out_of_field($structure->get_offlinequiz(), $question);

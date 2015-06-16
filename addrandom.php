@@ -39,6 +39,7 @@ $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $addonpage = optional_param('addonpage', 0, PARAM_INT);
 $category = optional_param('category', 0, PARAM_INT);
 $scrollpos = optional_param('scrollpos', 0, PARAM_INT);
+$groupnumber = optional_param('groupnumber', 1, PARAM_INT);
 
 // Get the course object and related bits.
 if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
@@ -51,16 +52,42 @@ if (!$contexts->having_cap('moodle/question:useall')) {
     print_error('nopermissions', '', '', 'use');
 }
 
-$PAGE->set_url($thispageurl);
+if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
+    $groupnumber = $SESSION->question_pagevars['groupnumber'];
+}
+
+if ($groupnumber === -1) {
+    $groupnumber = 1;
+}
+
+$offlinequiz->groupnumber = $groupnumber;
+
+// Load the offlinequiz group and set the groupid in the offlinequiz object.
+if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
+    $offlinequiz->groupid = $offlinequizgroup->id;
+    //$groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
+    // $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions, $offlinequiz->groupid);
+    // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
+    //$offlinequiz->questions = $groupquestions;
+} else {
+    print_error('invalidgroupnumber', 'offlinequiz');
+}
+
 
 if ($returnurl) {
     $returnurl = new moodle_url($returnurl);
 } else {
-    $returnurl = new moodle_url('/mod/offlinequiz/edit.php', array('cmid' => $cmid));
+    $returnurl = new moodle_url('/mod/offlinequiz/edit.php',
+            array('cmid' => $cmid,
+                  'groupnumber' => $offlinequiz->groupnumber
+            )); 
 }
 if ($scrollpos) {
     $returnurl->param('scrollpos', $scrollpos);
 }
+
+$thispageurl->param('groupnumber', $offlinequiz->groupnumber);
+$PAGE->set_url($thispageurl);
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
@@ -98,8 +125,8 @@ if ($data = $mform->get_data()) {
                 'It seems a form was submitted without any button being pressed???');
     }
 
-    offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $data->numbertoadd, $includesubcategories);
-    offlinequiz_delete_previews($offlinequiz);
+    offlinequiz_add_random_questions($offlinequiz, $offlinequizgroup, $categoryid, $data->numbertoadd, $includesubcategories);
+    offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     redirect($returnurl);
 }

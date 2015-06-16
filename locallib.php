@@ -2196,7 +2196,7 @@ function offlinequiz_question_tostring($question, $showicon = false,
  *      add at the end
  * @return bool false if the question was already in the offlinequiz
  */
-function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offlinegroup, $fromofflinegroup = null) {
+function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offlinegroup, $fromofflinegroup = null, $maxmarks = null) {
     global $DB;
 
     if (offlinequiz_has_scanned_pages($offlinequiz->id)) {
@@ -2220,6 +2220,8 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
                           'offlinegroupid' => $fromofflinegroup,
                           'questionid' => $questionid))) {
             $maxmark = $oldmaxmark;
+        } else if ($maxmarks && array_key_exists($questionid, $maxmarks)) {
+            $maxmark = $maxmarks[$questionid];
         }
 
         $maxpage = 1;
@@ -2267,6 +2269,151 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
     }
 }
 
+/**
+ * Randomly add a number of multichoice questions to an offlinequiz group.
+ * 
+ * @param unknown_type $offlinequiz
+ * @param unknown_type $addonpage
+ * @param unknown_type $categoryid
+ * @param unknown_type $number
+ * @param unknown_type $includesubcategories
+ */
+function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $categoryid, $number, $recurse) {
+    global $DB;
+
+    $category = $DB->get_record('question_categories', array('id' => $categoryid));
+    if (!$category) {
+        print_error('invalidcategoryid', 'error');
+    }
+
+    $catcontext = context::instance_by_id($category->contextid);
+    require_capability('moodle/question:useall', $catcontext);
+
+    if ($recurse) {
+        $categoryids = question_categorylist($category->id);
+    } else {
+        $categoryids = array($category->id);
+    }
+
+    list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
+
+    // Find all questions in the selected categories that are not in the offline group yet.
+    $sql = "SELECT id
+              FROM {question} q
+             WHERE q.category $qcsql
+               AND q.parent = 0
+               AND q.hidden = 0
+               AND q.qtype IN ('multichoice', 'multichoiceset')
+               AND NOT EXISTS (SELECT 1 
+                                 FROM {offlinequiz_group_questions} ogq
+                                WHERE ogq.questionid = q.id
+                                  AND ogq.offlinequizid = :offlinequizid
+                                  AND ogq.offlinegroupid = :offlinegroupid)";
+    
+    $qcparams['offlinequizid'] = $offlinequiz->id;
+    $qcparams['offlinegroupid'] = $offlinegroup->id;
+    
+    $questionids = $DB->get_fieldset_sql($sql, $qcparams);
+    srand(microtime() * 1000000);
+    shuffle($questionids);
+    
+    $chosenids = array();
+    while (($questionid = array_shift($questionids)) && $number > 0) {
+        $chosenids[] = $questionid;
+        $number -= 1;
+    }
+    
+    // Get the old maxmarks in case questions are already in other offlinequiz groups.
+    list($qsql, $params) = $DB->get_in_or_equal($chosenids, SQL_PARAMS_NAMED);
+    
+    $sql = "SELECT id, questionid, maxmark
+              FROM {offlinequiz_group_questions}
+             WHERE offlinequizid = :offlinequizid
+               AND questionid $qsql";
+    $params['offlinequizid'] = $offlinequiz->id;
+    
+    $slots = $DB->get_records_sql($sql, $params);
+    $maxmarks = array();
+    foreach ($slots as $slot) {
+        if (!array_key_exists($slot->questionid, $maxmarks)) {
+            $maxmarks[$slot->questionid] = $slot->maxmark;
+        }
+    }
+    offlinequiz_add_questionlist_to_group($chosenids, $offlinequiz, $offlinegroup, null, $maxmarks);
+}
+
+/**
+ * 
+ * @param unknown $offlinequiz
+ * @param unknown $questionids
+ */
+function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
+    global $DB;
+    
+    // Go through the question IDs and remove them if they exist.
+    // We do a DB commit after each question ID to make things simpler. 
+    foreach ($questionids as $questionid) {
+        // Retrieve the slots indexed by id
+        $slots = $DB->get_records('offlinequiz_group_questions',
+                array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $offlinequiz->groupid),
+                'slot');
+
+        // Build an array with slots indexed by questionid and indexed by slot number.
+        $questionslots = array();
+        $slotsinorder = array();
+        foreach ($slots as $slot) {
+            $questionslots[$slot->questionid] = $slot;
+            $slotsinorder[$slot->slot] = $slot;
+        }
+
+        if (!array_key_exists($questionid, $questionslots)) {
+            continue;
+        }   
+
+        $slot = $questionslots[$questionid];
+
+        $nextslot = null;
+        $prevslot = null;
+        if (array_key_exists($slot->slot + 1, $slotsinorder)) {
+            $nextslot = $slotsinorder[$slot->slot + 1];
+        }
+        if (array_key_exists($slot->slot - 1, $slotsinorder)) {
+            $prevslot = $slotsinorder[$slot->slot - 1];
+        }
+        $lastslot = end($slotsinorder);
+
+        $trans = $DB->start_delegated_transaction();        
+
+        // Reduce the page numbers of the following slots if there is no previous slot
+        // or the page number of the previous slot is smaller than the page number of the current slot. 
+        $removepage = false;
+        if ($nextslot && $nextslot->page > $slot->page) {
+            if (!$prevslot || $prevslot->page < $slot->page) {
+                $removepage = true;
+            }
+        }
+
+        // Delete the slot.
+        $DB->delete_records('offlinequiz_group_questions',
+                array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $offlinequiz->groupid,
+                      'id' => $slot->id));
+
+        // Reduce the slot number in the following slots if there are any.
+        // Also reduce the page number if necessary.
+        if ($nextslot) {
+            for ($curslotnr = $nextslot->slot ; $curslotnr <= $lastslot->slot; $curslotnr++) {
+                if ($removepage) {
+                    $slotsinorder[$curslotnr]->page = $slotsinorder[$curslotnr]->page - 1;
+                }
+                // Reduce the slot number by one.
+                $slotsinorder[$curslotnr]->slot = $slotsinorder[$curslotnr]->slot - 1;
+                $DB->update_record('offlinequiz_group_questions', $slotsinorder[$curslotnr]);
+            }
+        }                    
+
+        $trans->allow_commit();
+   }
+}
 
 /**
  * Add a question to a offlinequiz group

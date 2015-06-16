@@ -56,6 +56,9 @@ $scrollpos = optional_param('scrollpos', '', PARAM_INT);
 if(array_key_exists('savechanges', $_POST) && $_POST['savechanges']) {
     unset($_POST['category']);
 }
+if(array_key_exists('offlinequizdeleteselected', $_POST) && $_POST['offlinequizdeleteselected']) {
+    unset($_POST['category']);
+}
 
 list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
         question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
@@ -138,6 +141,24 @@ if ($scrollpos) {
     $afteractionurl->param('scrollpos', $scrollpos);
 }
 
+// Get the list of question ids had their check-boxes ticked.
+$selectedquestionids = array();
+$params = (array) data_submitted();
+foreach ($params as $key => $value) {
+    if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
+        $selectedquestionids[] = $matches[1];
+    }
+} 
+
+if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
+        !empty($selectedquestionids) && confirm_sesskey()) {
+
+    offlinequiz_remove_questionlist($offlinequiz, $selectedquestionids);
+    offlinequiz_delete_template_usages($offlinequiz);
+    $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+    redirect($afteractionurl);
+}
+
 if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     // Re-paginate the offlinequiz.
     $structure->check_can_be_edited();
@@ -211,15 +232,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     if ($copyselectedtogroup) {
         
-        // Get the list of question ids had their check-boxes ticked.
-        $selectedquestionids = array();
-        $params = (array) data_submitted();
-        foreach ($params as $key => $value) {
-            if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
-                $selectedquestionids[] = $matches[1];
-            }
-        } 
-
         if (($selectedquestionids) && ($newgroup = offlinequiz_get_group($offlinequiz, $copyselectedtogroup))) {
             $fromofflinegroup = optional_param('fromofflinegroup', 0, PARAM_INT);
 
@@ -327,7 +339,11 @@ require_once('tabs.php');
 //offlinequiz_print_status_bar($offlinequiz);
 
 // Questions wrapper start.
-echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content'));
+if ($mode == 'grade') {
+    echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content edit_grades'));
+} else {
+    echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content'));
+}
 
 $letterstr = 'ABCDEFGHIJKL';
 $groupletters = array();

@@ -465,14 +465,16 @@ input#showviewbutton {
     padding-right: 0;
 }
 
-#page-mod-offlinequiz-edit .statusbar {
-    margin: 0.6em 0.4em;
-}
 #page-mod-offlinequiz-edit .statusdisplay {
     background-color: #ffc;
     clear: both;
     margin: 0.3em 1em 0.3em 0;
     padding: 1px ;
+    /* Stop margin collapse. */
+}
+#page-mod-offlinequiz-edit .emptystatusdisplay {
+    clear: both;
+    margin: 0.3em 1em 0.3em 0;
     /* Stop margin collapse. */
 }
 #page-mod-offlinequiz-edit.dir-rtl .statusdisplay {
@@ -482,20 +484,6 @@ input#showviewbutton {
     margin: 0.4em;
 }
 
-#page-mod-offlinequiz-edit .maxgrade,
-#page-mod-offlinequiz-edit .totalpoints {
-    display: block;
-    float: right;
-    margin: -2.5em 1em 0em 1em;
-    padding: .2em;
-}
-#page-mod-offlinequiz-edit .maxgrade label {
-    display: inline;
-}
-#page-mod-offlinequiz-edit.dir-rtl .maxgrade,
-#page-mod-offlinequiz-edit.dir-rtl .totalpoints {
-    float: left;
-}
 
 #page-mod-offlinequiz-edit li.activity > div,
 #page-mod-offlinequiz-edit li.pagenumber {
@@ -643,11 +631,6 @@ input#showviewbutton {
     min-width: 5.45em;
 }
 
-#page-mod-offlinequiz-edit div.copyselected {
-	display: inline-block;
-
-	margin-left: 30px;
-}
 /* #page-mod-offlinequiz-edit .menucopyselectedtogrouptop { */
 /*     font-size: 1em;	 */
 /* } */
@@ -704,6 +687,84 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit.dir-rtl span.editinstructions {
     left: 0;
     right: auto;
+}
+
+#page-mod-offlinequiz-edit div.rpcontainerclass input {
+	margin-left: 0em;
+	margin-top: 0.2em;
+}
+
+#page-mod-offlinequiz-edit div.groupchoice {
+	float: left;
+	margin: 0.5em 1.5em 0.7em 0em;
+}
+
+#page-mod-offlinequiz-edit .clear {
+	clear: both;
+}
+
+
+#page-mod-offlinequiz-edit .statusbar {
+	float: left;
+    margin: 0.6em 0em 0.6em 0em;
+}
+
+
+#page-mod-offlinequiz-edit .maxgrade {
+    display: block;
+    float: right;
+    margin: -2.5em 1em 0em 1em;
+    padding: .2em;
+}
+#page-mod-offlinequiz-edit .maxgrade {
+	position: relative;
+	top: 2.2em;
+}
+
+#page-mod-offlinequiz-edit .maxgrade label {
+    display: inline;
+}
+
+#page-mod-offlinequiz-edit .edit_grades .maxgrade {
+	margin: -5em 1em 0em 1em;
+	top: 0em;
+}
+#page-mod-offlinequiz-edit .totalpoints {
+    display: block;
+    float: right;
+    margin: -3.5em 1em 0em 1em;
+    padding: .2em;
+}
+#page-mod-offlinequiz-edit .edit_grades .totalpoints {
+    display: block;
+    float: right;
+    margin: -2em 1em 0em 1em;
+    padding: .2em;
+}
+
+#page-mod-offlinequiz-edit.dir-rtl .maxgrade,
+#page-mod-offlinequiz-edit.dir-rtl .totalpoints {
+    float: left;
+}
+
+#page-mod-offlinequiz-edit div.selectall {
+	display: inline-block;
+	margin-right: 2em;
+}
+
+#page-mod-offlinequiz-edit div.copyselected {
+	display: inline-block;
+	margin-right: 2.5em;
+}
+#page-mod-offlinequiz-edit div.removeselected {
+	display: inline-block;
+}
+#page-mod-offlinequiz-edit div.removeselected input {
+	margin-left: 0px;
+}
+
+#page-mod-offlinequiz-edit div.randomquestionformforpopup input[type="checkbox"] {
+	vertical-align: text-bottom;
 }
 
 #page-mod-offlinequiz-edit ul.slots .activityinstance span.instancename {

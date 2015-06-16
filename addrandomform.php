@@ -45,9 +45,9 @@ class offlinequiz_add_random_form extends moodleform {
 
         // Random from existing category section.
         $mform->addElement('header', 'categoryheader',
-                get_string('randomfromexistingcategory', 'offlinequiz'));
+                get_string('addrandomfromcategory', 'offlinequiz'));
 
-        $mform->addElement('questioncategory', 'category', get_string('category'),
+        $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
                 array('contexts' => $usablecontexts, 'top' => false));
         $mform->setDefault('category', $this->_customdata['cat']);
 
@@ -56,22 +56,9 @@ class offlinequiz_add_random_form extends moodleform {
         $mform->addElement('select', 'numbertoadd', get_string('randomnumber', 'offlinequiz'),
                 $this->get_number_of_questions_to_add_choices());
 
-        $mform->addElement('submit', 'existingcategory', get_string('addrandomquestion', 'offlinequiz'));
+        $mform->addElement('submit', 'existingcategory', get_string('add'));
 
-        // Random from a new category section.
-        $mform->addElement('header', 'categoryheader',
-                get_string('randomquestionusinganewcategory', 'offlinequiz'));
-
-        $mform->addElement('text', 'name', get_string('name'), 'maxlength="254" size="50"');
-        $mform->setType('name', PARAM_TEXT);
-
-        $mform->addElement('questioncategory', 'parent', get_string('parentcategory', 'question'),
-                array('contexts' => $usablecontexts, 'top' => true));
-        $mform->addHelpButton('parent', 'parentcategory', 'question');
-
-        $mform->addElement('submit', 'newcategory',
-                get_string('createcategoryandaddrandomquestion', 'offlinequiz'));
-
+ 
         // Cancel button.
         $mform->addElement('cancel');
         $mform->closeHeaderBefore('cancel');
