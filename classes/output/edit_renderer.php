@@ -17,9 +17,12 @@
 /**
  * Renderer outputting the offlinequiz editing UI.
  *
- * @package mod_offlinequiz
- * @copyright 2013 The Open University.
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.2+
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_offlinequiz\output;
@@ -1170,7 +1173,6 @@ class edit_renderer extends \plugin_renderer_base {
         $config->pagehtml = $this->new_page_template($structure, $contexts, $pagevars, $pageurl);
         $config->addpageiconhtml = $this->add_page_icon_template($structure, $offlinequiz);
 
-        //print_object($offlinequiz);
         $this->page->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
                 'M.mod_offlinequiz.init_resource_toolbox',
                 array(array(

@@ -1,5 +1,5 @@
 /**
- * Drag and Drop for Quiz sections and slots.
+ * Drag and Drop for offline quiz sections and slots.
  *
  * @module moodle-mod-offlinequiz-dragdrop
  */

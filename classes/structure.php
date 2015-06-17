@@ -17,9 +17,12 @@
 /**
  * Defines the \mod_offlinequiz\structure class.
  *
- * @package   mod_offlinequiz
- * @copyright 2013 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.8+
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_offlinequiz;
@@ -419,7 +422,6 @@ class structure {
 
         $this->populate_slots_with_sectionids();
         $this->populate_question_numbers();
-        //print_object($this->slotsinorder);
     }
 
     /**

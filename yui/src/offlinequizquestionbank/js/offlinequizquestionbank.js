@@ -1,4 +1,4 @@
-// This file is part of Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,13 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Add questions from question bank functionality for a popup in offlinequiz editing page.
  *
- * @package   mod_offlinequiz
- * @copyright 2014 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.8+
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 var CSS = {

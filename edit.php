@@ -13,8 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-
 /**
  * Page to edit offlinequizzes
  *
@@ -35,11 +33,14 @@
  * delete       Removes a question from the offlinequiz
  * savechanges  Saves the order and grades for questions in the offlinequiz
  *
- * @package    mod_offlinequiz
- * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.8+
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
