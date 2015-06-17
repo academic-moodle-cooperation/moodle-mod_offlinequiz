@@ -2202,14 +2202,15 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
     if (offlinequiz_has_scanned_pages($offlinequiz->id)) {
         return false;
     }
-    
+
     // Don't add the same question twice.
     foreach ($questionids as $questionid) {
         $slots = $DB->get_records('offlinequiz_group_questions',
                 array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $offlinegroup->id),
                 'slot', 'questionid, slot, page, id');
+
         if (array_key_exists($questionid, $slots)) {
-            return false;
+            continue;
         }
         
         $trans = $DB->start_delegated_transaction();

@@ -46,7 +46,6 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/addrandomform.php');
-require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/question/category_class.php');
 
 // These params are only passed from page request to request while we stay on
@@ -232,7 +231,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     $copyselectedtogroup = optional_param('copyselectedtogrouptop', 0, PARAM_INT);
 
     if ($copyselectedtogroup) {
-        
+
         if (($selectedquestionids) && ($newgroup = offlinequiz_get_group($offlinequiz, $copyselectedtogroup))) {
             $fromofflinegroup = optional_param('fromofflinegroup', 0, PARAM_INT);
 
