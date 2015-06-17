@@ -165,6 +165,7 @@ $string['formforcorrection'] = 'Korrekturbogen für Gruppe {$a}';
 $string['formforgroup'] = 'Fragebogen für Gruppe {$a}';
 $string['formforgroupdocx'] = 'Fragebogen für Gruppe {$a} (DOCX)';
 $string['formsexist'] = 'Formulare bereits erstellt.';
+$string['formsexistx'] = 'Formulare bereits erstellt (<a href="{$a}">Formulare herunterladen</a>)';
 $string['formsheetsettings'] = 'Formulareinstellungen';
 $string['formspreview'] = 'Vorschau für Formulare';
 $string['formwarning'] = 'Für die festgelegte Fragen- bzw. Antwortanzahl ist kein Antwortbogen definiert. Bitte kontaktieren Sie den Systemadministrator.';

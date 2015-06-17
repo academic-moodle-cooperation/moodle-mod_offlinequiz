@@ -308,8 +308,16 @@ class structure {
      * @return string[] array of strings.
      */
     public function get_edit_page_warnings() {
+        global $CFG;
+        
         $warnings = array();
 
+        if (!$this->can_be_edited()) {
+            $reviewlink = new \moodle_url($CFG->wwwroot . '/mod/offlinequiz/createquiz.php', 
+                    array ('q' => $this->offlinequizobj->get_offlinequiz()->id,
+                           'mode' => 'createpdfs'));
+            $warnings[] = get_string('formsexistx', 'offlinequiz', $reviewlink->out(false));
+        }
         if (offlinequiz_has_scanned_pages($this->offlinequizobj->get_offlinequizid())) {
             $reviewlink = offlinequiz_attempt_summary_link_to_reports($this->offlinequizobj->get_offlinequiz(),
                     $this->offlinequizobj->get_cm(), $this->offlinequizobj->get_context());

@@ -249,4 +249,53 @@ class custom_view extends \core_question\bank\view {
     protected function create_new_question_form($category, $canadd) {
         // Don't display this.
     }
+    
+    /**
+     * Create the SQL query to retrieve the indicated questions, based on
+     * \core_question\bank\search\condition filters.
+     */
+    protected function build_query() {
+        global $DB;
+
+        // Get the required tables and fields.
+        $joins = array();
+        $fields = array('q.hidden', 'q.category');
+        foreach ($this->requiredcolumns as $column) {
+            $extrajoins = $column->get_extra_joins();
+            foreach ($extrajoins as $prefix => $join) {
+                if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
+                    throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
+                }
+                $joins[$prefix] = $join;
+            }
+            $fields = array_merge($fields, $column->get_required_fields());
+        }
+        $fields = array_unique($fields);
+
+        // Build the order by clause.
+        $sorts = array();
+        foreach ($this->sort as $sort => $order) {
+            list($colname, $subsort) = $this->parse_subsort($sort);
+            $sorts[] = $this->requiredcolumns[$colname]->sort_expression($order < 0, $subsort);
+        }
+
+        // Build the where clause.
+        $tests = array('q.parent = 0');
+        $this->sqlparams = array();
+        foreach ($this->searchconditions as $searchcondition) {
+            if ($searchcondition->where()) {
+                $tests[] = '((' . $searchcondition->where() .'))';
+            }
+            if ($searchcondition->params()) {
+                $this->sqlparams = array_merge($this->sqlparams, $searchcondition->params());
+            }
+        }
+        // Build the SQL.
+        $sql = ' FROM {question} q ' . implode(' ', $joins);
+        $sql .= ' WHERE ' . implode(' AND ', $tests);
+        $sql .= '   AND q.qtype IN (\'multichoice\', \'multichoiceset\', \'description\') ';
+        $this->countsql = 'SELECT count(1)' . $sql;
+        $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
+    }
+
 }

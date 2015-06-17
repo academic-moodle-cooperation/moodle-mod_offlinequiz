@@ -193,6 +193,7 @@ $string['formforcorrection'] = 'Correction form for group {$a}';
 $string['formforgroup'] = 'Question form for group {$a}';
 $string['formforgroupdocx'] = 'Question form for group {$a} (DOCX)';
 $string['formsexist'] = 'Forms already created.';
+$string['formsexistx'] = 'Forms already created (<a href="{$a}">Download forms</a>)';
 $string['formsheetsettings'] = 'Form Settings';
 $string['formspreview'] = 'Preview for forms';
 $string['formwarning'] = 'There is no answer form defined. Please contact your administrator.';
