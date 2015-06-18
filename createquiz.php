@@ -256,21 +256,37 @@ if ($mode == 'preview') {
 
         $questionnumber = 1;
         $currentpage = 1;
-        foreach ($slots as $slot) {
-            $slotquestion = $templateusage->get_question($slot);
-            $question = $questions[$slotquestion->id];
-            if (!$offlinequiz->shufflequestions && $question->page > $currentpage) {
-                echo '<center>//---------------------- ' . get_string('newpage', 'offlinequiz') .
-                         ' ----------------//</center>';
-                $currentpage++;
+        if ($offlinequiz->shufflequestions) {
+            foreach ($slots as $slot) {
+                $slotquestion = $templateusage->get_question($slot);
+                $question = $questions[$slotquestion->id];
+                $attempt = $templateusage->get_question_attempt($slot);
+                $order = $slotquestion->get_order($attempt);  // Order.
+                offlinequiz_print_question_preview($question, $order, $questionnumber, $context, $PAGE);
+                // Note: we don't have description questions in quba slots.
+                $questionnumber++;
             }
-            $attempt = $templateusage->get_question_attempt($slot);
-            $order = $slotquestion->get_order($attempt);  // Order.
-            offlinequiz_print_question_preview($question, $order, $questionnumber, $context, $PAGE);
-            // Note: we don't have description questions in quba slots.
-            $questionnumber++;
+        } else {
+            foreach ($questions as $question) {
+                if ($question->page > $currentpage) {
+                    echo '<center>//---------------------- ' . get_string('newpage', 'offlinequiz') .
+                            ' ----------------//</center>';
+                    $currentpage++;
+                }
+                $order = array();
+                if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+                    $slot = $questionslots[$question->id];
+                    $slotquestion = $templateusage->get_question($slot);
+                    $attempt = $templateusage->get_question_attempt($slot);
+                    $order = $slotquestion->get_order($attempt);
+                }
+                // Use our own function to print the preview.
+                offlinequiz_print_question_preview($question, $order, $questionnumber, $context, $PAGE);
+                if ($question->qtype != 'description') {
+                    $questionnumber++;
+                }
+            }
         }
-
         echo $OUTPUT->box_end();
     }// End foreach.
 

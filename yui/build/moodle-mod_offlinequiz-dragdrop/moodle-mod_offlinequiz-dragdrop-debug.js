@@ -1,7 +1,7 @@
 YUI.add('moodle-mod_offlinequiz-dragdrop', function (Y, NAME) {
 
 /**
- * Drag and Drop for Quiz sections and slots.
+ * Drag and Drop for offline quiz sections and slots.
  *
  * @module moodle-mod-offlinequiz-dragdrop
  */

@@ -1,7 +1,7 @@
 YUI.add('moodle-mod_offlinequiz-offlinequizbase', function (Y, NAME) {
 
 /**
- * The offlinequizbase class to provide shared functionality to Modules within Moodle.
+ * The offlinequizbase class to provide shared functionality.
  *
  * @module moodle-mod_offlinequiz-offlinequizbase
  */

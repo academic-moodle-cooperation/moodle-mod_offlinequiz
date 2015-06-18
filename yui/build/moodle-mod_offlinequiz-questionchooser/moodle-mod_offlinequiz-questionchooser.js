@@ -47,6 +47,16 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
 
         // Display the chooser dialogue.
         this.display_chooser(e);
+
+        var nodes = Y.all('#chooseform input[type=radio]')._nodes;
+        console.log(nodes);
+        for(i = 0; i < nodes.length; i++) {
+        	if (nodes[i].id != 'qtype_qtype_multichoiceset' &&
+        		nodes[i].id != 'qtype_qtype_multichoice' &&
+        		nodes[i].id != 'qtype_qtype_description' ) {
+        		nodes[i].disabled = true;
+        	}
+        }        
     },
 
     parameters_to_hidden_input: function(parameters, form, name) {
