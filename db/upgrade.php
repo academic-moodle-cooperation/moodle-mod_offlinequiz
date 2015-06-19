@@ -1162,8 +1162,15 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
                 $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
                         'number', '*');
-                $questioninstances = $DB->get_records('offlinequiz_q_instances',
-                        array('offlinequizid' => $offlinequiz->id), 'questionid', 'questionid, grade');
+                $instancesraw = $DB->get_records('offlinequiz_q_instances',
+                        array('offlinequizid' => $offlinequiz->id));
+                
+                $questioninstances = array();
+                foreach ($instancesraw as $instance) {
+                	if (!array_key_exist($instance->questionid, $questioninstances)) {
+                		$questioninstances[$instance->questionid] = $instance;
+                	}
+                }
                 
                 foreach ($groups as $group) {
                     $groupquestions = $DB->get_records('offlinequiz_group_questions',
