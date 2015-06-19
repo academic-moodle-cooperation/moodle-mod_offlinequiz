@@ -1192,8 +1192,11 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                             $groupquestion->page = $currentpage;
                             $needsupdate = true;
                         }
-                        $groupquestion->slot = $currentslot;
-                        $needsupdate = true;
+                        // If the slot is not set, then fill it.
+                        if (!$groupquestion->slot) {
+	                        $groupquestion->slot = $currentslot;
+    	                    $needsupdate = true;
+                        }
                         
                         if ($needsupdate) {
                             $DB->update_record('offlinequiz_group_questions', $groupquestion);
