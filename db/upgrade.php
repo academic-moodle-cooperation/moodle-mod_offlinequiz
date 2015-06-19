@@ -1142,7 +1142,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     
     if ($oldversion < 2015060900) {
     
-        //  This upgrade migrates old offlinequiz_q_instances grades (maxgrades) to new 
+        // This upgrade migrates old offlinequiz_q_instances grades (maxgrades) to new 
         // maxmark field in offlinequiz_group_questions.
         // It also deletes group questions with questionid 0 (pagebreaks) and inserts the 
         // correct page number instead. 
@@ -1150,12 +1150,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $numofflinequizzes = $DB->count_records('offlinequiz');
         if ($numofflinequizzes > 0) {
             $pbar = new progress_bar('offlinequizquestionstoslots', 500, true);
+            $pbar->create();
             $pbar->update(0, $numofflinequizzes,
                         "Upgrading offlinequiz group questions - {0}/{$numofflinequizzes}.");
 
-            flush();
-            ob_flush();
-            
             $numberdone = 0;
             $offlinequizzes = $DB->get_recordset('offlinequiz', null, 'id', 'id, numgroups');
             foreach ($offlinequizzes as $offlinequiz) {
@@ -1194,10 +1192,9 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                             $groupquestion->page = $currentpage;
                             $needsupdate = true;
                         }
-                        if (!$groupquestion->slot) {
-                            $groupquestion->slot = $currentslot;
-                            $needsupdate = true;
-                        }
+                        $groupquestion->slot = $currentslot;
+                        $needsupdate = true;
+                        
                         if ($needsupdate) {
                             $DB->update_record('offlinequiz_group_questions', $groupquestion);
                         }
