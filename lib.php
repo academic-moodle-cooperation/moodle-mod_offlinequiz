@@ -97,6 +97,20 @@ function offlinequiz_add_instance($offlinequiz) {
         print_error('invalidcourseid', 'error');
     }
 
+	$context = context_module::instance($offlinequiz->coursemodule);
+
+    // Process the HTML editor data in pdfintro.
+    if (is_array($offlinequiz->pdfintro) && array_key_exists('text', $offlinequiz->pdfintro)) {
+    	if ($draftitemid = $offlinequiz->pdfintro['itemid']) {
+  		    $editoroptions = offlinequiz_get_editor_options();
+
+        	$offlinequiz->pdfintro = file_save_draft_area_files($draftitemid, $context->id,
+                                                    'mod_offlinequiz', 'pdfintro',
+                                                    0, $editoroptions,
+                                                    $offlinequiz->pdfintro['text']);
+    	}
+    }
+
     // Try to store it in the database.
     try {
         if (!$offlinequiz->id = $DB->insert_record('offlinequiz', $offlinequiz)) {
@@ -137,6 +151,21 @@ function offlinequiz_update_instance($offlinequiz) {
     $result = offlinequiz_process_options($offlinequiz);
     if ($result && is_string($result)) {
         return $result;
+    }
+
+	$context = context_module::instance($offlinequiz->coursemodule);
+
+    // Process the HTML editor data in pdfintro.
+    if (is_array($offlinequiz->pdfintro) && array_key_exists('text', $offlinequiz->pdfintro)) {
+    	if ($draftitemid = $offlinequiz->pdfintro['itemid']) {
+  		    $editoroptions = offlinequiz_get_editor_options();
+
+        	$offlinequiz->pdfintro = file_save_draft_area_files($draftitemid, $context->id,
+                                                    'mod_offlinequiz', 'pdfintro',
+                                                    0, $editoroptions,
+                                                    $offlinequiz->pdfintro['text']);
+    	}
+        // $offlinequiz->pdfintro = $feedback->pdfintro['format'];
     }
 
     // Update the database.
@@ -229,6 +258,20 @@ function offlinequiz_delete_instance($id) {
     }
 
     return true;
+}
+
+/**
+ * This gets an array with default options for the editor
+ *
+ * @return array the options
+ */
+function offlinequiz_get_editor_options($context = null) {
+    $options = array('maxfiles' => EDITOR_UNLIMITED_FILES,
+    		     'noclean' => true);
+    if ($context) {
+    	$options['context'] = $context;
+    }
+    return $options;
 }
 
 /**

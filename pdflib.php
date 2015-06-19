@@ -647,7 +647,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
         }
     } else {
         // No shufflequestions, so go through the questions as they have been added to the offlinequiz group.
-        // We also add custom page breaks.
+        // We also have to show description questions that are not in the template.
 
         // First, compute mapping  questionid -> slotnumber.
         $questionslots = array();

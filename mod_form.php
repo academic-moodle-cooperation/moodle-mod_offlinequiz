@@ -142,14 +142,13 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             $mform->addElement('editor', 'pdfintro', get_string('pdfintro', 'offlinequiz'), array('rows' => 20),
-                     array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true,
-                      'context' => $this->context));
+                     offlinequiz_get_editor_options($this->context));
         } else {
             $mform->addElement('static', 'pdfintro', get_string('pdfintro', 'offlinequiz'), $offlinequiz->pdfintro);
         }
         $mform->setType('pdfintro', PARAM_RAW);
-        $mform->setDefault('pdfintro', array('text' => get_string('pdfintrotext', 'offlinequiz')));
-        $mform->addHelpButton('pdfintro', 'pdfintro', "offlinequiz");
+        //$mform->setDefault('pdfintro', array('text' => get_string('pdfintrotext', 'offlinequiz')));
+        $mform->addHelpButton('pdfintro', 'pdfintro', 'offlinequiz');
 
         unset($options);
         $options[8] = 8;
@@ -250,6 +249,32 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             }
 
         }
+
+        // Set the pdfintro text.
+       	if ($this->current->instance) {
+            // Editing an existing pdfintro - let us prepare the added editor elements (intro done automatically).
+            $draftitemid = file_get_submitted_draft_itemid('pdfintro');
+            $text = file_prepare_draft_area($draftitemid, $this->context->id,
+                                    'mod_offlinequiz', 'pdfintro', false,
+                                    offlinequiz_get_editor_options($this->context),
+                                    $toform['pdfintro']);
+
+            // $default_values['pdfintro']['format'] = $default_values['pdfintro'];
+            $toform['pdfintro'] = array();
+            $toform['pdfintro']['text'] = $text; 
+            $toform['pdfintro']['itemid'] = $draftitemid;
+        } else {
+            // Adding a new feedback instance.
+            $draftitemid = file_get_submitted_draft_itemid('pdfintro');
+
+            // No context yet, itemid not used.
+            file_prepare_draft_area($draftitemid, null, 'mod_offlinequiz', 'pdfintro', false);
+            $toform['pdfintro'] = array();
+            $toform['pdfintro']['text'] = get_string('pdfintrotext', 'offlinequiz');
+            $toform['pdfintro']['format'] = editors_get_preferred_format();
+            $toform['pdfintro']['itemid'] = $draftitemid;
+        }
+        
         if (empty($toform['timelimit'])) {
             $toform['timelimitenable'] = 0;
         } else {

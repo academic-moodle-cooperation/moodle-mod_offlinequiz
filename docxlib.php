@@ -489,32 +489,21 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
         $section->addPageBreak();
     }
 
-    // Load all the questions needed by this script.
-    $layout = offlinequiz_get_group_questions($offlinequiz, $group->id);
-    $pagequestions = explode(',', $layout);
-    $questionlist = explode(',', str_replace(',0', '', $layout));
-
-    if (!$questionlist) {
-        echo $OUTPUT->box_start();
-        echo $OUTPUT->error_text(get_string('noquestionsfound', 'offlinequiz', $groupletter));
-        echo $OUTPUT->box_end();
-        return;
-    }
-
-    list($qsql, $params) = $DB->get_in_or_equal($questionlist);
-    $params[] = $offlinequiz->id;
-
-    $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance, c.contextid
-              FROM {question} q,
-                   {offlinequiz_q_instances} i,
+    // Load all the questions needed for this offline quiz group.
+    $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark 
+              FROM {offlinequiz_group_questions} ogq,
+                   {question} q,
                    {question_categories} c
-             WHERE q.id $qsql
-               AND i.offlinequizid = ?
-               AND q.id = i.questionid
-               AND q.category=c.id";
-
+             WHERE ogq.offlinequizid = :offlinequizid
+               AND ogq.offlinegroupid = :offlinegroupid
+               AND q.id = ogq.questionid
+               AND q.category = c.id
+          ORDER BY ogq.slot ASC ";
+    $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
+ 
     // Load the questions.
-    if (!$questions = $DB->get_records_sql($sql, $params)) {
+    $questions = $DB->get_records_sql($sql, $params);
+    if (!$questions) {
         echo $OUTPUT->box_start();
         echo $OUTPUT->error_text(get_string('noquestionsfound', 'offlinequiz', $groupletter));
         echo $OUTPUT->box_end();
@@ -638,18 +627,18 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
         // No shufflequestions, so go through the questions as they have been added to the offlinequiz group
         // We also add custom page breaks.
-        foreach ($pagequestions as $myquestion) {
+        $currentpage = 1;
+        foreach ($questions as $question) {
 
-            if ($myquestion == '0') {
+ 	        // Add page break if set explicitely by teacher.
+        	if ($question->page > $currentpage) {
                 $section->addPageBreak();
-                continue;
+                $currentpage++;
             }
 
             set_time_limit(120);
 
             // Print the question.
-            $question = $questions[$myquestion];
-
             $questiontext = $question->questiontext;
 
             // Filter only for tex formulas.
@@ -673,6 +662,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                                                     0.6, 300, 'docx');
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
+
             // Description questions are printed without a number because they are not on the answer form.
             if ($question->qtype == 'description') {
                 offlinequiz_print_blocks_docx($section, $blocks);
@@ -688,7 +678,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
-                $slot = $questionslots[$myquestion];
+                $slot = $questionslots[$question->id];
 
                 // Save the usage slot in the group questions table.
 //                 $DB->set_field('offlinequiz_group_questions', 'usageslot', $slot,
