@@ -436,7 +436,7 @@ class edit_renderer extends \plugin_renderer_base {
             'value' => get_string('removeselected', 'offlinequiz')
         );
 
-        if (!$structure->can_be_repaginated()) {
+        if (!$structure->can_be_edited()) {
             $buttonoptions['disabled'] = 'disabled';
         } 
         

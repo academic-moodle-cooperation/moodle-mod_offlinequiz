@@ -1150,12 +1150,15 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $numofflinequizzes = $DB->count_records('offlinequiz');
         if ($numofflinequizzes > 0) {
             $pbar = new progress_bar('offlinequizquestionstoslots', 500, true);
+            $pbar->update(0, $numofflinequizzes,
+                        "Upgrading offlinequiz group questions - {0}/{$numofflinequizzes}.");
 
-            $transaction = $DB->start_delegated_transaction();
-    
+
             $numberdone = 0;
             $offlinequizzes = $DB->get_recordset('offlinequiz', null, 'id', 'id, numgroups');
             foreach ($offlinequizzes as $offlinequiz) {
+                $transaction = $DB->start_delegated_transaction();
+    
                 $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
                         'number', '*', 0, $offlinequiz->numgroups);
                 $questioninstances = $DB->get_records('offlinequiz_q_instances',
@@ -1204,8 +1207,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                 $pbar->update($numberdone, $numofflinequizzes,
                         "Upgrading offlinequiz group questions - {$numberdone}/{$numofflinequizzes}.");
 
+                $transaction->allow_commit();
             }
-            $transaction->allow_commit();
         }
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2015060900, 'offlinequiz');
