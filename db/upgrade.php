@@ -1140,7 +1140,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2015060502, 'offlinequiz');
     }
     
-    if ($oldversion < 2015060900) {
+    if ($oldversion < 2015060901) {
     
         // This upgrade migrates old offlinequiz_q_instances grades (maxgrades) to new 
         // maxmark field in offlinequiz_group_questions.
@@ -1161,7 +1161,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                 error_log('Upgrading offlinequiz ' . $offlinequiz->id . ' to version 2015060900.');
 
                 $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
-                        'number', '*', 0, $offlinequiz->numgroups);
+                        'number', '*');
                 $questioninstances = $DB->get_records('offlinequiz_q_instances',
                         array('offlinequizid' => $offlinequiz->id), 'questionid', 'questionid, grade');
                 
@@ -1211,7 +1211,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
             }
         }
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2015060900, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2015060901, 'offlinequiz');
     }
     
     
