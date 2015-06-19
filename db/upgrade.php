@@ -1167,7 +1167,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                 
                 $questioninstances = array();
                 foreach ($instancesraw as $instance) {
-                	if (!array_key_exist($instance->questionid, $questioninstances)) {
+                	if (!array_key_exists($instance->questionid, $questioninstances)) {
                 		$questioninstances[$instance->questionid] = $instance;
                 	}
                 }
