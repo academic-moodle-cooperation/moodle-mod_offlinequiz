@@ -189,6 +189,13 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $data->offlinegroupid = $this->get_new_parentid('offlinequiz_group');
         $data->questionid = $this->get_mappingid('question', $data->questionid);
 
+        // Support old backups prior to Moodle 2.8.5.
+        if (isset($data->usageslot) && !isset($data->slot)) {
+            $data->slot = $data->usageslot;
+        }
+        if (isset($data->pagenumber) && !isset($data->page)) {
+            $data->page = $data->pagenumber;
+        }
         $newitemid = $DB->insert_record('offlinequiz_group_questions', $data);
     }
 
