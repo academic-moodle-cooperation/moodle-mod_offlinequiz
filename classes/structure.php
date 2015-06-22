@@ -232,6 +232,7 @@ class structure {
      * @return bool whether this slot the first one on its page.
      */
     public function is_first_slot_on_page($slotnumber) {
+        print_object($slotnumber);
         if ($slotnumber == 1) {
             return true;
         }
