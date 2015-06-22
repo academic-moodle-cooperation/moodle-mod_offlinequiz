@@ -906,11 +906,11 @@ class offlinequiz_page_scanner {
                 // Was } else if ($patternfactor < 2.45 or $patternfactor2 < 2.8) { .
                 return 2;
             } else {
-                return 1;
+                return 3;
             }
-        } else if ($percent >= $this->lowertrigger * 100) {
+        } else if ($percent >= $this->lowertrigger) {
               return 1;
-        } else if ($percent >= $this->lowerwarning * 100) {
+        } else if ($percent >= $this->lowerwarning) {
             return 3;
         } else {
             return 0;
@@ -1514,7 +1514,7 @@ class offlinequiz_page_scanner {
         $this->lowerwarning = $empty + ($cross - $empty) * 0.2;
         $this->lowertrigger = $this->lowerwarning + (($cross - $this->lowerwarning) * 0.2);
         $this->upperwarning = $cross + ((100 - $cross) * 0.2);
-        $this->uppertrigger = $cross + ((100 - $cross) * 0.74);
+        $this->uppertrigger = $cross + ((100 - $cross) * 0.64);
         $this->calibrated = true;
     }
 
