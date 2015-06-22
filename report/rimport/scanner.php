@@ -1514,7 +1514,7 @@ class offlinequiz_page_scanner {
         $this->lowerwarning = $empty + ($cross - $empty) * 0.2;
         $this->lowertrigger = $this->lowerwarning + (($cross - $this->lowerwarning) * 0.2);
         $this->upperwarning = $cross + ((100 - $cross) * 0.2);
-        $this->uppertrigger = $cross + ((100 - $cross) * 0.64);
+        $this->uppertrigger = $cross + ((100 - $cross) * 0.63);
         $this->calibrated = true;
     }
 
