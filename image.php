@@ -83,8 +83,8 @@ echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /
 
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
-
 $group = $groups[$result->offlinegroupid];
+$offlinequiz->groupid =- $group->id;
 
 list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, array($group));
 
@@ -150,26 +150,29 @@ if ($sheetloaded) {
 
     if ($options->gradedsheetfeedback) {
 
-        $layout = offlinequiz_get_group_questions($offlinequiz, $group->id);
-        $questionids = explode(',', $layout);
+        $questionids = offlinequiz_get_group_question_ids($offlinequiz, $group->id);
 
         list($qsql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
         $params['offlinequizid'] = $offlinequiz->id;
+        $params['offlinegroupid'] = $group->id;
 
-        $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance
+        $sql = "SELECT q.*, ogq.maxmark
                   FROM {question} q,
-                       {offlinequiz_q_instances} i
-                 WHERE i.offlinequizid = :offlinequizid
-                   AND q.id = i.questionid
+                       {offlinequiz_group_questions} ogq
+                 WHERE ogq.offlinequizid = :offlinequizid
+                   AND ogq.offlinegroupid = :offlinegroupid
+                   AND q.id = ogq.questionid
                    AND q.id $qsql";
 
         // Load the questions.
         if (!$questions = $DB->get_records_sql($sql, $params)) {
-            error(get_string('noquestionsfound', 'quiz'), 'view.php?q='.$offlinequiz->id);
+            $viewurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/view.php',
+                    array('q' => $offlinequiz->id));
+            print_error('noquestionsfound', 'offlinequiz', $viewurl);
         }
         // Load the question type specific information.
         if (!get_question_options($questions)) {
-            error('Could not load question options');
+            print_error('Could not load question options');
         }
 
         $questioncounter = 0;
@@ -244,7 +247,7 @@ if ($sheetloaded) {
             } else {
                 $grade = 0;
             }
-            $maxgrade = $question->maxgrade + 0;
+            $maxgrade = $question->maxmark + 0;
             echo "<td>$grade / $maxgrade</td></tr>";
         }
         echo "</table>"; // Inner table 1.
@@ -265,7 +268,7 @@ if ($sheetloaded) {
             } else {
                 $grade = 0;
             }
-            $maxgrade = $question->maxgrade + 0;
+            $maxgrade = $question->maxmark + 0;
             echo "<td>$grade / $maxgrade</td></tr>";
         }
         if (($endindex - $middle) == 1) {

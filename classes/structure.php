@@ -689,7 +689,6 @@ class structure {
      * @param float $maxmark the new maxmark.
      * @return bool true if the new grade is different from the old one.
      */
-    // TODO adjust this to store maxmark in offlinequiz_q_instances
     public function update_slot_maxmark($slot, $maxmark) {
         global $DB;
 

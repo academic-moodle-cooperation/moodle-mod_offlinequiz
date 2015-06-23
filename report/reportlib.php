@@ -103,22 +103,42 @@ function offlinequiz_report_unindex($datum) {
 function offlinequiz_report_get_significant_questions($offlinequiz) {
     global $DB;
 
-    $questionids = offlinequiz_questions_in_offlinequiz($offlinequiz->questions);
+    $questionids = $offlinequiz->questions;
     if (empty($questionids)) {
         return array();
     }
 
-    list($usql, $params) = $DB->get_in_or_equal(explode(',', $questionids));
-    $params[] = $offlinequiz->id;
-    $questions = $DB->get_records_sql("SELECT q.id, q.length, qqi.grade AS maxmark
-                                         FROM {question} q
-                                         JOIN {offlinequiz_q_instances} qqi ON qqi.questionid = q.id
-                                        WHERE q.id $usql
-                                          AND qqi.offlinequizid = ?
-                                          AND length > 0", $params);
+    list($usql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
+    
+    $params['offlinequizid'] = $offlinequiz->id;
+    $groupsql = '';
+    if ($offlinequiz->groupid) {
+        $groupsql = ' AND oqg.offlinegroupid = :offlinegroupid ';
+        $params['offlinegroupid'] = $offlinequiz->groupid;
+    }
 
+    $rawquestions = $DB->get_records_sql("SELECT oqg.id as oqgid, q.id as questionid, q.length, oqg.maxmark
+                                            FROM {question} q
+                                            JOIN {offlinequiz_group_questions} oqg ON oqg.questionid = q.id
+                                           WHERE q.id $usql
+                                             AND q.qtype <> 'description'
+                                             AND oqg.offlinequizid = :offlinequizid
+                                                 $groupsql
+                                             AND q.length > 0", $params);
+    // Make sure we have unique questionids. Not sure if DISTINCT in query captures all contingencies.
+    $questions = array();
+    foreach ($rawquestions as $rawquestion) {
+        if (!array_key_exists($rawquestion->questionid, $questions)) {
+            $question = new stdClass();
+            $question->id = $rawquestion->questionid;
+            $question->length = $rawquestion->length;
+            $question->maxmark = $rawquestion->maxmark;
+            $questions[$question->id] = $question;
+        }
+    }
+    
     $number = 1;
-    foreach (explode(',', $questionids) as $key => $id) {
+    foreach ($questionids as $key => $id) {
         if (!array_key_exists($id, $questions)) {
             continue;
         }

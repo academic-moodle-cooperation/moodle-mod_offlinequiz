@@ -156,7 +156,8 @@ function offlinequiz_update_instance($offlinequiz) {
 	$context = context_module::instance($offlinequiz->coursemodule);
 
     // Process the HTML editor data in pdfintro.
-    if (is_array($offlinequiz->pdfintro) && array_key_exists('text', $offlinequiz->pdfintro)) {
+    if (property_exists($offlinequiz, 'pdfintro') && is_array($offlinequiz->pdfintro)
+            && array_key_exists('text', $offlinequiz->pdfintro)) {
     	if ($draftitemid = $offlinequiz->pdfintro['itemid']) {
   		    $editoroptions = offlinequiz_get_editor_options();
 

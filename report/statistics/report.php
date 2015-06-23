@@ -107,11 +107,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
             if ($offlinegroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
                 $offlinequiz->groupid = $offlinegroup->id;
-                $groupquestions = offlinequiz_get_group_questions($offlinequiz);
-                $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions);
-
-                // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
-                $offlinequiz->questions = offlinequiz_clean_layout($groupquestions, empty($purequestions));
+                $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
+                $offlinequiz->questions = $groupquestions;
             } else {
                 print_error('invalidgroupnumber', 'offlinequiz');
             }
@@ -138,9 +135,12 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             }
 
             // If no group has been chosen we simply take the questions from the question instances.
-            $qinstanceids = $DB->get_fieldset_select('offlinequiz_q_instances', 'questionid',
-                    'offlinequizid = :offlinequizid', array('offlinequizid' => $offlinequiz->id));
-            $offlinequiz->questions = offlinequiz_clean_layout(implode(',', $qinstanceids));
+            $sql = "SELECT DISTINCT(questionid)
+                      FROM {offlinequiz_group_questions}
+                     WHERE offlinequizid = :offlinequizid";
+            
+            $questionids = $DB->get_fieldset_sql($sql, array('offlinequizid' => $offlinequiz->id));
+            $offlinequiz->questions = $questionids;
         }
 
         // We warn the user if the different offlinequiz groups have different sets of questions.
@@ -285,7 +285,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 }
             }
 
-            if (!offlinequiz_questions_in_offlinequiz($offlinequiz->questions)) {
+            if (!$offlinequiz->questions) {
                 echo offlinequiz_no_questions_message($offlinequiz, $cm, $this->context);
             } else if (!$this->table->is_downloading() && $s == 0) {
                 echo $OUTPUT->box_start('linkbox');
@@ -424,13 +424,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      */
     private function groups_have_different_questions($offlinequiz, $groups) {
         $agroup = array_pop($groups);
-        $aquestions = offlinequiz_get_group_questions($offlinequiz, $agroup->id);
-        $aquestions = explode(',', offlinequiz_questions_in_offlinequiz($aquestions));
+        $aquestions = offlinequiz_get_group_question_ids($offlinequiz, $agroup->id);
 
         // Compare all other groups to the first one.
         foreach ($groups as $bgroup) {
-            $bquestions = offlinequiz_get_group_questions($offlinequiz, $bgroup->id);
-            $bquestions = explode(',', offlinequiz_questions_in_offlinequiz($bquestions));
+            $bquestions = offlinequiz_get_group_question_ids($offlinequiz, $bgroup->id);
             // Check which questions are in group A but not in group B.
             $diff1 = array_diff($aquestions, $bquestions);
             // Check which questions are in group B but not in group A.

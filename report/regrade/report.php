@@ -92,21 +92,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
             return true;
         }
 
-        // Fetch all questions.
-        $sql = "SELECT q.id, i.grade as maxgrade,
-                       q.category, q.parent, q.name, q.defaultmark,
-                       q.penalty, q.qtype, q.stamp, q.version, q.hidden
-                  FROM {offlinequiz_q_instances} i,
-                       {question} q
-                 WHERE i.offlinequizid = :offlinequizid
-                   AND i.questionid = q.id";
-
-        $params = array('offlinequizid' => $offlinequiz->id);
-
-        if (! $questions = $DB->get_records_sql($sql, $params)) {
-            print_error("Failed to get questions for regrading!");
-        }
-
+        // Fetch all groups.
         if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
                 '*', 0, $offlinequiz->numgroups)) {
             foreach ($groups as $group) {
@@ -131,6 +117,18 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
         foreach ($results as $result) {
             set_time_limit(120);
 
+            $sql = "SELECT ogq.questionid, ogq.maxmark 
+                      FROM {offlinequiz_group_questions} ogq
+                     WHERE ogq.offlinequizid = :offlinequizid
+                       AND ogq.offlinegroupid = :offlinegroupid";
+
+            $params = array('offlinequizid' => $offlinequiz->id,
+                            'offlinegroupid' => $result->offlinegroupid);
+
+            if (! $questions = $DB->get_records_sql($sql, $params)) {
+                print_error("Failed to get questions for regrading!");
+            }
+            
             $user = $DB->get_record('user', array('id' => $result->userid));
             echo '<strong>' . get_string('regradingresult', 'offlinequiz', $user->{$offlinequizconfig->ID_field}) .
             '</strong> ';
@@ -207,7 +205,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
             $qqr = new stdClass();
             $qqr->oldfraction = $quba->get_question_fraction($slot);
             $slotquestion = $quba->get_question($slot);
-            $newmaxmark = $questions[$slotquestion->id]->maxgrade;
+            $newmaxmark = $questions[$slotquestion->id]->maxmark;
             $quba->regrade_question($slot, $finished, $newmaxmark);
 
             $qqr->newfraction = $quba->get_question_fraction($slot);

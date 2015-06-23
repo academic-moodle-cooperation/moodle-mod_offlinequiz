@@ -53,8 +53,6 @@ $thispageurl->param('groupnumber', $offlinequiz->groupnumber);
 if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     $offlinequiz->groupid = $offlinequizgroup->id;
     $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
-    // $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions, $offlinequiz->groupid);
-    // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
     $offlinequiz->questions = $groupquestions;
 } else {
     print_error('invalidgroupnumber', 'offlinequiz');

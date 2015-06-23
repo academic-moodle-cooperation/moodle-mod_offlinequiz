@@ -223,22 +223,6 @@ function offlinequiz_get_group_question_ids($offlinequiz, $groupid = 0) {
     return $questionids;
 }
 
-/**
- * Returns a comma separated list of question ids for an offlinequiz group
- *
- * @param string $offlinequiz The offlinequiz object containing the questions in a
- * comma separated layout list.
- *
- * @return string comma separated list of question ids, without page breaks.
- */
-function offlinequiz_questions_in_offlinequiz($layout) {
-    $questions = str_replace(',0', '', offlinequiz_clean_layout($layout, true));
-    if ($questions === '0') {
-        return '';
-    } else {
-        return $questions;
-    }
-}
 
 /**
  *
@@ -1081,7 +1065,10 @@ function offlinequiz_get_group_sumgrades($offlinequiz) {
 function offlinequiz_update_sumgrades($offlinequiz, $offlinegroupid = null) {
     global $DB;
 
-    $groupid = $offlinequiz->groupid;
+    $groupid = 0; 
+    if (isset($offlinequiz->groupid)) {
+        $groupid = $offlinequiz->groupid;
+    }
     if (!empty($offlinegroupid)) {
         $groupid = $offlinegroupid;
     }
@@ -2419,85 +2406,3 @@ function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
         $trans->allow_commit();
    }
 }
-
-/**
- * Add a question to a offlinequiz group
- *
- * Adds a question to a offlinequiz by updating $offlinequiz as well as the
- * offlinequiz and offlinequiz_question_instances tables. It also adds a page break
- * if required.
- * @param int $id The id of the question to be added
- * @param object $offlinequiz The extended offlinequiz object as used by edit.php
- *      This is updated by this function
- * @param int $page Which page in offlinequiz to add the question on. If 0 (default),
- *      add at the end
- * @return bool false if the question was already in the offlinequiz
- */
-// function offlinequiz_add_question_to_group($id, $offlinequiz, $page = 0) {
-//     global $DB;
-
-//     $questions = explode(',', offlinequiz_clean_layout($offlinequiz->questions));
-
-//     // Don't add the same question twice.
-//     if (in_array($id, $questions)) {
-//         return false;
-//     }
-
-//     // Remove ending page break if it is not needed.
-//     if ($breaks = array_keys($questions, 0)) {
-//         // Determine location of the last two page breaks.
-//         $end = end($breaks);
-//         $last = prev($breaks);
-//         $last = $last ? $last : -1;
-//         if (!$offlinequiz->questionsperpage || (($end - $last - 1) < $offlinequiz->questionsperpage)) {
-//             array_pop($questions);
-//         }
-//     }
-//     if (is_int($page) && $page >= 1) {
-//         $numofpages = offlinequiz_number_of_pages($offlinequiz->questions);
-//         if ($numofpages < $page) {
-//             // The page specified does not exist in offlinequiz.
-//             $page = 0;
-//         } else {
-//             // Add ending page break - the following logic requires doing this at this point.
-//             $questions[] = 0;
-//             $questionsnew = array();
-//             $currentpage = 1;
-//             $addnow = false;
-//             foreach ($questions as $question) {
-//                 if ($question == 0) {
-//                     $currentpage++;
-//                     // The current page is the one after the one we want to add on,
-//                     // So we add the question before adding the current page.
-//                     if ($currentpage == $page + 1) {
-//                         $questionsnew[] = $id;
-//                     }
-//                 }
-//                 $questionsnew[] = $question;
-//             }
-//             $questions = $questionsnew;
-//         }
-//     }
-//     if ($page == 0) {
-//         // Add question.
-//         $questions[] = $id;
-//         // Add ending page break.
-//         $questions[] = 0;
-//     }
-
-//     // Save new questionslist in database.
-//     $offlinequiz->questions = implode(',', $questions);
-
-//     offlinequiz_save_questions($offlinequiz);
-
-//     // Only add a new question instance if there isn't already one.
-//     if (!$instance = $DB->get_record('offlinequiz_q_instances', array('offlinequizid' => $offlinequiz->id, 'questionid' => $id))) {
-//         // Add the new question instance if it doesn't already exist.
-//         $instance = new stdClass();
-//         $instance->offlinequizid = $offlinequiz->id;
-//         $instance->questionid = $id;
-//         $instance->grade = $DB->get_field('question', 'defaultmark', array('id' => $id));
-
-//         $DB->insert_record('offlinequiz_q_instances', $instance);
-//     }
-// }
