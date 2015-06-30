@@ -750,6 +750,7 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit div.selectall {
 	display: inline-block;
 	margin-right: 2em;
+	clear: both;
 }
 
 #page-mod-offlinequiz-edit div.copyselected {

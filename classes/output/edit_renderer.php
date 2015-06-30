@@ -77,9 +77,9 @@ class edit_renderer extends \plugin_renderer_base {
         // Start form for question checkboxes
         $output .= $this->start_add_to_group_form($offlinequiz, $pageurl);
         // Add buttons for adding selected to another group and for removing selected. 
-        $output .= $this->select_all_links($structure);
         $output .= $this->add_to_group_button($structure, $offlinequiz,  $pageurl);
         $output .= $this->remove_selected_button($structure, $offlinequiz,  $pageurl);
+        $output .= $this->select_all_links($structure);
                 
 
         // Show the questions organised into sections and pages.
@@ -410,7 +410,7 @@ class edit_renderer extends \plugin_renderer_base {
 //             $output .= '<input type="checkbox" id="sall" name="sall" ' .
 //                ' onClick="javascript:if (this.checked){deselect_all_in(\'FORM\', null, \'offlinequizbulkcopyform\'); this.checked = null} else {select_all_in(\'FORM\', null, \'offlinequizbulkcopyform\');}">';
 //             $output .= get_string('selectall', 'offlinequiz');
-//             $output .= '</a>';    
+            $output .= '<br/>';    
             $output .= html_writer::start_div('selectall');  
             $output .= '<a href="javascript:select_all_in(\'FORM\', null, ' . '\'offlinequizbulkcopyform\');" >' .
                         get_string('selectall', 'offlinequiz') . '</a> /';

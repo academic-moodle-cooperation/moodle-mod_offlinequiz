@@ -73,7 +73,7 @@ if (!$options->sheetfeedback and !$options->gradedsheetfeedback) {
 
 $url = new moodle_url('/mod/offlinequiz/image.php', array('pageid' => $scannedpage->id, 'resultid' => $result->id));
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('empty');
+$PAGE->set_pagelayout('popup');
 
 echo "<style>\n";
 echo "body {margin:0px; font-family:Arial,Verdana,Helvetica,sans-serif;}\n";
