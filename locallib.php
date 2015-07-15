@@ -1874,15 +1874,15 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
         echo '<input type="hidden" name="pagesize" value="' . $pagesize . '" />';
         echo '<input type="hidden" name="listid" value="' . $listid . '" />';
         echo '<table class="boxaligncenter"><tr><td>';
-        $options = array('CSV' => get_string('CSVformat', 'offlinequiz'),
-                'ODS' => get_string('ODSformat', 'offlinequiz'),
-                'Excel' => get_string('Excelformat', 'offlinequiz'));
+        $options = array(
+                'Excel' => get_string('excelformat', 'offlinequiz'),
+                'ODS' => get_string('odsformat', 'offlinequiz'),
+                'CSV' => get_string('csvformat', 'offlinequiz')
+        );
         print_string('downloadresultsas', 'offlinequiz');
         echo "</td><td>";
-        echo html_writer::select($options, 'download', '', array('' => 'choosedots'),
-                array('onchange' => 'this.form.submit(); return true;'));
-        echo '<noscript id="noscriptmenuaction" style="display: inline;"><div>';
-        echo '<input type="submit" value="' . get_string('go') . '" /></div></noscript>';
+        echo html_writer::select($options, 'download', '', false);
+        echo '<input type="submit" value="' . get_string('go') . '" />';
         echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'.
             "\n-->\n".'</script>';
         echo "</td>\n";

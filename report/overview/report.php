@@ -661,15 +661,15 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     }
                 }
             } // End foreach ($results...
-        } else if (! $download) {
-            $table->print_initials_bar ();
+        } else if (!$download) {
+            $table->print_initials_bar();
         }
 
-        if (! $download) {
+        if (!$download) {
             // Print table.
-            $table->finish_html ();
+            $table->finish_html();
 
-            if (! empty ( $results )) {
+            if (!empty($results)) {
                 echo '<form id="downloadoptions" action="report.php" method="get">';
                 echo ' <input type="hidden" name="id" value="' . $cm->id . '" />';
                 echo ' <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
@@ -677,19 +677,16 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 echo ' <input type="hidden" name="noheader" value="yes" />';
                 echo ' <table class="boxaligncenter"><tr><td>';
                 $options = array (
-                        'CSV' => get_string('CSVformat', 'offlinequiz'),
-                        'ODS' => get_string('ODSformat', 'offlinequiz'),
-                        'Excel' => get_string('Excelformat', 'offlinequiz'),
-                        'CSVplus1' => get_string('CSVplus1format', 'offlinequiz'),
-                        'CSVpluspoints' => get_string('CSVpluspointsformat', 'offlinequiz')
+                        'Excel' => get_string('excelformat', 'offlinequiz'),
+                        'ODS' => get_string('odsformat', 'offlinequiz'),
+                        'CSV' => get_string('csvformat', 'offlinequiz'),
+                        'CSVplus1' => get_string('csvplus1format', 'offlinequiz'),
+                        'CSVpluspoints' => get_string('csvpluspointsformat', 'offlinequiz')
                         );
                 print_string ( 'downloadresultsas', 'offlinequiz' );
                 echo "</td><td>";
-                echo html_writer::select ( $options, 'download', '', get_string ( 'selectformat', 'offlinequiz' ), array (
-                        'onchange' => 'if(this.selectedIndex > 0) document.forms.downloadoptions.submit(); return true;'
-                ) );
-                echo ' <noscript id="noscriptmenuaction" style="display: inline;"><div>';
-                echo ' <input type="submit" value="' . get_string ( 'go' ) . '" /></div></noscript>';
+                echo html_writer::select($options, 'download', '', false);
+                echo ' <input type="submit" value="' . get_string('download') . '" />';
                 echo ' <script type="text/javascript">' . "\n<!--\n" .
                         'document.getElementById("noscriptmenuaction").style.display = "none";' . "\n-->\n" . '</script>';
                 echo " </td>\n";
