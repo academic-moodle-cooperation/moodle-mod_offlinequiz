@@ -72,11 +72,17 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
         }
         return;
     }
-
+    $numberofjobs = count($jobs);
+    
+    if ($verbose) {
+        $pbar = new progress_bar('offlinequizcronbar', 500, true);
+        $pbar->create();
+        $pbar->update(0, $numberofjobs,
+                        "Processing job - {0}/{$numberofjobs}.");
+    }
+    $numberdone = 0;
+    
     foreach ($jobs as $job) {
-        if ($verbose) {
-            ob_flush();
-        }
         // Check whether the status is still 'new' (might have been changed by other cronjob).
         $transaction = $DB->start_delegated_transaction();
         $status = $DB->get_field('offlinequiz_queue', 'status', array('id' => $job->id));
@@ -271,6 +277,13 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
                 email_to_user($user, $CFG->noreplyaddress, get_string('importmailsubject', 'offlinequiz'), $mailtext);
             }
         } // End !alreadydone.
+        $numberdone++;
+        if ($verbose) {
+            ob_flush();
+            $pbar->update($numberdone, $numberofjobs,
+                        "Processing job - {$numberdone}/{$numberofjobs}.");
+        }
+        
     } // End foreach.
 } // End function.
 
