@@ -38,7 +38,7 @@ require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
 
-function offlinequiz_evaluation_cron($jobid = 0) {
+function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
     global $CFG, $DB;
 
     raise_memory_limit(MEMORY_EXTRA);
@@ -67,6 +67,9 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
     // If there are no new jobs, we simply exit.
     if (!$jobs = $DB->get_records_sql($sql, $params, 0, OFFLINEQUIZ_TOP_QUEUE_JOBS)) {
+        if ($verbose) {
+            echo get_string('nothingtodo', 'offlinequiz');
+        }
         return;
     }
 

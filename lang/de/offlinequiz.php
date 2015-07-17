@@ -288,6 +288,7 @@ $string['noquestionsonpage'] = 'Leere Seite';
 $string['noquestionselected'] = 'Keine Fragen ausgewählt!';
 $string['noresults'] = 'Es gibt keine Ergebnisse.';
 $string['noreview'] = 'Sie dürfen diesen Onlinetest nicht einsehen';
+$string['nothingtodo'] = 'Die Warteschlange ist leer!';
 $string['notxtfile'] = 'Keine TXT- bzw. CSV-Datei';
 $string['notyetgraded'] = 'Noch nicht bewertet';
 $string['nozipfile'] = 'Keine ZIP-Datei';
