@@ -74,6 +74,9 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
     }
 
     foreach ($jobs as $job) {
+        if ($verbose) {
+            ob_flush();
+        }
         // Check whether the status is still 'new' (might have been changed by other cronjob).
         $transaction = $DB->start_delegated_transaction();
         $status = $DB->get_field('offlinequiz_queue', 'status', array('id' => $job->id));
