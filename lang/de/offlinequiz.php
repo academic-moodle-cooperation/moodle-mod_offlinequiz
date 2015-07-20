@@ -252,6 +252,7 @@ $string['marginwarning'] = 'Bitte drucken Sie die folgenden Antwortbögen ohne z
 $string['marks'] = 'Punktezahl';
 $string['matrikel'] = 'Matrikelnummer';
 $string['maxgradewarning'] = 'Die beste Bewertung muss eine Zahl sein!';
+$string['maxmark'] = 'Erreichbare Punkte';
 $string['membersinplist'] = '{$a->count} Teilnehmer/innen in Anwesenheitsliste <a href="{$a->url}">{$a->name}</a>';
 $string['missingimagefile'] = 'Bilddatei fehlt';
 $string['missingitemdata'] = 'Fehlende Antwort/en für {$a}';

@@ -28,7 +28,7 @@
 
 $string['modulename'] = 'Offline Quiz';
 $string['modulenameplural'] = 'Offline Quizzes';
-$string['addnewquestion'] = 'a new question ...';
+$string['addnewquestion'] = 'a new question';
 $string['pluginname'] = 'Offlinequiz';
 $string['add'] = 'Add';
 $string['addlist'] = 'Add list';
