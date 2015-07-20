@@ -323,6 +323,7 @@ $string['noquestionsonpage'] = 'Empty page';
 $string['noquestionselected'] = 'No questions selected!';
 $string['noresults'] = 'There are no results.';
 $string['noreview'] = 'You are not allowed to review this offline quiz';
+$string['nothingtodo'] = 'Nothing to do!';
 $string['notxtfile'] = 'No TXT file';
 $string['notyetgraded'] = 'Not yet graded';
 $string['nozipfile'] = 'No ZIP file';

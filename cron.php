@@ -38,7 +38,7 @@ require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
 
-function offlinequiz_evaluation_cron($jobid = 0) {
+function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
     global $CFG, $DB;
 
     raise_memory_limit(MEMORY_EXTRA);
@@ -67,9 +67,21 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
     // If there are no new jobs, we simply exit.
     if (!$jobs = $DB->get_records_sql($sql, $params, 0, OFFLINEQUIZ_TOP_QUEUE_JOBS)) {
+        if ($verbose) {
+            echo get_string('nothingtodo', 'offlinequiz');
+        }
         return;
     }
-
+    $numberofjobs = count($jobs);
+    
+    if ($verbose) {
+        $pbar = new progress_bar('offlinequizcronbar', 500, true);
+        $pbar->create();
+        $pbar->update(0, $numberofjobs,
+                        "Processing job - {0}/{$numberofjobs}.");
+    }
+    $numberdone = 0;
+    
     foreach ($jobs as $job) {
         // Check whether the status is still 'new' (might have been changed by other cronjob).
         $transaction = $DB->start_delegated_transaction();
@@ -265,6 +277,13 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                 email_to_user($user, $CFG->noreplyaddress, get_string('importmailsubject', 'offlinequiz'), $mailtext);
             }
         } // End !alreadydone.
+        $numberdone++;
+        if ($verbose) {
+            ob_flush();
+            $pbar->update($numberdone, $numberofjobs,
+                        "Processing job - {$numberdone}/{$numberofjobs}.");
+        }
+        
     } // End foreach.
 } // End function.
 
