@@ -454,6 +454,7 @@ $string['reordertool'] = 'Show the reordering tool';
 $string['repaginate'] = 'Repaginate with {$a} questions per page';
 $string['repaginatecommand'] = 'Repaginate';
 $string['repaginatenow'] = 'Repaginate now';
+$string['reportoverview'] = 'Overview';
 $string['reportstarts'] = 'review of results';
 $string['resetofflinequizzes'] = 'Reset Offline Quiz data';
 $string['results'] = 'Results';

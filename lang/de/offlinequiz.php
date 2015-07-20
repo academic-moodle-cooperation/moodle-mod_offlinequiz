@@ -412,6 +412,7 @@ $string['reorderquestions'] = 'Neuanordnung der Fragen';
 $string['repaginate'] = 'Seiten neu erstellen mit {$a} Fragen pro Seite.';
 $string['repaginatecommand'] = 'Seitenumbrüche einfügen';
 $string['repaginatenow'] = 'Neu nummerieren';
+$string['reportoverview'] = 'Übersicht';
 $string['reportstarts'] = 'Prüfungseinsicht beginnt';
 $string['resetofflinequizzes'] = 'Offline-Test-Daten zurücksetzen';
 $string['resultexists'] = 'Identisches Ergebnis für {$a} bereits vorhanden';
