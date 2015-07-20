@@ -28,7 +28,7 @@
 
 $string['modulename'] = 'Offline Quiz';
 $string['modulenameplural'] = 'Offline Quizzes';
-$string['addnewquestion'] = 'Add a question ...';
+$string['addnewquestion'] = 'a new question ...';
 $string['pluginname'] = 'Offlinequiz';
 $string['add'] = 'Add';
 $string['addlist'] = 'Add list';
@@ -42,7 +42,7 @@ $string['addparts'] = 'Add participants';
 $string['addquestionfrombanktopage'] = 'Add from the question bank to page {$a}';
 $string['addrandom'] = 'Randomly add {$a} multiple choice question(s) ';
 $string['addrandomfromcategory'] = 'Randomly add questions';
-$string['addrandomquestion'] = 'Add random question';
+$string['addrandomquestion'] = 'questions randomly';
 $string['addrandomquestiontoofflinequiz'] = 'Adding questions to offlinequiz {$a->name} (group {$a->group})';
 $string['addrandomquestiontopage'] = 'Add a random question to page {$a}';
 $string['addarandomquestion'] = 'Randomly add questions';
