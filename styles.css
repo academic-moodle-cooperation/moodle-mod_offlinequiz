@@ -657,7 +657,7 @@ input#showviewbutton {
     position: absolute;
     top: 0;
     left: 6em;
-    width: 100%;
+    width: 85%;
 }
 #page-mod-offlinequiz-edit ul.slots li.section li.activity.forgrading .activityinstance {
     left: 3em;
@@ -774,7 +774,7 @@ input#showviewbutton {
     text-overflow: ellipsis;
     overflow: hidden;
     word-break: break-word;
-    width: 70%;
+    width: 90%;
     display: inline-block;
     height: 20px;
 }
