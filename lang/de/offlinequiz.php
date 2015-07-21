@@ -544,7 +544,6 @@ $string['white'] = 'Weiß';
 $string['withselected'] = 'Ausgewählte...';
 $string['zipfile'] = 'ZIP-Datei';
 $string['zipok'] = 'ZIP-Datei importieren';
-$string['zerogradewarning'] = 'Hinweis: Die beste Bewertung für den Offline-Test beträgt 0 Punkte!';
 $string['greeniscross'] = 'wird als Ankreuzung gewertet';
 $string['rediswrong'] = 'falsch angekreuzt oder fälschlich nicht angekreuzt';
 $string['quizassociatedwith'] = 'Dieser Offline-Test ist assoziiert mit dem Test';

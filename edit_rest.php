@@ -45,7 +45,7 @@ $summary    = optional_param('summary', '', PARAM_RAW);
 $sequence   = optional_param('sequence', '', PARAM_SEQUENCE);
 $visible    = optional_param('visible', 0, PARAM_INT);
 $pageaction = optional_param('action', '', PARAM_ALPHA); // Used to simulate a DELETE command.
-$maxmark    = optional_param('maxmark', '', PARAM_FLOAT);
+$maxmark    = optional_param('maxmark', '', PARAM_RAW);
 $page       = optional_param('page', '', PARAM_INT);
 $PAGE->set_url('/mod/offlinequiz/edit-rest.php',
         array('offlinequizid' => $offlinequizid, 'class' => $class));
@@ -104,6 +104,11 @@ switch($requestmethod) {
                     case 'updatemaxmark':
                         require_capability('mod/offlinequiz:manage', $modcontext);
                         $slot = $structure->get_slot_by_id($id);
+                        if (!is_numeric(str_replace(',', '.', $maxmark))) {
+                            echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
+                                    'newsummarks' => offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades)));
+                            break;
+                        }
                         if ($structure->update_slot_maxmark($slot, $maxmark)) {
                             // Grade has really changed.
                             // offlinequiz_delete_previews($offlinequiz);
@@ -112,7 +117,7 @@ switch($requestmethod) {
                             //offlinequiz_update_all_final_grades($offlinequiz);
                             offlinequiz_update_grades($offlinequiz, 0, true);
                         }
-                        echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $maxmark),
+                        echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
                                 'newsummarks' => offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades)));
                         break;
                     case 'updatepagebreak':

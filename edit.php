@@ -109,6 +109,10 @@ $course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MU
 $offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
 $structure = $offlinequizobj->get_structure();
 
+if ($warning = optional_param('warning', '', PARAM_TEXT)) {
+    $structure->add_warning(urldecode($warning));
+}
+
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
 
@@ -241,14 +245,18 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         }
         redirect($afteractionurl);
     }
-    
-    
+
     // If rescaling is required save the new maximum.
-    $maxgrade = unformat_float(optional_param('maxgrade', -1, PARAM_RAW));
-    if ($maxgrade >= 0) {
-        offlinequiz_set_grade($maxgrade, $offlinequiz);
+    $maxgrade = str_replace(',', '.', optional_param('maxgrade', -1, PARAM_RAW));
+    if (!is_numeric( $maxgrade)) {
+        $afteractionurl->param('warning', urlencode(get_string('maxgradewarning', 'offlinequiz')));
+    } else {
+        $maxgrade = unformat_float($maxgrade);
+        if ($maxgrade >= 0) {
+            offlinequiz_set_grade($maxgrade, $offlinequiz);
 //        offlinequiz_update_all_final_grades($offlinequiz);
-        offlinequiz_update_grades($offlinequiz, 0, true);
+            offlinequiz_update_grades($offlinequiz, 0, true);
+        }
     }
 
     redirect($afteractionurl);

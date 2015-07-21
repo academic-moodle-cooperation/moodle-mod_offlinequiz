@@ -68,6 +68,8 @@ class structure {
     /** @var bool caches the results of can_be_edited. */
     protected $canbeedited = null;
 
+    private $warnings = array();
+    
     /**
      * Create an instance of this class representing an empty offlinequiz.
      * @return structure
@@ -331,7 +333,14 @@ class structure {
                     get_string('modulename', 'offlinequiz')) . '</a>';
             $warnings[] = get_string('shufflequestionsselected', 'offlinequiz', $updatelink);
         }
-
+        if ($this->offlinequizobj->get_offlinequiz()->grade == 0) {
+            $warnings[] = get_string('gradeiszero', 'offlinequiz');
+        }
+        foreach ($this->warnings as $warning) {
+            error_log($warning);
+            $warnings[] = $warning;
+        }
+        
         return $warnings;
     }
 
@@ -692,6 +701,8 @@ class structure {
     public function update_slot_maxmark($slot, $maxmark) {
         global $DB;
 
+        $maxmark = unformat_float($maxmark);
+
         if (abs($maxmark - $slot->maxmark) < 1e-7) {
             // Grade has not changed. Nothing to do.
             return false;
@@ -760,5 +771,9 @@ class structure {
         $slots = $this->refresh_page_numbers_and_update_db($offlinequiz);
 
         return $slots;
+    }
+    
+    public function add_warning($string) {
+        $this->warnings[] = $string;
     }
 }
