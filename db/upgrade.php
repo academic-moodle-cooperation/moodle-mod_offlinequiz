@@ -1158,7 +1158,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
             $offlinequizzes = $DB->get_recordset('offlinequiz', null, 'id', 'id, numgroups');
             foreach ($offlinequizzes as $offlinequiz) {
                 $transaction = $DB->start_delegated_transaction();
-                error_log('Upgrading offlinequiz ' . $offlinequiz->id . ' to version 2015060902.');
 
                 $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
                         'number', '*');

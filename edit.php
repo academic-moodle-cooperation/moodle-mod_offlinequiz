@@ -272,7 +272,6 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
             if (is_numeric(str_replace(',', '.', $value))) {
                 // Parse input for question -> grades.
                 $questionid = $matches[1];
-//                $offlinequiz->grades[$questionid] = unformat_float($value);
                 offlinequiz_update_question_instance($offlinequiz, $questionid, unformat_float($value));
             } else {
                 $bulkgradewarning = true;
