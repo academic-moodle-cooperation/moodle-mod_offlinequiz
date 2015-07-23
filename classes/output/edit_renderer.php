@@ -159,6 +159,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= $this->offlinequiz_information($structure);
         $output .= html_writer::div('<br/>', 'clear');
         $output .= $this->maximum_grade_input($offlinequiz, $this->page->url);
+        $output .= $this->offlinequiz_state_warnings($structure);
         $output .= $this->total_marks($offlinequiz);
 
         $output .= $this->start_grading_form($offlinequiz, $pageurl);
@@ -279,7 +280,6 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function offlinequiz_state_warnings(structure $structure) {
         $warnings = $structure->get_edit_page_warnings();
-
         if (empty($warnings)) {
             return $this->box('', 'emptystatusdisplay');
         }

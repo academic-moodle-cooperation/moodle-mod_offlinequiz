@@ -337,7 +337,6 @@ class structure {
             $warnings[] = get_string('gradeiszero', 'offlinequiz');
         }
         foreach ($this->warnings as $warning) {
-            error_log($warning);
             $warnings[] = $warning;
         }
         
