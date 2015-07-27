@@ -334,10 +334,10 @@ class structure {
             $warnings[] = get_string('shufflequestionsselected', 'offlinequiz', $updatelink);
         }
         if ($this->offlinequizobj->get_offlinequiz()->grade == 0) {
-            $warnings[] = get_string('gradeiszero', 'offlinequiz');
+            $warnings[] = '<b>' . get_string('gradeiszero', 'offlinequiz') . '</b>';
         }
         foreach ($this->warnings as $warning) {
-            $warnings[] = $warning;
+            $warnings[] = '<b>' . $warning . '</b>';
         }
         
         return $warnings;
