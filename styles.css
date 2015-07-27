@@ -759,6 +759,7 @@ input#showviewbutton {
 }
 #page-mod-offlinequiz-edit div.removeselected {
 	display: inline-block;
+    float: right;
 }
 #page-mod-offlinequiz-edit div.removeselected input {
 	margin-left: 0px;
