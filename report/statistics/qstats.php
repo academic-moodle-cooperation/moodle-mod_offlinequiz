@@ -182,9 +182,10 @@ class offlinequiz_statistics_question_stats {
                     $subquestionstats[$step->questionid]->differentweights = true;
                 }
                 // Redmine 1302. Compute the number of results.
-                if ($step->mark == $step->maxmark) {
+                if (abs($step->maxmark - $step->mark) <= 1e-7) {
                     $subquestionstats[$step->questionid]->correct++;
-                } else if ($step->mark > 0 && $step->mark < $step->maxmark) {
+                } else if ($step->mark > 0 && $step->mark < $step->maxmark &&
+                         (abs($step->maxmark - $step->mark) > 1e-7)) {
                     $subquestionstats[$step->questionid]->partially++;
                 } else {
                     $subquestionstats[$step->questionid]->wrong++;
