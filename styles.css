@@ -532,6 +532,7 @@ input#showviewbutton {
 }
 #page-mod-offlinequiz-edit ul.slots {
     margin: 0;
+    clear: both;
 }
 #page-mod-offlinequiz-edit ul.slots li.section {
     list-style: none;
@@ -988,6 +989,9 @@ table#categoryquestions {
 @media only screen and (max-width: 62em) {
     #page-mod-offlinequiz-edit .totalpoints {
         margin: -2em 1em 0em 1em;
+    }
+    #page-mod-offlinequiz-edit .maxgrade {
+        margin-bottom: 1.5em;
     }
 }
 @media only screen and (min-width: 50em) and (max-width: 60em) {
