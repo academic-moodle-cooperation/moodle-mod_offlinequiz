@@ -732,7 +732,7 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit .totalpoints {
     display: block;
     float: right;
-    margin: -4em 1em 0em 1em;
+    margin: -3.5em 1em 0em 1em;
     padding: .2em;
 }
 #page-mod-offlinequiz-edit .edit_grades .totalpoints {
