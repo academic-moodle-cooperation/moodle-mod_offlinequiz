@@ -732,7 +732,7 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit .totalpoints {
     display: block;
     float: right;
-    margin: -3.5em 1em 0em 1em;
+    margin: -4em 1em 0em 1em;
     padding: .2em;
 }
 #page-mod-offlinequiz-edit .edit_grades .totalpoints {
@@ -755,7 +755,7 @@ input#showviewbutton {
 
 #page-mod-offlinequiz-edit div.copyselected {
 	display: inline-block;
-	margin-right: 2.5em;
+/*	margin-right: 2.5em;*/
 }
 #page-mod-offlinequiz-edit div.removeselected {
 	display: inline-block;
@@ -983,4 +983,15 @@ table#categoryquestions {
 /* Base theme needs extra support. */
 #page-mod-offlinequiz-edit ul.slots li.section ul.section {
     list-style: none;
+}
+
+@media only screen and (max-width: 62em) {
+    #page-mod-offlinequiz-edit .totalpoints {
+        margin: -2em 1em 0em 1em;
+    }
+}
+@media only screen and (min-width: 50em) and (max-width: 60em) {
+    #page-mod-offlinequiz-edit div.removeselected {
+        margin-top: -2em;
+    }
 }
