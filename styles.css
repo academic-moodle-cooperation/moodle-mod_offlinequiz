@@ -992,6 +992,6 @@ table#categoryquestions {
 }
 @media only screen and (min-width: 50em) and (max-width: 60em) {
     #page-mod-offlinequiz-edit div.removeselected {
-        margin-top: -2em;
+        margin-top: -0.5em;
     }
 }
