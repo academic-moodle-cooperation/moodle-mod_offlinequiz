@@ -27,8 +27,8 @@
 require_once("../../../config.php");
 require_once("../locallib.php");
 
-$id   = optional_param('id', 0, PARAM_INT); // Course Module ID, or
-$page = optional_param('page', 1, PARAM_INT);  // offlinequiz ID
+$id   = optional_param('id', 0, PARAM_INT); // Course Module ID, or.
+$page = optional_param('page', 1, PARAM_INT);  // offlinequiz ID.
 
 if ($id) {
     if (! $cm = get_coursemodule_from_id('offlinequiz', $id)) {
@@ -44,7 +44,7 @@ if ($id) {
     }
 }
 
-// Check login
+// Check login.
 if (!empty($course)) {
     require_login($course->id, false, $cm);
 } else {
@@ -86,7 +86,7 @@ if (!empty($course)) {
 $PAGE->set_pagelayout('report');
 
 
-// Print the header
+// Print the header.
 $navlinks = array();
 $strtutorial = get_string("tutorial", "offlinequiz");
 if (empty($offlinequiz)) {
@@ -103,7 +103,6 @@ if (!file_exists($CFG->dirroot."/mod/offlinequiz/tutorial/$lang/page-$page.html"
     $lang = 'en';
 }
 
-// echo $OUTPUT->box_start('boxwidthwide boxaligncenter', 'tutorialcontent');
 echo '<table cellspacing=4 cellpadding=10 border=0>
           <tr><td width="200px" valign="top">';
 require($CFG->dirroot."/mod/offlinequiz/tutorial/$lang/menu.html");
@@ -126,8 +125,6 @@ if (!empty($answer)) {
 
 require($CFG->dirroot."/mod/offlinequiz/tutorial/$lang/page-$page.html");
 echo '</td></tr></table>';
-
-// echo $OUTPUT->box_end();
 
 // Finish the page.
 echo $OUTPUT->footer();

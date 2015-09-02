@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/offlinequiz/db" VERSION="20131125" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
+<XMLDB PATH="mod/offlinequiz/db" VERSION="20150605" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -61,8 +61,9 @@
         <FIELD NAME="offlinegroupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The offlinequiz group the question belongs to."/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the question in the question base."/>
         <FIELD NAME="position" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Position of the question in the question list (1...n)."/>
-        <FIELD NAME="pagenumber" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Number of the page of the answer document where the answers to this question will be found. The field will be filled when the answer documents are created."/>
-        <FIELD NAME="usageslot" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The slot of the question in the template usage of the group. This will be filled when after the usage template has been created."/>
+        <FIELD NAME="page" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Number of the page of the answer document where the answers to this question will be found. The field will be filled when the answer documents are created."/>
+        <FIELD NAME="slot" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The slot of the question in the template usage of the group. This will be filled when after the usage template has been created."/>
+        <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="1" SEQUENCE="false" DECIMALS="7" COMMENT="How many marks this question contributes to offlinequiz.sumgrades."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

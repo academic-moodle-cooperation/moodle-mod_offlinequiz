@@ -47,47 +47,52 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $offlinequiz = new restore_path_element('offlinequiz', '/activity/offlinequiz');
         $paths[] = $offlinequiz;
 
-        // question instances
+        // Question instances.
         $paths[] = new restore_path_element('offlinequiz_q_instance',
                 '/activity/offlinequiz/question_instances/question_instance');
 
-        // scanned pages and their choices and corners
+        // Scanned pages and their choices and corners.
         $paths[] = new restore_path_element('offlinequiz_scannedpage', '/activity/offlinequiz/scannedpages/scannedpage');
         $paths[] = new restore_path_element('offlinequiz_choice', '/activity/offlinequiz/scannedpages/scannedpage/choices/choice');
         $paths[] = new restore_path_element('offlinequiz_corner', '/activity/offlinequiz/scannedpages/scannedpage/corners/corner');
 
-        // lists of participants and their scanned pages
-        $paths[] = new restore_path_element('offlinequiz_plist', '/activity/offlinequiz/plists/plist');
-        $paths[] = new restore_path_element('offlinequiz_participant', '/activity/offlinequiz/plists/plist/participants/participant');
-        $paths[] = new restore_path_element('offlinequiz_scannedppage', '/activity/offlinequiz/scannedppages/scannedppage');
-        $paths[] = new restore_path_element('offlinequiz_pchoice', '/activity/offlinequiz/scannedppages/scannedppage/pchoices/pchoice');
+        // Lists of participants and their scanned pages.
+        $paths[] = new restore_path_element('offlinequiz_plist',
+                 '/activity/offlinequiz/plists/plist');
+        $paths[] = new restore_path_element('offlinequiz_participant',
+                 '/activity/offlinequiz/plists/plist/participants/participant');
+        $paths[] = new restore_path_element('offlinequiz_scannedppage',
+                 '/activity/offlinequiz/scannedppages/scannedppage');
+        $paths[] = new restore_path_element('offlinequiz_pchoice',
+                 '/activity/offlinequiz/scannedppages/scannedppage/pchoices/pchoice');
 
-        // handle offlinequiz groups
-        // we need to identify this path to add the question usages
+        // Handle offlinequiz groups.
+        // We need to identify this path to add the question usages.
         $offlinequizgroup = new restore_path_element('offlinequiz_group',
                 '/activity/offlinequiz/groups/group');
         $paths[] = $offlinequizgroup;
 
-        // Add template question usages for offline groups
+        // Add template question usages for offline groups.
         $this->add_question_usages($offlinequizgroup, $paths, 'group_');
 
-        $paths[] = new restore_path_element('offlinequiz_groupquestion', '/activity/offlinequiz/groups/group/groupquestions/groupquestion');
+        $paths[] = new restore_path_element('offlinequiz_groupquestion',
+                 '/activity/offlinequiz/groups/group/groupquestions/groupquestion');
 
-        // We only add the results if userinfo was activated
+        // We only add the results if userinfo was activated.
         if ($userinfo) {
             $offlinequizresult = new restore_path_element('offlinequiz_result',
                     '/activity/offlinequiz/results/result');
             $paths[] = $offlinequizresult;
 
-            // Add the results' question usages
+            // Add the results' question usages.
             $this->add_question_usages($offlinequizresult, $paths, 'result_');
         }
 
-        // Return the paths wrapped into standard activity structure
+        // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
     }
 
-    // dummy methods for group question usages
+    // Dummy methods for group question usages.
     public function process_group_question_usage($data) {
         $this->restore_question_usage_worker($data, 'group_');
     }
@@ -112,7 +117,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->restore_question_attempt_step_worker($data, 'result_');
     }
 
-    // restore method for the activity
+    // Restore method for the activity.
     protected function process_offlinequiz($data) {
         global $CFG, $DB;
 
@@ -126,20 +131,20 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->questions = '';
 
-        // offlinequiz->results can come both in data->results and
-        // data->results_number, handle both. MDL-26229
+        // The offlinequiz->results can come both in data->results and
+        // data->results_number, handle both. MDL-26229.
         if (isset($data->results_number)) {
             $data->results = $data->results_number;
             unset($data->results_number);
         }
 
-        // insert the offlinequiz record
+        // Insert the offlinequiz record.
         $newitemid = $DB->insert_record('offlinequiz', $data);
-        // immediately after inserting "activity" record, call this
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
-    // restore method for question instances
+    // Restore method for question instances.
     protected function process_offlinequiz_q_instance($data) {
         global $DB;
 
@@ -152,7 +157,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $DB->insert_record('offlinequiz_q_instances', $data);
     }
 
-    // restore method for offline groups
+    // Restore method for offline groups.
     protected function process_offlinequiz_group($data) {
         global $DB;
 
@@ -164,7 +169,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         if (empty($data->templateusageid)) {
 
             $newitemid = $DB->insert_record('offlinequiz_groups', $data);
-            // Save offlinequiz_group->id mapping, because logs use it
+            // Save offlinequiz_group->id mapping, because logs use it.
             $this->set_mapping('offlinequiz_group', $oldid, $newitemid, false);
         } else {
             // The data is actually inserted into the database later in inform_new_usage_id.
@@ -173,22 +178,29 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
     }
 
 
-    // restore method for offline group questions
+    // Restore method for offlinequiz group questions.
     protected function process_offlinequiz_groupquestion($data) {
         global $DB;
 
         $data = (object) $data;
         $oldid = $data->id;
 
+        // Backward compatibility for old field names prior to Moodle 2.8.5.
+        if (isset($data->usageslot) && !isset($data->slot)) {
+            $data->slot = $data->usageslot;
+        }
+        if (isset($data->pagenumber) && !isset($data->page)) {
+            $data->page = $data->pagenumber;
+        }
+
         $data->offlinequizid = $this->get_new_parentid('offlinequiz');
         $data->offlinegroupid = $this->get_new_parentid('offlinequiz_group');
         $data->questionid = $this->get_mappingid('question', $data->questionid);
 
         $newitemid = $DB->insert_record('offlinequiz_group_questions', $data);
-        // $this->set_mapping('offlinequiz_group_question', $oldid, $newitemid, true);
     }
 
-    // restore method for scanned pages
+    // Restore method for scanned pages.
     protected function process_offlinequiz_scannedpage($data) {
         global $DB;
 
@@ -202,7 +214,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->set_mapping('offlinequiz_scannedpage', $oldid, $newitemid, true);
     }
 
-    // restore method for choices on scanned pages
+    // Restore method for choices on scanned pages.
     protected function process_offlinequiz_choice($data) {
         global $DB;
 
@@ -212,10 +224,9 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $data->scannedpageid = $this->get_new_parentid('offlinequiz_scannedpage');
 
         $newitemid = $DB->insert_record('offlinequiz_choices', $data);
-        // $this->set_mapping('offlinequiz_group_question', $oldid, $newitemid, true);
     }
 
-    // restore method for corners of scanned pages
+    // Restore method for corners of scanned pages.
     protected function process_offlinequiz_corner($data) {
         global $DB;
 
@@ -225,10 +236,9 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $data->scannedpageid = $this->get_new_parentid('offlinequiz_scannedpage');
 
         $newitemid = $DB->insert_record('offlinequiz_page_corners', $data);
-        // $this->set_mapping('offlinequiz_group_question', $oldid, $newitemid, true);
     }
 
-    // restore method for scanned participants pages
+    // Restore method for scanned participants pages.
     protected function process_offlinequiz_scannedppage($data) {
         global $DB;
 
@@ -241,7 +251,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->set_mapping('offlinequiz_scannedppage', $oldid, $newitemid, true);
     }
 
-    // restore method for choices on scanned participants pages
+    // Restore method for choices on scanned participants pages.
     protected function process_offlinequiz_pchoice($data) {
         global $DB;
 
@@ -251,10 +261,9 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $data->scannedppageid = $this->get_new_parentid('offlinequiz_scannedppage');
 
         $newitemid = $DB->insert_record('offlinequiz_p_choices', $data);
-        // $this->set_mapping('offlinequiz_group_question', $oldid, $newitemid, true);
     }
 
-    // restore method for lists of participants
+    // Restore method for lists of participants.
     protected function process_offlinequiz_plist($data) {
         global $DB;
 
@@ -267,7 +276,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->set_mapping('offlinequiz_plist', $oldid, $newitemid, true);
     }
 
-    // restore method for a participant
+    // Restore method for a participant.
     protected function process_offlinequiz_participant($data) {
         global $DB;
 
@@ -277,10 +286,9 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $data->listid = $this->get_new_parentid('offlinequiz_plist');
 
         $newitemid = $DB->insert_record('offlinequiz_participants', $data);
-        // $this->set_mapping('offlinequiz_group_question', $oldid, $newitemid, true);
     }
 
-    // restore method for offlinequiz results (attempts)
+    // Restore method for offlinequiz results (attempts).
     protected function process_offlinequiz_result($data) {
         global $DB;
 
@@ -291,8 +299,8 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $data->offlinegroupid = $this->get_mappingid('offlinequiz_group', $data->offlinegroupid);
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->teacherid = $this->get_mappingid('user', $data->teacherid);
-        // the usageid is set in the function below
-        
+        // The usageid is set in the function below.
+
         $data->timestart = $this->apply_date_offset($data->timestart);
         $data->timefinish = $this->apply_date_offset($data->timefinish);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
@@ -301,11 +309,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->currentofflinequizresult = clone($data);
     }
 
-    // restore the usage id after it has been created
+    // Restore the usage id after it has been created.
     protected function inform_new_usage_id($newusageid) {
         global $DB;
 
-        // we might be dealing with a result
+        // We might be dealing with a result.
         $data = $this->currentofflinequizresult;
         if ($data) {
             $this->currentofflinequizresult = null;
@@ -314,10 +322,10 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
 
             $newitemid = $DB->insert_record('offlinequiz_results', $data);
 
-            // Save offlinequiz_result->id mapping, because scanned pages use it
+            // Save offlinequiz_result->id mapping, because scanned pages use it.
             $this->set_mapping('offlinequiz_result', $oldid, $newitemid, false);
         } else {
-            // or we might be dealing with an offlinequiz group
+            // Or we might be dealing with an offlinequiz group.
             $data = $this->currentofflinegroup;
             if ($data) {
                 $this->currentofflinegroup = null;
@@ -326,7 +334,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
 
                 $newitemid = $DB->insert_record('offlinequiz_groups', $data);
 
-                // Save offlinequiz_group->id mapping, because offlinequiz_results use it
+                // Save offlinequiz_group->id mapping, because offlinequiz_results use it.
                 $this->set_mapping('offlinequiz_group', $oldid, $newitemid, false);
             }
         }
@@ -334,10 +342,9 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
 
     protected function after_execute() {
         parent::after_execute();
-        // Add offlinequiz related files, no need to match by itemname (just internally handled context)
+        // Add offlinequiz related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_offlinequiz', 'intro', null);
         $this->add_related_files('mod_offlinequiz', 'imagefiles', null);
         $this->add_related_files('mod_offlinequiz', 'pdfs', null);
     }
-
 }

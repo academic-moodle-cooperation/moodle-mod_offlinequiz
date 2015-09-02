@@ -1,0 +1,10 @@
+{
+    "name": "moodle-mod_offlinequiz-randomquestion",
+    "builds": {
+        "moodle-mod_offlinequiz-randomquestion": {
+            "jsfiles": [
+                "randomquestion.js"
+            ]
+        }
+    }
+}

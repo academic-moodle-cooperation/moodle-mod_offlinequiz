@@ -1,0 +1,14 @@
+{
+    "moodle-mod_offlinequiz-toolboxes": {
+        "requires": [
+            "base",
+            "node",
+            "event",
+            "event-key",
+            "io",
+            "moodle-mod_offlinequiz-offlinequizbase",
+            "moodle-mod_offlinequiz-util-slot",
+            "moodle-core-notification-ajaxexception"
+        ]
+    }
+}

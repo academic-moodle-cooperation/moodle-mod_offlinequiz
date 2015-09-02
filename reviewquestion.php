@@ -29,9 +29,9 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once('locallib.php');
 
-$resultid = required_param('resultid', PARAM_INT); // result id
-$slot = required_param('slot', PARAM_INT); // question number in usage
-$seq = optional_param('step', null, PARAM_INT); // sequence number
+$resultid = required_param('resultid', PARAM_INT); // Result id.
+$slot = required_param('slot', PARAM_INT);         // Question number in usage.
+$seq = optional_param('step', null, PARAM_INT);    // Sequence number.
 
 $baseurl = new moodle_url('/mod/offlinequiz/reviewquestion.php',
         array('resultid' => $resultid, 'slot' => $slot));
@@ -41,22 +41,26 @@ if ($seq !== 0) {
 }
 $PAGE->set_url($currenturl);
 
-// $resultobj = offlinequiz_result::create($resultid);
 if (!$result = $DB->get_record('offlinequiz_results', array('id' => $resultid))) {
     print_error('result does not exist');
 }
 if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $result->offlinequizid))) {
-    print_error('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    print_error('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
+    $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
-    print_error('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, array('course' => $offlinequiz->course,
+    print_error('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
+    $COURSE->id, array('course' => $offlinequiz->course,
          'offlinequiz' => $offlinequiz->id));
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-    print_error('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
+    print_error('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
+    $COURSE->id, $offlinequiz->id);
 }
-if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
-    print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+if (!$groups = $DB->get_records('offlinequiz_groups',
+        array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+    print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
+    $COURSE->id, $scannedpage->offlinequizid);
 }
 
 // Check login.

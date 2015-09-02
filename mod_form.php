@@ -58,11 +58,12 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
         if ($offlinequiz && $offlinequiz->docscreated) {
             $mform->addElement('html', "<center><a href=\"" . $CFG->wwwroot .
-                    "/mod/offlinequiz/createquiz.php?mode=createpdfs&amp;q=$offlinequiz->id\">" . get_string('formsexist', 'offlinequiz')."</a></center>");
+                    "/mod/offlinequiz/createquiz.php?mode=createpdfs&amp;q=$offlinequiz->id\">" .
+                    get_string('formsexist', 'offlinequiz')."</a></center>");
         }
 
         // Name.
-        $mform->addElement('text', 'name', get_string('name', 'offlinequiz'), array('size'=>'64'));
+        $mform->addElement('text', 'name', get_string('name', 'offlinequiz'), array('size' => '64'));
 
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -74,10 +75,10 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         // Introduction.
         $this->add_intro_editor(false, get_string('introduction', 'offlinequiz'));
 
-        $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), array('optional'=>true));
+        $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), array('optional' => true));
 
         if (!$offlinequiz || !$offlinequiz->docscreated) {
-            for ($i=1; $i<=6; $i++) {
+            for ($i = 1; $i <= 6; $i++) {
                 $groupmenu[$i] = "$i";
             }
             $mform->addElement('select', 'numgroups', get_string('numbergroups', 'offlinequiz'), $groupmenu);
@@ -86,29 +87,28 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $mform->addElement('static', 'numgroups', get_string('numbergroups', 'offlinequiz'));
         }
 
-        // Only allow to change shufflequestions and shuffleanswers if the PDF documents have not been created
+        // Only allow to change shufflequestions and shuffleanswers if the PDF documents have not been created.
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             $attribs = '';
         } else {
             $attribs = ' disabled="disabled"';
         }
-        
+
         $mform->addElement('selectyesno', 'shufflequestions', get_string("shufflequestions", "offlinequiz"), $attribs);
-        // $mform->addHelpButton('shufflequestions', 'shufflequestions', 'offlinequiz');
         $mform->setDefault('shufflequestions', $offlinequizconfig->shufflequestions);
 
         $mform->addElement('selectyesno', 'shuffleanswers', get_string("shufflewithin", "offlinequiz"), $attribs);
         $mform->addHelpButton('shuffleanswers', 'shufflewithin', 'offlinequiz');
         $mform->setDefault('shuffleanswers', $offlinequizconfig->shuffleanswers);
 
-        // option for show tutorial
+        // Option for show tutorial.
         $mform->addElement('selectyesno', 'showtutorial', get_string("showtutorial", "offlinequiz"));
         $mform->addHelpButton('showtutorial', "showtutorial", "offlinequiz");
-        //      $mform->setDefault('showtutorial', $offlinequizconfig->showtutorial);
         $mform->addElement('static', 'showtutorialdescription', '', get_string("showtutorialdescription", "offlinequiz") .
-                '<br/><a href="'.$CFG->wwwroot.'/mod/offlinequiz/tutorial/index.php">'.$CFG->wwwroot.'/mod/offlinequiz/tutorial/index.php</a>');
+                '<br/><a href="'.$CFG->wwwroot.'/mod/offlinequiz/tutorial/index.php">' . $CFG->wwwroot .
+                '/mod/offlinequiz/tutorial/index.php</a>');
 
-        // timeopen and timeclose
+        // Timeopen and timeclose.
         $mform->addElement('date_time_selector', 'timeopen', get_string("reviewopens", "offlinequiz"),
                 array('optional' => true, 'step' => 1));
         $mform->addHelpButton('timeopen', 'quizopenclose', 'offlinequiz');
@@ -125,7 +125,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('decimalpoints', 'decimalplaces', 'offlinequiz');
         $mform->setDefault('decimalpoints', $offlinequizconfig->decimalpoints);
 
-        /* ------------------------------------------------------------------------------- */
+        // -------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('formsheetsettings', 'offlinequiz'));
 
         unset($options);
@@ -138,17 +138,17 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('papergray', 'papergray', 'offlinequiz');
         $mform->setDefault('papergray', $offlinequizconfig->papergray);
 
-        // -------------------------------------------------------------------------------
-        // $mform->addElement('header', 'displayhdr', get_string('generatepdfform', 'offlinequiz'));
+        // ------------------------------------------------------------------------------
 
         if (!$offlinequiz || !$offlinequiz->docscreated) {
-            $mform->addElement('htmleditor', 'pdfintro', get_string('pdfintro', 'offlinequiz'), array('rows' => 20));
+            $mform->addElement('editor', 'pdfintro', get_string('pdfintro', 'offlinequiz'), array('rows' => 20),
+                     offlinequiz_get_editor_options($this->context));
         } else {
             $mform->addElement('static', 'pdfintro', get_string('pdfintro', 'offlinequiz'), $offlinequiz->pdfintro);
         }
         $mform->setType('pdfintro', PARAM_RAW);
-        $mform->setDefault('pdfintro', get_string('pdfintrotext', 'offlinequiz'));
-        $mform->addHelpButton('pdfintro', 'pdfintro', "offlinequiz");
+        //$mform->setDefault('pdfintro', array('text' => get_string('pdfintrotext', 'offlinequiz')));
+        $mform->addHelpButton('pdfintro', 'pdfintro', 'offlinequiz');
 
         unset($options);
         $options[8] = 8;
@@ -164,25 +164,29 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $options[OFFLINEQUIZ_DOCX_FORMAT] = 'DOCX';
         $mform->addElement('select', 'fileformat', get_string('fileformat', 'offlinequiz'), $options, $attribs);
         $mform->addHelpButton('fileformat', 'fileformat', 'offlinequiz');
-        $mform->setDefault('fileformat',0);
+        $mform->setDefault('fileformat', 0);
 
         $mform->addElement('selectyesno', 'showgrades', get_string("showgrades", "offlinequiz"), $attribs);
         $mform->addHelpButton('showgrades', "showgrades", "offlinequiz");
-        //      $mform->setDefault('showgrades', $offlinequizconfig->showgrades);
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'reviewoptionshdr', get_string("reviewoptions", "offlinequiz"));
         $mform->addHelpButton('reviewoptionshdr', 'reviewoptions', 'offlinequiz');
 
-        $closedoptionsgrp =array();
+        $closedoptionsgrp = array();
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'attemptclosed', '', get_string('theattempt', 'offlinequiz'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'correctnessclosed', '', get_string('whethercorrect', 'question'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'marksclosed', '', get_string('marks', 'offlinequiz'));
-        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'specificfeedbackclosed', '', get_string('specificfeedback', 'question'));
-        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'generalfeedbackclosed', '', get_string('generalfeedback', 'question'));
-        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'rightanswerclosed', '', get_string('rightanswer', 'question'));
-        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'sheetclosed', '', get_string('scannedform', 'offlinequiz'));
-        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'gradedsheetclosed', '', get_string('gradedscannedform', 'offlinequiz'));
+        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'specificfeedbackclosed', '',
+                get_string('specificfeedback', 'question'));
+        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'generalfeedbackclosed', '',
+                get_string('generalfeedback', 'question'));
+        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'rightanswerclosed', '',
+                get_string('rightanswer', 'question'));
+        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'sheetclosed', '',
+                get_string('scannedform', 'offlinequiz'));
+        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'gradedsheetclosed', '',
+                get_string('gradedscannedform', 'offlinequiz'));
         $mform->addGroup($closedoptionsgrp, 'closedoptionsgrp', get_string("reviewincludes", "offlinequiz"), '<br />', false);
         $mform->setDefault('attemptclosed', $offlinequizconfig->reviewattempt );
         $mform->setDefault('correctnessclosed', $offlinequizconfig->reviewcorrectness );
@@ -197,16 +201,19 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->disabledIf('specificfeedbackclosed', 'attemptclosed');
         $mform->disabledIf('generalfeedbackclosed', 'attemptclosed');
         $mform->disabledIf('rightanswerclosed', 'attemptclosed');
-        //      $mform->disabledIf('gradedsheetclosed', 'sheetclosed');
         $mform->setExpanded('reviewoptionshdr');
-        // Try to insert student view for teachers
-        
+        // Try to insert student view for teachers.
+
         $language = current_language();
 
-        $mform->addElement('html', '<input id="showviewbutton" type="button" value="'. get_string('showstudentview', 'offlinequiz') . '" onClick="showStudentView(); return false;">');
-        $mform->addElement('html', '<div class="Popup"><center><input type="button" class="closePopup" onClick="closePopup(); return false;" value="' . get_string('closestudentview', 'offlinequiz') . '"/></center><br/></div>');
+        $mform->addElement('html', '<input id="showviewbutton" type="button" value="'.
+                get_string('showstudentview', 'offlinequiz') . '" onClick="showStudentView(); return false;">');
+        $mform->addElement('html', '<div class="Popup"><center><input type="button" class="closePopup"' .
+                ' onClick="closePopup(); return false;" value="' . get_string('closestudentview', 'offlinequiz') .
+                '"/></center><br/></div>');
         $mform->addElement('html', '<div id="overlay" class="closePopup"></div>');
-        $mform->addElement('html', '<input id="basefilename" type="hidden" value="' . $CFG->wwwroot . '/mod/offlinequiz/pix/studentview/' . $language . '/img">');
+        $mform->addElement('html', '<input id="basefilename" type="hidden" value="' . $CFG->wwwroot .
+                '/mod/offlinequiz/pix/studentview/' . $language . '/img">');
 
         $module = array(
                 'name'      => 'mod_offlinequiz_mod_form',
@@ -218,15 +225,11 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
         $PAGE->requires->jquery();
         $PAGE->requires->js('/mod/offlinequiz/mod_form.js');
-        
-        //      $this->standard_grading_coursemodule_elements();
-        // $this->standard_hidden_coursemodule_elements();
 
         // -------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();
 
         // -------------------------------------------------------------------------------
-        // buttons
         $this->add_action_buttons();
     }
 
@@ -246,6 +249,34 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             }
 
         }
+
+        // Set the pdfintro text.
+        if ($this->current->instance) {
+            if (!$toform['docscreated']) {
+                // Editing an existing pdfintro - let us prepare the added editor elements (intro done automatically).
+                $draftitemid = file_get_submitted_draft_itemid('pdfintro');
+                $text = file_prepare_draft_area($draftitemid, $this->context->id,
+                                        'mod_offlinequiz', 'pdfintro', false,
+                                        offlinequiz_get_editor_options($this->context),
+                                        $toform['pdfintro']);
+                // $default_values['pdfintro']['format'] = $default_values['pdfintro'];
+                $toform['pdfintro'] = array();
+                $toform['pdfintro']['text'] = $text; 
+                $toform['pdfintro']['format'] = editors_get_preferred_format();
+                $toform['pdfintro']['itemid'] = $draftitemid;
+            }
+        } else {
+            // Adding a new feedback instance.
+            $draftitemid = file_get_submitted_draft_itemid('pdfintro');
+
+            // No context yet, itemid not used.
+            file_prepare_draft_area($draftitemid, null, 'mod_offlinequiz', 'pdfintro', false);
+            $toform['pdfintro'] = array();
+            $toform['pdfintro']['text'] = get_string('pdfintrotext', 'offlinequiz');
+            $toform['pdfintro']['format'] = editors_get_preferred_format();
+            $toform['pdfintro']['itemid'] = $draftitemid;
+        }
+        
         if (empty($toform['timelimit'])) {
             $toform['timelimitenable'] = 0;
         } else {
@@ -274,9 +305,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        //      if (strlen($data['pdfintro']) > 1800) {
-        //          $errors['pdfintro'] = get_string('pdfintrotoolarge', 'offlinequiz');
-        //      }
         // Check open and close times are consistent.
         if ($data['timeopen'] != 0 && $data['timeclose'] != 0 && $data['timeclose'] < $data['timeopen']) {
             $errors['timeclose'] = get_string('closebeforeopen', 'offlinequiz');

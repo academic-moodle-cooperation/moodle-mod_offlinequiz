@@ -41,13 +41,6 @@ class offlinequiz_statistics_settings_form extends moodleform {
         $mform->addElement('header', 'preferencespage',
                 get_string('preferencespage', 'offlinequiz_statistics'));
 
-//         $options = array();
-//         $options[0] = get_string('attemptsfirst', 'offlinequiz_statistics');
-//         $options[1] = get_string('attemptsall', 'offlinequiz_statistics');
-//         $mform->addElement('select', 'useallattempts',
-//                 get_string('calculatefrom', 'offlinequiz_statistics'), $options);
-//         $mform->setDefault('useallattempts', 0);
-
         $mform->addElement('submit', 'submitbutton',
                 get_string('preferencessave', 'offlinequiz_statistics'));
     }

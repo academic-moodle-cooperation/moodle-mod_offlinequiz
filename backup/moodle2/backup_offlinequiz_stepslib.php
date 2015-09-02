@@ -33,10 +33,10 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
 
     protected function define_structure() {
 
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separately
+        // Define each element separately.
         $offlinequiz = new backup_nested_element('offlinequiz', array('id'), array(
                 'name', 'intro', 'pdfintro', 'timeopen',
                 'timeclose', 'time', 'grade', 'numgroups', 'decimalpoints',
@@ -55,7 +55,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
 
         $groupquestions = new backup_nested_element('groupquestions');
         $groupquestion = new backup_nested_element('groupquestion', array('id'), array(
-                'questionid', 'position', 'pagenumber', 'usageslot'));
+                'questionid', 'position', 'page', 'slot'));
 
         $results = new backup_nested_element('results');
 
@@ -97,28 +97,28 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
                 'userid', 'value'));
 
         // This module is using questions, so produce the related question states and sessions
-        // attaching them to the $result element based in 'uniqueid' matching
+        // attaching them to the $result element based in 'uniqueid' matching.
 
-        // TODO once the Moodle bug is fixed
+        // TODO once the Moodle bug is fixed.
         $this->add_question_usages($result, 'usageid', 'result_');
         $this->add_question_usages($group, 'templateusageid', 'group_');
 
-        // group questions are children of groups which are children of the offlinequiz
+        // Group questions are children of groups which are children of the offlinequiz.
         $groups->add_child($group);
         $group->add_child($groupquestions);
         $groupquestions->add_child($groupquestion);
         $offlinequiz->add_child($groups);
 
-        // results are children of the offlinequiz
+        // Results are children of the offlinequiz.
         $results->add_child($result);
         $offlinequiz->add_child($results);
 
-        // Build the tree
-        // question instances are children of the offlinequiz
+        // Build the tree.
+        // Question instances are children of the offlinequiz.
         $qinstances->add_child($qinstance);
         $offlinequiz->add_child($qinstances);
 
-        // choices and corners are children of scannedpages which are children of the offlinequiz
+        // Choices and corners are children of scannedpages which are children of the offlinequiz.
         $scannedpage->add_child($choices);
         $choices->add_child($choice);
         $scannedpage->add_child($corners);
@@ -127,20 +127,20 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $offlinequiz->add_child($scannedpages);
         $scannedpages->add_child($scannedpage);
 
-        // lists of participants are children of the offlinequiz
+        // Lists of participants are children of the offlinequiz.
         $offlinequiz->add_child($plists);
         $plists->add_child($plist);
-        // participants are children of lists of participants
+        // Participants are children of lists of participants.
         $plist->add_child($participants);
         $participants->add_child($participant);
 
-        // scanned participants pages are children of the offlinequiz
+        // Scanned participants pages are children of the offlinequiz.
         $offlinequiz->add_child($scannedppages);
         $scannedppages->add_child($scannedppage);
         $scannedppage->add_child($pchoices);
         $pchoices->add_child($pchoice);
 
-        // Define sources
+        // Define sources.
         $offlinequiz->set_source_table('offlinequiz', array('id' => backup::VAR_ACTIVITYID));
 
         $qinstance->set_source_table('offlinequiz_q_instances',
@@ -155,7 +155,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $plist->set_source_table('offlinequiz_p_lists',
                 array('offlinequizid' => backup::VAR_PARENTID));
 
-        // All the rest of elements only happen if we are including user info
+        // All the rest of elements only happen if we are including user info.
         if ($userinfo) {
 
             $result->set_source_sql('
@@ -174,7 +174,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
             $corner->set_source_table('offlinequiz_page_corners',
                     array('scannedpageid' => backup::VAR_PARENTID));
 
-            // add participants info only when userinfo
+            // Add participants info only when userinfo.
             $participant->set_source_table('offlinequiz_participants',
                     array('listid' => backup::VAR_PARENTID));
 
@@ -186,22 +186,17 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
 
         }
 
-        // Define file annotations
+        // Define file annotations.
         $offlinequiz->annotate_files('mod_offlinequiz', 'intro', null);
-        $offlinequiz->annotate_files('mod_offlinequiz', 'imagefiles', null); // This file area hasn't itemid
+        $offlinequiz->annotate_files('mod_offlinequiz', 'imagefiles', null); // This file area has no itemid.
         $offlinequiz->annotate_files('mod_offlinequiz', 'pdfs', null);
 
-        // Define source alias
-        //         $offlinequiz->set_source_alias('results', 'results_number');
-        //         $grade->set_source_alias('grade', 'gradeval');
-        //         $result->set_source_alias('result', 'resultnum');
-
-        // Define id annotations
+        // Define id annotations.
         $qinstance->annotate_ids('question', 'questionid');
         $result->annotate_ids('user', 'userid');
         $result->annotate_ids('user', 'teacherid');
 
-        // Return the root element (offlinequiz), wrapped into standard activity structure
+        // Return the root element (offlinequiz), wrapped into standard activity structure.
         return $this->prepare_activity_structure($offlinequiz);
     }
 }

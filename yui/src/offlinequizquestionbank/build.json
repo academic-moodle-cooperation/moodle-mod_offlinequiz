@@ -1,0 +1,10 @@
+{
+    "name": "moodle-mod_offlinequiz-offlinequizquestionbank",
+    "builds": {
+        "moodle-mod_offlinequiz-offlinequizquestionbank": {
+            "jsfiles": [
+                "offlinequizquestionbank.js"
+            ]
+        }
+    }
+}

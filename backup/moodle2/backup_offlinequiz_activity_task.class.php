@@ -37,7 +37,7 @@ class backup_offlinequiz_activity_task extends backup_activity_task {
      * Define (add) particular settings this activity can have
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
+        // No particular settings for this activity.
     }
 
     /**
@@ -45,21 +45,21 @@ class backup_offlinequiz_activity_task extends backup_activity_task {
      */
     protected function define_my_steps() {
         // Generate the offlinequiz.xml file containing all the offlinequiz information
-        // and annotating used questions
+        // and annotating used questions.
         $this->add_step(new backup_offlinequiz_activity_structure_step('offlinequiz_structure', 'offlinequiz.xml'));
 
         // Note: Following  steps must be present
-        // in all the activities using question banks (only offlinequiz for now)
-        // TODO: Specialise these step to a new subclass of backup_activity_task
+        // in all the activities using question banks (only offlinequiz for now).
+        // TODO: Specialise these step to a new subclass of backup_activity_task.
 
         // Process all the annotated questions to calculate the question
         // categories needing to be included in backup for this activity
-        // plus the categories belonging to the activity context itself
+        // plus the categories belonging to the activity context itself.
         $this->add_step(new backup_calculate_question_categories('activity_question_categories'));
 
         // Clean backup_temp_ids table from questions. We already
         // have used them to detect question_categories and aren't
-        // needed anymore
+        // needed anymore.
         $this->add_step(new backup_delete_temp_questions('clean_temp_questions'));
     }
 
@@ -72,17 +72,17 @@ class backup_offlinequiz_activity_task extends backup_activity_task {
 
         $base = preg_quote($CFG->wwwroot, '/');
 
-        // Link to the list of offlinequizzes
-        $search="/(".$base."\/mod\/offlinequiz\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@OFFLINEQUIZINDEX*$2@$', $content);
+        // Link to the list of offlinequizzes.
+        $search = "/(" . $base . "\/mod\/offlinequiz\/index.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@OFFLINEQUIZINDEX*$2@$', $content);
 
-        // Link to offlinequiz view by moduleid
-        $search="/(".$base."\/mod\/offlinequiz\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@OFFLINEQUIZVIEWBYID*$2@$', $content);
+        // Link to offlinequiz view by moduleid.
+        $search = "/(" . $base . "\/mod\/offlinequiz\/view.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@OFFLINEQUIZVIEWBYID*$2@$', $content);
 
-        // Link to offlinequiz view by offlinequizid
-        $search="/(".$base."\/mod\/offlinequiz\/view.php\?q\=)([0-9]+)/";
-        $content= preg_replace($search, '$@OFFLINEQUIZVIEWBYQ*$2@$', $content);
+        // Link to offlinequiz view by offlinequizid.
+        $search = "/(" . $base . "\/mod\/offlinequiz\/view.php\?q\=)([0-9]+)/";
+        $content = preg_replace($search, '$@OFFLINEQUIZVIEWBYQ*$2@$', $content);
 
         return $content;
     }

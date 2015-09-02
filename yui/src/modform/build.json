@@ -1,0 +1,10 @@
+{
+    "name": "moodle-mod_offlinequiz-modform",
+    "builds": {
+        "moodle-mod_offlinequiz-modform": {
+            "jsfiles": [
+                "modform.js"
+            ]
+        }
+    }
+}

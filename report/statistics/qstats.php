@@ -110,13 +110,11 @@ class offlinequiz_statistics_question_stats {
 
         // Get the SQL and params for question IDs.
         list($qsql, $qparams) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'q');
-        
-//         list($qsql, $qparams) = $DB->get_in_or_equal(array_keys($this->questions),
-//                 SQL_PARAMS_NAMED, 'q');
+
         list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(
                 $offlinequizid, $currentgroup, $groupstudents, $allattempts, false, $offlinegroupid);
 
-        // Trying to make this work on MySQL 
+        // Trying to make this work on MySQL
         // First we get the questionattemptids that we actually need.
         $questionattemptids = $DB->get_fieldset_sql("
                 SELECT qa.id
@@ -126,11 +124,11 @@ class offlinequiz_statistics_question_stats {
                    AND $whereqa", $qparams + $qaparams);
 
         list($qaidssql, $qaidsparams) = $DB->get_in_or_equal($questionattemptids, SQL_PARAMS_NAMED, 'qaid');
-        
+
         $params = array_merge($qparams, $qaparams, $qaidsparams);
 
-	// works already quite a bit faster 
-	$this->lateststeps = $DB->get_records_sql("
+        // Works already quite a bit faster.
+        $this->lateststeps = $DB->get_records_sql("
                 SELECT
                     qas.id,
                     offlinequiza.sumgrades,
@@ -156,7 +154,7 @@ class offlinequiz_statistics_question_stats {
 
     /*
      * Compute the statistics for the questions given to the constructor
-     * 
+     *
      */
     public function compute_statistics() {
         set_time_limit(0);
@@ -179,11 +177,11 @@ class offlinequiz_statistics_question_stats {
                     $subquestionstats[$step->questionid]->maxmark = $step->maxmark;
                     $subquestionstats[$step->questionid]->correct = 0;
                     $subquestionstats[$step->questionid]->partially = 0;
-                    $subquestionstats[$step->questionid]->wrong = 0;                    
+                    $subquestionstats[$step->questionid]->wrong = 0;
                 } else if ($subquestionstats[$step->questionid]->maxmark != $step->maxmark) {
                     $subquestionstats[$step->questionid]->differentweights = true;
                 }
-                // Redmine 1302. Compute the number of results 
+                // Redmine 1302. Compute the number of results.
                 if ($step->mark == $step->maxmark) {
                     $subquestionstats[$step->questionid]->correct++;
                 } else if ($step->mark > 0 && $step->mark < $step->maxmark) {
@@ -272,9 +270,6 @@ class offlinequiz_statistics_question_stats {
         // Go through the records one more time.
         foreach ($this->lateststeps as $step) {
             $this->secondary_steps_walker($step, $this->questions[$step->questionid]->_stats);
-//             if ($this->questions[$step->questionid]->qtype == 'random') {
-//                 $this->secondary_steps_walker($step, $this->subquestions[$step->questionid]->_stats);
-//             }
         }
 
         $sumofcovariancewithoverallmark = 0;
@@ -360,7 +355,7 @@ class offlinequiz_statistics_question_stats {
         }
         sort($stats->markarray, SORT_NUMERIC);
         sort($stats->othermarksarray, SORT_NUMERIC);
-        
+
         $stats->correct = 0;
         $stats->partially = 0;
         $stats->wrong = 0;
@@ -394,7 +389,7 @@ class offlinequiz_statistics_question_stats {
         $stats->covariancemaxsum += $sortedmarkdifference * $sortedothermarkdifference;
         $stats->covariancewithoverallmarksum += $markdifference * $overallmarkdifference;
 
-        // Redmine 1302. Compute the number of results
+        // Redmine 1302. Compute the number of results.
         if ($step->mark == $step->maxmark) {
             $stats->correct++;
         } else if ($step->mark > 0 && $step->mark < $step->maxmark) {

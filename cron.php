@@ -38,15 +38,13 @@ require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
 
-function offlinequiz_evaluation_cron($jobid = 0) {
+function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
     global $CFG, $DB;
 
-//     $CFG->debug = 32767;
-//     $CFG->debugdisplay = true;
     raise_memory_limit(MEMORY_EXTRA);
 
     // Only count the jobs with status processing that have been started in the last 24 hours.
-    $expiretime = time() - 86400; 
+    $expiretime = time() - 86400;
     $runningsql = "SELECT COUNT(*)
                      FROM {offlinequiz_queue}
                     WHERE status = 'processing'
@@ -58,7 +56,7 @@ function offlinequiz_evaluation_cron($jobid = 0) {
         return;
     }
 
-    // TODO do this properly. Just for testing
+    // TODO do this properly. Just for testing.
     $sql = "SELECT * FROM {offlinequiz_queue} WHERE status = 'new'";
     $params = array();
     if ($jobid) {
@@ -69,9 +67,21 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
     // If there are no new jobs, we simply exit.
     if (!$jobs = $DB->get_records_sql($sql, $params, 0, OFFLINEQUIZ_TOP_QUEUE_JOBS)) {
+        if ($verbose) {
+            echo get_string('nothingtodo', 'offlinequiz');
+        }
         return;
     }
-
+    $numberofjobs = count($jobs);
+    
+    if ($verbose) {
+        $pbar = new progress_bar('offlinequizcronbar', 500, true);
+        $pbar->create();
+        $pbar->update(0, $numberofjobs,
+                        "Processing job - {0}/{$numberofjobs}.");
+    }
+    $numberdone = 0;
+    
     foreach ($jobs as $job) {
         // Check whether the status is still 'new' (might have been changed by other cronjob).
         $transaction = $DB->start_delegated_transaction();
@@ -110,7 +120,8 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                 $DB->set_field('offlinequiz_queue', 'info', 'context not found', array('id' => $job->id));
                 continue;
             }
-            if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+            if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
+                    'number', '*', 0, $offlinequiz->numgroups)) {
                 $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
                 $DB->set_field('offlinequiz_queue', 'info', 'no offlinequiz groups found', array('id' => $job->id));
                 continue;
@@ -119,7 +130,7 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
             offlinequiz_load_useridentification();
 
-            // TODO
+            // TODO.
             $jobdata = $DB->get_records_sql("
                     SELECT *
                       FROM {offlinequiz_queue_data}
@@ -127,7 +138,8 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                        AND status = 'new'",
                     array('queueid' => $job->id));
 
-            list($maxquestions, $maxanswers, $formtype, $questionsperpage) =  offlinequiz_get_question_numbers($offlinequiz, $groups);
+            list($maxquestions, $maxanswers, $formtype, $questionsperpage) =
+                offlinequiz_get_question_numbers($offlinequiz, $groups);
 
             $dirname = '';
             $doubleentry = 0;
@@ -138,8 +150,8 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
                 // We remember the directory name to be able to remove it later.
                 if (empty($dirname)) {
-                    $path_parts = pathinfo($data->filename);
-                    $dirname = $path_parts['dirname'];
+                    $pathparts = pathinfo($data->filename);
+                    $dirname = $pathparts['dirname'];
                 }
 
                 set_time_limit(120);
@@ -153,10 +165,6 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                     $scannedpage = $scanner->load_image($data->filename);
                     if ($scannedpage->status == 'ok') {
                         echo 'job ' . $job->id . ': image loaded ' . $scannedpage->filename . "\n";
-                        // We don't need this little hack to get the real filename. We keep the file originally uploaded for a number of days. It is then deleted by the offlinequiz cron() in lib.php.
-                        // load_image() appends a counter suffix in case a file already exists, it also renames files in case of format conversion..
-//                        $data->filename = $dirname . '/' . $scannedpage->origfilename;
-//                        $DB->update_record('offlinequiz_queue_data', $data);
                     } else if ($scannedpage->error == 'filenotfound') {
                         echo 'job ' . $job->id . ': image file not found: ' . $scannedpage->filename . "\n";
                     }
@@ -166,8 +174,9 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
                     // If we could load the image file, the status is 'ok', so we can check the page for errors.
                     if ($scannedpage->status == 'ok') {
-                        // we autorotate so check_scanned_page will return a potentially new scanner and the scannedpage
-                        list($scanner, $scannedpage) = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $coursecontext, true);
+                        // We autorotate so check_scanned_page will return a potentially new scanner and the scannedpage.
+                        list($scanner, $scannedpage) = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage,
+                                $job->importuserid, $coursecontext, true);
                     } else {
                         if (property_exists($scannedpage, 'id') && !empty($scannedpage->id)) {
                             $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
@@ -177,17 +186,19 @@ function offlinequiz_evaluation_cron($jobid = 0) {
                     }
                     echo 'job ' . $job->id . ': scannedpage id ' . $scannedpage->id . "\n";
 
-                    // if the status is still 'ok', we can process the answers. This potentially submits the page and
-                    // checks whether the result for a student is complete
+                    // If the status is still 'ok', we can process the answers. This potentially submits the page and
+                    // checks whether the result for a student is complete.
                     if ($scannedpage->status == 'ok') {
-                        // we can process the answers and submit them if possible
-                        $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $questionsperpage, $coursecontext, true);
+                        // We can process the answers and submit them if possible.
+                        $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage,
+                                $job->importuserid, $questionsperpage, $coursecontext, true);
                         echo 'job ' . $job->id . ': processed answers for ' . $scannedpage->id . "\n";
                     } else if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
-                        // already process the answers but don't submit them.
-                        $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $questionsperpage, $coursecontext, false);
+                        // Already process the answers but don't submit them.
+                        $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage,
+                                $job->importuserid, $questionsperpage, $coursecontext, false);
 
-                        // compare the old and the new result wrt. the choices
+                        // Compare the old and the new result wrt. the choices.
                         $scannedpage = offlinequiz_check_different_result($scannedpage);
                     }
 
@@ -199,7 +210,7 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
                     if ($scannedpage->status == 'ok' || $scannedpage->status == 'submitted'
                             || $scannedpage->status == 'suspended' || $scannedpage->error == 'missingpages') {
-                        // mark the file as processed
+                        // Mark the file as processed.
                         $DB->set_field('offlinequiz_queue_data', 'status', 'processed', array('id' => $data->id));
                     } else {
                         $DB->set_field('offlinequiz_queue_data', 'status', 'error', array('id' => $data->id));
@@ -232,10 +243,10 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
             echo date('Y-m-d-H:i') . ": Import queue with id $job->id imported.\n\n";
 
-            if ($user = $DB->get_record('user',  array('id' =>$job->importuserid))) {
+            if ($user = $DB->get_record('user',  array('id' => $job->importuserid))) {
                 $mailtext = get_string('importisfinished', 'offlinequiz', format_text($offlinequiz->name, FORMAT_PLAIN));
 
-                // how many pages have been imported successfully
+                // How many pages have been imported successfully.
                 $countsql = "SELECT COUNT(id)
                                FROM {offlinequiz_queue_data}
                               WHERE queueid = :queueid
@@ -244,7 +255,7 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
                 $mailtext .= "\n\n". get_string('importnumberpages', 'offlinequiz', $DB->count_records_sql($countsql, $params));
 
-                // how many pages have an error
+                // How many pages have an error.
                 $countsql = "SELECT COUNT(id)
                                FROM {offlinequiz_queue_data}
                               WHERE queueid = :queueid
@@ -265,12 +276,15 @@ function offlinequiz_evaluation_cron($jobid = 0) {
 
                 email_to_user($user, $CFG->noreplyaddress, get_string('importmailsubject', 'offlinequiz'), $mailtext);
             }
-//            echo "removing dir " . $dirname . "\n";
-//            remove_dir($dirname);
-
         } // End !alreadydone.
+        $numberdone++;
+        if ($verbose) {
+            ob_flush();
+            $pbar->update($numberdone, $numberofjobs,
+                        "Processing job - {$numberdone}/{$numberofjobs}.");
+        }
+        
     } // End foreach.
-
 } // End function.
 
 require_once($CFG->libdir . '/clilib.php');

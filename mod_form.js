@@ -15,7 +15,7 @@
 
 /**
  * JavaScript functions for student view in mod_form.php
- * 
+ *
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
@@ -36,7 +36,7 @@ function showStudentView() {
 
 //	str = 'attempt='+ attempt + ' correctness=' + correctness + ' marks='+marks+ ' specfeed='+ specificfeedback + ' genfeed='+ generalfeedback +
 //			' rightanswer='+ rightanswer+ ' sheet=' + sheet + ' gradedsheet=' + gradedsheet + '<br/>';
-//	
+//
 //	console.log(str);
 	baseurl = $('#basefilename').val();
 	imagefile1 = '';
@@ -53,7 +53,7 @@ function showStudentView() {
 		imagefile2 = baseurl + '2';
 	}
 	if (correctness) {
-		imagefile2 = imagefile2 + "_correctness"; 
+		imagefile2 = imagefile2 + "_correctness";
 	}
 	if (marks) {
 		imagefile1 = baseurl + '1';
@@ -84,11 +84,11 @@ function showStudentView() {
 	}
 
 	if (gradedsheet) {
-		imagefile1 = imagefile1 + "_pagelink"; 
+		imagefile1 = imagefile1 + "_pagelink";
 		pagefile = pagefile + "_gradedsheet.png";
 	} else if (sheet) {
-		imagefile1 = imagefile1 + "_pagelink"; 
-		pagefile = pagefile + "_sheet.png"; 
+		imagefile1 = imagefile1 + "_pagelink";
+		pagefile = pagefile + "_sheet.png";
 	}
 
 	if (imagefile1 != '') {
@@ -115,7 +115,7 @@ function showStudentView() {
 		$('<img />').attr({ 'id': 'image3', 'width': '100%', 'src': imagefile3}).appendTo($('.Popup'));
 		$('<br/>').appendTo($('.Popup'));
 	}
-	
+
 	if (pagefile != '') {
         $('<hr/>').appendTo($('.Popup'));
 		$('<img />').attr({ 'id': 'image4', 'width': '100%', 'src': pagefile}).appendTo($('.Popup'));
@@ -129,10 +129,10 @@ function showStudentView() {
 function closePopup () {
 	$('.Popup').fadeOut('slow');
 	$('#overlay').fadeOut('slow');
-	
+
 	$('.Popup').children('img').remove();
 	$('.Popup').children('br').remove();
-	$('.Popup').children('hr').remove();	
+	$('.Popup').children('hr').remove();
 }
 
 // Catch ESC key to close popup.
@@ -153,4 +153,3 @@ $("#overlay").click(function(e){
 $(".Popup").click(function(e){
   e.stopPropagation();
 });
-

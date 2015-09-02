@@ -33,8 +33,8 @@ require_once($CFG->libdir.'/tablelib.php');
 class offlinequiz_results_table extends flexible_table {
 
     protected $offlinequiz;
-    protected $noresults;    
-    protected $psize;    
+    protected $noresults;
+    protected $psize;
 
     public function __construct($uniqueid, $params) {
         parent::__construct($uniqueid);
@@ -74,7 +74,7 @@ class offlinequiz_results_table extends flexible_table {
         echo '  <input type="submit" value="'.get_string('deleteselectedresults', 'offlinequiz').'"/>';
         echo ' </td></tr></table>';
         echo '  </center>';
-        // Close form
+        // Close form.
         echo ' </div>';
         echo '</form></div>';
     }
@@ -101,4 +101,4 @@ class offlinequiz_results_table extends flexible_table {
         echo html_writer::end_tag('div');
     }
 
-} // end class
+}

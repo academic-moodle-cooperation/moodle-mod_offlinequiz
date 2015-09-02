@@ -52,7 +52,7 @@ function offlinequiz_report_list($context) {
     $reports = $DB->get_records('offlinequiz_reports', null, 'displayorder DESC', 'name, capability');
     $reportdirs = get_plugin_list('offlinequiz');
 
-    // Order the reports tab in descending order of displayorder
+    // Order the reports tab in descending order of displayorder.
     $reportcaps = array();
     foreach ($reports as $key => $report) {
         if (array_key_exists($report->name, $reportdirs)) {
@@ -60,7 +60,7 @@ function offlinequiz_report_list($context) {
         }
     }
 
-    // Add any other reports, which are on disc but not in the DB, on the end
+    // Add any other reports, which are on disc but not in the DB, on the end.
     foreach ($reportdirs as $reportname => $notused) {
         if (!isset($reportcaps[$reportname])) {
             $reportcaps[$reportname] = null;
@@ -75,21 +75,9 @@ function offlinequiz_report_list($context) {
             $reportlist[] = $name;
         }
     }
-    //     $reportlist = array();
-    //     $capability = 'mod/offlinequiz:viewreports';
-    //     if (has_capability($capability, $context)) {
-    //     	$reportlist = array('overview', 'rimport', 'regrade');
-    //     }
+
     return $reportlist;
 }
-
-// /**
-//  * Get the default report for the current user.
-//  * @param object $context the offlinequiz context.
-//  */
-// function offlinequiz_report_default_report($context) {
-//     return reset(offlinequiz_report_list($context));
-// }
 
 function offlinequiz_report_unindex($datum) {
     if (!$datum) {
@@ -115,47 +103,49 @@ function offlinequiz_report_unindex($datum) {
 function offlinequiz_report_get_significant_questions($offlinequiz) {
     global $DB;
 
-    $questionids = offlinequiz_questions_in_offlinequiz($offlinequiz->questions);
+    $questionids = $offlinequiz->questions;
     if (empty($questionids)) {
         return array();
     }
 
-    list($usql, $params) = $DB->get_in_or_equal(explode(',', $questionids));
-    $params[] = $offlinequiz->id;
-    $questions = $DB->get_records_sql("SELECT q.id, q.length, qqi.grade AS maxmark
-                                         FROM {question} q
-                                         JOIN {offlinequiz_q_instances} qqi ON qqi.questionid = q.id
-                                        WHERE q.id $usql
-                                          AND qqi.offlinequizid = ?
-                                          AND length > 0", $params);
+    list($usql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
+    
+    $params['offlinequizid'] = $offlinequiz->id;
+    $groupsql = '';
+    if ($offlinequiz->groupid) {
+        $groupsql = ' AND oqg.offlinegroupid = :offlinegroupid ';
+        $params['offlinegroupid'] = $offlinequiz->groupid;
+    }
 
+    $rawquestions = $DB->get_records_sql("SELECT oqg.id as oqgid, q.id as questionid, q.length, oqg.maxmark
+                                            FROM {question} q
+                                            JOIN {offlinequiz_group_questions} oqg ON oqg.questionid = q.id
+                                           WHERE q.id $usql
+                                             AND q.qtype <> 'description'
+                                             AND oqg.offlinequizid = :offlinequizid
+                                                 $groupsql
+                                             AND q.length > 0", $params);
+    // Make sure we have unique questionids. Not sure if DISTINCT in query captures all contingencies.
+    $questions = array();
+    foreach ($rawquestions as $rawquestion) {
+        if (!array_key_exists($rawquestion->questionid, $questions)) {
+            $question = new stdClass();
+            $question->id = $rawquestion->questionid;
+            $question->length = $rawquestion->length;
+            $question->maxmark = $rawquestion->maxmark;
+            $questions[$question->id] = $question;
+        }
+    }
+    
     $number = 1;
-    foreach (explode(',', $questionids) as $key => $id) {
+    foreach ($questionids as $key => $id) {
         if (!array_key_exists($id, $questions)) {
             continue;
         }
         $questions[$id]->number = $number;
         $number += $questions[$id]->length;
     }
-    
-//     $qsbyslot = array();
-//     $number = 1;
-//     foreach (explode(',', $questionids) as $key => $id) {
-//         if (!array_key_exists($id, $questions)) {
-//             continue;
-//         }
 
-//         $slot = $key + 1;
-//         $question = $questions[$id];
-//         $question->slot = $slot;
-//         $question->number = $number;
-
-//         $qsbyslot[$slot] = $question;
-
-//         $number += $question->length;
-//     }
-
-//     return $qsbyslot;
     return $questions;
 }
 

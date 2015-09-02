@@ -62,19 +62,20 @@ $offlinequiz = $DB->get_record('offlinequiz', array('id' => $offlinequizstatisti
 if ($groupnumber > 0) {
     if ($offlinegroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
         $offlinequiz->groupid = $offlinegroup->id;
-        $groupquestions = offlinequiz_get_group_questions($offlinequiz);
-        $purequestions = offlinequiz_questions_in_offlinequiz($groupquestions);
-
-        // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
-        $offlinequiz->questions = offlinequiz_clean_layout($groupquestions, empty($purequestions));
+        $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
+        $offlinequiz->questions = $groupquestions;
     } else {
         print_error('invalidgroupnumber', 'offlinequiz');
     }
 } else {
     $offlinequiz->groupid = 0;
-    // If no group has been chosen we simply take the questions from the question instances
-    $qinstanceids = $DB->get_fieldset_select('offlinequiz_q_instances', 'questionid', 'offlinequizid = :offlinequizid', array('offlinequizid' => $offlinequiz->id));
-    $offlinequiz->questions = offlinequiz_clean_layout(implode(',', $qinstanceids));
+    // If no group has been chosen we simply take the all questions.
+    $sql = "SELECT DISTINCT(questionid)
+              FROM {offlinequiz_group_questions}
+             WHERE offlinequizid = :offlinequizid";
+            
+    $questionids = $DB->get_fieldset_sql($sql, array('offlinequizid' => $offlinequiz->id));
+    $offlinequiz->questions = $questionids;
 }
 
 $cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id);

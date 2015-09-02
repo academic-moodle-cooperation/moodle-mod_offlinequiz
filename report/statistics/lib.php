@@ -37,7 +37,8 @@ defined('MOODLE_INTERNAL') || die();
  * @param bool $forcedownload
  * @param array $options additional options affecting the file serving
  */
-function offlinequiz_statistics_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload, array $options=array()) {
+function offlinequiz_statistics_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload,
+                                                                array $options = array()) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
@@ -57,7 +58,7 @@ function offlinequiz_statistics_questiontext_preview_pluginfile($context, $quest
 function offlinequiz_statistics_cron() {
     global $DB;
 
-    $expiretime = time() - 5*HOURSECS;
+    $expiretime = time() - 5 * HOURSECS;
     $todelete = $DB->get_records_select_menu('offlinequiz_statistics',
             'timemodified < ?', array($expiretime), '', 'id, 1');
 

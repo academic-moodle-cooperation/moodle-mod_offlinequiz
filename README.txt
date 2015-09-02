@@ -101,6 +101,11 @@ IV. Website settings
      means that the students mark a 5 digit number on the answer form. A concatenation of the letter 'b', the marked number, 
      and the string 'cd' denotes the 'idnumber' of the user in Moodle's 'user' table.
      
+V. Scanning of answer forms
+
+     Answer forms should be scanned as black-and-white images with 200 - 300 dpi. Do not scan in greyscale! 
+     Supported file types are TIF, PNG and GIF.
+     
 V. Contact
    In case you have any questions regarding this module you can either contact the author of the module (zimmerj7@univie.ac.at) or the 
    e-learning support of the University of Vienna (e-support.zid@univie.ac.at).

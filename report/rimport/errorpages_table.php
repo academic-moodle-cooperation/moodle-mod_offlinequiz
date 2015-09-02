@@ -51,7 +51,8 @@ class offlinequiz_selectall_table extends flexible_table {
     public function wrap_html_start() {
 
         echo '<div id="tablecontainer" class="centerbox">';
-        echo '<form id="reportform" method="post" action="'. $this->reportscript . '" onsubmit="return confirm(\'' . $this->params['strreallydel'] . '\');">';
+        echo '<form id="reportform" method="post" action="'. $this->reportscript .
+             '" onsubmit="return confirm(\'' . $this->params['strreallydel'] . '\');">';
         echo ' <div>';
 
         foreach ($this->params as $name => $value) {
@@ -73,11 +74,11 @@ class offlinequiz_selectall_table extends flexible_table {
         echo '<input type="submit" value="'.get_string('deleteselectedpages', 'offlinequiz_rimport').'"/>';
         echo '</td></tr></table>';
         echo '  </center>';
-        // Close form
+        // Close form.
         echo ' </div>';
         echo '</form></div>';
     }
-} // end class
+} // End class.
 
 class offlinequiz_partlist_table extends offlinequiz_selectall_table {
 
@@ -90,18 +91,20 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
         echo '<a href="javascript:select_all_in(\'FORM\',null, \'reportform\');">'. $strselectall . '</a> / ';
         echo '<a href="javascript:deselect_all_in(\'FORM\',null,\'reportform\');">' . $strselectnone . '</a> ';
         echo '&nbsp;&nbsp;';
-        $options = array('check' => get_string('checkparts', 'offlinequiz'), 'uncheck' => get_string('uncheckparts', 'offlinequiz'));
-        echo html_writer::select($options, 'action', '', array(''=>'choosedots'),
+        $options = array('check' => get_string('checkparts', 'offlinequiz'),
+                'uncheck' => get_string('uncheckparts', 'offlinequiz'));
+        echo html_writer::select($options, 'action', '', array('' => 'choosedots'),
                 array('onchange' => 'this.form.submit(); return true;'));
 
-        // choose_from_menu($options, 'action', '', get_string('withselected', 'offlinequiz'),
-        // 'if(this.selectedIndex > 0) submitFormById(\'participantform\');', '', true);
+        // Choose_from_menu($options, 'action', '', get_string('withselected', 'offlinequiz'),
+        // 'if(this.selectedIndex > 0) submitFormById(\'participantform\');', '', true).
         echo '<noscript id="noscriptmenuaction" style="display: inline;"><div>';
         echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
-        echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
+        echo '<script type="text/javascript">' . "\n<!--\n" .
+            'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
         echo '</td></tr></table>';
         echo '  </center>';
-        // Close form
+        // Close form.
         echo ' </div>';
         echo '</form></div>';
 

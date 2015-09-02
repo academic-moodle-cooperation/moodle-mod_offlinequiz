@@ -92,7 +92,7 @@ if (!is_readable("report/$mode/report.php")) {
     print_error('reportnotfound', 'offlinequiz', '', $mode);
 }
 
-// Open the selected offlinequiz report and display it
+// Open the selected offlinequiz report and display it.
 $file = $CFG->dirroot . '/mod/offlinequiz/report/' . $mode . '/report.php';
 if (is_readable($file)) {
     include_once($file);
@@ -106,7 +106,7 @@ if (!class_exists($reportclassname)) {
 $report = new $reportclassname();
 $report->display($offlinequiz, $cm, $course);
 
-// Print footer
+// Print footer.
 echo $OUTPUT->footer();
 
 // Log that this report was viewed.

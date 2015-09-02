@@ -1,0 +1,21 @@
+{
+  "name": "moodle-mod_offlinequiz-util",
+  "builds": {
+    "moodle-mod_offlinequiz-util-base": {
+      "jsfiles": [
+        "base.js"
+      ]
+    },
+    "moodle-mod_offlinequiz-util-slot": {
+      "jsfiles": [
+        "slot.js"
+      ]
+    }
+    ,
+    "moodle-mod_offlinequiz-util-page": {
+      "jsfiles": [
+        "page.js"
+      ]
+    }
+  }
+}

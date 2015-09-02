@@ -74,17 +74,17 @@ abstract class offlinequiz_default_report {
                 $reporttitle = get_string('statisticsplural', 'offlinequiz');
                 break;
         }
-        
+
         if ($currenttab == 'statistics') {
             $reporttitle = get_string('statisticsplural', 'offlinequiz');
         }
 
-        // Print the page header
+        // Print the page header.
         $PAGE->set_title(format_string($offlinequiz->name) . ' -- ' . $reporttitle);
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
 
-        // Print the tabs
+        // Print the tabs.
         if ($currenttab == 'statistics') {
             $statmode = $reportmode;
         } else {

@@ -17,10 +17,14 @@
 /**
  * Subplugin info class.
  *
- * @package   mod_quiz
- * @copyright 2013 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.8+
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
+
 namespace mod_offlinequiz\plugininfo;
 
 use core\plugininfo\base;
@@ -46,7 +50,7 @@ class offlinequiz extends base {
 
         // Do the opposite of db/install.php scripts - deregister the report.
 
-        $DB->delete_records('offlinequiz_reports', array('name'=>$this->name));
+        $DB->delete_records('offlinequiz_reports', array('name' => $this->name));
 
         parent::uninstall_cleanup();
     }

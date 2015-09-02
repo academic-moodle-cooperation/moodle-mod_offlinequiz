@@ -1,0 +1,26 @@
+{
+  "moodle-mod_offlinequiz-util": {
+    "requires": [
+        "node"
+    ],
+    "use": [
+        "moodle-mod_offlinequiz-util-base"
+    ],
+    "submodules": {
+        "moodle-mod_offlinequiz-util-base": {
+        },
+        "moodle-mod_offlinequiz-util-slot": {
+            "requires": [
+                "node",
+                "moodle-mod_offlinequiz-util-base"
+            ]
+        },
+        "moodle-mod_offlinequiz-util-page": {
+            "requires": [
+                "node",
+                "moodle-mod_offlinequiz-util-base"
+            ]
+        }
+    }
+  }
+}

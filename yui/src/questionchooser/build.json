@@ -1,0 +1,10 @@
+{
+    "name": "moodle-mod_offlinequiz-questionchooser",
+    "builds": {
+        "moodle-mod_offlinequiz-questionchooser": {
+            "jsfiles": [
+                "questionchooser.js"
+            ]
+        }
+    }
+}

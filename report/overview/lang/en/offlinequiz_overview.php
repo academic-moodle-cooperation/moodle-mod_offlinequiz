@@ -26,3 +26,4 @@
  *
  **/
 
+$string['pluginname'] = 'Offlinequiz Results Overview';

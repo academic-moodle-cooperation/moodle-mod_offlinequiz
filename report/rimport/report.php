@@ -53,7 +53,8 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
         $tablecolumns = array('checkbox', 'counter', 'userkey', 'groupnumber', 'pagenumber', 'time', 'error', 'info', 'link');
         $tableheaders = array('', '#', get_string($offlinequizconfig->ID_field, 'offlinequiz_rimport'),
-                get_string('group'), get_string('page'), get_string('importedon', 'offlinequiz_rimport'), get_string('error'), get_string('info'), '');
+                get_string('group'), get_string('page'), get_string('importedon', 'offlinequiz_rimport'),
+                get_string('error'), get_string('info'), '');
 
         $table->initialbars(true);
         $table->define_columns($tablecolumns);
@@ -63,7 +64,6 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 '&amp;pagesize=' . $pagesize);
 
         $table->sortable(true, 'time'); // Sorted by lastname by default.
-        // $table->collapsible(true);
         $table->initialbars(true);
 
         $table->column_class('checkbox', 'checkbox');
@@ -79,7 +79,6 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
         $table->set_attribute('cellpadding', '4');
         $table->set_attribute('id', 'errorpages');
         $table->set_attribute('class', 'errorpages');
-        // $table->set_attribute('width', '100%');
         $table->set_attribute('align', 'center');
         $table->set_attribute('border', '1');
 
@@ -114,10 +113,10 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
         $strtimeformat = get_string('strftimedatetime');
 
-        // options for the popup_action
+        // Options for the popup_action.
         $options = array();
-        $options['height'] = 1200; // optional
-        $options['width'] = 1170; // optional
+        $options['height'] = 1200; // Optional.
+        $options['width'] = 1170; // Optional.
         $options['resizable'] = false;
 
         $counter = 1;
@@ -128,18 +127,17 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 $actionlink = '';
             } else {
                 if ($page->error == 'missingpages') {
-                    $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/image.php?pageid=' . $page->id . '&resultid=' . $page->resultid);
+                    $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/image.php?pageid=' . $page->id .
+                            '&resultid=' . $page->resultid);
                     $title = get_string('showpage', 'offlinequiz_rimport');
                 } else {
                     $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/correct.php?pageid=' . $page->id);
                     $title = get_string('correcterror', 'offlinequiz_rimport');
                 }
 
-                $actionlink = $OUTPUT->action_link($url, $title, new popup_action('click', $url, 'correct' . $page->id, $options));
+                $actionlink = $OUTPUT->action_link($url, $title, new popup_action('click', $url, 'correct' .
+                        $page->id, $options));
             }
-            //             if ($page->error == 'missingpages') {
-            //              $actionlink = ' ';
-            //             }
 
             $groupstr = '?';
             $groupnumber = $page->groupnumber;
@@ -171,7 +169,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
         if (!$table->print_nothing_to_display()) {
             // Print the table.
-            $table->print_html();  // Print the whole table
+            $table->print_html();
         }
     }
 
@@ -202,30 +200,30 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
             echo $OUTPUT->box_start('linkbox');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
-            echo $OUTPUT->heading_with_help(get_string('resultimport', 'offlinequiz'), 'import', 'offlinequiz');
+            echo $OUTPUT->heading_with_help(get_string('resultimport', 'offlinequiz'), 'importnew', 'offlinequiz');
             echo $OUTPUT->box_end();
         }
 
-        $import_form = new offlinequiz_upload_form($reporturl,
+        $importform = new offlinequiz_upload_form($reporturl,
                 array('offlinequiz' => $offlinequiz, 'context' => $this->context));
 
-        // has the user submitted a file?
-        if ($fromform = $import_form->get_data() && confirm_sesskey()) {
-            // file checks out ok
+        // Has the user submitted a file?
+        if ($fromform = $importform->get_data() && confirm_sesskey()) {
+            // File checks out ok.
             $fileisgood = false;
 
-            // work out if this is an uploaded file
+            // Work out if this is an uploaded file
             // or one from the filesarea.
-            $realfilename = $import_form->get_new_filename('newfile');
-            // create a unique temp dir.
-            srand(microtime()*1000000);
+            $realfilename = $importform->get_new_filename('newfile');
+            // Create a unique temp dir.
+            srand(microtime() * 1000000);
             $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
             $dirname = "{$CFG->tempdir}/offlinequiz/import/$unique";
             check_dir_exists($dirname, true, true);
 
             $importfile = $dirname . '/' . $realfilename;
 
-            if (!$result = $import_form->save_file('newfile', $importfile, true)) {
+            if (!$result = $importform->save_file('newfile', $importfile, true)) {
                 throw new moodle_exception('uploadproblem');
             }
 
@@ -244,7 +242,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             }
             $added = count($files);
 
-            // create a new queue job
+            // Create a new queue job.
             $job = new stdClass();
             $job->offlinequizid = $offlinequiz->id;
             $job->importuserid = $USER->id;
@@ -256,7 +254,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 echo $OUTPUT->notification(get_string('couldnotcreatejob', 'offlinequiz_rimport'), 'notifyproblem');
             }
 
-            // add the files to the job
+            // Add the files to the job.
             foreach ($files as $file) {
                 $jobfile = new stdClass();
                 $jobfile->queueid = $job->id;
@@ -268,12 +266,12 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 }
             }
 
-            // notify the user
+            // Notify the user.
             echo $OUTPUT->notification(get_string('addingfilestoqueue', 'offlinequiz_rimport', $added), 'notifysuccess');
             echo $OUTPUT->continue_button($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id . '&mode=rimport');
         } else {
 
-            // print info about offlinequiz_queue jobs
+            // Print info about offlinequiz_queue jobs.
             $sql = 'SELECT COUNT(*) as count
                       FROM {offlinequiz_queue} q
                       JOIN {offlinequiz_queue_data} qd on q.id = qd.queueid
@@ -290,7 +288,8 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 echo $OUTPUT->notification(get_string('newformsinqueue', 'offlinequiz_rimport', $newforms->count), 'notifysuccess');
             }
             if ($processingforms->count > 0) {
-                echo $OUTPUT->notification(get_string('processingformsinqueue', 'offlinequiz_rimport', $processingforms->count), 'notifysuccess');
+                echo $OUTPUT->notification(get_string('processingformsinqueue', 'offlinequiz_rimport', $processingforms->count),
+                        'notifysuccess');
             }
 
             $action = optional_param('action', '', PARAM_ACTION);
@@ -320,10 +319,10 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     }
                     break;
                 default:
-                    // print the table with answer forms that need correction
+                    // Print the table with answer forms that need correction.
                     $this->print_error_report($offlinequiz);
-                    // display the upload form
-                    $import_form->display();
+                    // Display the upload form.
+                    $importform->display();
             }
         }
     }

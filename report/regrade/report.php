@@ -38,24 +38,15 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
         $confirm = optional_param('confirm', 0, PARAM_INT);
 
         raise_memory_limit(MEMORY_EXTRA);
-        
-        // Print header
+
+        // Print header.
         $this->print_header_and_tabs($cm, $course, $offlinequiz, 'regrade');
 
         offlinequiz_load_useridentification();
         $offlinequizconfig = get_config('offlinequiz');
         $letterstr = 'ABCDEFGHIJKL';
 
-        //      // create new correction forms
-        //      for ($i=1; $i <= $offlinequiz->numgroups; $i++) {
-        //          if (!$result = $DB->get_record('offlinequiz_results', array('offlinequizid' => $offlinequiz->id,
-        //                  'groupid' => $i, 'sheet', 1)) {
-        //              error("Missing data for group ".$letterstr[$i-1],"createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey());
-        //          }
-        //          offlinequiz_create_pdf_correction($result, $offlinequiz, $course->id);
-        //      }
-
-        // Print heading
+        // Print heading.
         echo $OUTPUT->box_start('linkbox');
         echo $OUTPUT->heading(format_string($offlinequiz->name));
         echo $OUTPUT->heading(get_string('regradingquiz', 'offlinequiz'));
@@ -67,7 +58,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
                      JOIN {user} u on u.id = res.userid
                     WHERE res.offlinequizid = :offlinequizid
                       AND res.status = 'complete'";
-        $resparams =  array('offlinequizid' => $offlinequiz->id);
+        $resparams = array('offlinequizid' => $offlinequiz->id);
 
         if (!$results = $DB->get_records_sql($ressql, $resparams)) {
             $url = new moodle_url('/mod/offlinequiz/report.php', array('id' => $cm->id));
@@ -101,22 +92,9 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
             return true;
         }
 
-        // Fetch all questions
-        $sql = "SELECT q.id, i.grade as maxgrade,
-                       q.category, q.parent, q.name, q.defaultmark,
-                       q.penalty, q.qtype, q.stamp, q.version, q.hidden
-                  FROM {offlinequiz_q_instances} i,
-                       {question} q
-                 WHERE i.offlinequizid = :offlinequizid
-                   AND i.questionid = q.id";
-
-        $params = array('offlinequizid' => $offlinequiz->id);
-
-        if (! $questions = $DB->get_records_sql($sql, $params)) {
-            print_error("Failed to get questions for regrading!");
-        }
-
-        if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+        // Fetch all groups.
+        if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
+                '*', 0, $offlinequiz->numgroups)) {
             foreach ($groups as $group) {
                 $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
                 $groupletter = $letterstr[$group->number - 1];
@@ -127,23 +105,34 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
             }
         }
 
-        // options for the popup_action
+        // Options for the popup_action.
         $options = array();
-        $options['height'] = 1024; // optional
-        $options['width'] = 860; // optional
+        $options['height'] = 1024; // Optional.
+        $options['width'] = 860; // Optional.
         $options['resizable'] = false;
 
         $saveresult = false;
 
-        // Loop through all results and regrade while printing progress info
+        // Loop through all results and regrade while printing progress info.
         foreach ($results as $result) {
             set_time_limit(120);
 
+            $sql = "SELECT ogq.questionid, ogq.maxmark 
+                      FROM {offlinequiz_group_questions} ogq
+                     WHERE ogq.offlinequizid = :offlinequizid
+                       AND ogq.offlinegroupid = :offlinegroupid";
+
+            $params = array('offlinequizid' => $offlinequiz->id,
+                            'offlinegroupid' => $result->offlinegroupid);
+
+            if (! $questions = $DB->get_records_sql($sql, $params)) {
+                print_error("Failed to get questions for regrading!");
+            }
+            
             $user = $DB->get_record('user', array('id' => $result->userid));
             echo '<strong>' . get_string('regradingresult', 'offlinequiz', $user->{$offlinequizconfig->ID_field}) .
             '</strong> ';
             $changed = $this->regrade_result($result, $questions);
-            //  offlinequiz_update_sumgrades($offlinequiz, $result->offlinegroupid);
 
             if ($changed) {
                 $quba = question_engine::load_questions_usage_by_activity($result->usageid);
@@ -159,7 +148,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
                 echo get_string('done', 'offlinequiz');
             }
             echo '<br />';
-            // the following makes sure that the output is sent immediately.
+            // The following makes sure that the output is sent immediately.
             @flush();@ob_flush();
         }
 
@@ -172,25 +161,10 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
         );
         $event = \mod_offlinequiz\event\results_regraded::create($params);
         $event->trigger();
-        
-        // Loop through all questions and recalculate $result->sumgrade
-        //      $resultschanged = 0;
-        //      foreach ($results as $result) {
-        //          $sumgrades = 0;
-        //          $questionids = explode(',', offlinequiz_questions_in_offlinequiz($result->layout));
-        //          foreach($questionids as $questionid) {
-        //              $lastgradedid = get_field('question_sessions', 'newgraded', 'resultid', $result->uniqueid, 'questionid', $questionid);
-        //              $sumgrades += get_field('question_states', 'grade', 'id', $lastgradedid);
-        //          }
-        //          if ($saveresult) {
-        //              $resultschanged++;
-        //              set_field('offlinequiz_results', 'sumgrades', $sumgrades, 'id', $result->id);
-        //          }
-        //      }
 
-        $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php', array('q' => $offlinequiz->id, 'mode' => 'overview'));
+        $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php', array('q' => $offlinequiz->id,
+                'mode' => 'overview'));
 
-        // offlinequiz_grade_item_update($offlinequiz, 'reset');
         offlinequiz_update_grades($offlinequiz);
 
         echo $OUTPUT->box_start('linkbox');
@@ -231,7 +205,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
             $qqr = new stdClass();
             $qqr->oldfraction = $quba->get_question_fraction($slot);
             $slotquestion = $quba->get_question($slot);
-            $newmaxmark = $questions[$slotquestion->id]->maxgrade;
+            $newmaxmark = $questions[$slotquestion->id]->maxmark;
             $quba->regrade_question($slot, $finished, $newmaxmark);
 
             $qqr->newfraction = $quba->get_question_fraction($slot);
