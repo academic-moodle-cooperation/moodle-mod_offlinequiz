@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.8+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,8 +40,6 @@ require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
  * has been started, then the attempt holds the specific set of questions
  * that that student should answer, and we no longer use this class.
  *
- * @copyright 2014 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class structure {
     /** @var \offlinequiz the offlinequiz this is the structure of. */

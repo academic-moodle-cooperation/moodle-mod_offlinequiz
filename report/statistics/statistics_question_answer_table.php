@@ -18,7 +18,7 @@
  * Offlinequiz statistics report, table for showing statistics of each question and its answers.
  *
  * @package   offlinequiz_statistics
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ require_once($CFG->libdir.'/tablelib.php');
  * This table has one row for each question in the offlinequiz, with sub-rows when
  * random questions appear. There are columns for the various statistics.
  *
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_question_answer_statistics_table extends flexible_table {

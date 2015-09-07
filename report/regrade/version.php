@@ -14,25 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of offlinequiz
+ * Offlinequiz regradeing report version info
  *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
- *
- * @package       mod_offlinequiz
- * @author        Juergen Zimmer <zimmerj7@univie.ac.at> <zimmerj7@univie.ac.at>
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @since         Moodle 2.2
+ * @since         Moodle 2.1
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+ *
+ **/
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2015060902;
-$plugin->release   = "2015-06-16";      // User-friendly version number.
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->requires = 2014111000;         // Requires this Moodle version.
-$plugin->cron     = 3600;               // Period for cron to check this module (secs).
-$plugin->component = 'mod_offlinequiz'; // Full name of the plugin (used for diagnostics).
+$plugin->version  = 2015070300;
+$plugin->requires = 2011112900;
+$plugin->component = 'offlinequiz_regrade';
