@@ -257,7 +257,6 @@ $string['infoshort'] = 'i';
 $string['insecuremarkingsforquestion'] = 'Insecure markings need manual corrections for question';
 $string['insecuremarkings'] = 'Insecure markings need manual corrections';
 $string['insertnumber'] = 'Please insert the correct identification number marked by the blue frame.';
-$string['insertnumber'] = 'Please insert the correct identification number marked by the blue frame.';
 $string['instruction1'] = 'This answer form will be scanned automatically. Please do not fold or spot. Use a black or blue pen to mark the fields:';
 $string['instruction2'] = 'Only clear markings can be interpreted correctly! If you want to correct a marking, completely fill the box with color. This field will be interpreted like an empty box:';
 $string['instruction3'] = 'Corrected boxes cannot be marked again. Please do not write anything outside of the boxes.';
