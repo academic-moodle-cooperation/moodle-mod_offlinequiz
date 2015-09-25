@@ -233,6 +233,7 @@ $string['instruction1'] = 'Dieser Antwortbogen wird maschinell gelesen. Bitte ni
 $string['instruction2'] = 'Nur deutlich erkennbare positionsgenaue Markierungen werden ausgewertet! Wenn Sie eine Ankreuzung korrigieren möchten, füllen Sie das Kästchen mit der Falsch-Markierung mit Ihrem Stift vollkommen aus, dadurch wird diese Ankreuzung wie ein leeres Kästchen gewertet:';
 $string['instruction3'] = 'Ausstreichungen können nicht noch mal korrigiert werden. Markierungen und Beschriftungen außerhalb der Kästchenfelder können die Auswertung behindern.';
 $string['introduction'] = 'Beschreibung';
+$string['invaliduserfield'] = 'Ungültiges Feld der user Tabelle.';
 $string['invigilator'] = 'Saalaufsicht';
 $string['ischecked'] = 'Teilnahme bestätigt';
 $string['isnotchecked'] = 'Teilnahme nicht bestätigt';
