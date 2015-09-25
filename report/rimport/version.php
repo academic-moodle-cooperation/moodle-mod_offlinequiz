@@ -28,6 +28,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2012052001;
+$plugin->version  = 2015092501;
 $plugin->requires = 2011060313;
 $plugin->component = 'offlinequiz_rimport';
