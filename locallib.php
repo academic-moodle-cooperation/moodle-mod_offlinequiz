@@ -899,11 +899,6 @@ function offlinequiz_load_useridentification() {
                       strpos($offlinequizconfig->useridentification, '=') - $end - 1);
     $field = substr($offlinequizconfig->useridentification, strpos($offlinequizconfig->useridentification, '=') + 1);
 
-    $testuser = $DB->get_record('user', array('id' => 1));
-
-    if (!isset($testuser->{$field})) {
-        print_error($errorstr, 'offlinequiz');
-    }
     set_config('ID_digits', $digits, 'offlinequiz');
     set_config('ID_prefix', $prefix, 'offlinequiz');
     set_config('ID_postfix', $postfix, 'offlinequiz');

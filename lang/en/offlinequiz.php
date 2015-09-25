@@ -262,6 +262,7 @@ $string['instruction1'] = 'This answer form will be scanned automatically. Pleas
 $string['instruction2'] = 'Only clear markings can be interpreted correctly! If you want to correct a marking, completely fill the box with color. This field will be interpreted like an empty box:';
 $string['instruction3'] = 'Corrected boxes cannot be marked again. Please do not write anything outside of the boxes.';
 $string['introduction'] = 'Introduction';
+$string['invaliduserfield'] = 'Invalid field of the user table used.';
 $string['invigilator'] = 'Invigilator';
 $string['ischecked'] = 'Participation is checked';
 $string['isnotchecked'] = 'Participation is not checked';
