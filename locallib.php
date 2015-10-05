@@ -1525,12 +1525,16 @@ function offlinequiz_delete_pdf_forms($offlinequiz) {
     global $DB;
 
     $fs = get_file_storage();
-    $context = context_module::instance($offlinequiz->cmid);
+    
+    // If the offlinequiz has just been created then there is no cmid.
+    if (isset($offlinequiz->cmid)) {    
+        $context = context_module::instance($offlinequiz->cmid);
 
-    // Delete PDF documents.
-    $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
-    foreach ($files as $file) {
-        $file->delete();
+        // Delete PDF documents.
+        $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
+        foreach ($files as $file) {
+            $file->delete();
+        }
     }
 
     // Set offlinequiz->docscreated to 0.
@@ -1557,15 +1561,6 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
                 $DB->set_field('offlinequiz_groups', 'templateusageid', 0, array('id' => $group->id));
             }
         }
-
-        // Empty pagenumbers and usage slots.
-//         $sql = "UPDATE {offlinequiz_group_questions}
-//                    SET slot = NULL,
-//                        page = NULL
-//                  WHERE offlinequizid = :offlinequizid
-//                  ";
-//         $params = array('offlinequizid' => $offlinequiz->id);
-//         $DB->execute($sql, $params);
     }
 
     // Also delete the PDF forms if they have been created.
