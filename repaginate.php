@@ -17,9 +17,12 @@
 /**
  * Rest endpoint for ajax editing for paging operations on the offlinequiz structure.
  *
- * @package   mod_offlinequiz
- * @copyright 2014 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.8
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../config.php');
@@ -49,6 +52,8 @@ if (offlinequiz_has_scanned_pages($offlinequizid)) {
 $slotnumber++;
 $repage = new \mod_offlinequiz\repaginate($offlinequizid, $offlinegroupid);
 $repage->repaginate_slots($slotnumber, $repagtype);
+
+offlinequiz_delete_template_usages($offlinequizobj->get_offlinequiz());
 
 $structure = $offlinequizobj->get_structure();
 $slots = $structure->refresh_page_numbers_and_update_db($structure->get_offlinequiz());

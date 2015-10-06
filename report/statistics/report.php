@@ -19,7 +19,7 @@
  *
  * @package   offlinequiz_statistics
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/responseanalysi
  * a offlinequiz, compared to the whole offlinequiz. It also provides a drill-down to more
  * detailed information about each question.
  *
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_statistics_report extends offlinequiz_default_report {

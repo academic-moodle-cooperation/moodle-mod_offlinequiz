@@ -23,7 +23,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -899,11 +899,6 @@ function offlinequiz_load_useridentification() {
                       strpos($offlinequizconfig->useridentification, '=') - $end - 1);
     $field = substr($offlinequizconfig->useridentification, strpos($offlinequizconfig->useridentification, '=') + 1);
 
-    $testuser = $DB->get_record('user', array('id' => 1));
-
-    if (!isset($testuser->{$field})) {
-        print_error($errorstr, 'offlinequiz');
-    }
     set_config('ID_digits', $digits, 'offlinequiz');
     set_config('ID_prefix', $prefix, 'offlinequiz');
     set_config('ID_postfix', $postfix, 'offlinequiz');
@@ -1199,7 +1194,7 @@ function offlinequiz_partlist_created($offlinequiz) {
  * An extension of question_display_options that includes the extra options used
  * by the offlinequiz.
  *
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_offlinequiz_display_options extends question_display_options {
@@ -1530,12 +1525,16 @@ function offlinequiz_delete_pdf_forms($offlinequiz) {
     global $DB;
 
     $fs = get_file_storage();
-    $context = context_module::instance($offlinequiz->cmid);
+    
+    // If the offlinequiz has just been created then there is no cmid.
+    if (isset($offlinequiz->cmid)) {    
+        $context = context_module::instance($offlinequiz->cmid);
 
-    // Delete PDF documents.
-    $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
-    foreach ($files as $file) {
-        $file->delete();
+        // Delete PDF documents.
+        $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
+        foreach ($files as $file) {
+            $file->delete();
+        }
     }
 
     // Set offlinequiz->docscreated to 0.
@@ -1562,15 +1561,6 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
                 $DB->set_field('offlinequiz_groups', 'templateusageid', 0, array('id' => $group->id));
             }
         }
-
-        // Empty pagenumbers and usage slots.
-//         $sql = "UPDATE {offlinequiz_group_questions}
-//                    SET slot = NULL,
-//                        page = NULL
-//                  WHERE offlinequizid = :offlinequizid
-//                  ";
-//         $params = array('offlinequizid' => $offlinequiz->id);
-//         $DB->execute($sql, $params);
     }
 
     // Also delete the PDF forms if they have been created.

@@ -26,7 +26,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -176,14 +176,8 @@ function offlinequiz_update_instance($offlinequiz) {
 
     // Do the processing required after an add or an update.
     offlinequiz_after_add_or_update($offlinequiz);
-
-    // Check whether shufflequestions of shuffleanswers has been changed
-    // If so, we have to delete the question usage templates...
-    // Note that we don't have to delete PDF files because the shuffle settings can not be changed when
-    // the documents have been created.
-    if (($offlinequiz->shufflequestions != $shufflequestions) || ($offlinequiz->shuffleanswers != $shuffleanswers)) {
-        offlinequiz_delete_template_usages($offlinequiz, false);
-    }
+    // Delete the question usage templates.
+    offlinequiz_delete_template_usages($offlinequiz);
 
     return true;
 }
@@ -944,7 +938,6 @@ function offlinequiz_after_add_or_update($offlinequiz) {
     }
 
     offlinequiz_update_events($offlinequiz);
-
     offlinequiz_grade_item_update($offlinequiz);
     return;
 }

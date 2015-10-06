@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Admin settings class for the offlinequiz review opitions.
  *
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_offlinequiz_admin_review_setting extends admin_setting {
@@ -165,4 +165,47 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
         return format_admin_setting($this, $this->visiblename, $return,
                 $this->description, true, '', get_string('everythingon', 'offlinequiz'), $query);
     }
+}
+
+/**
+ * 
+ */
+class admin_setting_configtext_user_formula extends admin_setting_configtext {
+	public function validate($data) {
+		global $DB;
+
+		$valid = false;
+        // allow paramtype to be a custom regex if it is the form of /pattern/
+        if (preg_match('#^/.*/$#', $this->paramtype)) {
+            if (preg_match($this->paramtype, $data)) {
+                $valid = true;
+            } else {
+                return get_string('validateerror', 'admin');
+            }
+
+        } else if ($this->paramtype === PARAM_RAW) {
+            $valid = true;
+
+        } else {
+            $cleaned = clean_param($data, $this->paramtype);
+            if ("$data" === "$cleaned") { // implicit conversion to string is needed to do exact comparison
+                $valid = true;
+            } else {
+                return get_string('validateerror', 'admin');
+            }
+        }
+        if ($valid) {
+        	// check for valid user table field.
+            $field = substr($data, strpos($data, '=') + 1);
+		    if ($testusers = $DB->get_records('user', null, '', '*', 0, 1)) {
+		    	if (count($testusers) > 0 && $testuser = array_pop($testusers)) {
+                   if (isset($testuser->{$field})) {
+                       return true;
+                   } else {
+    	    	       return get_string('invaliduserfield', 'offlinequiz');
+                   }
+		    	}
+    		}
+        }
+	}
 }

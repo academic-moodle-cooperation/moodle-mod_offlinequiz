@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.5
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -161,7 +161,6 @@ class offlinequiz_statistics_question_stats {
 
         $subquestionstats = array();
 
-        error_log('compute_stats');
         // Compute the statistics of position, and for random questions, work
         // out which questions appear in which positions.
         foreach ($this->lateststeps as $step) {

@@ -21,7 +21,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -349,6 +349,8 @@ if ($mode == 'preview') {
             print_error('Some answer forms have already been analysed',
                 "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey());
         } else {
+            // Redmine 2750: Always delete templates as well.
+            offlinequiz_delete_template_usages($offlinequiz);
             $offlinequiz = offlinequiz_delete_pdf_forms($offlinequiz);
 
             $doctype = 'PDF';

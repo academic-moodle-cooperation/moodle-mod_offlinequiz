@@ -15,23 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Lists renamed classes so that the autoloader can make the old names still work.
+ * Offlinequiz regradeing report version info
  *
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @since         Moodle 2.8+
+ * @since         Moodle 2.1
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+ *
+ **/
 
 defined('MOODLE_INTERNAL') || die();
 
-// Array 'old_class_name' => 'new\class_name'.
-$renamedclasses = array(
-
-    // Changed in Moodle 2.8.
-    'offlinequiz_question_bank_view'                 => 'mod_offlinequiz\question\bank\custom_view',
-    'question_bank_add_to_offlinequiz_action_column' => 'mod_offlinequiz\question\bank\add_action_column',
-    'question_bank_question_name_text_column' => 'mod_offlinequiz\question\bank\question_name_text_column',
-);
+$plugin->version  = 2015070300;
+$plugin->requires = 2011112900;
+$plugin->component = 'offlinequiz_regrade';

@@ -18,11 +18,13 @@
  * This file contains the code to analyse all the responses to a particular
  * question.
  *
- * @package   offlinequiz_statistics
- * @copyright 2010 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.5
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,7 +33,6 @@ defined('MOODLE_INTERNAL') || die();
  * This class can store and compute the analysis of the responses to a particular
  * question.
  *
- * @copyright 2010 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_statistics_response_analyser {

@@ -89,8 +89,8 @@ switch($requestmethod) {
                 switch ($field) {
                     case 'move':
                         require_capability('mod/offlinequiz:manage', $modcontext);
+                        offlinequiz_delete_template_usages($offlinequiz);
                         $structure->move_slot($id, $previousid, $page);
-                        // offlinequiz_delete_previews($offlinequiz);
                         echo json_encode(array('visible' => true));
                         break;
 
@@ -110,9 +110,10 @@ switch($requestmethod) {
                             break;
                         }
                         if ($structure->update_slot_maxmark($slot, $maxmark)) {
+
                             // Grade has really changed.
-                            // offlinequiz_delete_previews($offlinequiz);
                             $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+                            offlinequiz_update_question_instance($offlinequiz, $slot->questionid, unformat_float($maxmark));
                             offlinequiz_update_all_attempt_sumgrades($offlinequiz);
                             //offlinequiz_update_all_final_grades($offlinequiz);
                             offlinequiz_update_grades($offlinequiz, 0, true);
@@ -122,6 +123,7 @@ switch($requestmethod) {
                         break;
                     case 'updatepagebreak':
                         require_capability('mod/offlinequiz:manage', $modcontext);
+                        offlinequiz_delete_template_usages($offlinequiz);
                         $slots = $structure->update_page_break($offlinequiz, $id, $value);
                         $json = array();
                         foreach ($slots as $slot) {
@@ -147,7 +149,7 @@ switch($requestmethod) {
                     throw new moodle_exception('AJAX commands.php: Bad slot ID '.$id);
                 }
                 $structure->remove_slot($offlinequiz, $slot->slot);
-                // offlinequiz_delete_previews($offlinequiz);
+                offlinequiz_delete_template_usages($offlinequiz);
                 offlinequiz_update_sumgrades($offlinequiz);
                 echo json_encode(array('newsummarks' => offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades),
                             'deleted' => true, 'newnumquestions' => $structure->get_question_count()));

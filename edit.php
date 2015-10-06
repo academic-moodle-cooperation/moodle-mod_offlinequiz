@@ -37,7 +37,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.8+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -166,7 +166,7 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     $structure->check_can_be_edited();
     $questionsperpage = optional_param('questionsperpage', $offlinequiz->questionsperpage, PARAM_INT);
     offlinequiz_repaginate_questions($offlinequiz->id, $offlinequiz->groupid, $questionsperpage );
-    //offlinequiz_delete_previews($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
 
@@ -183,7 +183,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     } else {
         offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage);
     }
-    // offlinequiz_delete_previews($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     $thispageurl->param('lastchanged', $addquestion);
     redirect($afteractionurl);
@@ -208,7 +208,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             }
         }
     }
-    // offlinequiz_delete_previews($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     redirect($afteractionurl);
 }
@@ -222,7 +222,7 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     $randomcount = required_param('randomcount', PARAM_INT);
     offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount, $recurse);
 
-    // offlinequiz_delete_previews($offlinequiz);
+    offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     redirect($afteractionurl);
 }
@@ -232,6 +232,9 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     // Parameter to copy selected questions to another group.
     $copyselectedtogroup = optional_param('copyselectedtogrouptop', 0, PARAM_INT);
 
+    // Delete the templates, just to be sure.
+    offlinequiz_delete_template_usages($offlinequiz);
+
     if ($copyselectedtogroup) {
 
         if (($selectedquestionids) && ($newgroup = offlinequiz_get_group($offlinequiz, $copyselectedtogroup))) {
@@ -240,8 +243,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
             offlinequiz_add_questionlist_to_group($selectedquestionids, $offlinequiz, $newgroup, $fromofflinegroup);
 
             offlinequiz_update_sumgrades($offlinequiz, $newgroup->id);
-            // Delete the templates, just to be sure.
-            offlinequiz_delete_template_usages($offlinequiz);
         }
         redirect($afteractionurl);
     }
@@ -279,15 +280,12 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
         }
     }
 
-    $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
-    // Redmine 983: Upgrade sumgrades for all other groups as well.
+    // Redmine 983: Upgrade sumgrades for all offlinequiz groups.
     if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
             '*', 0, $offlinequiz->numgroups)) {
-            foreach ($groups as $group) {
-                if ($group->id != $offlinequiz->groupid) {
-                    $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
-                }
-            }
+        foreach ($groups as $group) {
+            $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
+        }
     }
 
     offlinequiz_update_all_attempt_sumgrades($offlinequiz);

@@ -20,7 +20,7 @@
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,19 +36,19 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('offlinequizintro', '', get_string('configintro', 'offlinequiz')));
 
     // User identification.
-    $settings->add(new admin_setting_configtext('offlinequiz/useridentification',
+    $settings->add(new admin_setting_configtext_user_formula('offlinequiz/useridentification',
             get_string('useridentification', 'offlinequiz'), get_string('configuseridentification', 'offlinequiz'),
             '[7]=idnumber' , PARAM_RAW, 30));
 
     // Shuffle questions.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/shufflequestions',
             get_string('shufflequestions', 'offlinequiz'), get_string('configshufflequestions', 'offlinequiz'),
-            array('value' => 0, 'adv' => false)));
+            0));
 
     // Shuffle within questions.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/shuffleanswers',
             get_string('shufflewithin', 'offlinequiz'), get_string('configshufflewithin', 'offlinequiz'),
-            array('value' => 1, 'adv' => false)));
+            1));
 
     // Logo image URL setting.
     $settings->add(new admin_setting_configtext('offlinequiz/logourl', get_string('logourl', 'offlinequiz'),
@@ -86,7 +86,7 @@ if ($ADMIN->fulltree) {
     }
     $settings->add(new admin_setting_configselect('offlinequiz/decimalpoints',
             get_string('decimalplaces', 'offlinequiz'), get_string('configdecimalplaces', 'offlinequiz'),
-            array('value' => 2, 'fix' => false), $options));
+            2, $options));
 
     $settings->add(new admin_setting_heading('scanningheading',
             get_string('scanningoptionsheading', 'offlinequiz'), ''));
@@ -99,7 +99,7 @@ if ($ADMIN->fulltree) {
     $options[700] = get_string("pearlywhite", "offlinequiz");
 
     $settings->add(new admin_setting_configselect('offlinequiz/papergray', get_string('papergray', 'offlinequiz'),
-            get_string('configpapergray', 'offlinequiz'), array('value' => 670, 'fix' => true), $options));
+            get_string('configpapergray', 'offlinequiz'), 670, $options));
 
     $settings->add(new admin_setting_heading('correctionheading',
             get_string('correctionoptionsheading', 'offlinequiz'), ''));
@@ -124,7 +124,7 @@ if ($ADMIN->fulltree) {
     }
 
     $settings->add(new admin_setting_configselect('offlinequiz/oneclickrole', get_string('oneclickrole', 'offlinequiz'),
-            get_string('oneclickroledesc', 'offlinequiz'), array('value' => $default, 'fix' => true), $options));
+            get_string('oneclickroledesc', 'offlinequiz'), $default, $options));
 
     $settings->add(new admin_setting_configtext('offlinequiz/keepfilesfordays', get_string('keepfilesfordays', 'offlinequiz'),
              get_string('configkeepfilesfordays', 'offlinequiz'), 8, PARAM_INT));

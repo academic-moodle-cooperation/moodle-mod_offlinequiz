@@ -23,16 +23,16 @@
  *
  * @package       mod_offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at> <zimmerj7@univie.ac.at>
- * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.2
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2015060902;
-$module->release   = "2015-06-16";      // User-friendly version number.
-$module->maturity  = MATURITY_STABLE;
-$module->requires = 2014111000;         // Requires this Moodle version.
-$module->cron     = 3600;               // Period for cron to check this module (secs).
-$module->component = 'mod_offlinequiz'; // Full name of the plugin (used for diagnostics).
+$plugin->version  = 2015100500;
+$plugin->release   = "2015-06-16";      // User-friendly version number.
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->requires = 2014111000;         // Requires this Moodle version.
+$plugin->cron     = 3600;               // Period for cron to check this module (secs).
+$plugin->component = 'mod_offlinequiz'; // Full name of the plugin (used for diagnostics).
