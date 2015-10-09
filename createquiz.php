@@ -349,6 +349,8 @@ if ($mode == 'preview') {
             print_error('Some answer forms have already been analysed',
                 "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey());
         } else {
+            // Redmine 2750: Always delete templates as well.
+            offlinequiz_delete_template_usages($offlinequiz);
             $offlinequiz = offlinequiz_delete_pdf_forms($offlinequiz);
 
             $doctype = 'PDF';

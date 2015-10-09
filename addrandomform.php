@@ -42,7 +42,7 @@ class offlinequiz_add_random_form extends moodleform {
         global $CFG, $DB;
         $mform =& $this->_form;
         $mform->setDisableShortforms();
-
+        
         $contexts = $this->_customdata['contexts'];
         $usablecontexts = $contexts->having_cap('moodle/question:useall');
 
@@ -72,6 +72,8 @@ class offlinequiz_add_random_form extends moodleform {
         $mform->setType('cmid', PARAM_INT);
         $mform->addElement('hidden', 'returnurl', 0);
         $mform->setType('returnurl', PARAM_LOCALURL);
+        $mform->addElement('hidden', 'groupnumber', $this->_customdata['groupnumber']);
+        $mform->setType('groupnumber', PARAM_INT);
     }
 
     public function validation($fromform, $files) {

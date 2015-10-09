@@ -161,7 +161,6 @@ class offlinequiz_statistics_question_stats {
 
         $subquestionstats = array();
 
-        error_log('compute_stats');
         // Compute the statistics of position, and for random questions, work
         // out which questions appear in which positions.
         foreach ($this->lateststeps as $step) {

@@ -103,7 +103,10 @@ $qcobject = new question_category_object(
     $contexts->having_cap('moodle/question:add'));
 
 $mform = new offlinequiz_add_random_form(new moodle_url('/mod/offlinequiz/addrandom.php'),
-                array('contexts' => $contexts, 'cat' => $pagevars['cat']));
+                array('contexts' => $contexts,
+                      'cat' => $pagevars['cat'],
+                      'groupnumber'=> $offlinequiz->groupnumber
+                ));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);

@@ -53,6 +53,8 @@ $slotnumber++;
 $repage = new \mod_offlinequiz\repaginate($offlinequizid, $offlinegroupid);
 $repage->repaginate_slots($slotnumber, $repagtype);
 
+offlinequiz_delete_template_usages($offlinequizobj->get_offlinequiz());
+
 $structure = $offlinequizobj->get_structure();
 $slots = $structure->refresh_page_numbers_and_update_db($structure->get_offlinequiz());
 
