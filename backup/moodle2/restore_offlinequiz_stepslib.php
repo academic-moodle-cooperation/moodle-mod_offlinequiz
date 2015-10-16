@@ -47,10 +47,6 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $offlinequiz = new restore_path_element('offlinequiz', '/activity/offlinequiz');
         $paths[] = $offlinequiz;
 
-        // Question instances.
-        $paths[] = new restore_path_element('offlinequiz_q_instance',
-                '/activity/offlinequiz/question_instances/question_instance');
-
         // Scanned pages and their choices and corners.
         $paths[] = new restore_path_element('offlinequiz_scannedpage', '/activity/offlinequiz/scannedpages/scannedpage');
         $paths[] = new restore_path_element('offlinequiz_choice', '/activity/offlinequiz/scannedpages/scannedpage/choices/choice');
@@ -142,19 +138,6 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $newitemid = $DB->insert_record('offlinequiz', $data);
         // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
-    }
-
-    // Restore method for question instances.
-    protected function process_offlinequiz_q_instance($data) {
-        global $DB;
-
-        $data = (object)$data;
-        $oldid = $data->id;
-
-        $data->offlinequizid = $this->get_new_parentid('offlinequiz');
-        $data->questionid = $this->get_mappingid('question', $data->questionid);
-
-        $DB->insert_record('offlinequiz_q_instances', $data);
     }
 
     // Restore method for offline groups.

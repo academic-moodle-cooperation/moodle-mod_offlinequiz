@@ -143,9 +143,6 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         // Define sources.
         $offlinequiz->set_source_table('offlinequiz', array('id' => backup::VAR_ACTIVITYID));
 
-        $qinstance->set_source_table('offlinequiz_q_instances',
-                array('offlinequizid' => backup::VAR_PARENTID));
-
         $group->set_source_table('offlinequiz_groups',
                 array('offlinequizid' => backup::VAR_PARENTID));
 
@@ -192,7 +189,6 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $offlinequiz->annotate_files('mod_offlinequiz', 'pdfs', null);
 
         // Define id annotations.
-        $qinstance->annotate_ids('question', 'questionid');
         $result->annotate_ids('user', 'userid');
         $result->annotate_ids('user', 'teacherid');
 
