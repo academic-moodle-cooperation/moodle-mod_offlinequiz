@@ -55,7 +55,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
 
         $groupquestions = new backup_nested_element('groupquestions');
         $groupquestion = new backup_nested_element('groupquestion', array('id'), array(
-                'questionid', 'position', 'page', 'slot'));
+                'questionid', 'position', 'page', 'slot', 'maxmark'));
 
         $results = new backup_nested_element('results');
 
