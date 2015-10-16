@@ -81,9 +81,9 @@ class offlinequiz_question_usage_by_activity extends question_usage_by_activity 
             // We have to check for the type because we might have old migrated templates
             // that could contain description questions.
             if ($slotquestion->get_type_name() == 'multichoice' || $slotquestion->get_type_name() == 'multichoiceset') {
-                                $order = $slotquestion->get_order($attempt);  // Order of the answers.
-                                $order = implode(',', $order);
-                $newslot = $newquba->add_question($slotquestion, $qinstances[$slotquestion->id]->grade);
+                $order = $slotquestion->get_order($attempt);  // Order of the answers.
+                $order = implode(',', $order);
+                $newslot = $newquba->add_question($slotquestion, $qinstances[$slotquestion->id]->maxmark);
                 $qa = $newquba->get_question_attempt($newslot);
                 $qa->start('immediatefeedback', 1, array('_order' => $order));
             }
@@ -664,7 +664,8 @@ function offlinequiz_delete_result($resultid, $context) {
 /**
  * Save new maxgrade to a question instance
  *
- * Saves changes to the question grades in the offlinequiz_question_instances table.
+ * Saves changes to the question grades in the offlinequiz_group_questions table.
+ * The grades of the questions in the group template qubas are also updated.
  * This function does not update 'sumgrades' in the offlinequiz table.
  *
  * @param int $offlinequiz  The offlinequiz to update / add the instances for.
@@ -702,6 +703,7 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade)
            if ($slot) {
                // Update the grade in the template usage.
                question_engine::set_max_mark_in_attempts(new qubaid_list(array($group->templateusageid)), $slot, $grade);
+
                // Update the grade in the student attempts/results.
                // First get the IDs of the question usages that correspond to the results in this group.
                $results = $DB->get_records('offlinequiz_results',
