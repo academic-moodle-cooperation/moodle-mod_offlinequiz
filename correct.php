@@ -365,8 +365,9 @@ onClick=\"self.close(); return false;\"><br />";
             }
 
             // Finally, delete the old result.
-            $DB->delete_records('offlinequiz_results', array('id' => $oldresultid));
+            offlinequiz_delete_result($oldresultid, $context);
         } else {
+            // Otherwise keep the old resultid.
             $scannedpage->resultid = $oldresultid;
             $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
         }
