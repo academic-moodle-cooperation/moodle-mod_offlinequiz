@@ -245,6 +245,9 @@ function offlinequiz_delete_instance($id) {
     // Remove the grade item.
     offlinequiz_grade_item_delete($offlinequiz);
 
+    // Delete template question usages of offlinequiz groups.
+    offlinequiz_delete_template_usages($offlinequiz);
+
     // All the tables with no dependencies...
     $tablestopurge = array(
             'offlinequiz_groups' => 'offlinequizid',

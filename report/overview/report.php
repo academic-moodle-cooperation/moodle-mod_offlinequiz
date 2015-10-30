@@ -94,7 +94,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     if ($resultid && $todelete = $DB->get_record ( 'offlinequiz_results', array (
                             'id' => $resultid) )) {
 
-                        offlinequiz_delete_result ($resultid, $context);
+                        offlinequiz_delete_result($resultid, $context);
 
                         // Log this event.
                         $params = array (
