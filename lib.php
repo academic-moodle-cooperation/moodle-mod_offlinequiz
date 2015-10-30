@@ -176,8 +176,14 @@ function offlinequiz_update_instance($offlinequiz) {
 
     // Do the processing required after an add or an update.
     offlinequiz_after_add_or_update($offlinequiz);
-    // Delete the question usage templates.
-    offlinequiz_delete_template_usages($offlinequiz);
+
+    // We also need the docscreated and the numgroups field. 
+    $offlinequiz = $DB->get_record('offlinequiz', array('id' => $offlinequiz->id));
+
+    // Delete the question usage templates if no documents have been created and no answer forms have been scanned.
+    if (!$offlinequiz->docscreated && !offlinequiz_has_scanned_pages($offlinequiz->id)) {
+        offlinequiz_delete_template_usages($offlinequiz);
+    }
 
     return true;
 }
