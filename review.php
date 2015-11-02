@@ -142,6 +142,7 @@ if ($options->marks != question_display_options::HIDDEN) {
         $maxmark = format_float($group->sumgrades, $offlinequiz->decimalpoints);
         $percentage = format_float(($result->sumgrades * 100.0 / $group->sumgrades), $offlinequiz->decimalpoints);
 
+        print_object(array($resultmark, $maxmark, $percentage));
         $table->data[] = array($strscore . ':', $resultmark . '/' . $maxmark . ' (' . $percentage . '%)');
 
         $a = new stdClass;
