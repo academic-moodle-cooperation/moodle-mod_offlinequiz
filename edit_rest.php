@@ -125,9 +125,9 @@ switch($requestmethod) {
                             //offlinequiz_update_all_final_grades($offlinequiz);
                             offlinequiz_update_grades($offlinequiz, 0, true);
                         }
-                        $newgroup = $DB->get_record('offlinequiz_groups', array('id' => $offlinequizgroup->id));
+                        $newsummarks = $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $offlinequizgroup->id));
                         echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
-                                'newsummarks' => format_float($newgroup->sumgrades, $offlinequiz->decimalpoints)));
+                                'newsummarks' => format_float($newsummarks, $offlinequiz->decimalpoints)));
                         break;
                     case 'updatepagebreak':
                         require_capability('mod/offlinequiz:manage', $modcontext);
