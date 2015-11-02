@@ -105,13 +105,11 @@ switch($requestmethod) {
                         require_capability('mod/offlinequiz:manage', $modcontext);
                         $slot = $structure->get_slot_by_id($id);
                         if (!is_numeric(str_replace(',', '.', $maxmark))) {
-                            echo('not numeric maxmark');
                             echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
                                     'newsummarks' => offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades)));
                             break;
                         }
                         if ($structure->update_slot_maxmark($slot, $maxmark)) {
-                            echo('success update slot maxmark');
                             // Recalculate the sumgrades for all groups
                             if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
                                 '*', 0, $offlinequiz->numgroups)) {
@@ -127,8 +125,9 @@ switch($requestmethod) {
                             //offlinequiz_update_all_final_grades($offlinequiz);
                             offlinequiz_update_grades($offlinequiz, 0, true);
                         }
+                        $newgroup = $DB->get_record('offlinequiz_groups', array('id' => $offlinequizgroup->id));
                         echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
-                                'newsummarks' => offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades)));
+                                'newsummarks' => format_float($newgroup->sumgrades, $offlinequiz->decimalpoints)));
                         break;
                     case 'updatepagebreak':
                         require_capability('mod/offlinequiz:manage', $modcontext);
