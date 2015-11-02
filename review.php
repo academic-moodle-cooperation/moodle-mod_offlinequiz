@@ -137,15 +137,16 @@ if (!empty($offlinequiz->time)) {
 // If the student is allowed to see his score.
 if ($options->marks != question_display_options::HIDDEN) {
     if ($offlinequiz->grade and $group->sumgrades) {
+
+        $resultmark = format_float($result->sumgrades, $offlinequiz->decimalpoints);
+        $maxmark = format_float($group->sumgrades, $offlinequiz->decimalpoints);
+        $percentage = format_float(($result->sumgrades * 100.0 / $group->sumgrades), $offlinequiz->decimalpoints);
+
+        $table->data[] = array($strscore . ':', $resultmark . '/' . $maxmark . ' (' . $percentage . '%)');
+
         $a = new stdClass;
         $a->grade = format_float(preg_replace('/,/i', '.', $grade), $offlinequiz->decimalpoints);
         $a->maxgrade = format_float($offlinequiz->grade, $offlinequiz->decimalpoints);
-
-        $rawscore = format_float($result->sumgrades, $offlinequiz->decimalpoints);
-        $percentage = format_float(($result->sumgrades * 1.0 / $group->sumgrades) * 100, $offlinequiz->decimalpoints);
-
-        $table->data[] = array($strscore . ':', $rawscore . '/' . format_float($group->sumgrades,
-                $offlinequiz->decimalpoints) . ' (' . $percentage . '%)');
         $table->data[] = array($strgrade . ':', get_string('outof', 'offlinequiz', $a));
     }
 }
