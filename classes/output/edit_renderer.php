@@ -721,7 +721,11 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Call question bank.
         $icon = new \pix_icon('t/add', $str->fromquestionbank, 'moodle', array('class' => 'iconsmall', 'title' => ''));
-        $title = get_string('addquestionfrombanktopage', 'offlinequiz', $page);
+        if ($page) {
+            $title = get_string('addquestionfrombanktopage', 'offlinequiz', $page);
+        } else {
+            $title = get_string('addquestionfrombankatend', 'offlinequiz', $page);
+        }
         $attributes = array('class' => 'cm-edit-action questionbank',
                 'data-header' => $title, 'data-action' => 'questionbank', 'data-addonpage' => $page);
         $actions['questionbank'] = new \action_menu_link_secondary($pageurl, $icon, $str->fromquestionbank, $attributes);

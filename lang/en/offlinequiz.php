@@ -40,6 +40,7 @@ $string['addnewuseroverride'] = 'Add user override';
 $string['addpagebreak'] = 'Add page break';
 $string['addpagehere'] = 'Add page here';
 $string['addparts'] = 'Add participants';
+$string['addquestionfrombankatend'] = 'Add from the question bank at the end';
 $string['addquestionfrombanktopage'] = 'Add from the question bank to page {$a}';
 $string['addrandom'] = 'Randomly add {$a} multiple choice question(s) ';
 $string['addrandomfromcategory'] = 'questions randomly';
