@@ -606,12 +606,12 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 }
                 if ($offlinequiz->showgrades) {
                     $pointstr = get_string('points', 'grades');
-                    if ($question->maxgrade == 1) {
+                    if ($question->maxmark == 1) {
                         $pointstr = get_string('point', 'offlinequiz');
                     }
                     // Indent the question grade like the answers.
                     $textrun = $section->createTextRun($level2);
-                    $textrun->addText('(' . ($question->maxgrade + 0) . ' '. $pointstr .')', 'bStyle');
+                    $textrun->addText('(' . ($question->maxmark + 0) . ' '. $pointstr .')', 'bStyle');
                 }
             }
             $section->addTextBreak();
@@ -711,12 +711,12 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 }
                 if ($offlinequiz->showgrades) {
                     $pointstr = get_string('points', 'grades');
-                    if ($question->maxgrade == 1) {
+                    if ($question->maxmark == 1) {
                         $pointstr = get_string('point', 'offlinequiz');
                     }
                     // Indent the question grade like the answers.
                     $textrun = $section->createTextRun($level2);
-                    $textrun->addText('(' . ($question->maxgrade + 0) . ' '. $pointstr .')', 'bStyle');
+                    $textrun->addText('(' . ($question->maxmark + 0) . ' '. $pointstr .')', 'bStyle');
                 }
 
                 $section->addTextBreak();
