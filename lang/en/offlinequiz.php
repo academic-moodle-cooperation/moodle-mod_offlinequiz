@@ -97,7 +97,7 @@ $string['correcterror'] = 'solve';
 $string['correctforgroup'] = 'Correct answers for Group {$a}';
 $string['correctionform'] = 'Correction';
 $string['correctionforms'] = 'Correction forms';
-$string['correctionoptionsheading'] = 'Correction options.';
+$string['correctionoptionsheading'] = 'Correction options';
 $string['correctupdated'] = 'Updated correction form for group {$a}.';
 $string['couldnotgrab'] = 'Could not grab image {$a}';
 $string['couldnotregister'] = 'Could not register user {$a}';
@@ -152,7 +152,6 @@ $string['editgroups'] = 'Edit Offline Groups';
 $string['editgroupquestions'] = 'Edit group questions';
 $string['editingofflinequiz'] = 'Editing group questions';
 $string['editingofflinequiz_help'] = 'When creating an offline quiz, the main concepts are:
-*
 * The offline quiz, containing questions over one or more pages
 * The question bank, which stores copies of all questions organised into categories';
 
@@ -533,7 +532,7 @@ $string['showgrades_help'] = 'This option controls whether the maximum grades of
 $string['showmissingattemptonly'] = 'Show all checked participants without result';
 $string['showmissingcheckonly'] = 'Show all unchecked participants with result';
 $string['shownumpartsperpage'] = 'Show {$a} participants per page';
-$string['showstudentview'] = 'Show student view.';
+$string['showstudentview'] = 'Show student view';
 $string['showtutorial'] = 'Show an offline quiz tutorial to students.';
 $string['showtutorial_help'] = 'This option determines whether students can see a tutorial about the basics of offline quizzes.
 The tutorial provides information about how to handle the different types of documents in offline quizzes. In an interactive part they learn how to tick their student ID correctly.<br />
