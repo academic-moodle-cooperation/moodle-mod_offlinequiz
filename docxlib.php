@@ -728,9 +728,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     $fs = get_file_storage();
 
-    $fileprefix = 'form';
+    $fileprefix = get_string('fileprefixform', 'offlinequiz');
     if ($correction) {
-        $fileprefix = 'correction';
+        $fileprefix = get_string('fileprefixcorrection', 'offlinequiz');
     }
 
     srand(microtime() * 1000000);
@@ -748,14 +748,17 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $objwriter->save($tempfilename);
 
     // Prepare file record object.
-    $timestamp = date('Ymd_His', time());
+    $date = usergetdate(time());
+    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
+            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+
     $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => $fileprefix . '-' . strtolower($groupletter) . '_' . $timestamp . '.docx');
+            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.docx');
 
     // Delete existing old files, should actually not happen.
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],

@@ -793,20 +793,23 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
     $fs = get_file_storage();
 
-    $fileprefix = 'form';
+    $fileprefix = get_string('fileprefixform', 'offlinequiz');
     if ($correction) {
-        $fileprefix = 'correction';
+        $fileprefix = get_string('fileprefixcorrection', 'offlinequiz');
     }
 
     // Prepare file record object.
-    $timestamp = date('Ymd_His', time());
+    $date = usergetdate(time());
+    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
+            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+    
     $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => $fileprefix . '-' . strtolower($groupletter) . '_' . $timestamp . '.pdf');
+            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.pdf');
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -984,14 +987,18 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     $fs = get_file_storage();
 
     // Prepare file record object.
-    $timestamp = date('Ymd_His', time());
+    $date = usergetdate(time());
+    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
+            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+
+    $fileprefix = get_string('fileprefixanswer', 'offlinequiz');
     $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => 'answer-' . strtolower($groupletter) . '_' . $timestamp . '.pdf');
+            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.pdf');
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -1127,14 +1134,18 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
     $fs = get_file_storage();
 
     // Prepare file record object.
-    $timestamp = date('Ymd_His', time());
+    $date = usergetdate(time());
+    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
+            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+
+    $fileprefix = get_string('fileprefixparticipants', 'offlinequiz');
     $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => 'participants_' . $list->id . '_' . $timestamp . '.pdf');
+            'filename' => $fileprefix . '_' . $list->id . '_' . $timestamp . '.pdf');
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
