@@ -481,7 +481,7 @@ switch($mode) {
 
         echo $OUTPUT->box_start('boxaligncenter generalbox boxwidthnormal');
 
-        $sql = "SELECT id, name, number
+        $sql = "SELECT id, name, number, filename
                   FROM {offlinequiz_p_lists}
                  WHERE offlinequizid = :offlinequizid
               ORDER BY name ASC";
@@ -493,7 +493,7 @@ switch($mode) {
 
             // Delete existing pdf if forcenew.
             if ($forcenew && property_exists($list, 'filename') && $list->filename
-                    && $file = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $list->filename)) {
+                    && $file = $fs->get_file($context->id, 'mod_offlinequiz', 'participants', 0, '/', $list->filename)) {
                 $file->delete();
                 $list->filename = null;
             }
@@ -501,7 +501,7 @@ switch($mode) {
             $pdffile = null;
             // Create PDF file if necessary.
             if (!property_exists($list, 'filename') ||  !$list->filename ||
-                    !$pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $list->filename)) {
+                    !$pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'participants', 0, '/', $list->filename)) {
                 $pdffile = offlinequiz_create_pdf_participants($offlinequiz, $course->id, $list, $context);
                 if (!empty($pdffile)) {
                     $list->filename = $pdffile->get_filename();

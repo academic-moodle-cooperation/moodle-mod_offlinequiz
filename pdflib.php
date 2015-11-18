@@ -1142,7 +1142,7 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
     $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
-            'filearea' => 'pdfs',
+            'filearea' => 'participants',
             'filepath' => '/',
             'itemid' => 0,
             'filename' => $fileprefix . '_' . $list->id . '_' . $timestamp . '.pdf');

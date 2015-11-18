@@ -424,8 +424,8 @@ if ($mode == 'preview') {
                            AND itemid = 0
                            AND filepath = '/'
                            AND " . $sqllike;
-                $params = array('contextid' => $context->id,
-                        'filename' => 'form-' . strtolower($groupletter) . '%' . $suffix);
+                $searchfilename = get_string('fileprefixform', 'offlinequiz') . '_' . $groupletter . '%' . $suffix;
+                $params = array('contextid' => $context->id, 'filename' => $searchfilename);
                 $filename = $DB->get_field_sql($sql, $params);
                 $questionfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $filename);
             }
@@ -476,8 +476,9 @@ if ($mode == 'preview') {
                            AND itemid = 0
                            AND filepath = '/'
                            AND " . $sqllike;
-                $params = array('contextid' => $context->id,
-                        'filename' => 'answer-' . strtolower($groupletter) . '%.pdf');
+
+                $searchfilename = get_string('fileprefixanswer', 'offlinequiz') . '_' . $groupletter . '%.pdf';
+                $params = array('contextid' => $context->id, 'filename' => $searchfilename);
                 $filename = $DB->get_field_sql($sql, $params);
                 $answerpdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $filename);
             }
@@ -523,8 +524,9 @@ if ($mode == 'preview') {
                            AND itemid = 0
                            AND filepath = '/'
                            AND " . $sqllike;
-                $params = array('contextid' => $context->id,
-                        'filename' => 'correction-' . strtolower($groupletter) . '%.pdf');
+
+                $searchfilename = get_string('fileprefixcorrection', 'offlinequiz') . '_' . $groupletter . '%.pdf';
+                $params = array('contextid' => $context->id, 'filename' => $searchfilename);
                 $filename = $DB->get_field_sql($sql, $params);
                 $correctpdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $filename);
             }
