@@ -107,19 +107,27 @@ if ($downloadall && $offlinequiz->docscreated) {
 
     // Simply pack all files in the 'pdfs' filearea in a ZIP file.
     $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
-    $timestamp = date('Ymd_His', time());
+
+    $date = usergetdate(time());
+    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
+            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+
+
     $shortname = $DB->get_field('course', 'shortname', array('id' => $offlinequiz->course));
     $zipfilename = clean_filename($shortname . '_' . $offlinequiz->name . '_' . $timestamp . '.zip');
     $tempzip = tempnam($CFG->tempdir . '/', 'offlinequizzip');
     $filelist = array();
 
+    $questionprefix = get_string('fileprefixform', 'offlinequiz');
+    $answerprefix = get_string('fileprefixanswer', 'offlinequiz');
+    $correctionprefix = get_string('fileprefixcorrection', 'offlinequiz');
     foreach ($files as $file) {
         $filename = $file->get_filename();
         if ($filename != '.') {
             $path = '';
-            if (0 === strpos($filename, 'form-')) {
+            if (0 === strpos($filename, $questionprefix)) {
                 $path = get_string('questionforms', 'offlinequiz');
-            } else if (0 === strpos($filename, 'answer-')) {
+            } else if (0 === strpos($filename, $answerprefix)) {
                 $path = get_string('answerforms', 'offlinequiz');
             } else {
                 $path = get_string('correctionforms', 'offlinequiz');
