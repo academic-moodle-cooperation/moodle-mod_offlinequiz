@@ -986,5 +986,6 @@ function offlinequiz_update_form_file_names() {
             }
             $DB->update_record('offlinequiz_groups', $group);
         }
-    }
+        $done += 1;
+   }
 }
