@@ -1548,6 +1548,10 @@ function offlinequiz_delete_pdf_forms($offlinequiz) {
             $file->delete();
         }
     }
+    // Delete the file names in the offlinequiz groups
+    $DB->set_field('offlinequiz_groups', 'questionfilename', null, array('offlinequizid' => $offlinequiz->id));
+    $DB->set_field('offlinequiz_groups', 'answerfilename', null, array('offlinequizid' => $offlinequiz->id));
+    $DB->set_field('offlinequiz_groups', 'correctionfilename', null, array('offlinequizid' => $offlinequiz->id));
 
     // Set offlinequiz->docscreated to 0.
     $offlinequiz->docscreated = 0;
