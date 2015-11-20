@@ -531,6 +531,7 @@ $string['tutorial'] = 'Information zum Prüfungsablauf bei Multiple-Choice-Prüf
 $string['type'] = 'Typ';
 $string['uncheckparts'] = 'Ausgewählte Teilnehmer/innen als abwesend markieren';
 $string['updatedsumgrades'] = 'Maximale Punktezahl der Gruppe {$a->letter} neu berechnet {$a->grade}.';
+$string['upgradingfilenames'] = 'Dateinamen der Dokumente werden migriert: Offline-Test {$a->done}/{$a->outof} <br/>(Offline-Test ID {$a->info})';
 $string['upgradingofflinequizattempts'] = 'Offline Test Ergebnisse werden migriert: Offline Test {$a->done}/{$a->outof} (Offline Test ID {$a->info})';
 $string['upgradingilogs'] = 'Hochgeladene Antwortbögen werden migriert: Offline Test {$a->done}/{$a->outof} (Offline Test ID {$a->info})';
 $string['uploadpart'] = 'Anwesenheitslisten: hochladen/korrigieren';

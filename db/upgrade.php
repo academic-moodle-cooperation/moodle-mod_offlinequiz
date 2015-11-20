@@ -1223,7 +1223,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2015060902, 'offlinequiz');
     }
     
-    if ($oldversion < 2015112000) {
+    if ($oldversion < 2015112002) {
 
         // Define field questionfilename to be added to offlinequiz_groups.
         $table = new xmldb_table('offlinequiz_groups');
@@ -1252,7 +1252,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         offlinequiz_update_form_file_names();
 
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2015112000, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2015112002, 'offlinequiz');
     }
     
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.

@@ -975,7 +975,7 @@ function offlinequiz_update_form_file_names() {
             foreach ($files as $file) {
                 $filename = $file->get_filename();
                 if ($filename != '.') {
-                    if (0 === strpos($filename, 'question-' . strtolower($groupletter))) {
+                    if (0 === strpos($filename, 'form-' . strtolower($groupletter))) {
                         $group->questionfilename = $filename;
                     } else if (0 === strpos($filename, 'answer-' . strtolower($groupletter))) {
                         $group->answerfilename = $filename;
