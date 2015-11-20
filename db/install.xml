@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/offlinequiz/db" VERSION="20150605" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
+<XMLDB PATH="mod/offlinequiz/db" VERSION="20151120" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -46,6 +46,9 @@
         <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The sum of all grades of question instances in an offlineequiz group."/>
         <FIELD NAME="numberofpages" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The number of pages of the answer document for a group."/>
         <FIELD NAME="templateusageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Link to the group's template question usage in the question engine."/>
+        <FIELD NAME="questionfilename" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="The name of the file containing the questions for the offline quiz group."/>
+        <FIELD NAME="answerfilename" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="The name of the file containing the answer boxes for the offline quiz group."/>
+        <FIELD NAME="correctionfilename" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="The name of the file containing the correction information for the offline quiz group."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
