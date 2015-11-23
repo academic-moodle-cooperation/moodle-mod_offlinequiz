@@ -954,12 +954,13 @@ function offlinequiz_update_form_file_names() {
     $fs = get_file_storage();
     $letterstr = 'abcdefghijkl';
 
+    $a = new stdClass();
+    $a->done = $done;
+    $a->outof = $outof;
+    $a->info = $offlinequiz->id;
+    $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
+
     foreach ($offlinequizzes as $offlinequiz) {
-        $a = new stdClass();
-        $a->done = $done;
-        $a->outof = $outof;
-        $a->info = $offlinequiz->id;
-        $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
 
         $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
         $context = context_module::instance($cm->id);
@@ -987,5 +988,7 @@ function offlinequiz_update_form_file_names() {
             $DB->update_record('offlinequiz_groups', $group);
         }
         $done += 1;
+	    $a->done = $done;
+	    $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
    }
 }

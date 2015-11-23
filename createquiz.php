@@ -504,7 +504,7 @@ if ($mode == 'preview') {
                     $DB->update_record('offlinequiz_groups', $group);
                 }
             } else {
-                $filename = $correctionpdffile->get_filename();
+                $filename = $group->correctionfilename;
                 $correctionpdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $filename);
             }
 
