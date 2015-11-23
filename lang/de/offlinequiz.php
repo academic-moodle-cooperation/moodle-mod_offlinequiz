@@ -129,6 +129,9 @@ $string['downloadpartpdf'] = 'PDF-Formular für die Anwesenheitsliste \'{$a}\' h
 $string['downloadpdfs'] = 'Formulare herunterladen';
 $string['downloadresultsas'] = 'Ergebnisse herunterladen als: ';
 $string['editingofflinequiz'] = 'Fragenlisten bearbeiten';
+$string['editingofflinequiz_help'] = 'Beim Erzeugen von Offline-Tests sind zwei Komponenten wichtig:
+<ul><li> Der Offline-Test, der die Fragen für die verschiedenen Gruppen auf einer oder mehreren Seiten enthält.</li>
+<li> Die Fragensammlung, in der Fragen in verschiedene Kategorien aufgeteilt sind.</li></ul>';
 $string['editingofflinequizx'] = 'Fragenlisten bearbeiten: {$a}';
 $string['editmaxmark'] = 'Erreichbare Punkte ändern';
 $string['editlist'] = 'Anwesenheitsliste bearbeiten';

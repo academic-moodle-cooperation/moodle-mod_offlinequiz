@@ -152,9 +152,8 @@ $string['editgroups'] = 'Edit Offline Groups';
 $string['editgroupquestions'] = 'Edit group questions';
 $string['editingofflinequiz'] = 'Editing group questions';
 $string['editingofflinequiz_help'] = 'When creating an offline quiz, the main concepts are:
-* The offline quiz, containing questions over one or more pages
-* The question bank, which stores copies of all questions organised into categories';
-
+<ul><li> The offline quiz, containing questions over one or more pages</li>
+<li> The question bank, which stores copies of all questions organised into categories</li></ul>';
 $string['editofflinequiz'] = 'Edit offline quiz';
 $string['editingofflinequizx'] = 'Edit offline quiz: {$a}';
 $string['editmaxmark'] = 'Edit maximum mark';
