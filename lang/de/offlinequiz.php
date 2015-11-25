@@ -274,7 +274,7 @@ $string['modulename'] = 'Offline-Test';
 $string['modulenameplural'] = 'Offline-Tests';
 $string['modulename_help'] = 'Dieses Modul erlaubt die Erstellung von Fragebogen-Tests mit Multiple-Choice-Fragen.
 Die Fragen werden in der Moodle-Fragendatenbank gespeichert und können in anderen Offline- und Online-Tests wiederverwendet werden.
-Das Modul erstellt Frage- und Antwortbögen, die als PDF- oder DOCX-Dateien heruntergeladen werden können. Auf den ausgedruckten Antwortbögen werden die Antworten von den Studierenden angekreuzt.
+Das Modul erstellt Frage- und Antwortbögen, die als PDF- oder DOCX-Dateien heruntergeladen werden können. Auf den ausgedruckten Antwortbögen werden die Antworten von den Teilnehmer/innen angekreuzt.
 Die Resultate werden eigescannt und in das Moodle System importiert.
 Eine detaillierte Beschreibung des Moduls finden Sie auf der Webseite: http://offline-tests.univie.ac.at';
 $string['moodleprocessing'] = 'Belege durch Moodle auswerten';
@@ -284,7 +284,7 @@ $string['removeselected'] = 'Ausgewählte entfernen';
 $string['multianswersforsingle'] = 'Mehrere Antworten bei Einfachauswahl';
 $string['name'] = 'Name des Offline-Tests';
 $string['neededcorrection'] = '<strong>Achtung!</strong><br />&nbsp;<br />Einige Ihrer Markierungen mussten manuell korrigiert werden.
-Die aufgrund dieses Fehlers notwendige händische Nachbearbeitung verzögerte die Gesamtauswertung und die Bekanntgabe der Ergebnisse an alle Studierenden.
+Die aufgrund dieses Fehlers notwendige händische Nachbearbeitung verzögerte die Gesamtauswertung und die Bekanntgabe der Ergebnisse an alle Teilnehmer/innen.
 <br />Die erfolgten Korrekturen sind als rot markierte Kästchen im folgenden Beleg zu sehen.
 <br />Wir bitten Sie, bei zukünftigen Prüfungen Ihre Markierungen sorgfältig zu kontrollieren.<br />&nbsp;<br />Vielen Dank!';
 $string['newgrade'] = 'Bewertet';
@@ -336,7 +336,7 @@ $string['offlinequiz:view'] = 'Test-Informationen sehen';
 $string['oneclickenrol'] = '1-Click Einschreibung';
 $string['oneclickenroldesc'] = 'Wenn Sie diese Option aktivieren haben die Trainer/innen beim Korrigieren von Antwortbögen (Fehler "Teilnehmer/in nicht im Kurs") die Möglichkeit Nutzer mit einem Click in den Kurs einzuschreiben.';
 $string['oneclickrole'] = 'Rolle für Einschreibung.';
-$string['oneclickroledesc'] = 'Wählen Sie hier die Rolle aus, die bei der 1-Click Einschreibung verwendet werden soll. Es können nur Rollen mit dem Archetyp "student" ausgewählt werden.';
+$string['oneclickroledesc'] = 'Wählen Sie hier die Rolle aus, die bei der 1-Click Einschreibung verwendet werden soll. Es können nur Rollen mit der Basisrolle "Teilnehmer/in" ausgewählt werden.';
 $string['onlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
 $string['orderandpaging'] = 'Reihenfolge und Seitenumbrüche';
 $string['orderandpaging_help'] = 'Die Zahlen 10, 20, 30, ... neben jeder Frage zeigt deren Reihenfolge an. Die Zahlenfolge in 10er-Schritten lässt Platz, um weitere Fragen einfügen zu können.
@@ -378,7 +378,7 @@ Sie eine Gruppenanmeldung verwenden wollen.</p>
 <p>Anschließend laden Sie die Listen als PDFs herunter, drucken sie aus und markieren die Teilnehmer/innen
 mit Kreuzen, ähnlich wie die Antworten auf dem Antwortbogen. Die Listen werden hochgeladen und das Programm speichert
 in der Datenbank, wer als anwesend markiert ist. Bitte vermeiden Sie Verschmutzungen im Bereich der Barcodes, da
-diese der Identifikation der Studierenden dienen.</p>';
+diese der Identifikation der Teilnehmer/innen dienen.</p>';
 $string['partimportnew'] = 'Importieren von Anwesenheitslisten';
 $string['partimportnew_help'] = '<p> Hier können Sie die ausgefüllten Anwesenheitslisten importieren.
 Sie können entweder mehrere eingescannte Bilddateien in einer ZIP-Datei
@@ -441,10 +441,10 @@ $string['reviewofresult'] = 'Ergebnis';
 $string['reviewopens'] = 'Bericht beginnt';
 $string['reviewoptions'] = 'Prüfungseinsicht';
 $string['reviewoptionsheading'] = 'Einstellungen für die Prüfungseinsicht';
-$string['reviewoptions_help'] = 'Diese Optionen regeln, welche Informationen Studierende bei der Prüfungseinsicht einsehen dürfen. Im Detail bedeuten die Optionen:
+$string['reviewoptions_help'] = 'Diese Optionen regeln, welche Informationen Teilnehmer/innen bei der Prüfungseinsicht einsehen dürfen. Im Detail bedeuten die Optionen:
 <table>
 <tr><td style="vertical-align: top;"><b>Das Ergebnis</b></td><td>
-Studierende sehen Fragetexte, Antworttexte und welche Antworten sie angekreuzt haben.
+Teilnehmer/innen sehen Fragetexte, Antworttexte und welche Antworten sie angekreuzt haben.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Ob richtig</b></td><td>
 Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist und bewirkt, dass zusätzlich angezeigt wird,
@@ -460,11 +460,11 @@ Diese Option lässt sich nur anhaken, wenn auch "Das Ergebnis" ausgewählt ist u
  (Bsp.: "Die richtige Antwort lautet: a, c").
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scannerbeleg</b></td><td>
-Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Antwortformular angezeigt.
+Teilnehmer/innen sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Antwortformular angezeigt.
 Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Scannerbeleg mit Bewertung</b></td><td>
-Studierende sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Formular angezeigt.
+Teilnehmer/innen sehen einen Link zum Scannerbeleg. Wenn dieser angeklickt wird, wird das eingescannte Formular angezeigt.
 Kästchen, die als Ankreuzungen gewertet wurden, sind grün umrandet.
 Zusätzlich sind alle Kästchen, die fälschlicherweise angekreuzt wurden und solche, die fälschlicherweise nicht angekreuzt sind, rot hinterlegt.
 Des Weiteren befindet sich am rechten Rand eine Auflistung der erreichten Punkte pro Frage.
@@ -496,7 +496,7 @@ $string['selectlist'] = 'Bitte wählen Sie eine Liste oder versuchen Sie den Bog
 $string['selectpage'] = 'Bitte wählen Sie die Seite oder versuchen Sie den Bogen neu zu adjustieren:';
 $string['showallparts'] = 'Alle {$a} Teilnehmer/innen anzeigen';
 $string['showcopyright'] = 'Copyright Hinweis';
-$string['showcopyrightdesc'] = 'Wenn Sie diese Option aktivieren wird bei der Prüfungseinsicht für Studierende ein Copyright Hinweis angezeigt.';
+$string['showcopyrightdesc'] = 'Wenn Sie diese Option aktivieren wird bei der Prüfungseinsicht für Teilnehmer/innen ein Copyright Hinweis angezeigt.';
 $string['showgrades'] = 'Punkte für Fragen drucken';
 $string['showgrades_help'] = 'Diese Option steuert, ob die erzielbaren Punkte einer Frage auf dem Fragebogen angezeigt werden.';
 $string['showmissingattemptonly'] = 'Alle Anwesenden ohne Ergebnis anzeigen';
@@ -517,8 +517,8 @@ $string['studycode'] = 'Studienkennzahl';
 $string['starttutorial'] = 'Information zum Prüfungsablauf ansehen';
 $string['showtutorial'] = 'Tutorial zum Prüfungsablauf anzeigen';
 $string['showtutorialdescription'] = 'Sie können das Tutorial auch mit der folgenden URL auf der Kursseite verlinken:';
-$string['showtutorial_help'] = 'Mit dieser Option können Sie für Ihre Studierenden ein Tutorial zum Prüfungsablauf anzeigen lassen.
-Darin erhalten die Studierenden grundlegende Informationen zu den Prüfungsunterlagen und zum Ausfüllen des Antwortbogens.
+$string['showtutorial_help'] = 'Mit dieser Option können Sie für Ihre Teilnehmer/innen ein Tutorial zum Prüfungsablauf anzeigen lassen.
+Darin erhalten die Teilnehmer/innen grundlegende Informationen zu den Prüfungsunterlagen und zum Ausfüllen des Antwortbogens.
 Außerdem können sie das korrekte Ankreuzen der Matrikelnummer interaktiv üben.<br />
 <b>Bitte beachten Sie:</b><br />
 Falls Sie diese Option auf "Ja" setzen, die Prüfung aber ausblenden, wird der Link zum Tutorial trotzdem nicht sichtbar sein.
