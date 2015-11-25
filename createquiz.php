@@ -105,9 +105,6 @@ if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $
 if ($downloadall && $offlinequiz->docscreated) {
     $fs = get_file_storage();
 
-    // Simply pack all files in the 'pdfs' filearea in a ZIP file.
-    $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
-
     $date = usergetdate(time());
     $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
             $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
@@ -118,22 +115,23 @@ if ($downloadall && $offlinequiz->docscreated) {
     $tempzip = tempnam($CFG->tempdir . '/', 'offlinequizzip');
     $filelist = array();
 
-    $questionprefix = get_string('fileprefixform', 'offlinequiz');
-    $answerprefix = get_string('fileprefixanswer', 'offlinequiz');
-    $correctionprefix = get_string('fileprefixcorrection', 'offlinequiz');
-    foreach ($files as $file) {
-        $filename = $file->get_filename();
-        if ($filename != '.') {
-            $path = '';
-            if (0 === strpos($filename, $questionprefix)) {
-                $path = get_string('questionforms', 'offlinequiz');
-            } else if (0 === strpos($filename, $answerprefix)) {
-                $path = get_string('answerforms', 'offlinequiz');
-            } else {
-                $path = get_string('correctionforms', 'offlinequiz');
-            }
-            $path = clean_filename($path);
-            $filelist[$path . '/' . $filename] = $file;
+    $questionpath = clean_filename(get_string('questionforms', 'offlinequiz'));
+    $answerpath = clean_filename(get_string('answerforms', 'offlinequiz'));
+    $correctionpath = clean_filename(get_string('correctionforms', 'offlinequiz'));
+
+    // Simply packing all files in the 'pdfs' filearea does not work.
+    // We have to read the file names from the offlinequiz_groups table.
+    foreach ($groups as $group) {
+        if ($questionfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $group->questionfilename)) {
+            $filelist[$questionpath . '/' . $questionfile->get_filename()] = $questionfile;
+        }
+
+        if ($answerfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $group->answerfilename)) {
+            $filelist[$answerpath . '/' . $answerfile->get_filename()] = $answerfile;
+        }
+
+        if ($correctionfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $group->correctionfilename)) {
+            $filelist[$correctionpath . '/' . $correctionfile->get_filename()] = $correctionfile;
         }
     }
 

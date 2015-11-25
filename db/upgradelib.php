@@ -957,7 +957,6 @@ function offlinequiz_update_form_file_names() {
     $a = new stdClass();
     $a->done = $done;
     $a->outof = $outof;
-    $a->info = $offlinequiz->id;
     $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
 
     foreach ($offlinequizzes as $offlinequiz) {
@@ -989,6 +988,7 @@ function offlinequiz_update_form_file_names() {
         }
         $done += 1;
 	    $a->done = $done;
+        $a->info = $offlinequiz->id;
 	    $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
    }
 }
