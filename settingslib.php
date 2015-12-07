@@ -195,17 +195,30 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
             }
         }
         if ($valid) {
-        	// check for valid user table field.
-            $field = substr($data, strpos($data, '=') + 1);
-		    if ($testusers = $DB->get_records('user', null, '', '*', 0, 1)) {
-		    	if (count($testusers) > 0 && $testuser = array_pop($testusers)) {
-                   if (isset($testuser->{$field})) {
-                       return true;
-                   } else {
-    	    	       return get_string('invaliduserfield', 'offlinequiz');
-                   }
-		    	}
-    		}
+            $formularegexp = "/^([0-9a-zA-Z]*)\[([0-9]+)\]=([a-z]+)$/";
+            $matches = array();
+
+            if (preg_match($formularegexp, $data, $matches)) {
+                $prefix = $matches[1];
+                $digits = intval($matches[2]);
+                $field = $matches[3];
+                // Check the number of digits
+                if ($digits < 1 || $digits > 9) {
+                    return get_string('invalidnumberofdigits', 'offlinequiz');
+                }
+            	// Check for valid user table field.
+    		    if ($testusers = $DB->get_records('user', null, '', '*', 0, 1)) {
+		            if (count($testusers) > 0 && $testuser = array_pop($testusers)) {
+                        if (isset($testuser->{$field})) {
+                            return true;
+                        } else {
+    	    	            return get_string('invaliduserfield', 'offlinequiz');
+                        }
+		    	    }
+    		    }
+            } else {
+                return get_string('invalidformula', 'offlinequiz');
+            }
         }
 	}
 }
