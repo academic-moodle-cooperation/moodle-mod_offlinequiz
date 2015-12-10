@@ -28,6 +28,6 @@ Feature: Add a offlinequiz
     And I follow "Course 1"
 
    @javascript
-   Scenario: Add and configure small offline quiz with Javascript enabled
+   Scenario: Add and configure offline quiz with Javascript enabled
     Then I should see "Test offline quiz name"
     And I log out
