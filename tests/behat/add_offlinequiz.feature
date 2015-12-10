@@ -1,8 +1,8 @@
 @mod @mod_offlinequiz
-Feature: Add a offlinequiz
+Feature: Add an offlinequiz
   In order to evaluate students
   As a teacher
-  I need to create a offlinequiz
+  I need to create an offlinequiz
 
   Background:
     Given the following "users" exist:
