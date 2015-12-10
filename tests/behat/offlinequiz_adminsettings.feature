@@ -1,8 +1,8 @@
-@mod @mod_offlinequiz @adminsetting
-Feature: Within a moodle instance, an administrator should be able to set some default values
-  for the entire Moodle installation.
+@mod @mod_offlinequiz @adminsetting @amc
+Feature: Within a moodle instance, an administrator should be able to set some default values for the entire Moodle installation.
   In order to define the adminsetting of an offline quiz.
-  As an administrator I need to have fields to set different default values.
+  As an admin
+  I need to default values for offline quiz settings.
 
   @javascript
   Scenario: Switch as an admin to the adminsettings of the module offlinequiz and change
@@ -19,9 +19,9 @@ Feature: Within a moodle instance, an administrator should be able to set some d
       | teacher1 | C1 | editingteacher |
 	And I log in as "admin"
     And I navigate to "Offline Quiz" node in "Site administration > Plugins > Activity modules"
-#    And I fill the form with:
-#	  | White value of paper | Dark grey |
     And I set the field "White value of paper" to "Dark grey"
+#    And I set the field "Scanned form with grades" to "1"
+    And I pause scenario execution
 	And I press "Save changes"
     And I log out
 	And I log in as "teacher1"
@@ -32,6 +32,8 @@ Feature: Within a moodle instance, an administrator should be able to set some d
 	  | Description | Add an offline quiz to the current course |
 	And I follow "Test offline quiz name"
 	And I navigate to "Edit settings" node in "Offline quiz administration"
+    And I expand all fieldsets
     Then I should see "Dark grey"
-#	Then "sheetclosed" should contain "1"
+    #Then "Scanned form with grades" should contain "1"
+
 	
