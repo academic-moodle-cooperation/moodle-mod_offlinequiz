@@ -267,8 +267,8 @@ $string['instruction1'] = 'This answer form will be scanned automatically. Pleas
 $string['instruction2'] = 'Only clear markings can be interpreted correctly! If you want to correct a marking, completely fill the box with color. This field will be interpreted like an empty box:';
 $string['instruction3'] = 'Corrected boxes cannot be marked again. Please do not write anything outside of the boxes.';
 $string['introduction'] = 'Introduction';
-$string['invalidformula'] = 'Invalid formula for user identification. The formula must have the form &lt;prefix&gt;[&lt;digits&gt;]=&lt;db-field&gt;.';
-$string['invalidnumberofdigits'] = 'Invalid number of digits used. Only up to 9 digits are allowed.';
+$string['invalidformula'] = 'Invalid formula for user identification. The formula must have the form &lt;prefix&gt;[&lt;#digits&gt;]&lt;suffix&gt;=&lt;db-field&gt;.';
+$string['invalidnumberofdigits'] = 'Invalid number of digits used. Only 1 up to 9 digit(s) are allowed.';
 $string['invaliduserfield'] = 'Invalid field of the user table used.';
 $string['invigilator'] = 'Invigilator';
 $string['ischecked'] = 'Participation is checked';

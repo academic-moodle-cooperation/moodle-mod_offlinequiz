@@ -76,7 +76,7 @@ $string['configpapergray'] = 'Weißwert des Papieres, das für Antwortbögen ver
 $string['configshufflequestions'] = 'Wenn Sie diese Option aktivieren werden die Fragen jeder Offline-Test Gruppe nach dem Zufallsprinzip gemischt.';;
 $string['configshufflewithin'] = 'Wenn Sie diese Option aktivieren, werden die Antworten jeder Multple-Choice Frage nach dem Zufallsprinzip gemischt.';
 $string['configshufflequestionsanswers'] = 'Antworten mischen blah blah';
-$string['configuseridentification'] = 'Eine Formel, die die Identifikation von NutzerInnen beschreibt. Diese Formel wird verwendet, um hochgeladene Antwortbögen den richtigen NutzerInnen zuzuordnen. Die rechte Seite der Gleichung muss ein Feld der "user" Tabelle von Moodle sein.';
+$string['configuseridentification'] = 'Eine Formel, die die Identifikation von Nutzer/innen beschreibt. Diese Formel wird verwendet, um hochgeladene Antwortbögen den richtigen Nutzer/innen zuzuordnen. Die rechte Seite der Gleichung muss ein Feld der "user" Tabelle von Moodle sein.';
 $string['confirmremovequestion'] = 'Sind Sie sicher, dass Sie die Frage des Typs {$a} entfernen wollen?';
 $string['pluginadministration'] = 'Offline-Test Administration';
 $string['copyright'] = 'Diese Seite ist nur zu Ihrer persönlichen Information. Wie jeder andere Text auch unterliegen Prüfungsfragen den Bestimmungen des Urheberrechts. Es ist Ihnen nicht gestattet, Fragen zu kopieren oder an andere weiterzugeben. Zuwiderhandeln kann belangt werden.';
@@ -243,7 +243,7 @@ $string['instruction1'] = 'Dieser Antwortbogen wird maschinell gelesen. Bitte ni
 $string['instruction2'] = 'Nur deutlich erkennbare positionsgenaue Markierungen werden ausgewertet! Wenn Sie eine Ankreuzung korrigieren möchten, füllen Sie das Kästchen mit der Falsch-Markierung mit Ihrem Stift vollkommen aus, dadurch wird diese Ankreuzung wie ein leeres Kästchen gewertet:';
 $string['instruction3'] = 'Ausstreichungen können nicht noch mal korrigiert werden. Markierungen und Beschriftungen außerhalb der Kästchenfelder können die Auswertung behindern.';
 $string['introduction'] = 'Beschreibung';
-$string['invalidformula'] = 'Ungültige Formel zur Identifikation von NutzerInnen. Die Formel muss folgende Form haben: &lt;Präfix&gt;[&lt;#Ziffern&gt;]=&lt;DB-Feld&gt;.';
+$string['invalidformula'] = 'Ungültige Formel zur Identifikation von NutzerInnen. Die Formel muss folgende Form haben: &lt;Präfix&gt;[&lt;#Ziffern&gt;]&lt;Suffix&gt;=&lt;DB-Feld&gt;.';
 $string['invalidnumberofdigits'] = 'Formel enthält ungültige Anzahl von Ziffern. Es werden 1 bis 9 Ziffern unterstützt.';
 $string['invaliduserfield'] = 'Formel enthält ungültiges Feld der Tabelle "user".';
 $string['invigilator'] = 'Saalaufsicht';
