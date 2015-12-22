@@ -72,17 +72,6 @@
         <INDEX NAME="offlinequiz" UNIQUE="false" FIELDS="offlinequizid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="offlinequiz_q_instances" COMMENT="The questions instances of offlinequizzes.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="offlinequizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the offlinequiz."/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-    </TABLE>
     <TABLE NAME="offlinequiz_scanned_pages" COMMENT="The pages of answer documents scanned by a teacher.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>

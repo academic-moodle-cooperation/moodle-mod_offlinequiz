@@ -97,7 +97,7 @@ if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     print_error('invalidgroupnumber', 'offlinequiz');
 }
 
-$offlinequiz->sumgrades = offlinequiz_get_group_sumgrades($offlinequiz);
+$offlinequiz->sumgrades = $offlinequizgroup->sumgrades;
 
 $offlinequizhasattempts = offlinequiz_has_scanned_pages($offlinequiz->id);
 $docscreated = $offlinequiz->docscreated;
@@ -232,9 +232,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     // Parameter to copy selected questions to another group.
     $copyselectedtogroup = optional_param('copyselectedtogrouptop', 0, PARAM_INT);
 
-    // Delete the templates, just to be sure.
-    offlinequiz_delete_template_usages($offlinequiz);
-
     if ($copyselectedtogroup) {
 
         if (($selectedquestionids) && ($newgroup = offlinequiz_get_group($offlinequiz, $copyselectedtogroup))) {
@@ -243,6 +240,8 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
             offlinequiz_add_questionlist_to_group($selectedquestionids, $offlinequiz, $newgroup, $fromofflinegroup);
 
             offlinequiz_update_sumgrades($offlinequiz, $newgroup->id);
+            // Delete the templates, just to be sure.
+            offlinequiz_delete_template_usages($offlinequiz);
         }
         redirect($afteractionurl);
     }

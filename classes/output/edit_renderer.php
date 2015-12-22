@@ -729,7 +729,11 @@ class edit_renderer extends \plugin_renderer_base {
         // Add a random question.
         $returnurl = new \moodle_url('/mod/offlinequiz/edit.php',
                 array('cmid' => $structure->get_cmid(), 'groupnumber' => $pageurl->get_param('groupnumber'), 'data-addonpage' => $page));
-        $params = array('returnurl' => $returnurl, 'cmid' => $structure->get_cmid(), 'appendqnumstring' => 'addarandomquestion');
+        $params = array('returnurl' => $returnurl,
+                        'cmid' => $structure->get_cmid(),
+                        'appendqnumstring' => 'addarandomquestion',
+                        'groupnumber' => $pageurl->get_param('groupnumber')
+        );
         $url = new \moodle_url('/mod/offlinequiz/addrandom.php', $params);
         $icon = new \pix_icon('t/add', $str->addarandomquestion, 'moodle', array('class' => 'iconsmall', 'title' => ''));
         $attributes = array('class' => 'cm-edit-action addarandomquestion', 'data-action' => 'addarandomquestion');
@@ -1139,7 +1143,10 @@ class edit_renderer extends \plugin_renderer_base {
             return '';
         }
         $randomform = new \offlinequiz_add_random_form(new \moodle_url('/mod/offlinequiz/addrandom.php'),
-                                 array('contexts' => $contexts, 'cat' => $pagevars['cat']));
+                                 array('contexts' => $contexts,
+                                       'cat' => $pagevars['cat'],
+                                       'groupnumber' => $thispageurl->get_param('groupnumber')
+                                 ));
         $randomform->set_data(array(
                 'category' => $pagevars['cat'],
                 'returnurl' => $thispageurl->out_as_local_url(true),

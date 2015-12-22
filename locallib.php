@@ -81,9 +81,9 @@ class offlinequiz_question_usage_by_activity extends question_usage_by_activity 
             // We have to check for the type because we might have old migrated templates
             // that could contain description questions.
             if ($slotquestion->get_type_name() == 'multichoice' || $slotquestion->get_type_name() == 'multichoiceset') {
-                                $order = $slotquestion->get_order($attempt);  // Order of the answers.
-                                $order = implode(',', $order);
-                $newslot = $newquba->add_question($slotquestion, $qinstances[$slotquestion->id]->grade);
+                $order = $slotquestion->get_order($attempt);  // Order of the answers.
+                $order = implode(',', $order);
+                $newslot = $newquba->add_question($slotquestion, $qinstances[$slotquestion->id]->maxmark);
                 $qa = $newquba->get_question_attempt($newslot);
                 $qa->start('immediatefeedback', 1, array('_order' => $order));
             }
@@ -638,7 +638,7 @@ function offlinequiz_completed_results($offlinequizid, $courseid, $onlystudents 
 }
 
 /**
- * Delete an offlinequiz result.
+ * Delete an offlinequiz result, including the questions_usage_by_activity corresponding to it.
  *
  * @param mixed $attempt an integer attempt id or an attempt object
  *      (row of the offlinequiz_results table).
@@ -647,24 +647,33 @@ function offlinequiz_completed_results($offlinequizid, $courseid, $onlystudents 
 function offlinequiz_delete_result($resultid, $context) {
     global $DB;
 
-    // First delete the result itself.
-    $DB->delete_records('offlinequiz_results', array('id' => $resultid));
+    if ($result = $DB->get_record('offlinequiz_results', array('id' => $resultid))) {
+     
+        // First delete the result itself.
+        $DB->delete_records('offlinequiz_results', array('id' => $result->id));
+    
+        // Now we delete all scanned pages that refer to the result.
+        $scannedpages = $DB->get_records_sql("
+                SELECT *
+                  FROM {offlinequiz_scanned_pages}
+                 WHERE resultid = :resultid", array('resultid' => $result->id));
 
-    // Now we delete all scanned pages that referred to the result.
-    $scannedpages = $DB->get_records_sql("
-            SELECT *
-              FROM {offlinequiz_scanned_pages}
-             WHERE resultid = :resultid", array('resultid' => $resultid));
+        foreach ($scannedpages as $page) {
+            offlinequiz_delete_scanned_page($page, $context);
+        }
 
-    foreach ($scannedpages as $page) {
-        offlinequiz_delete_scanned_page($page, $context);
+        // Finally, delete the question usage that belongs to the result.
+        if ($result->usageid) {
+            question_engine::delete_questions_usage_by_activity($result->usageid);
+        }
     }
 }
 
 /**
  * Save new maxgrade to a question instance
  *
- * Saves changes to the question grades in the offlinequiz_question_instances table.
+ * Saves changes to the question grades in the offlinequiz_group_questions table.
+ * The grades of the questions in the group template qubas are also updated.
  * This function does not update 'sumgrades' in the offlinequiz table.
  *
  * @param int $offlinequiz  The offlinequiz to update / add the instances for.
@@ -674,6 +683,7 @@ function offlinequiz_delete_result($resultid, $context) {
 function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade) {
     global $DB;
 
+    // First change the maxmark of the question in all offline quiz groups.
     $groupquestionids = $DB->get_fieldset_select('offlinequiz_group_questions', 'id',
                     'offlinequizid = :offlinequizid AND questionid = :questionid',
                     array('offlinequizid' => $offlinequiz->id, 'questionid' => $questionid));
@@ -685,48 +695,50 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade)
     $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0,
                 $offlinequiz->numgroups);
 
-    // TODO This could be made faster by setting all grades for all slots in one go.
+    // Now change the maxmark of the question instance in the template question usages of the offlinequiz groups.
     foreach ($groups as $group) {
 
         if ($group->templateusageid) {
-           $templateusage = question_engine::load_questions_usage_by_activity($group->templateusageid);
-           $slots = $templateusage->get_slots();
+            $templateusage = question_engine::load_questions_usage_by_activity($group->templateusageid);
+            $slots = $templateusage->get_slots();
 
-           $slot = 0;
-           foreach ($slots as $thisslot) {
-               if ($templateusage->get_question($thisslot)->id == $questionid) {
-                   $slot = $thisslot;
-                   break;
-               }
-           }
-           if ($slot) {
-               // Update the grade in the template usage.
-               question_engine::set_max_mark_in_attempts(new qubaid_list(array($group->templateusageid)), $slot, $grade);
-               // Update the grade in the student attempts/results.
-               // First get the IDs of the question usages that correspond to the results in this group.
-               $results = $DB->get_records('offlinequiz_results',
-                       array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id));
-               $qubaids = array();
-               foreach ($results as $result) {
-                   if ($result->usageid > 0) {
-                       $qubaids[] = $result->usageid;
-                   }
-               }
+            $slot = 0;
+            foreach ($slots as $thisslot) {
+                if ($templateusage->get_question($thisslot)->id == $questionid) {
+                    $slot = $thisslot;
+                    break;
+                }
+            }
+            if ($slot) {
+                // Update the grade in the template usage.
+                question_engine::set_max_mark_in_attempts(new qubaid_list(array($group->templateusageid)), $slot, $grade);
+            }
+        }
+    }
 
-               if (!empty($qubaids)) {
-                  list($usql, $params) = $DB->get_in_or_equal($qubaids, SQL_PARAMS_NAMED, 'quba');
-                  // Then update only those IDs. Hopefully, there is an index on the field questionusageid.
-                  $sql = "UPDATE {question_attempts}
-                             SET maxmark = :maxmark
-                           WHERE questionusageid $usql
-                             AND slot = :slot";
+    // Now do the same for the qubas of the results of the offline quiz.
+    if ($results = $DB->get_records('offlinequiz_results', array('offlinequizid' => $offlinequiz->id))) {
+        foreach ($results as $result) {
+            if ($result->usageid > 0) {
+                $quba = question_engine::load_questions_usage_by_activity($result->usageid);
+                $slots = $quba->get_slots();
+                
+                $slot = 0;
+                foreach ($slots as $thisslot) {
+                    if ($quba->get_question($thisslot)->id == $questionid) {
+                        $slot = $thisslot;
+                        break;
+                    }
+                }
+                if ($slot) {
+                    question_engine::set_max_mark_in_attempts(new qubaid_list(array($result->usageid)), $slot, $grade);
 
-                  $params['slot'] = $slot;
-                  $params['maxmark'] = $grade;
-
-                  $DB->execute($sql, $params);
-               }
-           }
+                    // Now set the new sumgrades also in the offline quiz result.
+                    $newquba = question_engine::load_questions_usage_by_activity($result->usageid);
+                    $DB->set_field('offlinequiz_results', 'sumgrades',  $newquba->get_total_mark(),
+                        array('id' => $result->id));
+                }
+            }
         }
     }
 }
@@ -2384,12 +2396,14 @@ function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
         // Also reduce the page number if necessary.
         if ($nextslot) {
             for ($curslotnr = $nextslot->slot ; $curslotnr <= $lastslot->slot; $curslotnr++) {
-                if ($removepage) {
-                    $slotsinorder[$curslotnr]->page = $slotsinorder[$curslotnr]->page - 1;
+                if ($slotsinorder[$curslotnr]) {
+                    if ($removepage) {
+                        $slotsinorder[$curslotnr]->page = $slotsinorder[$curslotnr]->page - 1;
+                    }
+                    // Reduce the slot number by one.
+                    $slotsinorder[$curslotnr]->slot = $slotsinorder[$curslotnr]->slot - 1;
+                    $DB->update_record('offlinequiz_group_questions', $slotsinorder[$curslotnr]);
                 }
-                // Reduce the slot number by one.
-                $slotsinorder[$curslotnr]->slot = $slotsinorder[$curslotnr]->slot - 1;
-                $DB->update_record('offlinequiz_group_questions', $slotsinorder[$curslotnr]);
             }
         }                    
 

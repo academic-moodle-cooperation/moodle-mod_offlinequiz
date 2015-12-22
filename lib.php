@@ -176,8 +176,14 @@ function offlinequiz_update_instance($offlinequiz) {
 
     // Do the processing required after an add or an update.
     offlinequiz_after_add_or_update($offlinequiz);
-    // Delete the question usage templates.
-    offlinequiz_delete_template_usages($offlinequiz);
+
+    // We also need the docscreated and the numgroups field. 
+    $offlinequiz = $DB->get_record('offlinequiz', array('id' => $offlinequiz->id));
+
+    // Delete the question usage templates if no documents have been created and no answer forms have been scanned.
+    if (!$offlinequiz->docscreated && !offlinequiz_has_scanned_pages($offlinequiz->id)) {
+        offlinequiz_delete_template_usages($offlinequiz);
+    }
 
     return true;
 }
@@ -239,10 +245,12 @@ function offlinequiz_delete_instance($id) {
     // Remove the grade item.
     offlinequiz_grade_item_delete($offlinequiz);
 
+    // Delete template question usages of offlinequiz groups.
+    offlinequiz_delete_template_usages($offlinequiz);
+
     // All the tables with no dependencies...
     $tablestopurge = array(
             'offlinequiz_groups' => 'offlinequizid',
-            'offlinequiz_q_instances' => 'offlinequizid',
             'offlinequiz' => 'id'
     );
 
@@ -753,23 +761,6 @@ function offlinequiz_user_complete($course, $user, $mod, $offlinequiz) {
     }
 
     return true;
-}
-
-/**
- * Check whether some of the questions given are used in any offlinequiz.
- *
- * @param array $questionids of question IDs.
- * @return bool whether any of these questions are used by any instance of this module.
- */
-function offlinequiz_questions_in_use($questionids) {
-    global $DB, $CFG;
-    require_once($CFG->libdir . '/questionlib.php');
-
-    list($test, $params) = $DB->get_in_or_equal($questionids);
-    return $DB->record_exists_select('offlinequiz_q_instances',
-            'questionid ' . $test, $params) || question_engine::questions_in_use(
-            $questionids, new qubaid_join('{offlinequiz_results} oqr',
-            'oqr.usageid'));
 }
 
 /**

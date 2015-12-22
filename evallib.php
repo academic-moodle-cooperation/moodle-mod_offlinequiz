@@ -233,14 +233,16 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
                 // We have to use our own loading function in order to get the right class.
                 $templateusage = offlinequiz_load_questions_usage_by_activity($group->templateusageid);
 
-                // Get the question instances for initial markmarks.
-                $sql = "SELECT questionid, grade
-                          FROM {offlinequiz_q_instances}
-                         WHERE offlinequizid = :offlinequizid";
+                // Get the question instances for initial maxmarks.
+                $sql = "SELECT questionid, maxmark
+                          FROM {offlinequiz_group_questions}
+                         WHERE offlinequizid = :offlinequizid
+                           AND offlinegroupid = :offlinegroupid";
 
                 $qinstances = $DB->get_records_sql($sql,
-                        array('offlinequizid' => $offlinequiz->id));
-
+                        array('offlinequizid' => $offlinequiz->id,
+                              'offlinegroupid' => $group->id));
+ 
                 // Clone it...
                 $quba = $templateusage->get_clone($qinstances);
 

@@ -689,7 +689,6 @@ class structure {
      *
      * Saves changes to the question grades in the offlinequiz_group_questions table and any
      * corresponding question_attempts.
-     * It does not update 'sumgrades' in the offlinequiz table.
      *
      * @param \stdClass $slot row from the offlinequiz_group_questions table.
      * @param float $maxmark the new maxmark.
@@ -737,8 +736,9 @@ class structure {
         }
         
         // Now look at the maxmark of attemps.
-        \question_engine::set_max_mark_in_attempts(new \result_qubaids_for_offlinequiz($slot->offlinequizid, $slot->offlinegroupid),
-                $slot->slot, $maxmark);
+        // We do this already in offlinequiz_update_question_instance.
+//         \question_engine::set_max_mark_in_attempts(new \result_qubaids_for_offlinequiz($slot->offlinequizid, $slot->offlinegroupid),
+//                 $slot->slot, $maxmark);
         $trans->allow_commit();
 
         return true;
