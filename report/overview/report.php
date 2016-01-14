@@ -484,7 +484,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             if (empty($tablesort)) {
                 $sort = ' ORDER BY u.lastname, u.id ';
             } else {
-                $sort = ' ORDER BY ' . $tablesort;
+                $sort = ' ORDER BY ' . $tablesort . ', u.id';
             }
 
             $table->pagesize($pagesize, $total);
