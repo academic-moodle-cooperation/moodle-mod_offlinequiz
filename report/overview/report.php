@@ -492,8 +492,6 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
         // Fetch the results.
         if (!$download) {
-            print_object($select . $from . $where . $sort);
-            print_object($table->get_page_start() . ' ' . $table->get_page_size());
             $results = $DB->get_records_sql($select . $from . $where . $sort, $params,
                     $table->get_page_start(), $table->get_page_size());
         } else {
