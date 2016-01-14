@@ -482,7 +482,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
             // Fix some wired sorting.
             if (empty($tablesort)) {
-                $sort = ' ORDER BY u.lastname, u.firstname ';
+                $sort = ' ORDER BY u.lastname, u.id ';
             } else {
                 $sort = ' ORDER BY ' . $tablesort;
             }
