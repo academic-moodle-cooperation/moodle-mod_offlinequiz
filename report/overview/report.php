@@ -478,13 +478,13 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $total = $DB->count_records_sql($countsql, $params);
 
             // Add extra limits due to sorting by question grade.
-            $sort = $table->get_sql_sort();
+            $tablesort = $table->get_sql_sort();
 
             // Fix some wired sorting.
-            if (empty($sort)) {
-                $sort = ' ORDER BY u.lastname';
+            if (empty($tablesort)) {
+                $sort = ' ORDER BY u.lastname, u.firstname ';
             } else {
-                $sort = ' ORDER BY ' . $sort;
+                $sort = ' ORDER BY ' . $tablesort;
             }
 
             $table->pagesize($pagesize, $total);
@@ -492,6 +492,8 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
         // Fetch the results.
         if (!$download) {
+            print_object($select . $from . $where . $sort);
+            print_object($table->get_page_start() . ' ' . $table->get_page_size());
             $results = $DB->get_records_sql($select . $from . $where . $sort, $params,
                     $table->get_page_start(), $table->get_page_size());
         } else {
