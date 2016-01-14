@@ -66,8 +66,11 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
             require_once($CFG->libdir . '/grouplib.php');
             $groupselecturl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php',
-                    array('id' => $cm->id, 'mode' => 'overview', 'noresults' => $noresults,
-                        'group' => $groupid
+                    array('id' => $cm->id,
+                            'mode' => 'overview',
+                            'noresults' => $noresults,
+                            'pagesize' => $pagesize,
+                            'group' => $groupid
                     ));
 
             echo groups_print_activity_menu($cm, $groupselecturl, true);
