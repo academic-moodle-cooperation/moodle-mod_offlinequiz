@@ -243,7 +243,7 @@ $string['instruction1'] = 'Dieser Antwortbogen wird maschinell gelesen. Bitte ni
 $string['instruction2'] = 'Nur deutlich erkennbare positionsgenaue Markierungen werden ausgewertet! Wenn Sie eine Ankreuzung korrigieren möchten, füllen Sie das Kästchen mit der Falsch-Markierung mit Ihrem Stift vollkommen aus, dadurch wird diese Ankreuzung wie ein leeres Kästchen gewertet:';
 $string['instruction3'] = 'Ausstreichungen können nicht noch mal korrigiert werden. Markierungen und Beschriftungen außerhalb der Kästchenfelder können die Auswertung behindern.';
 $string['introduction'] = 'Beschreibung';
-$string['invalidformula'] = 'Ungültige Formel zur Identifikation von NutzerInnen. Die Formel muss folgende Form haben: &lt;Präfix&gt;[&lt;#Ziffern&gt;]&lt;Suffix&gt;=&lt;DB-Feld&gt;.';
+$string['invalidformula'] = 'Ungültige Formel zur Identifikation von Nutzer/innen. Die Formel muss folgende Form haben: &lt;Präfix&gt;[&lt;#Ziffern&gt;]&lt;Suffix&gt;=&lt;DB-Feld&gt;.';
 $string['invalidnumberofdigits'] = 'Formel enthält ungültige Anzahl von Ziffern. Es werden 1 bis 9 Ziffern unterstützt.';
 $string['invaliduserfield'] = 'Formel enthält ungültiges Feld der Tabelle "user".';
 $string['invigilator'] = 'Saalaufsicht';
