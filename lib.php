@@ -1376,3 +1376,20 @@ function offlinequiz_get_grade_format($offlinequiz) {
 
     return $offlinequiz->questiondecimalpoints;
 }
+
+/**
+ * @param array $questionids of question ids.
+ * @return bool whether any of these questions are used by any instance of this module.
+ */
+function offlinequiz_questions_in_use($questionids) {
+    global $DB, $CFG;
+    require_once($CFG->libdir . '/questionlib.php');
+    list($test, $params) = $DB->get_in_or_equal($questionids);
+
+    // Either the questions are used in the group questions, or in results, or in template qubas.
+    return $DB->record_exists_select('offlinequiz_group_questions', 'questionid ' . $test, $params) ||
+           question_engine::questions_in_use($questionids, new qubaid_join('{offlinequiz_results} quiza',
+            'quiza.usageid', '')) ||
+           question_engine::questions_in_use($questionids, new qubaid_join('{offlinequiz_groups} groupa',
+            'groupa.templateusageid', ''));
+}
