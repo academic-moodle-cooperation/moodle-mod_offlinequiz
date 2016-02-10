@@ -177,7 +177,7 @@ function offlinequiz_update_instance($offlinequiz) {
     // Do the processing required after an add or an update.
     offlinequiz_after_add_or_update($offlinequiz);
 
-    // We also need the docscreated and the numgroups field. 
+    // We also need the docscreated and the numgroups field.
     $offlinequiz = $DB->get_record('offlinequiz', array('id' => $offlinequiz->id));
 
     // Delete the question usage templates if no documents have been created and no answer forms have been scanned.
@@ -441,8 +441,8 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
         return false;
     }
 
-    // The file area 'pdfs' is served by pluginfile.php.
-    $fileareas = array('pdfs', 'imagefiles');
+    // The file file areas served by this method.
+    $fileareas = array('pdfs', 'participants', 'imagefiles');
     if (!in_array($filearea, $fileareas)) {
         return false;
     }
@@ -458,7 +458,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
 
     // Teachers in this context are allowed to see all the files in the context.
     if (has_capability('mod/offlinequiz:viewreports', $context)) {
-        if ($filearea == 'pdfs') {
+        if ($filearea == 'pdfs' || $filearea == 'participants') {
             $filename = clean_filename($course->shortname) . '_' . clean_filename($offlinequiz->name) . '_' . $file->get_filename();
             send_stored_file($file, 86400, 0, $forcedownload, array('filename' => $filename));
         } else {
