@@ -15,19 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Offlinequiz regradeing report version info
+ * Step definitions for offlinequiz behat features.
  *
  * @package       mod
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @since         Moodle 2.1
+ * @since         Moodle 2.9
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
+
+require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
+require_once(__DIR__ . '/../../../../question/tests/behat/behat_question_base.php');
+
+use Behat\Behat\Context\Step\Given as Given,
+    Behat\Gherkin\Node\TableNode as TableNode,
+    Behat\Mink\Exception\ExpectationException as ExpectationException;
+
+/**
+ * Steps definitions related to mod_offlinequiz.
  *
- **/
+ * @copyright 2015 Juergen Zimmer
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class behat_mod_offlinequiz extends behat_question_base {
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version  = 2015092500;
-$plugin->requires = 2011112900;
-$plugin->component = 'offlinequiz_regrade';
+ 
+}

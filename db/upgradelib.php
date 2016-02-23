@@ -933,3 +933,62 @@ function offlinequiz_remove_redundant_q_instances() {
         $transaction->allow_commit();
     }
 }
+
+/**
+ * Updates the new field names (questionfilename, answerfilename, correctionfilename) in the table 
+ * offlinequiz_groups for old offline quizzes. 
+ */
+function offlinequiz_update_form_file_names() {
+    global $DB;
+
+    $offlinequizzes = $DB->get_records('offlinequiz');
+
+    if (empty($offlinequizzes)) {
+        return;
+    }
+
+    $progressbar = new progress_bar('filenameupdate');
+    $progressbar->create();
+    $done = 0;
+    $outof = count($offlinequizzes);
+    $fs = get_file_storage();
+    $letterstr = 'abcdefghijkl';
+
+    $a = new stdClass();
+    $a->done = $done;
+    $a->outof = $outof;
+    $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
+
+    foreach ($offlinequizzes as $offlinequiz) {
+
+        $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
+        $context = context_module::instance($cm->id);
+
+        $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
+        $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0,
+            $offlinequiz->numgroups);
+        // Simply load all files in the 'pdfs' filearea in a ZIP file.
+
+        foreach ($groups as $group) {
+            $groupletter = $letterstr[$group->number - 1];
+
+            foreach ($files as $file) {
+                $filename = $file->get_filename();
+                if ($filename != '.') {
+                    if (0 === strpos($filename, 'form-' . strtolower($groupletter))) {
+                        $group->questionfilename = $filename;
+                    } else if (0 === strpos($filename, 'answer-' . strtolower($groupletter))) {
+                        $group->answerfilename = $filename;
+                    } else if (0 === strpos($filename, 'correction-' . strtolower($groupletter))) {
+                        $group->correctionfilename = $filename;
+                    }
+                }
+            }
+            $DB->update_record('offlinequiz_groups', $group);
+        }
+        $done += 1;
+	    $a->done = $done;
+        $a->info = $offlinequiz->id;
+	    $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
+   }
+}

@@ -1223,6 +1223,37 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2015060902, 'offlinequiz');
     }
     
+    if ($oldversion < 2015112002) {
+
+        // Define field questionfilename to be added to offlinequiz_groups.
+        $table = new xmldb_table('offlinequiz_groups');
+        $field = new xmldb_field('questionfilename', XMLDB_TYPE_CHAR, '1000', null, null, null, null, 'templateusageid');
+
+        // Conditionally launch add field questionfilename.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('answerfilename', XMLDB_TYPE_CHAR, '1000', null, null, null, null, 'questionfilename');
+
+        // Conditionally launch add field answerfilename.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('correctionfilename', XMLDB_TYPE_CHAR, '1000', null, null, null, null, 'answerfilename');
+
+        // Conditionally launch add field correctionfilename.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
+        offlinequiz_update_form_file_names();
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015112002, 'offlinequiz');
+    }
     
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
     // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the 

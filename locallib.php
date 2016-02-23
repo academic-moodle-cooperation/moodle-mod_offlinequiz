@@ -59,6 +59,8 @@ define("OFFLINEQUIZ_PART_USER_ERROR", "23");
 define("OFFLINEQUIZ_PART_LIST_ERROR", "24");
 define("OFFLINEQUIZ_IMPORT_NUMUSERS", "50");
 
+define('OFFLINEQUIZ_USER_FORMULA_REGEXP', "/^([0-9a-zA-Z]*)\[([\-]?[0-9]+)\]([0-9a-zA-Z]*)=([a-z]+)$/");
+
 define('OFFLINEQUIZ_GROUP_LETTERS', "ABCDEFGHIJKL");  // Letters for naming offlinequiz groups.
 
 define('OFFLINEQUIZ_PDF_FORMAT', 0);   // PDF file format for question sheets.
@@ -889,85 +891,12 @@ function offlinequiz_results_open($offlinequiz) {
     }
 }
 
-
 /**
- * Splits the little formula from $offlinequizconfig->useridentification
- * into prefix, postfix, digits and field and stores them in config variables.
+ * @deprecated User identification is now set in admin settings.
  */
 function offlinequiz_load_useridentification() {
-    global $CFG, $DB;
-
-    $offlinequizconfig = get_config('offlinequiz');
-
-    $errorstr = "Incorrect formula for user identification. Please contact your system administrator to change the settings.";
-    $start = strpos($offlinequizconfig->useridentification, '[');
-    $end = strpos($offlinequizconfig->useridentification, ']');
-    $digits = substr($offlinequizconfig->useridentification, $start + 1, $end - $start - 1);
-    if (!is_numeric($digits) or $digits > 9) {
-        print_error($errorstr, 'offlinequiz');
-    }
-    $prefix = substr($offlinequizconfig->useridentification, 0, $start);
-    $postfix = substr($offlinequizconfig->useridentification, $end + 1,
-                      strpos($offlinequizconfig->useridentification, '=') - $end - 1);
-    $field = substr($offlinequizconfig->useridentification, strpos($offlinequizconfig->useridentification, '=') + 1);
-
-    set_config('ID_digits', $digits, 'offlinequiz');
-    set_config('ID_prefix', $prefix, 'offlinequiz');
-    set_config('ID_postfix', $postfix, 'offlinequiz');
-    set_config('ID_field', $field, 'offlinequiz');
+	return;
 }
-
-// /**
-//  * Clean the question layout from various possible anomalies:
-//  * - Remove consecutive ","'s
-//  * - Remove duplicate question id's
-//  * - Remove extra "," from beginning and end
-//  * - Finally, add a ",0" in the end if there is none
-//  *
-//  * @param $string $layout the offlinequiz layout to clean up, usually from $offlinequiz->questions.
-//  * @param bool $removeemptypages If true, remove empty pages from the offlinequiz. False by default.
-//  * @return $string the cleaned-up layout
-//  */
-// function offlinequiz_clean_layout($layout, $removeemptypages = false) {
-// //    Remove repeated ','s. This can happen when a restore fails to find the right
-// //    id to relink to.
-//     $layout = preg_replace('/,{2,}/', ',', trim(trim($layout), ','));
-// //    Remove duplicate question ids.
-//     $layout = explode(',', $layout);
-//     $cleanerlayout = array();
-//     $seen = array();
-//     foreach ($layout as $item) {
-//         if ($item == 0) {
-//             $cleanerlayout[] = '0';
-//         } else if (!in_array($item, $seen)) {
-//             $cleanerlayout[] = $item;
-//             $seen[] = $item;
-//         }
-//     }
-
-//     if ($removeemptypages) {
-// //       Avoid duplicate page breaks.
-//         $layout = $cleanerlayout;
-//         $cleanerlayout = array();
-//         $stripfollowingbreaks = true; // Ensure breaks are stripped from the start.
-//         foreach ($layout as $item) {
-//             if ($stripfollowingbreaks && $item == 0) {
-//                 continue;
-//             }
-//             $cleanerlayout[] = $item;
-//             $stripfollowingbreaks = $item == 0;
-//         }
-//     }
-
-// //    Add a page break at the end if there is none.
-//     if (end($cleanerlayout) !== '0') {
-//         $cleanerlayout[] = '0';
-//     }
-
-//     $result = implode(',', $cleanerlayout);
-//     return $result;
-// }
-
 
 /**
  * Creates an array of maximum grades for an offlinequiz
@@ -1548,6 +1477,10 @@ function offlinequiz_delete_pdf_forms($offlinequiz) {
             $file->delete();
         }
     }
+    // Delete the file names in the offlinequiz groups
+    $DB->set_field('offlinequiz_groups', 'questionfilename', null, array('offlinequizid' => $offlinequiz->id));
+    $DB->set_field('offlinequiz_groups', 'answerfilename', null, array('offlinequizid' => $offlinequiz->id));
+    $DB->set_field('offlinequiz_groups', 'correctionfilename', null, array('offlinequizid' => $offlinequiz->id));
 
     // Set offlinequiz->docscreated to 0.
     $offlinequiz->docscreated = 0;

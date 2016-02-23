@@ -105,27 +105,33 @@ if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $
 if ($downloadall && $offlinequiz->docscreated) {
     $fs = get_file_storage();
 
-    // Simply pack all files in the 'pdfs' filearea in a ZIP file.
-    $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
-    $timestamp = date('Ymd_His', time());
+    $date = usergetdate(time());
+    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
+            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+
+
     $shortname = $DB->get_field('course', 'shortname', array('id' => $offlinequiz->course));
     $zipfilename = clean_filename($shortname . '_' . $offlinequiz->name . '_' . $timestamp . '.zip');
     $tempzip = tempnam($CFG->tempdir . '/', 'offlinequizzip');
     $filelist = array();
 
-    foreach ($files as $file) {
-        $filename = $file->get_filename();
-        if ($filename != '.') {
-            $path = '';
-            if (0 === strpos($filename, 'form-')) {
-                $path = get_string('questionforms', 'offlinequiz');
-            } else if (0 === strpos($filename, 'answer-')) {
-                $path = get_string('answerforms', 'offlinequiz');
-            } else {
-                $path = get_string('correctionforms', 'offlinequiz');
-            }
-            $path = clean_filename($path);
-            $filelist[$path . '/' . $filename] = $file;
+    $questionpath = clean_filename(get_string('questionforms', 'offlinequiz'));
+    $answerpath = clean_filename(get_string('answerforms', 'offlinequiz'));
+    $correctionpath = clean_filename(get_string('correctionforms', 'offlinequiz'));
+
+    // Simply packing all files in the 'pdfs' filearea does not work.
+    // We have to read the file names from the offlinequiz_groups table.
+    foreach ($groups as $group) {
+        if ($questionfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $group->questionfilename)) {
+            $filelist[$questionpath . '/' . $questionfile->get_filename()] = $questionfile;
+        }
+
+        if ($answerfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $group->answerfilename)) {
+            $filelist[$answerpath . '/' . $answerfile->get_filename()] = $answerfile;
+        }
+
+        if ($correctionfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $group->correctionfilename)) {
+            $filelist[$correctionpath . '/' . $correctionfile->get_filename()] = $correctionfile;
         }
     }
 
@@ -406,27 +412,12 @@ if ($mode == 'preview') {
                 } else {
                     $questionfile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 }
-            } else {
-                if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
-                    $suffix = '.docx';
-                } else {
-                    $suffix = '.pdf';
+                if ($questionfile) {
+                    $group->questionfilename = $questionfile->get_filename();
+                    $DB->update_record('offlinequiz_groups', $group);
                 }
-                // We have to retrieve the filename from the {files} table because it has a time stamp in it.
-                // A better (but more complicated) way would be to set the date in the
-                // function offlinequiz_question_pluginfile() in lib.php.
-                $sqllike = $DB->sql_like('filename', ':filename');
-                $sql = "SELECT filename
-                          FROM {files}
-                         WHERE contextid = :contextid
-                           AND component = 'mod_offlinequiz'
-                           AND filearea = 'pdfs'
-                           AND itemid = 0
-                           AND filepath = '/'
-                           AND " . $sqllike;
-                $params = array('contextid' => $context->id,
-                        'filename' => 'form-' . strtolower($groupletter) . '%' . $suffix);
-                $filename = $DB->get_field_sql($sql, $params);
+            } else {
+                $filename = $group->questionfilename;
                 $questionfile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $filename);
             }
 
@@ -466,19 +457,12 @@ if ($mode == 'preview') {
             if (!$offlinequiz->docscreated) {
                 $answerpdffile = offlinequiz_create_pdf_answer(offlinequiz_get_maxanswers($offlinequiz, array($group)),
                     $templateusage, $offlinequiz, $group, $course->id, $context);
+                if ($answerpdffile) {
+                    $group->answerfilename = $answerpdffile->get_filename();
+                    $DB->update_record('offlinequiz_groups', $group);
+                }
             } else {
-                $sqllike = $DB->sql_like('filename', ':filename');
-                $sql = "SELECT filename
-                          FROM {files}
-                         WHERE contextid = :contextid
-                           AND component = 'mod_offlinequiz'
-                           AND filearea = 'pdfs'
-                           AND itemid = 0
-                           AND filepath = '/'
-                           AND " . $sqllike;
-                $params = array('contextid' => $context->id,
-                        'filename' => 'answer-' . strtolower($groupletter) . '%.pdf');
-                $filename = $DB->get_field_sql($sql, $params);
+                $filename = $group->answerfilename;
                 $answerpdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $filename);
             }
 
@@ -511,28 +495,21 @@ if ($mode == 'preview') {
             }
 
             if (!$offlinequiz->docscreated) {
-                $correctpdffile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group,
+                $correctionpdffile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group,
                                      $course->id, $context, true);
+                if ($correctionpdffile) {
+                    $group->correctionfilename = $correctionpdffile->get_filename();
+                    $DB->update_record('offlinequiz_groups', $group);
+                }
             } else {
-                $sqllike = $DB->sql_like('filename', ':filename');
-                $sql = "SELECT filename
-                          FROM {files}
-                         WHERE contextid = :contextid
-                           AND component = 'mod_offlinequiz'
-                           AND filearea = 'pdfs'
-                           AND itemid = 0
-                           AND filepath = '/'
-                           AND " . $sqllike;
-                $params = array('contextid' => $context->id,
-                        'filename' => 'correction-' . strtolower($groupletter) . '%.pdf');
-                $filename = $DB->get_field_sql($sql, $params);
-                $correctpdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $filename);
+                $filename = $group->correctionfilename;
+                $correctionpdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $filename);
             }
 
-            if ($correctpdffile) {
-                $url = "$CFG->wwwroot/pluginfile.php/" . $correctpdffile->get_contextid() . '/' .
-                        $correctpdffile->get_component() . '/' . $correctpdffile->get_filearea() . '/' .
-                        $correctpdffile->get_itemid() . '/' . $correctpdffile->get_filename() . '?forcedownload=1';
+            if ($correctionpdffile) {
+                $url = "$CFG->wwwroot/pluginfile.php/" . $correctionpdffile->get_contextid() . '/' .
+                        $correctionpdffile->get_component() . '/' . $correctionpdffile->get_filearea() . '/' .
+                        $correctionpdffile->get_itemid() . '/' . $correctionpdffile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, get_string('formforcorrection', 'offlinequiz', $groupletter));
 
                 echo '<br />&nbsp;<br />';

@@ -73,7 +73,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
 
         // Introduction.
-        $this->add_intro_editor(false, get_string('introduction', 'offlinequiz'));
+        $this->standard_intro_elements();
 
         $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), array('optional' => true));
 
