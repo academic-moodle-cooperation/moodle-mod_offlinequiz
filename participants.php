@@ -102,6 +102,15 @@ $PAGE->set_heading($course->fullname);
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 
+function find_pdf_file($contextid, $listfilename) {
+    $fs = get_file_storage();
+    if ($pdffile = $fs->get_file($contextid, 'mod_offlinequiz', 'participants', 0, '/', $listfilename)) {
+        return $pdffile;
+    } else {
+        return $fs->get_file($contextid, 'mod_offlinequiz', 'pdfs', 0, '/', $listfilename);
+    }
+}
+
 switch($mode) {
     case 'editlists':
         // Only print headers and tabs if not asked to download data.
@@ -493,7 +502,7 @@ switch($mode) {
 
             // Delete existing pdf if forcenew.
             if ($forcenew && property_exists($list, 'filename') && $list->filename
-                    && $file = $fs->get_file($context->id, 'mod_offlinequiz', 'participants', 0, '/', $list->filename)) {
+                    && $file = find_pdf_file($context->id, $list->filename)) {
                 $file->delete();
                 $list->filename = null;
             }
@@ -501,7 +510,7 @@ switch($mode) {
             $pdffile = null;
             // Create PDF file if necessary.
             if (!property_exists($list, 'filename') ||  !$list->filename ||
-                    !$pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'participants', 0, '/', $list->filename)) {
+                    !$pdffile = find_pdf_file($context->id, $list->filename)) {
                 $pdffile = offlinequiz_create_pdf_participants($offlinequiz, $course->id, $list, $context);
                 if (!empty($pdffile)) {
                     $list->filename = $pdffile->get_filename();
@@ -543,7 +552,7 @@ switch($mode) {
         // We redirect if all pdf files are missing.
         $redirect = true;
         foreach ($lists as $list) {
-            if ($list->filename && $file = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $list->filename)) {
+            if ($list->filename && $file = find_pdf_file($context->id, $list->filename)) {
                 $redirect = false;
             }
         }
