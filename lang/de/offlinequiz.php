@@ -177,6 +177,7 @@ $string['forautoanalysis'] = 'Zur automatischen Prüfungsauswertung';
 $string['formforcorrection'] = 'Korrekturbogen für Gruppe {$a}';
 $string['formforgroup'] = 'Fragebogen für Gruppe {$a}';
 $string['formforgroupdocx'] = 'Fragebogen für Gruppe {$a} (DOCX)';
+$string['formforgrouplatex'] = 'Fragebogen für Gruppe {$a} (LATEX)';
 $string['formsexist'] = 'Formulare bereits erstellt.';
 $string['formsexistx'] = 'Formulare bereits erstellt (<a href="{$a}">Formulare herunterladen</a>)';
 $string['formsheetsettings'] = 'Formulareinstellungen';

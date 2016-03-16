@@ -196,6 +196,7 @@ $string['forautoanalysis'] = 'For automatic analysis';
 $string['formforcorrection'] = 'Correction form for group {$a}';
 $string['formforgroup'] = 'Question form for group {$a}';
 $string['formforgroupdocx'] = 'Question form for group {$a} (DOCX)';
+$string['formforgrouplatex'] = 'Question form for group {$a} (LATEX)';
 $string['formsexist'] = 'Forms already created.';
 $string['formsexistx'] = 'Forms already created (<a href="{$a}">Download forms</a>)';
 $string['formsheetsettings'] = 'Form Settings';
@@ -428,6 +429,65 @@ $string['questionbankcontents'] = 'Question bank contents';
 $string['questionforms'] = 'Question forms';
 $string['questionname'] = 'Question name';
 $string['questionsheet'] = 'Question sheet';
+$string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
+\usepackage[ngerman]{babel}
+\textwidth 16truecm
+\textheight 23truecm
+\setlength{\oddsidemargin}{0cm}
+\setlength{\evensidemargin}{0cm}
+\setlength{\topmargin}{-1cm}
+\usepackage[latin1]{inputenc} % damit deutsche Sonderzeichen (Umlaute, ß) in den Code eingegeben werden können
+\usepackage{amsmath} % für \implies etc
+\usepackage{amsfonts} % für \mathbb etc
+\usepackage{graphicx} % zum Bilder einfügen
+\renewcommand{\familydefault}{\sfdefault} % Schriftart
+\newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
+\newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
+\newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
+\parindent 0pt % keine Einrückung am Beginn des Absatzes
+\usepackage{esvect} % für lange Vektorpfeile, z.B. \vv{AB}
+\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % Für Einfügen von Hyperlinks
+\renewcommand\UrlFont{\sf}
+\usepackage{ulem} % Durchstreichen: \sout{gerade durchstreichen} \xout{schräg durchstreichen}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\usepackage{scrpage2} % Kopf- und Fußzeilen (http://esc-now.de/_/latex-individuelle-kopf-und-fusszeilen/?lang=en):
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\ifoot{[Gruppe \Group]}
+\makeatletter %%% Seitenumbrüche zwischen Antwortmöglichkeiten unterdrücken (funktioniert meistens!)
+\@beginparpenalty=10000
+\@itempenalty=10000
+\makeatother 
+%
+%%% DIE FOLGENDEN ZWEI ZEILEN: Wenn erste auskommentiert -> r/f werden angezeigt, wenn zweite auskommentiert -> r/f werden verborgen
+\newcommand{\answerIs}[1]{} %%% Zum verborgenen Anzeigen der richtigen und falschen Antworten
+% \newcommand{\answerIs}[1]{[#1]} %%% Zum Anzeigen der richtigen und falschen Antworten
+%%% 
+
+\begin{document}
+
+
+
+% ===========================================================================================================
+%%% Die Lehrveranstaltungs-Daten:
+\begin{center}{Universit\"at Wien, SEMESTER}\end{center}
+\begin{center}{\LARGE {$a->coursename}}\end{center}
+\begin{center}{Schriftliche Prüfung, {$a->date}}\end{center}
+%%% In der folgenden Zeile bei Erstellen des endgültigen Fragebogens den Namen der Gruppe einfügen!
+\def\Group{{$a->groupname}}
+\begin{center}{\Large Group \Group}\end{center}
+
+{\bf Name:}\\\\
+{\bf Matrikelnummer:}\\\\
+{\bf Unterschrift:}\\
+
+% ===========================================================================================================
+\bigskip
+
+{$a->latexforquestions}
+
+
+\end{document}';
 $string['questionsin'] = 'Questions in';
 $string['questionsingroup'] = 'Questions in group';
 $string['questionsinthisofflinequiz'] = 'Questions in this offline quiz';

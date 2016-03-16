@@ -162,6 +162,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $options = array();
         $options[OFFLINEQUIZ_PDF_FORMAT] = 'PDF';
         $options[OFFLINEQUIZ_DOCX_FORMAT] = 'DOCX';
+        $options[OFFLINEQUIZ_LATEX_FORMAT] = 'LATEX';
         $mform->addElement('select', 'fileformat', get_string('fileformat', 'offlinequiz'), $options, $attribs);
         $mform->addHelpButton('fileformat', 'fileformat', 'offlinequiz');
         $mform->setDefault('fileformat', 0);

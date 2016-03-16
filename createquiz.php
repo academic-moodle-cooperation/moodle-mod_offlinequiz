@@ -362,6 +362,8 @@ if ($mode == 'preview') {
             $doctype = 'PDF';
             if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                 $doctype = 'DOCX';
+            } else if($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+            	$doctype = 'LATEX';
             }
             $params = array(
                 'context' => $context,
@@ -409,6 +411,9 @@ if ($mode == 'preview') {
                 if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                     require_once('docxlib.php');
                     $questionfile = offlinequiz_create_docx_question($templateusage, $offlinequiz, $group, $course->id, $context);
+                } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+                	require_once('latexlib.php');
+                	$questionfile = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 } else {
                     $questionfile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 }
@@ -425,6 +430,8 @@ if ($mode == 'preview') {
                 $filestring = get_string('formforgroup', 'offlinequiz', $groupletter);
                 if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                     $filestring = get_string('formforgroupdocx', 'offlinequiz', $groupletter);
+                } else if($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+                	$filestring = get_string('formforgrouplatex', 'offlinequiz', $groupletter);
                 }
                 $url = "$CFG->wwwroot/pluginfile.php/" . $questionfile->get_contextid() . '/' . $questionfile->get_component() .
                             '/' . $questionfile->get_filearea() . '/' . $questionfile->get_itemid() . '/' .
@@ -530,6 +537,8 @@ if ($mode == 'preview') {
         $doctype = 'PDF';
         if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
             $doctype = 'DOCX';
+        } else if($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+        	$doctype = 'LATEX';
         }
         $params = array(
             'context' => $context,
