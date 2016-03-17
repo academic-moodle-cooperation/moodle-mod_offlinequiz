@@ -436,7 +436,6 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 \setlength{\oddsidemargin}{0cm}
 \setlength{\evensidemargin}{0cm}
 \setlength{\topmargin}{-1cm}
-\usepackage[latin1]{inputenc} % damit deutsche Sonderzeichen (Umlaute, ß) in den Code eingegeben werden können
 \usepackage{amsmath} % für \implies etc
 \usepackage{amsfonts} % für \mathbb etc
 \usepackage{graphicx} % zum Bilder einfügen

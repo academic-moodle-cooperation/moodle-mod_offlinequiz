@@ -122,8 +122,7 @@ class offlinequiz_question_usage_by_activity extends question_usage_by_activity 
         $quba->observer = new question_engine_unit_of_work($quba);
 
         while ($record && $record->qubaid == $qubaid && !is_null($record->slot)) {
-            $quba->questionattempts[$record->slot] =
-            question_attempt::load_from_records($records,
+            $quba->questionattempts[$record->slot] = question_attempt::load_from_records($records,
                     $record->questionattemptid, $quba->observer,
                     $quba->get_preferred_behaviour());
             if ($records->valid()) {
@@ -896,7 +895,7 @@ function offlinequiz_results_open($offlinequiz) {
  * @deprecated User identification is now set in admin settings.
  */
 function offlinequiz_load_useridentification() {
-	return;
+    return;
 }
 
 /**
@@ -1478,7 +1477,7 @@ function offlinequiz_delete_pdf_forms($offlinequiz) {
             $file->delete();
         }
     }
-    // Delete the file names in the offlinequiz groups
+    // Delete the file names in the offlinequiz groups.
     $DB->set_field('offlinequiz_groups', 'questionfilename', null, array('offlinequizid' => $offlinequiz->id));
     $DB->set_field('offlinequiz_groups', 'answerfilename', null, array('offlinequizid' => $offlinequiz->id));
     $DB->set_field('offlinequiz_groups', 'correctionfilename', null, array('offlinequizid' => $offlinequiz->id));

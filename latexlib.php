@@ -34,18 +34,8 @@ require_once($CFG->dirroot . '/filter/tex/filter.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 
 
-// //TODO löschen?
-// /**
-//  * Returns a rendering of the number depending on the answernumbering format.
-//  * 
-//  * @param int $num The number, starting at 0.
-//  * @param string $style The style to render the number in. One of the
-//  * options returned by {@link qtype_multichoice:;get_numbering_styles()}.
-//  * @return string the number $num in the requested style.
-//  */
-// function number_in_style($num, $style) {
-//         return $number = chr(ord('a') + $num);
-// }
+
+
 /**
  * Generates the PDF question/correction form for an offlinequiz group.
  *
@@ -66,23 +56,14 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
     $coursecontext = context_course::instance($courseid);
     $course = $DB->get_record('course', array('id' => $courseid));
-	//TODO
     $title = format_text($offlinequiz->name, FORMAT_HTML);
     if (!empty($offlinequiz->time)) {
         $title .= ': ' . userdate($offlinequiz->time);
     }
     $title .= ",  " . get_string('group') . $groupletter;
-    if (!$correction) {
-    
-
-        // The PDF intro text can be arbitrarily long so we have to catch page overflows.
-        if (!empty($offlinequiz->pdfintro)) {
-		//TODO
-        }
-    }
 
     // Load all the questions needed for this offline quiz group.
-    $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark 
+    $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
               FROM {offlinequiz_group_questions} ogq,
                    {question} q,
                    {question_categories} c
@@ -92,7 +73,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
                AND q.category = c.id
           ORDER BY ogq.slot ASC ";
     $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
- 
+
     // Load the questions.
     $questions = $DB->get_records_sql($sql, $params);
     if (!$questions) {
@@ -106,7 +87,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     if (!get_question_options($questions)) {
         print_error('Could not load question options');
     }
-    
+
     $number = 1;
 
     // We need a mapping from question IDs to slots, assuming that each question occurs only once.
@@ -121,221 +102,86 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
             $question = $questions[$currentquestionid];
 
-            $questiontext = $question->questiontext;
+            $questiontext = offlinequiz_convert_html_to_latex($question->questiontext);
 
+            $latexforquestions .= '\item ' .  $questiontext . "\n";
 
-            // Remove all HTML comments (typically from MS Office).
-            $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
-
-            // Remove <font> tags.
-            $questiontext = preg_replace("/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext);
-
-            // Remove <script> tags that are created by mathjax preview.
-            $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
-            //print_object($questiontext);
-			$questiontext = strip_tags($questiontext);
-			//print_object($questiontext);
-			//TODO remove images
-
-            $latexforquestions .=  '\item ' .  $questiontext . "\n";
-            //TODO Antworttyp Enumerate
-            $latexforquestions .= '\begin{enumerate}' . " \n";
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 // There is only a slot for multichoice questions.
                 $attempt = $templateusage->get_question_attempt($slot);
                 $order = $slotquestion->get_order($attempt);  // Order of the answers.
-				print_object($order);
-				
+
+                $latexforquestions .= '\begin{enumerate}' . " \n";
                 foreach ($order as $key => $answer) {
-                    $answertext = $question->options->answers[$answer]->answer;
-                    // Remove all HTML comments (typically from MS Office).
-                    $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
-                    // Remove all paragraph tags because they mess up the layout.
-                    $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
-                    // Remove <script> tags that are created by mathjax preview.
-                    $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
-                    $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = strip_tags($answertext);
-                    //TODO remove images
-					//TODO Antworten richtig anzeigen
-                    //                     if ($correction) {
-                    //                         if ($question->options->answers[$answer]->fraction > 0) {
-                    //                             $latex .= '</b>';
-                    //                         }
-                    //                     }
-					$answertext = '\item\answerIs{false} ' . $answertext;
-                    $latexforquestions .= $answertext;
-
-
-					
-                    $latexforquestions .= "\n";
+                    $latexforquestions .= offlinequiz_get_answer_latex($question, $answer);
                 }
                 $latexforquestions .= '\end{enumerate}' . "\n";
-					//TODO showgrades?
-//                 if ($offlinequiz->showgrades) {
-//                     $pointstr = get_string('points', 'grades');
-//                     if ($question->maxmark == 1) {
-//                         $pointstr = get_string('point', 'offlinequiz');
-//                     }
-//                     $latex .= '<br/>(' . ($question->maxmark + 0) . ' ' . $pointstr .')<br/>';
-//                 }
+
+                if ($offlinequiz->showgrades) {
+                    $pointstr = get_string('points', 'grades');
+                    if ($question->maxmark == 1) {
+                        $pointstr = get_string('point', 'offlinequiz');
+                    }
+                    $latexforquestions .= '(' . format_float($question->maxmark, $offlinequiz->decimalpoints) .
+                     ' ' . $pointstr .")\n";
+                }
             }
 
         }
         $latexforquestions .= '\end{enumerate}' . "\n";
-        
+
     } else {
-//         // No shufflequestions, so go through the questions as they have been added to the offlinequiz group.
-//         // We also have to show description questions that are not in the template.
+        // No shufflequestions, so go through the questions as they have been added to the offlinequiz group.
+        // We also have to show description questions that are not in the template.
 
-//         // First, compute mapping  questionid -> slotnumber.
-//         $questionslots = array();
-//         foreach ($slots as $slot) {
-//             $questionslots[$templateusage->get_question($slot)->id] = $slot;
-//         }
-//         $currentpage = 1;
-//         foreach($questions as $question) {
-//             $currentquestionid = $question->id;
-            
-//             // Add page break if set explicitely by teacher.
-//             if ($question->page > $currentpage) {
-//                 $pdf->AddPage();
-//                 $pdf->Ln(14);
-//                 $currentpage++;
-//             }
+        // First, compute mapping  questionid -> slotnumber.
+        $questionslots = array();
+        foreach ($slots as $slot) {
+            $questionslots[$templateusage->get_question($slot)->id] = $slot;
+        }
 
-//             // Add page break if necessary because of overflow.
-//             if ($pdf->GetY() > 230) {
-//                 $pdf->AddPage();
-//                 $pdf->Ln( 14 );
-//             }
-//             set_time_limit( 120 );
-            
-//             /**
-//              * **************************************************
-//              * either we print the question HTML 
-//              * **************************************************
-//              */
-//             $pdf->checkpoint();
-            
-//             $questiontext = $question->questiontext;
-            
-//             // Filter only for tex formulas.
-//             if (! empty ( $texfilter )) {
-//                 $questiontext = $texfilter->filter ( $questiontext );
-//             }
-            
-//             // Remove all HTML comments (typically from MS Office).
-//             $questiontext = preg_replace ( "/<!--.*?--\s*>/ms", "", $questiontext );
-            
-//             // Remove <font> tags.
-//             $questiontext = preg_replace ( "/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext );
-            
-//             // Remove <script> tags that are created by mathjax preview.
-//             $questiontext = preg_replace ( "/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext );
-            
-//             // Remove all class info from paragraphs because TCPDF won't use CSS.
-//             $questiontext = preg_replace ( '/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext );
-            
-//             $questiontext = $trans->fix_image_paths ( $questiontext, $question->contextid, 'questiontext', $question->id, 1, 300 );
-            
-//             $latex = '';
-            
-//             $latex .= $questiontext . '<br/><br/>';
-//             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                
-//                 $slot = $questionslots[$currentquestionid];
-//                 // Save the usage slot in the group questions table.
-//                 // $DB->set_field('offlinequiz_group_questions', 'usageslot', $slot,
-//                 // array('offlinequizid' => $offlinequiz->id,
-//                 // 'offlinegroupid' => $group->id, 'questionid' => $question->id));
-                
-//                 // There is only a slot for multichoice questions.
-//                 $slotquestion = $templateusage->get_question ( $slot );
-//                 $attempt = $templateusage->get_question_attempt ( $slot );
-//                 $order = $slotquestion->get_order ( $attempt ); // Order of the answers.
-                
-//                 foreach ( $order as $key => $answer ) {
-//                     $answertext = $question->options->answers[$answer]->answer;
-//                     // Filter only for tex formulas.
-//                     if (! empty ( $texfilter )) {
-//                         $answertext = $texfilter->filter ( $answertext );
-//                     }
-                    
-//                     // Remove all HTML comments (typically from MS Office).
-//                     $answertext = preg_replace ( "/<!--.*?--\s*>/ms", "", $answertext );
-//                     // Remove all paragraph tags because they mess up the layout.
-//                     $answertext = preg_replace ( "/<p[^>]*>/ms", "", $answertext );
-//                     // Remove <script> tags that are created by mathjax preview.
-//                     $answertext = preg_replace ( "/<script[^>]*>[^<]*<\/script>/ms", "", $answertext );
-//                     $answertext = preg_replace ( "/<\/p[^>]*>/ms", "", $answertext );
-//                     $answertext = $trans->fix_image_paths ( $answertext, $question->contextid, 'answer', $answer, 1, 300 );
-//                     // Was $pdf->GetK()).
-                    
-//                     if ($correction) {
-//                         if ($question->options->answers[$answer]->fraction > 0) {
-//                             $latex .= '<b>';
-//                         }
-                        
-//                         $answertext .= " (" . round ( $question->options->answers[$answer]->fraction * 100 ) . "%)";
-//                     }
-                    
-//                     $latex .= number_in_style ( $key, $question->options->answernumbering ) . ') &nbsp; ';
-//                     $latex .= $answertext;
-                    
-//                     if ($correction) {
-//                         if ($question->options->answers[$answer]->fraction > 0) {
-//                             $latex .= '</b>';
-//                         }
-//                     }
-//                     $latex .= "<br/>\n";
-//                 }
-                
-//                 if ($offlinequiz->showgrades) {
-//                     $pointstr = get_string ( 'points', 'grades' );
-//                     if ($question->maxmark == 1) {
-//                         $pointstr = get_string ( 'point', 'offlinequiz' );
-//                     }
-//                     $latex .= '<br/>(' . ($question->maxmark + 0) . ' ' . $pointstr . ')<br/>';
-//                 }
-//             }
-            
-//             // Finally print the question number and the HTML string.
-//             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-//                 $pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
-//                 $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
-//                 $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
-//             }
-            
-//             $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $latex );
-//             $pdf->Ln ();
-            
-//             if ($pdf->is_overflowing ()) {
-//                 $pdf->backtrack ();
-//                 $pdf->AddPage ();
-//                 $pdf->Ln ( 14 );
-                
-//                 // Print the question number and the HTML string again on the new page.
-//                 if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-//                     $pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
-//                     $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
-//                     $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
-//                 }
-                
-//                 $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $latex );
-//                 $pdf->Ln ();
-//             }
-//             $number += $questions[$currentquestionid]->length;
-//        }
+        foreach ($questions as $question) {
+            $currentquestionid = $question->id;
 
+            $questiontext = $question->questiontext;
+            $questiontext = offlinequiz_convert_html_to_latex($question->questiontext);
+            if ($question->qtype == 'description') {
+                $latexforquestions .= "\n" . '\\ ' . $questiontext . "\n";
+            } else {
+                $latexforquestions .= '\item ' .  $questiontext . "\n";
+            }
+            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+
+                $slot = $questionslots[$currentquestionid];
+
+                // There is only a slot for multichoice questions.
+                $slotquestion = $templateusage->get_question ( $slot );
+                $attempt = $templateusage->get_question_attempt ( $slot );
+                $order = $slotquestion->get_order ( $attempt ); // Order of the answers.
+                $latexforquestions .= '\begin{enumerate}' . " \n";
+                foreach ($order as $key => $answer) {
+                    $latexforquestions .= offlinequiz_get_answer_latex($question, $answer);
+                }
+                $latexforquestions .= '\end{enumerate}' . "\n";
+                if ($offlinequiz->showgrades) {
+                    $pointstr = get_string('points', 'grades');
+                    if ($question->maxmark == 1) {
+                        $pointstr = get_string('point', 'offlinequiz');
+                    }
+                    $latexforquestions .= '(' . format_float($question->maxmark, $offlinequiz->decimalpoints) . ' ' .
+                    $pointstr .")\n";
+                }
+
+            }
+        }
+        $latexforquestions .= '\end{enumerate}' . "\n";
     }
     $a = array();
     $a['latexforquestions'] = $latexforquestions;
-    //TODO LATEXen
-    $a['coursename'] = $course->fullname;
+    $a['coursename'] = offlinequiz_convert_html_to_latex($course->fullname);
     $a['groupname'] = $groupletter;
-    //TODO exceptionhandling?
+    // TODO exceptionhandling?
     $a['date'] = userdate($offlinequiz->time);
     $latex = get_string('questionsheetlatextemplate', 'offlinequiz', $a);
     $fs = get_file_storage();
@@ -346,7 +192,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     $date = usergetdate(time());
     $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
             $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
-    
+
     $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
@@ -360,8 +206,51 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
         $oldfile->delete();
     }
-    
+
     $file = $fs->create_file_from_string($fileinfo, $latex);
 
     return $file;
+}
+
+function offlinequiz_convert_html_to_latex($text) {
+    $umlautconversion = array(
+            'Ä' => '\"A',
+            'ä' => '\"a',
+            'Ö' => '\"O',
+            'ö' => '\"o',
+            'Ü' => '\"U',
+            'ü' => '\"u',
+            'ß' => '\ss',
+            '&nbsp;' => ' ',
+            '#' => '\#',
+            '%' => '\%'
+    );
+    // Remove all HTML comments (typically from MS Office).
+    $text = preg_replace("/<!--.*?--\s*>/ms", "", $text);
+    // Remove all paragraph tags because they mess up the layout.
+    $text = preg_replace("/<p[^>]*>/ms", "", $text);
+    $text = preg_replace("/<\/p[^>]*>/ms", "", $text);
+    // Remove <script> tags that are created by mathjax preview.
+    $text = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $text);
+    $text = strip_tags($text);
+    foreach ($umlautconversion as $umlaut => $replace) {
+        $text = str_ireplace($umlaut, $replace, $text);
+    }
+    return $text;
+}
+
+/**
+ *
+ */
+function offlinequiz_get_answer_latex($question, $answer) {
+    $answertext = $question->options->answers[$answer]->answer;
+    $answertext = offlinequiz_convert_html_to_latex($answertext);
+    if ($question->options->answers [$answer]->fraction > 0) {
+        $result = '\item\answerIs{true} ' . $answertext;
+    } else {
+        $result = '\item\answerIs{false} ' . $answertext;
+    }
+
+    $result .= "\n";
+    return $result;
 }
