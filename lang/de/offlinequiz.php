@@ -408,6 +408,64 @@ $string['questionbankcontents'] = 'Die Frage-Reihe beinhaltet';
 $string['questionforms'] = 'Frageboegen';
 $string['questionname'] = 'Frage';
 $string['questionsheet'] = 'Fragebogen';
+$string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
+\usepackage[ngerman]{babel}
+\textwidth 16truecm
+\textheight 23truecm
+\setlength{\oddsidemargin}{0cm}
+\setlength{\evensidemargin}{0cm}
+\setlength{\topmargin}{-1cm}
+\usepackage{amsmath} % für \implies etc
+\usepackage{amsfonts} % für \mathbb etc
+\usepackage{graphicx} % zum Bilder einfügen
+\renewcommand{\familydefault}{\sfdefault} % Schriftart
+\newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
+\newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
+\newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
+\parindent 0pt % keine Einrückung am Beginn des Absatzes
+\usepackage{esvect} % für lange Vektorpfeile, z.B. \vv{AB}
+\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % Für Einfügen von Hyperlinks
+\renewcommand\UrlFont{\sf}
+\usepackage{ulem} % Durchstreichen: \sout{gerade durchstreichen} \xout{schräg durchstreichen}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\usepackage{scrpage2} % Kopf- und Fußzeilen (http://esc-now.de/_/latex-individuelle-kopf-und-fusszeilen/?lang=en):
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\ifoot{[Gruppe \Group]}
+\makeatletter %%% Seitenumbrüche zwischen Antwortmöglichkeiten unterdrücken (funktioniert meistens!)
+\@beginparpenalty=10000
+\@itempenalty=10000
+\makeatother
+%
+%%% DIE FOLGENDEN ZWEI ZEILEN: Wenn erste auskommentiert -> r/f werden angezeigt, wenn zweite auskommentiert -> r/f werden verborgen
+\newcommand{\answerIs}[1]{} %%% Zum verborgenen Anzeigen der richtigen und falschen Antworten
+% \newcommand{\answerIs}[1]{[#1]} %%% Zum Anzeigen der richtigen und falschen Antworten
+%%%
+
+\begin{document}
+
+
+
+% ===========================================================================================================
+%%% Die Lehrveranstaltungs-Daten:
+\begin{center}{Universit\"at Wien}\end{center}
+\begin{center}{\LARGE {$a->coursename}}\end{center}
+\begin{center}{Schriftlich Pr\"ufung{$a->date}}\end{center}
+%%% In der folgenden Zeile bei Erstellen des endgültigen Fragebogens den Namen der Gruppe einfügen!
+\def\Group{{$a->groupname}}
+\begin{center}{\Large Gruppe \Group}\end{center}
+
+{\bf Name:}\\\\
+{\bf Matrikelnummer:}\\\\
+{\bf Unterschrift:}\\
+
+% ===========================================================================================================
+\bigskip
+
+{$a->latexforquestions}
+
+
+\end{document}';
 $string['questionsingroup'] = 'Fragen in Gruppe';
 $string['quizdate'] = 'Testdatum';
 $string['quizopenclose'] = 'Anfangs- und Endzeiten';

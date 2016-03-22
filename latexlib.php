@@ -33,11 +33,8 @@ require_once($CFG->dirroot . '/question/type/questionbase.php');
 require_once($CFG->dirroot . '/filter/tex/filter.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 
-
-
-
 /**
- * Generates the PDF question/correction form for an offlinequiz group.
+ * Generates the LaTeX question form for an offlinequiz group.
  *
  * @param question_usage_by_activity $templateusage the template question  usage for this offline group
  * @param object $offlinequiz The offlinequiz object
@@ -56,10 +53,9 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
     $coursecontext = context_course::instance($courseid);
     $course = $DB->get_record('course', array('id' => $courseid));
+
     $title = format_text($offlinequiz->name, FORMAT_HTML);
-    if (!empty($offlinequiz->time)) {
-        $title .= ': ' . userdate($offlinequiz->time);
-    }
+
     $title .= ",  " . get_string('group') . $groupletter;
 
     // Load all the questions needed for this offline quiz group.
@@ -182,10 +178,15 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     $a['coursename'] = offlinequiz_convert_html_to_latex($course->fullname);
     $a['groupname'] = $groupletter;
     // TODO exceptionhandling?
-    $a['date'] = userdate($offlinequiz->time);
-    $latex = get_string('questionsheetlatextemplate', 'offlinequiz', $a);
-    $fs = get_file_storage();
+    if ($offlinequiz->time) {
+        $a['date'] = ', ' . userdate($offlinequiz->time);
+    } else {
+        $a['date'] = '';
+    }
 
+    $latex = get_string('questionsheetlatextemplate', 'offlinequiz', $a);
+
+    $fs = get_file_storage();
     $fileprefix = get_string('fileprefixform', 'offlinequiz');
 
     // Prepare file record object.
@@ -203,7 +204,6 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
-
         $oldfile->delete();
     }
 
@@ -212,8 +212,12 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     return $file;
 }
 
+/**
+ * Return the LaTeX representation of a question or answer text.
+ * @param string $text
+ */
 function offlinequiz_convert_html_to_latex($text) {
-    $umlautconversion = array(
+    $conversiontable = array(
             'Ä' => '\"A',
             'ä' => '\"a',
             'Ö' => '\"O',
@@ -233,14 +237,18 @@ function offlinequiz_convert_html_to_latex($text) {
     // Remove <script> tags that are created by mathjax preview.
     $text = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $text);
     $text = strip_tags($text);
-    foreach ($umlautconversion as $umlaut => $replace) {
-        $text = str_ireplace($umlaut, $replace, $text);
+    foreach ($conversiontable as $search => $replace) {
+        $text = str_ireplace($search, $replace, $text);
     }
     return $text;
 }
 
 /**
+ * Return the LaTeX representation of an answer.
  *
+ * @param unknown $question
+ * @param unknown $answer
+ * @return string
  */
 function offlinequiz_get_answer_latex($question, $answer) {
     $answertext = $question->options->answers[$answer]->answer;

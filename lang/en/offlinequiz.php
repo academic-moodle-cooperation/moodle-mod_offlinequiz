@@ -430,7 +430,6 @@ $string['questionforms'] = 'Question forms';
 $string['questionname'] = 'Question name';
 $string['questionsheet'] = 'Question sheet';
 $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
-\usepackage[ngerman]{babel}
 \textwidth 16truecm
 \textheight 23truecm
 \setlength{\oddsidemargin}{0cm}
@@ -456,12 +455,12 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 \makeatletter %%% Seitenumbrüche zwischen Antwortmöglichkeiten unterdrücken (funktioniert meistens!)
 \@beginparpenalty=10000
 \@itempenalty=10000
-\makeatother 
+\makeatother
 %
 %%% DIE FOLGENDEN ZWEI ZEILEN: Wenn erste auskommentiert -> r/f werden angezeigt, wenn zweite auskommentiert -> r/f werden verborgen
 \newcommand{\answerIs}[1]{} %%% Zum verborgenen Anzeigen der richtigen und falschen Antworten
 % \newcommand{\answerIs}[1]{[#1]} %%% Zum Anzeigen der richtigen und falschen Antworten
-%%% 
+%%%
 
 \begin{document}
 
@@ -469,16 +468,16 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 
 % ===========================================================================================================
 %%% Die Lehrveranstaltungs-Daten:
-\begin{center}{Universit\"at Wien, SEMESTER}\end{center}
+\begin{center}{University of Vienna}\end{center}
 \begin{center}{\LARGE {$a->coursename}}\end{center}
-\begin{center}{Schriftliche Prüfung, {$a->date}}\end{center}
+\begin{center}{Written Exam{$a->date}}\end{center}
 %%% In der folgenden Zeile bei Erstellen des endgültigen Fragebogens den Namen der Gruppe einfügen!
 \def\Group{{$a->groupname}}
 \begin{center}{\Large Group \Group}\end{center}
 
 {\bf Name:}\\\\
-{\bf Matrikelnummer:}\\\\
-{\bf Unterschrift:}\\
+{\bf Matriculation number:}\\\\
+{\bf Signature:}\\
 
 % ===========================================================================================================
 \bigskip
