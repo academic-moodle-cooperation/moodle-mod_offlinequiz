@@ -414,7 +414,7 @@ $string['pdfscreated'] = 'PDF forms have been created';
 $string['pdfsdeletedforgroup'] = 'Forms for group {$a} deleted';
 $string['pdfintro'] = 'Additional information';
 $string['pdfintro_help'] = 'This information will be printed on the first page of the question sheet and should contain general information about how to fill in the answer form.';
-$string['pdfintrotext'] = '<b>How do I mark correctly?</b><br />This answer form will be scanned automatically. Please do not fold or spot. Use a black or blue pen to mark the fields. If you want to correct a marking, completeley fill the box with color. This field will be interpreted like an empty box.<br />';
+$string['pdfintrotext'] = '<b>How do I mark correctly?</b><br />This answer form will be scanned automatically. Please do not fold or spot. Use a black or blue pen to mark the fields. If you want to correct a marking, completely fill the box with color. This field will be interpreted like an empty box.<br />';
 $string['pdfintrotoolarge'] = 'The introduction is too long (max. 2000 characters).';
 $string['pearlywhite'] = 'Pearly white';
 $string['pluginadministration'] = 'Offline quiz administration';
@@ -541,7 +541,7 @@ You can also define start and end time for the results report. The checkboxes me
 <tr><td style="vertical-align: top;"><b>The attempt</b></td><td>
 The text of the questions and answers will be shown to the students. They will see which answers they chose, but the correct answers will not be indicated.</td>
 </td></tr>
-<tr><td style="vertical-align: top;"><b>Wether correct</b></td><td>
+<tr><td style="vertical-align: top;"><b>Whether correct</b></td><td>
 This option can only be activated if the option "The attempt" is activated. If activated, the students can see which of the chosen answers are correct (green background) or incorrect (red background).
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Marks</b></td><td>
