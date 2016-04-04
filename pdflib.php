@@ -424,21 +424,31 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     $pdf->Ln(4);
     if (!$correction) {
         $pdf->Cell(0, 4, offlinequiz_str_html_pdf(get_string('questionsheet', 'offlinequiz')), 0, 0, 'C');
-        $pdf->Rect(34, 46, 137, 53, 'D');
+        if ($offlinequiz->printstudycodefield) {
+            $pdf->Rect(34, 46, 137, 53, 'D');
+        } else {
+            $pdf->Rect(34, 46, 137, 43, 'D');
+        }
         $pdf->SetFont('FreeSans', '', 10);
         // Line breaks to position name string etc. properly.
         $pdf->Ln(20);
-        $pdf->Cell(58, 10, offlinequiz_str_html_pdf(get_string('name')).":", 0, 0, 'R');
+        $pdf->Cell(58, 10, offlinequiz_str_html_pdf(get_string('name')) . ":", 0, 0, 'R');
         $pdf->Rect(76, 60, 80, 0.3, 'F');
         $pdf->Ln(10);
-        $pdf->Cell(58, 10, offlinequiz_str_html_pdf(get_string('idnumber', 'offlinequiz')).":", 0, 0, 'R');
+        $pdf->Cell(58, 10, offlinequiz_str_html_pdf(get_string('idnumber', 'offlinequiz')) . ":", 0, 0, 'R');
         $pdf->Rect(76, 70, 80, 0.3, 'F');
         $pdf->Ln(10);
-        $pdf->Cell(58, 10, offlinequiz_str_html_pdf(get_string('studycode', 'offlinequiz')).":", 0, 0, 'R');
-        $pdf->Rect(76, 80, 80, 0.3, 'F');
-        $pdf->Ln(10);
-        $pdf->Cell(58, 10, offlinequiz_str_html_pdf(get_string('signature', 'offlinequiz')).":", 0, 0, 'R');
-        $pdf->Rect(76, 90, 80, 0.3, 'F');
+        if ($offlinequiz->printstudycodefield) {
+            $pdf->Cell(58, 10, offlinequiz_str_html_pdf(get_string('studycode', 'offlinequiz')) . ":", 0, 0, 'R');
+            $pdf->Rect(76, 80, 80, 0.3, 'F');
+            $pdf->Ln(10);
+        }
+        $pdf->Cell(58, 10, offlinequiz_str_html_pdf(get_string('signature', 'offlinequiz')) . ":", 0, 0, 'R');
+        if ($offlinequiz->printstudycodefield) {
+            $pdf->Rect(76, 90, 80, 0.3, 'F');
+        } else {
+            $pdf->Rect(76, 80, 80, 0.3, 'F');
+        }
         $pdf->Ln(33);
         $pdf->SetFont('FreeSans', '', $offlinequiz->fontsize);
         $pdf->SetFontSize($offlinequiz->fontsize);
