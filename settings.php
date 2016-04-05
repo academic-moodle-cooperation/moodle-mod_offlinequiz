@@ -40,6 +40,11 @@ if ($ADMIN->fulltree) {
             get_string('useridentification', 'offlinequiz'), get_string('configuseridentification', 'offlinequiz'),
             '[7]=idnumber' , PARAM_RAW, 30));
 
+    // Print study code field.
+    $settings->add(new admin_setting_configcheckbox('offlinequiz/printstudycodefield',
+            get_string('printstudycodefield', 'offlinequiz'), get_string('printstudycodefield_help', 'offlinequiz'),
+            1));
+
     // Shuffle questions.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/shufflequestions',
             get_string('shufflequestions', 'offlinequiz'), get_string('configshufflequestions', 'offlinequiz'),
