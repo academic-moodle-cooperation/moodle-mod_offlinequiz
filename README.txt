@@ -106,5 +106,4 @@ V. Scanning of answer forms
      Supported file types are TIF, PNG and GIF.
      
 V. Contact
-   In case you have any questions regarding this module you can either contact the author of the module (zimmerj7@univie.ac.at) or the 
-   e-learning support of the University of Vienna (e-support.zid@univie.ac.at).
+   In case you have any questions regarding this module you can either contact the author of the module (zimmerj7@univie.ac.at)
