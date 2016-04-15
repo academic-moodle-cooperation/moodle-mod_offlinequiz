@@ -106,4 +106,4 @@ V. Scanning of answer forms
      Supported file types are TIF, PNG and GIF.
      
 V. Contact
-   In case you have any questions regarding this module you can either contact the author of the module (zimmerj7@univie.ac.at)
+   In case you have any questions regarding this module you can contact the AMC support (info@academic-moodle-cooperation.org)
