@@ -198,45 +198,44 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 }
             }
         }
+            
+        // Set up the table in any case, even if we are downloading a file.
+        $params = array('offlinequiz' => $offlinequiz, 'noresults' => $noresults, 'pagesize' => $pagesize, 'group' => $groupid
+        );
+        $table = new offlinequiz_results_table('mod-offlinequiz-report-overview-report', $params);
+        
+        $table->define_columns($tablecolumns);
+        $table->define_headers($tableheaders);
+        $baseurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php', 
+                array('mode' => 'overview', 'id' => $cm->id, 'noresults' => $noresults, 'group' => $groupid, 
+                    'pagesize' => $pagesize
+                ));
+        $table->define_baseurl($baseurl);
+        
+        $table->sortable(true);
+        $table->no_sorting('checkbox');
+        
+        if ($withparticipants) {
+            $table->no_sorting('checked');
+        }
+        
+        $table->column_suppress('picture');
+        $table->column_suppress('fullname');
+        
+        $table->column_class('picture', 'picture');
+        $table->column_class($offlinequizconfig->ID_field, 'userkey');
+        $table->column_class('timestart', 'timestart');
+        $table->column_class('offlinegroupid', 'offlinegroupid');
+        $table->column_class('sumgrades', 'sumgrades');
+        
+        $table->set_attribute('cellpadding', '2');
+        $table->set_attribute('id', 'attempts');
+        $table->set_attribute('class', 'generaltable generalbox');
+        
+        // Start working -- this is necessary as soon as the niceties are over.
+        $table->setup();
 
-        if (!$download) {
-            // Set up the table.
-            $params = array('offlinequiz' => $offlinequiz, 'noresults' => $noresults,
-                'pagesize' => $pagesize, 'group' => $groupid
-            );
-            $table = new offlinequiz_results_table('mod-offlinequiz-report-overview-report', $params);
-
-            $table->define_columns($tablecolumns);
-            $table->define_headers($tableheaders);
-            $baseurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php',
-                    array('mode' => 'overview', 'id' => $cm->id, 'noresults' => $noresults,
-                        'group' => $groupid, 'pagesize' => $pagesize
-                    ));
-            $table->define_baseurl($baseurl);
-
-            $table->sortable(true);
-            $table->no_sorting('checkbox');
-
-            if ($withparticipants) {
-                $table->no_sorting('checked');
-            }
-
-            $table->column_suppress('picture');
-            $table->column_suppress('fullname');
-
-            $table->column_class('picture', 'picture');
-            $table->column_class($offlinequizconfig->ID_field, 'userkey');
-            $table->column_class('timestart', 'timestart');
-            $table->column_class('offlinegroupid', 'offlinegroupid');
-            $table->column_class('sumgrades', 'sumgrades');
-
-            $table->set_attribute('cellpadding', '2');
-            $table->set_attribute('id', 'attempts');
-            $table->set_attribute('class', 'generaltable generalbox');
-
-            // Start working -- this is necessary as soon as the niceties are over.
-            $table->setup();
-        } else if ($download == 'ODS') {
+        if ($download == 'ODS') {
             require_once("$CFG->libdir/odslib.class.php");
 
             $filename .= ".ods";
@@ -431,68 +430,67 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         list($contexttest, $cparams) = $result;
         list($roletest, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
 
-        $from = "FROM {user} u
+        $from = " FROM {user} u
                   JOIN {role_assignments} ra ON ra.userid = u.id
              LEFT JOIN {offlinequiz_results} qa ON u.id = qa.userid AND qa.offlinequizid = :offlinequizid
              ";
 
         $where = " WHERE ra.contextid $contexttest AND ra.roleid $roletest ";
 
-        $params = array('offlinequizid' => $offlinequiz->id
-        );
+        $params = array('offlinequizid' => $offlinequiz->id);
         $params = array_merge($params, $cparams, $rparams);
+
+        if (empty($noresults)) {
+            $where = $where . " AND qa.userid IS NOT NULL
+                                AND qa.status = 'complete' "; // Show ONLY students with results.
+        } else if ($noresults == 1) {
+            // The value noresults = 1 means only no results, so make the left join ask for only
+            // records
+            // where the right is null (no results).
+            $where .= ' AND qa.userid IS NULL '; // Show ONLY students without results.
+        } else if ($noresults == 3) {
+            // We want all results, also the partial ones.
+            $from = "FROM {user} u
+                      JOIN {offlinequiz_results} qa ON u.id = qa.userid ";
+            $where = " WHERE qa.offlinequizid = :offlinequizid ";
+        } // The value noresults = 2 means we want all students, with or without results.
 
         if ($groupid) {
             $from .= " JOIN {groups_members} gm ON gm.userid = u.id ";
             $where .= " AND gm.groupid = :groupid ";
             $params['groupid'] = $groupid;
         }
-        if (empty($noresults)) {
-            $where = $where . " AND qa.userid IS NOT NULL
-                                AND qa.status = 'complete'"; // Show ONLY students with results.
-        } else if ($noresults == 1) {
-            // The value noresults = 1 means only no results, so make the left join ask for only
-            // records
-            // where the right is null (no results).
-            $where .= ' AND qa.userid IS NULL'; // Show ONLY students without results.
-        } else if ($noresults == 3) {
-            // We want all results, also the partial ones.
-            $from = "FROM {user} u
-                      JOIN {offlinequiz_results} qa ON u.id = qa.userid ";
-            $where = " WHERE qa.offlinequizid = :offlinequizid";
-        } // The value noresults = 2 means we want all students, with or without results.
 
         $countsql = 'SELECT COUNT(DISTINCT(u.id)) ' . $from . $where;
+            
+        // Count the records NOW, before funky question grade sorting messes up $from.
+        $totalinitials = $DB->count_records_sql($countsql, $params);
+        
+        // Add extra limits due to initials bar.
+        list($ttest, $tparams) = $table->get_sql_where();
+        
+        if (!empty($ttest)) {
+            $where .= ' AND ' . $ttest;
+            $countsql .= ' AND ' . $ttest;
+            $params = array_merge($params, $tparams);
+        }
+        
+        $total = $DB->count_records_sql($countsql, $params);
+        
+        // Add extra limits due to sorting by question grade.
+        $tablesort = $table->get_sql_sort();
+        
+        $table->pagesize($pagesize, $total);
 
-        if (!$download) {
 
-            // Count the records NOW, before funky question grade sorting messes up $from.
-            $totalinitials = $DB->count_records_sql($countsql, $params);
-
-            // Add extra limits due to initials bar.
-            list($ttest, $tparams) = $table->get_sql_where();
-
-            if (!empty($ttest)) {
-                $where .= ' AND ' . $ttest;
-                $countsql .= ' AND ' . $ttest;
-                $params = array_merge($params, $tparams);
-            }
-
-            $total = $DB->count_records_sql($countsql, $params);
-
-            // Add extra limits due to sorting by question grade.
-            $tablesort = $table->get_sql_sort();
-
-            // Fix some wired sorting.
-            if (empty($tablesort)) {
-                $sort = ' ORDER BY u.lastname, u.id ';
-            } else {
-                $sort = ' ORDER BY ' . $tablesort . ', u.id';
-            }
-
-            $table->pagesize($pagesize, $total);
+        // Fix some wired sorting.
+        if (empty($tablesort)) {
+            $sort = ' ORDER BY u.lastname, u.id ';
+        } else {
+            $sort = ' ORDER BY ' . $tablesort . ', u.id';
         }
 
+       error_log($select . $from . $where . $sort);
         // Fetch the results.
         if (!$download) {
             $results = $DB->get_records_sql($select . $from . $where . $sort, $params,
@@ -664,6 +662,8 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 echo ' <input type="hidden" name="id" value="' . $cm->id . '" />';
                 echo ' <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
                 echo ' <input type="hidden" name="mode" value="overview" />';
+                echo ' <input type="hidden" name="group" value="' . $groupid . '" />';
+                echo ' <input type="hidden" name="noresults" value="' . $noresults . '" />';
                 echo ' <input type="hidden" name="noheader" value="yes" />';
                 echo ' <table class="boxaligncenter"><tr><td>';
                 $options = array('Excel' => get_string('excelformat', 'offlinequiz'),
@@ -694,19 +694,19 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         // Print display options.
         echo '<div class="controls">';
         echo '<form id="options" action="report.php" method="get">';
-        echo '<div class=centerbox>';
-        echo '<p>' . get_string('displayoptions', 'offlinequiz') . ': </p>';
-        echo '<input type="hidden" name="id" value="' . $cm->id . '" />';
-        echo '<input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
-        echo '<input type="hidden" name="mode" value="overview" />';
-        echo '<input type="hidden" name="group" value="' . $groupid . '" />';
-        echo '<input type="hidden" name="noresults" value="' . $noresults . '" />';
-        echo '<input type="hidden" name="detailedmarks" value="0" />';
-        echo '<table id="overview-options" class="boxaligncenter">';
-        echo '<tr align="left">';
-        echo '<td><label for="pagesize">' . get_string('pagesizeparts', 'offlinequiz') .
-                 '</label></td>';
-        echo '<td><input type="text" id="pagesize" name="pagesize" size="3" value="' . $pagesize .
+        echo ' <div class=centerbox>';
+        echo '   <p>' . get_string('displayoptions', 'offlinequiz') . ': </p>';
+        echo '   <input type="hidden" name="id" value="' . $cm->id . '" />';
+        echo '   <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
+        echo '   <input type="hidden" name="mode" value="overview" />';
+        echo '   <input type="hidden" name="group" value="' . $groupid . '" />';
+        echo '   <input type="hidden" name="noresults" value="' . $noresults . '" />';
+        echo '   <input type="hidden" name="detailedmarks" value="0" />';
+        echo '   <table id="overview-options" class="boxaligncenter">';
+        echo '     <tr align="left">';
+        echo '     <td><label for="pagesize">' . get_string('pagesizeparts', 'offlinequiz') .
+                  '</label></td>';
+        echo '     <td><input type="text" id="pagesize" name="pagesize" size="3" value="' . $pagesize .
                  '" /></td>';
         echo '</tr>';
         echo '<tr align="left">';
