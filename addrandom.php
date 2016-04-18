@@ -131,7 +131,7 @@ if ($data = $mform->get_data()) {
                 'It seems a form was submitted without any button being pressed???');
     }
 
-    offlinequiz_add_random_questions($offlinequiz, $offlinequizgroup, $categoryid, $data->numbertoadd, $includesubcategories,$preventsamequestion);
+    offlinequiz_add_random_questions($offlinequiz, $offlinequizgroup, $categoryid, $data->numbertoadd, $includesubcategories, $preventsamequestion);
     offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     redirect($returnurl);
