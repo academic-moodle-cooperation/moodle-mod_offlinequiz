@@ -459,7 +459,8 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
     // Teachers in this context are allowed to see all the files in the context.
     if (has_capability('mod/offlinequiz:viewreports', $context)) {
         if ($filearea == 'pdfs' || $filearea == 'participants') {
-            $filename = clean_filename($course->shortname) . '_' . clean_filename($offlinequiz->name) . '_' . $file->get_filename();
+            $filename = clean_filename($course->shortname . '_' . $offlinequiz->name . '_' . $file->get_filename());
+            $filename = str_replace(" ", "_", $filename);
             send_stored_file($file, 86400, 0, $forcedownload, array('filename' => $filename));
         } else {
             send_stored_file($file, 86400, 0, $forcedownload);
