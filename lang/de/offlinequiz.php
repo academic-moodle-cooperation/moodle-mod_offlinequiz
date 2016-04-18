@@ -398,6 +398,7 @@ $string['pearlywhite'] = 'Perlweiß';
 $string['pluginadministration'] = 'Offline-Test-Administration';
 $string['point'] = 'Punkt';
 $string['present'] = 'Anwesend';
+$string['preventsamequestion'] = 'Doppelte Verwendung von Fragen verhindern';
 $string['previewforgroup'] = 'Vorschau für Gruppe {$a}';
 $string['preview'] = 'Vorschau';
 $string['previewquestion'] = 'Vorschau der Frage';
