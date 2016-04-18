@@ -420,6 +420,7 @@ $string['pearlywhite'] = 'Pearly white';
 $string['pluginadministration'] = 'Offline quiz administration';
 $string['point'] = 'point';
 $string['present'] = 'present';
+$string['preventsamequestion'] = 'Prevent multiple usage of the same question in different groups';
 $string['previewforgroup'] = 'Preview for group {$a}';
 $string['preview'] = 'Preview';
 $string['previewquestion'] = 'Preview question';

@@ -2201,7 +2201,7 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
  * @param unknown_type $number
  * @param unknown_type $includesubcategories
  */
-function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $categoryid, $number, $recurse) {
+function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $categoryid, $number, $recurse,$preventsamequestion) {
     global $DB;
 
     $category = $DB->get_record('question_categories', array('id' => $categoryid));
@@ -2220,19 +2220,27 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
 
     list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
 
-    // Find all questions in the selected categories that are not in the offline group yet.
     $sql = "SELECT id
               FROM {question} q
              WHERE q.category $qcsql
                AND q.parent = 0
                AND q.hidden = 0
-               AND q.qtype IN ('multichoice', 'multichoiceset')
-               AND NOT EXISTS (SELECT 1
-                                 FROM {offlinequiz_group_questions} ogq
-                                WHERE ogq.questionid = q.id
-                                  AND ogq.offlinequizid = :offlinequizid
-                                  AND ogq.offlinegroupid = :offlinegroupid)";
-
+               AND q.qtype IN ('multichoice', 'multichoiceset') ";
+    if(!$preventsamequestion) {
+        // Find all questions in the selected categories that are not in the offline group yet.
+        $sql .= "AND NOT EXISTS (SELECT 1
+                                   FROM {offlinequiz_group_questions} ogq
+                                  WHERE ogq.questionid = q.id
+                                    AND ogq.offlinequizid = :offlinequizid
+                                    AND ogq.offlinegroupid = :offlinegroupid)";
+    }
+    else {
+        // Find all questions in the selected categories that are not in the offline test yet.
+        $sql .= "AND NOT EXISTS (SELECT 1
+                                   FROM {offlinequiz_group_questions} ogq
+                                  WHERE ogq.questionid = q.id
+                                    AND ogq.offlinequizid = :offlinequizid)";
+    }
     $qcparams['offlinequizid'] = $offlinequiz->id;
     $qcparams['offlinegroupid'] = $offlinegroup->id;
 

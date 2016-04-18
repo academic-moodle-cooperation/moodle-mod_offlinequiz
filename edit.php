@@ -150,7 +150,7 @@ foreach ($params as $key => $value) {
     if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
         $selectedquestionids[] = $matches[1];
     }
-} 
+}
 
 if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
         !empty($selectedquestionids) && confirm_sesskey()) {
@@ -177,7 +177,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     // If the question is already in another group, take the maxmark of that.
     if ($maxmarks = $DB->get_fieldset_select('offlinequiz_group_questions', 'maxmark',
-            'offlinequizid = :offlinequizid AND questionid = :questionid', 
+            'offlinequizid = :offlinequizid AND questionid = :questionid',
             array('offlinequizid' => $offlinequiz->id, 'questionid' => $addquestion))) {
         offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage, $maxmarks[0]);
     } else {
@@ -217,10 +217,12 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     // Add random questions to the offlinequiz.
     $structure->check_can_be_edited();
     $recurse = optional_param('recurse', 0, PARAM_BOOL);
+    $preventsamequestion = optional_param('preventsamequestion', 0, PARAM_BOOL);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     $categoryid = required_param('categoryid', PARAM_INT);
     $randomcount = required_param('randomcount', PARAM_INT);
-    offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount, $recurse);
+
+    offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount, $recurse,$preventsamequestion);
 
     offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
