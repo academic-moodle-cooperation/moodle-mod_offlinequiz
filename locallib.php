@@ -67,6 +67,10 @@ define('OFFLINEQUIZ_PDF_FORMAT', 0);   // PDF file format for question sheets.
 define('OFFLINEQUIZ_DOCX_FORMAT', 1);  // DOCX file format for question sheets.
 define('OFFLINEQUIZ_LATEX_FORMAT', 2);  // LATEX file format for question sheets.
 
+define('OFFLINEQUIZ_QUESTIONINFO_NONE', 0); // No info is printed.
+define('OFFLINEQUIZ_QUESTIONINFO_QTYPE', 1); // The question type is printed.
+define('OFFLINEQUIZ_QUESTIONINFO_ANSWERS', 2); // The number of correct answers is printed.
+
 define('NUMBERS_PER_PAGE', 30);        // Number of students on participants list.
 define('OQ_IMAGE_WIDTH', 860);         // Width of correction form.
 

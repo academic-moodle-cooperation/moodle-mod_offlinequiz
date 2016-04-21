@@ -53,6 +53,7 @@ $string['addtoofflinequiz'] = 'Add to offline quiz';
 $string['addtoqueue'] = 'Add to queue';
 $string['allinone'] = 'Unlimited';
 $string['alllists'] = 'All lists';
+$string['allornothing'] = 'All-or-nothing';
 $string['allresults'] = 'Show all results';
 $string['allstudents'] = 'Show all students';
 $string['alwaysavailable'] = 'Always available';
@@ -430,6 +431,11 @@ $string['questionanalysis'] = 'Difficulty analysis';
 $string['questionanalysistitle'] = 'Difficulty Analysis Table';
 $string['questionbankcontents'] = 'Question bank contents';
 $string['questionforms'] = 'Question forms';
+$string['questioninfoanswers'] = 'Number of correct answers';
+$string['questioninfocorrectanswer'] = 'correct answer';
+$string['questioninfocorrectanswers'] = 'correct answers';
+$string['questioninfonone'] = 'Nothing';
+$string['questioninfoqtype'] = 'Question type';
 $string['questionname'] = 'Question name';
 $string['questionsheet'] = 'Question sheet';
 $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
@@ -597,6 +603,12 @@ $string['showgrades_help'] = 'This option controls whether the maximum grades of
 $string['showmissingattemptonly'] = 'Show all checked participants without result';
 $string['showmissingcheckonly'] = 'Show all unchecked participants with result';
 $string['shownumpartsperpage'] = 'Show {$a} participants per page';
+$string['showquestioninfo'] = 'Print info about question';
+$string['showquestioninfo_help'] = 'With this option you can control, which additional information about the question is printed on the question sheet.
+You can choose one of these:
+- Nothing (default)
+- Question type - Depending on question type Single-Choice, Multiple-Choice, All-or-Nothing Multiple-Choice will be printed
+- Number of correct answers - The number of correct answers will be printed';
 $string['showstudentview'] = 'Show student view';
 $string['showtutorial'] = 'Show an offline quiz tutorial to students.';
 $string['showtutorial_help'] = 'This option determines whether students can see a tutorial about the basics of offline quizzes.
@@ -611,6 +623,7 @@ $string['shufflequestionsselected'] = 'Shuffle questions has been set, so some a
 $string['shufflewithin'] = 'Shuffle within questions';
 $string['shufflewithin_help'] = 'If enabled, the parts making up each question will be randomly shuffled each time you press the reload button in the form preview. NOTE: This setting only applies to questions that have the shuffeling option activated.';
 $string['signature'] = 'Signature';
+$string['singlechoice'] = 'Single choice';
 $string['standard'] = 'Standard';
 $string['starttutorial'] = 'Start tutorial about the examination';
 $string['statistics'] = 'Statistics';

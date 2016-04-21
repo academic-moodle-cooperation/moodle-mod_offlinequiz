@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/lib/PHPWord.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/documentlib.php');
 
 /**
  * Function to print all blocks (parts) of a question or answer text in one textrun.
@@ -492,7 +493,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     }
 
     // Load all the questions needed for this offline quiz group.
-    $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark 
+    $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
               FROM {offlinequiz_group_questions} ogq,
                    {question} q,
                    {question_categories} c
@@ -502,7 +503,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                AND q.category = c.id
           ORDER BY ogq.slot ASC ";
     $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
- 
+
     // Load the questions.
     $questions = $DB->get_records_sql($sql, $params);
     if (!$questions) {
@@ -606,14 +607,11 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     $blocks = offlinequiz_convert_image_docx($answertext);
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
                 }
-                if ($offlinequiz->showgrades) {
-                    $pointstr = get_string('points', 'grades');
-                    if ($question->maxmark == 1) {
-                        $pointstr = get_string('point', 'offlinequiz');
-                    }
+                $infostr = offlinequiz_get_question_infostring($offlinequiz,$question);
+                if($infostr) {
                     // Indent the question grade like the answers.
                     $textrun = $section->createTextRun($level2);
-                    $textrun->addText('(' . ($question->maxmark + 0) . ' '. $pointstr .')', 'bStyle');
+                    $textrun->addText($infostr, 'bStyle');
                 }
             }
             $section->addTextBreak();
@@ -711,16 +709,12 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
                 }
-                if ($offlinequiz->showgrades) {
-                    $pointstr = get_string('points', 'grades');
-                    if ($question->maxmark == 1) {
-                        $pointstr = get_string('point', 'offlinequiz');
-                    }
+                $infostr = offlinequiz_get_question_infostring($offlinequiz,$question);
+                if($infostr) {
                     // Indent the question grade like the answers.
                     $textrun = $section->createTextRun($level2);
-                    $textrun->addText('(' . ($question->maxmark + 0) . ' '. $pointstr .')', 'bStyle');
+                    $textrun->addText($infostr, 'bStyle');
                 }
-
                 $section->addTextBreak();
                 $number++;
                 // End if multichoice.
@@ -737,7 +731,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     srand(microtime() * 1000000);
     $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
-    
+
     $tempfilename = $CFG->dataroot . '/temp/offlinequiz/' . $unique . '.docx';
     check_dir_exists($CFG->dataroot . '/temp/offlinequiz', true, true);
 
