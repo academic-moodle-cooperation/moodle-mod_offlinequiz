@@ -574,9 +574,12 @@ $string['shownumpartsperpage'] = '{$a} Teilnehmer/innen pro Seite anzeigen';
 $string['showquestioninfo'] = 'Hinweis zu Antwortoptionen drucken';
 $string['showquestioninfo_help'] = 'Diese Option steuert, ob bei Hinweise zur Antwortoption einer Frage auf dem Fragebogen unterhalb der Frage angezeigt werden.
 Folgende Optionen sind möglich:
-- keine
-- Fragetyp zeigen - Single-Choice, Multiple-Choice, Alles-oder-Nichts MC wird angezeigt
-- Anzahl der richtigen Antworten zeigen - bspw. 1 richtige Antwort wird angezeigt';
+<ul>
+    <li> keine
+    <li> Fragetyp zeigen - Single-Choice, Multiple-Choice, Alles-oder-Nichts MC wird angezeigt
+    <li> Anzahl der richtigen Antworten zeigen - bspw. 1 richtige Antwort wird angezeigt
+</ul>';
+
 $string['showstudentview'] = 'Teilnehmer/innen-Ansicht anzeigen';
 $string['shuffleanswers'] = 'Antworten neu mischen';
 $string['shuffleanswersagain'] = 'Antworten neu mischen';

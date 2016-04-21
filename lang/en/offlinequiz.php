@@ -606,9 +606,11 @@ $string['shownumpartsperpage'] = 'Show {$a} participants per page';
 $string['showquestioninfo'] = 'Print info about question';
 $string['showquestioninfo_help'] = 'With this option you can control, which additional information about the question is printed on the question sheet.
 You can choose one of these:
-- Nothing (default)
-- Question type - Depending on question type Single-Choice, Multiple-Choice, All-or-Nothing Multiple-Choice will be printed
-- Number of correct answers - The number of correct answers will be printed';
+<ul>
+<li> Nothing (default)
+<li> Question type - Depending on question type Single-Choice, Multiple-Choice, All-or-Nothing Multiple-Choice will be printed
+<li> Number of correct answers - The number of correct answers will be printed
+</ul>';
 $string['showstudentview'] = 'Show student view';
 $string['showtutorial'] = 'Show an offline quiz tutorial to students.';
 $string['showtutorial_help'] = 'This option determines whether students can see a tutorial about the basics of offline quizzes.
