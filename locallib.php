@@ -366,38 +366,6 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
     $trans->allow_commit();
 }
 
-
-/**
- * Save the questions of an offlinequiz in the database.
- * @param object $offlinequiz the offlinequiz object.
- * @param array $questionids an array of question IDs.
- * @return .
- */
-// function offlinequiz_save_questions($offlinequiz, $questionids = null) {
-//     global $DB;
-
-//     if (empty($questionids)) {
-//         $questionids = explode(',', $offlinequiz->questions);
-//     }
-
-//     // Delete all offline group questions.
-//     $DB->delete_records('offlinequiz_group_questions', array('offlinequizid' => $offlinequiz->id,
-//             'offlinegroupid' => $offlinequiz->groupid));
-
-//     // Then insert them from scratch.
-//     $position = 1;
-//     foreach ($questionids as $qid) {
-//         $data = new stdClass();
-//         $data->offlinequizid = $offlinequiz->id;
-//         $data->offlinegroupid = $offlinequiz->groupid;
-//         $data->questionid = $qid;
-//         $data->slot = $position;
-//         $data->position = $position++;
-
-//         $DB->insert_record('offlinequiz_group_questions', $data);
-//     }
-// }
-
 /**
  * returns the maximum number of questions in a set of offline groups
  *
@@ -2122,7 +2090,8 @@ function offlinequiz_question_tostring($question, $showicon = false,
  *      add at the end
  * @return bool false if the question was already in the offlinequiz
  */
-function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offlinegroup, $fromofflinegroup = null, $maxmarks = null) {
+function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offlinegroup,
+        $fromofflinegroup = null, $maxmarks = null) {
     global $DB;
 
     if (offlinequiz_has_scanned_pages($offlinequiz->id)) {
@@ -2143,9 +2112,9 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
         // If the question is already in another group, take the maxmark of that.
         $maxmark = null;
         if ($fromofflinegroup && $oldmaxmark = $DB->get_field('offlinequiz_group_questions', 'maxmark',
-                    array('offlinequizid' => $offlinequiz->id,
-                          'offlinegroupid' => $fromofflinegroup,
-                          'questionid' => $questionid))) {
+            array('offlinequizid' => $offlinequiz->id,
+            'offlinegroupid' => $fromofflinegroup,
+            'questionid' => $questionid))) {
             $maxmark = $oldmaxmark;
         } else if ($maxmarks && array_key_exists($questionid, $maxmarks)) {
             $maxmark = $maxmarks[$questionid];
@@ -2174,7 +2143,6 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
             $slot->maxmark = $DB->get_field('question', 'defaultmark', array('id' => $questionid));
         }
 
-
         $lastslot = end($slots);
         if ($lastslot) {
             $slot->slot = $lastslot->slot + 1;
@@ -2182,7 +2150,6 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
             $slot->slot = 1;
         }
         $slot->page = 0;
-
 
         if (!$slot->page) {
             if ($offlinequiz->questionsperpage && $numonlastpage >= $offlinequiz->questionsperpage) {
@@ -2205,7 +2172,8 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
  * @param unknown_type $number
  * @param unknown_type $includesubcategories
  */
-function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $categoryid, $number, $recurse,$preventsamequestion) {
+function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $categoryid,
+        $number, $recurse, $preventsamequestion) {
     global $DB;
 
     $category = $DB->get_record('question_categories', array('id' => $categoryid));
@@ -2230,15 +2198,14 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
                AND q.parent = 0
                AND q.hidden = 0
                AND q.qtype IN ('multichoice', 'multichoiceset') ";
-    if(!$preventsamequestion) {
+    if (!$preventsamequestion) {
         // Find all questions in the selected categories that are not in the offline group yet.
         $sql .= "AND NOT EXISTS (SELECT 1
                                    FROM {offlinequiz_group_questions} ogq
                                   WHERE ogq.questionid = q.id
                                     AND ogq.offlinequizid = :offlinequizid
                                     AND ogq.offlinegroupid = :offlinegroupid)";
-    }
-    else {
+    } else {
         // Find all questions in the selected categories that are not in the offline test yet.
         $sql .= "AND NOT EXISTS (SELECT 1
                                    FROM {offlinequiz_group_questions} ogq
@@ -2292,7 +2259,7 @@ function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
     // Go through the question IDs and remove them if they exist.
     // We do a DB commit after each question ID to make things simpler.
     foreach ($questionids as $questionid) {
-        // Retrieve the slots indexed by id
+        // Retrieve the slots indexed by id.
         $slots = $DB->get_records('offlinequiz_group_questions',
                 array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $offlinequiz->groupid),
                 'slot');

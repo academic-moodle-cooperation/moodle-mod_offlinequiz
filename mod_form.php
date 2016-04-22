@@ -151,7 +151,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $mform->addElement('static', 'pdfintro', get_string('pdfintro', 'offlinequiz'), $offlinequiz->pdfintro);
         }
         $mform->setType('pdfintro', PARAM_RAW);
-        //$mform->setDefault('pdfintro', array('text' => get_string('pdfintrotext', 'offlinequiz')));
         $mform->addHelpButton('pdfintro', 'pdfintro', 'offlinequiz');
 
         $options = array();
@@ -271,7 +270,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
                                         'mod_offlinequiz', 'pdfintro', false,
                                         offlinequiz_get_editor_options($this->context),
                                         $toform['pdfintro']);
-                // $default_values['pdfintro']['format'] = $default_values['pdfintro'];
                 $toform['pdfintro'] = array();
                 $toform['pdfintro']['text'] = $text;
                 $toform['pdfintro']['format'] = editors_get_preferred_format();

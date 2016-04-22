@@ -27,19 +27,18 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-function offlinequiz_get_question_infostring($offlinequiz,$question) {
-    //print_object($offlinequiz);
+function offlinequiz_get_question_infostring($offlinequiz, $question) {
     if ($offlinequiz->showgrades || $offlinequiz->showquestioninfo) {
         $infostr = '(';
-        $questioninfo = offlinequiz_get_questioninfo($offlinequiz,$question);
-        if($questioninfo) {
+        $questioninfo = offlinequiz_get_questioninfo($offlinequiz, $question);
+        if ($questioninfo) {
             $infostr .= $questioninfo;
-            if($offlinequiz->showgrades) {
-                $infostr .=  ', ';
+            if ($offlinequiz->showgrades) {
+                $infostr .= ', ';
             }
         }
 
-        if($offlinequiz->showgrades) {
+        if ($offlinequiz->showgrades) {
             $pointstr = get_string('points', 'grades');
             if ($question->maxmark == 1) {
                 $pointstr = get_string('point', 'offlinequiz');
@@ -55,31 +54,27 @@ function offlinequiz_get_question_infostring($offlinequiz,$question) {
 }
 
 function offlinequiz_get_questioninfo($offlinequiz, $question) {
-    if($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_QTYPE) {
-        if($question->qtype == 'multichoice') {
+    if ($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_QTYPE) {
+        if ($question->qtype == 'multichoice') {
 
-            if($question->options->single) {
-                $questioninfo = get_string('singlechoice','offlinequiz');
+            if ($question->options->single) {
+                $questioninfo = get_string('singlechoice', 'offlinequiz');
+            } else {
+                $questioninfo = get_string('multichoice', 'offlinequiz');
             }
-            else {
-                $questioninfo = get_string('multichoice','offlinequiz');
-            }
-        }
-        else if($question->qtype == 'multichoiceset') {
-            $questioninfo = get_string('allornothing','offlinequiz');
+        } else if ($question->qtype == 'multichoiceset') {
+            $questioninfo = get_string('allornothing', 'offlinequiz');
         }
         return $questioninfo;
 
-    }
-    else if($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_ANSWERS) {
+    } else if ($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_ANSWERS) {
         $amount = offlinequiz_get_amount_correct_answers($question);
-        $questioninfo = $amount . ' ' . get_string('questioninfocorrectanswers','offlinequiz');
-        if($amount == 1) {
-            $questioninfo = $amount . ' ' . get_string('questioninfocorrectanswer','offlinequiz', $amount);
+        $questioninfo = $amount . ' ' . get_string('questioninfocorrectanswers', 'offlinequiz');
+        if ($amount == 1) {
+            $questioninfo = $amount . ' ' . get_string('questioninfocorrectanswer', 'offlinequiz', $amount);
         }
         return $questioninfo;
-    }
-    else {
+    } else {
         return null;
     }
 }
@@ -87,9 +82,9 @@ function offlinequiz_get_questioninfo($offlinequiz, $question) {
 function offlinequiz_get_amount_correct_answers($question) {
     $answers = $question->options->answers;
     $amount = 0;
-    foreach($answers as $answer) {
-        if($answer->fraction > 0) {
-            $amount = $amount +1;
+    foreach ($answers as $answer) {
+        if ($answer->fraction > 0) {
+            $amount = $amount + 1;
         }
     }
     return $amount;

@@ -580,11 +580,6 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
-                // Save the usage slot in the group questions table.
-//                 $DB->set_field('offlinequiz_group_questions', 'usageslot', $slot,
-//                         array('offlinequizid' => $offlinequiz->id,
-//                                 'offlinegroupid' => $group->id, 'questionid' => $question->id));
-
                 // There is only a slot for multichoice questions.
                 $attempt = $templateusage->get_question_attempt($slot);
                 $order = $slotquestion->get_order($attempt);  // Order of the answers.
@@ -607,8 +602,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     $blocks = offlinequiz_convert_image_docx($answertext);
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
                 }
-                $infostr = offlinequiz_get_question_infostring($offlinequiz,$question);
-                if($infostr) {
+                $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
+                if ($infostr) {
                     // Indent the question grade like the answers.
                     $textrun = $section->createTextRun($level2);
                     $textrun->addText($infostr, 'bStyle');
@@ -630,8 +625,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
         $currentpage = 1;
         foreach ($questions as $question) {
 
- 	        // Add page break if set explicitely by teacher.
-        	if ($question->page > $currentpage) {
+            // Add page break if set explicitely by teacher.
+            if ($question->page > $currentpage) {
                 $section->addPageBreak();
                 $currentpage++;
             }
@@ -680,11 +675,6 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
                 $slot = $questionslots[$question->id];
 
-                // Save the usage slot in the group questions table.
-//                 $DB->set_field('offlinequiz_group_questions', 'usageslot', $slot,
-//                         array('offlinequizid' => $offlinequiz->id,
-//                                 'offlinegroupid' => $group->id, 'questionid' => $question->id));
-
                 // Now retrieve the order of the answers.
                 $slotquestion = $templateusage->get_question($slot);
                 $attempt = $templateusage->get_question_attempt($slot);
@@ -709,8 +699,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
                 }
-                $infostr = offlinequiz_get_question_infostring($offlinequiz,$question);
-                if($infostr) {
+                $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
+                if ($infostr) {
                     // Indent the question grade like the answers.
                     $textrun = $section->createTextRun($level2);
                     $textrun->addText($infostr, 'bStyle');

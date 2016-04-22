@@ -115,8 +115,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
                 $latexforquestions .= '\end{enumerate}' . "\n";
 
                 $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
-                if($infostr) {
-                    //$infostr = str_replace(')', ' )', $infostr);
+                if ($infostr) {
                     $latexforquestions .= $infostr . "\n";
                 }
             }
@@ -158,9 +157,8 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
                 }
                 $latexforquestions .= '\end{enumerate}' . "\n";
                 $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
-                if($infostr) {
-                //$infostr = str_replace(')', ' )', $infostr);
-                $latexforquestions .= $infostr . "\n";
+                if ($infostr) {
+                    $latexforquestions .= $infostr . "\n";
                 }
 
             }
