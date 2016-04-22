@@ -45,6 +45,7 @@ $string['addrandomquestiontopage'] = 'Zufällig Fragen zur Seite {$a} hinzufüge
 $string['addtoofflinequiz'] = 'Hinzufügen';
 $string['addtoqueue'] = 'Zur Warteschlange hinzufügen';
 $string['allinone'] = 'Unbegrenzt';
+$string['allornothing'] = 'All-or-nothing';
 $string['alllists'] = 'Alle Listen';
 $string['allresults'] = 'Alle Ergebnisse anzeigen';
 $string['allstudents'] = 'Alle Teilnehmer/innen anzeigen';
@@ -282,6 +283,7 @@ Eine detaillierte Beschreibung des Moduls finden Sie auf der Webseite: http://of
 $string['moodleprocessing'] = 'Belege durch Moodle auswerten';
 $string['movecorners'] = 'Ziehen Sie die Eckmarkierungen per Drag-and-Drop zunächst in die richtige Position.';
 $string['moveselectedonpage'] = 'Verschieben der ausgewählten Fragen zur Seite: {$a}';
+$string['multichoice'] = 'Multiple-Choice';
 $string['removeselected'] = 'Ausgewählte entfernen';
 $string['multianswersforsingle'] = 'Mehrere Antworten bei Einfachauswahl';
 $string['name'] = 'Name des Offline-Tests';
@@ -408,6 +410,12 @@ $string['questionanalysis'] = 'Schwierigkeitsübersicht';
 $string['questionanalysistitle'] = 'Schwierigkeitsübersicht';
 $string['questionbankcontents'] = 'Die Frage-Reihe beinhaltet';
 $string['questionforms'] = 'Fragebögen';
+$string['questioninfoanswers'] = 'Anzahl der richtigen Antworten zeigen';
+$string['questioninfocorrectanswer'] = 'richtige Antwort';
+$string['questioninfocorrectanswers'] = 'richtige Antworten';
+$string['questioninfonone'] = 'nein';
+$string['questioninfoqtype'] = 'Fragetyp zeigen';
+$string['questioninfomultichoice'] = 'Multiple-Choice';
 $string['questionname'] = 'Frage';
 $string['questionsheet'] = 'Fragebogen';
 $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
@@ -565,6 +573,15 @@ $string['showgrades_help'] = 'Diese Option steuert, ob die erzielbaren Punkte ei
 $string['showmissingattemptonly'] = 'Alle Anwesenden ohne Ergebnis anzeigen';
 $string['showmissingcheckonly'] = 'Alle Abwesenden mit Ergebnis anzeigen';
 $string['shownumpartsperpage'] = '{$a} Teilnehmer/innen pro Seite anzeigen';
+$string['showquestioninfo'] = 'Hinweis zu Antwortoptionen drucken';
+$string['showquestioninfo_help'] = 'Diese Option steuert, ob bei Hinweise zur Antwortoption einer Frage auf dem Fragebogen unterhalb der Frage angezeigt werden.
+Folgende Optionen sind möglich:
+<ul>
+    <li> keine
+    <li> Fragetyp zeigen - Single-Choice, Multiple-Choice, Alles-oder-Nichts MC wird angezeigt
+    <li> Anzahl der richtigen Antworten zeigen - bspw. 1 richtige Antwort wird angezeigt
+</ul>';
+
 $string['showstudentview'] = 'Teilnehmer/innen-Ansicht anzeigen';
 $string['shuffleanswers'] = 'Antworten neu mischen';
 $string['shuffleanswersagain'] = 'Antworten neu mischen';
@@ -575,6 +592,7 @@ $string['shufflequestionsselected'] = 'Fragen-Mischen wurde aktiviert. Deshalb s
 $string['shufflewithin'] = 'Antworten innerhalb der Fragen mischen';
 $string['shufflewithin_help'] = 'Wenn hier "Ja" ausgewählt ist, wird die Reihenfolge der Antwortalternativen pro Frage zufällig gewählt. Ist dieselbe Frage in zwei oder mehreren Gruppen des Offline-Tests eingebunden, wird für jede Gruppe die Antwortreihenfolge nach dem Zufallsprinzip festgelegt. ACHTUNG: Antworten werden nur bei Fragen gemischt, für die in den Einstellungen der Frage das Mischen aktiviert ist!';
 $string['signature'] = 'Unterschrift';
+$string['singlechoice'] = 'Single-Choice';
 $string['standard'] = 'Standard';
 $string['studycode'] = 'Studienkennzahl';
 $string['starttutorial'] = 'Information zum Prüfungsablauf ansehen';

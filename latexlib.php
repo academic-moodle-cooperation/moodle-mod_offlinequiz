@@ -114,13 +114,9 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
                 }
                 $latexforquestions .= '\end{enumerate}' . "\n";
 
-                if ($offlinequiz->showgrades) {
-                    $pointstr = get_string('points', 'grades');
-                    if ($question->maxmark == 1) {
-                        $pointstr = get_string('point', 'offlinequiz');
-                    }
-                    $latexforquestions .= '(' . format_float($question->maxmark, $offlinequiz->decimalpoints) .
-                     ' ' . $pointstr .")\n";
+                $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
+                if ($infostr) {
+                    $latexforquestions .= $infostr . "\n";
                 }
             }
 
@@ -160,13 +156,9 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
                     $latexforquestions .= offlinequiz_get_answer_latex($question, $answer);
                 }
                 $latexforquestions .= '\end{enumerate}' . "\n";
-                if ($offlinequiz->showgrades) {
-                    $pointstr = get_string('points', 'grades');
-                    if ($question->maxmark == 1) {
-                        $pointstr = get_string('point', 'offlinequiz');
-                    }
-                    $latexforquestions .= '(' . format_float($question->maxmark, $offlinequiz->decimalpoints) . ' ' .
-                    $pointstr .")\n";
+                $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
+                if ($infostr) {
+                    $latexforquestions .= $infostr . "\n";
                 }
 
             }

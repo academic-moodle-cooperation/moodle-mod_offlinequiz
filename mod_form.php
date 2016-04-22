@@ -87,7 +87,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $mform->addElement('static', 'numgroups', get_string('numbergroups', 'offlinequiz'));
         }
 
-        // Only allow to change shufflequestions and shuffleanswers if the PDF documents have not been created.
+        // Only allow certain options if the PDF documents have not been created.
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             $attribs = '';
         } else {
@@ -141,7 +141,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'printstudycodefield', get_string('printstudycodefield', 'offlinequiz'), $attribs);
         $mform->addHelpButton('printstudycodefield', 'printstudycodefield', 'offlinequiz');
         $mform->setDefault('printstudycodefield', $offlinequizconfig->printstudycodefield);
-        
+
         // ------------------------------------------------------------------------------
 
         if (!$offlinequiz || !$offlinequiz->docscreated) {
@@ -151,10 +151,9 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $mform->addElement('static', 'pdfintro', get_string('pdfintro', 'offlinequiz'), $offlinequiz->pdfintro);
         }
         $mform->setType('pdfintro', PARAM_RAW);
-        //$mform->setDefault('pdfintro', array('text' => get_string('pdfintrotext', 'offlinequiz')));
         $mform->addHelpButton('pdfintro', 'pdfintro', 'offlinequiz');
 
-        unset($options);
+        $options = array();
         $options[8] = 8;
         $options[9] = 9;
         $options[10] = 10;
@@ -173,6 +172,13 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
         $mform->addElement('selectyesno', 'showgrades', get_string("showgrades", "offlinequiz"), $attribs);
         $mform->addHelpButton('showgrades', "showgrades", "offlinequiz");
+
+        $options = array();
+        $options[OFFLINEQUIZ_QUESTIONINFO_NONE] = get_string("questioninfonone", "offlinequiz");
+        $options[OFFLINEQUIZ_QUESTIONINFO_QTYPE] = get_string("questioninfoqtype", "offlinequiz");
+        $options[OFFLINEQUIZ_QUESTIONINFO_ANSWERS] = get_string("questioninfoanswers", "offlinequiz");
+        $mform->addElement('select', 'showquestioninfo', get_string("showquestioninfo", "offlinequiz"), $options, $attribs);
+        $mform->addHelpButton('showquestioninfo', "showquestioninfo", "offlinequiz");
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'reviewoptionshdr', get_string("reviewoptions", "offlinequiz"));
@@ -264,9 +270,8 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
                                         'mod_offlinequiz', 'pdfintro', false,
                                         offlinequiz_get_editor_options($this->context),
                                         $toform['pdfintro']);
-                // $default_values['pdfintro']['format'] = $default_values['pdfintro'];
                 $toform['pdfintro'] = array();
-                $toform['pdfintro']['text'] = $text; 
+                $toform['pdfintro']['text'] = $text;
                 $toform['pdfintro']['format'] = editors_get_preferred_format();
                 $toform['pdfintro']['itemid'] = $draftitemid;
             }
@@ -281,7 +286,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $toform['pdfintro']['format'] = editors_get_preferred_format();
             $toform['pdfintro']['itemid'] = $draftitemid;
         }
-        
+
         if (empty($toform['timelimit'])) {
             $toform['timelimitenable'] = 0;
         } else {
