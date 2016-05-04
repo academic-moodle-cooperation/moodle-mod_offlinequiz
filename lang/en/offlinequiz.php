@@ -603,11 +603,11 @@ $string['showgrades_help'] = 'This option controls whether the maximum grades of
 $string['showmissingattemptonly'] = 'Show all checked participants without result';
 $string['showmissingcheckonly'] = 'Show all unchecked participants with result';
 $string['shownumpartsperpage'] = 'Show {$a} participants per page';
-$string['showquestioninfo'] = 'Print info about question';
+$string['showquestioninfo'] = 'Print info about answers';
 $string['showquestioninfo_help'] = 'With this option you can control, which additional information about the question is printed on the question sheet.
 You can choose one of these:
 <ul>
-<li> Nothing (default)
+<li> Nothing
 <li> Question type - Depending on question type Single-Choice, Multiple-Choice, All-or-Nothing Multiple-Choice will be printed
 <li> Number of correct answers - The number of correct answers will be printed
 </ul>';
