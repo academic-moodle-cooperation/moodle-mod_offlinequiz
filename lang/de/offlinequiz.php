@@ -413,7 +413,7 @@ $string['questionforms'] = 'Fragebögen';
 $string['questioninfoanswers'] = 'Anzahl der richtigen Antworten zeigen';
 $string['questioninfocorrectanswer'] = 'richtige Antwort';
 $string['questioninfocorrectanswers'] = 'richtige Antworten';
-$string['questioninfonone'] = 'nein';
+$string['questioninfonone'] = 'Nein';
 $string['questioninfoqtype'] = 'Fragetyp zeigen';
 $string['questioninfomultichoice'] = 'Multiple-Choice';
 $string['questionname'] = 'Frage';
@@ -577,8 +577,8 @@ $string['showquestioninfo'] = 'Hinweis zu Antwortoptionen drucken';
 $string['showquestioninfo_help'] = 'Diese Option steuert, ob bei Hinweise zur Antwortoption einer Frage auf dem Fragebogen unterhalb der Frage angezeigt werden.
 Folgende Optionen sind möglich:
 <ul>
-    <li> keine
-    <li> Fragetyp zeigen - Single-Choice, Multiple-Choice, Alles-oder-Nichts MC wird angezeigt
+    <li> Nein - Es werden keine Hinweise gezeigt
+    <li> Fragetyp zeigen - Single-Choice, Multiple-Choice, Alles-oder-Nichts Multiple-Choice wird angezeigt
     <li> Anzahl der richtigen Antworten zeigen - bspw. 1 richtige Antwort wird angezeigt
 </ul>';
 
