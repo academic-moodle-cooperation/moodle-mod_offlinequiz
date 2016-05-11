@@ -184,7 +184,7 @@ switch($mode) {
             echo '<b>'.$list->name." ($numusers)".'</b>';
             $streditlist = get_string('editthislist', 'offlinequiz');
             $strdeletelist = get_string('deletethislist', 'offlinequiz');
-            if (count($lists) > 1) {
+            if (count($lists) > 0) {
                 echo '&nbsp;<a href="participants.php?mode=editlists&amp;action=delete&amp;q=' . $offlinequiz->id .
                     '&amp;listid=' . $list->id . '&amp;sesskey=' . sesskey() . '" title="' . $strdeletelist .
                         '" onClick="return confirm(\''.addslashes(get_string('deletelistcheck', 'offlinequiz')).'\');">
