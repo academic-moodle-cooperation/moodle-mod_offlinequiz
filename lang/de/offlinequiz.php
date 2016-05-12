@@ -278,8 +278,7 @@ $string['modulenameplural'] = 'Offline-Tests';
 $string['modulename_help'] = 'Dieses Modul erlaubt die Erstellung von Fragebogen-Tests mit Multiple-Choice-Fragen.
 Die Fragen werden in der Moodle-Fragendatenbank gespeichert und können in anderen Offline- und Online-Tests wiederverwendet werden.
 Das Modul erstellt Frage- und Antwortbögen, die als PDF- oder DOCX-Dateien heruntergeladen werden können. Auf den ausgedruckten Antwortbögen werden die Antworten von den Teilnehmer/innen angekreuzt.
-Die Resultate werden eigescannt und in das Moodle System importiert.
-Eine detaillierte Beschreibung des Moduls finden Sie auf der Webseite: http://offline-tests.univie.ac.at';
+Die Resultate werden eigescannt und in das Moodle System importiert.';
 $string['moodleprocessing'] = 'Belege durch Moodle auswerten';
 $string['movecorners'] = 'Ziehen Sie die Eckmarkierungen per Drag-and-Drop zunächst in die richtige Position.';
 $string['moveselectedonpage'] = 'Verschieben der ausgewählten Fragen zur Seite: {$a}';
