@@ -181,18 +181,19 @@ switch($mode) {
 
             $numusers = $DB->count_records_sql($sql, $params);
             echo '<li>';
-            echo '<b>'.$list->name." ($numusers)".'</b>';
+            $listlink= 'participants.php?mode=editparticipants&amp;q=' . $offlinequiz->id .
+                    '&amp;listid=' . $list->id . '&amp;sesskey=' . sesskey();
+            echo '<a href="' . $listlink . '" >' . $list->name." ($numusers)". '</a>';
             $streditlist = get_string('editthislist', 'offlinequiz');
             $strdeletelist = get_string('deletethislist', 'offlinequiz');
             if (count($lists) > 0) {
                 echo '&nbsp;<a href="participants.php?mode=editlists&amp;action=delete&amp;q=' . $offlinequiz->id .
                     '&amp;listid=' . $list->id . '&amp;sesskey=' . sesskey() . '" title="' . $strdeletelist .
                         '" onClick="return confirm(\''.addslashes(get_string('deletelistcheck', 'offlinequiz')).'\');">
-                        <img src="' . $CFG->wwwroot .'/pix/t/delete.gif" alt="'.$strdeletelist.'"></a>';
+                        <img src="' . $OUTPUT->pix_url('t/delete'). '" alt="'.$strdeletelist.'"></a>';
             }
             echo '&nbsp;<a href="participants.php?mode=editlists&amp;action=edit&amp;q=' . $offlinequiz->id .
-            '&amp;listid=' . $list->id . '" title="' . $streditlist . '"><img src="' . $CFG->wwwroot .
-            '/pix/t/edit.gif" alt="' . $streditlist . '"></a>';
+            '&amp;listid=' . $list->id . '" title="' . $streditlist . '"><img src="'. $OUTPUT->pix_url('t/edit') .'" alt="' . $streditlist . '"></a>';
             echo '</li>';
         }
         echo '</ul>';
