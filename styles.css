@@ -126,6 +126,9 @@ body.jsenabled .questionflagcheckbox {display: none;}
 #page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr .fitemtitle,
 #adminofflinequizreviewoptions .fitemtitle {text-align: right;}
 
+#page-mod-offlinequiz-participants a.editlistlink {margin-left: 3px;}
+#page-mod-offlinequiz-participants a.deletelistlink {margin-left: 3px;}
+
 /** Mod offlinequiz page headings **/
 #page-mod-offlinequiz-view .offlinequizinfo,
 #page-mod-offlinequiz-view h2.main,

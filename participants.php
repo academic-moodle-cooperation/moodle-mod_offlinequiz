@@ -181,19 +181,28 @@ switch($mode) {
 
             $numusers = $DB->count_records_sql($sql, $params);
             echo '<li>';
-            $listlink= 'participants.php?mode=editparticipants&amp;q=' . $offlinequiz->id .
-                    '&amp;listid=' . $list->id . '&amp;sesskey=' . sesskey();
-            echo '<a href="' . $listlink . '" >' . $list->name." ($numusers)". '</a>';
+            $listname = '<b>' . $list->name . '(' . $numusers . ')</b>';
+            $listurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
+                    array('mode' => 'editparticipants', 'q' => $offlinequiz->id ,'listid' => $list->id));
+            echo html_writer::link($listurl, $listname);
             $streditlist = get_string('editthislist', 'offlinequiz');
+            $imagehtml = html_writer::img($OUTPUT->pix_url('t/edit'),  $streditlist);
+            $editurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
+                    array('mode' => 'editlists', 'action' => 'edit' , 'q' => $offlinequiz->id ,'listid' => $list->id));
+            echo html_writer::link($editurl, $imagehtml, array('class' => 'editlistlink'));
+
             $strdeletelist = get_string('deletethislist', 'offlinequiz');
-            if (count($lists) > 0) {
-                echo '&nbsp;<a href="participants.php?mode=editlists&amp;action=delete&amp;q=' . $offlinequiz->id .
-                    '&amp;listid=' . $list->id . '&amp;sesskey=' . sesskey() . '" title="' . $strdeletelist .
-                        '" onClick="return confirm(\''.addslashes(get_string('deletelistcheck', 'offlinequiz')).'\');">
-                        <img src="' . $OUTPUT->pix_url('t/delete'). '" alt="'.$strdeletelist.'"></a>';
-            }
-            echo '&nbsp;<a href="participants.php?mode=editlists&amp;action=edit&amp;q=' . $offlinequiz->id .
-            '&amp;listid=' . $list->id . '" title="' . $streditlist . '"><img src="'. $OUTPUT->pix_url('t/edit') .'" alt="' . $streditlist . '"></a>';
+            $imagehtml = html_writer::img($OUTPUT->pix_url('t/delete'),  $strdeletelist);
+            $deleteurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
+                    array('mode' => 'editlists',
+                          'action' => 'delete',
+                          'q' => $offlinequiz->id,
+                          'listid' => $list->id,
+                          'sesskey' => sesskey()));
+            echo html_writer::link($deleteurl, $imagehtml,array('onClick' =>
+                            'return confirm(\'' . addslashes(get_string('deletelistcheck', 'offlinequiz')) . '\');',
+                            'class' => 'deletelistlink'
+            ));
             echo '</li>';
         }
         echo '</ul>';
