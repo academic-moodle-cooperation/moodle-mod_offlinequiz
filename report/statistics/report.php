@@ -138,7 +138,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $sql = "SELECT DISTINCT(questionid)
                       FROM {offlinequiz_group_questions}
                      WHERE offlinequizid = :offlinequizid";
-            
+
             $questionids = $DB->get_fieldset_sql($sql, array('offlinequizid' => $offlinequiz->id));
             $offlinequiz->questions = $questionids;
         }
@@ -1362,21 +1362,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      * @return string HTML snipped for the Download full report as UI.
      */
     protected function everything_download_options() {
-
-        $downloadoptions = $this->table->get_download_menu();
-        $downloadelements = new stdClass();
-        $downloadelements->formatsmenu = html_writer::select($downloadoptions, 'download',
-                $this->table->defaultdownloadformat, false);
-        $downloadelements->downloadbutton = '<input type="submit" value="' .
-                get_string('download') . '"/>';
-
-        $output = '<form action="'. $this->table->baseurl .'" method="post">';
-        $output .= '<div class="mdl-align">';
-        $output .= '<input type="hidden" name="everything" value="1"/>';
-        $output .= html_writer::tag('label', get_string('downloadeverything', 'offlinequiz_statistics', $downloadelements));
-        $output .= '</div></form>';
-
-        return $output;
+        global $OUTPUT;
+        return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'offlinequiz_statistics'),
+                $this->table->baseurl->out_omit_querystring(), 'download', $this->table->baseurl->params() + array('everything' => 1));
     }
 
     /**
