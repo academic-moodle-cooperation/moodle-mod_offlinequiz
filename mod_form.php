@@ -138,6 +138,10 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('papergray', 'papergray', 'offlinequiz');
         $mform->setDefault('papergray', $offlinequizconfig->papergray);
 
+        $mform->addElement('selectyesno', 'printstudycodefield', get_string('printstudycodefield', 'offlinequiz'), $attribs);
+        $mform->addHelpButton('printstudycodefield', 'printstudycodefield', 'offlinequiz');
+        $mform->setDefault('printstudycodefield', $offlinequizconfig->printstudycodefield);
+        
         // ------------------------------------------------------------------------------
 
         if (!$offlinequiz || !$offlinequiz->docscreated) {

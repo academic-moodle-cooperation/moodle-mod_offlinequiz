@@ -471,9 +471,11 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
         $cell = $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('idnumber', 'offlinequiz')) .
                                                           ':  ', 'brStyle');
 
-        $table->addRow();
-        $cell = $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('studycode', 'offlinequiz')) .
+        if ($offlinequiz->printstudycodefield) {
+            $table->addRow();
+            $cell = $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('studycode', 'offlinequiz')) .
                                                           ':  ', 'brStyle');
+        }
 
         $table->addRow();
         $cell = $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('signature', 'offlinequiz')) .
