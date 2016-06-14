@@ -1254,6 +1254,21 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2015112002, 'offlinequiz');
     }
+
+    if ($oldversion < 2015112007) {
+    
+        // Define field printstudycodefield to be added to offlinequiz.
+        $table = new xmldb_table('offlinequiz');
+        $field = new xmldb_field('printstudycodefield', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1', 'shuffleanswers');
+    
+        // Conditionally launch add field printstudycodefield.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015112007, 'offlinequiz');
+    }
     
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
     // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the 

@@ -122,6 +122,15 @@ if (has_capability('mod/offlinequiz:view', $context)) {
     }
 }
 
+function find_pdf_file($contextid, $listfilename) {
+    $fs = get_file_storage();
+    if ($pdffile = $fs->get_file($contextid, 'mod_offlinequiz', 'participants', 0, '/', $listfilename)) {
+        return $pdffile;
+    } else {
+        return $fs->get_file($contextid, 'mod_offlinequiz', 'pdfs', 0, '/', $listfilename);
+    }
+}
+
 if (has_capability('mod/offlinequiz:viewreports', $context)) {
 
     if (!$students = get_enrolled_users($coursecontext, 'mod/offlinequiz:attempt')) {
@@ -172,7 +181,7 @@ if (has_capability('mod/offlinequiz:viewreports', $context)) {
 
         // Only print info if the PDF files have been created.
         if (property_exists($firstlist, 'filename') && $firstlist->filename &&
-                    $pdffile = $fs->get_file($context->id, 'mod_offlinequiz', 'pdfs', 0, '/', $firstlist->filename)) {
+            $pdffile = find_pdf_file($context->id, $firstlist->filename)) {
 
             echo '<br/><div class="box generalbox linkbox">';
             $listids = array();

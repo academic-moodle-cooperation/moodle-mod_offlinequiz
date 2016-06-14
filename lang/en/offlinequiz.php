@@ -189,13 +189,14 @@ $string['fileprefixcorrection'] = 'correction_form';
 $string['fileprefixform'] = 'question_form';
 $string['fileprefixparticipants'] = 'participants_list';
 $string['fileformat'] = 'Format for question sheets';
-$string['fileformat_help'] = 'Choose whether you want your question sheets in PDF or DOCX format. Answer forms and correction sheets will always be generated in PDF format.';
+$string['fileformat_help'] = 'Choose whether you want your question sheets in PDF, DOCX or TEX format. Answer forms and correction sheets will always be generated in PDF format.';
 $string['filesizetolarge'] = 'Some of your image files are very large. The dimensions will be resized during the interpretation. Please try to scan with a resolution between 200 and 300 dpi and in black and white mode. This will speed up the interpretation next time.';
 $string['fontsize'] = 'Fontsize';
 $string['forautoanalysis'] = 'For automatic analysis';
 $string['formforcorrection'] = 'Correction form for group {$a}';
 $string['formforgroup'] = 'Question form for group {$a}';
 $string['formforgroupdocx'] = 'Question form for group {$a} (DOCX)';
+$string['formforgrouplatex'] = 'Question form for group {$a} (LATEX)';
 $string['formsexist'] = 'Forms already created.';
 $string['formsexistx'] = 'Forms already created (<a href="{$a}">Download forms</a>)';
 $string['formsheetsettings'] = 'Form Settings';
@@ -225,7 +226,7 @@ $string['idnumber'] = 'ID number';
 $string['imagefile'] = 'Image file';
 $string['imagenotfound'] = 'Image file: {$a} not found!';
 $string['imagenotjpg'] = 'Image not jpg or png: {$a}';
-$string['imagickwarning'] = 'Missing imagemagick: Ask your system administrator to install the imagemagick library and check the path to the convert binary in your TeX notation filter settings. You cannot improt TIF files without imagemagick!';
+$string['imagickwarning'] = 'Missing imagemagick: Ask your system administrator to install the imagemagick library and check the path to the convert binary in your TeX notation filter settings. You cannot import TIF files without imagemagick!';
 $string['importerror11'] = 'Other result exists';
 $string['importerror12'] = 'User not registered';
 $string['importerror13'] = 'No group data';
@@ -413,7 +414,7 @@ $string['pdfscreated'] = 'PDF forms have been created';
 $string['pdfsdeletedforgroup'] = 'Forms for group {$a} deleted';
 $string['pdfintro'] = 'Additional information';
 $string['pdfintro_help'] = 'This information will be printed on the first page of the question sheet and should contain general information about how to fill in the answer form.';
-$string['pdfintrotext'] = '<b>How do I mark correctly?</b><br />This answer form will be scanned automatically. Please do not fold or spot. Use a black or blue pen to mark the fields. If you want to correct a marking, completeley fill the box with color. This field will be interpreted like an empty box.<br />';
+$string['pdfintrotext'] = '<b>How do I mark correctly?</b><br />This answer form will be scanned automatically. Please do not fold or spot. Use a black or blue pen to mark the fields. If you want to correct a marking, completely fill the box with color. This field will be interpreted like an empty box.<br />';
 $string['pdfintrotoolarge'] = 'The introduction is too long (max. 2000 characters).';
 $string['pearlywhite'] = 'Pearly white';
 $string['pluginadministration'] = 'Offline quiz administration';
@@ -422,12 +423,71 @@ $string['present'] = 'present';
 $string['previewforgroup'] = 'Preview for group {$a}';
 $string['preview'] = 'Preview';
 $string['previewquestion'] = 'Preview question';
+$string['printstudycodefield'] = 'Print study code field on question sheet';
+$string['printstudycodefield_help'] = 'If checked, the study code field will be printed on the first page of the question sheet.';
 $string['questionanalysis'] = 'Difficulty analysis';
 $string['questionanalysistitle'] = 'Difficulty Analysis Table';
 $string['questionbankcontents'] = 'Question bank contents';
 $string['questionforms'] = 'Question forms';
 $string['questionname'] = 'Question name';
 $string['questionsheet'] = 'Question sheet';
+$string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
+\textwidth 16truecm
+\textheight 23truecm
+\setlength{\oddsidemargin}{0cm}
+\setlength{\evensidemargin}{0cm}
+\setlength{\topmargin}{-1cm}
+\usepackage{amsmath} % für \implies etc
+\usepackage{amsfonts} % für \mathbb etc
+\usepackage{graphicx} % zum Bilder einfügen
+\renewcommand{\familydefault}{\sfdefault} % Schriftart
+\newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
+\newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
+\newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
+\parindent 0pt % keine Einrückung am Beginn des Absatzes
+\usepackage{esvect} % für lange Vektorpfeile, z.B. \vv{AB}
+\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % Für Einfügen von Hyperlinks
+\renewcommand\UrlFont{\sf}
+\usepackage{ulem} % Durchstreichen: \sout{gerade durchstreichen} \xout{schräg durchstreichen}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\usepackage{scrpage2} % Kopf- und Fußzeilen (http://esc-now.de/_/latex-individuelle-kopf-und-fusszeilen/?lang=en):
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\ifoot{[Gruppe \Group]}
+\makeatletter %%% Seitenumbrüche zwischen Antwortmöglichkeiten unterdrücken (funktioniert meistens!)
+\@beginparpenalty=10000
+\@itempenalty=10000
+\makeatother
+%
+%%% DIE FOLGENDEN ZWEI ZEILEN: Wenn erste auskommentiert -> r/f werden angezeigt, wenn zweite auskommentiert -> r/f werden verborgen
+\newcommand{\answerIs}[1]{} %%% Zum verborgenen Anzeigen der richtigen und falschen Antworten
+% \newcommand{\answerIs}[1]{[#1]} %%% Zum Anzeigen der richtigen und falschen Antworten
+%%%
+
+\begin{document}
+
+
+
+% ===========================================================================================================
+%%% Die Lehrveranstaltungs-Daten:
+\begin{center}{University of Vienna}\end{center}
+\begin{center}{\LARGE {$a->coursename}}\end{center}
+\begin{center}{Written Exam{$a->date}}\end{center}
+%%% In der folgenden Zeile bei Erstellen des endgültigen Fragebogens den Namen der Gruppe einfügen!
+\def\Group{{$a->groupname}}
+\begin{center}{\Large Group \Group}\end{center}
+
+{\bf Name:}\\\\
+{\bf Matriculation number:}\\\\
+{\bf Signature:}\\
+
+% ===========================================================================================================
+\bigskip
+
+{$a->latexforquestions}
+
+
+\end{document}';
 $string['questionsin'] = 'Questions in';
 $string['questionsingroup'] = 'Questions in group';
 $string['questionsinthisofflinequiz'] = 'Questions in this offline quiz';
@@ -483,7 +543,7 @@ You can also define start and end time for the results report. The checkboxes me
 <tr><td style="vertical-align: top;"><b>The attempt</b></td><td>
 The text of the questions and answers will be shown to the students. They will see which answers they chose, but the correct answers will not be indicated.</td>
 </td></tr>
-<tr><td style="vertical-align: top;"><b>Wether correct</b></td><td>
+<tr><td style="vertical-align: top;"><b>Whether correct</b></td><td>
 This option can only be activated if the option "The attempt" is activated. If activated, the students can see which of the chosen answers are correct (green background) or incorrect (red background).
 </td></tr>
 <tr><td style="vertical-align: top;"><b>Marks</b></td><td>

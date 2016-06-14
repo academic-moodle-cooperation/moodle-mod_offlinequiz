@@ -214,7 +214,7 @@ if ($mode == 'preview') {
         echo $OUTPUT->box_start('generalbox groupcontainer');
 
         // Load all the questions needed for this offline quiz group.
-        $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark 
+        $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
               FROM {offlinequiz_group_questions} ogq,
                    {question} q,
                    {question_categories} c
@@ -224,9 +224,9 @@ if ($mode == 'preview') {
                AND q.category = c.id
           ORDER BY ogq.slot ASC ";
         $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
- 
+
         $questions = $DB->get_records_sql($sql, $params);
-        
+
         // Load the questions.
         if (!$questions = $DB->get_records_sql($sql, $params)) {
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/edit.php',
@@ -333,19 +333,19 @@ if ($mode == 'preview') {
         } else {
             ?>
             <div class="singlebutton linkbox">
-    	        <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=" . $offlinequiz->id .
+               <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=" . $offlinequiz->id .
                       "&mode=createpdfs" ?>" method="POST">
                     <div>
-    			        <input type="hidden" name="forcepdfnew" value="1" /> 
-			            <input type="submit" value="<?php echo get_string('deletepdfs', 'offlinequiz') ?>"
-				         onClick='return confirm("<?php echo get_string('realydeletepdfs', 'offlinequiz') ?>")' />
-                    </div>
-	             </form>
+                        <input type="hidden" name="forcepdfnew" value="1" />
+                        <input type="submit" value="<?php echo get_string('deletepdfs', 'offlinequiz') ?>"
+                        onClick='return confirm("<?php echo get_string('realydeletepdfs', 'offlinequiz') ?>")' />
+                   </div>
+              </form>
             </div>
             <?php
         }
         echo $OUTPUT->box_end();
-    } // End if (!$completedresults.
+    }
 
     $fs = get_file_storage();
 
@@ -362,6 +362,8 @@ if ($mode == 'preview') {
             $doctype = 'PDF';
             if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                 $doctype = 'DOCX';
+            } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+                $doctype = 'LATEX';
             }
             $params = array(
                 'context' => $context,
@@ -388,9 +390,9 @@ if ($mode == 'preview') {
     if (!$forcepdfnew) {
         // Redmine 2131: Add download all link.
         $downloadallurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/createquiz.php',
-                array('q' => $offlinequiz->id,
-                        'mode' => 'createpdfs',
-                        'downloadall' => 1));
+        array('q' => $offlinequiz->id,
+        'mode' => 'createpdfs',
+        'downloadall' => 1));
         echo html_writer::start_div('downloadalllink');
         echo html_writer::link($downloadallurl->out(false), get_string('downloadallzip', 'offlinequiz'));
         echo html_writer::end_div();
@@ -409,6 +411,9 @@ if ($mode == 'preview') {
                 if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                     require_once('docxlib.php');
                     $questionfile = offlinequiz_create_docx_question($templateusage, $offlinequiz, $group, $course->id, $context);
+                } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+                    require_once('latexlib.php');
+                    $questionfile = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 } else {
                     $questionfile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 }
@@ -425,6 +430,8 @@ if ($mode == 'preview') {
                 $filestring = get_string('formforgroup', 'offlinequiz', $groupletter);
                 if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                     $filestring = get_string('formforgroupdocx', 'offlinequiz', $groupletter);
+                } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+                    $filestring = get_string('formforgrouplatex', 'offlinequiz', $groupletter);
                 }
                 $url = "$CFG->wwwroot/pluginfile.php/" . $questionfile->get_contextid() . '/' . $questionfile->get_component() .
                             '/' . $questionfile->get_filearea() . '/' . $questionfile->get_itemid() . '/' .
@@ -530,6 +537,8 @@ if ($mode == 'preview') {
         $doctype = 'PDF';
         if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
             $doctype = 'DOCX';
+        } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+            $doctype = 'LATEX';
         }
         $params = array(
             'context' => $context,
