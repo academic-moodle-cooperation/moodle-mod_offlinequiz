@@ -53,6 +53,7 @@ $string['addtoofflinequiz'] = 'Add to offline quiz';
 $string['addtoqueue'] = 'Add to queue';
 $string['allinone'] = 'Unlimited';
 $string['alllists'] = 'All lists';
+$string['allornothing'] = 'All-or-nothing';
 $string['allresults'] = 'Show all results';
 $string['allstudents'] = 'Show all students';
 $string['alwaysavailable'] = 'Always available';
@@ -298,8 +299,7 @@ $string['missingquestion'] = 'This question no longer seems to exist';
 $string['missinguserid'] = 'Missing user identification number! Could not read barcode!';
 $string['modulename_help'] = 'This module allows the teacher to design offline quizzes consisting of multiple choice questions.
 These questions are kept in the Moodle question bank and can be re-used within courses and even between courses.
-The offline quizzes can be downloaded as PDF files. The students mark their answers on form sheets. The form sheets are scanned and the answers imported into the system.
-For further information see http://offline-tests.univie.ac.at';
+The offline quizzes can be downloaded as PDF files. The students mark their answers on form sheets. The form sheets are scanned and the answers imported into the system.';
 $string['moveselectedonpage'] = 'Move selected questions to page: {$a}';
 $string['copyselectedtogroup'] = 'Add selected questions to group: {$a}';
 $string['copytogroup'] = 'Add all questions to group: {$a}';
@@ -420,6 +420,7 @@ $string['pearlywhite'] = 'Pearly white';
 $string['pluginadministration'] = 'Offline quiz administration';
 $string['point'] = 'point';
 $string['present'] = 'present';
+$string['preventsamequestion'] = 'Prevent multiple usage of the same question in different groups';
 $string['previewforgroup'] = 'Preview for group {$a}';
 $string['preview'] = 'Preview';
 $string['previewquestion'] = 'Preview question';
@@ -429,6 +430,11 @@ $string['questionanalysis'] = 'Difficulty analysis';
 $string['questionanalysistitle'] = 'Difficulty Analysis Table';
 $string['questionbankcontents'] = 'Question bank contents';
 $string['questionforms'] = 'Question forms';
+$string['questioninfoanswers'] = 'Number of correct answers';
+$string['questioninfocorrectanswer'] = 'correct answer';
+$string['questioninfocorrectanswers'] = 'correct answers';
+$string['questioninfonone'] = 'Nothing';
+$string['questioninfoqtype'] = 'Question type';
 $string['questionname'] = 'Question name';
 $string['questionsheet'] = 'Question sheet';
 $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
@@ -506,7 +512,7 @@ $string['recreatepdfs'] = 'Recreate PDFs';
 $string['recurse'] = 'Include questions from subcategories too';
 $string['refreshpreview'] = 'Refresh preview';
 $string['regrade'] = 'Regrade';
-$string['regradedisplayexplanation'] = '<b>Attention:</b> Regrading also changes marks that have been overwritten manually!';
+$string['regradedisplayexplanation'] = '<b>Attention:</b> Regrading will not change marks that have been overwritten manually!';
 $string['regradinginfo'] = 'If you change the score for a question, you must regrade the offline quiz to update the participants’ results.';
 $string['regradingquiz'] = 'Regrading';
 $string['regradingresult'] = 'Regrading result for user {$a}...';
@@ -596,6 +602,14 @@ $string['showgrades_help'] = 'This option controls whether the maximum grades of
 $string['showmissingattemptonly'] = 'Show all checked participants without result';
 $string['showmissingcheckonly'] = 'Show all unchecked participants with result';
 $string['shownumpartsperpage'] = 'Show {$a} participants per page';
+$string['showquestioninfo'] = 'Print info about answers';
+$string['showquestioninfo_help'] = 'With this option you can control, which additional information about the question is printed on the question sheet.
+You can choose one of these:
+<ul>
+<li> Nothing
+<li> Question type - Depending on question type Single-Choice, Multiple-Choice, All-or-Nothing Multiple-Choice will be printed
+<li> Number of correct answers - The number of correct answers will be printed
+</ul>';
 $string['showstudentview'] = 'Show student view';
 $string['showtutorial'] = 'Show an offline quiz tutorial to students.';
 $string['showtutorial_help'] = 'This option determines whether students can see a tutorial about the basics of offline quizzes.
@@ -610,6 +624,7 @@ $string['shufflequestionsselected'] = 'Shuffle questions has been set, so some a
 $string['shufflewithin'] = 'Shuffle within questions';
 $string['shufflewithin_help'] = 'If enabled, the parts making up each question will be randomly shuffled each time you press the reload button in the form preview. NOTE: This setting only applies to questions that have the shuffeling option activated.';
 $string['signature'] = 'Signature';
+$string['singlechoice'] = 'Single choice';
 $string['standard'] = 'Standard';
 $string['starttutorial'] = 'Start tutorial about the examination';
 $string['statistics'] = 'Statistics';

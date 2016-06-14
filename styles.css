@@ -126,6 +126,9 @@ body.jsenabled .questionflagcheckbox {display: none;}
 #page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr .fitemtitle,
 #adminofflinequizreviewoptions .fitemtitle {text-align: right;}
 
+#page-mod-offlinequiz-participants a.editlistlink {margin-left: 3px;}
+#page-mod-offlinequiz-participants a.deletelistlink {margin-left: 3px;}
+
 /** Mod offlinequiz page headings **/
 #page-mod-offlinequiz-view .offlinequizinfo,
 #page-mod-offlinequiz-view h2.main,
@@ -225,7 +228,7 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-report div.notify { text-align: center; }
 #page-mod-offlinequiz-report div.notifynote { color: #0044bb; }
 #page-mod-offlinequiz-report div.backlinkbox { padding-top: 10px; }
-
+#page-mod-offlinequiz-report table.errorpages td.checkbox input  { margin-left: 0px; float: none; }
 
 /** settings.php */
 #adminofflinequizreviewoptions {margin-bottom: 0.5em;}

@@ -81,7 +81,7 @@ if ($returnurl) {
     $returnurl = new moodle_url('/mod/offlinequiz/edit.php',
             array('cmid' => $cmid,
                   'groupnumber' => $offlinequiz->groupnumber
-            )); 
+            ));
 }
 if ($scrollpos) {
     $returnurl->param('scrollpos', $scrollpos);
@@ -116,11 +116,13 @@ if ($data = $mform->get_data()) {
     if (!empty($data->existingcategory)) {
         list($categoryid) = explode(',', $data->category);
         $includesubcategories = !empty($data->includesubcategories);
+        $preventsamequestion = !empty($data->preventsamequestion);
         $returnurl->param('cat', $data->category);
 
     } else if (!empty($data->newcategory)) {
         list($parentid, $contextid) = explode(',', $data->parent);
         $categoryid = $qcobject->add_category($data->parent, $data->name, '', true);
+        $preventsamequestion = !empty($data->preventsamequestion);
         $includesubcategories = 0;
 
         $returnurl->param('cat', $categoryid . ',' . $contextid);
@@ -129,7 +131,7 @@ if ($data = $mform->get_data()) {
                 'It seems a form was submitted without any button being pressed???');
     }
 
-    offlinequiz_add_random_questions($offlinequiz, $offlinequizgroup, $categoryid, $data->numbertoadd, $includesubcategories);
+    offlinequiz_add_random_questions($offlinequiz, $offlinequizgroup, $categoryid, $data->numbertoadd, $includesubcategories, $preventsamequestion);
     offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     redirect($returnurl);

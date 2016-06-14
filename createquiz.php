@@ -112,6 +112,7 @@ if ($downloadall && $offlinequiz->docscreated) {
 
     $shortname = $DB->get_field('course', 'shortname', array('id' => $offlinequiz->course));
     $zipfilename = clean_filename($shortname . '_' . $offlinequiz->name . '_' . $timestamp . '.zip');
+    $zipfilename = str_replace(' ', '_', $zipfilename);
     $tempzip = tempnam($CFG->tempdir . '/', 'offlinequizzip');
     $filelist = array();
 

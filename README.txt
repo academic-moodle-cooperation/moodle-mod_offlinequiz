@@ -104,6 +104,5 @@ V. Scanning of answer forms
 
      Answer forms should be scanned as black-and-white images with 200 - 300 dpi. Do not scan in greyscale! 
      Supported file types are TIF, PNG and GIF.
-     
-V. Contact
-   In case you have any questions regarding this module you can either contact the author of the module (zimmerj7@univie.ac.at)
+VI. Contact
+   In case you have any questions regarding this module you can contact the AMC support (info@academic-moodle-cooperation.org)
