@@ -186,7 +186,7 @@ switch($mode) {
                     array('mode' => 'editparticipants', 'q' => $offlinequiz->id ,'listid' => $list->id));
             echo html_writer::link($listurl, $listname);
             $streditlist = get_string('editthislist', 'offlinequiz');
-            $imagehtml = html_writer::img($OUTPUT->pix_url('t/edit'),  $streditlist);
+            $imagehtml = html_writer::img($OUTPUT->pix_url('i/edit'),  $streditlist);
             $editurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                     array('mode' => 'editlists', 'action' => 'edit' , 'q' => $offlinequiz->id ,'listid' => $list->id));
             echo html_writer::link($editurl, $imagehtml, array('class' => 'editlistlink'));
