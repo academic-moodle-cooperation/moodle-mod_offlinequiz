@@ -336,20 +336,10 @@ class offlinequiz_statistics_table extends flexible_table {
      * This function is not part of the public api.
      */
     public function download_buttons() {
+        global $OUTPUT;
         if ($this->is_downloadable() && !$this->is_downloading()) {
-            $downloadoptions = $this->get_download_menu();
-
-            $downloadelements = new stdClass();
-            $downloadelements->formatsmenu = html_writer::select($downloadoptions,
-                    'download', $this->defaultdownloadformat, false);
-            $downloadelements->downloadbutton = '<input type="submit" value="'.
-                    get_string('download').'"/>';
-            $html = '<form action="'. $this->baseurl .'" method="post">';
-            $html .= '<div class="mdl-align">';
-            $html .= html_writer::tag('label', get_string('downloadas', 'table', $downloadelements));
-            $html .= '</div></form><br/>';
-
-            return $html;
+            return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'offlinequiz_statistics'),
+                    $this->baseurl->out_omit_querystring(), 'download', $this->baseurl->params() + array('everything' => 1));
         } else {
             return '';
         }
@@ -361,6 +351,9 @@ class offlinequiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_correct($question) {
+        if (!$question->_stats->s) {
+            return '';
+        }
         $result = $question->_stats->correct . ' (' . round($question->_stats->correct / $question->_stats->s * 100) . '%)';
         return $result;
     }
@@ -371,6 +364,9 @@ class offlinequiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_partially($question) {
+        if (!$question->_stats->s) {
+            return '';
+        }
         return $question->_stats->partially . ' (' . round($question->_stats->partially / $question->_stats->s * 100) . '%)';
     }
 
@@ -380,6 +376,9 @@ class offlinequiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_wrong($question) {
+        if (!$question->_stats->s) {
+            return '';
+        }
         return $question->_stats->wrong . ' (' . round($question->_stats->wrong / $question->_stats->s * 100) . '%)';
     }
 }
