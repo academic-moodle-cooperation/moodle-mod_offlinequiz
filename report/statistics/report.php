@@ -308,20 +308,20 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $this->output_statistics_graph($offlinequizstats->id, $s);
                     }
 
-                    foreach ($questions as $question) {
-                        if (question_bank::get_qtype(
-                                $question->qtype, false)->can_analyse_responses()) {
-                            $this->output_individual_question_response_analysis(
-                                    $question, $reporturl, $offlinequizstats);
+//                     foreach ($questions as $question) {
+//                         if (question_bank::get_qtype(
+//                                 $question->qtype, false)->can_analyse_responses()) {
+//                             $this->output_individual_question_response_analysis(
+//                                     $question, $reporturl, $offlinequizstats);
 
-                        } else if (!empty($question->_stats->subquestions)) {
-                            $subitemstodisplay = explode(',', $question->_stats->subquestions);
-                            foreach ($subitemstodisplay as $subitemid) {
-                                $this->output_individual_question_response_analysis(
-                                        $subquestions[$subitemid], $reporturl, $offlinequizstats);
-                            }
-                        }
-                    }
+//                         } else if (!empty($question->_stats->subquestions)) {
+//                             $subitemstodisplay = explode(',', $question->_stats->subquestions);
+//                             foreach ($subitemstodisplay as $subitemid) {
+//                                 $this->output_individual_question_response_analysis(
+//                                         $subquestions[$subitemid], $reporturl, $offlinequizstats);
+//                             }
+//                         }
+//                     }
                 }
             } else if ($statmode == 'questionandanswerstats') {
                 if ($s) {
@@ -379,16 +379,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
                     get_string('backtoquestionsandanswers', 'offlinequiz_statistics') . '</a>',
                     'boxaligncenter backlinkbox generalbox boxwidthnormal mdl-align');
-
-        } else if ($this->table->is_downloading()) {
-            // Downloading overview report.
-            $this->download_offlinequiz_info_table($offlinequizinfo);
-            if ($statmode == 'questionstats') {
-                $this->output_offlinequiz_structure_analysis_table($s, $questions, $subquestions);
-            } else if ($statmode == 'questionandanswerstats') {
-                $this->output_offlinequiz_question_answer_table($s, $questions, $subquestions, $offlinequizstats);
-            }
-            $this->table->finish_output();
 
         } else {
             // On-screen display of overview report.
