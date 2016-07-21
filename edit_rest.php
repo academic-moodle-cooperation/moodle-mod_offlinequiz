@@ -105,8 +105,10 @@ switch($requestmethod) {
                         require_capability('mod/offlinequiz:manage', $modcontext);
                         $slot = $structure->get_slot_by_id($id);
                         if (!is_numeric(str_replace(',', '.', $maxmark))) {
+                            $summarks = $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $offlinequizgroup->id));
                             echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
-                                    'newsummarks' => offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades)));
+                                            'newsummarks' => offlinequiz_format_grade($offlinequiz,$summarks)));
+
                             break;
                         }
                         if ($structure->update_slot_maxmark($slot, $maxmark)) {
