@@ -251,7 +251,7 @@ if ($mode == 'preview') {
         }
         if (!$slots = $templateusage->get_slots()) {
             echo $OUTPUT->box_start('notify');
-            echo $OUTPUT->error_text(get_string('nomcquestions', 'offlinequiz', $groupletter));
+            echo $OUTPUT->notification(get_string('nomcquestions', 'offlinequiz', $groupletter));
             echo $OUTPUT->box_end();
         }
 
