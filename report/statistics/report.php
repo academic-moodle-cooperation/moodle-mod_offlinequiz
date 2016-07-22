@@ -1353,8 +1353,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      */
     protected function everything_download_options() {
         global $OUTPUT;
-        return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'offlinequiz_statistics'),
-                $this->table->baseurl->out_omit_querystring(), 'download', $this->table->baseurl->params() + array('everything' => 1));
+        if($this->table->baseurl) {
+            return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'offlinequiz_statistics'),
+                    $this->table->baseurl->out_omit_querystring(), 'download', $this->table->baseurl->params() + array('everything' => 1));
+        }
     }
 
     /**
