@@ -138,7 +138,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $sql = "SELECT DISTINCT(questionid)
                       FROM {offlinequiz_group_questions}
                      WHERE offlinequizid = :offlinequizid";
-            
+
             $questionids = $DB->get_fieldset_sql($sql, array('offlinequizid' => $offlinequiz->id));
             $offlinequiz->questions = $questionids;
         }
@@ -308,20 +308,20 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $this->output_statistics_graph($offlinequizstats->id, $s);
                     }
 
-                    foreach ($questions as $question) {
-                        if (question_bank::get_qtype(
-                                $question->qtype, false)->can_analyse_responses()) {
-                            $this->output_individual_question_response_analysis(
-                                    $question, $reporturl, $offlinequizstats);
+//                     foreach ($questions as $question) {
+//                         if (question_bank::get_qtype(
+//                                 $question->qtype, false)->can_analyse_responses()) {
+//                             $this->output_individual_question_response_analysis(
+//                                     $question, $reporturl, $offlinequizstats);
 
-                        } else if (!empty($question->_stats->subquestions)) {
-                            $subitemstodisplay = explode(',', $question->_stats->subquestions);
-                            foreach ($subitemstodisplay as $subitemid) {
-                                $this->output_individual_question_response_analysis(
-                                        $subquestions[$subitemid], $reporturl, $offlinequizstats);
-                            }
-                        }
-                    }
+//                         } else if (!empty($question->_stats->subquestions)) {
+//                             $subitemstodisplay = explode(',', $question->_stats->subquestions);
+//                             foreach ($subitemstodisplay as $subitemid) {
+//                                 $this->output_individual_question_response_analysis(
+//                                         $subquestions[$subitemid], $reporturl, $offlinequizstats);
+//                             }
+//                         }
+//                     }
                 }
             } else if ($statmode == 'questionandanswerstats') {
                 if ($s) {
@@ -379,16 +379,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
                     get_string('backtoquestionsandanswers', 'offlinequiz_statistics') . '</a>',
                     'boxaligncenter backlinkbox generalbox boxwidthnormal mdl-align');
-
-        } else if ($this->table->is_downloading()) {
-            // Downloading overview report.
-            $this->download_offlinequiz_info_table($offlinequizinfo);
-            if ($statmode == 'questionstats') {
-                $this->output_offlinequiz_structure_analysis_table($s, $questions, $subquestions);
-            } else if ($statmode == 'questionandanswerstats') {
-                $this->output_offlinequiz_question_answer_table($s, $questions, $subquestions, $offlinequizstats);
-            }
-            $this->table->finish_output();
 
         } else {
             // On-screen display of overview report.
@@ -1362,21 +1352,11 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      * @return string HTML snipped for the Download full report as UI.
      */
     protected function everything_download_options() {
-
-        $downloadoptions = $this->table->get_download_menu();
-        $downloadelements = new stdClass();
-        $downloadelements->formatsmenu = html_writer::select($downloadoptions, 'download',
-                $this->table->defaultdownloadformat, false);
-        $downloadelements->downloadbutton = '<input type="submit" value="' .
-                get_string('download') . '"/>';
-
-        $output = '<form action="'. $this->table->baseurl .'" method="post">';
-        $output .= '<div class="mdl-align">';
-        $output .= '<input type="hidden" name="everything" value="1"/>';
-        $output .= html_writer::tag('label', get_string('downloadeverything', 'offlinequiz_statistics', $downloadelements));
-        $output .= '</div></form>';
-
-        return $output;
+        global $OUTPUT;
+        if($this->table->baseurl) {
+            return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'offlinequiz_statistics'),
+                    $this->table->baseurl->out_omit_querystring(), 'download', $this->table->baseurl->params() + array('everything' => 1));
+        }
     }
 
     /**

@@ -606,7 +606,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 if ($infostr) {
                     // Indent the question grade like the answers.
                     $textrun = $section->createTextRun($level2);
-                    $textrun->addText($infostr, 'bStyle');
+                    $textrun->addText($infostr, 'nStyle');
                 }
             }
             $section->addTextBreak();
@@ -703,7 +703,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 if ($infostr) {
                     // Indent the question grade like the answers.
                     $textrun = $section->createTextRun($level2);
-                    $textrun->addText($infostr, 'bStyle');
+                    $textrun->addText($infostr, 'nStyle');
                 }
                 $section->addTextBreak();
                 $number++;

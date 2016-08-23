@@ -186,7 +186,7 @@ switch($mode) {
                     array('mode' => 'editparticipants', 'q' => $offlinequiz->id ,'listid' => $list->id));
             echo html_writer::link($listurl, $listname);
             $streditlist = get_string('editthislist', 'offlinequiz');
-            $imagehtml = html_writer::img($OUTPUT->pix_url('t/edit'),  $streditlist);
+            $imagehtml = html_writer::img($OUTPUT->pix_url('i/edit'),  $streditlist);
             $editurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                     array('mode' => 'editlists', 'action' => 'edit' , 'q' => $offlinequiz->id ,'listid' => $list->id));
             echo html_writer::link($editurl, $imagehtml, array('class' => 'editlistlink'));
@@ -220,7 +220,7 @@ switch($mode) {
         $listid = optional_param('listid', 0, PARAM_INT);
         $group = optional_param('group', 0, PARAM_INT);
         $addselect = optional_param_array('addselect', array(), PARAM_INT);
-        $removeselect = optional_param('removeselect', '', PARAM_RAW);
+        $removeselect = optional_param_array('removeselect', array(), PARAM_RAW);
 
         if (!$list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid))) {
             if (!$lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), ' number ASC ')) {
@@ -342,36 +342,6 @@ switch($mode) {
         $potentialmembersoptions = '';
         $memberlist = implode(',', $memberids);
 
-        $sql = "SELECT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname,
-                       u.alternatename, u.middlename, u.firstnamephonetic, u.lastnamephonetic
-                  FROM {user} u, {role_assignments} ra
-                 WHERE ra.roleid $rsql
-                   AND ra.userid = u.id
-                   AND ra.contextid $csql";
-
-        if (!empty($memberlist)) {
-            $sql .= " AND u.id NOT IN ($memberlist)";
-        }
-        if (!empty($searchtext)) {
-            $searchtext = $DB->sql_like_escape(trim($searchtext));
-
-            $likelastname = $DB->sql_like('u.lastname', ':searchtext1');
-            $likefirstname = $DB->sql_like('u.firstname', ':searchtext2');
-            $likeuserkey = $DB->sql_like('u.' . $offlinequizconfig->ID_field, ':searchtext3');
-
-            $sql .= " AND (" .
-                    $likelastname . ' OR ' .
-                    $likefirstname . ' OR ' .
-                    $likeuserkey .
-                    ")";
-
-            $rparams['searchtext1'] = '%' . $searchtext . '%';
-            $rparams['searchtext2'] = '%' . $searchtext . '%';
-            $rparams['searchtext3'] = '%' . $searchtext . '%';
-        }
-
-        $sql .= " ORDER BY u.lastname, u.firstname";
-
         if (!empty($group)) {
             $groupmembers = groups_get_members($group);
         }
@@ -379,7 +349,7 @@ switch($mode) {
         $potentialmemberscount = 0;
         $params = array_merge($rparams, $cparams);
 
-        if ($potentialmembers = $DB->get_records_sql($sql, $params)) {
+        if ($potentialmembers = get_enrolled_users($coursecontext, 'mod/offlinequiz:attempt')) {
             foreach ($potentialmembers as $member) {
                 if (empty($members[$member->id]) and (empty($group) or !empty($groupmembers[$member->id]))) {
                     $potentialmembersoptions .= '<option value="' . $member->id . '">' . fullname($member) .
