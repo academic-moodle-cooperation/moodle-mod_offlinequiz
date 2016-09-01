@@ -1,0 +1,45 @@
+<?php
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+namespace offlinequiz_result_import;
+
+define("PAGE_STATUS_OK", "STATUS_OK");
+define("PAGE_STATUS_ALIGNMENT_ERROR","ALIGNMENT_ERROR");
+define("PAGE_STATUS_GROUP_ERROR","PAGE_STATUS_GROUP_ERROR");
+define("PAGE_STUDENT_ID_ERROR","PAGE_STUDENT_ID_ERROR");
+class offlinequiz_result_page {
+
+
+    public $pagenumber;
+    public $answers;
+    public $expectedstudentidpositions;
+    public $expectedgroupnumberpositions;
+    public $group;
+    public $image;
+    public $scanproperties;
+    public $positionproperties;
+    public $offlinequizid;
+    public $status;
+    public $studentidnumbers;
+    public $userid;
+
+
+    public function __construct($imagick,$offlinequizid) {
+        $imagick->quantizeimage(2, \Imagick::COLORSPACE_GRAY, 0, false, false);
+        $this->image = $imagick;
+        $this->offlinequizid=$offlinequizid;
+    }
+
+}
