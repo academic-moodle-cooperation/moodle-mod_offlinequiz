@@ -354,6 +354,7 @@ $string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
 $string['overallfeedback'] = 'Generelles Feedback';
 $string['overview'] = 'Übersicht';
 $string['pagecorrected'] = 'Korrigierter Bogen der Anwesenheitsliste importiert';
+$string['page_evaluation_task'] = 'Evaluierung der Antwortbögen im Offlinequiz-Plugin';
 $string['pageimported'] = 'Bogen der Anwesenheitsliste importiert';
 $string['page-mod-offlinequiz-x'] = 'Jede Offline-Test-Seite';
 $string['page-mod-offlinequiz-edit'] = 'Offline-Test Bearbeiten-Seite';
