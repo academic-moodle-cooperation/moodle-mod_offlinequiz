@@ -69,12 +69,21 @@ II. Installation
 
 III. Cronjob 
 
-   For the evaluation of answer forms an additional cronjob has to be installed. This should look similar to the following
+    The plugin uses a cronjob for evaluating the answer forms.
+    If you didn't configure the offline-quiz cronjob, the automated analysis of answer forms is not going work!
+    Information about how to configure cronjobs can be found at https://docs.moodle.org/en/Cron
+    
+    Before Version 3.2 there was an additional cronjob required. This cronjob is no longer necessary, unless you intend to run the cronjob on a separate server.
+    
+    Since the evaluation of answer forms usually takes a lot of system resources, it
+    is recommended to run this cronjob on a separate application server to take load from the frontend servers.
+    
+    If you want to run the cronjob on a dedicated server you have to disable it in the moodle settings and
+    create an additional job on the dedicated server looking like this:
    
      */10 * * * * DATE=`date +\%Y\%m\%d`; php <your moodle root dir>/mod/offlinequiz/cron.php --cli=1 >> /var/log/moodle/cron-olq.log.$DATE 2>&1
      
-   but has to be adjusted to your environment. Since the evaluation of answer forms usually takes a lot of system resources, it
-   is recommended to run this cronjob on a separate application server to take load from the frontend servers.
+    
    
 IV. Website settings 
 

@@ -1563,6 +1563,10 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
             // Remove all paragraph tags because they mess up the layout.
             $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
             $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
+            //rewrite image URLs
+            $answertext = question_rewrite_question_preview_urls($answertext, $question->id,
+            $question->contextid, 'question', 'answer', $question->options->answers[$answer]->id,
+            $context->id, 'offlinequiz');
 
             echo "<div class=\"answer\">$letterstr[$key])&nbsp;&nbsp;";
             echo $answertext;

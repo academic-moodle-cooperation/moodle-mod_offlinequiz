@@ -14,25 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of offlinequiz
+ * calls the offlinequiz cron task for evaluating uploaded files
  *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
- *
- * @package       mod_offlinequiz
- * @author        Juergen Zimmer <zimmerj7@univie.ac.at> <zimmerj7@univie.ac.at>
- * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @since         Moodle 2.2
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
+ * @copyright     2016 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.1+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_offlinequiz\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2016091100;
-$plugin->release   = "v3.1.0";      // User-friendly version number.
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->requires = 2016052300 ;         // Requires this Moodle version.
-$plugin->cron     = 3600;               // Period for cron to check this plugin (secs).
-$plugin->component = 'mod_offlinequiz'; // Full name of the plugin (used for diagnostics).
+require_once($CFG->dirroot . '/mod/offlinequiz/cron.php');
+
+class page_evaluation_task extends \core\task\scheduled_task {
+    public function get_name() {
+        // Shown in admin screens
+        return get_string('pageevaluationtask', 'mod_offlinequiz');
+    }
+
+    public function execute() {
+        \offlinequiz_evaluation_cron();
+    }
+}
