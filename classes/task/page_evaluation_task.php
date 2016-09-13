@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/cron.php');
 class page_evaluation_task extends \core\task\scheduled_task {
     public function get_name() {
         // Shown in admin screens
-        return get_string('page_evaluation_task', 'mod_offlinequiz');
+        return get_string('pageevaluationtask', 'mod_offlinequiz');
     }
 
     public function execute() {
