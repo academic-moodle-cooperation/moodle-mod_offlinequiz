@@ -70,10 +70,10 @@ II. Installation
 III. Cronjob 
 
     The plugin uses a cronjob for evaluating the answer forms.
-    If you didn't configure your cron for your moodle-instance, the correction of the sheets will not work!
-    You can find how to configure the cronjob at https://docs.moodle.org/en/Cron
+    If you didn't configure the offline-quiz cronjob, the automated analysis of answer forms is not going work!
+    Information about how to configure cronjobs can be found at https://docs.moodle.org/en/Cron
     
-    Before Version 3.2 there was an additional cronjob required. This cronjob is no longer necessary, except you want to run the cronjob on a separate server.
+    Before Version 3.2 there was an additional cronjob required. This cronjob is no longer necessary, unless you intend to run the cronjob on a separate server.
     
     Since the evaluation of answer forms usually takes a lot of system resources, it
     is recommended to run this cronjob on a separate application server to take load from the frontend servers.
