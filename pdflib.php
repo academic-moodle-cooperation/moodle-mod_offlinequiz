@@ -35,6 +35,8 @@ require_once($CFG->dirroot . '/filter/tex/filter.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/documentlib.php');
 
+define('LOGO_MAX_ASPECT_RATIO',3.714285714);
+
 class offlinequiz_pdf extends pdf
 {
     /**
@@ -111,7 +113,15 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
         $logourl = trim($offlinequizconfig->logourl);
         if (!empty($logourl)) {
-            $this->Image($logourl, 133, 10.8, 54, 0);
+            $aspectRatio = $this->get_logo_aspect_ratio($logourl);
+            if($aspectRatio< LOGO_MAX_ASPECT_RATIO) {
+                $newlength = 54 * $aspectRatio/LOGO_MAX_ASPECT_RATIO;
+                $this->IMAGE($logourl,133,10.8,$newlength,0);
+            }
+            else {
+                $this->Image($logourl, 133, 10.8, 54, 0);
+            }
+
         } else {
             $this->Image("$CFG->dirroot/mod/offlinequiz/pix/logo.jpg", 133, 10.8, 54, 0);
         }
@@ -205,6 +215,12 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
         $this->Ln();
     }
+
+    private function get_logo_aspect_ratio($logourl) {
+    list($originalWidth, $originalHeight) = getimagesize($logourl);
+    return $originalWidth / $originalHeight;
+    }
+
 
     /**
      * (non-PHPdoc)
