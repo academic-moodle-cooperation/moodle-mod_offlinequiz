@@ -444,31 +444,30 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 \setlength{\oddsidemargin}{0cm}
 \setlength{\evensidemargin}{0cm}
 \setlength{\topmargin}{-1cm}
-\usepackage{amsmath} % für \implies etc
-\usepackage{amsfonts} % für \mathbb etc
-\usepackage{graphicx} % zum Bilder einfügen
-\renewcommand{\familydefault}{\sfdefault} % Schriftart
+\usepackage{amsmath} % for \implies etc
+\usepackage{amsfonts} % for \mathbb etc
+\usepackage{graphicx} % for including pictures
+\renewcommand{\familydefault}{\sfdefault} % Font
 \newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
 \newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
 \newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
-\parindent 0pt % keine Einrückung am Beginn des Absatzes
-\usepackage{esvect} % für lange Vektorpfeile, z.B. \vv{AB}
-\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % Für Einfügen von Hyperlinks
+\parindent 0pt % no indent on the beginning of a section
+\usepackage{esvect} % long vector arrows, e.g. \vv{AB}
+\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using of Hyperlinks
 \renewcommand\UrlFont{\sf}
-\usepackage{ulem} % Durchstreichen: \sout{gerade durchstreichen} \xout{schräg durchstreichen}
+\usepackage{ulem} %  \sout{horizontal strike out} \xout{diagonal strike out}
 \newcommand{\abs}[1]{\left\lvert#1\right\rvert}
-\usepackage{scrpage2} % Kopf- und Fußzeilen (http://esc-now.de/_/latex-individuelle-kopf-und-fusszeilen/?lang=en):
+\usepackage{scrpage2} % For Headings and Footer
 \pagestyle{scrheadings}
 \clearscrheadfoot
 \ifoot{[Gruppe \Group]}
-\makeatletter %%% Seitenumbrüche zwischen Antwortmöglichkeiten unterdrücken (funktioniert meistens!)
+\makeatletter %%% disable pagebreaks between answers
 \@beginparpenalty=10000
 \@itempenalty=10000
 \makeatother
 %
-%%% DIE FOLGENDEN ZWEI ZEILEN: Wenn erste auskommentiert -> r/f werden angezeigt, wenn zweite auskommentiert -> r/f werden verborgen
-\newcommand{\answerIs}[1]{} %%% Zum verborgenen Anzeigen der richtigen und falschen Antworten
-% \newcommand{\answerIs}[1]{[#1]} %%% Zum Anzeigen der richtigen und falschen Antworten
+\newcommand{\answerIs}[1]{} %%%Disable showing the right answer
+% \newcommand{\answerIs}[1]{[#1]} %%%Enable showing the right answer
 %%%
 
 \begin{document}
@@ -476,11 +475,10 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 
 
 % ===========================================================================================================
-%%% Die Lehrveranstaltungs-Daten:
-\begin{center}{University of Vienna}\end{center}
+%%% Data of the Course
 \begin{center}{\LARGE {$a->coursename}}\end{center}
 \begin{center}{Written Exam{$a->date}}\end{center}
-%%% In der folgenden Zeile bei Erstellen des endgültigen Fragebogens den Namen der Gruppe einfügen!
+%%%
 \def\Group{{$a->groupname}}
 \begin{center}{\Large Group \Group}\end{center}
 
