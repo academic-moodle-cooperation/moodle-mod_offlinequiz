@@ -210,13 +210,13 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
  */
 function offlinequiz_convert_html_to_latex($text) {
     $conversiontable = array(
-            'Ä' => '\"A',
-            'ä' => '\"a',
-            'Ö' => '\"O',
-            'ö' => '\"o',
-            'Ü' => '\"U',
-            'ü' => '\"u',
-            'ß' => '\ss',
+            'Ä' => '{\"A}',
+            'ä' => '{\"a}',
+            'Ö' => '{\"O}',
+            'ö' => '{\"o}',
+            'Ü' => '{\"U}',
+            'ü' => '{\"u}',
+            'ß' => '{\ss}',
             '&nbsp;' => ' ',
             '#' => '\#',
             '%' => '\%'
