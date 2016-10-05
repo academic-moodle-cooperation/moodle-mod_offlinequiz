@@ -121,8 +121,6 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
                 $this->Image($logourl, 133, 10.8, 54, 0);
             }
 
-        } else {
-            $this->Image("$CFG->dirroot/mod/offlinequiz/pix/logo.jpg", 133, 10.8, 54, 0);
         }
         // Print the top left fixation cross.
         $this->Line(11, 12, 14, 12);
