@@ -455,9 +455,9 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 \usepackage{esvect} % long vector arrows, e.g. \vv{AB}
 \usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using of Hyperlinks
 \renewcommand\UrlFont{\sf}
-\usepackage{ulem} %  \sout{horizontal strike out} \xout{diagonal strike out}
+\usepackage{ulem} %  \sout{horizontal cross out} \xout{diagonal strike out}
 \newcommand{\abs}[1]{\left\lvert#1\right\rvert}
-\usepackage{scrpage2} % For Headings and Footer
+\usepackage{scrpage2} % For Header and Footer
 \pagestyle{scrheadings}
 \clearscrheadfoot
 \ifoot{[Gruppe \Group]}
