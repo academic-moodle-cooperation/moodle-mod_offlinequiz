@@ -114,8 +114,8 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $logourl = trim($offlinequizconfig->logourl);
         if (!empty($logourl)) {
             $aspectratio = $this->get_logo_aspect_ratio($logourl);
-            if ($$aspectratio < LOGO_MAX_ASPECT_RATIO) {
-                $newlength = 54 * $$aspectratio / LOGO_MAX_ASPECT_RATIO;
+            if ($aspectratio < LOGO_MAX_ASPECT_RATIO) {
+                $newlength = 54 * $aspectratio / LOGO_MAX_ASPECT_RATIO;
                 $this->IMAGE($logourl, 133, 10.8, $newlength, 0);
             } else {
                 $this->Image($logourl, 133, 10.8, 54, 0);
