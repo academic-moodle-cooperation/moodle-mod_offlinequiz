@@ -971,7 +971,8 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     }
 
     // Save the number of pages in the group questions table.
-    $DB->set_field('offlinequiz_groups', 'numberofpages', $page, array('id' => $group->id));
+    $group->numberofpages=$page;
+    $DB->update_record('offlinequiz_groups', $group);
 
     $fs = get_file_storage();
 
