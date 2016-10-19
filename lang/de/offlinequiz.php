@@ -458,9 +458,8 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 
 % ===========================================================================================================
 %%% Die Lehrveranstaltungs-Daten:
-\begin{center}{Universit\"at Wien}\end{center}
 \begin{center}{\LARGE {$a->coursename}}\end{center}
-\begin{center}{Schriftliche Pr\"ufung{$a->date}}\end{center}
+\begin{center}{Schriftliche Pr\"ufung {$a->date}}\end{center}
 %%%
 \def\Group{{$a->groupname}}
 \begin{center}{\Large Gruppe \Group}\end{center}

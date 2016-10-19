@@ -477,7 +477,7 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 % ===========================================================================================================
 %%% Data of the Course
 \begin{center}{\LARGE {$a->coursename}}\end{center}
-\begin{center}{Written Exam{$a->date}}\end{center}
+\begin{center}{Written Exam {$a->date}}\end{center}
 %%%
 \def\Group{{$a->groupname}}
 \begin{center}{\Large Group \Group}\end{center}
