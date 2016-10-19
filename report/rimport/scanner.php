@@ -953,7 +953,7 @@ class offlinequiz_page_scanner {
                 $this->mark_hotspot($this->hotspots["u$i".substr($rightusernumber, $i, 1)]);
             }
         }
-        // Mark errors in group, not realy necessary, because there should always be premarked correctly.
+        // Mark errors in group, not really necessary, because there should always be premarked correctly.
         if ($wronggroup != $rightgroup) {
             $index = $rightgroup - 1;
             $this->mark_hotspot($this->hotspots["g$index"]);

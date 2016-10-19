@@ -461,7 +461,7 @@ switch($mode) {
 			        <input type="hidden" name="forcenew" value="1" />
 			        <input type="hidden" name="mode" value="createpdfs" />
 			        <input type="submit" value="<?php echo get_string('deleteupdatepdf', 'offlinequiz') ?>"
-				    onClick='return confirm("<?php echo get_string('realydeleteupdatepdf', 'offlinequiz') ?>")' />
+				    onClick='return confirm("<?php echo get_string('reallydeleteupdatepdf', 'offlinequiz') ?>")' />
                 </div>
 	        </form>
 	        <br>&nbsp;<br>

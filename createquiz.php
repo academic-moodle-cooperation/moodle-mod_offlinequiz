@@ -339,7 +339,7 @@ if ($mode == 'preview') {
                     <div>
                         <input type="hidden" name="forcepdfnew" value="1" />
                         <input type="submit" value="<?php echo get_string('deletepdfs', 'offlinequiz') ?>"
-                        onClick='return confirm("<?php echo get_string('realydeletepdfs', 'offlinequiz') ?>")' />
+                        onClick='return confirm("<?php echo get_string('reallydeletepdfs', 'offlinequiz') ?>")' />
                    </div>
               </form>
             </div>
