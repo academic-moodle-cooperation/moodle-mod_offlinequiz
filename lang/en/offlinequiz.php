@@ -388,6 +388,7 @@ $string['pageimported'] = 'Sheet of participants list imported';
 $string['page-mod-offlinequiz-x'] = 'Any offline quiz page';
 $string['page-mod-offlinequiz-edit'] = 'Edit offline quiz page';
 $string['pagenumberimported'] = 'Sheet {$a} of participants list imported';
+$string['pagenumberupdate'] = 'Page number update';
 $string['pagenotdetected'] = 'Could not detect barcode for page!';
 $string['pagesizeparts'] = 'Participants shown per page:';
 $string['papergray'] = 'White value of paper';
