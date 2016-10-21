@@ -1293,13 +1293,15 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         print('<div class="alert alert-error">The offlinequiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore, if you configured a cronjob for the Cron-API.'
                 . 'You have either the option to disable the job in the Cron-API, or disable your own cron, which is only needed, if you run the evaluation on a dedicated server.' .
                   ' For mor info read chapter III of the README.txt, which comes with this plugin. If you have read and understood this message click <a href='. $PAGE->url->__toString() . '&croninfo_read=true> here </a> to continue the upgrade.</div>' );
-
-
-//         upgrade_mod_savepoint(true, 2016042100, 'offlinequiz');
         return false;
         }
     }
 
+    if($oldversion < 2016101700) {
+        require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
+        offlinequiz_update_refresh_all_pagecounts();
+        return false;
+    }
 
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
     // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the
