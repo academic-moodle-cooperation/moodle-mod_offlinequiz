@@ -992,3 +992,46 @@ function offlinequiz_update_form_file_names() {
 	    $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
    }
 }
+
+function offlinequiz_update_refresh_all_pagecounts() {
+    global $DB;
+    $groups = $DB->get_records('offlinequiz_groups');
+    if(empty($groups)) {
+        return;
+    }
+    $progressbar = new progress_bar('pagenumberupdate');
+    $progressbar->create();
+    $done = 0;
+    $outof = count($groups);
+
+    $a = new stdClass();
+    $a->done = $done;
+    $a->outof = $outof;
+    $progressbar->update($done, $outof, get_string('pagenumberupdate', 'offlinequiz', $a));
+    foreach ($groups as $group) {
+        $params = array('id' => $group->id);
+        $questions = $DB->get_field_sql("SELECT count(*) FROM {question} q, {offlinequiz_group_questions} gq where gq.offlinegroupid = :id AND gq.questionid = q.id AND qtype <> 'description' ", $params);
+        $maxanswers = $DB->get_field_sql("SELECT max(count) from (SELECT count(*) as count from {question_answers} qa, {offlinequiz_groups} g, {offlinequiz_group_questions} gq where gq.offlinegroupid = g.id AND gq.questionid = qa.question AND g.id = :id group by gq.id) as count", $params);
+        $columns = offlinequiz_get_number_of_columns($maxanswers);
+        $pages = offlinequiz_get_number_of_pages($questions,$columns);
+        if($pages > 1 && $pages != $group->numberofpages) {
+            $group->numberofpages = $pages;
+            $DB->update_record('offlinequiz_groups', $group);
+        }
+        $done++;
+        $progressbar->update($done, $outof, get_string('pagenumberupdate', 'offlinequiz', $a));
+    }
+}
+
+function offlinequiz_get_number_of_columns($maxanswers)  {
+    $i=1;
+    $columnlimits = array(1 => 13, 2 => 8, 3 => 6);
+    while(array_key_exists($i,$columnlimits) && $columnlimits[$i] > $maxanswers) {
+        $i++;
+    }
+    return $i;
+}
+
+function offlinequiz_get_number_of_pages($questions,$columns) {
+    return ceil($questions/$columns/24);
+}

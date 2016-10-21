@@ -1095,58 +1095,58 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2013112500, 'offlinequiz');
     }
-    
+
     // Moodle v2.8.5+ release upgrade line.
     // Put any upgrade step following this.
-    
+
     if ($oldversion < 2015060500) {
-    
+
         // Rename field page on table offlinequiz_group_questions to NEWNAMEGOESHERE.
         $table = new xmldb_table('offlinequiz_group_questions');
         $field = new xmldb_field('pagenumber', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'position');
-    
+
         // Launch rename field page.
         $dbman->rename_field($table, $field, 'page');
-    
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2015060500, 'offlinequiz');
     }
-    
+
     if ($oldversion < 2015060501) {
-    
+
         // Rename field page on table offlinequiz_group_questions to NEWNAMEGOESHERE.
         $table = new xmldb_table('offlinequiz_group_questions');
         $field = new xmldb_field('usageslot', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'position');
-    
+
         // Launch rename field page.
         $dbman->rename_field($table, $field, 'slot');
-    
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2015060501, 'offlinequiz');
     }
-    
+
     if ($oldversion < 2015060502) {
-    
+
         // Define field maxmark to be added to offlinequiz_group_questions.
         $table = new xmldb_table('offlinequiz_group_questions');
         $field = new xmldb_field('maxmark', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '1', 'slot');
-    
+
         // Conditionally launch add field maxmark.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-    
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2015060502, 'offlinequiz');
     }
-    
+
     if ($oldversion < 2015060902) {
-    
-        // This upgrade migrates old offlinequiz_q_instances grades (maxgrades) to new 
+
+        // This upgrade migrates old offlinequiz_q_instances grades (maxgrades) to new
         // maxmark field in offlinequiz_group_questions.
-        // It also deletes group questions with questionid 0 (pagebreaks) and inserts the 
-        // correct page number instead. 
-        
+        // It also deletes group questions with questionid 0 (pagebreaks) and inserts the
+        // correct page number instead.
+
         $numofflinequizzes = $DB->count_records('offlinequiz');
         if ($numofflinequizzes > 0) {
             $pbar = new progress_bar('offlinequizquestionstoslots', 500, true);
@@ -1163,14 +1163,14 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                         'number', '*');
                 $instancesraw = $DB->get_records('offlinequiz_q_instances',
                         array('offlinequizid' => $offlinequiz->id));
-                
+
                 $questioninstances = array();
                 foreach ($instancesraw as $instance) {
                 	if (!array_key_exists($instance->questionid, $questioninstances)) {
                 		$questioninstances[$instance->questionid] = $instance;
                 	}
                 }
-                
+
                 foreach ($groups as $group) {
                     $groupquestions = $DB->get_records('offlinequiz_group_questions',
                             array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id), 'position');
@@ -1178,7 +1178,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                     $currentpage = 1;
                     $currentslot = 1;
                     foreach ($groupquestions as $groupquestion) {
-                        $needsupdate = false; 
+                        $needsupdate = false;
                         if ($groupquestion->questionid == 0) {
                             // We remove the old pagebreaks with questionid==0.
                             $DB->delete_records('offlinequiz_group_questions', array('id' => $groupquestion->id));
@@ -1203,13 +1203,13 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 	                        $groupquestion->slot = $currentslot;
     	                    $needsupdate = true;
                         }
-                        
+
                         if ($needsupdate) {
                             $DB->update_record('offlinequiz_group_questions', $groupquestion);
                         }
                         $currentslot++;
                     }
-                }    
+                }
 
                 // Done with this offlinequiz. Update progress bar.
                 $numberdone++;
@@ -1222,7 +1222,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2015060902, 'offlinequiz');
     }
-    
+
     if ($oldversion < 2015112002) {
 
         // Define field questionfilename to be added to offlinequiz_groups.
@@ -1256,22 +1256,27 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2015112007) {
-    
+
         // Define field printstudycodefield to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('printstudycodefield', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1', 'shuffleanswers');
-    
+
         // Conditionally launch add field printstudycodefield.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-    
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2015112007, 'offlinequiz');
     }
-    
+
+    if($oldversion < 2015112008) {
+                require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
+                offlinequiz_update_refresh_all_pagecounts();
+    }
+
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
-    // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the 
+    // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the
     //      position field to find new pages and insert them.
     //      Adapt offlinequiz code to handle missing zeros as pagebreaks.
 
