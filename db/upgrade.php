@@ -1300,7 +1300,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     if($oldversion < 2016101700) {
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
         offlinequiz_update_refresh_all_pagecounts();
-        return false;
     }
 
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
