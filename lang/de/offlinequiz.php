@@ -358,6 +358,7 @@ $string['pageimported'] = 'Bogen der Anwesenheitsliste importiert';
 $string['page-mod-offlinequiz-x'] = 'Jede Offline-Test-Seite';
 $string['page-mod-offlinequiz-edit'] = 'Offline-Test Bearbeiten-Seite';
 $string['pagenumberimported'] = 'Bogen {$a} der Anwesenheitsliste importiert';
+$string['pagenumberupdate'] = 'Aktualisierung der Seitenzahlen';
 $string['pagenotdetected'] = 'Barcode für Zuordnung der Seite nicht erfassbar!';
 $string['pagesizeparts'] = 'Einträge pro Seite:';
 $string['papergray'] = 'Weißwert des Papiers';
