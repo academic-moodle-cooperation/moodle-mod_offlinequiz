@@ -75,17 +75,17 @@ Installation
 Cron Job
 --------
 
-The plugin uses a cronjob for evaluating the answer forms. If you didn't configure the offline-quiz
-cronjob, the automated analysis of answer forms is not going work! Information about how to
-configure cronjobs can be found at https://docs.moodle.org/en/Cron
+The plugin uses a cron job for evaluating the answer forms. If you didn't configure the offline-quiz
+cron job, the automated analysis of answer forms is not going work! Information about how to
+configure cron jobs can be found at https://docs.moodle.org/en/Cron
 
-Before Version 3.2 there was an additional cronjob required. This cronjob is no longer necessary,
-unless you intend to run the cronjob on a separate server.
+Before Version 3.2 there was an additional cron job required. This cron job is no longer necessary,
+unless you intend to run the cron job on a separate server.
 
 Since the evaluation of answer forms usually takes a lot of system resources, it is recommended to
-run this cronjob on a separate application server to take load from the frontend servers.
+run this cron job on a separate application server to take load from the frontend servers.
 
-If you want to run the cronjob on a dedicated server you have to disable it in the moodle settings
+If you want to run the cron job on a dedicated server you have to disable it in the moodle settings
 and create an additional job on the dedicated server looking like this:
 
     */10 * * * * DATE=`date +\%Y\%m\%d`; php <your moodle root dir>/mod/offlinequiz/cron.php --cli=1 >> /var/log/moodle/cron-olq.log.$DATE 2>&1
@@ -144,13 +144,13 @@ Documentation
 
 You can find a cheat sheet for the plugin on the [AMC
 website](http://www.academic-moodle-cooperation.org/en/modules/offline-quiz/) and a video tutorial
-in german only in the [AMC YouTube Channel](https://www.youtube.com/c/AMCAcademicMoodleCooperation).
+in German only in the [AMC YouTube Channel](https://www.youtube.com/c/AMCAcademicMoodleCooperation).
 
 
 Bug Reports / Support
 ---------------------
 
-We try our best to deliver bug-free plugins, but we can not test the plugin for every platform,
+We try our best to deliver bug-free plugins, but we cannot test the plugin for every platform,
 database, PHP and Moodle version. If you find any bug please report it on
 [GitHub](https://github.com/academic-moodle-cooperation/moodle-mod_offlinequiz/issues). Please
 provide a detailed bug description, including the plugin and Moodle version and, if applicable, a
