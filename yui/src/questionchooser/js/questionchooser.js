@@ -1,7 +1,7 @@
 var CSS = {
     ADDNEWQUESTIONBUTTONS: 'ul.menu a.addquestion',
     CREATENEWQUESTION: 'div.createnewquestion',
-    CHOOSERDIALOGUE: 'div.chooserdialogue',
+    CHOOSERDIALOGUE: 'div.chooserdialoguebody',
     CHOOSERHEADER: 'div.choosertitle'
 };
 
@@ -25,6 +25,7 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
 
     display_dialogue: function(e) {
         e.preventDefault();
+        console.log(CSS.CREATENEWQUESTION + ' ' + CSS.CHOOSERDIALOGUE);
         var dialogue = Y.one(CSS.CREATENEWQUESTION + ' ' + CSS.CHOOSERDIALOGUE),
             header = Y.one(CSS.CREATENEWQUESTION + ' ' + CSS.CHOOSERHEADER);
 
@@ -48,9 +49,9 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
 
         var nodes = Y.all('#chooseform input[type=radio]')._nodes;
         for(i = 0; i < nodes.length; i++) {
-        	if (nodes[i].id != 'qtype_qtype_multichoiceset' &&
-        		nodes[i].id != 'qtype_qtype_multichoice' &&
-        		nodes[i].id != 'qtype_qtype_description' ) {
+        	if (nodes[i].id != 'item_qtype_multichoiceset' &&
+        		nodes[i].id != 'item_qtype_multichoice' &&
+        		nodes[i].id != 'item_qtype_description' ) {
         		nodes[i].disabled = true;
         	}
         }        
