@@ -1290,9 +1290,16 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         global $PAGE;
         global $OUTPUT;
         if(!optional_param('croninfo_read', false, PARAM_BOOL)) {
-        print('<div class="alert alert-error">The offlinequiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore, if you configured a cronjob for the Cron-API.'
-                . 'You have either the option to disable the job in the Cron-API, or disable your own cron, which is only needed, if you run the evaluation on a dedicated server.' .
-                  ' For mor info read chapter III of the README.txt, which comes with this plugin. If you have read and understood this message click <a href='. $PAGE->url->__toString() . '&croninfo_read=true> here </a> to continue the upgrade.</div>' );
+        print('<div class="alert alert-block"><span>The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore.
+                If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API, or disable your own cron, which is
+                only needed, if you run the evaluation on a dedicated server.
+                For more information read chapter III of the README.md, which comes with the plugin.<br></span>
+                <br><b>Continuing the upgrade:<br></b>If you have read and understood this message click the link below to continue the upgrade.
+                <br>
+                <br><b><a href='. $PAGE->url->__toString() . '&croninfo_read=true> CONTINUE </a> </b>
+                <br>
+                </div>' );
+        echo $OUTPUT->footer(); die;
         return false;
         }
     }
