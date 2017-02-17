@@ -1285,12 +1285,17 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2016042100, 'offlinequiz');
     }
 
+    if($oldversion < 2016101700) {
+        require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
+        offlinequiz_update_refresh_all_pagecounts();
+    }
+
     //Information about the new Cron-Job in Moodle-API
-    if($oldversion<2016100501) {
+    if($oldversion<2017020201) {
         global $PAGE;
         global $OUTPUT;
         if(!optional_param('croninfo_read', false, PARAM_BOOL)) {
-        print('<div class="alert alert-block"><span>The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore.
+            print('<div class="alert alert-block"><span>The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore.
                 If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API, or disable your own cron, which is
                 only needed, if you run the evaluation on a dedicated server.
                 For more information read chapter III of the README.md, which comes with the plugin.<br></span>
@@ -1299,14 +1304,9 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                 <br><b><a href='. $PAGE->url->__toString() . '&croninfo_read=true> CONTINUE </a> </b>
                 <br>
                 </div>' );
-        echo $OUTPUT->footer(); die;
-        return false;
+            echo $OUTPUT->footer(); die;
+            return false;
         }
-    }
-
-    if($oldversion < 2016101700) {
-        require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
-        offlinequiz_update_refresh_all_pagecounts();
     }
 
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
