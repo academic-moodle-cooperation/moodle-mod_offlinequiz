@@ -4,7 +4,9 @@ Offline Quiz Module
 This file is part of the mod_offlinequiz plugin for Moodle - <http://moodle.org/>
 
 *Author:*    Thomas Wedekind, Juergen Zimmer, Richard Rode
+
 *Copyright:* 2014 [Academic Moodle Cooperation](http://www.academic-moodle-cooperation.org)
+
 *License:*   [GNU GPL v3 or later](http://www.gnu.org/copyleft/gpl.html)
 
 
