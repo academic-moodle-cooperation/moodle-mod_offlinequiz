@@ -1286,6 +1286,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if($oldversion < 2016101700) {
+        print('<div class="alert alert-block"><span>Due to a bug in Offlinequiz, answer-forms with multiple pages weren\'t recognized properly. Therefore the number of pages has to be recalculated, which can take quite some time, depending on the amount of your offlinequizzes</span>
+                </div>' );
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
         offlinequiz_update_refresh_all_pagecounts();
     }
