@@ -1285,24 +1285,38 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2016042100, 'offlinequiz');
     }
 
-    //Information about the new Cron-Job in Moodle-API
-    if($oldversion<2016100501) {
-        global $PAGE;
-        global $OUTPUT;
-        if(!optional_param('croninfo_read', false, PARAM_BOOL)) {
-        print('<div class="alert alert-error">The offlinequiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore, if you configured a cronjob for the Cron-API.'
-                . 'You have either the option to disable the job in the Cron-API, or disable your own cron, which is only needed, if you run the evaluation on a dedicated server.' .
-                  ' For mor info read chapter III of the README.txt, which comes with this plugin. If you have read and understood this message click <a href='. $PAGE->url->__toString() . '&croninfo_read=true> here </a> to continue the upgrade.</div>' );
-        return false;
-        }
-    }
-
     if($oldversion < 2016101700) {
+        print('<div class="alert alert-block"><span> Due to a bug in the offline-quiz module, answer forms with multiple pages were not recognized properly. Therefore, the number of pages has to be re-calculated for each offline-quiz. This may take a while, depending on the number offline-quizzes in your Moodle platform.</span>
+                </div>' );
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
         offlinequiz_update_refresh_all_pagecounts();
     }
 
-    if ($oldversion < 2017011000) {
+    //Information about the new Cron-Job in Moodle-API
+    if($oldversion<2017020201) {
+        global $PAGE;
+        global $OUTPUT;
+        if(!optional_param('croninfo_read', false, PARAM_BOOL)) {
+            if(!CLI_SCRIPT) {
+            print('<div class="alert alert-block"><span>The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore.
+                If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API, or disable your own cron, which is
+                only needed, if you run the evaluation on a dedicated server.
+                For more information read chapter III of the README.md, which comes with the plugin.<br></span>
+                <br><b>Continuing the upgrade:<br></b>If you have read and understood this message click the link below to continue the upgrade.
+                <br>
+                <br><b><a href='. $PAGE->url->__toString() . '&croninfo_read=true> CONTINUE </a> </b>
+                <br>
+                </div>' );
+            echo $OUTPUT->footer(); die;
+            return false;
+            }
+            else {
+                print('The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore. If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API, or disable your own cron, which is only needed, if you run the evaluation on a dedicated server. For more information read chapter III of the README.md, which comes with the plugin.');
+            }
+        }
+    }
+
+    if ($oldversion < 2017020201) {
         // Changing precision of field pagenumber on table offlinequiz_scanned_pages to (20).
         $table = new xmldb_table('offlinequiz_scanned_pages');
         $field = new xmldb_field('pagenumber', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'userkey');
@@ -1310,7 +1324,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Launch change of precision for field pagenumber.
         $dbman->change_field_precision($table, $field);
 	
-	// Define field info to be added to offlinequiz_queue_data.
+        // Define field info to be added to offlinequiz_queue_data.
         $table = new xmldb_table('offlinequiz_queue_data');
         $field = new xmldb_field('info', XMLDB_TYPE_TEXT, null, null, null, null, null, 'error');
 	

@@ -88,7 +88,7 @@ $string['configshuffleanswers'] = 'Shuffle answers';
 $string['configshufflequestions'] = 'If you enable this option, then the order of questions in the offline quiz groups will be randomly shuffled each time you re-create the preview in the "Create forms" tab.';;
 $string['configshufflewithin'] = 'If you enable this option, the answers of multiple choice questions are shuffled separately for each offline quiz group.';
 $string['configuseridentification'] = 'A formula describing the user identification. This formula is used to assign answer forms to users in the system. The right hand side of the equation must denote a field in the user table of Moodle.';
-$string['configpapergray'] = 'grey-value of paper';
+$string['configpapergray'] = 'white-value of paper, which is used for the evaluation of answer-sheets';
 $string['configshufflewithin'] = 'If you enable this option, then the parts making up the individual questions will be randomly shuffled when the question- and answer-forms are created.';
 $string['confirmremovequestion'] = 'Are you sure you want to remove this {$a} question?';
 $string['copyright'] = '<strong>Warning: The texts on this page are just for your personal information. Like any other texts these questions are under copyright restrictions. You are not allowed to copy them or to show them to other people!</strong>';
@@ -268,7 +268,7 @@ $string['instruction1'] = 'This answer form will be scanned automatically. Pleas
 $string['instruction2'] = 'Only clear markings can be interpreted correctly! If you want to correct a marking, completely fill the box with color. This field will be interpreted like an empty box:';
 $string['instruction3'] = 'Corrected boxes cannot be marked again. Please do not write anything outside of the boxes.';
 $string['introduction'] = 'Introduction';
-$string['invalidformula'] = 'Invalid formula for user identification. The formula must have the form &lt;prefix&gt;[&lt;#digits&gt;]&lt;suffix&gt;=&lt;db-field&gt;.';
+$string['invalidformula'] = 'Invalid formula for user identification. The formula must have the form <prefix>[<#digits>]<suffix>=<db-field&>.';
 $string['invalidnumberofdigits'] = 'Invalid number of digits used. Only 1 up to 9 digit(s) are allowed.';
 $string['invaliduserfield'] = 'Invalid field of the user table used.';
 $string['invigilator'] = 'Invigilator';
