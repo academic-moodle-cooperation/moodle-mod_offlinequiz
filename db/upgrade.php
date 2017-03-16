@@ -1320,19 +1320,19 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Changing precision of field pagenumber on table offlinequiz_scanned_pages to (20).
         $table = new xmldb_table('offlinequiz_scanned_pages');
         $field = new xmldb_field('pagenumber', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'userkey');
-	
+
         // Launch change of precision for field pagenumber.
         $dbman->change_field_precision($table, $field);
-	
+
         // Define field info to be added to offlinequiz_queue_data.
         $table = new xmldb_table('offlinequiz_queue_data');
         $field = new xmldb_field('info', XMLDB_TYPE_TEXT, null, null, null, null, null, 'error');
-	
+
         // Conditionally launch add field info.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-	
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2017011000, 'offlinequiz');
     }
