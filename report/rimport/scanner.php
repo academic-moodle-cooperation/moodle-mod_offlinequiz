@@ -107,6 +107,7 @@ class offlinequiz_page_scanner {
     public $sourcefile;
     public $pageimage;
     public $path;
+    public $id_digits;
     public $maxanswers;
     public $maxquestions;
     public $questionsonpage;
@@ -170,6 +171,8 @@ class offlinequiz_page_scanner {
             $this->formtype = 1;
         }
         $this->numpages = ceil($maxquestions / ($this->formtype * 24));
+
+        $this->id_digits = $offlinequiz->id_digits;
     }
 
     /**
@@ -1529,7 +1532,7 @@ class offlinequiz_page_scanner {
         $offlinequizconfig = get_config('offlinequiz');
 
         $usernumber = '';
-        for ($i = 0; $i < $offlinequizconfig->ID_digits; $i++) {
+        for ($i = 0; $i < $this->id_digits; $i++) {
             $found = 0;
             $value = 'X';                   // If we cannot read the value, set it to X.
             $insecure = false;
@@ -1550,6 +1553,17 @@ class offlinequiz_page_scanner {
 
             $usernumber .= $value;
         }
+
+        /*
+         * This is just due to the Austrian universities changing from 7 digits to 8 digits in student IDs.
+         * We are handling the cases where answer sheets have been created with 7 digits and the
+         * student IDs contain already 8 digits. This has no effect on other systems/instances.
+         */
+        if ($offlinequizconfig->ID_digits > $this->id_digits) {
+            // Fill the usernumber to the new length with 0 on the left!
+            $usernumber = str_pad($usernumber, $offlinequizconfig->ID_digits, "0", STR_PAD_LEFT);
+        }
+
         return $usernumber;
     }
 
