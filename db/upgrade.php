@@ -1313,9 +1313,27 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
             else {
                 print('The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore. If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API, or disable your own cron, which is only needed, if you run the evaluation on a dedicated server. For more information read chapter III of the README.md, which comes with the plugin.');
             }
+
         }
     }
 
+    // Add id_digits containing amount of digits to match idnumber against.
+    if ($oldversion < 2017020202) {
+
+        // Define field id_digits to be added to offlinequiz.
+        $table = new xmldb_table('offlinequiz');
+        $field = new xmldb_field('id_digits', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'showtutorial');
+
+        // Conditionally launch add field id_digits.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            $DB->set_field('offlinequiz', 'id_digits', get_config('offlinequiz', 'ID_digits'));
+
+            // Offlinequiz savepoint reached.
+            upgrade_mod_savepoint(true, 2017020202, 'offlinequiz');
+        }
+    }
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
     // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the
     //      position field to find new pages and insert them.

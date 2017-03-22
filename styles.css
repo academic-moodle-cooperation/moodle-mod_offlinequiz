@@ -291,7 +291,6 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr .fitem, .dir-rtl  #adminofflinequizreviewoptions .group { width: 23%;float: right;}
 #page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr .fitemtitle, .dir-rtl  #adminofflinequizreviewoptions .fitemtitle {text-align: right;}
 #page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr fieldset.fgroup span, .dir-rtl  #adminofflinequizreviewoptions span {clear: right;float: right;}
-}
 
 #page-mod-offlinequiz-createquiz div.answer img.texrender {
     vertical-align: middle;
