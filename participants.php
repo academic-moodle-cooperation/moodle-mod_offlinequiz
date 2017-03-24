@@ -583,8 +583,11 @@ switch($mode) {
                 $files = array();
                 $mimetype = mimeinfo('type', $importfile);
                 if ($mimetype == 'application/zip') {
-                    if (unzip_file($importfile)) {
+                    $fp = get_file_packer('application/zip');
+                    $files = $fp->extract_to_pathname($importfile, $tempdir);
+                    if ($files) {
                         unlink($importfile);
+                        $files = get_directory_list($tempdir);
                     } else {
                         echo $OUTPUT->notification(get_string('couldnotunzip', 'offlinequiz_rimport', $realfilename),
                                                    'notifyproblem');

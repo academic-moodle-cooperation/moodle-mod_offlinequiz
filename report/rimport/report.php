@@ -230,7 +230,9 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             $files = array();
             $mimetype = mimeinfo('type', $importfile);
             if ($mimetype == 'application/zip') {
-                if (unzip_file($importfile)) {
+                $fp = get_file_packer('application/zip');
+                $files = $fp->extract_to_pathname($importfile, $dirname);
+                if ($files) {
                     unlink($importfile);
                     $files = get_directory_list($dirname);
                 } else {
