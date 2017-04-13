@@ -1317,7 +1317,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     // Add id_digits containing amount of digits to match idnumber against.
-    if ($oldversion < 2017020202) {
+    if ($oldversion < 2017020203) {
 
         // Define field id_digits to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
@@ -1331,7 +1331,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $DB->set_field('offlinequiz', 'id_digits', get_config('offlinequiz', 'ID_digits'));
 
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2017020202, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2017020203, 'offlinequiz');
     }
 
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
