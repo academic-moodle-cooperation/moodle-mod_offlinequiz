@@ -870,9 +870,14 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Action icons.
         $questionicons = '';
-        $input = '<input class="gradeinput" id="inputq' . $question->id .
-                '" type="text" value="' . offlinequiz_format_grade($structure->get_offlinequiz(), $question->maxmark) .
-                '" size="4" tabindex="' . $question->slot . '" name="g' . $question->id . '"/>';
+        if($question->qtype == 'description') {
+            $input = '';
+        }
+        else {
+            $input = '<input class="gradeinput" id="inputq' . $question->id .
+            '" type="text" value="' . offlinequiz_format_grade($structure->get_offlinequiz(), $question->maxmark) .
+            '" size="4" tabindex="' . $question->slot . '" name="g' . $question->id . '"/>';
+        }
         $questionicons .=  html_writer::span($input,
                 'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($structure->get_offlinequiz()));
 //        $questionicons .= $this->marked_out_of_field($structure->get_offlinequiz(), $question);
