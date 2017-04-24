@@ -1035,4 +1035,3 @@ function offlinequiz_get_number_of_columns($maxanswers)  {
 function offlinequiz_get_number_of_pages($questions,$columns) {
     return ceil($questions/$columns/24);
 }
-
