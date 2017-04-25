@@ -534,6 +534,7 @@ if ($mode == 'preview') {
         // Remember that we have created the documents.
         $offlinequiz->docscreated = 1;
         $DB->set_field('offlinequiz', 'docscreated', 1, array('id' => $offlinequiz->id));
+        $DB->set_field('offlinequiz', 'id_digits', get_config('offlinequiz', 'ID_digits'), array('id' => $offlinequiz->id));
 
         $doctype = 'PDF';
         if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
