@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_MODULENAME for Moodle - http://moodle.org/
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_MODULNAME\search;
+namespace mod_offlinequiz\search;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,5 +35,31 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class activity extends \core_search\area\base_activity {
+    /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
 
+    /**
+     * Add the attached description files.
+     *
+     * @param document $document The current document
+     * @return null
+     */
+    public function attach_files($document) {
+        $fs = get_file_storage();
+
+        $cm = $this->get_cm($this->get_module_name(), $document->get('itemid'), $document->get('courseid'));
+        $context = \context_module::instance($cm->id);
+
+        $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'intro', false, 'sortorder DESC, id ASC', false);
+
+        foreach ($files as $file) {
+            $document->add_stored_file($file);
+        }
+    }
 }

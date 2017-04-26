@@ -582,6 +582,7 @@ $string['scanneroptions'] = 'Scanner settings';
 $string['scannerpdfs'] = 'Empty forms';
 $string['scannerpdfstext'] = 'Download the following empty forms if you want to use your own scanner software.';
 $string['score'] = 'Score';
+$string['search:activity'] = 'Offline quiz - activity information';
 $string['select'] = 'Select';
 $string['selectagroup'] = 'Select a group';
 $string['selectall'] = 'Select all';
