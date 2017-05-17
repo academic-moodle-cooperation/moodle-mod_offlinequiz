@@ -50,7 +50,7 @@ foreach ($potentialmembers as $userid => $potentalmember) {
               <?php  echo $groupoptions ?>
          </select><br />
          <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
-         <input type="text" name="searchtext" id="searchtext" size="21" value="<?php p($searchtext, true) ?>" style="width:16em"
+         <input type="text" name="searchtext" id="searchtext" size="21" value="<?php p($searchtext, true) ?>"
                   onfocus ="getElementById('assignform').add.disabled=true;
                             getElementById('assignform').remove.disabled=true;
                             getElementById('assignform').removeselect.selectedIndex=-1;
@@ -60,7 +60,7 @@ foreach ($potentialmembers as $userid => $potentalmember) {
                                     getElementById('assignform').previoussearch.value=1;
                                     getElementById('assignform').submit();
                                } " />
-         <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
+         <button name="search" class="btn btn-secondary" id="search" type="submit" value="" > <?php p($strsearch) ?> </button>
     </td>
     <tr>
       <td valign="top">
@@ -76,10 +76,10 @@ foreach ($potentialmembers as $userid => $potentalmember) {
           </select></td>
       <td valign="top">
         <p class="arrow_button">
-            <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>"
-             title="<?php print_string('add'); ?>" /><br />
-            <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>"
-             title="<?php print_string('remove'); ?>" />
+            <button class="btn btn-secondary" name="add" id="add" type="submit"
+             title="<?php print_string('add'); ?>" > <?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?></button><br />
+            <button class="btn btn-secondary" name="remove" id="remove" type="submit"
+             title="<?php print_string('remove'); ?>" > <?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?> </button>
         </p>
       </td>
       <td valign="top">

@@ -1793,7 +1793,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
         print_string('downloadresultsas', 'offlinequiz');
         echo "</td><td>";
         echo html_writer::select($options, 'download', '', false);
-        echo '<input type="submit" value="' . get_string('go') . '" />';
+        echo '<button type="submit" class="btn btn-primary" >' . get_string('go') . '</button>';
         echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'.
             "\n-->\n".'</script>';
         echo "</td>\n";
@@ -1827,7 +1827,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
     echo html_writer::select($options, 'checkoption', $checkoption);
     echo '</td></tr>';
     echo '<tr><td colspan="2" align="center">';
-    echo '<input type="submit" value="'.get_string('go').'" />';
+    echo '<button type="submit" class="btn btn-secondary" >' .get_string('go'). '</button>';
     echo '</td></tr></table>';
     echo '</center>';
     echo '</form>';

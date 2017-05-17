@@ -675,7 +675,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 print_string('downloadresultsas', 'offlinequiz');
                 echo "</td><td>";
                 echo html_writer::select($options, 'download', '', false);
-                echo ' <input type="submit" value="' . get_string('download') . '" />';
+                echo ' <button type="submit" class="btn btn-primary" > ' . get_string('download') . '</button>';
                 echo ' <script type="text/javascript">' . "\n<!--\n" .
                          'document.getElementById("noscriptmenuaction").style.display = "none";' .
                          "\n-->\n" . '</script>';
@@ -721,7 +721,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         echo html_writer::select($options, 'noresults', $noresults, '');
         echo '</td></tr>';
         echo '<tr><td colspan="2" align="center">';
-        echo '<input type="submit" value="' . get_string('go') . '" />';
+        echo '<button type="submit" class="btn btn-secondary"> ' . get_string('go') . '</button>';
         echo '</td></tr></table>';
         echo '</div>';
         echo '</form>';

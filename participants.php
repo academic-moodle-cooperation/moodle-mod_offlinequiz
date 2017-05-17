@@ -186,13 +186,13 @@ switch($mode) {
                     array('mode' => 'editparticipants', 'q' => $offlinequiz->id ,'listid' => $list->id));
             echo html_writer::link($listurl, $listname);
             $streditlist = get_string('editthislist', 'offlinequiz');
-            $imagehtml = html_writer::img($OUTPUT->pix_url('i/edit'),  $streditlist);
+            $imagehtml = $OUTPUT->pix_icon('i/edit',  $streditlist);
             $editurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                     array('mode' => 'editlists', 'action' => 'edit' , 'q' => $offlinequiz->id ,'listid' => $list->id));
             echo html_writer::link($editurl, $imagehtml, array('class' => 'editlistlink'));
 
             $strdeletelist = get_string('deletethislist', 'offlinequiz');
-            $imagehtml = html_writer::img($OUTPUT->pix_url('t/delete'),  $strdeletelist);
+            $imagehtml = $OUTPUT->pix_icon('t/delete',  $strdeletelist);
             $deleteurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                     array('mode' => 'editlists',
                           'action' => 'delete',
@@ -460,8 +460,11 @@ switch($mode) {
 			        <input type="hidden" name="q" value="<?php echo $offlinequiz->id ?>" />
 			        <input type="hidden" name="forcenew" value="1" />
 			        <input type="hidden" name="mode" value="createpdfs" />
-			        <input type="submit" value="<?php echo get_string('deleteupdatepdf', 'offlinequiz') ?>"
-				    onClick='return confirm("<?php echo get_string('reallydeleteupdatepdf', 'offlinequiz') ?>")' />
+			        <button type="submit"
+				    onClick='return confirm("<?php echo get_string('reallydeleteupdatepdf', 'offlinequiz') ?>")' 
+				    class="btn btn-secondary">
+				    	<?php echo get_string('deleteupdatepdf', 'offlinequiz') ?>
+				    </button>
                 </div>
 	        </form>
 	        <br>&nbsp;<br>

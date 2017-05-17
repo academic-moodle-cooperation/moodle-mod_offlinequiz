@@ -213,7 +213,7 @@ class edit_renderer extends \plugin_renderer_base {
             $copyingdisabled = 'disabled="disabled"';
         }
         $output = get_string('copyselectedtogroup', 'offlinequiz', $select) .
-            '<input type="submit" name="savechanges" value="' . get_string('add') .
+            '<input class="btn btn-secondary" type="submit" name="savechanges" value="' . get_string('add') .
             '" ' . $copyingdisabled . '/>';
         return html_writer::div($output, 'copyselected');
     }
@@ -235,7 +235,7 @@ class edit_renderer extends \plugin_renderer_base {
 
     private function end_grading_form() {
 
-        $output = '<center><input type="submit" class="bulksubmitbutton" value="' .
+        $output = '<center><input type="submit" class="bulksubmitbutton btn" value="' .
                 get_string('bulksavegrades', 'offlinequiz') . '" name="bulkgradesubmit" /></center>
                 </form>';
         return $output;
@@ -333,8 +333,10 @@ class edit_renderer extends \plugin_renderer_base {
                 'value' => offlinequiz_format_grade($offlinequiz, $offlinequiz->grade)));
         $output .= html_writer::tag('label', get_string('maximumgradex', '', $a),
                 array('for' => 'inputmaxgrade'));
-        $output .= html_writer::empty_tag('input', array('type' => 'submit',
-                'name' => 'savechanges', 'value' => get_string('save', 'offlinequiz')));
+        $output .= html_writer::start_tag('button', array('type' => 'submit',
+                'name' => 'savechanges', 'class' => 'btn'));
+        $output .= get_string('save', 'offlinequiz');
+        $output .= html_writer::end_tag('button');
         $output .= html_writer::end_tag('fieldset');
         $output .= html_writer::end_tag('form');
         $output .= html_writer::end_tag('div');
@@ -1031,7 +1033,7 @@ class edit_renderer extends \plugin_renderer_base {
         $namestr = $qtype->local_name();
 
         $icon = $this->pix_icon('icon', $namestr, $qtype->plugin_name(), array('title' => $namestr,
-                'class' => 'icon activityicon', 'alt' => ' ', 'role' => 'presentation'));
+                'class' => 'icon', 'alt' => ' ', 'role' => 'presentation'));
 
         $editicon = $this->pix_icon('t/edit', '', 'moodle', array('title' => ''));
 

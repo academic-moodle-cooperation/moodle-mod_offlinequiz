@@ -333,13 +333,17 @@ if ($mode == 'preview') {
             echo '</div>';
         } else {
             ?>
-            <div class="singlebutton linkbox">
+            <div class="singlebutton linkbox btn-secondary">
                <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=" . $offlinequiz->id .
                       "&mode=createpdfs" ?>" method="POST">
                     <div>
                         <input type="hidden" name="forcepdfnew" value="1" />
-                        <input type="submit" value="<?php echo get_string('deletepdfs', 'offlinequiz') ?>"
-                        onClick='return confirm("<?php echo get_string('reallydeletepdfs', 'offlinequiz') ?>")' />
+                        <button type="submit"
+                        		onClick='return confirm("<?php echo get_string('reallydeletepdfs', 'offlinequiz') ?>")'
+                        		class="btn btn-secondary singlebutton"
+                        		 >
+                        	<?php echo get_string('deletepdfs', 'offlinequiz') ?>
+                        </button>
                    </div>
               </form>
             </div>
