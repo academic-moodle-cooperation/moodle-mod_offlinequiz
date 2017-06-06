@@ -125,8 +125,6 @@ class edit_renderer extends \plugin_renderer_base {
 
             // Include the question chooser.
             $output .= $this->question_chooser();
-
-
         }
 
         return $output;
@@ -1151,7 +1149,7 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function question_bank_loading() {
         return html_writer::div(html_writer::empty_tag('img',
-                array('alt' => 'loading', 'class' => 'loading-icon', 'src' => $this->pix_url('i/loading'))),
+                array('alt' => 'loading', 'class' => 'loading-icon', 'src' => $this->image_url('i/loading'))),
                 'questionbankloading');
     }
 
