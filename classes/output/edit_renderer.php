@@ -172,7 +172,9 @@ class edit_renderer extends \plugin_renderer_base {
             $output .= $this->start_section($section);
             $questionhtml = '';
             foreach ($structure->get_questions_in_section($section->id) as $question) {
-                $questionhtml .=  $this->question_row_for_grading($structure, $question, $contexts, $pagevars, $pageurl);
+                if ($question->qtype != 'description') {
+                    $questionhtml .=  $this->question_row_for_grading($structure, $question, $contexts, $pagevars, $pageurl);
+                }
             }
             $output .= html_writer::tag('ul', $questionhtml, array('class' => 'section img-text'));
             $output .= $this->end_section();
@@ -332,7 +334,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= html_writer::tag('label', get_string('maximumgradex', '', $a),
                 array('for' => 'inputmaxgrade'));
         $output .= html_writer::start_tag('button', array('type' => 'submit',
-                'name' => 'savechanges', 'class' => 'btn'));
+                'name' => 'savechanges', 'class' => 'btn btn-secondary savechanges'));
         $output .= get_string('save', 'offlinequiz');
         $output .= html_writer::end_tag('button');
         $output .= html_writer::end_tag('fieldset');
@@ -363,6 +365,7 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'repaginate',
             'id'    => 'repaginatecommand',
             'value' => get_string('repaginatecommand', 'offlinequiz'),
+            'class' => 'btn btn-secondary'
         );
         if (!$structure->can_be_repaginated()) {
             $buttonoptions['disabled'] = 'disabled';
@@ -436,7 +439,8 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'offlinequizdeleteselected',
             'id'    => 'removeselectedcommand',
             'onClick' => 'return confirm(\'' .  get_string('areyousureremoveselected', 'offlinequiz') . '\');',
-            'value' => get_string('removeselected', 'offlinequiz')
+            'value' => get_string('removeselected', 'offlinequiz'),
+            'class' => 'btn btn-secondary'
         );
 
         if (!$structure->can_be_edited()) {
@@ -989,11 +993,11 @@ class edit_renderer extends \plugin_renderer_base {
 
         if ($insertpagebreak) {
             $title = get_string('addpagebreak', 'offlinequiz');
-            $image = $this->pix_icon('e/insert_page_break', $title);
+            $image = $this->image_icon('e/insert_page_break', $title);
             $action = 'addpagebreak';
         } else {
             $title = get_string('removepagebreak', 'offlinequiz');
-            $image = $this->pix_icon('e/remove_page_break', $title);
+            $image = $this->image_icon('e/remove_page_break', $title);
             $action = 'removepagebreak';
         }
 
