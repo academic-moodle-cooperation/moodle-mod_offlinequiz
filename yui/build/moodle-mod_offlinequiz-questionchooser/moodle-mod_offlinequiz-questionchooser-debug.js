@@ -27,7 +27,6 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
 
     display_dialogue: function(e) {
         e.preventDefault();
-        console.log(CSS.CREATENEWQUESTION + ' ' + CSS.CHOOSERDIALOGUE);
         var dialogue = Y.one(CSS.CREATENEWQUESTION + ' ' + CSS.CHOOSERDIALOGUE),
             header = Y.one(CSS.CREATENEWQUESTION + ' ' + CSS.CHOOSERHEADER);
 

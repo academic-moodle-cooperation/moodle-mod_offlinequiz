@@ -235,7 +235,7 @@ class edit_renderer extends \plugin_renderer_base {
 
     private function end_grading_form() {
 
-        $output = '<center><input type="submit" class="bulksubmitbutton btn" value="' .
+        $output = '<center><input type="submit" class="bulksubmitbutton btn btn-primary" value="' .
                 get_string('bulksavegrades', 'offlinequiz') . '" name="bulkgradesubmit" /></center>
                 </form>';
         return $output;
@@ -629,12 +629,14 @@ class edit_renderer extends \plugin_renderer_base {
     public function page_row(structure $structure, $question, $contexts, $pagevars, $pageurl) {
         $output = '';
 
+        $slot = $question->slot;
+
+        $pagenumber = $structure->get_page_number_for_slot($slot);
+
         // Put page in a span for easier styling.
-        $page = html_writer::tag('span', get_string('page') . ' ' . $question->page,
-                array('class' => 'text'));
+        $page = $this->heading(get_string('page') . ' ' . $pagenumber, 4);
 
-
-        if ($structure->is_first_slot_on_page($question->slot)) {
+        if ($structure->is_first_slot_on_page($slot)) {
             // Add the add-menu at the page level.
             $addmenu = html_writer::tag('span', $this->add_menu_actions($structure,
                     $question->page, $pageurl, $contexts, $pagevars),
@@ -644,7 +646,7 @@ class edit_renderer extends \plugin_renderer_base {
                     $question->page, $pageurl, $pagevars);
 
             $output .= html_writer::tag('li', $page . $addmenu . $addquestionform,
-                    array('class' => 'pagenumber activity yui3-dd-drop page', 'id' => 'page-' . $question->page));
+                    array('class' => 'pagenumber activity yui3-dd-drop page', 'id' => 'page-' . $pagenumber));
         }
 
         return $output;
@@ -1035,7 +1037,7 @@ class edit_renderer extends \plugin_renderer_base {
         $namestr = $qtype->local_name();
 
         $icon = $this->pix_icon('icon', $namestr, $qtype->plugin_name(), array('title' => $namestr,
-                'class' => 'icon', 'alt' => ' ', 'role' => 'presentation'));
+                'class' => 'icon activityicon', 'alt' => ' ', 'role' => 'presentation'));
 
         $editicon = $this->pix_icon('t/edit', '', 'moodle', array('title' => ''));
 

@@ -365,22 +365,18 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         // Prevent the default button action
         ev.preventDefault();
 
-        nextactivity = activity.next('li.activity.slot');
-        var spinner = this.add_spinner(nextactivity),
-            slotid = 0;
+        var nextactivity = activity.next('li.activity.slot');
+//        var spinner = this.add_spinner(nextactivity),
+        var spinner = null;
         var value = action === 'removepagebreak' ? 1 : 2;
 
         var data = {
             'class': 'resource',
             'field': 'updatepagebreak',
-            'id':    slotid,
+            'id':    Y.Moodle.mod_offlinequiz.util.slot.getId(nextactivity),
             'value': value
         };
 
-        slotid = Y.Moodle.mod_offlinequiz.util.slot.getId(nextactivity);
-        if (slotid) {
-            data.id = Number(slotid);
-        }
         this.send_request(data, spinner, function(response) {
             if (response.slots) {
                 if (action === 'addpagebreak') {
@@ -390,8 +386,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                     Y.Moodle.mod_offlinequiz.util.page.remove(page, true);
                 }
                 this.reorganise_edit_page();
-            } else {
-                window.location.reload(true);
             }
         });
 
