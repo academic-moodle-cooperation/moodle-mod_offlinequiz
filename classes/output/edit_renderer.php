@@ -334,7 +334,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= html_writer::tag('label', get_string('maximumgradex', '', $a),
                 array('for' => 'inputmaxgrade'));
         $output .= html_writer::start_tag('button', array('type' => 'submit',
-                'name' => 'savechanges', 'class' => 'btn'));
+                'name' => 'savechanges', 'value' => 'true', 'class' => 'btn'));
         $output .= get_string('save', 'offlinequiz');
         $output .= html_writer::end_tag('button');
         $output .= html_writer::end_tag('fieldset');
