@@ -1968,7 +1968,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
         }
         $rownum = 1;
     } else if ($fileformat == 'CSV') {
-        $filename .= ".txt";
+        $filename .= ".csv";
 
         header("Content-Type: application/download\n");
         header("Content-Disposition: attachment; filename=\"$filename\"");
