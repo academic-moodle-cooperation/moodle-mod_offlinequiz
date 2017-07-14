@@ -301,6 +301,7 @@ M.mod_offlinequiz = M.mod_offlinequiz || {};
 M.mod_offlinequiz.init_section_dragdrop = function(params) {
     new DRAGSECTION(params);
 };
+/* global SELECTOR */
 /**
  * Resource drag and drop.
  *
@@ -317,7 +318,6 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         this.groups = ['resource'];
         this.samenodeclass = CSS.ACTIVITY;
         this.parentnodeclass = CSS.SECTION;
-        this.resourcedraghandle = this.get_drag_handle(M.str.moodle.move, CSS.EDITINGMOVE, CSS.ICONCLASS, true);
 
         this.samenodelabel = {
             identifier: 'dragtoafter',
@@ -329,34 +329,30 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         };
 
         // Go through all sections
-        var sectionlistselector = M.mod_offlinequiz.edit.get_section_selector(Y);
-        if (sectionlistselector) {
-            sectionlistselector = '.' + CSS.COURSECONTENT + ' ' + sectionlistselector;
-            this.setup_for_section(sectionlistselector);
+        this.setup_for_section();
 
-            // Initialise drag & drop for all resources/activities
-            var nodeselector = sectionlistselector.slice(CSS.COURSECONTENT.length + 2) + ' li.' + CSS.ACTIVITY;
-            var del = new Y.DD.Delegate({
-                container: '.' + CSS.COURSECONTENT,
-                nodes: nodeselector,
-                target: true,
-                handles: ['.' + CSS.EDITINGMOVE],
-                dragConfig: {groups: this.groups}
-            });
-            del.dd.plug(Y.Plugin.DDProxy, {
-                // Don't move the node at the end of the drag
-                moveOnEnd: false,
-                cloneNode: true
-            });
-            del.dd.plug(Y.Plugin.DDConstrained, {
-                // Keep it inside the .mod-offlinequiz-edit-content
-                constrain: '#' + CSS.SLOTS
-            });
-            del.dd.plug(Y.Plugin.DDWinScroll);
+        // Initialise drag & drop for all resources/activities
+        var nodeselector = 'li.' + CSS.ACTIVITY;
+        var del = new Y.DD.Delegate({
+            container: '.' + CSS.COURSECONTENT,
+            nodes: nodeselector,
+            target: true,
+            handles: ['.' + CSS.EDITINGMOVE],
+            dragConfig: {groups: this.groups}
+        });
+        del.dd.plug(Y.Plugin.DDProxy, {
+            // Don't move the node at the end of the drag
+            moveOnEnd: false,
+            cloneNode: true
+        });
+        del.dd.plug(Y.Plugin.DDConstrained, {
+            // Keep it inside the .mod-offlinequiz-edit-content
+            constrain: '#' + CSS.SLOTS
+        });
+        del.dd.plug(Y.Plugin.DDWinScroll);
 
-            M.mod_offlinequiz.offlinequizbase.register_module(this);
-            M.mod_offlinequiz.dragres = this;
-        }
+        M.mod_offlinequiz.offlinequizbase.register_module(this);
+        M.mod_offlinequiz.dragres = this;
     },
 
     /**
@@ -365,15 +361,8 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
      * @method setup_for_section
      * @param {String} baseselector The CSS selector or node to limit scope to
      */
-    setup_for_section: function(baseselector) {
-        Y.Node.all(baseselector).each(function(sectionnode) {
-            var resources = sectionnode.one('.' + CSS.CONTENT + ' ul.' + CSS.SECTION);
-            // See if resources ul exists, if not create one.
-            if (!resources) {
-                resources = Y.Node.create('<ul></ul>');
-                resources.addClass(CSS.SECTION);
-                sectionnode.one('.' + CSS.CONTENT + ' div.' + CSS.SUMMARY).insert(resources, 'after');
-            }
+    setup_for_section: function() {
+        Y.Node.all('.mod-offlinequiz-edit-content ul.slots ul.section').each(function(resources) {
             resources.setAttribute('data-draggroups', this.groups.join(' '));
             // Define empty ul as droptarget, so that item could be moved to empty list
             new Y.DD.Drop({
@@ -383,7 +372,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
             });
 
             // Initialise each resource/activity in this section
-            this.setup_for_resource('#' + sectionnode.get('id') + ' li.' + CSS.ACTIVITY);
+            this.setup_for_resource('li.activity');
         }, this);
     },
 
@@ -398,7 +387,9 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
             // Replace move icons
             var move = resourcesnode.one('a.' + CSS.EDITINGMOVE);
             if (move) {
-                move.replace(this.resourcedraghandle.cloneNode(true));
+                var resourcedraghandle = this.get_drag_handle(M.util.get_string('move', 'moodle'),
+                                                              CSS.EDITINGMOVE, CSS.ICONCLASS, true);
+                move.replace(resourcedraghandle);
             }
         }, this);
     },
@@ -407,7 +398,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         // Get our drag object
         var drag = e.target;
         drag.get('dragNode').setContent(drag.get('node').get('innerHTML'));
-        drag.get('dragNode').all('img.iconsmall').setStyle('vertical-align', 'baseline');
+        drag.get('dragNode').all('.icon').setStyle('vertical-align', 'baseline');
     },
 
     drag_dropmiss: function(e) {
@@ -444,7 +435,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         params['class'] = 'resource';
         params.field = 'move';
         params.id = Number(Y.Moodle.mod_offlinequiz.util.slot.getId(dragnode));
-        params.sectionId = Y.Moodle.core_course.util.section.getId(dropnode.ancestor(M.mod_offlinequiz.edit.get_section_wrapper(Y), true));
+        params.sectionId = Y.Moodle.core_course.util.section.getId(dropnode.ancestor('li.section', true));
 
         var previousslot = dragnode.previous(SELECTOR.SLOT);
         if (previousslot) {
@@ -484,12 +475,12 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
                     window.location.reload(true);
                 }
             },
-            context:this
+            context: this
         });
     },
 
     global_drop_over: function(e) {
-        //Overriding parent method so we can stop the slots being dragged before the first page node.
+        // Overriding parent method so we can stop the slots being dragged before the first page node.
 
         // Check that drop object belong to correct group.
         if (!e.drop || !e.drop.inGroup(this.groups)) {

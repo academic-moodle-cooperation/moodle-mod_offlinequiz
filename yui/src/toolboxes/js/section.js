@@ -24,6 +24,17 @@ var SECTIONTOOLBOX = function() {
 
 Y.extend(SECTIONTOOLBOX, TOOLBOX, {
     /**
+     * An Array of events added when editing a max mark field.
+     * These should all be detached when editing is complete.
+     *
+     * @property editsectionevents
+     * @protected
+     * @type Array
+     * @protected
+     */
+    editsectionevents: [],
+
+    /**
      * Initialize the section toolboxes module.
      *
      * Updates all span.commands with relevant handlers and other required changes.
@@ -34,11 +45,9 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
     initializer : function() {
         M.mod_offlinequiz.offlinequizbase.register_module(this);
 
-        // Section Highlighting.
-        Y.delegate('click', this.toggle_highlight, SELECTOR.PAGECONTENT, SELECTOR.SECTIONLI + ' ' + SELECTOR.HIGHLIGHT, this);
-
-        // Section Visibility.
-        Y.delegate('click', this.toggle_hide_section, SELECTOR.PAGECONTENT, SELECTOR.SECTIONLI + ' ' + SELECTOR.SHOWHIDE, this);
+        BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
+        Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
+        Y.delegate('change', this.handle_data_action, BODY, SELECTOR.EDITSHUFFLEQUESTIONSACTION, this);    
     },
 
     toggle_hide_section : function(e) {
@@ -83,7 +92,6 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
             'id'    : Y.Moodle.core_course.util.section.getId(section.ancestor(M.mod_offlinequiz.edit.get_section_wrapper(Y), true)),
             'value' : value
         };
-
         var lightbox = M.util.add_lightbox(Y, section);
         lightbox.show();
 

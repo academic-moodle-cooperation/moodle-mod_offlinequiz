@@ -198,40 +198,40 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 }
             }
         }
-            
+
         // Set up the table in any case, even if we are downloading a file.
         $params = array('offlinequiz' => $offlinequiz, 'noresults' => $noresults, 'pagesize' => $pagesize, 'group' => $groupid
         );
         $table = new offlinequiz_results_table('mod-offlinequiz-report-overview-report', $params);
-        
+
         $table->define_columns($tablecolumns);
         $table->define_headers($tableheaders);
-        $baseurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php', 
-                array('mode' => 'overview', 'id' => $cm->id, 'noresults' => $noresults, 'group' => $groupid, 
+        $baseurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php',
+                array('mode' => 'overview', 'id' => $cm->id, 'noresults' => $noresults, 'group' => $groupid,
                     'pagesize' => $pagesize
                 ));
         $table->define_baseurl($baseurl);
-        
+
         $table->sortable(true);
         $table->no_sorting('checkbox');
-        
+
         if ($withparticipants) {
             $table->no_sorting('checked');
         }
-        
+
         $table->column_suppress('picture');
         $table->column_suppress('fullname');
-        
+
         $table->column_class('picture', 'picture');
         $table->column_class($offlinequizconfig->ID_field, 'userkey');
         $table->column_class('timestart', 'timestart');
         $table->column_class('offlinegroupid', 'offlinegroupid');
         $table->column_class('sumgrades', 'sumgrades');
-        
+
         $table->set_attribute('cellpadding', '2');
         $table->set_attribute('id', 'attempts');
         $table->set_attribute('class', 'generaltable generalbox');
-        
+
         // Start working -- this is necessary as soon as the niceties are over.
         $table->setup();
 
@@ -462,24 +462,24 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         }
 
         $countsql = 'SELECT COUNT(DISTINCT(u.id)) ' . $from . $where;
-            
+
         // Count the records NOW, before funky question grade sorting messes up $from.
         $totalinitials = $DB->count_records_sql($countsql, $params);
-        
+
         // Add extra limits due to initials bar.
         list($ttest, $tparams) = $table->get_sql_where();
-        
+
         if (!empty($ttest)) {
             $where .= ' AND ' . $ttest;
             $countsql .= ' AND ' . $ttest;
             $params = array_merge($params, $tparams);
         }
-        
+
         $total = $DB->count_records_sql($countsql, $params);
-        
+
         // Add extra limits due to sorting by question grade.
         $tablesort = $table->get_sql_sort();
-        
+
         $table->pagesize($pagesize, $total);
 
 
@@ -692,9 +692,9 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         }
 
         // Print display options.
-        echo '<div class="controls">';
+        echo '<div class="display-options">';
         echo '<form id="options" action="report.php" method="get">';
-        echo ' <div class=centerbox>';
+        echo ' <div>';
         echo '   <p>' . get_string('displayoptions', 'offlinequiz') . ': </p>';
         echo '   <input type="hidden" name="id" value="' . $cm->id . '" />';
         echo '   <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';

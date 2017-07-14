@@ -125,8 +125,6 @@ class edit_renderer extends \plugin_renderer_base {
 
             // Include the question chooser.
             $output .= $this->question_chooser();
-
-
         }
 
         return $output;
@@ -174,7 +172,9 @@ class edit_renderer extends \plugin_renderer_base {
             $output .= $this->start_section($section);
             $questionhtml = '';
             foreach ($structure->get_questions_in_section($section->id) as $question) {
-                $questionhtml .=  $this->question_row_for_grading($structure, $question, $contexts, $pagevars, $pageurl);
+                if ($question->qtype != 'description') {
+                    $questionhtml .=  $this->question_row_for_grading($structure, $question, $contexts, $pagevars, $pageurl);
+                }
             }
             $output .= html_writer::tag('ul', $questionhtml, array('class' => 'section img-text'));
             $output .= $this->end_section();
@@ -235,7 +235,7 @@ class edit_renderer extends \plugin_renderer_base {
 
     private function end_grading_form() {
 
-        $output = '<center><input type="submit" class="bulksubmitbutton btn" value="' .
+        $output = '<center><input type="submit" class="bulksubmitbutton btn btn-primary" value="' .
                 get_string('bulksavegrades', 'offlinequiz') . '" name="bulkgradesubmit" /></center>
                 </form>';
         return $output;
@@ -334,7 +334,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= html_writer::tag('label', get_string('maximumgradex', '', $a),
                 array('for' => 'inputmaxgrade'));
         $output .= html_writer::start_tag('button', array('type' => 'submit',
-                'name' => 'savechanges', 'value' => 'true', 'class' => 'btn'));
+                'name' => 'savechanges', 'value' => 'true', 'class' => 'btn btn-secondary savechanges'));
         $output .= get_string('save', 'offlinequiz');
         $output .= html_writer::end_tag('button');
         $output .= html_writer::end_tag('fieldset');
@@ -365,6 +365,7 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'repaginate',
             'id'    => 'repaginatecommand',
             'value' => get_string('repaginatecommand', 'offlinequiz'),
+            'class' => 'btn btn-secondary'
         );
         if (!$structure->can_be_repaginated()) {
             $buttonoptions['disabled'] = 'disabled';
@@ -449,7 +450,8 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'offlinequizdeleteselected',
             'id'    => 'removeselectedcommand',
             'onClick' => 'return confirm(\'' .  get_string('areyousureremoveselected', 'offlinequiz') . '\');',
-            'value' => get_string('removeselected', 'offlinequiz')
+            'value' => get_string('removeselected', 'offlinequiz'),
+            'class' => 'btn btn-secondary'
         );
 
         if (!$structure->can_be_edited()) {
@@ -638,12 +640,14 @@ class edit_renderer extends \plugin_renderer_base {
     public function page_row(structure $structure, $question, $contexts, $pagevars, $pageurl) {
         $output = '';
 
+        $slot = $question->slot;
+
+        $pagenumber = $structure->get_page_number_for_slot($slot);
+
         // Put page in a span for easier styling.
-        $page = html_writer::tag('span', get_string('page') . ' ' . $question->page,
-                array('class' => 'text'));
+        $page = $this->heading(get_string('page') . ' ' . $pagenumber, 4);
 
-
-        if ($structure->is_first_slot_on_page($question->slot)) {
+        if ($structure->is_first_slot_on_page($slot)) {
             // Add the add-menu at the page level.
             $addmenu = html_writer::tag('span', $this->add_menu_actions($structure,
                     $question->page, $pageurl, $contexts, $pagevars),
@@ -653,7 +657,7 @@ class edit_renderer extends \plugin_renderer_base {
                     $question->page, $pageurl, $pagevars);
 
             $output .= html_writer::tag('li', $page . $addmenu . $addquestionform,
-                    array('class' => 'pagenumber activity yui3-dd-drop page', 'id' => 'page-' . $question->page));
+                    array('class' => 'pagenumber activity yui3-dd-drop page', 'id' => 'page-' . $pagenumber));
         }
 
         return $output;
@@ -1002,11 +1006,11 @@ class edit_renderer extends \plugin_renderer_base {
 
         if ($insertpagebreak) {
             $title = get_string('addpagebreak', 'offlinequiz');
-            $image = $this->pix_icon('e/insert_page_break', $title);
+            $image = $this->image_icon('e/insert_page_break', $title);
             $action = 'addpagebreak';
         } else {
             $title = get_string('removepagebreak', 'offlinequiz');
-            $image = $this->pix_icon('e/remove_page_break', $title);
+            $image = $this->image_icon('e/remove_page_break', $title);
             $action = 'removepagebreak';
         }
 
@@ -1044,7 +1048,7 @@ class edit_renderer extends \plugin_renderer_base {
         $namestr = $qtype->local_name();
 
         $icon = $this->pix_icon('icon', $namestr, $qtype->plugin_name(), array('title' => $namestr,
-                'class' => 'icon', 'alt' => ' ', 'role' => 'presentation'));
+                'class' => 'icon activityicon', 'alt' => ' ', 'role' => 'presentation'));
 
         $editicon = $this->pix_icon('t/edit', '', 'moodle', array('title' => ''));
 
@@ -1162,7 +1166,7 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function question_bank_loading() {
         return html_writer::div(html_writer::empty_tag('img',
-                array('alt' => 'loading', 'class' => 'loading-icon', 'src' => $this->pix_url('i/loading'))),
+                array('alt' => 'loading', 'class' => 'loading-icon', 'src' => $this->image_url('i/loading'))),
                 'questionbankloading');
     }
 

@@ -34,10 +34,6 @@ function showStudentView() {
 	sheet = $('#id_sheetclosed').is(":checked") && !$('#id_sheetclosed').is(":disabled");
 	gradedsheet = $('#id_gradedsheetclosed').is(":checked") && !$('#id_gradedsheetclosed').is(":disabled");
 
-//	str = 'attempt='+ attempt + ' correctness=' + correctness + ' marks='+marks+ ' specfeed='+ specificfeedback + ' genfeed='+ generalfeedback +
-//			' rightanswer='+ rightanswer+ ' sheet=' + sheet + ' gradedsheet=' + gradedsheet + '<br/>';
-//
-//	console.log(str);
 	baseurl = $('#basefilename').val();
 	imagefile1 = '';
 	imagefile2 = '';
