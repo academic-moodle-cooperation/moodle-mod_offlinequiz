@@ -594,6 +594,7 @@ $string['selectdifferentgroup'] = 'Please select a different group!';
 $string['selectformat'] = 'Select format...';
 $string['selectgroup'] = 'Select group';
 $string['selectlist'] = 'Please select a list or try to readjust sheet:';
+$string['selectmultipletoolbar'] = 'Select multiple toolbar';
 $string['selectpage'] = 'Please select page number or try to readjust sheet:';
 $string['showallparts'] = 'Show all {$a} participants';
 $string['showcopyright'] = 'Show copyright statement';

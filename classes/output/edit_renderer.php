@@ -411,18 +411,29 @@ class edit_renderer extends \plugin_renderer_base {
         $output = '';
 
         if ($structure->can_be_edited()) {
-
-//             $output .= '<input type="checkbox" id="sall" name="sall" ' .
-//                ' onClick="javascript:if (this.checked){deselect_all_in(\'FORM\', null, \'offlinequizbulkcopyform\'); this.checked = null} else {select_all_in(\'FORM\', null, \'offlinequizbulkcopyform\');}">';
-//             $output .= get_string('selectall', 'offlinequiz');
-            $output .= '<br/>';
-            $output .= html_writer::start_div('selectall');
-            $output .= '<a href="javascript:select_all_in(\'FORM\', null, ' . '\'offlinequizbulkcopyform\');" >' .
-                        get_string('selectall', 'offlinequiz') . '</a> /';
-            $output .=    ' <a href="javascript:deselect_all_in(\'FORM\', ' .
-                    'null, \'offlinequizbulkcopyform\');">' .
-                    get_string('selectnone', 'offlinequiz') . '</a>';
-            $output .= html_writer::end_div();
+        	$toolbaroptions = array(
+        			'class' => 'btn-toolbar',
+        			'role' => 'toolbar',
+        			'aria-label' => get_string('selectmultipletoolbar', 'offlinequiz'),
+        	);
+        	// Select all/deselect all questions.
+        	$buttonselectalloptions = array(
+        			'role' => 'button',
+        			'id' => 'questionselectall',
+        			'class' => 'btn btn-link'
+        	);
+        	$buttondeselectalloptions = array(
+        			'role' => 'button',
+        			'id' => 'questiondeselectall',
+        			'class' => 'btn btn-link'
+        	);
+        	$output .= html_writer::tag('div',
+        			html_writer::tag('div',
+        					html_writer::link('#', get_string('selectall', 'quiz'), $buttonselectalloptions) .
+        					html_writer::tag('span', "/", ['class' => 'separator']) .
+        					html_writer::link('#', get_string('selectnone', 'quiz'), $buttondeselectalloptions),
+        					array('class' => 'btn-group selectmultiplecommandbuttons')),
+        			$toolbaroptions);
         }
         return $output;
     }

@@ -46,6 +46,7 @@ YUI.add('moodle-mod_offlinequiz-toolboxes', function (Y, NAME) {
         COMMANDSPAN : '.commands',
         CONTENTAFTERLINK : 'div.contentafterlink',
         CONTENTWITHOUTLINK : 'div.contentwithoutlink',
+        DESELECTALL: '#questiondeselectall',
         EDITMAXMARK: 'a.editing_maxmark',
         HIDE : 'a.editing_hide',
         HIGHLIGHT : 'a.editing_highlight',
@@ -57,6 +58,8 @@ YUI.add('moodle-mod_offlinequiz-toolboxes', function (Y, NAME) {
         PAGECONTENT : 'div#page-content',
         PAGELI : 'li.page',
         SECTIONUL : 'ul.section',
+        SELECTMULTIPLECHECKBOX : '.offlinequizbulkcopyform input[type^=checkbox]',
+        SELECTALL: '#questionselectall',
         SHOW : 'a.' + CSS.SHOW,
         SHOWHIDE : 'a.editing_showhide',
         SLOTLI : 'li.slot',
@@ -287,6 +290,28 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         M.mod_offlinequiz.offlinequizbase.register_module(this);
         BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
         Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
+        this.initialise_select_multiple();
+    },
+    /**
+     * Initialize the select multiple options
+     *
+     * Add actions to the buttons that enable multiple slots to be selected and managed at once.
+     *
+     * @method initialise_select_multiple
+     * @protected
+     */
+    initialise_select_multiple: function() {
+        // Click select all link to check all the checkboxes.
+        Y.one(SELECTOR.SELECTALL).on('click', function(e) {
+            e.preventDefault();
+            Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
+        });
+
+        // Click deselect all link to show the select all checkboxes.
+        Y.one(SELECTOR.DESELECTALL).on('click', function(e) {
+            e.preventDefault();
+            Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
+        });
     },
 
     /**

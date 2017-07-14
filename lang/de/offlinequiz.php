@@ -561,6 +561,7 @@ $string['selectagroup'] = 'Gruppe auswählen';
 $string['selectall'] = 'Alle auswählen';
 $string['selectcategory'] = 'Kategorie auswählen';
 $string['selectedattempts'] = 'Ergebnisse auswählen...';
+$string['selectmultipletoolbar'] = 'Werzeugleiste zur Mehrfachauswahl';
 $string['selectnone'] = 'Keine auswählen';
 $string['selectformat'] = 'Dateiformat wählen...';
 $string['selectgroup'] = 'Basierend auf Gruppe:';
