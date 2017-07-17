@@ -233,7 +233,7 @@ if ($mode == 'preview') {
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/edit.php',
                     array('cmid' => $cm->id, 'groupnumber' => $group->number, 'noquestions' => 1));
             echo html_writer::link($url,  get_string('noquestionsfound', 'offlinequiz', $groupletter),
-                    array('class' => 'notifyproblem linkbox'));
+                    array('class' => 'linkbox'));
             echo $OUTPUT->box_end();
             continue;
         }
@@ -310,7 +310,7 @@ if ($mode == 'preview') {
         echo $OUTPUT->box_start('linkbox');
         foreach ($emptygroups as $groupnumber) {
             $groupletter = $letterstr[$groupnumber - 1];
-            echo $OUTPUT->notification(get_string('noquestionsfound', 'offlinequiz', $groupletter), 'notifyproblem');
+            echo $OUTPUT->notification(get_string('noquestionsfound', 'offlinequiz', $groupletter));
         }
         echo $OUTPUT->notification(get_string('nopdfscreated', 'offlinequiz'), 'notifyproblem');
         echo $OUTPUT->box_end();

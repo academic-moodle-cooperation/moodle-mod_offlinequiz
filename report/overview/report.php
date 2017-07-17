@@ -658,6 +658,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $table->finish_html();
 
             if (!empty($results)) {
+            	echo '<div class="downloadoptions">';
                 echo '<form id="downloadoptions" action="report.php" method="get">';
                 echo ' <input type="hidden" name="id" value="' . $cm->id . '" />';
                 echo ' <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
@@ -682,7 +683,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 echo " </td>\n";
                 echo "<td>";
                 echo "</td>\n";
-                echo '</tr></table></form>';
+                echo '</tr></table></form></div>';
             }
         } else if ($download == 'Excel' || $download == 'ODS') {
             $workbook->close();

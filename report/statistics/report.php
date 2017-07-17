@@ -260,6 +260,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             if (!$questionid) {
                 $this->print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions);
                 if ($statmode == 'statsoverview') {
+                	$resultmessage = '';
                     if ($offlinequiz->sumgrades == -1 || $differentquestions) {
                         echo $OUTPUT->box_start();
                         echo $OUTPUT->notification(get_string('remarks', 'offlinequiz_statistics') . ':', 'notifynote');
