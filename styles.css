@@ -38,7 +38,8 @@
     color: #000000;
     margin-top: 15px;
     }
-
+#page-mod-offlinequiz-review  div.correct i.icon,
+#page-mod-offlinequiz-review  div.incorrect i.icon {margin-left: 0.5em;}
 
 body.jsenabled .questionflagcheckbox {display: none;}
 

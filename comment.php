@@ -137,7 +137,7 @@ if (property_exists($slotquestion, '_number')) {
                 </div>
             </div>
             <fieldset class="felement fgroup">
-                <input id="id_submitbutton" type="submit" name="submit"
+                <input class="btn btn-secondary" id="id_submitbutton" type="submit" name="submit"
                     value="<?php
                         print_string('save', 'offlinequiz'); ?>" />
             </fieldset>

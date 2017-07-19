@@ -74,13 +74,13 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      */
     initialise_select_multiple: function() {
         // Click select all link to check all the checkboxes.
-        Y.one(SELECTOR.SELECTALL).on('click', function(e) {
+        Y.all(SELECTOR.SELECTALL).on('click', function(e) {
             e.preventDefault();
             Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
         });
 
         // Click deselect all link to show the select all checkboxes.
-        Y.one(SELECTOR.DESELECTALL).on('click', function(e) {
+        Y.all(SELECTOR.DESELECTALL).on('click', function(e) {
             e.preventDefault();
             Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
         });

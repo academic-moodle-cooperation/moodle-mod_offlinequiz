@@ -420,13 +420,11 @@ class edit_renderer extends \plugin_renderer_base {
         	// Select all/deselect all questions.
         	$buttonselectalloptions = array(
         			'role' => 'button',
-        			'id' => 'questionselectall',
-        			'class' => 'btn btn-link'
+        			'class' => 'btn btn-link selectall'
         	);
         	$buttondeselectalloptions = array(
         			'role' => 'button',
-        			'id' => 'questiondeselectall',
-        			'class' => 'btn btn-link'
+        			'class' => 'btn btn-link deselectall'
         	);
         	$output .= html_writer::tag('div',
         			html_writer::tag('div',

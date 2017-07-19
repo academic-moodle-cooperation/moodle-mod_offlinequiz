@@ -259,23 +259,20 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
             if (!$questionid) {
                 $this->print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions);
-                if ($statmode == 'statsoverview') {
-                	$resultmessage = '';
-                    if ($offlinequiz->sumgrades == -1 || $differentquestions) {
-                        echo $OUTPUT->box_start();
-                        echo $OUTPUT->notification(get_string('remarks', 'offlinequiz_statistics') . ':', 'notifynote');
-                    }
+                if ($statmode == 'statsoverview' && ($offlinequiz->sumgrades == -1 || $differentquestions)) {
+                	echo $OUTPUT->box_start();
+                	$notificationmessage = get_string('remarks', 'offlinequiz_statistics') . ":<br />";
                     if ($offlinequiz->sumgrades == -1) {
-                        echo $OUTPUT->notification('- ' . get_string('differentsumgrades', 'offlinequiz_statistics',
-                                implode(', ', $sumgrades)), 'notifynote');
+                    	$notificationmessage .= '- ' . get_string('differentsumgrades', 'offlinequiz_statistics',
+                                implode(', ', $sumgrades)) . "<br />";
                     }
                     if ($differentquestions) {
-                        echo $OUTPUT->notification('- ' . get_string('differentquestions', 'offlinequiz_statistics',
-                                implode(', ', $sumgrades)), 'notifynote');
+                    	$notificationmessage .= '- ' . get_string('differentquestions', 'offlinequiz_statistics',
+                                implode(', ', $sumgrades));
                     }
-                    if ($offlinequiz->sumgrades == -1 || $differentquestions) {
-                        echo $OUTPUT->box_end();
-                    }
+                    echo $OUTPUT->notification($notificationmessage, 'notifynote');
+                    echo $OUTPUT->box_end();
+                    
                 }
             }
 

@@ -46,7 +46,7 @@ YUI.add('moodle-mod_offlinequiz-toolboxes', function (Y, NAME) {
         COMMANDSPAN : '.commands',
         CONTENTAFTERLINK : 'div.contentafterlink',
         CONTENTWITHOUTLINK : 'div.contentwithoutlink',
-        DESELECTALL: '#questiondeselectall',
+        DESELECTALL: '.deselectall',
         EDITMAXMARK: 'a.editing_maxmark',
         HIDE : 'a.editing_hide',
         HIGHLIGHT : 'a.editing_highlight',
@@ -59,7 +59,7 @@ YUI.add('moodle-mod_offlinequiz-toolboxes', function (Y, NAME) {
         PAGELI : 'li.page',
         SECTIONUL : 'ul.section',
         SELECTMULTIPLECHECKBOX : '.offlinequizbulkcopyform input[type^=checkbox]',
-        SELECTALL: '#questionselectall',
+        SELECTALL: '.selectall',
         SHOW : 'a.' + CSS.SHOW,
         SHOWHIDE : 'a.editing_showhide',
         SLOTLI : 'li.slot',
@@ -302,13 +302,13 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      */
     initialise_select_multiple: function() {
         // Click select all link to check all the checkboxes.
-        Y.one(SELECTOR.SELECTALL).on('click', function(e) {
+        Y.all(SELECTOR.SELECTALL).on('click', function(e) {
             e.preventDefault();
             Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
         });
 
         // Click deselect all link to show the select all checkboxes.
-        Y.one(SELECTOR.DESELECTALL).on('click', function(e) {
+        Y.all(SELECTOR.DESELECTALL).on('click', function(e) {
             e.preventDefault();
             Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
         });
