@@ -843,6 +843,9 @@ input#showviewbutton {
     text-align: right;
     vertical-align: top;
 }
+#page-mod-offlinequiz-edit .mod-offlinequiz-edit-content {
+    padding-bottom: 12em;
+}
 
 #page-mod-offlinequiz-edit .mod_offlinequiz_edit_forms {
     display: none;
