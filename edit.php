@@ -303,7 +303,7 @@ $questionbank->process_actions($thispageurl, $cm);
 
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_pagetype('mod-offlinequiz-edit');
-
+$PAGE->force_settings_menu(true);
 $output = $PAGE->get_renderer('mod_offlinequiz', 'edit');
 
 $PAGE->set_title(get_string('editingofflinequizx', 'offlinequiz', format_string($offlinequiz->name)));

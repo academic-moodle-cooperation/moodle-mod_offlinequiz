@@ -91,6 +91,7 @@ $thispageurl = new moodle_url('/mod/offlinequiz/participants.php',
 $PAGE->set_url($thispageurl);
 $PAGE->set_pagelayout('admin');
 $node = $PAGE->settingsnav->find('mod_offlinequiz_participants', navigation_node::TYPE_SETTING);
+$PAGE->force_settings_menu(true);
 if ($node) {
     $node->make_active();
 }

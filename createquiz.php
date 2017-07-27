@@ -91,6 +91,7 @@ $PAGE->set_title($strpreview);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('report'); // Or 'admin'.
 $PAGE->set_cacheable(true);
+$PAGE->force_settings_menu(true);
 
 if ($node = $PAGE->settingsnav->find('mod_offlinequiz_createquiz', navigation_node::TYPE_SETTING)) {
     $node->make_active();

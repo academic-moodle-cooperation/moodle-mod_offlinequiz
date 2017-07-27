@@ -22,7 +22,7 @@
  * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.1
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
+ *AA
  **/
 
 #page-mod-offlinequiz-attempt #page .controls,
@@ -231,7 +231,7 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-report #cachingnotice .singlebutton {margin: 0.5em 0 0;}
 #page-mod-offlinequiz-report .bold .reviewlink {font-weight: normal;}
 #page-mod-offlinequiz-report div.notify { text-align: center; }
-#page-mod-offlinequiz-report div.notifynote { color: #0044bb; }
+#page-mod-offlinequiz-report div.notifynote { background-color: lightYellow; color: #3a3a3a; border: 0}
 #page-mod-offlinequiz-report div.backlinkbox { padding-top: 10px; }
 #page-mod-offlinequiz-report table.errorpages td.checkbox input  { margin-left: 0px; float: none; }
 
@@ -299,9 +299,6 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 
 #page-mod-offlinequiz-createquiz div.answer img.texrender {
     vertical-align: middle;
-}
-#page-mod-offlinequiz-report div.notifynote {
-    color: #006699;
 }
 #page-mod-offlinequiz-report table#statsoverviewtable {
     border: 1px solid #DDD;
@@ -824,7 +821,9 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit ul.slots .activityinstance img.activityicon {
-    padding: 0;
+    padding: 0 0 3px 0;
+    height: 16px;
+    width: 16px;
 }
 #page-mod-offlinequiz-edit.dir-rtl ul.slots .activityinstance img.activityicon {
     float: right;

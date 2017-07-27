@@ -64,6 +64,7 @@ if ($mode != '') {
 }
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
+$PAGE->force_settings_menu(true);
 
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
