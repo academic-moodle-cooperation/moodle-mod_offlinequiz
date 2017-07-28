@@ -56,7 +56,7 @@
         PAGECONTENT : 'div#page-content',
         PAGELI : 'li.page',
         SECTIONUL : 'ul.section',
-        SELECTMULTIPLECHECKBOX : '.offlinequizbulkcopyform input[type^=checkbox]',
+        SELECTMULTIPLECHECKBOX : '.offlinequizbulkcopyform input[type^=checkbox], .select-multiple-checkbox',
         SELECTALL: '.selectall',
         SHOW : 'a.' + CSS.SHOW,
         SHOWHIDE : 'a.editing_showhide',

@@ -997,7 +997,6 @@ function offlinequiz_update_sumgrades($offlinequiz, $offlinegroupid = null) {
     $DB->execute($sql, $params);
 
     $sumgrades = $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $groupid));
-
     return $sumgrades;
 }
 
@@ -1739,7 +1738,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
                 $attempt = false;
             }
             $row = array(
-                    '<input type="checkbox" name="participantid[]" value="'.$participant->id.'" />',
+                    '<input type="checkbox" name="participantid[]" value="'.$participant->id.'"  class=".select-multiple-checkbox"/>',
                     $picture,
                     $userlink,
                     $participant->{$offlinequizconfig->ID_field},

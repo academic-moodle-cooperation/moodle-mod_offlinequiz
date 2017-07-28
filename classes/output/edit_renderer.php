@@ -429,7 +429,6 @@ class edit_renderer extends \plugin_renderer_base {
         	$output .= html_writer::tag('div',
         			html_writer::tag('div',
         					html_writer::link('#', get_string('selectall', 'quiz'), $buttonselectalloptions) .
-        					html_writer::tag('span', "/", ['class' => 'separator']) .
         					html_writer::link('#', get_string('selectnone', 'quiz'), $buttondeselectalloptions),
         					array('class' => 'btn-group selectmultiplecommandbuttons')),
         			$toolbaroptions);
@@ -908,7 +907,7 @@ class edit_renderer extends \plugin_renderer_base {
 
 
     private function question_checkbox($question) {
-         $checkbox = '<input id="s' . $question->id . '" type="checkbox" name="s' .
+         $checkbox = '<input class=".select-multiple-checkbox" id="s' . $question->id . '" type="checkbox" name="s' .
                 $question->id . '"/>';
          return html_writer::span($checkbox, 'question_checkbox');
     }

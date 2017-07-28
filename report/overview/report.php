@@ -514,7 +514,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
                 if (!empty($result->resultid)) {
                     $checkbox = '<input type="checkbox" name="s' . $result->resultid . '" value="' .
-                             $result->resultid . '" />';
+                             $result->resultid . '"  class=".select-multiple-checkbox" />';
                 } else {
                     $checkbox = '';
                 }
@@ -658,7 +658,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $table->finish_html();
 
             if (!empty($results)) {
-            	echo '<div class="downloadoptions">';
+            	echo '<div>';
                 echo '<form id="downloadoptions" action="report.php" method="get">';
                 echo ' <input type="hidden" name="id" value="' . $cm->id . '" />';
                 echo ' <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
