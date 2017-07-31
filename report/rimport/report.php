@@ -153,7 +153,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 $errorstr = get_string('waitingforanalysis', 'offlinequiz_rimport');
             }
             $row = array(
-                    '<input type="checkbox" name="p' . $page->id . '" value="'.$page->id.'"  class=".select-multiple-checkbox" />',
+                    '<input type="checkbox" name="p' . $page->id . '" value="'.$page->id.'"  class="select-multiple-checkbox" />',
                     $counter.'&nbsp;',
                     $page->userkey,
                     $groupstr,

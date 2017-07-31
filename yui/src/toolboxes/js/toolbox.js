@@ -58,6 +58,7 @@
         SECTIONUL : 'ul.section',
         SELECTMULTIPLECHECKBOX : '.offlinequizbulkcopyform input[type^=checkbox], .select-multiple-checkbox',
         SELECTALL: '.selectall',
+        SELECTALLCHECKBOX: '.select-all-checkbox',
         SHOW : 'a.' + CSS.SHOW,
         SHOWHIDE : 'a.editing_showhide',
         SLOTLI : 'li.slot',

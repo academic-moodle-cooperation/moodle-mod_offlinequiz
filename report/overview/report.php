@@ -70,7 +70,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                             'mode' => 'overview',
                             'noresults' => $noresults,
                             'pagesize' => $pagesize,
-                            'group' => $groupid
+                    		'group' => $groupid
                     ));
 
             echo groups_print_activity_menu($cm, $groupselecturl, true);
@@ -173,8 +173,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             'timestart', 'offlinegroupid', 'sumgrades'
         );
         $tableheaders = array(
-            '<input type="checkbox" name="toggle" onClick="if (this.checked) {select_all_in(\'DIV\',null,\'tablecontainer\');}
-                else {deselect_all_in(\'DIV\',null,\'tablecontainer\');}"/>', '',
+            '<input type="checkbox" class="select-all-checkbox"/>', '',
             get_string('fullname'), get_string($offlinequizconfig->ID_field),
             get_string('importedon', 'offlinequiz'), get_string('group'),
             get_string('grade', 'offlinequiz')
@@ -514,7 +513,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
                 if (!empty($result->resultid)) {
                     $checkbox = '<input type="checkbox" name="s' . $result->resultid . '" value="' .
-                             $result->resultid . '"  class=".select-multiple-checkbox" />';
+                             $result->resultid . '"  class="select-multiple-checkbox" />';
                 } else {
                     $checkbox = '';
                 }

@@ -60,6 +60,7 @@ YUI.add('moodle-mod_offlinequiz-toolboxes', function (Y, NAME) {
         SECTIONUL : 'ul.section',
         SELECTMULTIPLECHECKBOX : '.offlinequizbulkcopyform input[type^=checkbox], .select-multiple-checkbox',
         SELECTALL: '.selectall',
+        SELECTALLCHECKBOX: '.select-all-checkbox',
         SHOW : 'a.' + CSS.SHOW,
         SHOWHIDE : 'a.editing_showhide',
         SLOTLI : 'li.slot',
@@ -305,12 +306,23 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         Y.all(SELECTOR.SELECTALL).on('click', function(e) {
             e.preventDefault();
             Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
+            Y.all(SELECTOR.SELECTALLCHECKBOX).set('checked', 'checked');
         });
 
         // Click deselect all link to show the select all checkboxes.
         Y.all(SELECTOR.DESELECTALL).on('click', function(e) {
             e.preventDefault();
             Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
+            Y.all(SELECTOR.SELECTALLCHECKBOX).set('checked', '');
+        });
+        
+        Y.all(SELECTOR.SELECTALLCHECKBOX).on('click', function(e) {
+            if (e.target._node.checked){
+            	Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
+            }
+            else {
+            	Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
+            }
         });
     },
 

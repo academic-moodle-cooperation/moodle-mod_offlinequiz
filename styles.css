@@ -189,8 +189,8 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 
 #page-mod-offlinequiz-report div#commands,
 #page-mod-offlinequiz-report .controls {text-align: center;}
-#page-mod-offlinequiz-report .downloadoptions {align: center;}
 #page-mod-offlinequiz-report .display-options {margin-top: 1em; text-align: center;}
+#page-mod-offlinequiz-report .downloadoptions .text-xs-right {text-align: center !important;}
 #page-mod-offlinequiz-report table#overview-options {margin-left: auto; margin-right: auto;}
 #page-mod-offlinequiz-report .menunoresults {margin-top: 1em;}
 #page-mod-offlinequiz-report .dubious{background-color: #fcc;}
@@ -300,6 +300,9 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 
 #page-mod-offlinequiz-createquiz div.answer img.texrender {
     vertical-align: middle;
+}
+#page-mod-offlinequiz-report .dowloadoptions .text-xs-right {
+	text-align: center !important;
 }
 #page-mod-offlinequiz-report table#statsoverviewtable {
     border: 1px solid #DDD;

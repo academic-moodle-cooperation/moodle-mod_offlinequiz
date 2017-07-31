@@ -99,6 +99,15 @@ if ($node) {
 $pagetitle = get_string('editparticipants', 'offlinequiz');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
+$PAGE->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
+		'M.mod_offlinequiz.init_resource_toolbox',
+		array(array(
+				'courseid' => $course->id,
+				'offlinequizid' => $offlinequiz->id,
+				'offlinegroupid' => $offlinequiz->groupid
+		))
+		);
+
 
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');

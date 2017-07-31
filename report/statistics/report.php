@@ -384,8 +384,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     $groupstudents, $useallattempts, $reporturl, $offlinequiz->groupid);
 
             if ($statmode == 'statsoverview') {
-                echo $this->everything_download_options();
-                echo '<br/><center>';
+            	echo html_writer::start_div("downloadoptions");
+            	echo $this->everything_download_options();
+               	echo html_writer::end_div();
+            	echo '<br/><center>';
                 echo $this->output_offlinequiz_info_table($offlinequizinfo);
                 echo '</center>';
             } else if ($statmode == 'questionstats') {
