@@ -1659,9 +1659,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
 
     // Define table columns.
     $tablecolumns = array('checkbox', 'picture', 'fullname', $offlinequizconfig->ID_field, 'number', 'attempt', 'checked');
-    $tableheaders = array('<input type="checkbox" name="toggle" onClick="' .
-                          'if (this.checked) {select_all_in(\'DIV\', null, \'tablecontainer\');} ' .
-                          ' else {deselect_all_in(\'DIV\', null, \'tablecontainer\');}"/>',
+    $tableheaders = array('<input type="checkbox" name="toggle" class="select-all-checkbox"/>',
             '', get_string('fullname'), get_string($offlinequizconfig->ID_field), get_string('participantslist', 'offlinequiz'),
             get_string('attemptexists', 'offlinequiz'), get_string('present', 'offlinequiz'));
 

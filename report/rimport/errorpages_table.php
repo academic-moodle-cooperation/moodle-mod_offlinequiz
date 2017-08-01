@@ -71,7 +71,7 @@ class offlinequiz_selectall_table extends flexible_table {
         echo '<a href="#" class="selectall">'. $strselectall . '</a> / ';
         echo '<a href="#" class="deselectall">' . $strselectnone . '</a> ';
         echo '&nbsp;&nbsp;';
-        echo '<input type="submit" value="'.get_string('deleteselectedpages', 'offlinequiz_rimport').'"/>';
+        echo '<input type="submit" value="'.get_string('deleteselectedpages', 'offlinequiz_rimport').'" class="btn btn-secondary"/>';
         echo '</td></tr></table>';
         echo '  </center>';
         // Close form.
