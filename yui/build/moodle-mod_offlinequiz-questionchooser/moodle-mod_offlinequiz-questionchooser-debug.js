@@ -1,7 +1,7 @@
 YUI.add('moodle-mod_offlinequiz-questionchooser', function (Y, NAME) {
 
 var CSS = {
-    ADDNEWQUESTIONBUTTONS: 'ul.menu a.addquestion',
+    ADDNEWQUESTIONBUTTONS: '.menu [data-action="addquestion"]',
     CREATENEWQUESTION: 'div.createnewquestion',
     CHOOSERDIALOGUE: 'div.chooserdialoguebody',
     CHOOSERHEADER: 'div.choosertitle'
