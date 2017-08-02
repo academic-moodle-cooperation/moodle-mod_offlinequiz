@@ -279,7 +279,6 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
         } // End !alreadydone.
         $numberdone++;
         if ($verbose) {
-            ob_flush();
             $pbar->update($numberdone, $numberofjobs,
                         "Processing job - {$numberdone}/{$numberofjobs}.");
         }
