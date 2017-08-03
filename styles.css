@@ -70,11 +70,11 @@ body.jsenabled .questionflagcheckbox {display: none;}
 .path-mod-offlinequiz .qnbutton.notyetanswered,
 .path-mod-offlinequiz .qnbutton.requiresgrading,
 .path-mod-offlinequiz .qnbutton.invalidanswer {background-color: white;}
-.path-mod-offlinequiz .qnbutton.correct {background-color: #cfc;}
+.path-mod-offlinequiz .answer .correct {background-color: #cfc;}
 .path-mod-offlinequiz .qnbutton.correct .trafficlight {border-bottom: 3px solid #080;}
 .path-mod-offlinequiz .qnbutton.partiallycorrect {background-color: #ffa;}
 .path-mod-offlinequiz .qnbutton.notanswered,
-.path-mod-offlinequiz .qnbutton.incorrect {background-color: #fcc;}
+.path-mod-offlinequiz .answer .incorrect {background-color: #fcc;}
 .path-mod-offlinequiz .qnbutton.notanswered .trafficlight,
 .path-mod-offlinequiz .qnbutton.incorrect .trafficlight {border-top: 3px solid #800;}
 
