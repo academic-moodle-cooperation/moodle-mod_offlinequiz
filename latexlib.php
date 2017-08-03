@@ -219,7 +219,9 @@ function offlinequiz_convert_html_to_latex($text) {
             'ß' => '{\ss}',
             '&nbsp;' => ' ',
             '#' => '\#',
-            '%' => '\%'
+            '%' => '\%',
+    		'&gt;' => '>',
+    		'&lt;' => '<'
     );
     // Remove all HTML comments (typically from MS Office).
     $text = preg_replace("/<!--.*?--\s*>/ms", "", $text);
