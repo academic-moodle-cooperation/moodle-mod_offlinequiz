@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+3.3.0 (2017-08-03)
+------------------
+* Moodle 3.3 compatible version
+* Official support of boost Theme
+* Offlinequizzes are now searchable through the moodle search
+* Multiple little bugfixes 
+
 3.2.0 (2017-02-01)
 ------------------
 

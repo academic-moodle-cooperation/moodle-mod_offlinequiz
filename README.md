@@ -3,7 +3,7 @@ Offline Quiz Module
 
 This file is part of the mod_offlinequiz plugin for Moodle - <http://moodle.org/>
 
-*Author:*    Thomas Wedekind, Juergen Zimmer, Richard Rode
+*Author:*    Thomas Wedekind, Juergen Zimmer, Richard Rode, Alexander Heher
 
 *Copyright:* 2014 [Academic Moodle Cooperation](http://www.academic-moodle-cooperation.org)
 
@@ -23,7 +23,7 @@ More precisely, a complete offline quiz consists (at least) of the following ste
   multiple-choice questions or description questions (text) to the quiz. This is very similar to
   creating online quizzes (standard Moodle quizzes).
 
-* From the question lists the teacher creates question sheets and answer forms as PDF (DOCX)
+* From the question lists the teacher creates question sheets and answer forms as PDF (DOCX, LaTeX)
   documents using the module.
 
 * The question sheets and answer forms are handed out to students for the actual quiz. The students
@@ -60,7 +60,7 @@ halls) without the need for expensive e-testing equipment.
 Requirements
 ------------
 
-The plugin is available for Moodle 2.5+. This version is for Moodle 3.2.
+The plugin is available for Moodle 2.5+. This version is for Moodle 3.3.
 
 
 Installation
