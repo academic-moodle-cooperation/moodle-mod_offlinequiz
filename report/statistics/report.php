@@ -259,22 +259,20 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
             if (!$questionid) {
                 $this->print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions);
-                if ($statmode == 'statsoverview') {
-                    if ($offlinequiz->sumgrades == -1 || $differentquestions) {
-                        echo $OUTPUT->box_start();
-                        echo $OUTPUT->notification(get_string('remarks', 'offlinequiz_statistics') . ':', 'notifynote');
-                    }
+                if ($statmode == 'statsoverview' && ($offlinequiz->sumgrades == -1 || $differentquestions)) {
+                	echo $OUTPUT->box_start();
+                	$notificationmessage = get_string('remarks', 'offlinequiz_statistics') . ":<br />";
                     if ($offlinequiz->sumgrades == -1) {
-                        echo $OUTPUT->notification('- ' . get_string('differentsumgrades', 'offlinequiz_statistics',
-                                implode(', ', $sumgrades)), 'notifynote');
+                    	$notificationmessage .= '- ' . get_string('differentsumgrades', 'offlinequiz_statistics',
+                                implode(', ', $sumgrades)) . "<br />";
                     }
                     if ($differentquestions) {
-                        echo $OUTPUT->notification('- ' . get_string('differentquestions', 'offlinequiz_statistics',
-                                implode(', ', $sumgrades)), 'notifynote');
+                    	$notificationmessage .= '- ' . get_string('differentquestions', 'offlinequiz_statistics',
+                                implode(', ', $sumgrades));
                     }
-                    if ($offlinequiz->sumgrades == -1 || $differentquestions) {
-                        echo $OUTPUT->box_end();
-                    }
+                    echo $OUTPUT->notification($notificationmessage, 'notifynote');
+                    echo $OUTPUT->box_end();
+                    
                 }
             }
 
@@ -386,8 +384,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     $groupstudents, $useallattempts, $reporturl, $offlinequiz->groupid);
 
             if ($statmode == 'statsoverview') {
-                echo $this->everything_download_options();
-                echo '<br/><center>';
+            	echo html_writer::start_div("downloadoptions");
+            	echo $this->everything_download_options();
+               	echo html_writer::end_div();
+            	echo '<br/><center>';
                 echo $this->output_offlinequiz_info_table($offlinequizinfo);
                 echo '</center>';
             } else if ($statmode == 'questionstats') {

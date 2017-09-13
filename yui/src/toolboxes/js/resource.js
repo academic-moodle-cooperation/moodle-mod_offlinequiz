@@ -62,6 +62,38 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         M.mod_offlinequiz.offlinequizbase.register_module(this);
         BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
         Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
+        this.initialise_select_multiple();
+    },
+    /**
+     * Initialize the select multiple options
+     *
+     * Add actions to the buttons that enable multiple slots to be selected and managed at once.
+     *
+     * @method initialise_select_multiple
+     * @protected
+     */
+    initialise_select_multiple: function() {
+        // Click select all link to check all the checkboxes.
+        Y.all(SELECTOR.SELECTALL).on('click', function(e) {
+            e.preventDefault();
+            Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
+            Y.all(SELECTOR.SELECTALLCHECKBOX).set('checked', 'checked');
+        });
+
+        // Click deselect all link to show the select all checkboxes.
+        Y.all(SELECTOR.DESELECTALL).on('click', function(e) {
+            e.preventDefault();
+            Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
+            Y.all(SELECTOR.SELECTALLCHECKBOX).set('checked', '');
+        });
+        
+        Y.all(SELECTOR.SELECTALLCHECKBOX).on('click', function(e) {
+            if (e.target._node.checked){
+            	Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
+            } else {
+            	Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
+            }
+        });
     },
 
     /**
@@ -365,22 +397,18 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         // Prevent the default button action
         ev.preventDefault();
 
-        nextactivity = activity.next('li.activity.slot');
-        var spinner = this.add_spinner(nextactivity),
-            slotid = 0;
+        var nextactivity = activity.next('li.activity.slot');
+//        var spinner = this.add_spinner(nextactivity),
+        var spinner = null;
         var value = action === 'removepagebreak' ? 1 : 2;
 
         var data = {
             'class': 'resource',
             'field': 'updatepagebreak',
-            'id':    slotid,
+            'id':    Y.Moodle.mod_offlinequiz.util.slot.getId(nextactivity),
             'value': value
         };
 
-        slotid = Y.Moodle.mod_offlinequiz.util.slot.getId(nextactivity);
-        if (slotid) {
-            data.id = Number(slotid);
-        }
         this.send_request(data, spinner, function(response) {
             if (response.slots) {
                 if (action === 'addpagebreak') {
@@ -390,8 +418,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                     Y.Moodle.mod_offlinequiz.util.page.remove(page, true);
                 }
                 this.reorganise_edit_page();
-            } else {
-                window.location.reload(true);
             }
         });
 

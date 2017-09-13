@@ -46,6 +46,7 @@ YUI.add('moodle-mod_offlinequiz-toolboxes', function (Y, NAME) {
         COMMANDSPAN : '.commands',
         CONTENTAFTERLINK : 'div.contentafterlink',
         CONTENTWITHOUTLINK : 'div.contentwithoutlink',
+        DESELECTALL: '.deselectall',
         EDITMAXMARK: 'a.editing_maxmark',
         HIDE : 'a.editing_hide',
         HIGHLIGHT : 'a.editing_highlight',
@@ -57,6 +58,9 @@ YUI.add('moodle-mod_offlinequiz-toolboxes', function (Y, NAME) {
         PAGECONTENT : 'div#page-content',
         PAGELI : 'li.page',
         SECTIONUL : 'ul.section',
+        SELECTMULTIPLECHECKBOX : '.offlinequizbulkcopyform input[type^=checkbox], .select-multiple-checkbox',
+        SELECTALL: '.selectall',
+        SELECTALLCHECKBOX: '.select-all-checkbox',
         SHOW : 'a.' + CSS.SHOW,
         SHOWHIDE : 'a.editing_showhide',
         SLOTLI : 'li.slot',
@@ -287,6 +291,39 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         M.mod_offlinequiz.offlinequizbase.register_module(this);
         BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
         Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
+        this.initialise_select_multiple();
+    },
+    /**
+     * Initialize the select multiple options
+     *
+     * Add actions to the buttons that enable multiple slots to be selected and managed at once.
+     *
+     * @method initialise_select_multiple
+     * @protected
+     */
+    initialise_select_multiple: function() {
+        // Click select all link to check all the checkboxes.
+        Y.all(SELECTOR.SELECTALL).on('click', function(e) {
+            e.preventDefault();
+            Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
+            Y.all(SELECTOR.SELECTALLCHECKBOX).set('checked', 'checked');
+        });
+
+        // Click deselect all link to show the select all checkboxes.
+        Y.all(SELECTOR.DESELECTALL).on('click', function(e) {
+            e.preventDefault();
+            Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
+            Y.all(SELECTOR.SELECTALLCHECKBOX).set('checked', '');
+        });
+        
+        Y.all(SELECTOR.SELECTALLCHECKBOX).on('click', function(e) {
+            if (e.target._node.checked){
+            	Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
+            }
+            else {
+            	Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
+            }
+        });
     },
 
     /**
@@ -590,22 +627,18 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         // Prevent the default button action
         ev.preventDefault();
 
-        nextactivity = activity.next('li.activity.slot');
-        var spinner = this.add_spinner(nextactivity),
-            slotid = 0;
+        var nextactivity = activity.next('li.activity.slot');
+//        var spinner = this.add_spinner(nextactivity),
+        var spinner = null;
         var value = action === 'removepagebreak' ? 1 : 2;
 
         var data = {
             'class': 'resource',
             'field': 'updatepagebreak',
-            'id':    slotid,
+            'id':    Y.Moodle.mod_offlinequiz.util.slot.getId(nextactivity),
             'value': value
         };
 
-        slotid = Y.Moodle.mod_offlinequiz.util.slot.getId(nextactivity);
-        if (slotid) {
-            data.id = Number(slotid);
-        }
         this.send_request(data, spinner, function(response) {
             if (response.slots) {
                 if (action === 'addpagebreak') {
@@ -615,8 +648,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                     Y.Moodle.mod_offlinequiz.util.page.remove(page, true);
                 }
                 this.reorganise_edit_page();
-            } else {
-                window.location.reload(true);
             }
         });
 
@@ -680,6 +711,17 @@ var SECTIONTOOLBOX = function() {
 
 Y.extend(SECTIONTOOLBOX, TOOLBOX, {
     /**
+     * An Array of events added when editing a max mark field.
+     * These should all be detached when editing is complete.
+     *
+     * @property editsectionevents
+     * @protected
+     * @type Array
+     * @protected
+     */
+    editsectionevents: [],
+
+    /**
      * Initialize the section toolboxes module.
      *
      * Updates all span.commands with relevant handlers and other required changes.
@@ -690,11 +732,9 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
     initializer : function() {
         M.mod_offlinequiz.offlinequizbase.register_module(this);
 
-        // Section Highlighting.
-        Y.delegate('click', this.toggle_highlight, SELECTOR.PAGECONTENT, SELECTOR.SECTIONLI + ' ' + SELECTOR.HIGHLIGHT, this);
-
-        // Section Visibility.
-        Y.delegate('click', this.toggle_hide_section, SELECTOR.PAGECONTENT, SELECTOR.SECTIONLI + ' ' + SELECTOR.SHOWHIDE, this);
+        BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
+        Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
+        Y.delegate('change', this.handle_data_action, BODY, SELECTOR.EDITSHUFFLEQUESTIONSACTION, this);    
     },
 
     toggle_hide_section : function(e) {
@@ -739,7 +779,6 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
             'id'    : Y.Moodle.core_course.util.section.getId(section.ancestor(M.mod_offlinequiz.edit.get_section_wrapper(Y), true)),
             'value' : value
         };
-
         var lightbox = M.util.add_lightbox(Y, section);
         lightbox.show();
 

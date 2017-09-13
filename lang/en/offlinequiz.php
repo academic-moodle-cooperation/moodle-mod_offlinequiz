@@ -88,7 +88,7 @@ $string['configshuffleanswers'] = 'Shuffle answers';
 $string['configshufflequestions'] = 'If you enable this option, then the order of questions in the offline quiz groups will be randomly shuffled each time you re-create the preview in the "Create forms" tab.';;
 $string['configshufflewithin'] = 'If you enable this option, the answers of multiple choice questions are shuffled separately for each offline quiz group.';
 $string['configuseridentification'] = 'A formula describing the user identification. This formula is used to assign answer forms to users in the system. The right hand side of the equation must denote a field in the user table of Moodle.';
-$string['configpapergray'] = 'grey-value of paper';
+$string['configpapergray'] = 'white-value of paper, which is used for the evaluation of answer-sheets';
 $string['configshufflewithin'] = 'If you enable this option, then the parts making up the individual questions will be randomly shuffled when the question- and answer-forms are created.';
 $string['confirmremovequestion'] = 'Are you sure you want to remove this {$a} question?';
 $string['copyright'] = '<strong>Warning: The texts on this page are just for your personal information. Like any other texts these questions are under copyright restrictions. You are not allowed to copy them or to show them to other people!</strong>';
@@ -268,7 +268,7 @@ $string['instruction1'] = 'This answer form will be scanned automatically. Pleas
 $string['instruction2'] = 'Only clear markings can be interpreted correctly! If you want to correct a marking, completely fill the box with color. This field will be interpreted like an empty box:';
 $string['instruction3'] = 'Corrected boxes cannot be marked again. Please do not write anything outside of the boxes.';
 $string['introduction'] = 'Introduction';
-$string['invalidformula'] = 'Invalid formula for user identification. The formula must have the form &lt;prefix&gt;[&lt;#digits&gt;]&lt;suffix&gt;=&lt;db-field&gt;.';
+$string['invalidformula'] = 'Invalid formula for user identification. The formula must have the form <prefix>[<#digits>]<suffix>=<db-field&>.';
 $string['invalidnumberofdigits'] = 'Invalid number of digits used. Only 1 up to 9 digit(s) are allowed.';
 $string['invaliduserfield'] = 'Invalid field of the user table used.';
 $string['invigilator'] = 'Invigilator';
@@ -299,7 +299,7 @@ $string['missingquestion'] = 'This question no longer seems to exist';
 $string['missinguserid'] = 'Missing user identification number! Could not read barcode!';
 $string['modulename_help'] = 'This module allows the teacher to design offline quizzes consisting of multiple choice questions.
 These questions are kept in the Moodle question bank and can be re-used within courses and even between courses.
-The offline quizzes can be downloaded as PDF files. The students mark their answers on form sheets. The form sheets are scanned and the answers imported into the system.';
+The offline quizzes can be downloaded as PDF-, DOCX- or LaTeX-files. The students mark their answers on form sheets. The form sheets are scanned and the answers imported into the system.';
 $string['moveselectedonpage'] = 'Move selected questions to page: {$a}';
 $string['copyselectedtogroup'] = 'Add selected questions to group: {$a}';
 $string['copytogroup'] = 'Add all questions to group: {$a}';
@@ -384,10 +384,12 @@ $string['overallfeedback'] = 'Overall feedback';
 $string['overview'] = 'Overview';
 $string['overviewdownload_help'] = '';
 $string['pagecorrected'] = 'Corrected sheet of participants list imported';
+$string['pageevaluationtask'] = 'Answer sheet evaluation for the offlinequiz-plugin';
 $string['pageimported'] = 'Sheet of participants list imported';
 $string['page-mod-offlinequiz-x'] = 'Any offline quiz page';
 $string['page-mod-offlinequiz-edit'] = 'Edit offline quiz page';
 $string['pagenumberimported'] = 'Sheet {$a} of participants list imported';
+$string['pagenumberupdate'] = 'Page number update';
 $string['pagenotdetected'] = 'Could not detect barcode for page!';
 $string['pagesizeparts'] = 'Participants shown per page:';
 $string['papergray'] = 'White value of paper';
@@ -443,31 +445,30 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 \setlength{\oddsidemargin}{0cm}
 \setlength{\evensidemargin}{0cm}
 \setlength{\topmargin}{-1cm}
-\usepackage{amsmath} % für \implies etc
-\usepackage{amsfonts} % für \mathbb etc
-\usepackage{graphicx} % zum Bilder einfügen
-\renewcommand{\familydefault}{\sfdefault} % Schriftart
+\usepackage{amsmath} % for \implies etc
+\usepackage{amsfonts} % for \mathbb etc
+\usepackage{graphicx} % for including pictures
+\renewcommand{\familydefault}{\sfdefault} % Font
 \newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
 \newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
 \newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
-\parindent 0pt % keine Einrückung am Beginn des Absatzes
-\usepackage{esvect} % für lange Vektorpfeile, z.B. \vv{AB}
-\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % Für Einfügen von Hyperlinks
+\parindent 0pt % no indent on the beginning of a section
+\usepackage{esvect} % long vector arrows, e.g. \vv{AB}
+\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using of Hyperlinks
 \renewcommand\UrlFont{\sf}
-\usepackage{ulem} % Durchstreichen: \sout{gerade durchstreichen} \xout{schräg durchstreichen}
+\usepackage{ulem} %  \sout{horizontal cross out} \xout{diagonal strike out}
 \newcommand{\abs}[1]{\left\lvert#1\right\rvert}
-\usepackage{scrpage2} % Kopf- und Fußzeilen (http://esc-now.de/_/latex-individuelle-kopf-und-fusszeilen/?lang=en):
+\usepackage{scrpage2} % For Header and Footer
 \pagestyle{scrheadings}
 \clearscrheadfoot
 \ifoot{[Gruppe \Group]}
-\makeatletter %%% Seitenumbrüche zwischen Antwortmöglichkeiten unterdrücken (funktioniert meistens!)
+\makeatletter %%% disable pagebreaks between answers
 \@beginparpenalty=10000
 \@itempenalty=10000
 \makeatother
 %
-%%% DIE FOLGENDEN ZWEI ZEILEN: Wenn erste auskommentiert -> r/f werden angezeigt, wenn zweite auskommentiert -> r/f werden verborgen
-\newcommand{\answerIs}[1]{} %%% Zum verborgenen Anzeigen der richtigen und falschen Antworten
-% \newcommand{\answerIs}[1]{[#1]} %%% Zum Anzeigen der richtigen und falschen Antworten
+\newcommand{\answerIs}[1]{} %%%Disable showing the right answer
+% \newcommand{\answerIs}[1]{[#1]} %%%Enable showing the right answer
 %%%
 
 \begin{document}
@@ -475,11 +476,10 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 
 
 % ===========================================================================================================
-%%% Die Lehrveranstaltungs-Daten:
-\begin{center}{University of Vienna}\end{center}
+%%% Data of the Course
 \begin{center}{\LARGE {$a->coursename}}\end{center}
-\begin{center}{Written Exam{$a->date}}\end{center}
-%%% In der folgenden Zeile bei Erstellen des endgültigen Fragebogens den Namen der Gruppe einfügen!
+\begin{center}{Written Exam {$a->date}}\end{center}
+%%%
 \def\Group{{$a->groupname}}
 \begin{center}{\Large Group \Group}\end{center}
 
@@ -506,8 +506,8 @@ $string['randomfromexistingcategory'] = 'Random question from an existing catego
 $string['randomnumber'] = 'Number of random questions';
 $string['randomquestionusinganewcategory'] = 'Random question using a new category';
 $string['readjust'] = 'Readjust';
-$string['realydeletepdfs'] = 'Do you realy want to delete the form files?';
-$string['realydeleteupdatepdf'] = 'Do you realy want to delete and update the participants list?';
+$string['reallydeletepdfs'] = 'Do you really want to delete the form files?';
+$string['reallydeleteupdatepdf'] = 'Do you really want to delete and update the participants list?';
 $string['recreatepdfs'] = 'Recreate PDFs';
 $string['recurse'] = 'Include questions from subcategories too';
 $string['refreshpreview'] = 'Refresh preview';
@@ -582,6 +582,7 @@ $string['scanneroptions'] = 'Scanner settings';
 $string['scannerpdfs'] = 'Empty forms';
 $string['scannerpdfstext'] = 'Download the following empty forms if you want to use your own scanner software.';
 $string['score'] = 'Score';
+$string['search:activity'] = 'Offline quiz - activity information';
 $string['select'] = 'Select';
 $string['selectagroup'] = 'Select a group';
 $string['selectall'] = 'Select all';
@@ -593,6 +594,7 @@ $string['selectdifferentgroup'] = 'Please select a different group!';
 $string['selectformat'] = 'Select format...';
 $string['selectgroup'] = 'Select group';
 $string['selectlist'] = 'Please select a list or try to readjust sheet:';
+$string['selectmultipletoolbar'] = 'Select multiple toolbar';
 $string['selectpage'] = 'Please select page number or try to readjust sheet:';
 $string['showallparts'] = 'Show all {$a} participants';
 $string['showcopyright'] = 'Show copyright statement';

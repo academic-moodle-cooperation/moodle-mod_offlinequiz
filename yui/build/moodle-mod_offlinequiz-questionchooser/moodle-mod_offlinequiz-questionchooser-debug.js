@@ -1,12 +1,12 @@
 YUI.add('moodle-mod_offlinequiz-questionchooser', function (Y, NAME) {
 
 var CSS = {
-    ADDNEWQUESTIONBUTTONS: 'ul.menu a.addquestion',
+    ADDNEWQUESTIONBUTTONS: '.menu [data-action="addquestion"]',
     CREATENEWQUESTION: 'div.createnewquestion',
-    CHOOSERDIALOGUE: 'div.chooserdialogue',
+    CHOOSERDIALOGUE: 'div.chooserdialoguebody',
     CHOOSERHEADER: 'div.choosertitle'
 };
-
+ 
 /**
  * The questionchooser class  is responsible for instantiating and displaying the question chooser
  * when viewing a offlinequiz in editing mode.
@@ -49,11 +49,10 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
         this.display_chooser(e);
 
         var nodes = Y.all('#chooseform input[type=radio]')._nodes;
-        console.log(nodes);
         for(i = 0; i < nodes.length; i++) {
-        	if (nodes[i].id != 'qtype_qtype_multichoiceset' &&
-        		nodes[i].id != 'qtype_qtype_multichoice' &&
-        		nodes[i].id != 'qtype_qtype_description' ) {
+        	if (nodes[i].id != 'item_qtype_multichoiceset' &&
+        		nodes[i].id != 'item_qtype_multichoice' &&
+        		nodes[i].id != 'item_qtype_description' ) {
         		nodes[i].disabled = true;
         	}
         }        

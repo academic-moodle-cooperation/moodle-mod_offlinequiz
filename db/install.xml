@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/offlinequiz/db" VERSION="20160421" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
+<XMLDB PATH="mod/offlinequiz/db" VERSION="20170310" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -32,6 +32,7 @@
         <FIELD NAME="fileformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="showgrades" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="showtutorial" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="id_digits" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Amount of digits used by offlinequiz-instance to match idnumbers"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for offlinequiz"/>
@@ -86,7 +87,7 @@
         <FIELD NAME="warningfilename" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="ID of a warning file iff created by the teacher."/>
         <FIELD NAME="groupnumber" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The (incomplete) number of the group (1...n)."/>
         <FIELD NAME="userkey" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="(Incomplete) username of the user the scanned page belongs to."/>
-        <FIELD NAME="pagenumber" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The (incomplete) number of the page."/>
+        <FIELD NAME="pagenumber" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="The (incomplete) number of the page."/>
         <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The latest point in time the page was evaluated or modified."/>
         <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The status of the scanned page ( 'error', 'ok', 'submitted')."/>
         <FIELD NAME="error" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The errorcode (in case status is 'error') as Moodle language string identifiers (insecuremarkings, unknownuser, unknowngroup, unkownusername, etc)."/>
@@ -224,6 +225,7 @@
         <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="status" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The status of a file ('new', 'ok', 'error'). In case of 'error', the error field contains the error message."/>
         <FIELD NAME="error" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The error message (get_string label) in case the status is 'error'."/>
+        <FIELD NAME="info" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The info message (get_string label) in case the status is 'info'."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

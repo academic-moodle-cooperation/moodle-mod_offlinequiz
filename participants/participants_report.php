@@ -119,7 +119,7 @@ class participants_report {
                 $errorstr = get_string('error' . $page->error, 'offlinequiz_rimport');
             }
             $row = array(
-                    '<input type="checkbox" name="pageid[]" value="' . $page->id . '" />',
+                    '<input type="checkbox" name="pageid[]" value="' . $page->id . '"  class="select-multiple-checkbox" />',
                     userdate($page->time, $strtimeformat),
                     $errorstr,
                     $actionlink

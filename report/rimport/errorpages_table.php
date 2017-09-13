@@ -68,10 +68,10 @@ class offlinequiz_selectall_table extends flexible_table {
 
         echo '<table id="commands">';
         echo '<tr><td>';
-        echo '<a href="javascript:select_all_in(\'FORM\',null, \'reportform\');">'. $strselectall . '</a> / ';
-        echo '<a href="javascript:deselect_all_in(\'FORM\',null,\'reportform\');">' . $strselectnone . '</a> ';
+        echo '<a href="#" class="selectall">'. $strselectall . '</a> / ';
+        echo '<a href="#" class="deselectall">' . $strselectnone . '</a> ';
         echo '&nbsp;&nbsp;';
-        echo '<input type="submit" value="'.get_string('deleteselectedpages', 'offlinequiz_rimport').'"/>';
+        echo '<input type="submit" value="'.get_string('deleteselectedpages', 'offlinequiz_rimport').'" class="btn btn-secondary"/>';
         echo '</td></tr></table>';
         echo '  </center>';
         // Close form.
@@ -88,8 +88,8 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
 
         echo '<table id="commands">';
         echo '<tr><td>';
-        echo '<a href="javascript:select_all_in(\'FORM\',null, \'reportform\');">'. $strselectall . '</a> / ';
-        echo '<a href="javascript:deselect_all_in(\'FORM\',null,\'reportform\');">' . $strselectnone . '</a> ';
+        echo '<a href="#" class="selectall">'. $strselectall . '</a> / ';
+        echo '<a href="#" class="deselectall">' . $strselectnone . '</a> ';
         echo '&nbsp;&nbsp;';
         $options = array('check' => get_string('checkparts', 'offlinequiz'),
                 'uncheck' => get_string('uncheckparts', 'offlinequiz'));

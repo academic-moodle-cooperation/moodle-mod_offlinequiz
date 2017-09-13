@@ -91,6 +91,7 @@ $PAGE->set_title($strpreview);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('report'); // Or 'admin'.
 $PAGE->set_cacheable(true);
+$PAGE->force_settings_menu(true);
 
 if ($node = $PAGE->settingsnav->find('mod_offlinequiz_createquiz', navigation_node::TYPE_SETTING)) {
     $node->make_active();
@@ -233,7 +234,7 @@ if ($mode == 'preview') {
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/edit.php',
                     array('cmid' => $cm->id, 'groupnumber' => $group->number, 'noquestions' => 1));
             echo html_writer::link($url,  get_string('noquestionsfound', 'offlinequiz', $groupletter),
-                    array('class' => 'notifyproblem linkbox'));
+                    array('class' => 'linkbox'));
             echo $OUTPUT->box_end();
             continue;
         }
@@ -310,7 +311,7 @@ if ($mode == 'preview') {
         echo $OUTPUT->box_start('linkbox');
         foreach ($emptygroups as $groupnumber) {
             $groupletter = $letterstr[$groupnumber - 1];
-            echo $OUTPUT->notification(get_string('noquestionsfound', 'offlinequiz', $groupletter), 'notifyproblem');
+            echo $OUTPUT->notification(get_string('noquestionsfound', 'offlinequiz', $groupletter));
         }
         echo $OUTPUT->notification(get_string('nopdfscreated', 'offlinequiz'), 'notifyproblem');
         echo $OUTPUT->box_end();
@@ -333,13 +334,17 @@ if ($mode == 'preview') {
             echo '</div>';
         } else {
             ?>
-            <div class="singlebutton linkbox">
+            <div class="singlebutton linkbox btn-secondary">
                <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=" . $offlinequiz->id .
                       "&mode=createpdfs" ?>" method="POST">
                     <div>
                         <input type="hidden" name="forcepdfnew" value="1" />
-                        <input type="submit" value="<?php echo get_string('deletepdfs', 'offlinequiz') ?>"
-                        onClick='return confirm("<?php echo get_string('realydeletepdfs', 'offlinequiz') ?>")' />
+                        <button type="submit"
+                        		onClick='return confirm("<?php echo get_string('reallydeletepdfs', 'offlinequiz') ?>")'
+                        		class="btn btn-secondary singlebutton"
+                        		 >
+                        	<?php echo get_string('deletepdfs', 'offlinequiz') ?>
+                        </button>
                    </div>
               </form>
             </div>
@@ -408,6 +413,7 @@ if ($mode == 'preview') {
                     print_error("Missing data for group ".$groupletter,
                         "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey());
                 }
+                $DB->set_field('offlinequiz', 'id_digits', get_config('offlinequiz', 'ID_digits'), array('id' => $offlinequiz->id));
 
                 if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                     require_once('docxlib.php');

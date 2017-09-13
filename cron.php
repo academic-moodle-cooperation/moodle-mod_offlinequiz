@@ -46,6 +46,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 
     raise_memory_limit(MEMORY_EXTRA);
 
+<<<<<<< HEAD
 //     // Only count the jobs with status processing that have been started in the last 24 hours.
 //     $expiretime = time() - 86400;
 //     $runningsql = "SELECT COUNT(*)
@@ -295,6 +296,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
     $resultpage = $engine->scanpage();
     print_object($resultpage);
     print(round(microtime(true) * 1000)-$time);
+
 } // End function.
 
 require_once($CFG->libdir . '/clilib.php');

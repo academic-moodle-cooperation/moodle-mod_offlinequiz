@@ -70,7 +70,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                             'mode' => 'overview',
                             'noresults' => $noresults,
                             'pagesize' => $pagesize,
-                            'group' => $groupid
+                    		'group' => $groupid
                     ));
 
             echo groups_print_activity_menu($cm, $groupselecturl, true);
@@ -173,8 +173,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             'timestart', 'offlinegroupid', 'sumgrades'
         );
         $tableheaders = array(
-            '<input type="checkbox" name="toggle" onClick="if (this.checked) {select_all_in(\'DIV\',null,\'tablecontainer\');}
-                else {deselect_all_in(\'DIV\',null,\'tablecontainer\');}"/>', '',
+            '<input type="checkbox" class="select-all-checkbox"/>', '',
             get_string('fullname'), get_string($offlinequizconfig->ID_field),
             get_string('importedon', 'offlinequiz'), get_string('group'),
             get_string('grade', 'offlinequiz')
@@ -198,40 +197,40 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 }
             }
         }
-            
+
         // Set up the table in any case, even if we are downloading a file.
         $params = array('offlinequiz' => $offlinequiz, 'noresults' => $noresults, 'pagesize' => $pagesize, 'group' => $groupid
         );
         $table = new offlinequiz_results_table('mod-offlinequiz-report-overview-report', $params);
-        
+
         $table->define_columns($tablecolumns);
         $table->define_headers($tableheaders);
-        $baseurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php', 
-                array('mode' => 'overview', 'id' => $cm->id, 'noresults' => $noresults, 'group' => $groupid, 
+        $baseurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php',
+                array('mode' => 'overview', 'id' => $cm->id, 'noresults' => $noresults, 'group' => $groupid,
                     'pagesize' => $pagesize
                 ));
         $table->define_baseurl($baseurl);
-        
+
         $table->sortable(true);
         $table->no_sorting('checkbox');
-        
+
         if ($withparticipants) {
             $table->no_sorting('checked');
         }
-        
+
         $table->column_suppress('picture');
         $table->column_suppress('fullname');
-        
+
         $table->column_class('picture', 'picture');
         $table->column_class($offlinequizconfig->ID_field, 'userkey');
         $table->column_class('timestart', 'timestart');
         $table->column_class('offlinegroupid', 'offlinegroupid');
         $table->column_class('sumgrades', 'sumgrades');
-        
+
         $table->set_attribute('cellpadding', '2');
         $table->set_attribute('id', 'attempts');
         $table->set_attribute('class', 'generaltable generalbox');
-        
+
         // Start working -- this is necessary as soon as the niceties are over.
         $table->setup();
 
@@ -462,24 +461,24 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         }
 
         $countsql = 'SELECT COUNT(DISTINCT(u.id)) ' . $from . $where;
-            
+
         // Count the records NOW, before funky question grade sorting messes up $from.
         $totalinitials = $DB->count_records_sql($countsql, $params);
-        
+
         // Add extra limits due to initials bar.
         list($ttest, $tparams) = $table->get_sql_where();
-        
+
         if (!empty($ttest)) {
             $where .= ' AND ' . $ttest;
             $countsql .= ' AND ' . $ttest;
             $params = array_merge($params, $tparams);
         }
-        
+
         $total = $DB->count_records_sql($countsql, $params);
-        
+
         // Add extra limits due to sorting by question grade.
         $tablesort = $table->get_sql_sort();
-        
+
         $table->pagesize($pagesize, $total);
 
 
@@ -514,7 +513,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
                 if (!empty($result->resultid)) {
                     $checkbox = '<input type="checkbox" name="s' . $result->resultid . '" value="' .
-                             $result->resultid . '" />';
+                             $result->resultid . '"  class="select-multiple-checkbox" />';
                 } else {
                     $checkbox = '';
                 }
@@ -658,6 +657,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $table->finish_html();
 
             if (!empty($results)) {
+            	echo '<div>';
                 echo '<form id="downloadoptions" action="report.php" method="get">';
                 echo ' <input type="hidden" name="id" value="' . $cm->id . '" />';
                 echo ' <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
@@ -675,14 +675,14 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 print_string('downloadresultsas', 'offlinequiz');
                 echo "</td><td>";
                 echo html_writer::select($options, 'download', '', false);
-                echo ' <input type="submit" value="' . get_string('download') . '" />';
+                echo ' <button type="submit" class="btn btn-primary" > ' . get_string('download') . '</button>';
                 echo ' <script type="text/javascript">' . "\n<!--\n" .
                          'document.getElementById("noscriptmenuaction").style.display = "none";' .
                          "\n-->\n" . '</script>';
                 echo " </td>\n";
                 echo "<td>";
                 echo "</td>\n";
-                echo '</tr></table></form>';
+                echo '</tr></table></form></div>';
             }
         } else if ($download == 'Excel' || $download == 'ODS') {
             $workbook->close();
@@ -692,9 +692,9 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         }
 
         // Print display options.
-        echo '<div class="controls">';
+        echo '<div class="display-options">';
         echo '<form id="options" action="report.php" method="get">';
-        echo ' <div class=centerbox>';
+        echo ' <div>';
         echo '   <p>' . get_string('displayoptions', 'offlinequiz') . ': </p>';
         echo '   <input type="hidden" name="id" value="' . $cm->id . '" />';
         echo '   <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
@@ -721,7 +721,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         echo html_writer::select($options, 'noresults', $noresults, '');
         echo '</td></tr>';
         echo '<tr><td colspan="2" align="center">';
-        echo '<input type="submit" value="' . get_string('go') . '" />';
+        echo '<button type="submit" class="btn btn-secondary"> ' . get_string('go') . '</button>';
         echo '</td></tr></table>';
         echo '</div>';
         echo '</form>';

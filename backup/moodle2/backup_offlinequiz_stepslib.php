@@ -42,7 +42,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
                 'timeclose', 'time', 'grade', 'numgroups', 'decimalpoints',
                 'review', 'questionsperpage', 'docscreated', 'shufflequestions', 'shuffleanswers',
                 'questions', 'sumgrades', 'papergray', 'fontsize', 'timecreated',
-                'timemodified', 'fileformat', 'showgrades', 'showquestioninfo', 'showtutorial', 'printstudycodefield'));
+                'timemodified', 'fileformat', 'showgrades', 'showquestioninfo', 'showtutorial', 'printstudycodefield', 'id_digits'));
 
         $qinstances = new backup_nested_element('question_instances');
 

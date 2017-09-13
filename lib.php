@@ -1335,13 +1335,13 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
         $node = navigation_node::create(get_string('groupquestions', 'offlinequiz'),
                 new moodle_url('/mod/offlinequiz/edit.php', array('cmid' => $PAGE->cm->id)),
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_edit',
-                new pix_icon('i/questions', ''));
+                new pix_icon('t/edit', ''));
         $offlinequiznode->add_node($node, $beforekey);
 
         $node = navigation_node::create(get_string('createofflinequiz', 'offlinequiz'),
                 new moodle_url('/mod/offlinequiz/createquiz.php', array('id' => $PAGE->cm->id)),
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_createpdfs',
-                new pix_icon('f/text', ''));
+        		new pix_icon('a/add_file', ''));
         $offlinequiznode->add_node($node, $beforekey);
 
         $node = navigation_node::create(get_string('participantslists', 'offlinequiz'),
@@ -1353,7 +1353,7 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
         $node = navigation_node::create(get_string('results', 'offlinequiz'),
                 new moodle_url('/mod/offlinequiz/report.php', array('id' => $PAGE->cm->id, 'mode' => 'overview')),
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_results',
-                new pix_icon('i/grades', ''));
+                new pix_icon('i/report', ''));
         $offlinequiznode->add_node($node, $beforekey);
     }
 

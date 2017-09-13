@@ -38,6 +38,6 @@ class checkbox_column extends \core_question\bank\checkbox_column {
         }
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                 $question->id . '" id="checkq' . $question->id . '" value="1" ' .
-                $disabled . '/>';
+                $disabled . ' class="select-multiple-checkbox" />';
     }
 }

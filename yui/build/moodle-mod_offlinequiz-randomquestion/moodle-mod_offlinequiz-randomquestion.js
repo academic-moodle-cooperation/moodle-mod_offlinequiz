@@ -29,7 +29,7 @@ YUI.add('moodle-mod_offlinequiz-randomquestion', function (Y, NAME) {
 var CSS = {
     RANDOMQUESTIONFORM: 'div.randomquestionformforpopup',
     PAGEHIDDENINPUT: 'input#rform_qpage',
-    RANDOMQUESTIONLINKS: 'ul.menu a.addarandomquestion'
+    RANDOMQUESTIONLINKS: '.menu [data-action="addarandomquestion"]'
 };
 
 var PARAMS = {

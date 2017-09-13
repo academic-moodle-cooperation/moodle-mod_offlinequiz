@@ -1,3 +1,5 @@
+/* global YUI */
+
 /**
  * A collection of utility classes for use with pages.
  *
@@ -15,7 +17,7 @@ Y.namespace('Moodle.mod_offlinequiz.util.page');
  */
 Y.Moodle.mod_offlinequiz.util.page = {
     CSS: {
-        PAGE : 'page'
+        PAGE: 'page'
     },
     CONSTANTS: {
         ACTIONMENUIDPREFIX: 'action-menu-',
@@ -26,11 +28,12 @@ Y.Moodle.mod_offlinequiz.util.page = {
     },
     SELECTORS: {
         ACTIONMENU: 'div.moodle-actionmenu',
-        ACTIONMENUBAR: 'ul.menubar',
-        ACTIONMENUMENU: 'ul.menu',
+        ACTIONMENUBAR: '.menubar',
+        ACTIONMENUMENU: '.menu',
+        ADDASECTION: '[data-action="addasection"]',
         PAGE: 'li.page',
         INSTANCENAME: '.instancename',
-        NUMBER: 'span.text'
+        NUMBER: 'h4'
     },
 
     /**
@@ -140,7 +143,9 @@ Y.Moodle.mod_offlinequiz.util.page = {
      * @return {node[]} An array containing page nodes.
      */
     getPages: function() {
-        return Y.all(Y.Moodle.mod_offlinequiz.util.slot.SELECTORS.PAGECONTENT + ' ' + Y.Moodle.mod_offlinequiz.util.slot.SELECTORS.SECTIONUL + ' ' + this.SELECTORS.PAGE);
+        return Y.all(Y.Moodle.mod_offlinequiz.util.slot.SELECTORS.PAGECONTENT + ' ' +
+                     Y.Moodle.mod_offlinequiz.util.slot.SELECTORS.SECTIONUL + ' ' +
+                    this.SELECTORS.PAGE);
     },
 
     /**
@@ -202,7 +207,9 @@ Y.Moodle.mod_offlinequiz.util.page = {
         beforenode.insert(page, 'after');
 
         // Enhance the add menu to make if fully visible and clickable.
-        M.core.actionmenu.newDOMNode(page);
+        if (typeof M.core.actionmenu !== "undefined") {
+            M.core.actionmenu.newDOMNode(page);
+        }
         return page;
     },
 
@@ -230,7 +237,8 @@ Y.Moodle.mod_offlinequiz.util.page = {
      */
     reorderPages: function() {
         // Get list of page nodes.
-        var pages = this.getPages(), currentpagenumber = 0;
+        var pages = this.getPages();
+        var currentpagenumber = 0;
         // Loop through pages incrementing the number each time.
         pages.each(function(page) {
             // Is the page empty?
@@ -261,7 +269,7 @@ Y.Moodle.mod_offlinequiz.util.page = {
         var actionmenus = this.getActionMenus();
         // Loop through pages incrementing the number each time.
         actionmenus.each(function(actionmenu, key) {
-            var previousActionMenu = actionmenus.item(key - 1);
+            var previousActionMenu = actionmenus.item(key - 1),
                 previousActionMenunumber = 0;
             if (previousActionMenu) {
                 previousActionMenunumber = this.getActionMenuId(previousActionMenu);
@@ -274,9 +282,15 @@ Y.Moodle.mod_offlinequiz.util.page = {
             // Update action-menu-1-menubar
             var menubar = actionmenu.one(this.SELECTORS.ACTIONMENUBAR);
             menubar.set('id', this.CONSTANTS.ACTIONMENUIDPREFIX + id + this.CONSTANTS.ACTIONMENUBARIDSUFFIX);
+
             // Update action-menu-1-menu
             var menumenu = actionmenu.one(this.SELECTORS.ACTIONMENUMENU);
             menumenu.set('id', this.CONSTANTS.ACTIONMENUIDPREFIX + id + this.CONSTANTS.ACTIONMENUMENUIDSUFFIX);
+
+            // Update the URL of the add-section action.
+            menumenu.one(this.SELECTORS.ADDASECTION).set('href',
+                menumenu.one(this.SELECTORS.ADDASECTION).get('href').replace(/\baddsectionatpage=\d+\b/, 'addsectionatpage=' + id));
+
         }, this);
     },
 
@@ -287,7 +301,9 @@ Y.Moodle.mod_offlinequiz.util.page = {
      * @return {node[]} An array containing page nodes.
      */
     getActionMenus: function() {
-        return Y.all(Y.Moodle.mod_offlinequiz.util.slot.SELECTORS.PAGECONTENT + ' ' + Y.Moodle.mod_offlinequiz.util.slot.SELECTORS.SECTIONUL + ' ' + this.SELECTORS.ACTIONMENU);
+        return Y.all(Y.Moodle.mod_offlinequiz.util.slot.SELECTORS.PAGECONTENT + ' ' +
+                     Y.Moodle.mod_offlinequiz.util.slot.SELECTORS.SECTIONUL + ' ' +
+                     this.SELECTORS.ACTIONMENU);
     },
 
     /**

@@ -59,7 +59,7 @@ define("OFFLINEQUIZ_PART_USER_ERROR", "23");
 define("OFFLINEQUIZ_PART_LIST_ERROR", "24");
 define("OFFLINEQUIZ_IMPORT_NUMUSERS", "50");
 
-define('OFFLINEQUIZ_USER_FORMULA_REGEXP', "/^([0-9a-zA-Z]*)\[([\-]?[0-9]+)\]([0-9a-zA-Z]*)=([a-z]+)$/");
+define('OFFLINEQUIZ_USER_FORMULA_REGEXP', "/^([^\[]*)\[([\-]?[0-9]+)\]([^\=]*)=([a-z]+)$/");
 
 define('OFFLINEQUIZ_GROUP_LETTERS', "ABCDEFGHIJKL");  // Letters for naming offlinequiz groups.
 
@@ -997,7 +997,6 @@ function offlinequiz_update_sumgrades($offlinequiz, $offlinegroupid = null) {
     $DB->execute($sql, $params);
 
     $sumgrades = $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $groupid));
-
     return $sumgrades;
 }
 
@@ -1563,6 +1562,10 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
             // Remove all paragraph tags because they mess up the layout.
             $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
             $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
+            //rewrite image URLs
+            $answertext = question_rewrite_question_preview_urls($answertext, $question->id,
+            $question->contextid, 'question', 'answer', $question->options->answers[$answer]->id,
+            $context->id, 'offlinequiz');
 
             echo "<div class=\"answer\">$letterstr[$key])&nbsp;&nbsp;";
             echo $answertext;
@@ -1656,9 +1659,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
 
     // Define table columns.
     $tablecolumns = array('checkbox', 'picture', 'fullname', $offlinequizconfig->ID_field, 'number', 'attempt', 'checked');
-    $tableheaders = array('<input type="checkbox" name="toggle" onClick="' .
-                          'if (this.checked) {select_all_in(\'DIV\', null, \'tablecontainer\');} ' .
-                          ' else {deselect_all_in(\'DIV\', null, \'tablecontainer\');}"/>',
+    $tableheaders = array('<input type="checkbox" name="toggle" class="select-all-checkbox"/>',
             '', get_string('fullname'), get_string($offlinequizconfig->ID_field), get_string('participantslist', 'offlinequiz'),
             get_string('attemptexists', 'offlinequiz'), get_string('present', 'offlinequiz'));
 
@@ -1735,7 +1736,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
                 $attempt = false;
             }
             $row = array(
-                    '<input type="checkbox" name="participantid[]" value="'.$participant->id.'" />',
+                    '<input type="checkbox" name="participantid[]" value="'.$participant->id.'"  class="select-multiple-checkbox"/>',
                     $picture,
                     $userlink,
                     $participant->{$offlinequizconfig->ID_field},
@@ -1789,7 +1790,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
         print_string('downloadresultsas', 'offlinequiz');
         echo "</td><td>";
         echo html_writer::select($options, 'download', '', false);
-        echo '<input type="submit" value="' . get_string('go') . '" />';
+        echo '<button type="submit" class="btn btn-primary" >' . get_string('go') . '</button>';
         echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'.
             "\n-->\n".'</script>';
         echo "</td>\n";
@@ -1823,7 +1824,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
     echo html_writer::select($options, 'checkoption', $checkoption);
     echo '</td></tr>';
     echo '<tr><td colspan="2" align="center">';
-    echo '<input type="submit" value="'.get_string('go').'" />';
+    echo '<button type="submit" class="btn btn-secondary" >' .get_string('go'). '</button>';
     echo '</td></tr></table>';
     echo '</center>';
     echo '</form>';
@@ -1964,7 +1965,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
         }
         $rownum = 1;
     } else if ($fileformat == 'CSV') {
-        $filename .= ".txt";
+        $filename .= ".csv";
 
         header("Content-Type: application/download\n");
         header("Content-Disposition: attachment; filename=\"$filename\"");

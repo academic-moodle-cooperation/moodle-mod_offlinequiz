@@ -181,6 +181,7 @@ class custom_view extends \core_question\bank\view {
                     'type' => 'submit',
                     'name' => 'add',
                     'value' => get_string('addtoofflinequiz', 'offlinequiz'),
+            		'class' => 'btn btn-primary'
             );
             if ($cmoptions->hasattempts) {
                 $params['disabled'] = 'disabled';

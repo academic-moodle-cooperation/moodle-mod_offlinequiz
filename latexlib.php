@@ -210,25 +210,27 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
  */
 function offlinequiz_convert_html_to_latex($text) {
     $conversiontable = array(
-            'Ä' => '\"A',
-            'ä' => '\"a',
-            'Ö' => '\"O',
-            'ö' => '\"o',
-            'Ü' => '\"U',
-            'ü' => '\"u',
-            'ß' => '\ss',
+            'Ä' => '{\"A}',
+            'ä' => '{\"a}',
+            'Ö' => '{\"O}',
+            'ö' => '{\"o}',
+            'Ü' => '{\"U}',
+            'ü' => '{\"u}',
+            'ß' => '{\ss}',
             '&nbsp;' => ' ',
             '#' => '\#',
-            '%' => '\%'
+            '%' => '\%',
+    		'<b>' => '\textbf{',
+    		'</b>' => '}',
+    		'<i>' => '\textit{',
+    		'</i>' => '}',
+    		'<u>' => '\underline{',
+    		'</u>' => '}',
+    		'&gt;' => '>',
+    		'&lt;' => '<'
+
     );
-    // Remove all HTML comments (typically from MS Office).
-    $text = preg_replace("/<!--.*?--\s*>/ms", "", $text);
-    // Remove all paragraph tags because they mess up the layout.
-    $text = preg_replace("/<p[^>]*>/ms", "", $text);
-    $text = preg_replace("/<\/p[^>]*>/ms", "", $text);
-    // Remove <script> tags that are created by mathjax preview.
-    $text = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $text);
-    $text = strip_tags($text);
+    $text = strip_tags($text,"<i><b><u>");
     foreach ($conversiontable as $search => $replace) {
         $text = str_ireplace($search, $replace, $text);
     }

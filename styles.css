@@ -22,7 +22,7 @@
  * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.1
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
+ *AA
  **/
 
 #page-mod-offlinequiz-attempt #page .controls,
@@ -38,7 +38,8 @@
     color: #000000;
     margin-top: 15px;
     }
-
+#page-mod-offlinequiz-review  div.correct i.icon,
+#page-mod-offlinequiz-review  div.incorrect i.icon {margin-left: 0.5em;}
 
 body.jsenabled .questionflagcheckbox {display: none;}
 
@@ -69,11 +70,11 @@ body.jsenabled .questionflagcheckbox {display: none;}
 .path-mod-offlinequiz .qnbutton.notyetanswered,
 .path-mod-offlinequiz .qnbutton.requiresgrading,
 .path-mod-offlinequiz .qnbutton.invalidanswer {background-color: white;}
-.path-mod-offlinequiz .qnbutton.correct {background-color: #cfc;}
+.path-mod-offlinequiz .answer .correct {background-color: #cfc;}
 .path-mod-offlinequiz .qnbutton.correct .trafficlight {border-bottom: 3px solid #080;}
 .path-mod-offlinequiz .qnbutton.partiallycorrect {background-color: #ffa;}
 .path-mod-offlinequiz .qnbutton.notanswered,
-.path-mod-offlinequiz .qnbutton.incorrect {background-color: #fcc;}
+.path-mod-offlinequiz .answer .incorrect {background-color: #fcc;}
 .path-mod-offlinequiz .qnbutton.notanswered .trafficlight,
 .path-mod-offlinequiz .qnbutton.incorrect .trafficlight {border-top: 3px solid #800;}
 
@@ -188,6 +189,10 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 
 #page-mod-offlinequiz-report div#commands,
 #page-mod-offlinequiz-report .controls {text-align: center;}
+#page-mod-offlinequiz-report .display-options {margin-top: 1em; text-align: center;}
+#page-mod-offlinequiz-report .downloadoptions .text-xs-right {text-align: center !important;}
+#page-mod-offlinequiz-report table#overview-options {margin-left: auto; margin-right: auto;}
+#page-mod-offlinequiz-report .menunoresults {margin-top: 1em;}
 #page-mod-offlinequiz-report .dubious{background-color: #fcc;}
 #page-mod-offlinequiz-report .highlight{border :medium solid yellow;background-color:lightYellow;}
 #page-mod-offlinequiz-report .negcovar{border :medium solid pink; width: 70%; float: right;}
@@ -226,9 +231,10 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-report #cachingnotice .singlebutton {margin: 0.5em 0 0;}
 #page-mod-offlinequiz-report .bold .reviewlink {font-weight: normal;}
 #page-mod-offlinequiz-report div.notify { text-align: center; }
-#page-mod-offlinequiz-report div.notifynote { color: #0044bb; }
+#page-mod-offlinequiz-report div.notifynote { background-color: lightYellow; color: #3a3a3a; border: 0}
 #page-mod-offlinequiz-report div.backlinkbox { padding-top: 10px; }
 #page-mod-offlinequiz-report table.errorpages td.checkbox input  { margin-left: 0px; float: none; }
+#page-mod-offlinequiz-report .boxaligncenter {margin: 0 auto;}
 
 /** settings.php */
 #adminofflinequizreviewoptions {margin-bottom: 0.5em;}
@@ -291,13 +297,12 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr .fitem, .dir-rtl  #adminofflinequizreviewoptions .group { width: 23%;float: right;}
 #page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr .fitemtitle, .dir-rtl  #adminofflinequizreviewoptions .fitemtitle {text-align: right;}
 #page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr fieldset.fgroup span, .dir-rtl  #adminofflinequizreviewoptions span {clear: right;float: right;}
-}
 
 #page-mod-offlinequiz-createquiz div.answer img.texrender {
     vertical-align: middle;
 }
-#page-mod-offlinequiz-report div.notifynote {
-    color: #006699;
+#page-mod-offlinequiz-report .dowloadoptions .text-xs-right {
+	text-align: center !important;
 }
 #page-mod-offlinequiz-report table#statsoverviewtable {
     border: 1px solid #DDD;
@@ -487,6 +492,13 @@ input#showviewbutton {
     margin: 0.4em;
 }
 
+#page-mod-offlinequiz-edit .btn.savechanges {
+	margin-left: 0.4em;
+}
+
+#page-mod-offlinequiz-edit input#inputmaxgrade {
+	width: 4em;
+}
 
 #page-mod-offlinequiz-edit li.activity > div,
 #page-mod-offlinequiz-edit li.pagenumber {
@@ -510,7 +522,7 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit .slotnumber {
     background-color: #D3D3D3;
     text-align: center;
-    margin: 0.1em 0.5em;
+    margin: 0.1em 1em;
     min-width: 2em;
     display: inline-block;
 }
@@ -526,6 +538,11 @@ input#showviewbutton {
     margin: 0;
     color: #777;
     font-weight: normal;
+}
+#page-mod-offlinequiz-edit ul.slots li.section li.activity.page h4 {
+    display: inline;
+    font-weight: normal;
+    font-size: 1em;
 }
 #page-mod-offlinequiz-edit ul.slots li.section .left {
     padding: 4px 0;
@@ -635,9 +652,9 @@ input#showviewbutton {
     min-width: 5.45em;
 }
 
-/* #page-mod-offlinequiz-edit .menucopyselectedtogrouptop { */
-/*     font-size: 1em;	 */
-/* } */
+#page-mod-offlinequiz-edit .menucopyselectedtogrouptop {
+    margin-right: 1em;
+} 
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .edit_icon,
 #page-mod-offlinequiz-edit ul.slots li.section li.activity a.preview,
@@ -647,12 +664,16 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .question_checkbox {
-	position: absolute;
+    padding-left: 0.3em;
+    padding-top: 0.2em;
+	position: absolute;	
     left: 0px;
 }
 
-#page-mod-offlinequiz-edit ul.slots li.section li.activity .editing_move {
-    left: 15px;
+#page-mod-offlinequiz-edit .section .activity .editing_move {
+    position: absolute;
+    top: 0;
+	left: 25px;
 }
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .activityinstance {
@@ -804,9 +825,9 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit ul.slots .activityinstance img.activityicon {
-    float: left;
-    margin: .2em 0 0;
-    padding: 0;
+    padding: 0 0 3px 0;
+    height: 16px;
+    width: 16px;
 }
 #page-mod-offlinequiz-edit.dir-rtl ul.slots .activityinstance img.activityicon {
     float: right;
@@ -824,6 +845,9 @@ input#showviewbutton {
     padding: 0px 2px 0px 0px;
     text-align: right;
     vertical-align: top;
+}
+#page-mod-offlinequiz-edit .mod-offlinequiz-edit-content {
+    padding-bottom: 12em;
 }
 
 #page-mod-offlinequiz-edit .mod_offlinequiz_edit_forms {

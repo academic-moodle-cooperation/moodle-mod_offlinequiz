@@ -91,6 +91,7 @@ $thispageurl = new moodle_url('/mod/offlinequiz/participants.php',
 $PAGE->set_url($thispageurl);
 $PAGE->set_pagelayout('admin');
 $node = $PAGE->settingsnav->find('mod_offlinequiz_participants', navigation_node::TYPE_SETTING);
+$PAGE->force_settings_menu(true);
 if ($node) {
     $node->make_active();
 }
@@ -98,6 +99,14 @@ if ($node) {
 $pagetitle = get_string('editparticipants', 'offlinequiz');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
+$PAGE->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
+		'M.mod_offlinequiz.init_resource_toolbox',
+		array(array(
+				'courseid' => $course->id,
+				'offlinequizid' => $offlinequiz->id
+		))
+		);
+
 
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
@@ -186,13 +195,13 @@ switch($mode) {
                     array('mode' => 'editparticipants', 'q' => $offlinequiz->id ,'listid' => $list->id));
             echo html_writer::link($listurl, $listname);
             $streditlist = get_string('editthislist', 'offlinequiz');
-            $imagehtml = html_writer::img($OUTPUT->pix_url('i/edit'),  $streditlist);
+            $imagehtml = $OUTPUT->pix_icon('i/edit',  $streditlist);
             $editurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                     array('mode' => 'editlists', 'action' => 'edit' , 'q' => $offlinequiz->id ,'listid' => $list->id));
             echo html_writer::link($editurl, $imagehtml, array('class' => 'editlistlink'));
 
             $strdeletelist = get_string('deletethislist', 'offlinequiz');
-            $imagehtml = html_writer::img($OUTPUT->pix_url('t/delete'),  $strdeletelist);
+            $imagehtml = $OUTPUT->pix_icon('t/delete',  $strdeletelist);
             $deleteurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                     array('mode' => 'editlists',
                           'action' => 'delete',
@@ -460,8 +469,11 @@ switch($mode) {
 			        <input type="hidden" name="q" value="<?php echo $offlinequiz->id ?>" />
 			        <input type="hidden" name="forcenew" value="1" />
 			        <input type="hidden" name="mode" value="createpdfs" />
-			        <input type="submit" value="<?php echo get_string('deleteupdatepdf', 'offlinequiz') ?>"
-				    onClick='return confirm("<?php echo get_string('realydeleteupdatepdf', 'offlinequiz') ?>")' />
+			        <button type="submit"
+				    onClick='return confirm("<?php echo get_string('reallydeleteupdatepdf', 'offlinequiz') ?>")' 
+				    class="btn btn-secondary">
+				    	<?php echo get_string('deleteupdatepdf', 'offlinequiz') ?>
+				    </button>
                 </div>
 	        </form>
 	        <br>&nbsp;<br>
@@ -583,8 +595,11 @@ switch($mode) {
                 $files = array();
                 $mimetype = mimeinfo('type', $importfile);
                 if ($mimetype == 'application/zip') {
-                    if (unzip_file($importfile)) {
+                    $fp = get_file_packer('application/zip');
+                    $files = $fp->extract_to_pathname($importfile, $tempdir);
+                    if ($files) {
                         unlink($importfile);
+                        $files = get_directory_list($tempdir);
                     } else {
                         echo $OUTPUT->notification(get_string('couldnotunzip', 'offlinequiz_rimport', $realfilename),
                                                    'notifyproblem');

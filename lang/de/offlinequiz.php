@@ -52,7 +52,7 @@ $string['allstudents'] = 'Alle Teilnehmer/innen anzeigen';
 $string['alwaysavailable'] = 'Immer verfügbar';
 $string['analysis'] = 'Ergebnisanalyse';
 $string['answerform'] = 'Antwortbogen';
-$string['answerforms'] = 'Antwortboegen';
+$string['answerforms'] = 'Antwortbögen';
 $string['answerformforgroup'] = 'Antwortbogen für Gruppe {$a}';
 $string['answerpdfxy'] = 'Antwortbogen ({$a->maxquestions} Fragen / {$a->maxanswers} Antworten je Frage)';
 $string['areyousureremoveselected'] = 'Wollen Sie wirklich alle ausgewählten Fragen entfernen?';
@@ -75,7 +75,7 @@ $string['configkeepfilesfordays'] = 'Stellen Sie ein, wie lange hochgeladene Bil
 $string['configonlylocalcategories'] = 'Keine öffentlichen Fragekategorien zulassen.';
 $string['configpapergray'] = 'Weißwert des Papieres, das für Antwortbögen verwendet wird.';
 $string['configshufflequestions'] = 'Wenn Sie diese Option aktivieren werden die Fragen jeder Offline-Test Gruppe nach dem Zufallsprinzip gemischt.';;
-$string['configshufflewithin'] = 'Wenn Sie diese Option aktivieren, werden die Antworten jeder Multple-Choice Frage nach dem Zufallsprinzip gemischt.';
+$string['configshufflewithin'] = 'Wenn Sie diese Option aktivieren, werden die Antworten jeder Multiple-Choice Frage nach dem Zufallsprinzip gemischt.';
 $string['configuseridentification'] = 'Eine Formel, die die Identifikation von Nutzer/innen beschreibt. Diese Formel wird verwendet, um hochgeladene Antwortbögen den richtigen Nutzer/innen zuzuordnen. Die rechte Seite der Gleichung muss ein Feld der "user" Tabelle von Moodle sein.';
 $string['confirmremovequestion'] = 'Sind Sie sicher, dass Sie die Frage des Typs {$a} entfernen wollen?';
 $string['pluginadministration'] = 'Offline-Test Administration';
@@ -85,7 +85,7 @@ $string['copytogroup'] = 'Alle Fragen zu Gruppe {$a} ';
 $string['correcterror'] = 'korrigieren';
 $string['correctforgroup'] = 'Korrekturbogen für Gruppe {$a}';
 $string['correctionform'] = 'Korrekturbogen';
-$string['correctionforms'] = 'Korrekturboegen';
+$string['correctionforms'] = 'Korrekturbögen';
 $string['correctionoptionsheading'] = 'Einstellungen für Korrektur von Antwortbögen';
 $string['correctupdated'] = 'Korrekturbogen für Gruppe {$a} angepasst.';
 $string['correct'] = 'richtig';
@@ -244,7 +244,7 @@ $string['instruction1'] = 'Dieser Antwortbogen wird maschinell gelesen. Bitte ni
 $string['instruction2'] = 'Nur deutlich erkennbare positionsgenaue Markierungen werden ausgewertet! Wenn Sie eine Ankreuzung korrigieren möchten, füllen Sie das Kästchen mit der Falsch-Markierung mit Ihrem Stift vollkommen aus, dadurch wird diese Ankreuzung wie ein leeres Kästchen gewertet:';
 $string['instruction3'] = 'Ausstreichungen können nicht noch mal korrigiert werden. Markierungen und Beschriftungen außerhalb der Kästchenfelder können die Auswertung behindern.';
 $string['introduction'] = 'Beschreibung';
-$string['invalidformula'] = 'Ungültige Formel zur Identifikation von Nutzer/innen. Die Formel muss folgende Form haben: &lt;Präfix&gt;[&lt;#Ziffern&gt;]&lt;Suffix&gt;=&lt;DB-Feld&gt;.';
+$string['invalidformula'] = 'Ungültige Formel zur Identifikation von Nutzer/innen. Die Formel muss folgende Form haben: <Präfix>[<#Ziffern>]<Suffix>=<DB-Feld>.';
 $string['invalidnumberofdigits'] = 'Formel enthält ungültige Anzahl von Ziffern. Es werden 1 bis 9 Ziffern unterstützt.';
 $string['invaliduserfield'] = 'Formel enthält ungültiges Feld der Tabelle "user".';
 $string['invigilator'] = 'Saalaufsicht';
@@ -277,7 +277,7 @@ $string['modulename'] = 'Offline-Test';
 $string['modulenameplural'] = 'Offline-Tests';
 $string['modulename_help'] = 'Dieses Modul erlaubt die Erstellung von Fragebogen-Tests mit Multiple-Choice-Fragen.
 Die Fragen werden in der Moodle-Fragendatenbank gespeichert und können in anderen Offline- und Online-Tests wiederverwendet werden.
-Das Modul erstellt Frage- und Antwortbögen, die als PDF- oder DOCX-Dateien heruntergeladen werden können. Auf den ausgedruckten Antwortbögen werden die Antworten von den Teilnehmer/innen angekreuzt.
+Das Modul erstellt Frage- und Antwortbögen, die als PDF-, DOCX- oder LaTeX-Dateien heruntergeladen werden können. Auf den ausgedruckten Antwortbögen werden die Antworten von den Teilnehmer/innen angekreuzt.
 Die Resultate werden eigescannt und in das Moodle System importiert.';
 $string['moodleprocessing'] = 'Belege durch Moodle auswerten';
 $string['movecorners'] = 'Ziehen Sie die Eckmarkierungen per Drag-and-Drop zunächst in die richtige Position.';
@@ -354,10 +354,12 @@ $string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
 $string['overallfeedback'] = 'Generelles Feedback';
 $string['overview'] = 'Übersicht';
 $string['pagecorrected'] = 'Korrigierter Bogen der Anwesenheitsliste importiert';
+$string['pageevaluationtask'] = 'Evaluierung der Antwortbögen im Offlinequiz-Plugin';
 $string['pageimported'] = 'Bogen der Anwesenheitsliste importiert';
 $string['page-mod-offlinequiz-x'] = 'Jede Offline-Test-Seite';
 $string['page-mod-offlinequiz-edit'] = 'Offline-Test Bearbeiten-Seite';
 $string['pagenumberimported'] = 'Bogen {$a} der Anwesenheitsliste importiert';
+$string['pagenumberupdate'] = 'Aktualisierung der Seitenzahlen';
 $string['pagenotdetected'] = 'Barcode für Zuordnung der Seite nicht erfassbar!';
 $string['pagesizeparts'] = 'Einträge pro Seite:';
 $string['papergray'] = 'Weißwert des Papiers';
@@ -404,7 +406,7 @@ $string['previewforgroup'] = 'Vorschau für Gruppe {$a}';
 $string['preview'] = 'Vorschau';
 $string['previewquestion'] = 'Vorschau der Frage';
 $string['printstudycodefield'] = 'Studienkennzahlfeld auf Fragebogen drucken';
-$string['printstudycodefield_help'] = 'Hier können Sie festlegen, ob am Decklatt des Fragebogens der Punkt Studienkennzahl abgefragt wird oder nicht.';
+$string['printstudycodefield_help'] = 'Hier können Sie festlegen, ob am Deckblatt des Fragebogens der Punkt Studienkennzahl abgefragt wird oder nicht.';
 $string['questionanalysis'] = 'Schwierigkeitsübersicht';
 $string['questionanalysistitle'] = 'Schwierigkeitsübersicht';
 $string['questionbankcontents'] = 'Die Frage-Reihe beinhaltet';
@@ -457,10 +459,9 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 
 % ===========================================================================================================
 %%% Die Lehrveranstaltungs-Daten:
-\begin{center}{Universit\"at Wien}\end{center}
 \begin{center}{\LARGE {$a->coursename}}\end{center}
-\begin{center}{Schriftlich Pr\"ufung{$a->date}}\end{center}
-%%% In der folgenden Zeile bei Erstellen des endgültigen Fragebogens den Namen der Gruppe einfügen!
+\begin{center}{Schriftliche Pr\"ufung {$a->date}}\end{center}
+%%%
 \def\Group{{$a->groupname}}
 \begin{center}{\Large Gruppe \Group}\end{center}
 
@@ -481,8 +482,8 @@ $string['quizopenclose'] = 'Anfangs- und Endzeiten';
 $string['quizopenclose_help'] = 'Teilnehmer/innen können ihre Ergebnisse nur zwischen Anfangs- und Endzeit sehen.';
 $string['randomnumber'] = 'Anzahl der Fragen';
 $string['readjust'] = 'Neu adjustieren';
-$string['realydeletepdfs'] = 'Möchten Sie die Formulare wirklich löschen?';
-$string['realydeleteupdatepdf'] = 'Möchten Sie die Anwesenheitsliste wirklich löschen und aktualisieren?';
+$string['reallydeletepdfs'] = 'Möchten Sie die Formulare wirklich löschen?';
+$string['reallydeleteupdatepdf'] = 'Möchten Sie die Anwesenheitsliste wirklich löschen und aktualisieren?';
 $string['recurse'] = 'Fragen aus Unterkategorien mit einbeziehen';
 $string['rediswrong'] = 'falsch angekreuzt oder fälschlich nicht angekreuzt';
 $string['refreshpreview'] = 'Vorschau aktualisieren';
@@ -554,11 +555,13 @@ $string['scanneroptions'] = 'Scanner-Einstellungen';
 $string['scannerpdfs'] = 'Leere Formulare';
 $string['scannerpdfstext'] = 'Laden Sie die folgenden leeren Antwortbögen herunter, wenn Sie Ihre eigene Scannersoftware verwenden wollen.';
 $string['score'] = 'Bewertung';
+$string['search:activity'] = 'Offline-Test - Aktivitätsinformation';
 $string['selectdifferentgroup'] = 'Bitte wählen Sie eine andere Gruppe!';
 $string['selectagroup'] = 'Gruppe auswählen';
 $string['selectall'] = 'Alle auswählen';
 $string['selectcategory'] = 'Kategorie auswählen';
 $string['selectedattempts'] = 'Ergebnisse auswählen...';
+$string['selectmultipletoolbar'] = 'Werzeugleiste zur Mehrfachauswahl';
 $string['selectnone'] = 'Keine auswählen';
 $string['selectformat'] = 'Dateiformat wählen...';
 $string['selectgroup'] = 'Basierend auf Gruppe:';

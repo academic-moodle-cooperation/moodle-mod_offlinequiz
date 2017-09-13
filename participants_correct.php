@@ -449,7 +449,6 @@ $javascript = "<script language=\"JavaScript\">
               alert(\"" . addslashes(get_string('insecuremarkings', 'offlinequiz')) . "\");
           }
       }
-      console.log(userid.attr('value'));
       if (checkbox.attr('value') == '1' && userid.attr('value') == '0') {
           document.getElementById('b'+i).setAttribute('class', 'barcodeselect barcodeerror');
           missinguserid = true;
