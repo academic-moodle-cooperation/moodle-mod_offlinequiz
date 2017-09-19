@@ -28,25 +28,28 @@ class offlinequiz_groupnumberscanner {
    public function __construct($boxscanner) {
        $this->boxscanner = $boxscanner;
    }
-
+	//Read the group number of the page
     public function scan_group_number(offlinequiz_result_page $page) {
         global $DB;
+        //Find the guessed middles of all group question boxes
         $points = $this->calculate_group_number_middles($page);
-        $count = 0;
+        $amountofcrosses = 0;
         $number = -1;
+        // go through every box and find out if its crossed out
         for($i = 0, $size = count($points); $i < $size; ++$i) {
-            $box = $this->boxscanner->scan_box($page,$points[$i],BOX_SIZE);
-            if($box) {
-                $count++;
+            $boxresult = $this->boxscanner->scan_box($page,$points[$i],BOX_SIZE);
+            //if the result of the box is "crossed" or "uncertain" raise the number of crosses
+            if($boxresult) {
+                $amountofcrosses++;
                 $number = $i;
             }
         }
-        if($count>1 || $count == 0 ) {
+        if($amountofcrosses>1 || $amountofcrosses == 0 ) {
             $page->status = PAGE_STATUS_GROUP_ERROR;
         }
         else {
-            print_object($number);
             $number++;
+            print("groupnumber: " . $number);
             $group = $DB->get_record('offlinequiz_groups',array('offlinequizid' => $page->offlinequizid, 'number' => $number ));
             if($group) {
                 $page->group = $group;

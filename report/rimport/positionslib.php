@@ -20,10 +20,11 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 
 define("A4_WIDTH", "2100");                    // Paper size.
 define("A4_HEIGHT", "2970");
-define("CORNER_SPACE_LEFT","125");
-define("CORNER_SPACE_RIGHT","155");
-define("CORNER_SPACE_BOTTOM","120");
-define("CORNER_SPACE_TOP","120");
+define("CORNER_SPACE_LEFT","125");				// The space, between the left side of paper and the cross of the left side 
+define("CORNER_SPACE_RIGHT","155");             //The space, between the right side of paper and the cross of the right side 
+define("CORNER_SPACE_TOP","120");				//The space between the top of the side and the crosses on top
+define("CORNER_SPACE_BOTTOM","120");			//The space between the bottom of the side and the crosses on the bottom
+
 define("LAYER_WIDTH", A4_WIDTH - CORNER_SPACE_LEFT-CORNER_SPACE_RIGHT);
 define("LAYER_HEIGHT", A4_HEIGHT - CORNER_SPACE_TOP - CORNER_SPACE_BOTTOM);
 define("DIAGONAL_LENGTH",sqrt(pow(LAYER_WIDTH, 2)+pow(LAYER_HEIGHT, 2)) );

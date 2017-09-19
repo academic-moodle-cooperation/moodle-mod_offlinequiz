@@ -16,19 +16,28 @@
 namespace offlinequiz_result_import;
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/positionslib.php');
-define('PAGE_NUMBER_DISTANCE_X',1576);
+//horizontal distance between the upper left corner and the beginning of the page number box
+define('PAGE_NUMBER_DISTANCE_X',1570);
+//vertical distance between the upper left corner and the beginning of the page number box
 define('PAGE_NUMBER_DISTANCE_Y',2651);
+// Height of the page number box
 define('PAGE_NUMBER_HEIGHT',36);
+// width of the page number box
 define('PAGE_NUMBER_WIDTH',181);
 define('PAGE_NUMBER_CELLS',26);
 define('PAGE_NUMBER_CELL_WIDTH',PAGE_NUMBER_WIDTH/PAGE_NUMBER_CELLS);
 define('PAGE_NUMBER_MEASURING_POINT_COUNT',5);
 class offlinequiz_pagenumberscanner {
 
+	// the Page number box is a binary encoded page number
     public function scan_page_number(offlinequiz_result_page $page) {
+    	//TODO
+    	$page->pagenumber= 1;
+    	return;
         $result = 0;
         $positions = $this->find_positions($page);
         $image = $page->image;
+        // For every line in the cell we measure a uneven amount of times from top to bottom
         for($i = 0;$i<PAGE_NUMBER_CELLS;$i++) {
             $count=0;
             for($j=0;$j<PAGE_NUMBER_MEASURING_POINT_COUNT;$j++) {
@@ -37,6 +46,7 @@ class offlinequiz_pagenumberscanner {
                 }
 
             }
+            // and if we find more black pixels than white, we consider it black
             if($count>PAGE_NUMBER_MEASURING_POINT_COUNT/2) {
                 $result = $result + pow(2,PAGE_NUMBER_CELLS-($i+1));
             }
@@ -55,6 +65,7 @@ class offlinequiz_pagenumberscanner {
                 $positions[$i][$j] = calculate_point_relative_to_corner($page,new offlinequiz_point($x, $y, 2));
             }
         }
+//         print_object($positions);
         return $positions;
 
     }

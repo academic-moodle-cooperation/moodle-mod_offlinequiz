@@ -46,7 +46,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 
     raise_memory_limit(MEMORY_EXTRA);
 
-<<<<<<< HEAD
+
 //     // Only count the jobs with status processing that have been started in the last 24 hours.
 //     $expiretime = time() - 86400;
 //     $runningsql = "SELECT COUNT(*)
@@ -289,10 +289,11 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 //         }
 
 //     } // End foreach.
-    $offlinequiz->id=2;
+    $offlinequiz->id=6;
     $contextid = 0;
     $time = round(microtime(true) * 1000);
-    $engine = new offlinequiz_result_engine($offlinequiz, $contextid,"/home/wedekit8/moodle/import/c2.tif");
+//     $engine = new offlinequiz_result_engine($offlinequiz, $contextid,"/home/wedekit8/moodle/import/scan_1010_001.tif");
+    $engine = new offlinequiz_result_engine($offlinequiz, $contextid,"/home/wedekit8/moodle/import/c7.tif");
     $resultpage = $engine->scanpage();
     print_object($resultpage);
     print(round(microtime(true) * 1000)-$time);

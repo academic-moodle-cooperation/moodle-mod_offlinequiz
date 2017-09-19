@@ -850,6 +850,12 @@ input#showviewbutton {
     padding-bottom: 12em;
 }
 
+#page-mod-offlinequiz-edit .section .activity .activityinstance > a {
+    text-indent: 0;
+    padding-left: 0;
+}
+
+
 #page-mod-offlinequiz-edit .mod_offlinequiz_edit_forms {
     display: none;
 }

@@ -22,7 +22,7 @@ class offlinequiz_point {
     //Mode of the point:
     //Mode 0: guessed point in millimeter*10 (x = 10 and x=0 are 1 mm away from each other)
     //Mode 1: found pixel in an image;
-    //Mode 2: guessed pixel relative to corner in millimeter/10
+    //Mode 2: guessed point relative to corner in millimeter/10
     public $mode;
 
     public function __construct($x, $y , $mode) {
@@ -44,7 +44,7 @@ class offlinequiz_point {
        return ($this->mode == 1 );
     }
     public function getdistance() {
-        return sqrt(pow(x, 2)+ pow(y,2));
+        return sqrt(pow($this->x, 2)+ pow($this->y,2));
     }
 
 }
