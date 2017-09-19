@@ -854,6 +854,12 @@ input#showviewbutton {
     display: none;
 }
 
+#page-mod-offlinequiz-edit .section .activity .activityinstance > a {
+    text-indent: 0;
+    padding-left: 0;
+}
+
+
 #categoryquestions > tbody > tr:nth-of-type(even) {
     background: #e4e4e4;
 }
