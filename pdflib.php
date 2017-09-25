@@ -635,6 +635,11 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
             }
 
+            //This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
+            $html = preg_replace ( "/(<span class=\"MathJax_Preview\">.+?)+(title=\"TeX\" >)/ms", "", $html );
+            $html = preg_replace ( "/<\/a><\/span>/ms", "", $html );
+            $html = preg_replace ("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
+
             // Finally print the question number and the HTML string.
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
                 $pdf->SetFont('FreeSans', 'B', $offlinequiz->fontsize);
@@ -773,6 +778,12 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
                 $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
             }
+
+            //This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
+            $html = preg_replace ( "/(<span class=\"MathJax_Preview\">.+?)+(title=\"TeX\" >)/ms", "", $html );
+            $html = preg_replace ( "/<\/a><\/span>/ms", "", $html );
+            $html = preg_replace ("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
+
 
             $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $html );
             $pdf->Ln ();
