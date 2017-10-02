@@ -16,9 +16,9 @@
 namespace offlinequiz_result_import;
 
 define("PAGE_STATUS_OK", "STATUS_OK");
-define("PAGE_STATUS_ALIGNMENT_ERROR","ALIGNMENT_ERROR");
+define("PAGE_STATUS_ALIGNMENT_ERROR","PAGE_STATUS_ALIGNMENT_ERROR");
 define("PAGE_STATUS_GROUP_ERROR","PAGE_STATUS_GROUP_ERROR");
-define("PAGE_STUDENT_ID_ERROR","PAGE_STUDENT_ID_ERROR");
+define("PAGE_STATUS_STUDENT_ID_ERROR","PAGE_STATUS_STUDENT_ID_ERROR");
 class offlinequiz_result_page {
 
 
@@ -29,10 +29,11 @@ class offlinequiz_result_page {
     public $group;
     public $image;
     public $scanproperties;
+    public $scannedpageid;
     public $positionproperties;
     public $offlinequizid;
     public $status;
-    public $studentidnumbers;
+    public $studentidziphers;
     public $userid;
 
 

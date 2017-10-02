@@ -20,10 +20,10 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 
 define("A4_WIDTH", "2100");                    // Paper size.
 define("A4_HEIGHT", "2970");
-define("CORNER_SPACE_LEFT","125");				// The space, between the left side of paper and the cross of the left side 
-define("CORNER_SPACE_RIGHT","155");             //The space, between the right side of paper and the cross of the right side 
-define("CORNER_SPACE_TOP","120");				//The space between the top of the side and the crosses on top
-define("CORNER_SPACE_BOTTOM","120");			//The space between the bottom of the side and the crosses on the bottom
+define("CORNER_SPACE_LEFT","124.5");				// The space, between the left side of paper and the cross of the left side 
+define("CORNER_SPACE_RIGHT","154.5");             //The space, between the right side of paper and the cross of the right side 
+define("CORNER_SPACE_TOP","119.5");				//The space between the top of the side and the crosses on top
+define("CORNER_SPACE_BOTTOM","120.5");			//The space between the bottom of the side and the crosses on the bottom
 
 define("LAYER_WIDTH", A4_WIDTH - CORNER_SPACE_LEFT-CORNER_SPACE_RIGHT);
 define("LAYER_HEIGHT", A4_HEIGHT - CORNER_SPACE_TOP - CORNER_SPACE_BOTTOM);
@@ -33,7 +33,7 @@ function calculatewithoutadjustment($imagegeometry,offlinequiz_point $point ) {
 
      $xpercentage = $point->getx() / A4_WIDTH;
      $ypercentage = $point->gety() / A4_HEIGHT;
-     return new offlinequiz_point(round($xpercentage*$imagegeometry['width']), round($ypercentage*$imagegeometry['height']),false);
+     return new offlinequiz_point($xpercentage*$imagegeometry['width'], $ypercentage*$imagegeometry['height'],false);
 }
 
 function add_with_adjustment(offlinequiz_result_page $page,offlinequiz_point $initialpoint,offlinequiz_point $toadd) {
@@ -43,9 +43,9 @@ function add_with_adjustment(offlinequiz_result_page $page,offlinequiz_point $in
     $zoomfactory = $page->scanproperties->zoomfactory;
     $pointangle = calculatepointangle($toadd);
     $pointlength = calculatepointlength($toadd);
-    $x = $initialpoint->getx() + cos($pageangle+$pointangle)*$pointlength*$zoomfactorx;
+    $x = $initialpoint->getx() + cos(-$pageangle+$pointangle)*$pointlength*$zoomfactorx;
     $y = $initialpoint->gety() + sin($pageangle+$pointangle)*$pointlength*$zoomfactory;
-    return new offlinequiz_point(round($x), round($y), 1);
+    return new offlinequiz_point($x, $y, 1);
 }
 
 function add(offlinequiz_point $point,$addx,$addy,$mode) {
@@ -63,8 +63,8 @@ function calculatepoint(offlinequiz_point $initialpoint, offlinequiz_point $dire
 
     $directionangle = calculatepointangle($realdirection);
     $addeddirectionangle = $directionangle + $anglechange;
-    $resultx = $initialpoint->getx() + round(cos($addeddirectionangle)*$length);
-    $resulty = $initialpoint->gety() + round(sin($addeddirectionangle)*$length);
+    $resultx = $initialpoint->getx() + cos($addeddirectionangle*$length);
+    $resulty = $initialpoint->gety() + sin($addeddirectionangle*$length);
     return new offlinequiz_point( $resultx,$resulty, $initialpoint->isfound() && $directionpoint->isfound());
 }
 
@@ -73,7 +73,7 @@ function calculatepointangle(offlinequiz_point $point) {
         return atan($point->gety()/$point->getx());
     }
     else {
-        return pi() + atan($point->gety()/$point->getx());
+        return M_PI + atan($point->gety()/$point->getx());
     }
 }
 

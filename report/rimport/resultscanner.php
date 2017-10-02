@@ -22,12 +22,12 @@ define('ANSWERS_MAX_QUESTIONS_PER_COLUMN',24);
 //serialize arrays, as until php 7 arrays aren't supported in define
 define('ANSWERS_COLUMNS_PER_PAGE_LIMITS' , serialize(array(1 => 13, 2 => 8, 3 => 6)));
 
-define('ANSWERS_DISTANCE_X',96);
-define('ANSWERS_DISTANCE_Y',985);
+define('ANSWERS_DISTANCE_X',100);
+define('ANSWERS_DISTANCE_Y',988);
 define('ANSWERS_BOX_DISTANCE_X_NORMAL',65);
-define('ANSWERS_BOX_DISTANCE_X_NEW_COLUMN',serialize(array(1 => 0, 2 => 906, 3 => 582, 4 => 455))); //Distance between the begin of two columns, 1 => 0 for programming necessary  
+define('ANSWERS_BOX_DISTANCE_X_NEW_COLUMN',serialize(array(1 => 0, 2 => 906, 3 => 582, 4 => 454.7))); //Distance between the begin of two columns, 1 => 0 for programming necessary  
 define('ANSWERS_BOX_DISTANCE_Y_NORMAL',65);
-define('ANSWERS_BOX_DISTANCE_Y_NEW_BLOCK',565);
+define('ANSWERS_BOX_DISTANCE_Y_NEW_BLOCK',564.6);
 define('ANSWERS_BOX_SIZE',35);
 class offlinequiz_resultscanner {
     private $boxscanner;
@@ -143,15 +143,19 @@ class offlinequiz_resultscanner {
     private function calculate_result(offlinequiz_result_page $page,$columndistance,$position,$questiononpage,$answercount) {
     	print("position:");
     	print_object($position);
-//     	print("\nanswercount:" . $answercount . "\n");
+    	print("\nanswercount:" . $answercount . "\n");
         for($i=0;$i<$answercount;$i++) {
-            $expectedx = ANSWERS_DISTANCE_X + $columndistance * $position['column'] + ANSWERS_BOX_DISTANCE_X_NORMAL * $i + ANSWERS_BOX_SIZE/2;
-            $expectedy = ANSWERS_DISTANCE_Y + ANSWERS_BOX_DISTANCE_Y_NEW_BLOCK * $position['block'] + ANSWERS_BOX_DISTANCE_Y_NORMAL * $position['blockposition'] + ANSWERS_BOX_SIZE/2;
-//             print("expectedx: " . $expectedx . "\n");
-//             print("expectedy: " . $expectedy . "\n");
+            $expectedx = ANSWERS_DISTANCE_X + ($columndistance * $position['column']) + (ANSWERS_BOX_DISTANCE_X_NORMAL * $i) + (ANSWERS_BOX_SIZE/2);
+            $expectedy = ANSWERS_DISTANCE_Y + (ANSWERS_BOX_DISTANCE_Y_NEW_BLOCK * $position['block']) + (ANSWERS_BOX_DISTANCE_Y_NORMAL * $position['blockposition']) + (ANSWERS_BOX_SIZE/2);
+            print("expectedx: " . $expectedx . "\n");
+            print("expectedy: " . $expectedy . "\n");
             $page->answers[$questiononpage][$i]['position'] = calculate_point_relative_to_corner($page, new offlinequiz_point($expectedx, $expectedy, 1));
 //             print_object($page->answers[$questiononpage][$i]['position']);
-            $page->answers[$questiononpage][$i]['result'] = $this->boxscanner->scan_box($page,$page->answers[$questiononpage][$i]['position'],ANSWERS_BOX_SIZE);
+            $result  = $this->boxscanner->scan_box($page,$page->answers[$questiononpage][$i]['position'],ANSWERS_BOX_SIZE);
+            $page->answers[$questiononpage][$i]['result'] = $result;
+            if($result == -1) {
+            	$page->status = "PAGE_STATUS_INSECURE_RESULT";
+            }
         }
     }
 

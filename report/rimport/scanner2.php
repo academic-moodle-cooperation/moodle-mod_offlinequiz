@@ -23,7 +23,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/resultscanner.php'
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/groupnumberscanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/studentidscanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/boxscanner.php');
-
+require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/resultsaver.php');
 
 
 class offlinequiz_result_engine {
@@ -36,18 +36,21 @@ class offlinequiz_result_engine {
     private $studentidscanner;
     private $resultscanner;
     private $page;
+    private $resultsaver;
 
-    public function __construct($offlinequiz, $contextid,$filepath) {
+    public function __construct($offlinequiz, $contextid,$filepath,$scannedpageid) {
 
-
+    	$boxscanner = new weightediagonalboxscanner();
         $this->contextid = $contextid;
         $this->offlinequizid = $offlinequiz->id;
         $this->page = new offlinequiz_result_page(new \Imagick(realpath($filepath)),$this->offlinequizid);
+        $this->page->scannedpageid=$scannedpageid;
         $this->pagepositionscanner = new offlinequiz_pagepositionscanner($this->page);
-        $this->groupnumberscanner = new offlinequiz_groupnumberscanner(new pixelcountboxscanner());
+        $this->groupnumberscanner = new offlinequiz_groupnumberscanner($boxscanner);
         $this->pagenumberscanner = new offlinequiz_pagenumberscanner();
-        $this->studentidscanner = new offlinequiz_studentid_scanner(new pixelcountboxscanner());
-        $this->resultscanner = new offlinequiz_resultscanner(new pixelcountboxscanner());
+        $this->studentidscanner = new offlinequiz_studentid_scanner($boxscanner);
+        $this->resultscanner = new offlinequiz_resultscanner($boxscanner);
+        $this->resultsaver = new offlinequiz_resultsaver();
     }
 
 
@@ -75,6 +78,10 @@ class offlinequiz_result_engine {
         }
         return $this->page;
 
+    }
+    
+    public function save_page() {
+    	$this->resultsaver->save_result($this->page);
     }
 
 

@@ -19,8 +19,8 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 
 define('BOX_SIZE','35');
 define('BOX_DISTANCE_X','95.7');
-define('BOX_A_CORNER_X',286);
-define('BOX_A_CORNER_Y',453);
+define('BOX_A_CORNER_X',288);
+define('BOX_A_CORNER_Y',455);
 class offlinequiz_groupnumberscanner {
 
    private $boxscanner;
@@ -49,7 +49,7 @@ class offlinequiz_groupnumberscanner {
         }
         else {
             $number++;
-            print("groupnumber: " . $number);
+            print("groupnumber: " . $number . "\n");
             $group = $DB->get_record('offlinequiz_groups',array('offlinequizid' => $page->offlinequizid, 'number' => $number ));
             if($group) {
                 $page->group = $group;
@@ -65,7 +65,7 @@ class offlinequiz_groupnumberscanner {
         $grouppoints = array();
 
         for($i=0;$i<=5;$i++) {
-            $boxmiddlepoint = new offlinequiz_point(round(BOX_A_CORNER_X+BOX_SIZE/2+BOX_DISTANCE_X*$i),round(BOX_A_CORNER_Y+BOX_SIZE/2),2);
+            $boxmiddlepoint = new offlinequiz_point(BOX_A_CORNER_X+BOX_SIZE/2+BOX_DISTANCE_X*$i,BOX_A_CORNER_Y+BOX_SIZE/2,2);
             $grouppoints[$i] = calculate_point_relative_to_corner($page,$boxmiddlepoint);
         }
         $page->expectedgroupnumberpositions = $grouppoints;

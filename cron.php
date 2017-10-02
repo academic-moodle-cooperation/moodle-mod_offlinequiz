@@ -1,5 +1,7 @@
 <?php
 use offlinequiz_result_import\offlinequiz_result_engine;
+use offlinequiz_result_import\offlinequiz_point;
+use offlinequiz_result_import\offlinequiz_result_page;
 
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
@@ -40,6 +42,7 @@ require_once($CFG->libdir . '/moodlelib.php');
 // require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
 // require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner2.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/positionslib.php');
 
 function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
     global $CFG, $DB;
@@ -289,12 +292,22 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 //         }
 
 //     } // End foreach.
-    $offlinequiz->id=6;
+    $offlinequiz->id=9;
     $contextid = 0;
+//     $page =  new offlinequiz_result_page(new \Imagick(realpath("/home/wedekit8/moodle/import/rewrite_2017/1587_040.tif")),16);
+//     $page->positionproperties["pageangle"]=-M_PI;
+//     $page->scanproperties->zoomfactorx = 1;
+//     $page->scanproperties->zoomfactory = 1;
+//     $page->positionproperties["upperleft"]=new offlinequiz_point(10, 10, 0);
+//     $resultpage = offlinequiz_result_import\calculate_point_relative_to_corner($page,new offlinequiz_point(10,10, 0));
+//     print_object($resultpage);
+    
     $time = round(microtime(true) * 1000);
-//     $engine = new offlinequiz_result_engine($offlinequiz, $contextid,"/home/wedekit8/moodle/import/scan_1010_001.tif");
-    $engine = new offlinequiz_result_engine($offlinequiz, $contextid,"/home/wedekit8/moodle/import/c7.tif");
+
+    $engine = new offlinequiz_result_engine($offlinequiz, $contextid,"/home/wedekit8/moodle/import/rewrite_2017/1587_077.tif",332);
+//     $engine = new offlinequiz_result_engine($offlinequiz, $contextid,"/home/wedekit8/moodle/import/c10.tif");
     $resultpage = $engine->scanpage();
+    $engine->save_page();
     print_object($resultpage);
     print(round(microtime(true) * 1000)-$time);
 

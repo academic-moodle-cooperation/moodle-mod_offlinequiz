@@ -20,8 +20,8 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 define('STUDENT_BOX_SIZE','35');
 define('STUDENT_BOX_DISTANCE_X','65');
 define('STUDENT_BOX_DISTANCE_Y','60');
-define('STUDENT_BOX_STUDENTID_CORNER_X',1265);
-define('STUDENT_BOX_STUDENTID_CORNER_Y',320);
+define('STUDENT_BOX_STUDENTID_CORNER_X',1266);
+define('STUDENT_BOX_STUDENTID_CORNER_Y',321);
 class offlinequiz_studentid_scanner {
 
     private $boxscanner;
@@ -39,7 +39,7 @@ class offlinequiz_studentid_scanner {
                 $page->status = PAGE_STUDENT_ID_ERROR;
             }
         }
-        $page->studentidnumbers=$number;
+        $page->studentidziphers=$number;
         if($page->status == PAGE_STATUS_OK) {
             $page->studentid = $this->extract_number($number);
         }
@@ -78,7 +78,7 @@ class offlinequiz_studentid_scanner {
         $studentidpoints = array();
         for($j=0;$j<=9;$j++) {
             for($i=0;$i<$iddigits;$i++) {
-                $boxmiddlepoint = new offlinequiz_point(round(STUDENT_BOX_STUDENTID_CORNER_X+STUDENT_BOX_SIZE/2+STUDENT_BOX_DISTANCE_X*$i),round(STUDENT_BOX_STUDENTID_CORNER_Y+STUDENT_BOX_SIZE/2+STUDENT_BOX_DISTANCE_Y*$j),2);
+                $boxmiddlepoint = new offlinequiz_point(STUDENT_BOX_STUDENTID_CORNER_X+STUDENT_BOX_SIZE/2+STUDENT_BOX_DISTANCE_X*$i,STUDENT_BOX_STUDENTID_CORNER_Y+STUDENT_BOX_SIZE/2+STUDENT_BOX_DISTANCE_Y*$j,2);
                 $studentidpoints[$i][$j] = calculate_point_relative_to_corner($page,$boxmiddlepoint);
             }
         }
