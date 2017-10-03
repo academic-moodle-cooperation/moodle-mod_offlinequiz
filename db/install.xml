@@ -98,6 +98,8 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="offlinequizid" UNIQUE="false" FIELDS="offlinequizid"/>
+        <INDEX NAME="offlinequiz_scanned_pages_resultid_idx" UNIQUE="false" FIELDS="resultid"/>
+        
       </INDEXES>
     </TABLE>
     <TABLE NAME="offlinequiz_choices" COMMENT="The choices made by users on scanned pages.">
@@ -126,6 +128,9 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="offlinequiz_page_corners_scannedpageid_idx" UNIQUE="false" FIELDS="scannedpageid" COMMENT="index for faster searching the corners of a scannedpage"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="offlinequiz_results" COMMENT="(Incomplete) results of students for an offlinequiz. Will be filled while answer documents are evaluated.">
       <FIELDS>
