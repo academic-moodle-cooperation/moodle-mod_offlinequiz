@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+3.3.2 (2017-11-06)
+------------------
+* additional index for tables page_corners and scanned_page
 
 3.3.0 (2017-08-03)
 ------------------
