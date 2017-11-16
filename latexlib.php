@@ -227,8 +227,8 @@ function offlinequiz_convert_html_to_latex($text) {
     		'<u>' => '\underline{',
     		'</u>' => '}',
     		'&gt;' => '>',
-    		'&lt;' => '<'
-
+    		'&lt;' => '<',
+        '$$' => '$'
     );
     $text = strip_tags($text,"<i><b><u>");
     foreach ($conversiontable as $search => $replace) {

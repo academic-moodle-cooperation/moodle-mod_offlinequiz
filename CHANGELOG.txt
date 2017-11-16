@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+3.4.0 (2017-11-16)
+* latex-document supports double-$ as begin-tag for formulas in new line
+* latex-document supports underline, bold and italic texts
+
+3.3.2 (2017-11-06)
+-------------------
+* additional index for tables page_corners and scanned_page
+
 3.3.0 (2017-08-03)
 ------------------
 * Moodle 3.3 compatible version
