@@ -1356,6 +1356,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2017042501, 'offlinequiz');
     }
+    if($oldversion < 2017081102) {
+    	$table = new xmldb_table('offlinequiz_page_corners');
+		$index = new xmldb_index('offlinequiz_page_corners_scannedpageid_idx', XMLDB_INDEX_NOTUNIQUE, array('scannedpageid'));
+    	//Conditionally launch add index offlinequiz_userid_idx.
+    	if (!$dbman->index_exists($table, $index)) {
+    		$dbman->add_index($table, $index);
+		}    		
+    	$table = new xmldb_table('offlinequiz_scanned_pages');
+    	$index = new xmldb_index('offlinequiz_scanned_pages_resultid_idx', XMLDB_INDEX_NOTUNIQUE, array('resultid'));
+    	// Conditionally launch add index offlinequiz_userid_idx.
+    	if (!$dbman->index_exists($table, $index)) {
+    		$dbman->add_index($table, $index);
+		}
+    }
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
     // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the
     //      position field to find new pages and insert them.
