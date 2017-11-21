@@ -224,11 +224,6 @@ class offlinequiz_html_translator
                         // Add filename to list of temporary files.
                         $this->tempfiles[] = $file;
 
-                        // In answer texts we want a line break to avoid the picture going above the line.
-                        if ($filearea == 'answer') {
-                            $output .= '<br/>';
-                        }
-
                         // Finally, add the image tag for tcpdf.
                         $output .= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' .
                             $height .'"/>';
