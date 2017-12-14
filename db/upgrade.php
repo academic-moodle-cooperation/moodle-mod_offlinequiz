@@ -1375,6 +1375,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     	
     	
     }
+    if ($oldversion < 2017113001) {
+
+        // Define field disableimgnewlines to be added to offlinequiz.
+        $table = new xmldb_table('offlinequiz');
+        $field = new xmldb_field('disableimgnewlines', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'id_digits');
+
+        // Conditionally launch add field disableimgnewlines.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2017113001, 'offlinequiz');
+    }
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
     // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the
     //      position field to find new pages and insert them.
