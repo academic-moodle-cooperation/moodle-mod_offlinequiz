@@ -34,31 +34,27 @@ class offlinequiz_studentid_scanner {
         $boxes = $this->calculate_student_id_middles($page);
         $iddigits = get_config('offlinequiz','ID_digits');
         for($i=0;$i<$iddigits;$i++) {
-            $number[$i] = $this->scannumber($page,$boxes[$i]);
-            if($number[$i] <0) {
+            $numbers[$i] = $this->scannumber($page,$boxes[$i]);
+            if($numbers[$i] <0) {
                 $page->status = PAGE_STUDENT_ID_ERROR;
             }
         }
-        $page->studentidziphers=$number;
+        $page->studentidziphers=$numbers;
         if($page->status == PAGE_STATUS_OK) {
-            $page->studentid = $this->extract_number($number);
+            $page->studentid = $this->extract_number($numbers);
         }
 
         return $page;
     }
 
-    private function extract_number($number) {
-        $iddigits = get_config('offlinequiz','ID_digits');
-        $result = "";
-        for($i=0;$i<$iddigits;$i++) {
-            $result = $result . $number[$i];
-        }
-        return $result;
+    private function extract_number($numbers) {
+        
+        return implode('', $numbers);
     }
 
     private function scannumber($page,$boxes) {
-        $number=-2;
-        for($i=0;$i<=9;$i++) {
+        $number = -2;
+        for($i = 0;$i <= 9; $i++) {
             $result = $this->boxscanner->scan_box($page,$boxes[$i],BOX_SIZE);
 
             if($result) {

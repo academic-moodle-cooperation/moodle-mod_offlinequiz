@@ -38,16 +38,16 @@ class offlinequiz_pagepositionscanner {
 
     public function scanposition() {
     	$geometry = $this->page->scanproperties->geometry;
-    	$this->page->scanproperties->zoomfactorx = $geometry['width']/A4_WIDTH;
-    	$this->page->scanproperties->zoomfactory = $geometry['height']/A4_HEIGHT;
+    	$this->page->scanproperties->zoomfactorx = $geometry['width'] / A4_WIDTH;
+    	$this->page->scanproperties->zoomfactory = $geometry['height'] / A4_HEIGHT;
     	$zoomfactorx= $this->page->scanproperties->zoomfactorx;
     	$zoomfactory= $this->page->scanproperties->zoomfactory;
-    	$this->expectedcrosspositions = array(
-    			"upperleft" => new offlinequiz_point(CORNER_SPACE_LEFT*$zoomfactorx,CORNER_SPACE_TOP*$zoomfactory,false),
-    			"upperright" => new offlinequiz_point((A4_WIDTH-CORNER_SPACE_RIGHT)*$zoomfactorx, CORNER_SPACE_TOP*$zoomfactory,false),
+    	$this->expectedcrosspositions = [
+    			"upperleft" => new offlinequiz_point(CORNER_SPACE_LEFT * $zoomfactorx,CORNER_SPACE_TOP * $zoomfactory,false),
+    			"upperright" => new offlinequiz_point((A4_WIDTH-CORNER_SPACE_RIGHT) * $zoomfactorx, CORNER_SPACE_TOP * $zoomfactory,false),
     			"lowerright" => new offlinequiz_point((A4_WIDTH-CORNER_SPACE_RIGHT)*$zoomfactorx, (A4_HEIGHT-CORNER_SPACE_BOTTOM)*$zoomfactory,false),
     			"lowerleft" => new offlinequiz_point(CORNER_SPACE_LEFT*$zoomfactorx, (A4_HEIGHT-CORNER_SPACE_BOTTOM)*$zoomfactory,false)
-    	);
+    	];
 //     	print_object($this->expectedcrosspositions);
 
         $this->page->positionproperties["upperright"] = $this->findcross("upperright");
@@ -126,9 +126,9 @@ class offlinequiz_pagepositionscanner {
     private function findcross($cornername) {
         $image = $this->page->image;
         if(!$image) {
-            return $guessedcrosspoint;
+            throw new \coding_exception('Image should not be empty');
         }
-        $crossscanner = new simplecrossscanner($this->page);
+        $crossscanner = new simple_cross_scanner($this->page);
         $startpoint = null;
         $geometry = $this->page->scanproperties->geometry;
         $zoomfactor = $this->page->scanproperties->zoomfactory;

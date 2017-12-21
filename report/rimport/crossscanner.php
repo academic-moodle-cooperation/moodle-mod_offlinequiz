@@ -146,7 +146,7 @@ class crossfinder {
     }
 }
 
-class simplecrossscanner {
+class simple_cross_scanner {
 	
 	public function findcross(\Imagick $image,offlinequiz_point $upperleft,offlinequiz_point $lowerright) {
 		$geometry = $image->getimagegeometry();

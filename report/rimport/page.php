@@ -15,15 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace offlinequiz_result_import;
 
-define("PAGE_STATUS_OK", "STATUS_OK");
-define("PAGE_STATUS_ALIGNMENT_ERROR","PAGE_STATUS_ALIGNMENT_ERROR");
-define("PAGE_STATUS_GROUP_ERROR","PAGE_STATUS_GROUP_ERROR");
-define("PAGE_STATUS_STUDENT_ID_ERROR","PAGE_STATUS_STUDENT_ID_ERROR");
+define('PAGE_STATUS_OK', 'ok');
+define('PAGE_STATUS_ALIGNMENT_ERROR','notadjusted');
+define('PAGE_STATUS_GROUP_ERROR','grouperror');
+define('PAGE_STATUS_STUDENT_ID_ERROR','studentiderror');
+define('PAGE_STATUS_PAGE_NUMBER_ERROR','pagenumbererror');
+define('PAGE_STATUS_SUBMITTED','submitted');
+define('PAGE_STATUS_INSECURE_RESULT','PAGE_STATUS_INSECURE_RESULT');
 class offlinequiz_result_page {
 
 
     public $pagenumber;
     public $answers;
+    public $startanswer;
+    public $resultid;
     public $expectedstudentidpositions;
     public $expectedgroupnumberpositions;
     public $group;
@@ -34,6 +39,7 @@ class offlinequiz_result_page {
     public $offlinequizid;
     public $status;
     public $studentidziphers;
+    public $teacherid;
     public $userid;
 
 

@@ -303,11 +303,11 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 //     print_object($resultpage);
     
     $time = round(microtime(true) * 1000);
-
-    $engine = new offlinequiz_result_engine($offlinequiz, $contextid,"/home/wedekit8/moodle/import/rewrite_2017/1587_077.tif",332);
+	print($time);
+    $engine = new offlinequiz_result_engine($offlinequiz, $contextid,"/home/wedekit8/moodle/import/rewrite_2017/1587_077.tif",0);
 //     $engine = new offlinequiz_result_engine($offlinequiz, $contextid,"/home/wedekit8/moodle/import/c10.tif");
     $resultpage = $engine->scanpage();
-    $engine->save_page();
+    $engine->save_page(2);
     print_object($resultpage);
     print(round(microtime(true) * 1000)-$time);
 

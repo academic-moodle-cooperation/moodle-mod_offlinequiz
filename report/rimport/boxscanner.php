@@ -95,7 +95,7 @@ class pixelcountboxscanner {
     }
 }
 
-class weightediagonalboxscanner{
+class weighted_diagonal_box_scanner{
 	private static $count=0;
 	
 	/**
@@ -109,17 +109,17 @@ class weightediagonalboxscanner{
 	 */
 	public function scan_box(offlinequiz_result_page $page,offlinequiz_point $boxmiddlepoint,$boxsize) {
 		self::$count++;
-		//first we find out, where the upper left of the box SHOULD be (plus some margin to be sure we hit the whole box)
+		// First we find out, where the upper left of the box SHOULD be (plus some margin to be sure we hit the whole box).
 		$marginedboxsize = $boxsize+BOX_MARGIN;
 		$middletoupperleft = new offlinequiz_point(-$marginedboxsize/2, -$marginedboxsize/2, 2);
 		$boxupperleft = add_with_adjustment($page,$boxmiddlepoint,$middletoupperleft);
 		//         print_object($boxupperleft);
 		
-		//get the cropped Image of the box
+		// Get the cropped Image of the box.
 		$zoomfactorx = $page->scanproperties->zoomfactorx;
 		$zoomfactory = $page->scanproperties->zoomfactory;
 		$boximage = clone $page->image;
-		$boximage->cropimage(round($marginedboxsize*$zoomfactorx),round($marginedboxsize*$zoomfactory),$boxupperleft->getx(),$boxupperleft->gety());
+		$boximage->cropimage(round($marginedboxsize*$zoomfactorx), round($marginedboxsize*$zoomfactory), $boxupperleft->getx(), $boxupperleft->gety());
 		$blackdotsbefore = $this->get_image_black_value($boximage);
 		
 		$boximage->writeImage("/tmp/boxtest" . self::$count . ".tif");
@@ -129,27 +129,15 @@ class weightediagonalboxscanner{
 		//         print_object($boxmiddlepoint);
 
 		
-		//find out how many black dots we have in the image
+		// Find out how many black dots we have in the image.
 		$blackdots = $this->get_image_black_value($boximage);
 		$maxdots = pow($marginedboxsize*$zoomfactory,2);
-		if($blackdots) {
-			$boxdiagupvalue = $this->get_box_diag_up_black_value($boximage)*$maxdots/$blackdots;
-			$boxdiagdownvalue = $this->get_box_diag_up_black_value($boximage)*$maxdots/$blackdots;
-		}
-		else {
-			print("blackdots null\n");
-			$boxdiagupvalue = 0;
-			$boxdiagdownvalue = 0;
-		}
-		$boxdiagvalue=$boxdiagupvalue+$boxdiagdownvalue;
-// 		print_object("boxdiagvalue" . $boxdiagvalue . "\n");
-		print("blackdots: " . $blackdots . " maxdots: ". $maxdots . " blackdotsbefore: " . $blackdotsbefore . " boxdiagvalue: ". $boxdiagvalue . "\n");
 		//         print($marginedboxsize);
 
 		//         print("schwarze Punkte: ". $blackpoints . "/" . $maxpoints . "\n");
 		//Depending on how many black pixels we have in comparison to all pixels, decide if it is crossed out or not
-		if ($blackdotsbefore>$maxdots*CROSS_FOUND_UPPER_LIMIT){
-			print("box filled " . $blackdotsbefore/$maxdots .  " \n");
+		if ($blackdotsbefore > $maxdots*CROSS_FOUND_UPPER_LIMIT){
+			print("box filled " . $blackdotsbefore / $maxdots .  " \n");
 			$boximage->writeImage("/tmp/boxtest_filled" . self::$count . ".tif");
 			return 0;
 		}
@@ -158,12 +146,19 @@ class weightediagonalboxscanner{
 			$boximage->writeImage("/tmp/boxtest_empty_change" . self::$count . ".tif");
 			return 0;
 		}
-		if($blackdots<$maxdots*CROSS_FOUND_LOWER_LIMIT) {
+		if($blackdots < $maxdots*CROSS_FOUND_LOWER_LIMIT) {
 			print("box empty " . $blackdots/$maxdots . "\n");
 			$boximage->writeImage("/tmp/boxtest_empty" . self::$count . ".tif");
 			return 0;
 		}
-		else if($boxdiagvalue<WEIGHTEDVALUE_LOWER_LIMIT) {
+		
+		$boxdiagupvalue = $this->get_box_diag_up_black_value($boximage)*$maxdots/$blackdots;
+		$boxdiagdownvalue = $this->get_box_diag_down_black_value($boximage)*$maxdots/$blackdots;
+		
+		$boxdiagvalue=$boxdiagupvalue+$boxdiagdownvalue;
+		// 		print_object("boxdiagvalue" . $boxdiagvalue . "\n");
+		print("blackdots: " . $blackdots . " maxdots: ". $maxdots . " blackdotsbefore: " . $blackdotsbefore . " boxdiagvalue: ". $boxdiagvalue . "\n");
+		if($boxdiagvalue<WEIGHTEDVALUE_LOWER_LIMIT) {
 			print("box empty, because too low weight: " . $boxdiagvalue . "\n");
 			$boximage->writeImage("/tmp/boxtest_empty_lw" . self::$count . ".tif");
 			return 0;
@@ -251,15 +246,13 @@ class weightediagonalboxscanner{
 		$geometry = $image->getimagegeometry();
 		$dots= $geometry["width"]* $geometry["height"];
 		$totaldiagblackvalue = 0;
-		$totaldiagvalue = 0;
 		for($i=0;$i<$geometry["width"];$i++) {
 			for($j=0;$j<$geometry["height"];$j++) {
-				$diagvalue = $this->get_diag_up_value($i,$j,$geometry["width"],$geometry["height"]);
 				
-				$totaldiagvalue +=$diagvalue;
+				
 				if(pixelisblack($image, $i, $j)) {
 // 					print("i: ". $i . " j: " . $j . " diavalue:" . $diagvalue . "\n");
-					$totaldiagblackvalue+= $diagvalue;
+					$totaldiagblackvalue+= $this->get_diag_up_value($i,$j,$geometry["width"],$geometry["height"]);
 				}
 				//else {
 // 					$totalnondiagvalue += getnormalnondiagvalue($i,$j,$width,$height);
@@ -273,15 +266,15 @@ class weightediagonalboxscanner{
 		$geometry = $image->getimagegeometry();
 		$dots= $geometry["width"]* $geometry["height"];
 		$totaldiagblackvalue = 0;
-		$totaldiagvalue = 0;
 		for($i=0;$i<$geometry["width"];$i++) {
 			for($j=0;$j<$geometry["height"];$j++) {
-				$diagvalue = $this->get_diag_down_value($i,$j,$geometry["width"],$geometry["height"]);
-				
-				$totaldiagvalue +=$diagvalue;
+
+
 				if(pixelisblack($image, $i, $j)) {
+					$totaldiagblackvalue+= $this->get_diag_down_value($i,$j,$geometry["width"],$geometry["height"]);
+					
 					// 					print("i: ". $i . " j: " . $j . " diavalue:" . $diagvalue . "\n");
-					$totaldiagblackvalue+= $diagvalue;
+					
 				}
 			}
 		}
@@ -299,7 +292,7 @@ class weightediagonalboxscanner{
 		$distance=$this->get_diag_down_distance($i,$j,$width,$height);
 		// 		print("i: " ."$i" . " j: " . $j . "distance: " . $distance . "\n");
 		//normal distribution
-		return 1/(NORMAL_DISTRIBUTION_VARIANCE *2*M_PI) * pow(M_E,(-1/2) * pow($distance/NORMAL_DISTRIBUTION_VARIANCE,2));
+		return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI) * pow(M_E, (-1/2) * pow($distance/NORMAL_DISTRIBUTION_VARIANCE,2));
 	}
 	
 	private function get_diag_up_distance($i,$j,$width,$height) {
@@ -320,16 +313,16 @@ class weightediagonalboxscanner{
 	}
 	private function get_diag_down_distance($i,$j,$width,$height) {
 		//the linear functions for the cross, the shift is 0 for downwards, $height for upwards
-		$gradiantdownwardsdiag = $height/$width;
+		$gradiantdiag = $height/$width;
 		//the orthogonal lines of these equations
-		$orthogonalupwards = -1/$gradiantupwardsdiag;
+		$orthogonal = -1/$gradiantdiag;
 		//
-		$shiftdownwards = $j-$i*$orthogonaldownwards;
+		$shiftdownwards = $j-$i*$orthogonal;
 		//some fancy linear equations here: find out the meeting points from the two lines with their orthogonals
-		$meetingpointdownwardsx = $shiftdownwards/($gradiantdownwardsdiag-$orthogonaldownwards);
-		$meetingpointdownwardsy = $orthogonaldownwards*$meetingpointdownwardsx+$shiftdownwards;
+		$meetingpointx = $shiftdownwards/($gradiantdiag-$orthogonal);
+		$meetingpointy = $orthogonal*$meetingpointx+$shiftdownwards;
 		
-		$distancedownwards = (new offlinequiz_point($meetingpointdownwardsx-$i,$meetingpointdownwardsy-$j,0))->getdistance();
+		$distancedownwards = (new offlinequiz_point($meetingpointx-$i,$meetingpointy-$j,0))->getdistance();
 		
 		return $distancedownwards/sqrt($width*$height);
 	}

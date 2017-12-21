@@ -21,6 +21,7 @@ define('BOX_SIZE','35');
 define('BOX_DISTANCE_X','95.7');
 define('BOX_A_CORNER_X',288);
 define('BOX_A_CORNER_Y',455);
+define('GROUP_BOXES',6);
 class offlinequiz_groupnumberscanner {
 
    private $boxscanner;
@@ -44,7 +45,7 @@ class offlinequiz_groupnumberscanner {
                 $number = $i;
             }
         }
-        if($amountofcrosses>1 || $amountofcrosses == 0 ) {
+        if($amountofcrosses > 1 || $amountofcrosses == 0 ) {
             $page->status = PAGE_STATUS_GROUP_ERROR;
         }
         else {
@@ -64,7 +65,7 @@ class offlinequiz_groupnumberscanner {
     private function calculate_group_number_middles(offlinequiz_result_page $page) {
         $grouppoints = array();
 
-        for($i=0;$i<=5;$i++) {
+        for($i=0;$i<GROUP_BOXES;$i++) {
             $boxmiddlepoint = new offlinequiz_point(BOX_A_CORNER_X+BOX_SIZE/2+BOX_DISTANCE_X*$i,BOX_A_CORNER_Y+BOX_SIZE/2,2);
             $grouppoints[$i] = calculate_point_relative_to_corner($page,$boxmiddlepoint);
         }

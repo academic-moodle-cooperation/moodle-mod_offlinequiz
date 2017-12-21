@@ -47,7 +47,7 @@ class offlinequiz_pagenumberscanner {
 
             }
             // and if we find more black pixels than white, we consider it black
-            if($count>PAGE_NUMBER_MEASURING_POINT_COUNT/2) {
+            if($count > PAGE_NUMBER_MEASURING_POINT_COUNT/2) {
                 $result = $result + pow(2,PAGE_NUMBER_CELLS-($i+1));
             }
         }
@@ -57,7 +57,7 @@ class offlinequiz_pagenumberscanner {
     private function find_positions(offlinequiz_result_page $page) {
         $positions = array();
         for($i=0;$i<PAGE_NUMBER_CELLS;$i++) {
-            for($j=0;$j<PAGE_NUMBER_MEASURING_POINT_COUNT;$j++) {
+            for($j=0;$j < PAGE_NUMBER_MEASURING_POINT_COUNT;$j++) {
                 //we measure points in the middle of the bar
                 $x = PAGE_NUMBER_DISTANCE_X+($i+0.5)*PAGE_NUMBER_CELL_WIDTH;
                 //We measure in as many points in between top and bottom as configured in equal distance.
@@ -65,7 +65,6 @@ class offlinequiz_pagenumberscanner {
                 $positions[$i][$j] = calculate_point_relative_to_corner($page,new offlinequiz_point($x, $y, 2));
             }
         }
-//         print_object($positions);
         return $positions;
 
     }

@@ -23,6 +23,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/resultscanner.php'
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/groupnumberscanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/studentidscanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/boxscanner.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/pagesaver.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/resultsaver.php');
 
 
@@ -36,11 +37,11 @@ class offlinequiz_result_engine {
     private $studentidscanner;
     private $resultscanner;
     private $page;
-    private $resultsaver;
+    private $pagesaver;
 
     public function __construct($offlinequiz, $contextid,$filepath,$scannedpageid) {
 
-    	$boxscanner = new weightediagonalboxscanner();
+    	$boxscanner = new weighted_diagonal_box_scanner();
         $this->contextid = $contextid;
         $this->offlinequizid = $offlinequiz->id;
         $this->page = new offlinequiz_result_page(new \Imagick(realpath($filepath)),$this->offlinequizid);
@@ -50,6 +51,7 @@ class offlinequiz_result_engine {
         $this->pagenumberscanner = new offlinequiz_pagenumberscanner();
         $this->studentidscanner = new offlinequiz_studentid_scanner($boxscanner);
         $this->resultscanner = new offlinequiz_resultscanner($boxscanner);
+        $this->pagesaver = new offlinequiz_page_saver();
         $this->resultsaver = new offlinequiz_resultsaver();
     }
 
@@ -80,9 +82,13 @@ class offlinequiz_result_engine {
 
     }
     
-    public function save_page() {
-    	$this->resultsaver->save_result($this->page);
+    public function save_page($teacherid) {
+    	$this->pagesaver->save_page_information($this->page);
+    	global $DB;
+    	$status = $DB->get_field('offlinequiz_scanned_pages', 'status', ['id' => $this->page->scannedpageid]);
+    	if($status == 'ok' || $status == 'submitted') {
+    		$this->resultsaver->create_or_update_result_in_db($this->page->scannedpageid,$teacherid);
+    	}
     }
-
 
 }
