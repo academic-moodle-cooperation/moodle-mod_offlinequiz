@@ -566,7 +566,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
             $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
-                                                    0.6, 300, 'docx');
+                                                    0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
             offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
@@ -597,7 +597,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     // Remove <script> tags that are created by mathjax preview.
                     $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 0.6, 200, 'docx');
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
 
                     $blocks = offlinequiz_convert_image_docx($answertext);
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
@@ -654,7 +654,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
             $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
-                                                    0.6, 300, 'docx');
+                                                    0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
 
@@ -693,7 +693,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     // Remove <script> tags that are created by mathjax preview.
                     $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 0.6, 200, 'docx');
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
 
                     $blocks = offlinequiz_convert_image_docx($answertext);
 
