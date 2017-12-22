@@ -49,9 +49,10 @@ class offlinequiz_html_translator
      */
     public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor, $maxwidth, $format = 'pdf') {
         global $CFG, $DB;
-
+	
         require_once($CFG->dirroot.'/filter/tex/lib.php');
         require_once($CFG->dirroot.'/filter/tex/latex.php');
+        $file = null;
         $fs = get_file_storage();
 
         $output = $input;

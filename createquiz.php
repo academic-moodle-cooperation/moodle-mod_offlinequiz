@@ -276,6 +276,7 @@ if ($mode == 'preview') {
             }
         } else {
             foreach ($questions as $question) {
+            	print('questionpage '. $question->page . '\n');
                 if ($question->page > $currentpage) {
                     echo '<center>//---------------------- ' . get_string('newpage', 'offlinequiz') .
                             ' ----------------//</center>';
