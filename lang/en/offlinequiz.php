@@ -667,3 +667,6 @@ $string['withselected'] = 'With selected...';
 $string['zipfile'] = 'ZIP file';
 $string['zipok'] = 'ZIP file imported';
 $string['zerogradewarning'] = 'Warning: Your offline quiz grade is 0.0!';
+$string['disableimgnewlines'] = 'Disable new lines before and after images';
+$string['disableimgnewlines_help'] = 'This option removes extra new lines surrounding images. It will also move the a/b/c... from left upper corner of the image into the left down corner of image answear. Helpful in quizzes containing LaTeX formulas.';
+$string['configdisableimgnewlines'] = 'This will also move the a/b/c... from over the image into the left down corner of image answear';
