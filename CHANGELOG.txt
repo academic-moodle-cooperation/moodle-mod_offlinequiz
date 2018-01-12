@@ -4,6 +4,7 @@ CHANGELOG
 3.4.0 (2017-11-16)
 * latex-document supports double-$ as begin-tag for formulas in new line
 * latex-document supports underline, bold and italic texts
+* new option for alignment of latex-questions in pdf-files
 
 3.3.2 (2017-11-06)
 -------------------
