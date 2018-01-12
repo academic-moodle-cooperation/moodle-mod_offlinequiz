@@ -404,7 +404,7 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
     left: 50%;
     margin-left: -250px;
     position: fixed;
-    top: 10px;
+    top: 5em;
     width: 600px;
     height: 800px;
     z-index: 3;
