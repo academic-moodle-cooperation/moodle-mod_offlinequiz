@@ -1371,8 +1371,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 		}
     }
 
-    if ($oldversion < 2017122200) {
+    if ($oldversion < 2018011601) {
 
+    	// Define field id_digits to be added to offlinequiz, if not defined. this might miss due to an error in an old moodle-version
+    	$table = new xmldb_table('offlinequiz');
+    	$field = new xmldb_field('id_digits', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'showtutorial');
+    	
+    	// Conditionally launch add field id_digits.
+    	if (!$dbman->field_exists($table, $field)) {
+    		$dbman->add_field($table, $field);
+    		
+    		$DB->set_field('offlinequiz', 'id_digits', get_config('offlinequiz', 'ID_digits'));
+    	}
+    	
+    	
         // Define field disableimgnewlines to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('disableimgnewlines', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'id_digits');
@@ -1383,7 +1395,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         }
 
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2017122200, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2018011601, 'offlinequiz');
     }
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
     // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the
