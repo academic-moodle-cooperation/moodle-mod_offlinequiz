@@ -454,7 +454,7 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \usepackage{amsmath} % for \implies etc
 \usepackage{amsfonts} % for \mathbb etc
 \usepackage{graphicx} % for including pictures
-\renewcommand{\familydefault}{\sfdefault} % Sfont
+\renewcommand{\familydefault}{\sfdefault} % Font
 \newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
 \newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
 \newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
