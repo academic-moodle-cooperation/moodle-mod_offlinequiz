@@ -442,7 +442,11 @@ $string['questioninfonone'] = 'Nothing';
 $string['questioninfoqtype'] = 'Question type';
 $string['questionname'] = 'Question name';
 $string['questionsheet'] = 'Question sheet';
-$string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
+$string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
+\documentclass[11pt,a4paper]{article}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \textwidth 16truecm
 \textheight 23truecm
 \setlength{\oddsidemargin}{0cm}
@@ -451,20 +455,28 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 \usepackage{amsmath} % for \implies etc
 \usepackage{amsfonts} % for \mathbb etc
 \usepackage{graphicx} % for including pictures
-\renewcommand{\familydefault}{\sfdefault} % Font
+\renewcommand{\familydefault}{\sfdefault} % Sfont
 \newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
 \newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
 \newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
+\newcommand{\I}{\mathrm{i}}
+\newcommand{\E}{\mathrm{e}}
+\newcommand{\Q}{{\mathbb Q}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\N}{{\mathbb N}}
+\newcommand{\Z}{{\mathbb Z}}
+\newcommand{\C}{{\mathbb C}}
 \parindent 0pt % no indent on the beginning of a section
 \usepackage{esvect} % long vector arrows, e.g. \vv{AB}
 \usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using of Hyperlinks
 \renewcommand\UrlFont{\sf}
 \usepackage{ulem} %  \sout{horizontal cross out} \xout{diagonal strike out}
 \newcommand{\abs}[1]{\left\lvert#1\right\rvert}
-\usepackage{scrpage2} % For Header and Footer
-\pagestyle{scrheadings}
-\clearscrheadfoot
-\ifoot{[Gruppe \Group]}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\chead{\sc \Title, Gruppe \Group}
+\cfoot{Seite \thepage/\pageref{LastPage}}
 \makeatletter %%% disable pagebreaks between answers
 \@beginparpenalty=10000
 \@itempenalty=10000
@@ -474,24 +486,40 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 % \newcommand{\answerIs}[1]{[#1]} %%%Enable showing the right answer
 %%%
 
+% ===========================================================================================================
+%%% Course data:
+\newcommand{\Group}{{$a->groupname}}
+\newcommand{\Title}{{$a->coursename}}
+\newcommand{\Date}{$a->date}
+
 \begin{document}
+% ===========================================================================================================
 
 
 
 % ===========================================================================================================
-%%% Data of the Course
-\begin{center}{\LARGE {$a->coursename}}\end{center}
-\begin{center}{Written Exam {$a->date}}\end{center}
-%%%
-\def\Group{{$a->groupname}}
-\begin{center}{\Large Group \Group}\end{center}
 
-{\bf Name:}\\\\
-{\bf Matriculation number:}\\\\
-{\bf Signature:}\\
+\begin{center}
+{\bf \Large Questionnaire}\\[3mm]
+\fbox{
+\begin{tabular}{rl}
+\rule{0pt}{25pt} Name: & $\underline{\hspace*{8cm}}$ \rule{20pt}{0pt}\\[5mm]
+Student ID: & $\underline{\hspace*{8cm}}$\\[5mm]
+%\rule{10pt}{0pt} Program code: & $\underline{\hspace*{8cm}}$\\[5mm]
+\rule[-20pt]{0pt}{20pt} Signature: & $\underline{\hspace*{8cm}}$
+\end{tabular}}
+\end{center}
 
-% ===========================================================================================================
 \bigskip
+% ===========================================================================================================
+
+{$a->pdfintrotext}
+
+% ===========================================================================================================
+
+\newpage
+
+% ===========================================================================================================
 
 {$a->latexforquestions}
 
