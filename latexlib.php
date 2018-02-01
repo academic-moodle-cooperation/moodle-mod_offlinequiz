@@ -169,6 +169,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     $a['latexforquestions'] = $latexforquestions;
     $a['coursename'] = offlinequiz_convert_html_to_latex($course->fullname);
     $a['groupname'] = $groupletter;
+    $latex = offlinequiz_convert_html_to_latex(get_string('pdfintrotext', 'offlinequiz', $a));
     // TODO exceptionhandling?
     if ($offlinequiz->time) {
         $a['date'] = ', ' . userdate($offlinequiz->time);
@@ -226,6 +227,7 @@ function offlinequiz_convert_html_to_latex($text) {
     		'</i>' => '}',
     		'<u>' => '\underline{',
     		'</u>' => '}',
+    		'<br>' => '\medskip',
     		'&gt;' => '>',
     		'&lt;' => '<',
         '$$' => '$'
