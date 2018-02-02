@@ -444,7 +444,7 @@ $string['questionname'] = 'Question name';
 $string['questionsheet'] = 'Question sheet';
 $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \documentclass[11pt,a4paper]{article}
-\usepackage[utf8]{inputenc}
+\usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \textwidth 16truecm
 \textheight 23truecm
