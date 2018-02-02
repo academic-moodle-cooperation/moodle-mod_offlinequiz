@@ -232,7 +232,7 @@ function offlinequiz_convert_html_to_latex($text) {
     		'&lt;' => '<',
         '$$' => '$'
     );
-    $text = strip_tags($text,"<i><b><u>");
+    $text = strip_tags($text,'<br><i><b><u>');
     foreach ($conversiontable as $search => $replace) {
         $text = str_ireplace($search, $replace, $text);
     }
