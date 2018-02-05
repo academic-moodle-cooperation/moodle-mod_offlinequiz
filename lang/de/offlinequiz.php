@@ -480,12 +480,12 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 % ===========================================================================================================
 
 \begin{center}
-{\bf \Large Fragebogen}\\[3mm]
+{\bf \Large Fragebogen}\\\\[3mm]
 \fbox{
 \begin{tabular}{rl}
-\rule{0pt}{25pt} Name: & $\underline{\hspace*{8cm}}$ \rule{20pt}{0pt}\\[5mm]
-Matrikelnummer: & $\underline{\hspace*{8cm}}$\\[5mm]
-%\rule{10pt}{0pt} Studienkennzahl: & $\underline{\hspace*{8cm}}$\\[5mm]
+\rule{0pt}{25pt} Name: & $\underline{\hspace*{8cm}}$ \rule{20pt}{0pt}\\\\[5mm]
+Matrikelnummer: & $\underline{\hspace*{8cm}}$\\\\[5mm]
+%\rule{10pt}{0pt} Studienkennzahl: & $\underline{\hspace*{8cm}}$\\\\[5mm]
 \rule[-20pt]{0pt}{20pt} Unterschrift: & $\underline{\hspace*{8cm}}$
 \end{tabular}}
 \end{center}
