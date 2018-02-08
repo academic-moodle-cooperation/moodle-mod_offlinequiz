@@ -211,13 +211,13 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
  */
 function offlinequiz_convert_html_to_latex($text) {
     $conversiontable = array(
-            'Ä' => '{\"A}',
-            'ä' => '{\"a}',
-            'Ö' => '{\"O}',
-            'ö' => '{\"o}',
-            'Ü' => '{\"U}',
-            'ü' => '{\"u}',
-            'ß' => '{\ss}',
+            '&Amul;' => 'Ä',
+            '&auml;' => 'ä',
+            '&Ouml;' => 'Ö',
+            '&ouml;' => 'ö',
+            '&Uuml;' => 'Ü',
+            '&uuml;' => 'ü',
+            '&szlig;' => 'ß',
             '&nbsp;' => ' ',
             '#' => '\#',
             '%' => '\%',
@@ -227,16 +227,27 @@ function offlinequiz_convert_html_to_latex($text) {
     		'</i>' => '}',
     		'<u>' => '\underline{',
     		'</u>' => '}',
+    		'<ul>' => '\begin{itemize}',
+    		'</ul>' => '\end{itemize}',
+    		'<ol>' => '\begin{enumerate}[label=(\arabic*)]',
+    		'</ol>' => '\end{enumerate}',
+    		'<li>' => '\item ',
+    		'</li>' => '',
+    		'<blockquote>' => '\begin{quotation}',
+    		'</blockquote>' => '\end{quotation}',
+    		'<br>' => '
+',
     		'<br />' => '
- ',
+
+',
     		'&gt;' => '>',
     		'&lt;' => '<',
-        '$$' => '$'
+    		'$$' => '$'
     );
-    $text = strip_tags($text,'<br><i><b><u>');
     foreach ($conversiontable as $search => $replace) {
         $text = str_ireplace($search, $replace, $text);
     }
+    $text = strip_tags($text,'');
     return $text;
 }
 
@@ -251,9 +262,9 @@ function offlinequiz_get_answer_latex($question, $answer) {
     $answertext = $question->options->answers[$answer]->answer;
     $answertext = offlinequiz_convert_html_to_latex($answertext);
     if ($question->options->answers [$answer]->fraction > 0) {
-        $result = '\item\answerIs{true} ' . $answertext;
+        $result = '\myitem{true} ' . $answertext;
     } else {
-        $result = '\item\answerIs{false} ' . $answertext;
+        $result = '\myitem{false} ' . $answertext;
     }
 
     $result .= "\n";
