@@ -110,8 +110,8 @@ $string['createpartpdferror'] = 'The PDF form for the list of participants {$a} 
 $string['createpdferror'] = 'The form for group {$a} could not be created. Maybe there are no questions in the group.';
 $string['createpdffirst'] = 'Create PDF list first';
 $string['createpdfforms'] = 'Create forms';
-$string['createpdf'] = 'PDF form';
-$string['createpdfs'] = 'PDF forms';
+$string['createpdf'] = 'Form';
+$string['createpdfs'] = 'Download forms';
 $string['createpdfsparticipants'] = 'PDF forms for list of participants';
 $string['createquestionandadd'] = 'Create a new question and add it to the quiz.';
 $string['createquiz'] = 'Create forms';
@@ -453,51 +453,40 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \setlength{\topmargin}{-1cm}
 \usepackage{amsmath} % for \implies etc
 \usepackage{amsfonts} % for \mathbb etc
-\usepackage{graphicx} % for including pictures
-\renewcommand{\familydefault}{\sfdefault} % Font
-\newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
-\newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
-\newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
-\newcommand{\I}{\mathrm{i}}
-\newcommand{\E}{\mathrm{e}}
-\newcommand{\Q}{{\mathbb Q}}
-\newcommand{\R}{{\mathbb R}}
-\newcommand{\N}{{\mathbb N}}
-\newcommand{\Z}{{\mathbb Z}}
-\newcommand{\C}{{\mathbb C}}
+\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using hyperlinks
+\usepackage{enumitem}
 \parindent 0pt % no indent on the beginning of a section
-\usepackage{esvect} % long vector arrows, e.g. \vv{AB}
-\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using of Hyperlinks
 \renewcommand\UrlFont{\sf}
-\usepackage{ulem} %  \sout{horizontal cross out} \xout{diagonal strike out}
-\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
 \usepackage{lastpage}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\chead{\sc \Title, Gruppe \Group}
+\chead{\sc \Title, Group \Group}
 \cfoot{Seite \thepage/\pageref{LastPage}}
 \makeatletter %%% disable pagebreaks between answers
 \@beginparpenalty=10000
 \@itempenalty=10000
 \makeatother
 %
-\newcommand{\answerIs}[1]{} %%%Disable showing the right answer
-% \newcommand{\answerIs}[1]{[#1]} %%%Enable showing the right answer
-%%%
+\usepackage{ifthen}
+\newif\ifshowcorrect
+%\showcorrecttrue % uncomment this line to show the correct solution
+\ifshowcorrect
+\newcommand{\myitem}[1]{%
+  \ifthenelse{\equal{#1}{true}}
+    {\item[\addtocounter{enumii}{1}(\textbf{\theenumii})]}
+    {\item[\addtocounter{enumii}{1}(\theenumii)]}%
+}
+\else
+\newcommand{\myitem}[1]{\item}
+\fi
 
 % ===========================================================================================================
 %%% Course data:
-\newcommand{\Group}{{$a->groupname}}
-\newcommand{\Title}{{$a->coursename}}
-\newcommand{\Date}{$a->date}
+\newcommand{\Group}{A}
+\newcommand{\Title}{Test Course}
+\newcommand{\Date}
 
-\begin{document}
-% ===========================================================================================================
-
-
-
-% ===========================================================================================================
-
+\newcommand{\TestTitle}{%
 \begin{center}
 {\bf \Large Questionnaire}\\\\[3mm]
 \fbox{
@@ -508,6 +497,17 @@ Student ID: & $\underline{\hspace*{8cm}}$\\\\[5mm]
 \rule[-20pt]{0pt}{20pt} Signature: & $\underline{\hspace*{8cm}}$
 \end{tabular}}
 \end{center}
+}
+
+\InputIfFileExists{offline_test_extras.tex}{}{} % Input extra user definitions
+
+\begin{document}
+% ===========================================================================================================
+
+\TestTitle
+
+% ===========================================================================================================
+
 
 \bigskip
 % ===========================================================================================================
