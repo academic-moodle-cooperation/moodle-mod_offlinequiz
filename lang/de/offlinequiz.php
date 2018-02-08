@@ -435,22 +435,10 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \usepackage{amsmath} % für \implies etc
 \usepackage{amsfonts} % für \mathbb etc
 \usepackage{graphicx} % zum Bilder einfügen
-\renewcommand{\familydefault}{\sfdefault} % Schriftart
-\newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
-\newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
-\newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
-\newcommand{\I}{\mathrm{i}}
-\newcommand{\E}{\mathrm{e}}
-\newcommand{\Q}{{\mathbb Q}}
-\newcommand{\R}{{\mathbb R}}
-\newcommand{\N}{{\mathbb N}}
-\newcommand{\Z}{{\mathbb Z}}
-\newcommand{\C}{{\mathbb C}}
-\parindent 0pt % keine Einrückung am Beginn des Absatzes
-\usepackage{esvect} % für lange Vektorpfeile, z.B. \vv{AB}
 \usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % Für Einfügen von Hyperlinks
-\usepackage{ulem} % Durchstreichen: \sout{gerade durchstreichen} \xout{schräg durchstreichen}
-\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\usepackage{enumitem}
+\parindent 0pt % keine Einrückung am Beginn des Absatzes
+\renewcommand{\familydefault}{\sfdefault} % Schriftart
 \usepackage{lastpage}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -461,10 +449,18 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \@itempenalty=10000
 \makeatother
 %
-%%% DIE FOLGENDEN ZWEI ZEILEN: Wenn erste auskommentiert -> r/f werden angezeigt, wenn zweite auskommentiert -> r/f werden verborgen
-\newcommand{\answerIs}[1]{} %%% Zum verborgenen Anzeigen der richtigen und falschen Antworten
-% \newcommand{\answerIs}[1]{[#1]} %%% Zum Anzeigen der richtigen und falschen Antworten
-%%%
+\usepackage{ifthen}
+\newif\ifshowcorrect
+%\showcorrecttrue % Auskommentieren um die richtige Lösung anzuzeigen
+\ifshowcorrect
+\newcommand{\myitem}[1]{%
+  \ifthenelse{\equal{#1}{true}}
+    {\item[\addtocounter{enumii}{1}(\textbf{\theenumii})]}
+    {\item[\addtocounter{enumii}{1}(\theenumii)]}%
+}
+\else
+\newcommand{\myitem}[1]{\item}
+\fi
 
 % ===========================================================================================================
 %%% Die Lehrveranstaltungs-Daten:
@@ -472,13 +468,7 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \newcommand{\Title}{{$a->coursename}}
 \newcommand{\Date}{$a->date}
 
-\begin{document}
-% ===========================================================================================================
-
-
-
-% ===========================================================================================================
-
+\newcommand{\TestTitle}{%
 \begin{center}
 {\bf \Large Fragebogen}\\\\[3mm]
 \fbox{
@@ -489,6 +479,18 @@ Matrikelnummer: & $\underline{\hspace*{8cm}}$\\\\[5mm]
 \rule[-20pt]{0pt}{20pt} Unterschrift: & $\underline{\hspace*{8cm}}$
 \end{tabular}}
 \end{center}
+}
+
+\InputIfFileExists{offline_test_extras.tex}{}{} % Input extra user definitions
+
+\begin{document}
+% ===========================================================================================================
+
+
+
+% ===========================================================================================================
+
+\TestTitle
 
 \bigskip
 % ===========================================================================================================
