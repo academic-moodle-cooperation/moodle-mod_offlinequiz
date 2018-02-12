@@ -211,16 +211,16 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
  */
 function offlinequiz_convert_html_to_latex($text) {
     $conversiontable = array(
-            '&Amul;' => 'Ä',
-            '&auml;' => 'ä',
-            '&Ouml;' => 'Ö',
-            '&ouml;' => 'ö',
-            '&Uuml;' => 'Ü',
-            '&uuml;' => 'ü',
-            '&szlig;' => 'ß',
-            '&nbsp;' => ' ',
-            '#' => '\#',
-            '%' => '\%',
+    		'&Amul;' => 'Ä',
+    		'&auml;' => 'ä',
+    		'&Ouml;' => 'Ö',
+    		'&ouml;' => 'ö',
+    		'&Uuml;' => 'Ü',
+    		'&uuml;' => 'ü',
+    		'&szlig;' => 'ß',
+    		'&nbsp;' => ' ',
+    		'#' => '\#',
+    		'%' => '\%',
     		'<b>' => '\textbf{',
     		'</b>' => '}',
     		'<i>' => '\textit{',
@@ -235,15 +235,21 @@ function offlinequiz_convert_html_to_latex($text) {
     		'</li>' => '',
     		'<blockquote>' => '\begin{quotation}',
     		'</blockquote>' => '\end{quotation}',
-    		'<br>' => '
-',
-    		'<br />' => '
+    		'<p />' => '
 
 ',
+    		'<br />' => '\newline ',
     		'&gt;' => '>',
     		'&lt;' => '<',
-    		'$$' => '$'
+    		'$' => '\$'
     );
+    $text = preg_replace(
+        '/\$\$(.*?)\$\$/','\[\1\]',
+        $text);
+    $text = preg_replace_callback(
+        '/(\\\\[\(\[].*?\\\\[\)\]])/',
+        function ($m) { return str_replace('&amp;', '&', $m[1]); },
+        $text);
     foreach ($conversiontable as $search => $replace) {
         $text = str_ireplace($search, $replace, $text);
     }
