@@ -141,7 +141,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
             if ($question->qtype == 'description') {
                 $latexforquestions .= "\n" . '\\ ' . $questiontext . "\n";
             } else {
-                $latexforquestions .= '\item ' .  $questiontext . "\n";
+                $latexforquestions .= '\item %' .  $question->name . "\n" . $questiontext . "\n";
             }
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
