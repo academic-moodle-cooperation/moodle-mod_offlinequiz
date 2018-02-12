@@ -1,0 +1,28 @@
+<h3>3. Il modulo risposte</h3>
+
+<p>Il modulo risposte contiene una sezione per indicare il tuo nome (A), una per inserire la tua matricola (B) e una per inserirvi le risposte (C).
+Come prima cosa inserisci nome, cognome, firma e numero di matricola. Il sistema non interprerà la tua calligrafia dopo l'esame. 
+Questi campi servono solo come documentazione. </p>
+
+<p style="margin: 2em"><img src="bloecke.gif" width="520px" border="1"></p>
+
+<p>Marcare attentamente le caselle per inserire il numero di matricola, verranno interpretate automaticamente per identificarti.
+Gli errori nella sezione relativa al numero di matricola potrebbero causare ritardi e problemi nell'interpretazione.
+</p>
+
+<p>Come fa il sistema ad attribuire le risposte alla giusta persona?</p>
+<form action="index.php" method="get" id="page3" class="popupform">
+<input type="hidden" name="id" value="<?php echo $id ?>">
+<input type="hidden" name="page" value="4">
+<table cellspacing=10 cellpadding=10 border=0 style="margin-left: 2em">
+<tr><td width=70px valign=top>a)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="2">
+&nbsp;&nbsp;&nbsp;</td><td>Il sistema legge il tuo nome attraverso un software di riconoscimento ottico dei caratteri.</td></tr>
+<tr><td width=70px valign=top>b)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="3">
+&nbsp;&nbsp;&nbsp;</td><td>La tua firma viene acquisita con un software usato per riconoscere le impronte digitali.</td></tr>
+<tr><td width=70px valign=top>c)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="1">
+&nbsp;&nbsp;&nbsp;</td><td>Vengono interpretate solamente le crocette sotto il tuo numero di matricola.</td></tr>
+<tr><td width=70px valign=top>d)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="4">
+&nbsp;&nbsp;&nbsp;</td><td>Il sistema legge la tua matricola attraverso un software di riconoscimento ottico dei caratteri.</td></tr>
+<tr><td width=70px valign=top></td><td><input class="btn btn-primary" type="submit" value="Continua &gt;"></td></tr>
+</table>
+<p style="margin-left: 4em"></p></form>&nbsp;</p>
