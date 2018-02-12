@@ -235,19 +235,21 @@ function offlinequiz_convert_html_to_latex($text) {
     		'</li>' => '',
     		'<blockquote>' => '\begin{quotation}',
     		'</blockquote>' => '\end{quotation}',
-    		'<p />' => '
+    		'</p>' => '
 
 ',
-    		'<br />' => '\newline ',
+    		'<br />' => '
+
+',
     		'&gt;' => '>',
     		'&lt;' => '<',
     		'$' => '\$'
     );
     $text = preg_replace(
-        '/\$\$(.*?)\$\$/','\[\1\]',
+        '/\$\$(.*?)\$\$/s','\[\1\]',
         $text);
     $text = preg_replace_callback(
-        '/(\\\\[\(\[].*?\\\\[\)\]])/',
+        '/(\\\\[\(\[].*?\\\\[\)\]])/s',
         function ($m) { return str_replace('&amp;', '&', $m[1]); },
         $text);
     foreach ($conversiontable as $search => $replace) {
