@@ -19,93 +19,101 @@
  *
  * @package       mod
  * @subpackage    offlinequiz
- * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @since         Moodle 2.2+
+ * @author        Staff AulaWeb <staff@aulaweb.unige.it>
+ * @copyright     2018 Università degli Studi di Genova {@link https://unige.it}
+ * @since         Moodle 3.3
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  **/
 
-$string['modulename'] = 'Offline Quiz';
-$string['modulenameplural'] = 'Offline Quizzes';
+$string['modulename'] = 'Quiz offline';
+$string['modulenameplural'] = 'Quiz offline';
 $string['pluginname'] = 'Offline Quiz';
 
-$string['addnewquestion'] = 'a new question';
-$string['add'] = 'Add';
-$string['addlist'] = 'Add list';
-$string['addarandomselectedquestion'] = 'Add a random selected question ...';
-$string['addnewpagesafterselected'] = 'Add page breaks after selected questions';
-$string['addnewquestionsqbank'] = 'Add questions to the category {$a->catname}: {$a->link}';
-$string['addnewuseroverride'] = 'Add user override';
-$string['addpagebreak'] = 'Add page break';
-$string['addpagehere'] = 'Add page here';
-$string['addparts'] = 'Add participants';
-$string['addquestionfrombankatend'] = 'Add from the question bank at the end';
-$string['addquestionfrombanktopage'] = 'Add from the question bank to page {$a}';
-$string['addrandom'] = 'Randomly add {$a} multiple choice question(s) ';
-$string['addrandomfromcategory'] = 'questions randomly';
-$string['addrandomquestion'] = 'questions randomly';
-$string['addrandomquestiontoofflinequiz'] = 'Adding questions to offlinequiz {$a->name} (group {$a->group})';
-$string['addrandomquestiontopage'] = 'Add a random question to page {$a}';
-$string['addarandomquestion'] = 'questions randomly';
-$string['addarandomquestion_help'] = 'Moodle adds a random selection of multiple choice questions (or all-or-nothing multiple-choice questions) to the current offline quiz group. The number of questions added can be set. The questions are chosen from the current question category (and, if selected, its sub-categories).';
-$string['addtoofflinequiz'] = 'Add to offline quiz';
-$string['addtoqueue'] = 'Add to queue';
-$string['allinone'] = 'Unlimited';
-$string['alllists'] = 'All lists';
-$string['allornothing'] = 'All-or-nothing';
-$string['allresults'] = 'Show all results';
-$string['allstudents'] = 'Show all students';
-$string['alwaysavailable'] = 'Always available';
-$string['analysis'] = 'Item analysis';
-$string['answerformforgroup'] = 'Answer form for group {$a}';
-$string['answerform'] = 'Form for answers';
-$string['answerforms'] = 'Answers forms';
-$string['answerpdfxy'] = 'Form for answers ({$a}->maxquestions questions / {$a}->maxanswers options)';
-$string['areyousureremoveselected'] = 'Are you sure you want to remove all selected questions?';
-$string['attemptexists'] = 'Attempt exists';
-$string['attemptsexist'] = 'You can no longer add or remove questions.';
-$string['attemptsnum'] = 'Results: {$a}';
-$string['attemptsonly'] = 'Show students with results only';
-$string['attendances'] = 'Attendances';
-$string['basicideasofofflinequiz'] = 'The basic ideas of offline quiz-making';
-$string['bulksavegrades'] = 'Save Grades';
-$string['calibratescanner'] = 'Calibrate scanner';
-$string['cannoteditafterattempts'] = 'You cannot add or remove questions because there are already complete results. ({$a})';
-$string['category'] = 'Category';
-$string['changed'] = 'Result has been changed.';
-$string['checkparts'] = 'Mark selected participants as present';
-$string['checkuserid'] = 'Check group/user ID';
-$string['chooseagroup'] = 'Choose a group...';
-$string['closebeforeopen'] = 'Could not update the offline quiz. You have specified a close date before the open date.';
-$string['closestudentview'] = 'Close Student View';
-$string['closewindow'] = 'Close Window';
-$string['cmmissing'] = 'The course module for the offline quiz with ID {$a} is missing';
-$string['configdisableimgnewlines'] = 'This option disables new lines before and after images in the pdf question sheets. Warning: This might lead to formatting problems.';
-$string['configintro'] = 'The values you set here are used as default values for the settings of new offline quizzes.';
-$string['configkeepfilesfordays'] = 'Determine how many days the uploaded image files are kept in temporary storage. During this time the image files are available in the offline quiz admin report.';
-$string['configonlylocalcategories'] = 'No shared question categories allowed.';
-$string['configshuffleanswers'] = 'Shuffle answers';
-$string['configshufflequestions'] = 'If you enable this option, then the order of questions in the offline quiz groups will be randomly shuffled each time you re-create the preview in the "Create forms" tab.';
-$string['configshufflewithin'] = 'If you enable this option, the answers of multiple choice questions are shuffled separately for each offline quiz group.';
-$string['configuseridentification'] = 'A formula describing the user identification. This formula is used to assign answer forms to users in the system. The right hand side of the equation must denote a field in the user table of Moodle.';
-$string['configpapergray'] = 'white-value of paper, which is used for the evaluation of answer-sheets';
-$string['configshufflewithin'] = 'If you enable this option, then the parts making up the individual questions will be randomly shuffled when the question- and answer-forms are created.';
-$string['confirmremovequestion'] = 'Are you sure you want to remove this {$a} question?';
-$string['copyright'] = '<strong>Warning: The texts on this page are just for your personal information. Like any other texts these questions are under copyright restrictions. You are not allowed to copy them or to show them to other people!</strong>';
-$string['copy'] = 'Copy';
-$string['correct'] = 'correct';
-$string['correcterror'] = 'solve';
-$string['correctforgroup'] = 'Correct answers for Group {$a}';
-$string['correctionform'] = 'Correction';
-$string['correctionforms'] = 'Correction forms';
-$string['correctionoptionsheading'] = 'Correction options';
-$string['correctupdated'] = 'Updated correction form for group {$a}.';
-$string['couldnotgrab'] = 'Could not grab image {$a}';
-$string['couldnotregister'] = 'Could not register user {$a}';
-$string['createcategoryandaddrandomquestion'] = 'Create category and add random question';
-$string['createofflinequiz'] = 'Create forms';
-$string['createlistfirst'] = 'Add participants';
+$string['addnewquestion'] = 'aggiungi domanda';
+$string['add'] = 'Aggiungi';
+$string['addlist'] = 'Aggiungi lista';
+$string['addarandomselectedquestion'] = 'Aggiungi una domanda scelta casualmente...';
+$string['addnewpagesafterselected'] = 'Aggiungi un salto pagina dopo le domande selazionate';
+$string['addnewquestionsqbank'] = 'Aggiungi domande alla categoria {$a->catname}: {$a->link}';
+$string['addnewuseroverride'] = 'Permetti all\utente di sovrascrivere';
+$string['addpagebreak'] = 'Inserisci salto pagina';
+$string['addpagehere'] = 'Aggiungi pagina qui';
+$string['addparts'] = 'Aggiungi partecipanti';
+$string['addquestionfrombankatend'] = 'Aggiungi in fondo dal deposito delle domande';
+$string['addquestionfrombanktopage'] = 'Aggiungi alla pagin dal {$a} deposito delle domande';
+$string['addrandom'] = 'Aggiungi casualmente {$a} domande a risposta multipla';
+$string['addrandomfromcategory'] = 'domande casuali';
+$string['addrandomquestion'] = 'domande casuali';
+$string['addrandomquestiontoofflinequiz'] = 'Aggiungi domande al quiz offline {$a->name} (group {$a->group})';
+$string['addrandomquestiontopage'] = 'Aggiungi una domanda casuale alla pagina {$a}';
+$string['addarandomquestion'] = 'domande casuali';
+$string['addarandomquestion_help'] = '';
+                    'Moodle adds a random selection of multiple choice questions (or all-or-nothing multiple-choice questions) to the current offline quiz group. The number of questions added can be set. The questions are chosen from the current question category (and, if selected, its sub-categories).';
+$string['addtoofflinequiz'] = 'Aggiungi al quiz offline';
+$string['addtoqueue'] = 'Accoda';
+$string['allinone'] = 'Illimitato';
+$string['alllists'] = 'Tutte le liste';
+$string['allornothing'] = 'Tutto-o-nulla';
+$string['allresults'] = 'Mostra tutti i risultat';
+$string['allstudents'] = 'Mostra tutti gli studenti';
+$string['alwaysavailable'] = 'Sempre disponibile';
+$string['analysis'] = 'Analisi elemento';
+$string['answerformforgroup'] =
+        'Answer form for group {$a}';
+$string['answerform'] = 'Modulo risposte';
+$string['answerforms'] =
+                'Answers forms';
+$string['answerpdfxy'] = 'Modulo per risposte ({$a}->maxquestions questions / {$a}->maxanswers options)';
+$string['areyousureremoveselected'] = 'Sicuro di voler eliminare tutte le domande selezionate?';
+$string['attemptexists'] =
+                'Attempt exists';
+$string['attemptsexist'] = 'Non puoi più aggiungere o eliminare domande.';
+$string['attemptsnum'] = 'Risultati: {$a}';
+$string['attemptsonly'] = 'Mostra solo gli studenti valutati';
+$string['attendances'] =
+        'Attendances';
+$string['basicideasofofflinequiz'] =
+        'The basic ideas of offline quiz-making';
+$string['bulksavegrades'] =
+        'Save Grades';
+$string['calibratescanner'] = 'Calibra scanner';
+$string['cannoteditafterattempts'] = 'Non puoi più aggiungere o eliminare domande preché ci sono già delle valutazioni. ({$a})';
+$string['category'] = 'Categoria';
+$string['changed'] = 'I risultati sono stati cambiati.';
+$string['checkparts'] = 'Segna come presenti gli iscritti selezionti';
+$string['checkuserid'] = 'Verifica ID gruppo/utente';
+$string['chooseagroup'] = 'Scegli un gruppo...';
+$string['closebeforeopen'] = 'Il quiz offline non può essere aggiornato. La data di chiusura impostata è antecedente quella di apertura';
+$string['closestudentview'] = 'Chiudi vista studente';
+$string['closewindow'] = 'Chiudi finestra';
+$string['cmmissing'] = 'Il modulo corso per il quiz offline con ID {$a} non è disponibile';
+$string['configdisableimgnewlines'] = 'Quest\'opzione disabilita gli a-capo prima  dopo le immagini nel foglio domande. Attenzione: può causare dei problemi con la formattazione';
+$string['configintro'] = 'I valori ipostati in questo pannello verranno usati come default nei nuovi quiz offline';
+$string['configkeepfilesfordays'] = 'Definisce quanti giorni le file delle immagini caricati sono mantenuti nello storage temporaneo. In questo periodo le immagini saranno disponibili nel report dell\'amministratore del quiz offline.';
+$string['configonlylocalcategories'] = 'Non sono permesse categorie di domande condivise.';
+$string['configshuffleanswers'] = 'Mischia le risposte';
+$string['configshufflequestions'] = 'Abilitando quest\'opzione, l\'ordine delle domande nel gruppo del quiz offline verrà cambiato casualmente ogni volta che apri l\'anteprima dal tab "Crea modulo".';
+$string['configshufflewithin'] = 'Abilitando quest\'opzione, le risposte nelle domande a risposta multipla saranno mischiate differentemente per ogni gruppo del quiz offline.';
+$string['configuseridentification'] = 'Una formula che descrive come identificare l\'utente. La formula è usata per associare nel sistema il modulo risposte all\'utente. Il lato destro dell\'equazione deve identificare un campo nel profilo utenti di Moodle'
+        . 'A formula describing the user identification. This formula is used to assign answer forms to users in the system. The right hand side of the equation must denote a field in the user table of Moodle.';
+$string['configpapergray'] = 'Livello di bianco della carta su cui vengono stampati i quiz, usato durante l\'elaborazione automatica';
+$string['configshufflewithin'] = 'Abilitando questa opzione le parti che costituiscono le domande individuali verranno mischiate alla generazione dei foglio di domande e del modulo risposte.';
+$string['confirmremovequestion'] = 'Sei sicuro di voler eliminare la domanda {$a}?';
+$string['copyright'] = '<strong>Attenzione: i testi in questa pagina sono per uso strettamente personale! Come tutti i testi, queste domande sono protette dal diritto d\'autore. Non possono essere copiate né mostrate ad altri.</strong>';
+$string['copy'] = 'Copia';
+$string['correct'] = 'corretta';
+$string['correcterror'] = 'risolvi';
+$string['correctforgroup'] = 'Risposta corrette per il gruppo {$a}';
+$string['correctionform'] = 'Correzione';
+$string['correctionforms'] = 'Correzione moduli';
+$string['correctionoptionsheading'] = 'Opzioni di correzione';
+$string['correctupdated'] = 'Modulo di correzione per il gruppo {$a} aggiornato.';
+$string['couldnotgrab'] = 'Cattura dell\'immagine {$a} fallita';
+$string['couldnotregister'] = 'Registrazione dell\'utente {$a} fallita';
+$string['createcategoryandaddrandomquestion'] = 'Crea categoria e aggiungi una domanda a caso';
+$string['createofflinequiz'] = 'Genera moduli';
+$string['createlistfirst'] = 'Aggiungi partecipanti';
 $string['createpartpdferror'] = 'The PDF form for the list of participants {$a} could not be created. The list may be empty.';
 $string['createpdferror'] = 'The form for group {$a} could not be created. Maybe there are no questions in the group.';
 $string['createpdffirst'] = 'Create PDF list first';
@@ -119,11 +127,11 @@ $string['csvfile'] = 'CSV file';
 $string['csvformat'] = 'Comma separated values text file (CSV)';
 $string['csvplus1format'] = 'Text file with raw data (CSV)';
 $string['csvpluspointsformat'] = 'Text file with points (CSV)';
-$string['darkgray'] = 'Dark grey';
+$string['darkgray'] = 'Grigio scuro';
 $string['datanotsaved'] = 'Could not save settings';
 $string['configdecimalplaces'] = 'Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
-$string['decimalplaces'] = 'Decimal places';
-$string['decimalplaces_help'] = 'Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
+$string['decimalplaces'] = 'Cifre decimali';
+$string['decimalplaces_help'] = 'Numero di cifre decimali che verranno mostrate nelle valutazioni dei quiz offline';
 $string['deletelistcheck'] = 'Do you really want to delete the selected list and all it\'s participants?';
 $string['deleteresultcheck'] = 'Do you really want to delete the selected results?';
 $string['deletepagesafterselected'] = 'Remove page breaks after selected questions';
@@ -166,7 +174,7 @@ $string['editparticipants'] = 'Edit participants';
 $string['editquestion'] = 'Edit question';
 $string['editquestions'] = 'Edit questions';
 $string['editscannedform'] = 'Edit scanned form';
-$string['emptygroups'] = 'Some offline quiz groups are empty. Please add some questions.';
+$string['emptygroups'] = 'Ci sono dei gruppi di domande vuoti. Aggiungere qualche domanda.';
 $string['enroluser'] = 'Enrol user';
 $string['erroraccessingreport'] = 'You are not allowed to view this report.';
 $string['errorreport'] = 'Report of import errors';
@@ -192,10 +200,10 @@ $string['fileprefixanswer'] = 'answer_form';
 $string['fileprefixcorrection'] = 'correction_form';
 $string['fileprefixform'] = 'question_form';
 $string['fileprefixparticipants'] = 'participants_list';
-$string['fileformat'] = 'Format for question sheets';
+$string['fileformat'] = 'Formato del file con i fogli domande';
 $string['fileformat_help'] = 'Choose whether you want your question sheets in PDF, DOCX or TEX format. Answer forms and correction sheets will always be generated in PDF format.';
 $string['filesizetolarge'] = 'Some of your image files are very large. The dimensions will be resized during the interpretation. Please try to scan with a resolution between 200 and 300 dpi and in black and white mode. This will speed up the interpretation next time.';
-$string['forautoanalysis'] = 'For automatic analysis';
+$string['forautoanalysis'] = 'per elaborazione automatica';
 $string['formforcorrection'] = 'Correction form for group {$a}';
 $string['formforgroup'] = 'Question form for group {$a}';
 $string['formforgroupdocx'] = 'Question form for group {$a} (DOCX)';
@@ -219,13 +227,13 @@ $string['gradewarning'] = 'The question grade has to be a number!';
 $string['gradingofflinequiz'] = 'Grades';
 $string['gradingofflinequizx'] = 'Grades: {$a}';
 $string['gradingoptionsheading'] = 'Grading options';
-$string['greeniscross'] = 'counted as a cross';
-$string['rediswrong'] = 'wrong cross or missing cross';
+$string['greeniscross'] = 'considerata una crocetta';
+$string['rediswrong'] = 'crocetta sbagliata o mancante';
 $string['group'] = 'Group';
 $string['groupoutofrange'] = 'Group was out of range and replaced with group A.';
 $string['groupquestions'] = 'Group Questions';
 $string['hasresult'] = 'Result exists';
-$string['idnumber'] = 'ID number';
+$string['idnumber'] = 'Matricola';
 $string['imagefile'] = 'Image file';
 $string['imagenotfound'] = 'Image file: {$a} not found!';
 $string['imagenotjpg'] = 'Image not jpg or png: {$a}';
@@ -266,20 +274,20 @@ $string['infoshort'] = 'i';
 $string['insecuremarkingsforquestion'] = 'Insecure markings need manual corrections for question';
 $string['insecuremarkings'] = 'Insecure markings need manual corrections';
 $string['insertnumber'] = 'Please insert the correct identification number marked by the blue frame.';
-$string['instruction1'] = 'This answer form will be scanned automatically. Please do not fold or spot. Use a black or blue pen to mark the fields:';
-$string['instruction2'] = 'Only clear markings can be interpreted correctly! If you want to correct a marking, completely fill the box with color. This field will be interpreted like an empty box:';
-$string['instruction3'] = 'Corrected boxes cannot be marked again. Please do not write anything outside of the boxes.';
-$string['introduction'] = 'Introduction';
+$string['instruction1'] = 'Questo modulo sarà analizzato automaticamente. Non piegarlo né macchiarlo. Usare una penna nera o blu per marcare i campi così:';
+$string['instruction2'] = 'Solo le caselle marcate chiaramente saranno interpretate correttamente! Non uscire dalla casella. Per correggere una casella, riempire completamente il quadrato di colore: la casella verrà interpretata come un quadrato vuoto:';
+$string['instruction3'] = 'Le caselle corrette non possono essere marcate di nuovo. Attenzione a non scrivere nulla fuori dalle caselle.';
+$string['introduction'] = 'Introduzione';
 $string['invalidformula'] = 'Invalid formula for user identification. The formula must have the form <prefix>[<#digits>]<suffix>=<db-field&>.';
 $string['invalidnumberofdigits'] = 'Invalid number of digits used. Only 1 up to 9 digit(s) are allowed.';
 $string['invaliduserfield'] = 'Invalid field of the user table used.';
-$string['invigilator'] = 'Invigilator';
+$string['invigilator'] = 'Vigilante';
 $string['ischecked'] = 'Participation is checked';
 $string['isnotchecked'] = 'Participation is not checked';
 $string['itemdata'] = 'Itemdata';
 $string['keepfilesfordays'] = 'Keep files for days';
-$string['lightgray'] = 'Light grey';
-$string['linktoscannedform'] = 'View scanned form';
+$string['lightgray'] = 'Grigio chiaro';
+$string['linktoscannedform'] = 'Immagine del modulo acquisita';
 $string['listnotdetected'] = 'Could not detect barcode for list!';
 $string['logdeleted'] = 'Log entry {$a} deleted.';
 $string['logourl'] = 'Logo URL';
@@ -309,7 +317,7 @@ $string['multipleanswers'] = 'Choose at least one answer.';
 $string['moodleprocessing'] = 'Let Moodle process data';
 $string['movecorners'] = 'Change the positions of the corner markings first. Use drag and drop.';
 $string['multianswersforsingle'] = 'Multiple answers for single choice question';
-$string['name'] = 'Offline quiz name';
+$string['name'] = 'Nome quiz offline';
 $string['neededcorrection'] = '<strong>Attention: Some of your markings needed manual correction. Have a look at the red squares in the following picture.
 <br />This implied manual intervention by a teacher and delayed the publishing of the offline quiz results!</strong>';
 $string['newgrade'] = 'Graded';
@@ -378,7 +386,7 @@ To add page breaks after particular questions, tick the checkboxes next to the q
 
 To arrange the questions over a number of pages, click the Repaginate button and select the desired number of questions per page.';
 $string['otherresultexists'] = 'Different result for {$a} already exists, import ignored! Delete result first.';
-$string['outof'] = '{$a->grade} out of a maximum of {$a->maxgrade}';
+$string['outof'] = '{$a->grade} su un massimo di {$a->maxgrade}';
 $string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
 $string['overallfeedback'] = 'Overall feedback';
 $string['overview'] = 'Overview';
@@ -392,8 +400,8 @@ $string['pagenumberimported'] = 'Sheet {$a} of participants list imported';
 $string['pagenumberupdate'] = 'Page number update';
 $string['pagenotdetected'] = 'Could not detect barcode for page!';
 $string['pagesizeparts'] = 'Participants shown per page:';
-$string['papergray'] = 'White value of paper';
-$string['papergray_help'] = 'If the white parts of your scanned answer forms are very dark you can correct this by setting this value to dark grey.';
+$string['papergray'] = 'Livello di bianco della carta';
+$string['papergray_help'] = 'Se lo scanner produce delle scansioni molto scure o si usa carta riciclata, si possono compensare indicando il livello di bianco nella scansione.';
 $string['partcheckedwithresult'] = '{$a} checked participants with result';
 $string['partcheckedwithoutresult'] = '<a href="{$a->url}">{$a->count} checked participants without result</a>';
 $string['partuncheckedwithresult'] = '<a href="{$a->url}">{$a->count} unchecked participants with result</a>';
@@ -414,11 +422,11 @@ or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['pdfdeletedforgroup'] = 'Form for group {$a} deleted';
 $string['pdfscreated'] = 'PDF forms have been created';
 $string['pdfsdeletedforgroup'] = 'Forms for group {$a} deleted';
-$string['pdfintro'] = 'Additional information';
-$string['pdfintro_help'] = 'This information will be printed on the first page of the question sheet and should contain general information about how to fill in the answer form.';
-$string['pdfintrotext'] = '<b>How do I mark correctly?</b><br />This answer form will be scanned automatically. Please do not fold or spot. Use a black or blue pen to mark the fields. If you want to correct a marking, completely fill the box with color. This field will be interpreted like an empty box.<br />';
-$string['pdfintrotoolarge'] = 'The introduction is too long (max. 2000 characters).';
-$string['pearlywhite'] = 'Pearly white';
+$string['pdfintro'] = 'Informazioni aggiuntive';
+$string['pdfintro_help'] = 'Il testo verrà stampato sulla prima pagina del foglio domande e possono contenere informazioni o istruzioni generali sulla prova o sulla compilazione del modulo.';
+$string['pdfintrotext'] = '<b>Come compilare correttamente il modulo</b><br />Evitare di piegare o macchiare. Usare una penna nera o blu per marcare i campi. Non uscire dalla casella. Per correggere un campo, riempire completamente il quadrato di colore: la casella verrà interpretata come un quadrato vuoto.<br />';
+$string['pdfintrotoolarge'] = 'L\'introduzione è troppo lunga (massimo 2000 caratteri).';
+$string['pearlywhite'] = 'Bianco lucido';
 $string['pluginadministration'] = 'Offline quiz administration';
 $string['point'] = 'point';
 $string['present'] = 'present';
@@ -426,8 +434,8 @@ $string['preventsamequestion'] = 'Prevent multiple usage of the same question in
 $string['previewforgroup'] = 'Preview for group {$a}';
 $string['preview'] = 'Preview';
 $string['previewquestion'] = 'Preview question';
-$string['printstudycodefield'] = 'Print study code field on question sheet';
-$string['printstudycodefield_help'] = 'If checked, the study code field will be printed on the first page of the question sheet.';
+$string['printstudycodefield'] = 'Stampa il campo per il codice esame';
+$string['printstudycodefield_help'] = 'Verrà stampato un campo da compilare con il codice esame sul foglio domande';
 $string['questionanalysis'] = 'Difficulty analysis';
 $string['questionanalysistitle'] = 'Difficulty Analysis Table';
 $string['questionbankcontents'] = 'Question bank contents';
@@ -438,7 +446,7 @@ $string['questioninfocorrectanswers'] = 'correct answers';
 $string['questioninfonone'] = 'Nothing';
 $string['questioninfoqtype'] = 'Question type';
 $string['questionname'] = 'Question name';
-$string['questionsheet'] = 'Question sheet';
+$string['questionsheet'] = 'Foglio domande';
 $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 \textwidth 16truecm
 \textheight 23truecm
@@ -498,7 +506,7 @@ $string['questionsin'] = 'Questions in';
 $string['questionsingroup'] = 'Questions in group';
 $string['questionsinthisofflinequiz'] = 'Questions in this offline quiz';
 $string['questiontextisempty'] = '[Empty question text]';
-$string['quizdate'] = 'Date of offline quiz';
+$string['quizdate'] = 'Data di svolgimento';
 $string['quizopenclose'] = 'Open and close dates';
 $string['quizopenclose_help'] = 'Students can only see their attempt(s) after the open time and before the close time.';
 $string['quizquestions'] = 'Quiz Questions';
@@ -534,15 +542,15 @@ $string['resetofflinequizzes'] = 'Reset Offline Quiz data';
 $string['results'] = 'Results';
 $string['resultexists'] = 'Same result for {$a} already exists, import ignored';
 $string['resultimport'] = 'Import results';
-$string['reviewcloses'] = 'Review closes';
-$string['reviewbefore'] = 'Allow review while offline quiz is open';
-$string['reviewclosed'] = 'After the offline quiz is closed';
-$string['reviewimmediately'] = 'Immediately after the attempt';
+$string['reviewcloses'] = 'Chiusura valutazioni';
+$string['reviewbefore'] = 'Permetti le valutazioni mentre il quiz online è aperto';
+$string['reviewclosed'] = 'Dopo che il qui offline è chiuso';
+$string['reviewimmediately'] = 'Immediatamente dopo il tentativo';
 $string['reviewincludes'] = 'Review includes';
-$string['reviewofresult'] = 'Review of result';
-$string['reviewopens'] = 'Review opens';
+$string['reviewofresult'] = 'Verifica dei risultati';
+$string['reviewopens'] = 'Apertura valutazioni';
 $string['reviewoptions'] = 'Students may view';
-$string['reviewoptionsheading'] = 'Review options';
+$string['reviewoptionsheading'] = 'Opzioni di valutazione';
 $string['reviewoptions_help'] = 'With these options you can control what the students may see after the results were imported.
 You can also define start and end time for the results report. The checkboxes mean:
 <table>
@@ -599,12 +607,12 @@ $string['selectpage'] = 'Please select page number or try to readjust sheet:';
 $string['showallparts'] = 'Show all {$a} participants';
 $string['showcopyright'] = 'Show copyright statement';
 $string['showcopyrightdesc'] = 'If you enable this option, a copyright statement will be shown on the student result review page.';
-$string['showgrades'] = 'Print question grades';
+$string['showgrades'] = 'Stampa la valutazione delle domande';
 $string['showgrades_help'] = 'This option controls whether the maximum grades of the offline quiz questions should be printed on the question sheet.';
 $string['showmissingattemptonly'] = 'Show all checked participants without result';
 $string['showmissingcheckonly'] = 'Show all unchecked participants with result';
 $string['shownumpartsperpage'] = 'Show {$a} participants per page';
-$string['showquestioninfo'] = 'Print info about answers';
+$string['showquestioninfo'] = 'Stampa informazioni sulle risposte';
 $string['showquestioninfo_help'] = 'With this option you can control, which additional information about the question is printed on the question sheet.
 You can choose one of these:
 <ul>
@@ -613,31 +621,31 @@ You can choose one of these:
 <li> Number of correct answers - The number of correct answers will be printed
 </ul>';
 $string['showstudentview'] = 'Show student view';
-$string['showtutorial'] = 'Show an offline quiz tutorial to students.';
-$string['showtutorial_help'] = 'This option determines whether students can see a tutorial about the basics of offline quizzes.
-The tutorial provides information about how to handle the different types of documents in offline quizzes. In an interactive part they learn how to tick their student ID correctly.<br />
-<b>Please note:</b><br />
-If you set this option to "Yes" but hide the offline quiz the link to the tutorial will not be visible. In this case you can add a link to the tutorial on the course page.';
-$string['showtutorialdescription'] = 'You can add a link to the tutorial to the course page using the following URL:';
+$string['showtutorial'] = 'Mostra agli studenti un tutorial sui quiz offline.';
+$string['showtutorial_help'] = 'Opzionalmente gli studenti possono leggere un tutorial sullo svolgimento dei quiz offline.
+Il tutorial mostra come usare i diversi tipi di documento dei quiz offline. In una parte interattiva, gli studenti possono pravare a compilare il loro ID correttamente.<br />
+<b>Attenzione:</b><br />
+Abilitando quest\'opzione lasciando però il quiz offline nascosto, il link al tutorial non sarà visibile. In questo caso, trascivere il link al tutorial nella pagina del corso.';
+$string['showtutorialdescription'] = 'Il link del tutorial ha questo URL:';
 $string['shuffleanswers'] = 'Shuffle answers';
 $string['shufflequestionsanswers'] = 'Shuffle questions and answers';
 $string['shufflequestionsselected'] = 'Shuffle questions has been set, so some actions relating to pages are not available. To change the shuffle option, {$a}.';
-$string['shufflewithin_help'] = 'If enabled, the parts making up each question will be randomly shuffled each time you press the reload button in the form preview. NOTE: This setting only applies to questions that have the shuffeling option activated.';
-$string['signature'] = 'Signature';
+$string['shufflewithin_help'] = 'Se abilitata, la sezione delle domande verrà ordinata riordinata casualmente ad ogni aggiornamento della pagina di anteprima. NOTA: Questa impostazione si applica solo alle domande che hanno già l\'opzione di ordinamento casuale attiva.';
+$string['signature'] = 'Firma';
 $string['singlechoice'] = 'Single choice';
 $string['standard'] = 'Standard';
-$string['starttutorial'] = 'Start tutorial about the examination';
+$string['starttutorial'] = 'Avvia il tutorial sull\'esame';
 $string['statistics'] = 'Statistics';
 $string['statisticsplural'] = 'Statistics';
 $string['statsoverview'] = 'Statistics Overview';
-$string['studycode'] = 'Study code';
+$string['studycode'] = 'Codice esame';
 $string['theattempt'] = 'The attempt';
 $string['timesup'] = 'Time is up!';
 $string['totalmarksx'] = 'Total of marks: {$a}';
 $string['totalpointsx'] = 'Total of marks: {$a}';
 $string['totalquestionsinrandomqcategory'] = 'Total of {$a} questions in category.';
 $string['trigger'] = 'lower/higher boundary';
-$string['tutorial'] = 'Tutorial for offline quizzes';
+$string['tutorial'] = 'Tutorial sui quiz offline';
 $string['type'] = 'Type';
 $string['uncheckparts'] = 'Mark selected participants as absent';
 $string['updatedsumgrades'] = 'The sum of all grades of group {$a->letter} was re-calculated to {$a->grade}.';
@@ -660,8 +668,8 @@ $string['usernotinlist'] = 'User not registered in list!';
 $string['usernotregistered'] = 'User {$a} not registered in course';
 $string['valuezero'] = 'Value should not be zero';
 $string['viewresults'] = 'View results';
-$string['white'] = 'White';
+$string['white'] = 'Bianco';
 $string['withselected'] = 'With selected...';
-$string['zipfile'] = 'ZIP file';
-$string['zipok'] = 'ZIP file imported';
-$string['zerogradewarning'] = 'Warning: Your offline quiz grade is 0.0!';
+$string['zipfile'] = 'File ZIP';
+$string['zipok'] = 'File ZIP importato';
+$string['zerogradewarning'] = 'Attenzione: la valutazione del quiz offline è 0.0!';

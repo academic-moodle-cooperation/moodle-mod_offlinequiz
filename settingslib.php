@@ -57,7 +57,7 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
         return array(
                 'attempt' => get_string('theattempt', 'offlinequiz'),
                 'correctness' => get_string('whethercorrect', 'question'),
-                'marks' => get_string('marks', 'offlinequiz'),
+                'marks' => get_string('marks', 'quiz'),
                 'specificfeedback' => get_string('specificfeedback', 'question'),
                 'generalfeedback' => get_string('generalfeedback', 'question'),
                 'rightanswer' => get_string('rightanswer', 'question'),

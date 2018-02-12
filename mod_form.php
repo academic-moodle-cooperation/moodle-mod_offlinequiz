@@ -81,10 +81,10 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             for ($i = 1; $i <= 6; $i++) {
                 $groupmenu[$i] = "$i";
             }
-            $mform->addElement('select', 'numgroups', get_string('numbergroups', 'offlinequiz'), $groupmenu);
+            $mform->addElement('select', 'numgroups', get_string('numgroups', 'group'), $groupmenu);
             $mform->setDefault('numgroups', 1);
         } else {
-            $mform->addElement('static', 'numgroups', get_string('numbergroups', 'offlinequiz'));
+            $mform->addElement('static', 'numgroups', get_string('numgroups', 'group'));
         }
 
         // Only allow certain options if the PDF documents have not been created.
@@ -94,10 +94,10 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $attribs = ' disabled="disabled"';
         }
 
-        $mform->addElement('selectyesno', 'shufflequestions', get_string("shufflequestions", "offlinequiz"), $attribs);
+        $mform->addElement('selectyesno', 'shufflequestions', get_string('shufflequestions', 'quiz'), $attribs);
         $mform->setDefault('shufflequestions', $offlinequizconfig->shufflequestions);
 
-        $mform->addElement('selectyesno', 'shuffleanswers', get_string("shufflewithin", "offlinequiz"), $attribs);
+        $mform->addElement('selectyesno', 'shuffleanswers', get_string('shufflewithin', 'quiz'), $attribs);
         $mform->addHelpButton('shuffleanswers', 'shufflewithin', 'offlinequiz');
         $mform->setDefault('shuffleanswers', $offlinequizconfig->shuffleanswers);
 
@@ -159,7 +159,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $options[10] = 10;
         $options[12] = 12;
         $options[14] = 14;
-        $mform->addElement('select', 'fontsize', get_string('fontsize', 'offlinequiz'), $options, $attribs);
+        $mform->addElement('select', 'fontsize', get_string('fontsize', 'editor'), $options, $attribs);
         $mform->setDefault('fontsize', 10);
 
         $options = array();

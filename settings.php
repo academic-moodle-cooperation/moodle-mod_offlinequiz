@@ -47,7 +47,7 @@ if ($ADMIN->fulltree) {
 
     // Shuffle questions.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/shufflequestions',
-            get_string('shufflequestions', 'offlinequiz'), get_string('configshufflequestions', 'offlinequiz'),
+            get_string('shufflequestions', 'quiz'), get_string('configshufflequestions', 'offlinequiz'),
             0));
 
     // Shuffle within questions.
