@@ -455,6 +455,8 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \usepackage{amsfonts} % for \mathbb etc
 \usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using hyperlinks
 \usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{ulem}
 \parindent 0pt % no indent on the beginning of a section
 \renewcommand\UrlFont{\sf}
 \usepackage{lastpage}
