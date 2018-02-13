@@ -437,6 +437,8 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \usepackage{graphicx} % zum Bilder einfügen
 \usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % Für Einfügen von Hyperlinks
 \usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{ulem}
 \parindent 0pt % keine Einrückung am Beginn des Absatzes
 \renewcommand{\familydefault}{\sfdefault} % Schriftart
 \usepackage{lastpage}
