@@ -48,8 +48,7 @@ $string['addrandomquestion'] = 'domande casuali';
 $string['addrandomquestiontoofflinequiz'] = 'Aggiungi domande al quiz offline {$a->name} (group {$a->group})';
 $string['addrandomquestiontopage'] = 'Aggiungi una domanda casuale alla pagina {$a}';
 $string['addarandomquestion'] = 'domande casuali';
-$string['addarandomquestion_help'] = '';
-                    'Moodle adds a random selection of multiple choice questions (or all-or-nothing multiple-choice questions) to the current offline quiz group. The number of questions added can be set. The questions are chosen from the current question category (and, if selected, its sub-categories).';
+$string['addarandomquestion_help'] = 'Moodle aggiungerà una selezione casuale di domande a risposta multipla (o domande tutte-o-nessuna a scelta multipla) al gruppo corrente del quiz offline. Puoi impostare il numero delle domande da aggiungere. Le domande sono scelte dall categoria corrente (e dalle relative sottocategorie, se selezinate).';
 $string['addtoofflinequiz'] = 'Aggiungi al quiz offline';
 $string['addtoqueue'] = 'Accoda';
 $string['allinone'] = 'Illimitato';
@@ -59,24 +58,18 @@ $string['allresults'] = 'Mostra tutti i risultat';
 $string['allstudents'] = 'Mostra tutti gli studenti';
 $string['alwaysavailable'] = 'Sempre disponibile';
 $string['analysis'] = 'Analisi elemento';
-$string['answerformforgroup'] =
-        'Answer form for group {$a}';
+$string['answerformforgroup'] = 'Modulo risposte per il gruppo {$a}';
 $string['answerform'] = 'Modulo risposte';
-$string['answerforms'] =
-                'Answers forms';
-$string['answerpdfxy'] = 'Modulo per risposte ({$a}->maxquestions questions / {$a}->maxanswers options)';
+$string['answerforms'] = 'Moduli risposte';
+$string['answerpdfxy'] = 'Modulo risposte ({$a}->maxquestions questions / {$a}->maxanswers options)';
 $string['areyousureremoveselected'] = 'Sicuro di voler eliminare tutte le domande selezionate?';
-$string['attemptexists'] =
-                'Attempt exists';
+$string['attemptexists'] = 'Tentativo esistente';
 $string['attemptsexist'] = 'Non puoi più aggiungere o eliminare domande.';
 $string['attemptsnum'] = 'Risultati: {$a}';
 $string['attemptsonly'] = 'Mostra solo gli studenti valutati';
-$string['attendances'] =
-        'Attendances';
-$string['basicideasofofflinequiz'] =
-        'The basic ideas of offline quiz-making';
-$string['bulksavegrades'] =
-        'Save Grades';
+$string['attendances'] = 'Presenti';
+$string['basicideasofofflinequiz'] = 'Le idee alla base della creazione di un quiz offline';
+$string['bulksavegrades'] = 'Salva valutazioni';
 $string['calibratescanner'] = 'Calibra scanner';
 $string['cannoteditafterattempts'] = 'Non puoi più aggiungere o eliminare domande preché ci sono già delle valutazioni. ({$a})';
 $string['category'] = 'Categoria';
@@ -114,16 +107,16 @@ $string['couldnotregister'] = 'Registrazione dell\'utente {$a} fallita';
 $string['createcategoryandaddrandomquestion'] = 'Crea categoria e aggiungi una domanda a caso';
 $string['createofflinequiz'] = 'Genera moduli';
 $string['createlistfirst'] = 'Aggiungi partecipanti';
-$string['createpartpdferror'] = 'The PDF form for the list of participants {$a} could not be created. The list may be empty.';
-$string['createpdferror'] = 'The form for group {$a} could not be created. Maybe there are no questions in the group.';
-$string['createpdffirst'] = 'Create PDF list first';
-$string['createpdfforms'] = 'Create forms';
-$string['createpdf'] = 'PDF form';
-$string['createpdfs'] = 'PDF forms';
-$string['createpdfsparticipants'] = 'PDF forms for list of participants';
+$string['createpartpdferror'] = 'Il registro presenze per la lista di partecipanti {$a} non può essere creato. La lista potrebbe essere vuota.';
+$string['createpdferror'] = 'Il modulo per il gruppo {$a} non può essere creato. Potrebbero non esserci domande nel gruppo.';
+$string['createpdffirst'] = 'Crea prima il registro presenze';
+$string['createpdfforms'] = 'Crea registri presenze';
+$string['createpdf'] = 'Registro presenze';
+$string['createpdfs'] = 'Registri presenze';
+$string['createpdfsparticipants'] = 'Registri presenze per liste di partecipanti';
 $string['createquestionandadd'] = 'Create a new question and add it to the quiz.';
-$string['createquiz'] = 'Create forms';
-$string['csvfile'] = 'CSV file';
+$string['createquiz'] = 'Genera moduli risposte';
+$string['csvfile'] = 'File CSV';
 $string['csvformat'] = 'Comma separated values text file (CSV)';
 $string['csvplus1format'] = 'Text file with raw data (CSV)';
 $string['csvpluspointsformat'] = 'Text file with points (CSV)';
@@ -178,15 +171,15 @@ $string['emptygroups'] = 'Ci sono dei gruppi di domande vuoti. Aggiungere qualch
 $string['enroluser'] = 'Enrol user';
 $string['erroraccessingreport'] = 'You are not allowed to view this report.';
 $string['errorreport'] = 'Report of import errors';
-$string['eventattemptdeleted'] = 'Offline quiz attempt deleted';
-$string['eventattemptpreviewstarted'] = 'Offline quiz attempt preview started';
-$string['eventattemptreviewed'] = 'Offline quiz attempt reviewed';
-$string['eventattemptsummaryviewed'] = 'Offline quiz attempt summary viewed';
-$string['eventattemptviewed'] = 'Offline quiz attempt viewed';
-$string['eventdocscreated'] = 'Offline quiz question and answer forms created';
-$string['eventdocsdeleted'] = 'Offline quiz question and answer forms deleted';
+$string['eventattemptdeleted'] = 'Consegna Quiz offline cancellata';
+$string['eventattemptpreviewstarted'] = 'Avvio anteprima consegna Quiz offline quiz';
+$string['eventattemptreviewed'] = 'Consegna Quiz offline verificata';
+$string['eventattemptsummaryviewed'] = 'Sommario consegne Quiz offline visualizzato';
+$string['eventattemptviewed'] = 'Consegna Quiz offline visualizzata';
+$string['eventdocscreated'] = 'Foglio domande e moduli risposta Quiz offline generati';
+$string['eventdocsdeleted'] = 'Foglio domande e moduli risposta Quiz offline cancellati';
 $string['eventeditpageviewed'] = 'Offline quiz edit page viewed';
-$string['eventofflinequizattemptsubmitted'] = 'Offline quiz attempt submitted';
+$string['eventofflinequizattemptsubmitted'] = 'Consegna Quiz offline caricata';
 $string['eventoverridecreated'] = 'Offline quiz override created';
 $string['eventoverridedeleted'] = 'Offline quiz override deleted';
 $string['eventoverrideupdated'] = 'Offline quiz override updated';
@@ -217,7 +210,7 @@ $string['fromquestionbank'] = 'from question bank';
 $string['functiondisabledbysecuremode'] = 'That functionality is currently disabled';
 $string['generalfeedback'] = 'General feedback';
 $string['generalfeedback_help'] = 'General feedback is text which is shown after a question has been attempted. Unlike feedback for a specific question which depends on the response given, the same general feedback is always shown.';
-$string['generatepdfform'] = 'Generate PDF form';
+$string['generatepdfform'] = 'Genera registro presenze';
 $string['grade'] = 'Grade';
 $string['gradedon'] = 'Graded on';
 $string['gradedscannedform'] = 'Scanned form with grades';
@@ -322,9 +315,9 @@ $string['neededcorrection'] = '<strong>Attention: Some of your markings needed m
 <br />This implied manual intervention by a teacher and delayed the publishing of the offline quiz results!</strong>';
 $string['newgrade'] = 'Graded';
 $string['newpage'] = 'New Page';
-$string['noattemptexists'] = 'No result exists';
-$string['noattempts'] = 'No results imported!';
-$string['noattemptsonly'] = 'Show students with no results only';
+$string['noattemptexists'] = 'Nessuna consegna presente';
+$string['noattempts'] = 'Consegne non importate!';
+$string['noattemptsonly'] = 'Mostra solo gli studenti senza consegne';
 $string['nocourse'] = 'The course with id {$a->course} that the offline quiz with ID {$a->offlinequiz} belongs to is missing.';
 $string['nogradesseelater'] = 'This quiz has not been graded yet for {$a}. Results will be published here.';
 $string['nogroupdata'] = 'No group data for user {$a}';
@@ -344,9 +337,9 @@ $string['nothingtodo'] = 'Nothing to do!';
 $string['notxtfile'] = 'No TXT file';
 $string['notyetgraded'] = 'Not yet graded';
 $string['nozipfile'] = 'No ZIP file';
-$string['numattempts'] = 'Number of results imported: {$a}';
-$string['numattemptsqueue'] = '{$a} answer forms added to queue. An email will be sent to your address after data processing.';
-$string['numattemptsverify'] = 'Scanned forms waiting for correction: {$a}';
+$string['numattempts'] = 'Numero delle consegne importate: {$a}';
+$string['numattemptsqueue'] = '{$a} moduli risposta accodati. Alla fine dell\'elaborazione dei dati ti verrà inviato un messaggio e-mail.';
+$string['numattemptsverify'] = 'Moduli digitalizzati in attesa di correzione: {$a}';
 $string['numberformat'] = 'The value has to be a number with {$a} digits!';
 $string['numpages'] = '{$a} pages imported';
 $string['numquestionsx'] = 'Questions: {$a}';
@@ -420,7 +413,7 @@ In this tab you can upload the filled-in lists of participants. You can upload s
 File names are not relevant but should not contain special characters such as umlauts. Images should be GIFs, PNGs
 or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['pdfdeletedforgroup'] = 'Form for group {$a} deleted';
-$string['pdfscreated'] = 'PDF forms have been created';
+$string['pdfscreated'] = 'I registri presenze sono stati generati';
 $string['pdfsdeletedforgroup'] = 'Forms for group {$a} deleted';
 $string['pdfintro'] = 'Informazioni aggiuntive';
 $string['pdfintro_help'] = 'Il testo verrà stampato sulla prima pagina del foglio domande e possono contenere informazioni o istruzioni generali sulla prova o sulla compilazione del modulo.';
@@ -508,7 +501,7 @@ $string['questionsinthisofflinequiz'] = 'Questions in this offline quiz';
 $string['questiontextisempty'] = '[Empty question text]';
 $string['quizdate'] = 'Data di svolgimento';
 $string['quizopenclose'] = 'Open and close dates';
-$string['quizopenclose_help'] = 'Students can only see their attempt(s) after the open time and before the close time.';
+$string['quizopenclose_help'] = 'Gli studenti possono vedere le proprie consegne solo tra la data di apertura e chiusura.';
 $string['quizquestions'] = 'Quiz Questions';
 $string['randomfromexistingcategory'] = 'Random question from an existing category';
 $string['randomnumber'] = 'Number of random questions';
@@ -551,28 +544,29 @@ $string['reviewofresult'] = 'Verifica dei risultati';
 $string['reviewopens'] = 'Apertura valutazioni';
 $string['reviewoptions'] = 'Students may view';
 $string['reviewoptionsheading'] = 'Opzioni di valutazione';
-$string['reviewoptions_help'] = 'With these options you can control what the students may see after the results were imported.
-You can also define start and end time for the results report. The checkboxes mean:
+$string['reviewoptions_help'] = 'Queste opzioni controllano ciò che gli studenti possono vedere dopo che le consegne sono state importate.
+Puoi anche definire un periodo di apertura e chiusura dei report dei risultati. I check box significano:
 <table>
-<tr><td style="vertical-align: top;"><b>The attempt</b></td><td>
-The text of the questions and answers will be shown to the students. They will see which answers they chose, but the correct answers will not be indicated.</td>
+<tr><td style="vertical-align: top;"><b>La consegna</b></td><td>
+Il testo delle domande e delle risposte sarà visibile agli studenti. Potranno vedere quale risposte hanno scelto, ma non sarà indicato quale sia la risposta corretta.</td>
 </td></tr>
-<tr><td style="vertical-align: top;"><b>Whether correct</b></td><td>
-This option can only be activated if the option "The attempt" is activated. If activated, the students can see which of the chosen answers are correct (green background) or incorrect (red background).
+<tr><td style="vertical-align: top;"><b>La correzione</b></td><td>
+L\'opzione è attivabile solo se è attiva l\'opzione "La consegna". Se attiva, gli studenti postrà controllare quali delle risposte che ha scelto siano corrette (sfondo verde) e quali errate (sfondo rosso).
 </td></tr>
-<tr><td style="vertical-align: top;"><b>Marks</b></td><td>
-The group (e.g. B), scores (achieved grade, total grade for questions, achieved in percent, e.g. 40/80 (50)) and the grade (e.g. 50 out of a maximum of 100) are displayed.
-Additionally, if "The attempt" is selected, the achieved score and the maximum score are shown for every question.
+<tr><td style="vertical-align: top;"><b>Punteggi</b></td><td>
+Sono mostrati il gruppo (es. B), i punteggi (risultato, totale per le domande, risultato in percentuale, es. 40/80 (50)) e il voto (es. 50 su 100).
+Se "La consegna" è abilitata, sono mostrati anche i punteggi e i massimi per ogni singola domanda.
 </td></tr>
-<tr><td style="vertical-align: top;"><b>Right Answers</b></td><td>
-It is shown which answers are correct or wrong. This option is only available if "The attempt" is set.
+<tr><td style="vertical-align: top;"><b>Risposte corrette</b></td><td>
+Mostra se le risposte sono corrette o meno. L\'opzione richiede che "La consegna" sia attiva.
 </td></tr>
-<tr><td style="vertical-align: top;"><b>Scanned form</b></td><td>
-The scanned answer forms are shown. Checked boxes are marked with green squares.
+<tr><td style="vertical-align: top;"><b>Modulo digitalizzato</b></td><td>
+Mostra l\'immagine acquisita del modulo risposte. Le caselle considerate come risposte sono evidenziate in verde.
 </td></tr>
-<tr><td style="vertical-align: top;"><b>Scanned form with grades</b></td><td>
-The scanned answer forms are shown. Checked boxes are marked with green squares. Wrong marks and missing marks are highlighted.
-Additionally, a table shows the maximum grade and the achieved grade for every question.
+<tr><td style="vertical-align: top;"><b>Modulo digitalizzato con i risultati</b></td><td>
+Mostra l\'immagine acquisita del modulo risposte. Le caselle considerate come risposte sono evidenziate in verde.
+Inoltre, tutte le caselle che sono state considerate errate e quelle contrassegnate in modo errato sono evidenziate in rosso.
+Sul margine destro, ci sarà un elenco dei punti segnati per domanda.
 </td></tr>
 </table>';
 
@@ -646,10 +640,10 @@ $string['totalpointsx'] = 'Total of marks: {$a}';
 $string['totalquestionsinrandomqcategory'] = 'Total of {$a} questions in category.';
 $string['trigger'] = 'lower/higher boundary';
 $string['tutorial'] = 'Tutorial sui quiz offline';
-$string['type'] = 'Type';
-$string['uncheckparts'] = 'Mark selected participants as absent';
-$string['updatedsumgrades'] = 'The sum of all grades of group {$a->letter} was re-calculated to {$a->grade}.';
-$string['upgradingfilenames'] = 'Upgrading filenames of documents: offline quiz {$a->done}/{$a->outof} (Offline Quiz ID {$a->info})';
+$string['type'] = 'Tipo';
+$string['uncheckparts'] = 'Marca assenti i partecipanti selezionati';
+$string['updatedsumgrades'] = 'La somma di tutte le valutazioni del gruppo {$a->letter} è stata ricalcolata in {$a->grade}.';
+$string['upgradingfilenames'] = 'Aggiornamento nomi dei file dei documenti: quiz offline {$a->done}/{$a->outof} (ID Quiz offline {$a->info})';
 $string['upgradingofflinequizattempts'] = 'Upgrading offline quiz attempts: offline quiz {$a->done}/{$a->outof} <br/>(Offline Quiz ID {$a->info})';
 $string['upgradingilogs'] = 'Upgrading scanned pages: scanned page {$a->done}/{$a->outof} <br/>(Offline Quiz ID {$a->info})';
 $string['uploadpart'] = 'Upload/Correct lists of participants';
