@@ -31,6 +31,8 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 define('RESULT_STATUS_ERROR','error');
 define('RESULT_STATUS_RESULT_ALREADY_EXISTS_FOR_OTHER_GRUOP','resultfordifferentgroups');
+define('RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_SAME_CROSSES','sameresultexists');
+define(RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_OTHER_CROSSES,'otherresultexists');
 
 class offlinequiz_resultsaver {
 	
@@ -49,9 +51,11 @@ class offlinequiz_resultsaver {
 		if(!$scannedpages || !$scannedpages[$scannedpageid]) {
 		 throw new \coding_exception('A scannedpage can not be updated if it has errors');
 		}
-		if($this->result_already_exists($scannedpageid)) {
-			self::save_page_status($scannedpageid, 'error', 're');
+		$resulterror = $this->get_result_exists_errors($scannedpageid);
+		if($resulterror) {
+			self::save_page_status($scannedpageid, 'error', $resulterror);
 		}
+		if($this->result_with_same_)
 		$groupnumber=0;
 		foreach($scannedpages as $scannedpage) {
 			if(!$groupnumber) {
@@ -108,6 +112,27 @@ class offlinequiz_resultsaver {
 		
 		
 	}
+	
+	private function get_result_exists_errors($scannedpageid) {
+		global $DB;
+		$sql = "SELECT page2.*
+				    FROM {offlinequiz_scanned_pages} page1,
+						 {offlinequiz_scanned_pages} page2
+					WHERE page1.id = :scannedpageid 
+					AND   page1.pagenumber = page2.pagenumber
+                    AND   page1.userkey = page2.userkey
+					AND   page2.resultid IS NOT NULL
+					AND   page1.id <> page2.id
+					AND   page1.offlinequizid = page2.offlinequizid";
+		$otherresults = $DB->get_records_sql($sql,['scannedpageid' => $scannedpageid]);
+		if(!$otherresults) {
+			return;
+		}
+		if($this->results_have_same_crosses($scannedpageid,$otherresults[0]->id)) {
+			return RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_SAME_CROSSES;
+		}
+	}
+	
 	/**
 	 * 
 	 */private function clone_template_usage($offlinequizid, $groupid) {
@@ -130,6 +155,20 @@ class offlinequiz_resultsaver {
 		
 		// And save it. The clone contains the same question in the same order and the same order of the answers.
 		question_engine::save_questions_usage_by_activity($quba);
+	}
+	
+	private function results_have_same_crosses ($scannedpageid1, $scannedpageid2) { 
+	
+		global $DB;
+		$sql = "SELECT 1
+				 FROM   mdl_offlinequiz_choices c1,
+				        mdl_offlinequiz_choices c2
+				 WHERE  c1.scannedpageid = :scannedpageid1
+				        AND c2.scannedpageid = :scannedpageid2
+				        AND c1.slotnumber = c2.slotnumber
+				        AND c1.choicenumber = c2.choicenumber
+				        AND c1.value <> c2.value";
+		return $DB->count_records_sql($sql,["scannedpageid1"=>$scannedpageid1,$sql[]])
 	}
 	
 	/**
