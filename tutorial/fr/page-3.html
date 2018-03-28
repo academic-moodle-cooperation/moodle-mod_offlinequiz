@@ -1,0 +1,25 @@
+<h3>3. La grille des réponses</h3>
+
+<p>Le formulaire de réponse contient un bloc pour votre nom (A), un bloc pour votre numéro d'immatriculation (B) et un bloc pour les réponses (C).
+Remplissez les cases correspondant à votre nom, votre signature et votre numéro d'immatriculation en premier. Notez que la machine n'essaiera pas d'interpréter votre écriture après l'examen. Ces boîtes sont uniquement à des fins de documentation.</p>
+
+<p style="margin: 2em"><img src="bloecke.gif" width="520px" border="1"></p>
+
+<p>Marquez soigneusement les cases correspondant à votre numéro d'immatriculation, car l'ordinateur aura besoin de ces marques pour identifier vos résultats. Les erreurs dans le bloc avec votre numéro d'immatriculation peuvent entraîner des retards et des erreurs d'interprétation.</p>
+
+<p>HComment l'ordinateur affecte-t-il le formulaire de réponse à la bonne personne?</p>
+<form action="index.php" method="get" id="page3" class="popupform">
+<input type="hidden" name="id" value="<?php echo $id ?>">
+<input type="hidden" name="page" value="4">
+<table cellspacing=10 cellpadding=10 border=0 style="margin-left: 2em">
+<tr><td width=70px valign=top>a)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="2">
+&nbsp;&nbsp;&nbsp;</td><td>Le système lit votre nom à l'aide d'un logiciel de reconnaissance optique de caractères.</td></tr>
+<tr><td width=70px valign=top>b)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="3">
+&nbsp;&nbsp;&nbsp;</td><td>Votre signature est numérisée à l'aide d'un logiciel utilisé pour les empreintes digitales dans les enquêtes criminelles.</td></tr>
+<tr><td width=70px valign=top>c)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="1">
+&nbsp;&nbsp;&nbsp;</td><td>Seules les croix dans les cases sous votre numéro d'immatriculation sont interprétées.</td></tr>
+<tr><td width=70px valign=top>d)&nbsp;&nbsp;&nbsp;<input type="radio" name="answer" value="4">
+&nbsp;&nbsp;&nbsp;</td><td>Le système lit votre numéro d'immatriculation à l'aide d'un logiciel de reconnaissance optique de caractères.</td></tr>
+<tr><td width=70px valign=top></td><td><input class="btn btn-primary" type="submit" value="Continue &gt;"></td></tr>
+</table>
+<p style="margin-left: 4em"></p></form>&nbsp;</p>
