@@ -422,8 +422,11 @@ $string['questioninfoqtype'] = 'Fragetyp zeigen';
 $string['questioninfomultichoice'] = 'Multiple-Choice';
 $string['questionname'] = 'Frage';
 $string['questionsheet'] = 'Fragebogen';
-$string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
+$string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
+\documentclass[11pt,a4paper]{article}
 \usepackage[ngerman]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
 \textwidth 16truecm
 \textheight 23truecm
 \setlength{\oddsidemargin}{0cm}
@@ -432,20 +435,17 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 \usepackage{amsmath} % für \implies etc
 \usepackage{amsfonts} % für \mathbb etc
 \usepackage{graphicx} % zum Bilder einfügen
-\renewcommand{\familydefault}{\sfdefault} % Schriftart
-\newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
-\newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
-\newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{ulem}
 \parindent 0pt % keine Einrückung am Beginn des Absatzes
-\usepackage{esvect} % für lange Vektorpfeile, z.B. \vv{AB}
+\renewcommand{\familydefault}{\sfdefault} % Schriftart
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\chead{\sc \Title, Gruppe \Group}
+\cfoot{Seite \thepage/\pageref{LastPage}}
 \usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % Für Einfügen von Hyperlinks
-\renewcommand\UrlFont{\sf}
-\usepackage{ulem} % Durchstreichen: \sout{gerade durchstreichen} \xout{schräg durchstreichen}
-\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
-\usepackage{scrpage2} % Kopf- und Fußzeilen (http://esc-now.de/_/latex-individuelle-kopf-und-fusszeilen/?lang=en):
-\pagestyle{scrheadings}
-\clearscrheadfoot
-\ifoot{[Gruppe \Group]}
 \makeatletter %%% Seitenumbrüche zwischen Antwortmöglichkeiten unterdrücken (funktioniert meistens!)
 \@beginparpenalty=10000
 \@itempenalty=10000
@@ -456,25 +456,45 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 % \newcommand{\answerIs}[1]{[#1]} %%% Zum Anzeigen der richtigen und falschen Antworten
 %%%
 
+
+% ===========================================================================================================
+%%% Die Lehrveranstaltungs-Daten:
+\newcommand{\Group}{{$a->groupname}}
+\newcommand{\Title}{{$a->coursename}}
+\newcommand{\Date}{$a->date}
+ 
+\newcommand{\TestTitle}{%
+\begin{center}
+{\bf \Large Fragebogen}\\\\[3mm]
+\fbox{
+\begin{tabular}{rl}
+\rule{0pt}{25pt} Name: & $\underline{\hspace*{8cm}}$ \rule{20pt}{0pt}\\\\[5mm]
+Matrikelnummer: & $\underline{\hspace*{8cm}}$\\\\[5mm]
+%\rule{10pt}{0pt} Studienkennzahl: & $\underline{\hspace*{8cm}}$\\\\[5mm]
+\rule[-20pt]{0pt}{20pt} Unterschrift: & $\underline{\hspace*{8cm}}$
+\end{tabular}}
+\end{center}
+}
+ 
+\InputIfFileExists{offline_test_extras.tex}{}{} % Input extra user definitions
+ 
 \begin{document}
 
 
 
 % ===========================================================================================================
-%%% Die Lehrveranstaltungs-Daten:
-\begin{center}{\LARGE {$a->coursename}}\end{center}
-\begin{center}{Schriftliche Pr\"ufung {$a->date}}\end{center}
-%%%
-\def\Group{{$a->groupname}}
-\begin{center}{\Large Gruppe \Group}\end{center}
+\TestTitle
 
-{\bf Name:}\\\\
-{\bf Matrikelnummer:}\\\\
-{\bf Unterschrift:}\\
+\bigskip
+% ===========================================================================================================
+
+{$a->pdfintrotext}
 
 % ===========================================================================================================
-\bigskip
 
+\newpage
+
+% ===========================================================================================================
 {$a->latexforquestions}
 
 
