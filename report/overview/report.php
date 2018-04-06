@@ -270,7 +270,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             // Here starts workshhet headers.
             $headers = array(get_string($offlinequizconfig->ID_field), get_string('firstname'),
                 get_string('lastname'), get_string('importedon', 'offlinequiz'),
-            	get_string('group'), get_string('grade', 'offlinequiz'),get_string('letter', 'offlinequiz')
+            	get_string('group'), get_string('grade', 'offlinequiz'), get_string('letter', 'offlinequiz')
             );
             if (!empty($withparticipants)) {
                 $headers[] = get_string('present', 'offlinequiz');
@@ -316,7 +316,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             // Here starts worksheet headers.
             $headers = array(get_string($offlinequizconfig->ID_field), get_string('firstname'),
                 get_string('lastname'), get_string('importedon', 'offlinequiz'),
-            		get_string('group'), get_string('grade', 'offlinequiz'),get_string('letter', 'offlinequiz')
+            	get_string('group'), get_string('grade', 'offlinequiz'), get_string('letter', 'offlinequiz')
             );
             if (!empty($withparticipants)) {
                 $headers[] = get_string('present', 'offlinequiz');
