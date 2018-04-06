@@ -568,19 +568,17 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                   "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/cross.gif\" alt=\"" .
                                  get_string('isnotchecked', 'offlinequiz') . "\">";
                     }
-                } else {
-
-                	if ($download != 'CSVplus1' || $download == 'CSVpluspoints') {
-	                    $row[] = $result->sumgrades === null ? '-' : $outputgrade;
-	                    $row[] = $this->get_grade($context, $course->id, $offlinequiz->id, $result->userid);
-	                    if ($withparticipants) {
-	                        if (array_key_exists($result->userid, $checked)) {
-	                            $row[] = $checked[$result->userid] ? get_string('ok') : '-';
-	                        } else {
-	                            $row[] = '-';
-	                        }
-	                    }
-                	}
+                } else if ($download != 'CSVplus1') {
+                    $row[] = $result->sumgrades === null ? '-' : $outputgrade;
+                    $row[] = $this->get_grade($context, $course->id, $offlinequiz->id, $result->userid);
+                    if ($withparticipants) {
+                        if (array_key_exists($result->userid, $checked)) {
+                            $row[] = $checked[$result->userid] ? get_string('ok') : '-';
+                        } else {
+                            $row[] = '-';
+                        }
+                    }
+                	
 
                 }
 
@@ -739,7 +737,6 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
     
     private function get_grade($context,$courseid,$offlinequizid,$userid) {
     	$grading_info = grade_get_grades($courseid, 'mod', 'offlinequiz', $offlinequizid, $userid);
-    	//                 	print_object($grading_info);
     	$gradeitem = $grading_info->items[0];
     	if($gradeitem != null) {
     		$letters = grade_get_letters($context);
