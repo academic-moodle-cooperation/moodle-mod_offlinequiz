@@ -279,6 +279,7 @@ $string['ischecked'] = 'Participation is checked';
 $string['isnotchecked'] = 'Participation is not checked';
 $string['itemdata'] = 'Itemdata';
 $string['keepfilesfordays'] = 'Keep files for days';
+$string['letter'] = 'Letter';
 $string['lightgray'] = 'Light grey';
 $string['linktoscannedform'] = 'View scanned form';
 $string['listnotdetected'] = 'Could not detect barcode for list!';

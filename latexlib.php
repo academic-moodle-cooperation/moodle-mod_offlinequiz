@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Creates the PDF forms for offlinequizzes
+ * Creates the Latex forms for offlinequizzes
  *
  * @package       mod
  * @subpackage    offlinequiz
