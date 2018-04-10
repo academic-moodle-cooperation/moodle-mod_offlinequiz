@@ -110,8 +110,8 @@ $string['createpartpdferror'] = 'The PDF form for the list of participants {$a} 
 $string['createpdferror'] = 'The form for group {$a} could not be created. Maybe there are no questions in the group.';
 $string['createpdffirst'] = 'Create PDF list first';
 $string['createpdfforms'] = 'Create forms';
-$string['createpdf'] = 'PDF form';
-$string['createpdfs'] = 'PDF forms';
+$string['createpdf'] = 'Form';
+$string['createpdfs'] = 'Download forms';
 $string['createpdfsparticipants'] = 'PDF forms for list of participants';
 $string['createquestionandadd'] = 'Create a new question and add it to the quiz.';
 $string['createquiz'] = 'Create forms';
@@ -279,6 +279,7 @@ $string['ischecked'] = 'Participation is checked';
 $string['isnotchecked'] = 'Participation is not checked';
 $string['itemdata'] = 'Itemdata';
 $string['keepfilesfordays'] = 'Keep files for days';
+$string['letter'] = 'Letter';
 $string['lightgray'] = 'Light grey';
 $string['linktoscannedform'] = 'View scanned form';
 $string['listnotdetected'] = 'Could not detect barcode for list!';
@@ -442,7 +443,10 @@ $string['questioninfonone'] = 'Nothing';
 $string['questioninfoqtype'] = 'Question type';
 $string['questionname'] = 'Question name';
 $string['questionsheet'] = 'Question sheet';
-$string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
+$string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
 \textwidth 16truecm
 \textheight 23truecm
 \setlength{\oddsidemargin}{0cm}
@@ -450,21 +454,17 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 \setlength{\topmargin}{-1cm}
 \usepackage{amsmath} % for \implies etc
 \usepackage{amsfonts} % for \mathbb etc
-\usepackage{graphicx} % for including pictures
-\renewcommand{\familydefault}{\sfdefault} % Font
-\newcommand{\lsim}{\mbox{\raisebox{-.3em}{$\stackrel{<}{\sim}$}}} % less or approximately equal
-\newcommand{\subs}{\mbox{\raisebox{-.5em}{$\stackrel{\subset}{\neq}$}}}
-\newcommand{\sei}{\mbox{\raisebox{.0em}{$\stackrel{!}{=}$}}}
+\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using hyperlinks
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{ulem}
 \parindent 0pt % no indent on the beginning of a section
-\usepackage{esvect} % long vector arrows, e.g. \vv{AB}
-\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using of Hyperlinks
 \renewcommand\UrlFont{\sf}
-\usepackage{ulem} %  \sout{horizontal cross out} \xout{diagonal strike out}
-\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
-\usepackage{scrpage2} % For Header and Footer
-\pagestyle{scrheadings}
-\clearscrheadfoot
-\ifoot{[Gruppe \Group]}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\chead{\sc \Title, Group \Group}
+\cfoot{Seite \thepage/\pageref{LastPage}}
 \makeatletter %%% disable pagebreaks between answers
 \@beginparpenalty=10000
 \@itempenalty=10000
@@ -474,24 +474,48 @@ $string['questionsheetlatextemplate'] = '\documentclass[12pt,a4paper]{article}
 % \newcommand{\answerIs}[1]{[#1]} %%%Enable showing the right answer
 %%%
 
+
+% ===========================================================================================================
+%%% Course data:
+\newcommand{\Group}{A}
+\newcommand{\Title}{Test Course}
+\newcommand{\Date}
+ 
+\newcommand{\TestTitle}{%
+\begin{center}
+{\bf \Large Questionnaire}\\\\[3mm]
+\fbox{
+\begin{tabular}{rl}
+\rule{0pt}{25pt} Name: & $\underline{\hspace*{8cm}}$ \rule{20pt}{0pt}\\\\[5mm]
+Student ID: & $\underline{\hspace*{8cm}}$\\\\[5mm]
+%\rule{10pt}{0pt} Program code: & $\underline{\hspace*{8cm}}$\\\\[5mm]
+\rule[-20pt]{0pt}{20pt} Signature: & $\underline{\hspace*{8cm}}$
+\end{tabular}}
+\end{center}
+}
+ 
+\InputIfFileExists{offline_test_extras.tex}{}{} % Input extra user definitions
+ 
 \begin{document}
 
 
+% ===========================================================================================================
+\TestTitle
 
 % ===========================================================================================================
-%%% Data of the Course
-\begin{center}{\LARGE {$a->coursename}}\end{center}
-\begin{center}{Written Exam {$a->date}}\end{center}
-%%%
-\def\Group{{$a->groupname}}
-\begin{center}{\Large Group \Group}\end{center}
 
-{\bf Name:}\\\\
-{\bf Matriculation number:}\\\\
-{\bf Signature:}\\
 
-% ===========================================================================================================
 \bigskip
+% ===========================================================================================================
+
+{$a->pdfintrotext}
+
+% ===========================================================================================================
+
+\newpage
+
+% ===========================================================================================================
+ 
 
 {$a->latexforquestions}
 
@@ -531,8 +555,9 @@ $string['reordertool'] = 'Show the reordering tool';
 $string['repaginate'] = 'Repaginate with {$a} questions per page';
 $string['repaginatecommand'] = 'Repaginate';
 $string['repaginatenow'] = 'Repaginate now';
+$string['reportends'] = 'Review of results ends';
 $string['reportoverview'] = 'Overview';
-$string['reportstarts'] = 'review of results';
+$string['reportstarts'] = 'Review of results starts';
 $string['resetofflinequizzes'] = 'Reset Offline Quiz data';
 $string['results'] = 'Results';
 $string['resultexists'] = 'Same result for {$a} already exists, import ignored';

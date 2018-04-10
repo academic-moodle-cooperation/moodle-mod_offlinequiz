@@ -976,8 +976,8 @@ function offlinequiz_update_events($offlinequiz) {
     }
 
     if (!empty($timeopen)) {
-        $event = new stdClass();
-        $event->name = $offlinequiz->name;
+    	$event = new stdClass();
+    	$event->name = $offlinequiz->name . ' (' . get_string('reportstarts', 'offlinequiz') . ')';
         $event->description = format_module_intro('offlinequiz', $offlinequiz, $cmid);
         // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $offlinequiz->course;
@@ -986,17 +986,27 @@ function offlinequiz_update_events($offlinequiz) {
         $event->modulename  = 'offlinequiz';
         $event->instance    = $offlinequiz->id;
         $event->timestart   = $timeopen;
-        $event->timeduration = max($timeclose - $timeopen, 0);
+        $event->timeduration = 0;
         $event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
 
-        if ($timeopen == $offlinequiz->time) {
-            $event->name = $offlinequiz->name;
-        }
-        if ($timeopen == $offlinequiz->timeopen) {
-            $event->name = $offlinequiz->name . ' (' . get_string('reportstarts', 'offlinequiz') . ')';
-        }
 
         calendar_event::create($event);
+    }
+    if (!empty($timeclose)) {
+    	$event = new stdClass();
+    	$event->name = $offlinequiz->name . ' (' . get_string('reportends', 'offlinequiz') . ')';
+    	$event->description = format_module_intro('offlinequiz', $offlinequiz, $cmid);
+    	// Events module won't show user events when the courseid is nonzero.
+    	$event->courseid    = ($userid) ? 0 : $offlinequiz->course;
+    	$event->groupid     = $groupid;
+    	$event->userid      = $userid;
+    	$event->modulename  = 'offlinequiz';
+    	$event->instance    = $offlinequiz->id;
+    	$event->timestart   = $timeclose;
+    	$event->timeduration = 0;
+    	$event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
+    	
+    	calendar_event::create($event);
     }
 
     // Delete any leftover events.
