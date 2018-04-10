@@ -1,5 +1,11 @@
 CHANGELOG
 =========
+3.4.2 (2018-04-10)
+------------------
+* changed the way how LaTeX-Question sheets work. It should now support almost every question that is written in the moodle editor
+* export of results now has the column "letter"
+* fixed an error for the calender-plugin where the report-appointment was displayed for all the days
+
 3.4.1 (2018-01-17)
 * fixed an error, where under certain condition the field id_digits was missing.
 
