@@ -240,6 +240,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
                 }
             } else if (preg_match('/^image/' , $mimetype)) {
+            	
                 $files[] = $realfilename;
             }
             $added = count($files);
@@ -258,6 +259,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
             // Add the files to the job.
             foreach ($files as $file) {
+            	$this->convert_black_white($dirname . '/' . $file);
                 $jobfile = new stdClass();
                 $jobfile->queueid = $job->id;
                 $jobfile->filename = $dirname . '/' . $file;
@@ -327,5 +329,11 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     $importform->display();
             }
         }
+    }
+    private function convert_black_white($file) {
+    	$imagemagick = new \Imagick(realpath($file));
+    	$imagemagick->quantizeimage(2, \Imagick::COLORSPACE_GRAY, 0, false, false);
+		$imagemagick->writeimage($file);
+		$imagemagick->clear();
     }
 }
