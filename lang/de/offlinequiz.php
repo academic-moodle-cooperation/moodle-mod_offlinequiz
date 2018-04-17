@@ -255,6 +255,7 @@ $string['ischecked'] = 'Teilnahme bestätigt';
 $string['isnotchecked'] = 'Teilnahme nicht bestätigt';
 $string['itemdata'] = 'Item-Daten';
 $string['keepfilesfordays'] = 'Tage der Aufbewahrung';
+$string['letter'] = 'Note';
 $string['lightgray'] = 'Hellgrau';
 $string['linktoscannedform'] = 'Scannerbeleg ansehen';
 $string['listnotdetected'] = 'Barcode für Zuordnung der Anwesenheitsliste nicht erfassbar!';
