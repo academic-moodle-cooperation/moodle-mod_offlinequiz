@@ -239,6 +239,19 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     echo $OUTPUT->notification(get_string('couldnotunzip', 'offlinequiz_rimport', $realfilename), 'notifyproblem');
 
                 }
+            } else if ($mimetype == 'image/tiff') {
+                // extract each TIFF subfiles into a file
+                // (it would be better to know if there are subfiles, but it is pretty cheap anyway)
+                $newfile = "$importfile-%d.tiff";
+                $handle = popen("convert '$importfile' '$newfile'", 'r');
+                fread($handle, 1);
+                while (!feof($handle)) fread($handle, 1);
+                pclose($handle);
+                if (count(get_directory_list($dirname)) > 1) {
+                    // it worked, remove original
+                    unlink($importfile);
+                }
+                $files = get_directory_list($dirname);
             } else if (preg_match('/^image/' , $mimetype)) {
                 $files[] = $realfilename;
             }
