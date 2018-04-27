@@ -175,7 +175,13 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     } else {
         $a['date'] = '';
     }
-
+    $a['fontsize'] = $offlinequiz->fontsize;
+    if($offlinequiz->printstudycodefield) {
+    	$a['printstudycodefield'] = true;
+    } else {
+    	$a['printstudycodefield'] = false;
+    }
+    
     $latex = get_string('questionsheetlatextemplate', 'offlinequiz', $a);
 
     $fs = get_file_storage();
