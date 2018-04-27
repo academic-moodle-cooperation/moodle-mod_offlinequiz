@@ -157,6 +157,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $options[8] = 8;
         $options[9] = 9;
         $options[10] = 10;
+        $options[11] = 11;
         $options[12] = 12;
         $options[14] = 14;
         $mform->addElement('select', 'fontsize', get_string('fontsize', 'offlinequiz'), $options, $attribs);
