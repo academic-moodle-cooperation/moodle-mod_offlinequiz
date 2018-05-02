@@ -177,9 +177,9 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     }
     $a['fontsize'] = $offlinequiz->fontsize;
     if($offlinequiz->printstudycodefield) {
-    	$a['printstudycodefield'] = true;
+    	$a['printstudycodefield'] = "true";
     } else {
-    	$a['printstudycodefield'] = false;
+    	$a['printstudycodefield'] = "false";
     }
     
     $latex = get_string('questionsheetlatextemplate', 'offlinequiz', $a);
