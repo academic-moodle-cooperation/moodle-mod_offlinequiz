@@ -358,9 +358,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
         }
     }
     private function convert_black_white($file) {
-    	$imagemagick = new \Imagick(realpath($file));
-    	$imagemagick->quantizeimage(2, \Imagick::COLORSPACE_GRAY, 0, false, false);
-		$imagemagick->writeimage($file);
-		$imagemagick->clear();
+    	$command = "convert " . realpath($file) . " -threshold 50% " . realpath($file);
+//     	popen($command, 'r');
     }
 }
