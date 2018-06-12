@@ -54,7 +54,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         $systemcontext = context_system::instance();
 
         // Set table options.
-        $noresults = optional_param('noresults', 0, PARAM_INT);
+        $noresults = optional_param('noresults', 3, PARAM_INT);
         $pagesize = optional_param('pagesize', 10, PARAM_INT);
         $groupid = optional_param('group', 0, PARAM_INT);
 
