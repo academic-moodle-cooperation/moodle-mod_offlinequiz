@@ -370,7 +370,7 @@ class structure {
         }
         if ($offlinequiz->timeclose > 0) {
             if ($timenow > $offlinequiz->timeclose) {
-                $dates[] = get_string('offlinequizclosed', 'offlinequiz', userdate($offlinequiz->timeclose));
+                $dates[] = get_string('offlinequizisclosed', 'offlinequiz', userdate($offlinequiz->timeclose));
             } else {
                 $dates[] = get_string('offlinequizcloseson', 'offlinequiz', userdate($offlinequiz->timeclose));
             }

@@ -2217,7 +2217,6 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
     $qcparams['offlinegroupid'] = $offlinegroup->id;
 
     $questionids = $DB->get_fieldset_sql($sql, $qcparams);
-    srand(microtime() * 1000000);
     shuffle($questionids);
 
     $chosenids = array();

@@ -54,8 +54,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        $mform->addElement('html', '<center>' . get_string('pluginname', 'offlinequiz') . '</center>');
-
         if ($offlinequiz && $offlinequiz->docscreated) {
             $mform->addElement('html', "<center><a href=\"" . $CFG->wwwroot .
                     "/mod/offlinequiz/createquiz.php?mode=createpdfs&amp;q=$offlinequiz->id\">" .

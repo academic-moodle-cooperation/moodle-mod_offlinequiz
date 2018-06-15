@@ -306,20 +306,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                         $this->output_statistics_graph($offlinequizstats->id, $s);
                     }
 
-//                     foreach ($questions as $question) {
-//                         if (question_bank::get_qtype(
-//                                 $question->qtype, false)->can_analyse_responses()) {
-//                             $this->output_individual_question_response_analysis(
-//                                     $question, $reporturl, $offlinequizstats);
-
-//                         } else if (!empty($question->_stats->subquestions)) {
-//                             $subitemstodisplay = explode(',', $question->_stats->subquestions);
-//                             foreach ($subitemstodisplay as $subitemid) {
-//                                 $this->output_individual_question_response_analysis(
-//                                         $subquestions[$subitemid], $reporturl, $offlinequizstats);
-//                             }
-//                         }
-//                     }
                 }
             } else if ($statmode == 'questionandanswerstats') {
                 if ($s) {

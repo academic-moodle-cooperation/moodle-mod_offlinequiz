@@ -723,8 +723,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     if ($correction) {
         $fileprefix = get_string('fileprefixcorrection', 'offlinequiz');
     }
-
-    srand(microtime() * 1000000);
+    
     $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
 
     $tempfilename = $CFG->dataroot . '/temp/offlinequiz/' . $unique . '.docx';

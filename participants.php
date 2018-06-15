@@ -581,7 +581,6 @@ switch($mode) {
                 // or one from the filesarea.
                 $realfilename = $importform->get_new_filename('newfile');
                 // Create a unique temp dir.
-                srand(microtime() * 1000000);
                 $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
                 $tempdir = "{$CFG->tempdir}/offlinequiz/import/$unique";
                 check_dir_exists($tempdir, true, true);

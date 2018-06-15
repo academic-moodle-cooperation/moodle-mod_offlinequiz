@@ -721,7 +721,6 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
                     'filename'  => $scanner->filename . '_warning');
 
             // Create a unique temp dir.
-            srand(microtime() * 1000000);
             $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
             $dirname = "{$CFG->tempdir}/offlinequiz/import/$unique";
             check_dir_exists($dirname, true, true);

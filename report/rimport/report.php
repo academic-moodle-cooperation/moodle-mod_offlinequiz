@@ -358,6 +358,6 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
     }
     private function convert_black_white($file) {
     	$command = "convert " . realpath($file) . " -threshold 50% " . realpath($file);
-//     	popen($command, 'r');
+     	popen($command, 'r');
     }
 }
