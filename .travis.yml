@@ -17,6 +17,9 @@ php:
  - 7.1
  - 7.2
 
+addons:
+  postgresql: "9.3"
+
 # This section sets up the environment variables for the build.
 env:
  global:
