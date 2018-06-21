@@ -66,12 +66,12 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->force_settings_menu(true);
 $PAGE->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
-		'M.mod_offlinequiz.init_resource_toolbox',
-		array(array(
-				'courseid' => $course->id,
-				'offlinequizid' => $offlinequiz->id
-		))
-		);
+        'M.mod_offlinequiz.init_resource_toolbox',
+        array(array(
+                'courseid' => $course->id,
+                'offlinequizid' => $offlinequiz->id
+        ))
+        );
 
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);

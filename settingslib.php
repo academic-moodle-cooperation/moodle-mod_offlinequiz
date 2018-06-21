@@ -67,7 +67,7 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
     }
 
     /**
-     * 
+     *
      * @param unknown_type $name
      * @param unknown_type $visiblename
      * @param unknown_type $description
@@ -94,7 +94,7 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
     }
 
     /**
-     * 
+     *
      * @param unknown_type $data
      */
     protected function normalise_data($data) {
@@ -168,13 +168,13 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
 }
 
 /**
- * 
+ *
  */
 class admin_setting_configtext_user_formula extends admin_setting_configtext {
-	public function validate($data) {
-		global $DB, $CFG;
+    public function validate($data) {
+        global $DB, $CFG;
 
-		$valid = false;
+        $valid = false;
         // allow paramtype to be a custom regex if it is the form of /pattern/
         if (preg_match('#^/.*/$#', $this->paramtype)) {
             if (preg_match($this->paramtype, $data)) {
@@ -187,7 +187,7 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
             $valid = true;
 
         } else {
-            $cleaned = clean_param($data, $this->paramtype);
+             $cleaned = clean_param($data, $this->paramtype);
             if ("$data" === "$cleaned") { // implicit conversion to string is needed to do exact comparison
                 $valid = true;
             } else {
@@ -195,9 +195,9 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
             }
         }
         if ($valid) {
-            require_once($CFG->dirroot . "/mod/offlinequiz/locallib.php");
+             require_once($CFG->dirroot . "/mod/offlinequiz/locallib.php");
 
-            $matches = array();
+             $matches = array();
             if (preg_match(OFFLINEQUIZ_USER_FORMULA_REGEXP, $data, $matches)) {
                 $prefix = $matches[1];
                 $digits = intval($matches[2]);
@@ -207,9 +207,9 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
                 if ($digits < 1 || $digits > 9) {
                     return get_string('invalidnumberofdigits', 'offlinequiz');
                 }
-            	// Check for valid user table field.
-    		    if ($testusers = $DB->get_records('user', null, '', '*', 0, 1)) {
-		            if (count($testusers) > 0 && $testuser = array_pop($testusers)) {
+                   // Check for valid user table field.
+                if ($testusers = $DB->get_records('user', null, '', '*', 0, 1)) {
+                    if (count($testusers) > 0 && $testuser = array_pop($testusers)) {
                         if (isset($testuser->{$field})) {
                             set_config('ID_digits', $digits, 'offlinequiz');
                             set_config('ID_prefix', $prefix, 'offlinequiz');
@@ -217,13 +217,13 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
                             set_config('ID_field', $field, 'offlinequiz');
                             return true;
                         } else {
-    	    	            return get_string('invaliduserfield', 'offlinequiz');
+                            return get_string('invaliduserfield', 'offlinequiz');
                         }
-		    	    }
-    		    }
+                    }
+                }
             } else {
                 return get_string('invalidformula', 'offlinequiz');
             }
         }
-	}
+    }
 }

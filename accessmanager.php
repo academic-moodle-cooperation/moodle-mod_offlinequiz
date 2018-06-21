@@ -369,11 +369,11 @@ class offlinequiz_access_manager {
      *      otherwise null.
      * @return mod_offlinequiz_preflight_check_form the form.
      */
-//     public function get_preflight_check_form(moodle_url $url, $attemptid) {
-//         return new mod_offlinequiz_preflight_check_form($url->out_omit_querystring(),
-//                 array('rules' => $this->rules, 'offlinequizobj' => $this->offlinequizobj,
-//                       'attemptid' => $attemptid, 'hidden' => $url->params()));
-//     }
+    // public function get_preflight_check_form(moodle_url $url, $attemptid) {
+    // return new mod_offlinequiz_preflight_check_form($url->out_omit_querystring(),
+    // array('rules' => $this->rules, 'offlinequizobj' => $this->offlinequizobj,
+    // 'attemptid' => $attemptid, 'hidden' => $url->params()));
+    // }
 
     /**
      * The pre-flight check has passed. This is a chance to record that fact in

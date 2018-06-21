@@ -202,8 +202,7 @@ class offlinequiz_statistics_question_stats {
                 if (!isset($this->randomselectors[$randomselectorstring])) {
                     $this->randomselectors[$randomselectorstring] = array();
                 }
-                $this->randomselectors[$randomselectorstring][$step->questionid] =
-                        $step->questionid;
+                $this->randomselectors[$randomselectorstring][$step->questionid] = $step->questionid;
             }
         }
 
@@ -280,8 +279,7 @@ class offlinequiz_statistics_question_stats {
             $this->sumofmarkvariance += $question->_stats->markvariance;
 
             if ($question->_stats->covariancewithoverallmark >= 0) {
-                $sumofcovariancewithoverallmark +=
-                        sqrt($question->_stats->covariancewithoverallmark);
+                $sumofcovariancewithoverallmark += sqrt($question->_stats->covariancewithoverallmark);
                 $question->_stats->negcovar = 0;
             } else {
                 $question->_stats->negcovar = 1;
@@ -297,9 +295,7 @@ class offlinequiz_statistics_question_stats {
                 if ($question->_stats->negcovar) {
                     $question->_stats->effectiveweight = null;
                 } else {
-                    $question->_stats->effectiveweight = 100 *
-                            sqrt($question->_stats->covariancewithoverallmark) /
-                            $sumofcovariancewithoverallmark;
+                    $question->_stats->effectiveweight = 100 * sqrt($question->_stats->covariancewithoverallmark) / $sumofcovariancewithoverallmark;
                 }
             } else {
                 $question->_stats->effectiveweight = null;
@@ -375,14 +371,12 @@ class offlinequiz_statistics_question_stats {
         if ($stats->subquestion) {
             $othermarkdifference = $step->sumgrades - $stats->othermarkaverage;
         } else {
-            $othermarkdifference = $step->sumgrades - $step->mark -
-                    $stats->othermarkaverage;
+            $othermarkdifference = $step->sumgrades - $step->mark - $stats->othermarkaverage;
         }
         $overallmarkdifference = $step->sumgrades - $this->summarksavg;
 
         $sortedmarkdifference = array_shift($stats->markarray) - $stats->markaverage;
-        $sortedothermarkdifference = array_shift($stats->othermarksarray) -
-                $stats->othermarkaverage;
+        $sortedothermarkdifference = array_shift($stats->othermarksarray) - $stats->othermarkaverage;
 
         $stats->markvariancesum += pow($markdifference, 2);
         $stats->othermarkvariancesum += pow($othermarkdifference, 2);
@@ -412,8 +406,7 @@ class offlinequiz_statistics_question_stats {
             $stats->othermarkvariance = $stats->othermarkvariancesum / ($stats->s - 1);
             $stats->covariance = $stats->covariancesum / ($stats->s - 1);
             $stats->covariancemax = $stats->covariancemaxsum / ($stats->s - 1);
-            $stats->covariancewithoverallmark = $stats->covariancewithoverallmarksum /
-                    ($stats->s - 1);
+            $stats->covariancewithoverallmark = $stats->covariancewithoverallmarksum / ($stats->s - 1);
             $stats->sd = sqrt($stats->markvariancesum / ($stats->s - 1));
 
         } else {
@@ -426,15 +419,13 @@ class offlinequiz_statistics_question_stats {
         }
 
         if ($stats->markvariance * $stats->othermarkvariance) {
-            $stats->discriminationindex = 100 * $stats->covariance /
-                    sqrt($stats->markvariance * $stats->othermarkvariance);
+            $stats->discriminationindex = 100 * $stats->covariance / sqrt($stats->markvariance * $stats->othermarkvariance);
         } else {
             $stats->discriminationindex = null;
         }
 
         if ($stats->covariancemax) {
-            $stats->discriminativeefficiency = 100 * $stats->covariance /
-                    $stats->covariancemax;
+            $stats->discriminativeefficiency = 100 * $stats->covariance / $stats->covariancemax;
         } else {
             $stats->discriminativeefficiency = null;
         }

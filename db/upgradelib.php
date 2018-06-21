@@ -202,8 +202,7 @@ class offlinequiz_ilog_upgrader {
                                                                    'needsupgradetonewqe' => 0, 'sheet' => 0));
         $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
                                    'number', '*', 0, $offlinequiz->numgroups);
-        list($maxquestions, $maxanswers, $formtype, $questionsperpage) =
-            offlinequiz_get_question_numbers($offlinequiz, $groups);
+        list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $groups);
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($attempts as $attempt) {
@@ -987,10 +986,10 @@ function offlinequiz_update_form_file_names() {
             $DB->update_record('offlinequiz_groups', $group);
         }
         $done += 1;
-	    $a->done = $done;
+        $a->done = $done;
         $a->info = $offlinequiz->id;
-	    $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
-   }
+        $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
+    }
 }
 
 function offlinequiz_update_refresh_all_pagecounts() {
@@ -1023,8 +1022,8 @@ function offlinequiz_update_refresh_all_pagecounts() {
     }
 }
 
-function offlinequiz_get_number_of_columns($maxanswers)  {
-    $i=1;
+function offlinequiz_get_number_of_columns($maxanswers) {
+    $i = 1;
     $columnlimits = array(1 => 13, 2 => 8, 3 => 6);
     while(array_key_exists($i,$columnlimits) && $columnlimits[$i] > $maxanswers) {
         $i++;
@@ -1033,5 +1032,5 @@ function offlinequiz_get_number_of_columns($maxanswers)  {
 }
 
 function offlinequiz_get_number_of_pages($questions,$columns) {
-    return ceil($questions/$columns/24);
+    return ceil($questions / $columns / 24);
 }

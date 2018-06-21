@@ -593,8 +593,7 @@ class offlinequiz_page_scanner {
         $factor = $width / imagesx($this->image);
 
         for ($i = 0; $i <= 5; $i++) {
-            $point = new oq_point(($this->hotspots["g$i"]->x + $this->offset->x) * $width / imagesx($this->image) -
-                    2 * $this->zoomx, ($this->hotspots["g$i"]->y + $this->offset->y) * $factor - 2 * $this->zoomy);
+            $point = new oq_point(($this->hotspots["g$i"]->x + $this->offset->x) * $width / imagesx($this->image) - 2 * $this->zoomx, ($this->hotspots["g$i"]->y + $this->offset->y) * $factor - 2 * $this->zoomy);
             $export["g$i"] = $point;
         }
         return $export;
@@ -821,10 +820,10 @@ class offlinequiz_page_scanner {
 
     /**
      * Determines the black value of a hotspot.
-     * Returns 
-     *    0 if empty, 
-     *    1 if marked, 
-     *    2 if deleted, 
+     * Returns
+     *    0 if empty,
+     *    1 if marked,
+     *    2 if deleted,
      *    3 if insecure.
      * If return is true, it returns the percentage of black pixels found
      *
@@ -909,7 +908,7 @@ class offlinequiz_page_scanner {
                  return 1;
             } else if ($patternfactor < 1.4 or $patternfactor2 < 1.7) {
                 // Was
-//            } else if ($patternfactor < 2.45 or $patternfactor2 < 2.8) {
+                // } else if ($patternfactor < 2.45 or $patternfactor2 < 2.8) {
                 return 2;
             } else {
                 return 3;

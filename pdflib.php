@@ -635,7 +635,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
             }
             if ($offlinequiz->disableimgnewlines) {
-                //This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
+                // This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
                 $html = preg_replace("/(<span class=\"MathJax_Preview\">.+?)+(title=\"TeX\" >)/ms", "", $html);
                 $html = preg_replace("/<\/a><\/span>/ms", "", $html);
                 $html = preg_replace("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
@@ -779,7 +779,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
             }
 
-            //This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
+            // This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
             if ($offlinequiz->disableimgnewlines) {
                 $html = preg_replace("/(<span class=\"MathJax_Preview\">.+?)+(title=\"TeX\" >)/ms", "", $html);
                 $html = preg_replace("/<\/a><\/span>/ms", "", $html);
@@ -995,7 +995,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
         $number ++;
     }
 
-    $group->numberofpages=$page;
+    $group->numberofpages = $page;
     $DB->update_record('offlinequiz_groups', $group);
 
     $fs = get_file_storage();

@@ -84,7 +84,7 @@ echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 $group = $groups[$result->offlinegroupid];
-$offlinequiz->groupid =- $group->id;
+$offlinequiz->groupid = - $group->id;
 
 list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, array($group));
 

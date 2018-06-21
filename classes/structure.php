@@ -746,8 +746,8 @@ class structure {
 
         // Now look at the maxmark of attemps.
         // We do this already in offlinequiz_update_question_instance.
-//         \question_engine::set_max_mark_in_attempts(new \result_qubaids_for_offlinequiz($slot->offlinequizid, $slot->offlinegroupid),
-//                 $slot->slot, $maxmark);
+        // \question_engine::set_max_mark_in_attempts(new \result_qubaids_for_offlinequiz($slot->offlinequizid, $slot->offlinegroupid),
+        // $slot->slot, $maxmark);
         $trans->allow_commit();
 
         return true;

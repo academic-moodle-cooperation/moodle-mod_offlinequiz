@@ -39,7 +39,6 @@ require_once($CFG->libdir.'/formslib.php');
 class offlinequiz_add_random_form extends moodleform {
 
     protected function definition() {
-        global $CFG, $DB;
         $mform =& $this->_form;
         $mform->setDisableShortforms();
 

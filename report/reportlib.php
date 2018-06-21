@@ -109,7 +109,7 @@ function offlinequiz_report_get_significant_questions($offlinequiz) {
     }
 
     list($usql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
-    
+
     $params['offlinequizid'] = $offlinequiz->id;
     $groupsql = '';
     if ($offlinequiz->groupid) {
@@ -136,7 +136,7 @@ function offlinequiz_report_get_significant_questions($offlinequiz) {
             $questions[$question->id] = $question;
         }
     }
-    
+
     $number = 1;
     foreach ($questionids as $key => $id) {
         if (!array_key_exists($id, $questions)) {
@@ -151,7 +151,7 @@ function offlinequiz_report_get_significant_questions($offlinequiz) {
 
 /**
  * Format a number as a percentage out of $offlinequiz->sumgrades
- * 
+ *
  * @param number $rawgrade the mark to format.
  * @param object $offlinequiz the offlinequiz settings
  * @param bool $round whether to round the results ot $offlinequiz->decimalpoints.
@@ -173,7 +173,7 @@ function offlinequiz_report_scale_summarks_as_percentage($rawmark, $offlinequiz,
 
 /**
  * Format a number as a percentage out of $offlinequiz->sumgrades
- * 
+ *
  * @param number $rawgrade the mark to format.
  * @param object $offlinequiz the offlinequiz settings
  * @param bool $round whether to round the results ot $offlinequiz->decimalpoints.

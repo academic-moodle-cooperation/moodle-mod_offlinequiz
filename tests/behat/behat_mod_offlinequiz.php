@@ -42,5 +42,5 @@ use Behat\Behat\Context\Step\Given as Given,
  */
 class behat_mod_offlinequiz extends behat_question_base {
 
- 
+
 }

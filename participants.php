@@ -100,12 +100,12 @@ $pagetitle = get_string('editparticipants', 'offlinequiz');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 $PAGE->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
-		'M.mod_offlinequiz.init_resource_toolbox',
-		array(array(
-				'courseid' => $course->id,
-				'offlinequizid' => $offlinequiz->id
-		))
-		);
+        'M.mod_offlinequiz.init_resource_toolbox',
+        array(array(
+                'courseid' => $course->id,
+                'offlinequizid' => $offlinequiz->id
+        ))
+        );
 
 
 offlinequiz_load_useridentification();
@@ -208,8 +208,7 @@ switch($mode) {
                           'q' => $offlinequiz->id,
                           'listid' => $list->id,
                           'sesskey' => sesskey()));
-            echo html_writer::link($deleteurl, $imagehtml,array('onClick' =>
-                            'return confirm(\'' . addslashes(get_string('deletelistcheck', 'offlinequiz')) . '\');',
+            echo html_writer::link($deleteurl, $imagehtml,array('onClick' => 'return confirm(\'' . addslashes(get_string('deletelistcheck', 'offlinequiz')) . '\');',
                             'class' => 'deletelistlink'
             ));
             echo '</li>';
@@ -464,19 +463,19 @@ switch($mode) {
         ?>
 
         <div class="singlebutton" align="center">
-	        <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/participants.php" ?>" method="post">
-		        <div>
-			        <input type="hidden" name="q" value="<?php echo $offlinequiz->id ?>" />
-			        <input type="hidden" name="forcenew" value="1" />
-			        <input type="hidden" name="mode" value="createpdfs" />
-			        <button type="submit"
-				    onClick='return confirm("<?php echo get_string('reallydeleteupdatepdf', 'offlinequiz') ?>")' 
-				    class="btn btn-secondary">
-				    	<?php echo get_string('deleteupdatepdf', 'offlinequiz') ?>
-				    </button>
+            <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/participants.php" ?>" method="post">
+                <div>
+                    <input type="hidden" name="q" value="<?php echo $offlinequiz->id ?>" />
+                    <input type="hidden" name="forcenew" value="1" />
+                    <input type="hidden" name="mode" value="createpdfs" />
+                    <button type="submit"
+                    onClick='return confirm("<?php echo get_string('reallydeleteupdatepdf', 'offlinequiz') ?>")' 
+                    class="btn btn-secondary">
+            <?php echo get_string('deleteupdatepdf', 'offlinequiz') ?>
+                    </button>
                 </div>
-	        </form>
-	        <br>&nbsp;<br>
+            </form>
+            <br>&nbsp;<br>
         </div>
         <?php
 
@@ -637,19 +636,16 @@ switch($mode) {
                 $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
                 if ($scannedpage = $scanner->load_image($filename)) {
                     if ($scannedpage->status == 'ok') {
-                        list($scanner, $scannedpage) =
-                            offlinequiz_check_scanned_participants_page($offlinequiz, $scanner, $scannedpage,
+                        list($scanner, $scannedpage) = offlinequiz_check_scanned_participants_page($offlinequiz, $scanner, $scannedpage,
                                                                         $USER->id, $coursecontext, true);
                     }
                     if ($scannedpage->status == 'ok') {
-                        $scannedpage =
-                            offlinequiz_process_scanned_participants_page($offlinequiz, $scanner, $scannedpage,
+                        $scannedpage = offlinequiz_process_scanned_participants_page($offlinequiz, $scanner, $scannedpage,
                                                                           $USER->id, $coursecontext);
                     }
                     if ($scannedpage->status == 'ok') {
                         $choicesdata = $DB->get_records('offlinequiz_p_choices', array('scannedppageid' => $scannedpage->id));
-                        $scannedpage = $scannedpage =
-                            offlinequiz_submit_scanned_participants_page($offlinequiz, $scannedpage, $choicesdata);
+                        $scannedpage = $scannedpage = offlinequiz_submit_scanned_participants_page($offlinequiz, $scannedpage, $choicesdata);
                         if ($scannedpage->status == 'submitted') {
                             echo get_string('pagenumberimported', 'offlinequiz', $j)."<br /><br />";
                         }

@@ -32,8 +32,7 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
-        question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
+list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) = question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
 
 // Get the course object and related bits.
 $course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);

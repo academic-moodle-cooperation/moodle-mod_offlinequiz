@@ -97,8 +97,7 @@ switch($requestmethod) {
                     case 'getmaxmark':
                         require_capability('mod/offlinequiz:manage', $modcontext);
                         $slot = $DB->get_record('offlinequiz_group_questions', array('id' => $id), '*', MUST_EXIST);
-                        echo json_encode(array('instancemaxmark' =>
-                                offlinequiz_format_question_grade($offlinequiz, $slot->maxmark)));
+                        echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark)));
                         break;
 
                     case 'updatemaxmark':
@@ -116,15 +115,15 @@ switch($requestmethod) {
                             if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
                                 '*', 0, $offlinequiz->numgroups)) {
                                 foreach ($groups as $group) {
-                                   $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
+                                    $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
                                 }
                             }
 
                             // Grade has really changed.
-                            //$offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+                            // $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
                             offlinequiz_update_question_instance($offlinequiz, $slot->questionid, unformat_float($maxmark));
                             offlinequiz_update_all_attempt_sumgrades($offlinequiz);
-                            //offlinequiz_update_all_final_grades($offlinequiz);
+                            // offlinequiz_update_all_final_grades($offlinequiz);
                             offlinequiz_update_grades($offlinequiz, 0, true);
                         }
                         $newsummarks = $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $offlinequizgroup->id));

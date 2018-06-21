@@ -276,7 +276,7 @@ if ($mode == 'preview') {
             }
         } else {
             foreach ($questions as $question) {
-            	print('questionpage '. $question->page . '\n');
+                print('questionpage '. $question->page . '\n');
                 if ($question->page > $currentpage) {
                     echo '<center>//---------------------- ' . get_string('newpage', 'offlinequiz') .
                             ' ----------------//</center>';
@@ -341,10 +341,10 @@ if ($mode == 'preview') {
                     <div>
                         <input type="hidden" name="forcepdfnew" value="1" />
                         <button type="submit"
-                        		onClick='return confirm("<?php echo get_string('reallydeletepdfs', 'offlinequiz') ?>")'
-                        		class="btn btn-secondary singlebutton"
-                        		 >
-                        	<?php echo get_string('deletepdfs', 'offlinequiz') ?>
+                                onClick='return confirm("<?php echo get_string('reallydeletepdfs', 'offlinequiz') ?>")'
+                                class="btn btn-secondary singlebutton"
+                                 >
+                            <?php echo get_string('deletepdfs', 'offlinequiz') ?>
                         </button>
                    </div>
               </form>

@@ -33,9 +33,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-//  If, for some reason, you need to use global variables instead of constants, do not forget to make them
-//  global as this file can be included inside a function scope. However, using the global variables
-//  at the module level is not recommended.
+// If, for some reason, you need to use global variables instead of constants, do not forget to make them
+// global as this file can be included inside a function scope. However, using the global variables
+// at the module level is not recommended.
 
 // CONSTANTS.
 
@@ -97,18 +97,18 @@ function offlinequiz_add_instance($offlinequiz) {
         print_error('invalidcourseid', 'error');
     }
 
-	$context = context_module::instance($offlinequiz->coursemodule);
+    $context = context_module::instance($offlinequiz->coursemodule);
 
     // Process the HTML editor data in pdfintro.
     if (is_array($offlinequiz->pdfintro) && array_key_exists('text', $offlinequiz->pdfintro)) {
-    	if ($draftitemid = $offlinequiz->pdfintro['itemid']) {
-  		    $editoroptions = offlinequiz_get_editor_options();
+        if ($draftitemid = $offlinequiz->pdfintro['itemid']) {
+              $editoroptions = offlinequiz_get_editor_options();
 
-        	$offlinequiz->pdfintro = file_save_draft_area_files($draftitemid, $context->id,
+            $offlinequiz->pdfintro = file_save_draft_area_files($draftitemid, $context->id,
                                                     'mod_offlinequiz', 'pdfintro',
                                                     0, $editoroptions,
                                                     $offlinequiz->pdfintro['text']);
-    	}
+        }
     }
 
     // Try to store it in the database.
@@ -153,19 +153,19 @@ function offlinequiz_update_instance($offlinequiz) {
         return $result;
     }
 
-	$context = context_module::instance($offlinequiz->coursemodule);
+    $context = context_module::instance($offlinequiz->coursemodule);
 
     // Process the HTML editor data in pdfintro.
     if (property_exists($offlinequiz, 'pdfintro') && is_array($offlinequiz->pdfintro)
             && array_key_exists('text', $offlinequiz->pdfintro)) {
-    	if ($draftitemid = $offlinequiz->pdfintro['itemid']) {
-  		    $editoroptions = offlinequiz_get_editor_options();
+        if ($draftitemid = $offlinequiz->pdfintro['itemid']) {
+              $editoroptions = offlinequiz_get_editor_options();
 
-        	$offlinequiz->pdfintro = file_save_draft_area_files($draftitemid, $context->id,
+            $offlinequiz->pdfintro = file_save_draft_area_files($draftitemid, $context->id,
                                                     'mod_offlinequiz', 'pdfintro',
                                                     0, $editoroptions,
                                                     $offlinequiz->pdfintro['text']);
-    	}
+        }
         // $offlinequiz->pdfintro = $feedback->pdfintro['format'];
     }
 
@@ -270,9 +270,9 @@ function offlinequiz_delete_instance($id) {
  */
 function offlinequiz_get_editor_options($context = null) {
     $options = array('maxfiles' => EDITOR_UNLIMITED_FILES,
-    		     'noclean' => true);
+                 'noclean' => true);
     if ($context) {
-    	$options['context'] = $context;
+        $options['context'] = $context;
     }
     return $options;
 }
@@ -775,7 +775,7 @@ function offlinequiz_user_complete($course, $user, $mod, $offlinequiz) {
  * @return boolean
  */
 function offlinequiz_print_recent_mod_activity($course, $viewfullnames, $timestart) {
-    return false;  //  True if anything was printed, otherwise false.
+    return false;  // True if anything was printed, otherwise false.
 }
 
 /**
@@ -976,8 +976,8 @@ function offlinequiz_update_events($offlinequiz) {
     }
 
     if (!empty($timeopen)) {
-    	$event = new stdClass();
-    	$event->name = $offlinequiz->name . ' (' . get_string('reportstarts', 'offlinequiz') . ')';
+        $event = new stdClass();
+        $event->name = $offlinequiz->name . ' (' . get_string('reportstarts', 'offlinequiz') . ')';
         $event->description = format_module_intro('offlinequiz', $offlinequiz, $cmid);
         // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $offlinequiz->course;
@@ -989,24 +989,23 @@ function offlinequiz_update_events($offlinequiz) {
         $event->timeduration = 0;
         $event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
 
-
         calendar_event::create($event);
     }
     if (!empty($timeclose)) {
-    	$event = new stdClass();
-    	$event->name = $offlinequiz->name . ' (' . get_string('reportends', 'offlinequiz') . ')';
-    	$event->description = format_module_intro('offlinequiz', $offlinequiz, $cmid);
-    	// Events module won't show user events when the courseid is nonzero.
-    	$event->courseid    = ($userid) ? 0 : $offlinequiz->course;
-    	$event->groupid     = $groupid;
-    	$event->userid      = $userid;
-    	$event->modulename  = 'offlinequiz';
-    	$event->instance    = $offlinequiz->id;
-    	$event->timestart   = $timeclose;
-    	$event->timeduration = 0;
-    	$event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
-    	
-    	calendar_event::create($event);
+        $event = new stdClass();
+        $event->name = $offlinequiz->name . ' (' . get_string('reportends', 'offlinequiz') . ')';
+        $event->description = format_module_intro('offlinequiz', $offlinequiz, $cmid);
+        // Events module won't show user events when the courseid is nonzero.
+        $event->courseid    = ($userid) ? 0 : $offlinequiz->course;
+        $event->groupid     = $groupid;
+        $event->userid      = $userid;
+        $event->modulename  = 'offlinequiz';
+        $event->instance    = $offlinequiz->id;
+        $event->timestart   = $timeclose;
+        $event->timeduration = 0;
+        $event->visible     = instance_is_visible('offlinequiz', $offlinequiz);
+
+        calendar_event::create($event);
     }
 
     // Delete any leftover events.
@@ -1224,10 +1223,10 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
 
     // Description by Juergen Zimmer (Tim Hunt):
     // 1. If the offlinequiz is set to not show grades while the offlinequiz is still open,
-    //    and is set to show grades after the offlinequiz is closed, then create the
-    //    grade_item with a show-after date that is the offlinequiz close date.
+    // and is set to show grades after the offlinequiz is closed, then create the
+    // grade_item with a show-after date that is the offlinequiz close date.
     // 2. If the offlinequiz is set to not show grades at either of those times,
-    //    create the grade_item as hidden.
+    // create the grade_item as hidden.
     // 3. If the offlinequiz is set to show grades, create the grade_item visible.
     $openreviewoptions = mod_offlinequiz_display_options::make_from_offlinequiz($offlinequiz);
     $closedreviewoptions = mod_offlinequiz_display_options::make_from_offlinequiz($offlinequiz);
@@ -1245,7 +1244,7 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
     } else {
         // A) both open and closed enabled
         // B) open enabled, closed disabled - we can not "hide after",
-        //    grades are kept visible even after closing.
+        // grades are kept visible even after closing.
         $params['hidden'] = 0;
     }
 
@@ -1351,7 +1350,7 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
         $node = navigation_node::create(get_string('createofflinequiz', 'offlinequiz'),
                 new moodle_url('/mod/offlinequiz/createquiz.php', array('id' => $PAGE->cm->id)),
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_createpdfs',
-        		new pix_icon('a/add_file', ''));
+                new pix_icon('a/add_file', ''));
         $offlinequiznode->add_node($node, $beforekey);
 
         $node = navigation_node::create(get_string('participantslists', 'offlinequiz'),

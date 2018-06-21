@@ -71,7 +71,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                             'mode' => 'overview',
                             'noresults' => $noresults,
                             'pagesize' => $pagesize,
-                    		'group' => $groupid
+                            'group' => $groupid
                     ));
 
             echo groups_print_activity_menu($cm, $groupselecturl, true);
@@ -270,7 +270,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             // Here starts workshhet headers.
             $headers = array(get_string($offlinequizconfig->ID_field), get_string('firstname'),
                 get_string('lastname'), get_string('importedon', 'offlinequiz'),
-            	get_string('group'), get_string('grade', 'offlinequiz'), get_string('letter', 'offlinequiz')
+                get_string('group'), get_string('grade', 'offlinequiz'), get_string('letter', 'offlinequiz')
             );
             if (!empty($withparticipants)) {
                 $headers[] = get_string('present', 'offlinequiz');
@@ -316,7 +316,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             // Here starts worksheet headers.
             $headers = array(get_string($offlinequizconfig->ID_field), get_string('firstname'),
                 get_string('lastname'), get_string('importedon', 'offlinequiz'),
-            	get_string('group'), get_string('grade', 'offlinequiz'), get_string('letter', 'offlinequiz')
+                get_string('group'), get_string('grade', 'offlinequiz'), get_string('letter', 'offlinequiz')
             );
             if (!empty($withparticipants)) {
                 $headers[] = get_string('present', 'offlinequiz');
@@ -482,7 +482,6 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
         $table->pagesize($pagesize, $total);
 
-
         // Fix some wired sorting.
         if (empty($tablesort)) {
             $sort = ' ORDER BY u.lastname, u.id ';
@@ -490,7 +489,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $sort = ' ORDER BY ' . $tablesort . ', u.id';
         }
 
-       error_log($select . $from . $where . $sort);
+        error_log($select . $from . $where . $sort);
         // Fetch the results.
         if (!$download) {
             $results = $DB->get_records_sql($select . $from . $where . $sort, $params,
@@ -546,8 +545,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
                 if (!empty($result) && $result->offlinegroupid) {
                     $outputgrade = format_float(
-                            $result->sumgrades / $groups[$result->offlinegroupid]->sumgrades *
-                                     $offlinequiz->grade, $offlinequiz->decimalpoints);
+                            $result->sumgrades / $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints);
                 } else {
                     $outputgrade = '-';
                 }
@@ -562,10 +560,8 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                  $result->resultid . '">' . $outputgrade . '</a>';
                     }
                     if ($withparticipants) {
-                        $row[] = !empty($checked[$result->userid]) ?
-                                "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/tick.gif\" alt=\"" .
-                                 get_string('ischecked', 'offlinequiz') . "\">" :
-                                  "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/cross.gif\" alt=\"" .
+                        $row[] = !empty($checked[$result->userid]) ? "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/tick.gif\" alt=\"" .
+                                 get_string('ischecked', 'offlinequiz') . "\">" : "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/cross.gif\" alt=\"" .
                                  get_string('isnotchecked', 'offlinequiz') . "\">";
                     }
                 } else if ($download != 'CSVplus1') {
@@ -578,7 +574,6 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                             $row[] = '-';
                         }
                     }
-                	
 
                 }
 
@@ -661,7 +656,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $table->finish_html();
 
             if (!empty($results)) {
-            	echo '<div>';
+                echo '<div>';
                 echo '<form id="downloadoptions" action="report.php" method="get">';
                 echo ' <input type="hidden" name="id" value="' . $cm->id . '" />';
                 echo ' <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
@@ -734,35 +729,35 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
         return true;
     }
-    
+
     private function get_grade($context,$courseid,$offlinequizid,$userid) {
-    	$grading_info = grade_get_grades($courseid, 'mod', 'offlinequiz', $offlinequizid, $userid);
-    	$gradeitem = $grading_info->items[0];
-    	if($gradeitem != null) {
-    		$letters = grade_get_letters($context);
-    		return $this->get_gradeletter($letters, $gradeitem, $userid);
-    	} else {
-    		return '-';
-    	}
+        $grading_info = grade_get_grades($courseid, 'mod', 'offlinequiz', $offlinequizid, $userid);
+        $gradeitem = $grading_info->items[0];
+        if($gradeitem != null) {
+            $letters = grade_get_letters($context);
+            return $this->get_gradeletter($letters, $gradeitem, $userid);
+        } else {
+            return '-';
+        }
     }
-    
+
     private function get_gradeletter($letters, $gradeitem,$userid) {
-    	if (!$gradeitem) {
-    		return '-';
-    	}
-    	$grade = $gradeitem->grades[$userid];
-    	// Map to range.
-    	$gradeint = $gradeitem->grademax - $gradeitem->grademin;
-    	$value = ($gradeint != 100 || $gradeitem->grademin != 0) ? ($grade->grade - $gradeitem->grademin
-    			) * 100 / $gradeint : $grade->grade;
-    			
-    	// Calculate gradeletter.
-    	$value = bounded_number(0, $value, 100); // Just in case.
-    	foreach ($letters as $boundary => $letter) {
-    		$numboundary = str_replace(',', '.', $boundary);
-    		if ($value >= $numboundary) {
-    			return format_string($letter);
-    		}
-    	}
+        if (!$gradeitem) {
+            return '-';
+        }
+        $grade = $gradeitem->grades[$userid];
+        // Map to range.
+        $gradeint = $gradeitem->grademax - $gradeitem->grademin;
+        $value = ($gradeint != 100 || $gradeitem->grademin != 0) ? ($grade->grade - $gradeitem->grademin
+        ) * 100 / $gradeint : $grade->grade;
+
+        // Calculate gradeletter.
+        $value = bounded_number(0, $value, 100); // Just in case.
+        foreach ($letters as $boundary => $letter) {
+            $numboundary = str_replace(',', '.', $boundary);
+            if ($value >= $numboundary) {
+                return format_string($letter);
+            }
+        }
     }
 }

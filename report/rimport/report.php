@@ -239,34 +239,35 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
                 }
             } else if ($mimetype == 'image/tiff') {
-            	// extract each TIFF subfiles into a file
-            	// (it would be better to know if there are subfiles, but it is pretty cheap anyway)
-            	$newfile = "$importfile-%d.tiff";
-            	$handle = popen("convert '$importfile' '$newfile'", 'r');
-            	fread($handle, 1);
-            	while (!feof($handle)) {
-            		fread($handle, 1);
-            	}
-            	pclose($handle);
-            	if (count(get_directory_list($dirname)) > 1) {
-            		// it worked, remove original
-            		unlink($importfile);
-            	}
-            	$files = get_directory_list($dirname);
+                // extract each TIFF subfiles into a file
+                // (it would be better to know if there are subfiles, but it is pretty cheap anyway)
+                $newfile = "$importfile-%d.tiff";
+                $handle = popen("convert '$importfile' '$newfile'", 'r');
+                fread($handle, 1);
+                while (!feof($handle)) {
+                    fread($handle, 1);
+                }
+                pclose($handle);
+                if (count(get_directory_list($dirname)) > 1) {
+                    // it worked, remove original
+                    unlink($importfile);
+                }
+                $files = get_directory_list($dirname);
             } else if ($mimetype == 'application/pdf') {
-            	// extract each page to a separate file
-            	$newfile = "$importfile-%03d.pdf";
-            	$handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
-            	fread($handle, 1);
-            	while (!feof($handle)) fread($handle, 1);
-            	pclose($handle);
-            	if (count(get_directory_list($dirname)) > 1) {
-            		// it worked, remove original
-            		unlink($importfile);
-            	}
-            	$files = get_directory_list($dirname);
+                // extract each page to a separate file
+                $newfile = "$importfile-%03d.pdf";
+                $handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
+                fread($handle, 1);
+                while (!feof($handle)) { fread($handle, 1);
+                }
+                pclose($handle);
+                if (count(get_directory_list($dirname)) > 1) {
+                    // it worked, remove original
+                    unlink($importfile);
+                }
+                $files = get_directory_list($dirname);
             } else if (preg_match('/^image/' , $mimetype)) {
-            	
+
                 $files[] = $realfilename;
             }
             $added = count($files);
@@ -285,7 +286,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
             // Add the files to the job.
             foreach ($files as $file) {
-            	$this->convert_black_white($dirname . '/' . $file);
+                $this->convert_black_white($dirname . '/' . $file);
                 $jobfile = new stdClass();
                 $jobfile->queueid = $job->id;
                 $jobfile->filename = $dirname . '/' . $file;
@@ -357,7 +358,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
         }
     }
     private function convert_black_white($file) {
-    	$command = "convert " . realpath($file) . " -threshold 50% " . realpath($file);
-     	popen($command, 'r');
+        $command = "convert " . realpath($file) . " -threshold 50% " . realpath($file);
+        popen($command, 'r');
     }
 }

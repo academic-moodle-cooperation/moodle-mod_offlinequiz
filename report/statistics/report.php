@@ -213,8 +213,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
 
         // Get the data to be displayed.
-        list($offlinequizstats, $questions, $subquestions, $s) =
-                $this->get_offlinequiz_and_questions_stats($offlinequiz, $currentgroup,
+        list($offlinequizstats, $questions, $subquestions, $s) = $this->get_offlinequiz_and_questions_stats($offlinequiz, $currentgroup,
                         $nostudentsingroup, $useallattempts, $groupstudents, $questions);
 
         $offlinequizinfo = $this->get_formatted_offlinequiz_info_data($course, $cm, $offlinequiz, $offlinequizstats);
@@ -260,19 +259,19 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             if (!$questionid) {
                 $this->print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions);
                 if ($statmode == 'statsoverview' && ($offlinequiz->sumgrades == -1 || $differentquestions)) {
-                	echo $OUTPUT->box_start();
-                	$notificationmessage = get_string('remarks', 'offlinequiz_statistics') . ":<br />";
+                    echo $OUTPUT->box_start();
+                    $notificationmessage = get_string('remarks', 'offlinequiz_statistics') . ":<br />";
                     if ($offlinequiz->sumgrades == -1) {
-                    	$notificationmessage .= '- ' . get_string('differentsumgrades', 'offlinequiz_statistics',
+                        $notificationmessage .= '- ' . get_string('differentsumgrades', 'offlinequiz_statistics',
                                 implode(', ', $sumgrades)) . "<br />";
                     }
                     if ($differentquestions) {
-                    	$notificationmessage .= '- ' . get_string('differentquestions', 'offlinequiz_statistics',
+                        $notificationmessage .= '- ' . get_string('differentquestions', 'offlinequiz_statistics',
                                 implode(', ', $sumgrades));
                     }
                     echo $OUTPUT->notification($notificationmessage, 'notifynote');
                     echo $OUTPUT->box_end();
-                    
+
                 }
             }
 
@@ -370,10 +369,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     $groupstudents, $useallattempts, $reporturl, $offlinequiz->groupid);
 
             if ($statmode == 'statsoverview') {
-            	echo html_writer::start_div("downloadoptions");
-            	echo $this->everything_download_options();
-               	echo html_writer::end_div();
-            	echo '<br/><center>';
+                echo html_writer::start_div("downloadoptions");
+                echo $this->everything_download_options();
+                   echo html_writer::end_div();
+                echo '<br/><center>';
                 echo $this->output_offlinequiz_info_table($offlinequizinfo);
                 echo '</center>';
             } else if ($statmode == 'questionstats') {
@@ -720,8 +719,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $offlinequizinfo[get_string('reviewcloses', 'offlinequiz')] = userdate($offlinequiz->timeclose);
         }
         if ($offlinequiz->timeopen && $offlinequiz->timeclose) {
-            $offlinequizinfo[get_string('duration', 'offlinequiz_statistics')] =
-                    format_time($offlinequiz->timeclose - $offlinequiz->timeopen);
+            $offlinequizinfo[get_string('duration', 'offlinequiz_statistics')] = format_time($offlinequiz->timeclose - $offlinequiz->timeopen);
         }
         // The statistics.
         foreach ($todisplay as $property => $format) {
@@ -756,8 +754,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             }
 
             $offlinequizinfo[get_string($property, 'offlinequiz_statistics',
-                    $this->using_attempts_string(!empty($offlinequizstats->allattempts)))] =
-                    $formattedvalue;
+                    $this->using_attempts_string(!empty($offlinequizstats->allattempts)))] = $formattedvalue;
         }
 
         return $offlinequizinfo;
@@ -999,7 +996,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         // Calculating MEAN of marks for all attempts by students
         // http://docs.moodle.org/dev/Offlinequiz_item_analysis_calculations_in_practise
-        //     #Calculating_MEAN_of_grades_for_all_attempts_by_students.
+        // #Calculating_MEAN_of_grades_for_all_attempts_by_students.
         if ($nostudentsingroup) {
             return $this->get_emtpy_stats($questions);
         }
@@ -1107,14 +1104,14 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
             // Standard_Deviation:
             // see http://docs.moodle.org/dev/Offlinequiz_item_analysis_calculations_in_practise
-            //         #Standard_Deviation.
+            // #Standard_Deviation.
 
             $offlinequizstats->standarddeviation = sqrt($powers->power2 / ($s - 1));
 
             // Skewness.
             if ($s > 2) {
                 // See http://docs.moodle.org/dev/
-                //      Offlinequiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis.
+                // Offlinequiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis.
                 $m2 = $powers->power2 / $s;
                 $m3 = $powers->power3 / $s;
                 $m4 = $powers->power4 / $s;
@@ -1282,8 +1279,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
     protected function get_offlinequiz_and_questions_stats($offlinequiz, $currentgroup,
             $nostudentsingroup, $useallattempts, $groupstudents, $questions) {
 
-        list($offlinequizstats, $questions, $subquestions, $s) =
-                $this->try_loading_cached_stats($offlinequiz, $currentgroup, $nostudentsingroup,
+        list($offlinequizstats, $questions, $subquestions, $s) = $this->try_loading_cached_stats($offlinequiz, $currentgroup, $nostudentsingroup,
                         $useallattempts, $groupstudents, $questions);
 
         if (is_null($offlinequizstats)) {

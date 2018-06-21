@@ -60,8 +60,7 @@ if(array_key_exists('offlinequizdeleteselected', $_POST) && $_POST['offlinequizd
     unset($_POST['category']);
 }
 
-list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
-        question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
+list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) = question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
@@ -256,7 +255,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         $maxgrade = unformat_float($maxgrade);
         if ($maxgrade >= 0) {
             offlinequiz_set_grade($maxgrade, $offlinequiz);
-//        offlinequiz_update_all_final_grades($offlinequiz);
+            // offlinequiz_update_all_final_grades($offlinequiz);
             offlinequiz_update_grades($offlinequiz, 0, true);
         }
     }
@@ -340,7 +339,7 @@ if ($offlinequizgradetool) {
 
 require_once('tabs.php');
 
-//offlinequiz_print_status_bar($offlinequiz);
+// offlinequiz_print_status_bar($offlinequiz);
 
 // Questions wrapper start.
 if ($mode == 'grade') {

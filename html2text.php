@@ -49,7 +49,7 @@ class offlinequiz_html_translator
      */
     public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor, $maxwidth, $disableimgnewlines, $format = 'pdf') {
         global $CFG, $DB;
-	
+
         require_once($CFG->dirroot.'/filter/tex/lib.php');
         require_once($CFG->dirroot.'/filter/tex/latex.php');
         $file = null;
@@ -224,7 +224,6 @@ class offlinequiz_html_translator
 
                         // Add filename to list of temporary files.
                         $this->tempfiles[] = $file;
-
 
                         // In answer texts we want a line break to avoid the picture going above the line.
                         if ($filearea == 'answer' and $disableimgnewlines == 0) {

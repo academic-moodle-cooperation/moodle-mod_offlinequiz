@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for offlinequizzes 
+ * Class for offlinequizzes
  *
  * @package       mod
  * @subpackage    offlinequiz
@@ -104,9 +104,9 @@ class offlinequiz {
      * @param object $attemptdata row from the offlinequiz_attempts table.
      * @return offlinequiz_attempt the new offlinequiz_attempt object.
      */
-//     public function create_attempt_object($attemptdata) {
-//         return new offlinequiz_attempt($attemptdata, $this->offlinequiz, $this->cm, $this->course);
-//     }
+    // public function create_attempt_object($attemptdata) {
+    // return new offlinequiz_attempt($attemptdata, $this->offlinequiz, $this->cm, $this->course);
+    // }
 
     // Functions for loading more data =========================================
 

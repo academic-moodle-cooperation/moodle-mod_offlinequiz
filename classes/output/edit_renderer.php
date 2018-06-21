@@ -71,7 +71,6 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= $this->maximum_grade_input($offlinequiz, $this->page->url);
         $output .= $this->offlinequiz_state_warnings($structure);
 
-
         $output .= $this->repaginate_button($structure, $pageurl, $offlinequiz);
         $output .= $this->total_marks($offlinequiz);
 
@@ -81,7 +80,6 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= $this->add_to_group_button($structure, $offlinequiz,  $pageurl);
         $output .= $this->remove_selected_button($structure, $offlinequiz,  $pageurl);
         $output .= $this->select_all_links($structure);
-
 
         // Show the questions organised into sections and pages.
         $output .= $this->start_section_list();
@@ -153,8 +151,8 @@ class edit_renderer extends \plugin_renderer_base {
                 get_string('gradingofflinequizx', 'offlinequiz', format_string($offlinequizobj->get_offlinequiz_name())) .
                 ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
                 'editingofflinequiz', 'offlinequiz', '',  get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
-///echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
-//             get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
+        // echo $OUTPUT->heading(get_string('gradingofflinequiz', 'offlinequiz') . ': ' . $offlinequiz->name. ' (' .
+        // get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ')');
         // Information at the top.
         $output .= $this->offlinequiz_group_selector($offlinequiz, $pageurl);
         $output .= $this->offlinequiz_information($structure);
@@ -173,7 +171,7 @@ class edit_renderer extends \plugin_renderer_base {
             $questionhtml = '';
             foreach ($structure->get_questions_in_section($section->id) as $question) {
                 if ($question->qtype != 'description') {
-                    $questionhtml .=  $this->question_row_for_grading($structure, $question, $contexts, $pagevars, $pageurl);
+                    $questionhtml .= $this->question_row_for_grading($structure, $question, $contexts, $pagevars, $pageurl);
                 }
             }
             $output .= html_writer::tag('ul', $questionhtml, array('class' => 'section img-text'));
@@ -202,7 +200,7 @@ class edit_renderer extends \plugin_renderer_base {
         $options[0] = get_string('selectagroup', 'offlinequiz');
         for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
             if ($i != $offlinequiz->groupnumber) {
-                $options[$i] = $letterstr[$i-1];
+                $options[$i] = $letterstr[$i - 1];
             }
         }
 
@@ -264,11 +262,11 @@ class edit_renderer extends \plugin_renderer_base {
 
         $selecturl = unserialize(serialize($pageurl));
         $selecturl->remove_params('groupnumber');
-        //$output .= html_writer::empty_tag('br');
+        // $output .= html_writer::empty_tag('br');
         $output .= html_writer::start_div('groupchoice');
         $output .= $OUTPUT->single_select($selecturl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
         $output .= html_writer::end_div();
-        //$output .= html_writer::empty_tag('br');
+        // $output .= html_writer::empty_tag('br');
         /*---------------------------*/
         return $output;
     }
@@ -412,26 +410,26 @@ class edit_renderer extends \plugin_renderer_base {
         $output = '';
 
         if ($structure->can_be_edited()) {
-        	$toolbaroptions = array(
-        			'class' => 'btn-toolbar',
-        			'role' => 'toolbar',
-        			'aria-label' => get_string('selectmultipletoolbar', 'offlinequiz'),
-        	);
-        	// Select all/deselect all questions.
-        	$buttonselectalloptions = array(
-        			'role' => 'button',
-        			'class' => 'btn btn-link selectall'
-        	);
-        	$buttondeselectalloptions = array(
-        			'role' => 'button',
-        			'class' => 'btn btn-link deselectall'
-        	);
-        	$output .= html_writer::tag('div',
-        			html_writer::tag('div',
-        					html_writer::link('#', get_string('selectall', 'quiz'), $buttonselectalloptions) .
-        					html_writer::link('#', get_string('selectnone', 'quiz'), $buttondeselectalloptions),
-        					array('class' => 'btn-group selectmultiplecommandbuttons')),
-        			$toolbaroptions);
+            $toolbaroptions = array(
+            'class' => 'btn-toolbar',
+            'role' => 'toolbar',
+            'aria-label' => get_string('selectmultipletoolbar', 'offlinequiz'),
+            );
+            // Select all/deselect all questions.
+            $buttonselectalloptions = array(
+            'role' => 'button',
+            'class' => 'btn btn-link selectall'
+            );
+            $buttondeselectalloptions = array(
+            'role' => 'button',
+            'class' => 'btn btn-link deselectall'
+            );
+            $output .= html_writer::tag('div',
+            html_writer::tag('div',
+                            html_writer::link('#', get_string('selectall', 'quiz'), $buttonselectalloptions) .
+                            html_writer::link('#', get_string('selectnone', 'quiz'), $buttondeselectalloptions),
+                            array('class' => 'btn-group selectmultiplecommandbuttons')),
+            $toolbaroptions);
         }
         return $output;
     }
@@ -892,9 +890,9 @@ class edit_renderer extends \plugin_renderer_base {
             '" type="text" value="' . offlinequiz_format_grade($structure->get_offlinequiz(), $question->maxmark) .
             '" size="4" tabindex="' . $question->slot . '" name="g' . $question->id . '"/>';
         }
-        $questionicons .=  html_writer::span($input,
+        $questionicons .= html_writer::span($input,
                 'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($structure->get_offlinequiz()));
-//        $questionicons .= $this->marked_out_of_field($structure->get_offlinequiz(), $question);
+        // $questionicons .= $this->marked_out_of_field($structure->get_offlinequiz(), $question);
 
         $output .= html_writer::span($questionicons, 'actions'); // Required to add js spinner icon.
 
