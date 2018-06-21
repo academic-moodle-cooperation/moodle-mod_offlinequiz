@@ -26,6 +26,8 @@
  *
  **/
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->libdir . '/weblib.php');
 require_once("pdflib.php");

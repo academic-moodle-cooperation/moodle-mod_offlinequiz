@@ -26,6 +26,8 @@
  *
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 define("A3_WIDTH", "2100");                    // Paper size.
 define("A3_HEIGHT", "2970");
 define("LAYER_WIDTH", "1815");                 // Active layer from corner cross to corner cross.
