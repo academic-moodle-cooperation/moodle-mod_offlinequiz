@@ -13,10 +13,9 @@ cache:
 # here will create a separate build and run the tests against that version of PHP.
 # WARNING, PHP7 only works in Moodle 3.0.1 or later!
 php:
- - 5.4
- - 5.5
- - 5.6
  - 7.0
+ - 7.1
+ - 7.2
 
 # This section sets up the environment variables for the build.
 env:
