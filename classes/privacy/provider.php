@@ -3,6 +3,8 @@
 
 namespace offlinequiz\privacy;
 use \core_privacy\local\metadata\collection;
+use \core_privacy\local\request\writer;
+use \core_privacy\local\request\contextlist;
 
 require_once($CFG->libdir . '/questionlib.php');
 
@@ -249,7 +251,7 @@ class provider implements
 			UNION ALL
 				SELECT sp.offlinequizid id
 				FROM {offlinequiz_scanned_pages} sp
-				INNER JOIN mdl_user u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
+				JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
 			    WHERE u.id = :userid)";
 
         $params = [
@@ -269,7 +271,7 @@ class provider implements
     public static function export_user_data(approved_contextlist $contextlist) {
         global $DB;
         $offlinequizconfig = get_config('offlinequiz');
-        if (empty($contextlist->count())) {
+        if (empty($contextlist->get_contextids()->count())) {
             return;
         }
 
@@ -277,8 +279,8 @@ class provider implements
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
-        $sql = "SELECT DISTINCT cm.instance
-        FROM mdl_context c 
+        $sql = "SELECT DISTINCT cm.instance offlinequizid, c.id contextid
+        FROM {context} c 
         INNER JOIN {course_modules} cm ON cm.id = c.instanceid
         INNER JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
         AND cm.instance IN (
@@ -304,23 +306,17 @@ class provider implements
 
         $params = ['userid' => $user->id] + $contextparams;
 
-        $offlinequizids = $DB->get_records_sql($sql, $params);
-        foreach ($offlinequizids as $offlinequizid) {
-            $this->export_offlinequiz($offlinequizid, $user->id);
+        $offlinequizes = $DB->get_records_sql($sql, $params);
+        foreach ($offlinequizes as $offlinequiz) {
+        	static::export_offlinequiz($offlinequiz->offlinequizid, \context::instance_by_id($contextid), $user->id);
         }
     }
 
-    private function export_offlinequiz($offlinequizid, $userid) {
-        if($this->is_teacher($offlinequizid, $userid)) {
-            // TODO
-            $this->export_teacher($offlinequizid,$userid);
-        }
-        else {
-            $this->export_student($offlinequizid, $userid);
-        }
+    private static function export_offlinequiz($offlinequizid, $context, $userid) {
+            export_student_data($offlinequizid, $context, $userid);
     }
 
-    private function export_student($offlinequizid, $userid) {
+    private static function export_student_data($offlinequizid, $context, $userid) {
         global $DB;
         $offlinequizconfig = get_config('offlinequiz');
         $exportobject = new \stdClass();
@@ -334,8 +330,8 @@ class provider implements
 
         $pchoices = $DB->get_records_sql($sql,["userid" => $userid, "offlinequizid" => $offlinequizid]);
 
-        if($pchoices) {
-            $exportobject->participantlists = $this->get_scanned_p_page_objects($pchoices);
+        if ($pchoices) {
+            $exportobject->participantlists = static::get_scanned_p_page_objects($pchoices);
         }
 
         $sql = "SELECT sp.*
@@ -345,15 +341,17 @@ class provider implements
 				AND   sp.offlinequizid = :offlinequizid";
         $scannedpages = $DB->get_records_sql($sql , ["userid" => $userid, "offlinequizid" => $offlinequizid]);
         if($scannedpages) {
-            $exportobject->scannedpages = $this->get_scanned_pages_objects($scannedpages);
+            $exportobject->scannedpages = static::get_scanned_pages_objects($scannedpages);
         }
         $results = $DB->get_records("offlinequiz_results", ["userid" => $userid, "offlinequizid" => $offlinequizid]);
         if($results) {
-            $exportobject->results = $this->get_results($results);
+        	$exportobject->results = static::get_results($results);
         }
+        writer::with_context($context)
+        ->export_data($offlinequizid, $exportobject);
     }
 
-    private function get_scanned_p_page_objects($pchoices) {
+    private static function get_scanned_p_page_objects($pchoices) {
         global $DB;
 
         $scannedpages = [];
@@ -369,83 +367,70 @@ class provider implements
         return $scannedpages;
     }
 
-    private function get_results($results) {
+    private static function get_results($results) {
         $results = [];
         foreach ($results as $result) {
             $exportobject = new \stdClass();
-            $exportobject->group = $this->get_group_name_by_result($result);
+            $exportobject->group = static::get_group_name_by_result($result);
             $exportobject->sumgrade = $result->sumgrade;
-            // howto export?
             $exportobject->usageid = $result->usageid;
-            $exportobject->uploadedby = $this->get_user_name_by_id($result->teacherid);
             $exportobject->status = $result->status;
             $exportobject->timestart = $result->timestart;
             $exportobject->timefinish = $result->timefinish;
             $exportobject->timemodified = $result->timemodified;
+            $results[] = $exportobject;
         }
+        return $results;
     }
 
-    private function get_scanned_pages_objects($scannedpages) {
+    private static function get_group_name_by_result($result) {
+        global $DB;
+        $SQL = "SELECT g.number 
+                FROM   {offlinequiz_results} r,
+                       {offlinequiz_groups} g 
+                WHERE  r.offlinegroupid = g.id
+                AND    r.id = :resultid";
+        $groupnumber = $DB->get_record_sql($SQL,["resultid" => $result->id]);
+        return static::get_group_letter($groupnumber);
+    }
+
+    private static function get_scanned_pages_objects($scannedpages) {
         foreach ($scannedpages as $scannedpage) {
-            $scannedpageobjects[$scannedpage->id] = get_scanned_page_object($scannedpage);
+            $scannedpageobjects[$scannedpage->id] = static::get_scanned_page_object($scannedpage);
         }
         return $scannedpageobjects;
     }
 
-    private function get_scanned_page_object($scannedpage) {
+    private static function get_scanned_page_object($scannedpage) {
         global $DB;
         $exportscannedpage = new \stdClass();
         $exportscannedpage->id = $scannedpage->id;
         $exportscannedpage->result = $scannedpage->resultid;
-        $exportscannedpage->group = $this->get_group($scannedpage->offlinequizid,$scannedpage->groupnumber);
-        $exportscannedpage->questions = $this->get_questions($scannedpage->id);
-        $exportscannedpage->pagecorners = $this->get_page_corners($scannedpage->id);
-        $exportscannedpage->queuedata = $this->get_queuedata($scannedpage->id);
+        $exportscannedpage->group = static::get_group($scannedpage->offlinequizid,$scannedpage->groupnumber);
+        $exportscannedpage->pagecorners = static::get_page_corners($scannedpage->id);
         return $exportscannedpage;
     }
-    private function get_group($offlinequizid,$groupnumber) {
+
+    private static function get_page_corners($scannedpageid) {
+        global $DB;
+        return $DB->get_records("offlinequiz_page_corners", ["scannedpageid" => $scannedpageid]);
+    }
+
+    private static function get_group($offlinequizid,$groupnumber) {
         global $DB;
 
         $group = $DB->get_record("offlinequiz_groups", ["offlinequizid" => $offlinequizid, "groupnumber" => $groupnumber ]);
 
         $exportgroup = new \stdClass();
-        $exportgroup->letter = $this->get_group_letter($groupnumber);
+        $exportgroup->letter = static::get_group_letter($groupnumber);
         $exportgroup->sumgrades = $group->sumgrades;
         $exportgroup->questionfilename = $group->questionfilename;
         $exportgroup->answerfilename = $group->answerfilename;
         $exportgroup->correctionfilename = $group->correctionfilename;
-        $exportgroup->questions = $this->get_group_questions($group->id);
         return $exportgroup;
     }
 
-    private function get_group_questions($groupid) {
-        global $DB;
-
-        // Load all the questions needed for this offline quiz group.
-        $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
-              FROM {offlinequiz_group_questions} ogq,
-                   {question} q,
-                   {question_categories} c
-             WHERE ogq.offlinegroupid = :offlinegroupid
-               AND q.id = ogq.questionid
-               AND q.category = c.id
-          ORDER BY ogq.slot ASC ";
-        $params = array( 'offlinegroupid' => $groupid);
-
-        // Load the questions.
-        $questions = $DB->get_records_sql($sql, $params);
-
-        // $questions = $DB->get_records('offlinequiz_group_questions', ['offlinegroupid' => $groupid]);
-
-        foreach ($questions as $question) {
-
-        }
-
-        $questionsdata = [];
-
-    }
-
-    private function get_group_letter($groupnumber) {
+    private static function get_group_letter($groupnumber) {
         switch ($groupnumber) {
             case 1:
              return "A";
