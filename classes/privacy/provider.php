@@ -230,18 +230,19 @@ class provider implements
 
         $offlinequizconfig = get_config('offlinequiz');
 
+        // Fetch all choice answers.
         $sql = "SELECT c.id FROM {context} c 
-        INNER JOIN {course_modules} cm ON cm.id = c.instanceid
-        INNER JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
+        JOIN {course_modules} cm ON cm.id = c.instanceid
+        JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
         AND cm.instance IN (
 				SELECT l.offlinequizid id
 				FROM {offlinequiz_p_lists} l 
-				INNER JOIN {offlinequiz_participants} p on l.id = p.listid 
+				JOIN {offlinequiz_participants} p on l.id = p.listid 
 				WHERE userid = :userid
 			UNION ALL 
 				SELECT p.offlinequizid id
 				FROM {offlinequiz_scanned_p_pages} p
-				INNER JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
+				JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
 				WHERE c.userid = :userid
 			UNION ALL
 				SELECT q.offlinequizid id 
@@ -275,40 +276,47 @@ class provider implements
         }
 
         $user = $contextlist->get_user();
-
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
-
-        $sql = "SELECT DISTINCT cm.instance offlinequizid, c.id contextid
-        FROM {context} c 
-        INNER JOIN {course_modules} cm ON cm.id = c.instanceid
-        INNER JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
-        AND cm.instance IN (
-				SELECT l.offlinequizid id
-				FROM {offlinequiz_p_lists} l 
-				INNER JOIN {offlinequiz_participants} p on l.id = p.listid 
-				WHERE userid = :userid
-			UNION ALL 
-				SELECT p.offlinequizid id
-				FROM {offlinequiz_scanned_p_pages} p
-				INNER JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
-				WHERE c.userid = :userid
-			UNION ALL
-				SELECT q.offlinequizid id 
-				FROM {offlinequiz_queue} q 
-				WHERE importuserid = :userid
-			UNION ALL
-				SELECT sp.offlinequizid id
-				FROM {offlinequiz_scanned_pages} sp
-				INNER JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
-			    WHERE u.id = :userid)
-		AND (c.id {$contextsql})";
-
-        $params = ['userid' => $user->id] + $contextparams;
-
-        $offlinequizes = $DB->get_records_sql($sql, $params);
-        foreach ($offlinequizes as $offlinequiz) {
-        	static::export_offlinequiz($offlinequiz->offlinequizid, \context::instance_by_id($contextid), $user->id);
+        $contextids = $contextlist->get_contextids();
+        foreach ($contextids as $contextid) {
+        	$context = \context::instance_by_id($contextid);
+        	$data = new \stdClass();
+        	$data->text = "hier ist Kontext " . $contextid;
+        	writer::with_context($context)->export_data($context, $data);
         }
+
+//         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+
+//         $sql = "SELECT DISTINCT cm.instance offlinequizid, c.id contextid
+//         FROM {context} c 
+//         JOIN {course_modules} cm ON cm.id = c.instanceid
+//         JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
+//         AND cm.instance IN (
+// 				SELECT l.offlinequizid id
+// 				FROM {offlinequiz_p_lists} l 
+// 				JOIN {offlinequiz_participants} p on l.id = p.listid 
+// 				WHERE userid = :userid
+// 			UNION ALL 
+// 				SELECT p.offlinequizid id
+// 				FROM {offlinequiz_scanned_p_pages} p
+// 				JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
+// 				WHERE c.userid = :userid
+// 			UNION ALL
+// 				SELECT q.offlinequizid id 
+// 				FROM {offlinequiz_queue} q 
+// 				WHERE importuserid = :userid
+// 			UNION ALL
+// 				SELECT sp.offlinequizid id
+// 				FROM {offlinequiz_scanned_pages} sp
+// 				JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
+// 			    WHERE u.id = :userid)
+// 		AND (c.id {$contextsql})";
+
+//         $params = ['userid' => $user->id] + $contextparams;
+
+//         $offlinequizes = $DB->get_records_sql($sql, $params);
+//         foreach ($offlinequizes as $offlinequiz) {
+//         	static::export_offlinequiz($offlinequiz->offlinequizid, \context::instance_by_id($contextid), $user->id);
+//         }
     }
 
     private static function export_offlinequiz($offlinequizid, $context, $userid) {
@@ -335,7 +343,7 @@ class provider implements
 
         $sql = "SELECT sp.*
 				FROM {offlinequiz_scanned_pages} sp
-				INNER JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
+				JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
 			    WHERE u.id = :userid
 				AND   sp.offlinequizid = :offlinequizid";
         $scannedpages = $DB->get_records_sql($sql , ["userid" => $userid, "offlinequizid" => $offlinequizid]);
