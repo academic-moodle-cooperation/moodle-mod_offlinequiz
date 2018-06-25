@@ -230,7 +230,6 @@ class provider implements
 
         $offlinequizconfig = get_config('offlinequiz');
 
-        // Fetch all choice answers.
         $sql = "SELECT c.id FROM {context} c 
         INNER JOIN {course_modules} cm ON cm.id = c.instanceid
         INNER JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
@@ -341,7 +340,7 @@ class provider implements
 				AND   sp.offlinequizid = :offlinequizid";
         $scannedpages = $DB->get_records_sql($sql , ["userid" => $userid, "offlinequizid" => $offlinequizid]);
         if($scannedpages) {
-            $exportobject->scannedpages = static::get_scanned_pages_objects($scannedpages);
+            $exportobject->scannedpages = static::get_scanned_pages_objects($context,$scannedpages);
         }
         $results = $DB->get_records("offlinequiz_results", ["userid" => $userid, "offlinequizid" => $offlinequizid]);
         if($results) {
@@ -349,6 +348,7 @@ class provider implements
         }
         writer::with_context($context)
         ->export_data($offlinequizid, $exportobject);
+        
     }
 
     private static function get_scanned_p_page_objects($pchoices) {
@@ -394,11 +394,20 @@ class provider implements
         return static::get_group_letter($groupnumber);
     }
 
-    private static function get_scanned_pages_objects($scannedpages) {
+    private static function get_scanned_pages_objects($context, $scannedpages) {
+
         foreach ($scannedpages as $scannedpage) {
             $scannedpageobjects[$scannedpage->id] = static::get_scanned_page_object($scannedpage);
+            static::export_file($context, $scannedpage);
+            
         }
         return $scannedpageobjects;
+    }
+    
+    private static function export_file($context, $scannedpage) {
+    	$fs = get_file_storage();
+    	$imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename);
+    	writer::with_context($context)->export_file($scannedpage->offlinequizid, $imagefile);
     }
 
     private static function get_scanned_page_object($scannedpage) {
