@@ -286,7 +286,6 @@ class provider implements
         if (empty($contextlist->get_contextids())) {
             return;
         }
-//         print_object($contextlist);
 
         $user = $contextlist->get_user();
         $contextids = $contextlist->get_contextids();
