@@ -60,7 +60,6 @@ class offlinequiz_html_translator
         $output = array_shift($strings);
         foreach ($strings as $string) {
             // Define a unique temporary name for each image file.
-            srand(microtime() * 1000000);
             $unique = str_replace('.', '', microtime(true) . '_' . rand(0, 100000));
 
             $imagetag = substr($string, 0, strpos($string, '>'));
