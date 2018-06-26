@@ -14,17 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Strings for component 'offlinequiz_overview', language 'en'
- *
- * @package       mod
- * @subpackage    offlinequiz
- * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @since         Moodle 2.1
- * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- **/
+namespace mod_offlinequiz\privacy;
 
-$string['pluginname'] = 'Offlinequiz Results Overview';
-$string['privacy:metadata'] = 'This plugin does not store any user related data.';
+class provider implements
+// This plugin does not store any personal user data.
+\core_privacy\local\metadata\null_provider {
+	
+	/**
+	 * This plugin does not store any data
+	 *
+	 * @return  string
+	 */
+	public static function get_reason() : string {
+		return 'privacy:metadata';
+	}
+}

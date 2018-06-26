@@ -432,6 +432,7 @@ $string['preview'] = 'Preview';
 $string['previewquestion'] = 'Preview question';
 $string['printstudycodefield'] = 'Print study code field on question sheet';
 $string['printstudycodefield_help'] = 'If checked, the study code field will be printed on the first page of the question sheet.';
+$string['privacy:data_folder_name'] = 'Offlinequiz data';
 $string['privacy:metadata:core_files'] = 'The offlinequiz uses the file API to store the generated question and answer sheets and the filled out answer sheets.';
 $string['privacy:metadata:core_question'] = 'The offlinequiz uses the question API for saving the questions for the quizes.';
 $string['privacy:metadata:mod_quiz'] = 'The offlinequiz uses the quiz API for saving results of the quizes.';
