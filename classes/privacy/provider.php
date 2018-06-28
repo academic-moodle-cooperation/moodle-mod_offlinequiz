@@ -295,7 +295,7 @@ class provider implements
         $sql = "SELECT DISTINCT c.id contextid, cm.instance offlinequizid
         FROM {context} c 
         JOIN {course_modules} cm ON cm.id = c.instanceid
-        JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
+        JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70
         AND cm.instance IN (
 				SELECT l.offlinequizid id
 				FROM {offlinequiz_p_lists} l 
@@ -425,9 +425,13 @@ class provider implements
     }
     
     private static function export_file($context, $scannedpage) {
-//     	$fs = get_file_storage();
-//     	$imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename);
-//     	writer::with_context($context)->export_file([$scannedpage->offlinequizid], $imagefile);
+    	$fs = get_file_storage();
+    	if($imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename)) {
+    		$datafoldername = get_string('privacy:data_folder_name','mod_offlinequiz');
+    		$scannedpage = get_string('scannedform','mod_offlinequiz');
+    		$filepath = [$datafoldername, $scannedpage];
+    		writer::with_context($context)->export_file($filepath, $imagefile);
+    	}
     }
 
     private static function get_scanned_page_object($scannedpage) {
