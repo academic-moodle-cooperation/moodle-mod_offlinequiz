@@ -337,7 +337,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             header("Pragma: public");
             echo "\xEF\xBB\xBF"; // UTF-8 BOM.
 
-            $headers = get_string($offlinequizconfig->ID_field) . ", " . get_string('fullname') .
+            $headers = get_string($offlinequizconfig->ID_field) . ", " . get_string('firstname') . ", " . get_string("lastname") .
                      ", " . get_string('importedon', 'offlinequiz') . ", " . get_string('group') .
                      ", " . get_string('grade', 'offlinequiz') . ", " . get_string('letter', 'offlinequiz');
             if (!empty($withparticipants)) {
@@ -565,7 +565,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                  get_string('isnotchecked', 'offlinequiz') . "\">";
                     }
                 } else if ($download != 'CSVplus1') {
-                    $row[] = $result->sumgrades === null ? '-' : $outputgrade;
+                	$row[] = $result->sumgrades === null ? '-' : format_float($outputgrade, $offlinequiz->decimalpoints, false);
                     $row[] = $this->get_grade($context, $course->id, $offlinequiz->id, $result->userid);
                     if ($withparticipants) {
                         if (array_key_exists($result->userid, $checked)) {
@@ -591,7 +591,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     echo $text . "\n";
                 } else if ($download == 'CSVplus1' || $download == 'CSVpluspoints') {
                     $text = $row[1] . ',' . $row[2] . ',' . $row[0] . ',' .
-                             $groups[$result->offlinegroupid]->number;
+                             $letterstr[$groups[$result->offlinegroupid]->number];
                     if ($pages = $DB->get_records('offlinequiz_scanned_pages',
                             array('resultid' => $result->resultid
                             ), 'pagenumber ASC')) {
@@ -633,7 +633,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
                     if ($download == 'CSVpluspoints') {
                         $text = $row[1] . ',' . $row[2] . ',' . $row[0] . ',' .
-                                 $groups[$result->offlinegroupid]->number;
+                                 $letterstr[$groups[$result->offlinegroupid]->number];
                         $quba = question_engine::load_questions_usage_by_activity($result->usageid);
                         $slots = $quba->get_slots();
                         foreach ($slots as $slot) {
