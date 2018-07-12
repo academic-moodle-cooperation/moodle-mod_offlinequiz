@@ -402,6 +402,7 @@ $string['partcheckedwithresult'] = '{$a} checked participants with result';
 $string['partcheckedwithoutresult'] = '<a href="{$a->url}">{$a->count} checked participants without result</a>';
 $string['partuncheckedwithresult'] = '<a href="{$a->url}">{$a->count} unchecked participants with result</a>';
 $string['partuncheckedwithoutresult'] = '{$a} unchecked participants without result';
+$string['partial'] = 'partial';
 $string['participantslist'] = 'List of participants';
 $string['participantslists'] = 'Participants';
 $string['participants'] = 'Participants';
