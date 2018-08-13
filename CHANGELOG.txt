@@ -1,10 +1,11 @@
 CHANGELOG
 =========
-3.5.0 (2018-06-xx)
+3.5.0 (2018-08-13)
 ------------------
 * Moodle 3.5 compatible version
 * introduced privacy API
 * partial results are displayed by default in the result table
+* added possibility to upload pdf files
 
 3.4.2 (2018-04-10)
 ------------------
