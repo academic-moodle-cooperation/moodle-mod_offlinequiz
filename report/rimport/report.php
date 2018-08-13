@@ -255,7 +255,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 $files = get_directory_list($dirname);
             } else if ($mimetype == 'application/pdf') {
                 // extract each page to a separate file
-                $newfile = "$importfile-%03d.pdf";
+                $newfile = "$importfile-%03d.tiff";
                 $handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
                 fread($handle, 1);
                 while (!feof($handle)) { fread($handle, 1);
