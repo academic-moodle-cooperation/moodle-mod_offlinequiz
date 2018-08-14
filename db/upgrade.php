@@ -1284,7 +1284,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2016042100, 'offlinequiz');
     }
 
-    if($oldversion < 2016101700) {
+    if ($oldversion < 2016101700) {
         print('<div class="alert alert-block"><span> Due to a bug in the offline-quiz module, answer forms with multiple pages were not recognized properly. Therefore, the number of pages has to be re-calculated for each offline-quiz. This may take a while, depending on the number offline-quizzes in your Moodle platform.</span>
                 </div>' );
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
@@ -1292,11 +1292,11 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     // Information about the new Cron-Job in Moodle-API
-    if($oldversion < 2017020201) {
+    if ($oldversion < 2017020201) {
         global $PAGE;
         global $OUTPUT;
-        if(!optional_param('croninfo_read', false, PARAM_BOOL)) {
-            if(!CLI_SCRIPT) {
+        if (!optional_param('croninfo_read', false, PARAM_BOOL)) {
+            if (!CLI_SCRIPT) {
                 print('<div class="alert alert-block"><span>The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore.
                 If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API, or disable your own cron, which is
                 only needed, if you run the evaluation on a dedicated server.
@@ -1353,7 +1353,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2017042501, 'offlinequiz');
     }
-    if($oldversion < 2017081102) {
+    if ($oldversion < 2017081102) {
         $table = new xmldb_table('offlinequiz_page_corners');
         $index = new xmldb_index('offlinequiz_page_corners_scannedpageid_idx', XMLDB_INDEX_NOTUNIQUE, array('scannedpageid'));
         // Conditionally launch add index offlinequiz_userid_idx.

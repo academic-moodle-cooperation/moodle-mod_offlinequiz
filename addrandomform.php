@@ -62,7 +62,6 @@ class offlinequiz_add_random_form extends moodleform {
 
         $mform->addElement('submit', 'existingcategory', get_string('add'));
 
-
         // Cancel button.
         $mform->addElement('cancel');
         $mform->closeHeaderBefore('cancel');

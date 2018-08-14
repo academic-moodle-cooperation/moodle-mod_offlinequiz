@@ -882,10 +882,9 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Action icons.
         $questionicons = '';
-        if($question->qtype == 'description') {
+        if ($question->qtype == 'description') {
             $input = '';
-        }
-        else {
+        } else {
             $input = '<input class="gradeinput" id="inputq' . $question->id .
             '" type="text" value="' . offlinequiz_format_grade($structure->get_offlinequiz(), $question->maxmark) .
             '" size="4" tabindex="' . $question->slot . '" name="g' . $question->id . '"/>';
