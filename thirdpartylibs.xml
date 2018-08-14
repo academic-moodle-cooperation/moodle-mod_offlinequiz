@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>javascript/html5shiv.js</location>
+        <name>Html5Shiv</name>
+        <version>3.6.2</version>
+        <license>Apache</license>
+        <licenseversion>2.0</licenseversion>
+    </library>
+    <library>
+        <location>lib/PHPWord</location>
+        <name>PHPWord</name>
+        <version>0.6.3</version>
+        <license>LGPL</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>lib/jquery</location>
+        <name>jquery</name>
+        <version>1.4.3</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>
