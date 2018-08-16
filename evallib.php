@@ -462,7 +462,7 @@ function offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdat
             $quba->finish_question($slot, time());
         }
 
-    } // End for ($slotindex...
+    } // End for slotindex.
 
     question_engine::save_questions_usage_by_activity($quba);
 

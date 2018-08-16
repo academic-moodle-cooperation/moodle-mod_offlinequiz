@@ -235,10 +235,10 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     unlink($importfile);
                     $files = get_directory_list($dirname);
                     foreach ($files as $file) {
-                    	$mimetype = mimeinfo('type', $file);
-                    	if($mimetype == 'application/pdf') {
-                    		$this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file);
-                    	}
+                        $mimetype = mimeinfo('type', $file);
+                        if ($mimetype == 'application/pdf') {
+                            $this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file);
+                        }
                     }
                     $files = get_directory_list($dirname);
                 } else {
@@ -246,8 +246,8 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
                 }
             } else if ($mimetype == 'image/tiff') {
-                // extract each TIFF subfiles into a file
-                // (it would be better to know if there are subfiles, but it is pretty cheap anyway)
+                // Extract each TIFF subfiles into a file.
+                // (it would be better to know if there are subfiles, but it is pretty cheap anyway).
                 $newfile = "$importfile-%d.tiff";
                 $handle = popen("convert '$importfile' '$newfile'", 'r');
                 fread($handle, 1);
@@ -256,7 +256,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 }
                 pclose($handle);
                 if (count(get_directory_list($dirname)) > 1) {
-                    // it worked, remove original
+                    // It worked, remove original.
                     unlink($importfile);
                 }
                 $files = get_directory_list($dirname);
@@ -353,25 +353,26 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             }
         }
     }
-	/**
-	 * @param dirname
-	 * @param importfile
-	 */private function extract_pdf_to_tiff($dirname, $importfile) {
-		// extract each page to a separate file
-		$newfile = "$importfile-%03d.tiff";
-		$handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
-		fread($handle, 1);
-		while (!feof($handle)) { 
-			fread($handle, 1);
-		}
-		pclose($handle);
-		if (count(get_directory_list($dirname)) > 1) {
-		    // it worked, remove original
-		    unlink($importfile);
-		}
-		$files = get_directory_list($dirname);
-		return $files;
-	}
+    /**
+     * @param dirname
+     * @param importfile
+     */
+    private function extract_pdf_to_tiff($dirname, $importfile) {
+        // Extract each page to a separate file.
+        $newfile = "$importfile-%03d.tiff";
+        $handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
+        fread($handle, 1);
+        while (!feof($handle)) {
+            fread($handle, 1);
+        }
+        pclose($handle);
+        if (count(get_directory_list($dirname)) > 1) {
+            // It worked, remove original.
+            unlink($importfile);
+        }
+        $files = get_directory_list($dirname);
+        return $files;
+    }
 
     private function convert_black_white($file) {
         $command = "convert " . realpath($file) . " -threshold 50% " . realpath($file);

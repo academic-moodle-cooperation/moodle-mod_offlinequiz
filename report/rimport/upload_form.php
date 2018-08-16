@@ -40,8 +40,9 @@ class offlinequiz_upload_form extends moodleform {
         $mform->addElement('header', 'importfileupload', get_string('importforms', 'offlinequiz_rimport'));
 
         $mform->addElement('filepicker', 'newfile', get_string('ziporimagefile', 'offlinequiz_rimport'), null,
-                array('subdirs' => 0,
-                        'accepted_types' => array('.jpeg', 'JPEG', 'JPG', 'jpg', '.png', '.zip', '.ZIP', '.tif', '.TIF', '.tiff', '.TIFF' , ".pdf", ".PDF")));
+                array('subdirs' => 0, 'accepted_types' =>
+                        array('.jpeg', 'JPEG', 'JPG', 'jpg', '.png', '.zip',
+                              '.ZIP', '.tif', '.TIF', '.tiff', '.TIFF' , ".pdf", ".PDF")));
 
         $mform->addRule('newfile', null, 'required', null, 'client');
 

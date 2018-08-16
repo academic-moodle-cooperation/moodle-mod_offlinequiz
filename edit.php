@@ -53,14 +53,15 @@ require_once($CFG->dirroot . '/question/category_class.php');
 $scrollpos = optional_param('scrollpos', '', PARAM_INT);
 
 // Patch problem with nested forms and category parameter, otherwise question_edit_setup has problems.
-if(array_key_exists('savechanges', $_POST) && $_POST['savechanges']) {
+if (array_key_exists('savechanges', $_POST) && $_POST['savechanges']) {
     unset($_POST['category']);
 }
-if(array_key_exists('offlinequizdeleteselected', $_POST) && $_POST['offlinequizdeleteselected']) {
+if (array_key_exists('offlinequizdeleteselected', $_POST) && $_POST['offlinequizdeleteselected']) {
     unset($_POST['category']);
 }
 
-list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) = question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
+list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
+   question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
@@ -111,7 +112,7 @@ $structure = $offlinequizobj->get_structure();
 if ($warning = optional_param('warning', '', PARAM_TEXT)) {
     $structure->add_warning(urldecode($warning));
 }
-
+require_login($course, false, $cm);
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
 
@@ -255,7 +256,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         $maxgrade = unformat_float($maxgrade);
         if ($maxgrade >= 0) {
             offlinequiz_set_grade($maxgrade, $offlinequiz);
-            // offlinequiz_update_all_final_grades($offlinequiz);
             offlinequiz_update_grades($offlinequiz, 0, true);
         }
     }
@@ -338,8 +338,6 @@ if ($offlinequizgradetool) {
 }
 
 require_once('tabs.php');
-
-// offlinequiz_print_status_bar($offlinequiz);
 
 // Questions wrapper start.
 if ($mode == 'grade') {

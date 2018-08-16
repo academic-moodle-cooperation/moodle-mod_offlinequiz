@@ -341,7 +341,7 @@ Y.Moodle.mod_offlinequiz.util.slot = {
                 iconname = 'e/insert_page_break';
             }
 
-            // Update the link and image titles
+            // Update the link and image titles.
             pagebreaklink.set('title', M.util.get_string(action, 'offlinequiz'));
             pagebreaklink.setData('action', action);
             // Update the image title.

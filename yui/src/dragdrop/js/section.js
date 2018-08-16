@@ -12,23 +12,23 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
     sectionlistselector: null,
 
     initializer: function() {
-        // Set group for parent class
+        // Set group for parent class.
         this.groups = [ CSS.SECTIONDRAGGABLE ];
         this.samenodeclass = M.mod_offlinequiz.edit.get_sectionwrapperclass();
         this.parentnodeclass = M.mod_offlinequiz.edit.get_containerclass();
 
-        // Check if we are in single section mode
+        // Check if we are in single section mode.
         if (Y.Node.one('.' + CSS.JUMPMENU)) {
             return false;
         }
-        // Initialise sections dragging
+        // Initialise sections dragging.
         this.sectionlistselector = M.mod_offlinequiz.edit.get_section_wrapper(Y);
         if (this.sectionlistselector) {
             this.sectionlistselector = '.' + CSS.COURSECONTENT + ' ' + this.sectionlistselector;
 
             this.setup_for_section(this.sectionlistselector);
 
-            // Make each li element in the lists of sections draggable
+            // Make each li element in the lists of sections draggable.
             var del = new Y.DD.Delegate({
                 container: '.' + CSS.COURSECONTENT,
                 nodes: '.' + CSS.SECTIONDRAGGABLE,
@@ -37,11 +37,11 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                 dragConfig: {groups: this.groups}
             });
             del.dd.plug(Y.Plugin.DDProxy, {
-                // Don't move the node at the end of the drag
+                // Don't move the node at the end of the drag.
                 moveOnEnd: false
             });
             del.dd.plug(Y.Plugin.DDConstrained, {
-                // Keep it inside the .mod-offlinequiz-edit-content
+                // Keep it inside the .mod-offlinequiz-edit-content.
                 constrain: '#' + CSS.PAGECONTENT,
                 stickY: true
             });
@@ -57,16 +57,16 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
      */
     setup_for_section: function(baseselector) {
         Y.Node.all(baseselector).each(function(sectionnode) {
-            // Determine the section ID
+            // Determine the section ID.
             var sectionid = Y.Moodle.core_course.util.section.getId(sectionnode);
 
-            // We skip the top section as it is not draggable
+            // We skip the top section as it is not draggable.
             if (sectionid > 0) {
-                // Remove move icons
+                // Remove move icons.
                 var movedown = sectionnode.one('.' + CSS.RIGHT + ' a.' + CSS.MOVEDOWN);
                 var moveup = sectionnode.one('.' + CSS.RIGHT + ' a.' + CSS.MOVEUP);
 
-                // Add dragger icon
+                // Add dragger icon.
                 var title = M.util.get_string('movesection', 'moodle', sectionid);
                 var cssleft = sectionnode.one('.' + CSS.LEFT);
 
@@ -89,12 +89,12 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
     },
 
     /*
-     * Drag-dropping related functions
+     * Drag-dropping related functions.
      */
     drag_start: function(e) {
-        // Get our drag object
+        // Get our drag object.
         var drag = e.target;
-        // Creat a dummy structure of the outer elemnents for clean styles application
+        // Creat a dummy structure of the outer elemnents for clean styles application.
         var containernode = Y.Node.create('<' + M.mod_offlinequiz.edit.get_containernode() + '></' + M.mod_offlinequiz.edit.get_containernode() + '>');
         containernode.addClass(M.mod_offlinequiz.edit.get_containerclass());
         var sectionnode = Y.Node.create('<' + M.mod_offlinequiz.edit.get_sectionwrappernode() + '></' + M.mod_offlinequiz.edit.get_sectionwrappernode() + '>');
@@ -166,11 +166,11 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
             params[varname] = pageparams[varname];
         }
 
-        // Prepare request parameters
+        // Prepare request parameters.
         params.sesskey = M.cfg.sesskey;
         params.courseid = this.get('courseid');
         params.offlinequizid = this.get('offlinequizid');
-        params.offlinegroupid = this.get('offlinegroupid');        
+        params.offlinegroupid = this.get('offlinegroupid');
         params['class'] = 'section';
         params.field = 'move';
         params.id = dragnodeid;
@@ -187,7 +187,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                 },
                 success: function(tid, response) {
                     // Update section titles, we can't simply swap them as
-                    // they might have custom title
+                    // they might have custom title.
                     try {
                         var responsetext = Y.JSON.parse(response.responseText);
                         if (responsetext.error) {

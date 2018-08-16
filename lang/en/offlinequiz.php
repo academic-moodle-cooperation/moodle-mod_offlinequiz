@@ -599,7 +599,7 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \newcommand{\Group}{{$a->groupname}}
 \newcommand{\Title}{{$a->coursename}}
 \newcommand{\Date}
- 
+
 \newcommand{\TestTitle}{%
 \begin{center}
 {\bf \Large Questionnaire}\\\\[3mm]
@@ -612,9 +612,9 @@ Student ID: & $\underline{\hspace*{8cm}}$\\\\[5mm]
 \end{tabular}}
 \end{center}
 }
- 
+
 \InputIfFileExists{offline_test_extras.tex}{}{} % Input extra user definitions
- 
+
 \begin{document}
 
 
@@ -634,7 +634,7 @@ Student ID: & $\underline{\hspace*{8cm}}$\\\\[5mm]
 \newpage
 
 % ===========================================================================================================
- 
+
 
 {$a->latexforquestions}
 

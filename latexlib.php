@@ -176,7 +176,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
         $a['date'] = '';
     }
     $a['fontsize'] = $offlinequiz->fontsize;
-    if($offlinequiz->printstudycodefield) {
+    if ($offlinequiz->printstudycodefield) {
         $a['printstudycodefield'] = "true";
     } else {
         $a['printstudycodefield'] = "false";
@@ -272,7 +272,7 @@ function offlinequiz_convert_html_to_latex_tables($dom) {
             $element->removeChild($caption);
         }
         $rows = $element->getElementsByTagName('tr');
-        // TeX needs the number of columns
+        // TeX needs the number of columns.
         $cmax = 0;
         foreach ($rows as $row) {
             $r++;
@@ -282,14 +282,14 @@ function offlinequiz_convert_html_to_latex_tables($dom) {
                 foreach ($cols as $col) {
                     $c++;
                     if ($c > 1) {
-                        $col->nodeValue = "-amp- " . $col->nodeValue; // add & between colums
+                        $col->nodeValue = "-amp- " . $col->nodeValue; // Add & between colums.
                     }
                 }
                 $cmax = max($cmax, $c);
             }
             $r++;
             if ($r > 1) {
-                $row->nodeValue = "\\\\\n" . $row->nodeValue; // add \\ between colums
+                $row->nodeValue = "\\\\\n" . $row->nodeValue; // Add \\ between colums.
             }
         }
         $pre .= '{' . str_repeat ("c", $cmax) . '}';
@@ -298,10 +298,10 @@ function offlinequiz_convert_html_to_latex_tables($dom) {
 }
 
 function offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element) {
-    $preNode = $dom->createTextNode($pre);
-    $postNode = $dom->createTextNode($post);
-    $element->parentNode->insertBefore($preNode, $element);
-    $element->appendChild($postNode);
+    $prenode = $dom->createTextNode($pre);
+    $postnode = $dom->createTextNode($post);
+    $element->parentNode->insertBefore($prenode, $element);
+    $element->appendChild($postnode);
 }
 
 /**
@@ -312,7 +312,7 @@ function offlinequiz_convert_html_to_latex($text) {
 
     $dom = new DOMDocument();
     $dom->loadHTML('<meta http-equiv="content-type" content="text/html; charset=utf-8">' . $text);
-    // replace tags
+    // Replace tags.
     offlinequiz_convert_html_to_latex_tagreplace($dom, 'h3', '{\LARGE ', "}\bigskip\n\n");
     offlinequiz_convert_html_to_latex_tagreplace($dom, 'h4', '{\large ', "}\medskip\n\n");
     offlinequiz_convert_html_to_latex_tagreplace($dom, 'h5', '{\large ', "}\medskip\n\n");
@@ -329,21 +329,22 @@ function offlinequiz_convert_html_to_latex($text) {
     offlinequiz_convert_html_to_latex_tagreplace($dom, 'ol', '\begin{enumerate}[label=(\arabic*)]', '\end{enumerate}');
     offlinequiz_convert_html_to_latex_tagreplace($dom, 'ul', '\begin{itemize}', '\end{itemize}');
     offlinequiz_convert_html_to_latex_tagreplace($dom, 'li', '\item ', '');
-    offlinequiz_convert_html_to_latex_tagreplace($dom, 'br', "\n", ''); // using newline might produce invalid TeX in some cases
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'br', "\n", ''); // Using newline might produce invalid TeX in some cases.
     offlinequiz_convert_html_to_latex_tables($dom);
     offlinequiz_convert_html_to_latex_paragraph($dom);
     offlinequiz_convert_html_to_latex_span($dom);
     $text = $dom->saveHTML();
-    // replace "$$ ... $$" by "\[ ... \]"
-    $text = preg_replace('/\$\$(.*?)\$\$/s','\[\1\]',$text);
-    // replace "&amp;" by "&" in math mode
-    $text = preg_replace_callback('/(\\\\[\(\[])(.*?)(\\\\[\)\]])/s',function ($m) {
+    // Replace "$$ ... $$" by "\[ ... \]".
+    $text = preg_replace('/\$\$(.*?)\$\$/s', '\[\1\]', $text);
+    // Replace "&amp;" by "&" in math mode.
+    $text = preg_replace_callback('/(\\\\[\(\[])(.*?)(\\\\[\)\]])/s', function ($m) {
           $tmp = str_replace('&amp;', '&', $m[2]);
-        if ( !(strpos($tmp, '\begin{align}') !== false or strpos($tmp, '\begin{align*}') !== false or strpos($tmp, '\begin{eqnarray') !== false) ) { $tmp = $m[1] . $tmp . $m[3];
+        if ( !(strpos($tmp, '\begin{align}') !== false or strpos($tmp, '\begin{align*}') !== false or strpos($tmp,
+                 '\begin{eqnarray') !== false) ) {
+              $tmp = $m[1] . $tmp . $m[3];
         }
           return $tmp;
-    },
-                        $text);
+    }, $text);
     $conversiontable = array(
     '&Amul;' => 'Ä',
     '&auml;' => 'ä',
@@ -354,7 +355,7 @@ function offlinequiz_convert_html_to_latex($text) {
     '&szlig;' => 'ß',
     '&nbsp;' => '~',
     '&amp;' => '\&',
-    '-amp-' => '&', // undo ugly hack to prevent the dom parser from rewriting &
+    '-amp-' => '&', // Undo ugly hack to prevent the dom parser from rewriting &.
     '#' => '\#',
     '%' => '\%',
     '&gt;' => '>',

@@ -27,12 +27,16 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/addrandomform.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/question/category_class.php');
 
-list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) = question_edit_setup('editq', '/mod/offlinequiz/addrandom.php', true);
+
+
+list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars)
+    = question_edit_setup('editq', '/mod/offlinequiz/addrandom.php', true);
 
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
@@ -46,6 +50,8 @@ $groupnumber = optional_param('groupnumber', 1, PARAM_INT);
 if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
     print_error('invalidcourseid');
 }
+
+require_login($course, false, $cm);
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
 // You also need the moodle/question:useall capability somewhere.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
@@ -127,7 +133,8 @@ if ($data = $mform->get_data()) {
                 'It seems a form was submitted without any button being pressed???');
     }
 
-    offlinequiz_add_random_questions($offlinequiz, $offlinequizgroup, $categoryid, $data->numbertoadd, $includesubcategories, $preventsamequestion);
+    offlinequiz_add_random_questions($offlinequiz, $offlinequizgroup, $categoryid,
+            $data->numbertoadd, $includesubcategories, $preventsamequestion);
     offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     redirect($returnurl);

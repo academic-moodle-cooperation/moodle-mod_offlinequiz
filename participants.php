@@ -192,12 +192,12 @@ switch($mode) {
             echo '<li>';
             $listname = '<b>' . $list->name . '(' . $numusers . ')</b>';
             $listurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
-                    array('mode' => 'editparticipants', 'q' => $offlinequiz->id ,'listid' => $list->id));
+                    array('mode' => 'editparticipants', 'q' => $offlinequiz->id , 'listid' => $list->id));
             echo html_writer::link($listurl, $listname);
             $streditlist = get_string('editthislist', 'offlinequiz');
             $imagehtml = $OUTPUT->pix_icon('i/edit',  $streditlist);
             $editurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
-                    array('mode' => 'editlists', 'action' => 'edit' , 'q' => $offlinequiz->id ,'listid' => $list->id));
+                    array('mode' => 'editlists', 'action' => 'edit' , 'q' => $offlinequiz->id , 'listid' => $list->id));
             echo html_writer::link($editurl, $imagehtml, array('class' => 'editlistlink'));
 
             $strdeletelist = get_string('deletethislist', 'offlinequiz');
@@ -208,9 +208,9 @@ switch($mode) {
                           'q' => $offlinequiz->id,
                           'listid' => $list->id,
                           'sesskey' => sesskey()));
-            echo html_writer::link($deleteurl, $imagehtml,array('onClick' => 'return confirm(\'' . addslashes(get_string('deletelistcheck', 'offlinequiz')) . '\');',
-                            'class' => 'deletelistlink'
-            ));
+            echo html_writer::link($deleteurl, $imagehtml,
+                         array('onClick' => 'return confirm(\'' . addslashes(get_string('deletelistcheck', 'offlinequiz'))
+                         . '\');', 'class' => 'deletelistlink'));
             echo '</li>';
         }
         echo '</ul>';
@@ -636,8 +636,8 @@ switch($mode) {
                 $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
                 if ($scannedpage = $scanner->load_image($filename)) {
                     if ($scannedpage->status == 'ok') {
-                        list($scanner, $scannedpage) = offlinequiz_check_scanned_participants_page($offlinequiz, $scanner, $scannedpage,
-                                                                        $USER->id, $coursecontext, true);
+                        list($scanner, $scannedpage) = offlinequiz_check_scanned_participants_page(
+                                                       $offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, true);
                     }
                     if ($scannedpage->status == 'ok') {
                         $scannedpage = offlinequiz_process_scanned_participants_page($offlinequiz, $scanner, $scannedpage,
@@ -645,7 +645,8 @@ switch($mode) {
                     }
                     if ($scannedpage->status == 'ok') {
                         $choicesdata = $DB->get_records('offlinequiz_p_choices', array('scannedppageid' => $scannedpage->id));
-                        $scannedpage = $scannedpage = offlinequiz_submit_scanned_participants_page($offlinequiz, $scannedpage, $choicesdata);
+                        $scannedpage = $scannedpage = offlinequiz_submit_scanned_participants_page(
+                                                      $offlinequiz, $scannedpage, $choicesdata);
                         if ($scannedpage->status == 'submitted') {
                             echo get_string('pagenumberimported', 'offlinequiz', $j)."<br /><br />";
                         }

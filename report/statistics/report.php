@@ -213,8 +213,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
 
         // Get the data to be displayed.
-        list($offlinequizstats, $questions, $subquestions, $s) = $this->get_offlinequiz_and_questions_stats($offlinequiz, $currentgroup,
-                        $nostudentsingroup, $useallattempts, $groupstudents, $questions);
+        list($offlinequizstats, $questions, $subquestions, $s) = $this->get_offlinequiz_and_questions_stats(
+                $offlinequiz, $currentgroup, $nostudentsingroup,
+                        $useallattempts, $groupstudents, $questions);
 
         $offlinequizinfo = $this->get_formatted_offlinequiz_info_data($course, $cm, $offlinequiz, $offlinequizstats);
 
@@ -719,7 +720,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $offlinequizinfo[get_string('reviewcloses', 'offlinequiz')] = userdate($offlinequiz->timeclose);
         }
         if ($offlinequiz->timeopen && $offlinequiz->timeclose) {
-            $offlinequizinfo[get_string('duration', 'offlinequiz_statistics')] = format_time($offlinequiz->timeclose - $offlinequiz->timeopen);
+            $offlinequizinfo[get_string('duration', 'offlinequiz_statistics')]
+             = format_time($offlinequiz->timeclose - $offlinequiz->timeopen);
         }
         // The statistics.
         foreach ($todisplay as $property => $format) {
@@ -1279,7 +1281,8 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
     protected function get_offlinequiz_and_questions_stats($offlinequiz, $currentgroup,
             $nostudentsingroup, $useallattempts, $groupstudents, $questions) {
 
-        list($offlinequizstats, $questions, $subquestions, $s) = $this->try_loading_cached_stats($offlinequiz, $currentgroup, $nostudentsingroup,
+        list($offlinequizstats, $questions, $subquestions, $s)
+          = $this->try_loading_cached_stats($offlinequiz, $currentgroup, $nostudentsingroup,
                         $useallattempts, $groupstudents, $questions);
 
         if (is_null($offlinequizstats)) {
@@ -1335,9 +1338,10 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      */
     protected function everything_download_options() {
         global $OUTPUT;
-        if($this->table->baseurl) {
+        if ($this->table->baseurl) {
             return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'offlinequiz_statistics'),
-                    $this->table->baseurl->out_omit_querystring(), 'download', $this->table->baseurl->params() + array('everything' => 1));
+                    $this->table->baseurl->out_omit_querystring(), 'download',
+                    $this->table->baseurl->params() + array('everything' => 1));
         }
     }
 

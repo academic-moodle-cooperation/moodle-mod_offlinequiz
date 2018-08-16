@@ -175,7 +175,7 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
         global $DB, $CFG;
 
         $valid = false;
-        // allow paramtype to be a custom regex if it is the form of /pattern/
+        // Allow paramtype to be a custom regex if it is the form of /pattern/.
         if (preg_match('#^/.*/$#', $this->paramtype)) {
             if (preg_match($this->paramtype, $data)) {
                 $valid = true;
@@ -188,7 +188,7 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
 
         } else {
              $cleaned = clean_param($data, $this->paramtype);
-            if ("$data" === "$cleaned") { // implicit conversion to string is needed to do exact comparison
+            if ("$data" === "$cleaned") { // Implicit conversion to string is needed to do exact comparison.
                 $valid = true;
             } else {
                 return get_string('validateerror', 'admin');
@@ -203,7 +203,7 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
                 $digits = intval($matches[2]);
                 $postfix = $matches[3];
                 $field = $matches[4];
-                // Check the number of digits
+                // Check the number of digits.
                 if ($digits < 1 || $digits > 9) {
                     return get_string('invalidnumberofdigits', 'offlinequiz');
                 }

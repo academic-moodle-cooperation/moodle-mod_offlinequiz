@@ -298,9 +298,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Adding keys to table offlinequiz_reports.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-        // Adding indexes to table offlinequiz_reports.
-        // $table->add_index('name', XMLDB_INDEX_UNIQUE, array('name'));.
-
         // Conditionally launch create table for offlinequiz_reports.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
@@ -823,8 +820,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
                 }
                 require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
-                list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $newgroups);
-
+                list($maxquestions, $maxanswers, $formtype, $questionsperpage) =
+                    offlinequiz_get_question_numbers($offlinequiz, $newgroups);
                 foreach ($newgroups as $newgroup) {
                     // Now we know the number of pages of the group.
                     $newgroup->numberofpages = ceil($maxquestions / ($formtype * 24));
@@ -881,7 +878,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     // In a first step we upgrade the offlinequiz_attempts exactly like quiz_attempts (see mod/quiz/db/upgrade.php).
     if ($oldversion < 2012030400) {
         $table = new xmldb_table('question_states');
-        // Echo "upgrading attempts to new question engine <br/>\n";.
 
         if ($dbman->table_exists($table)) {
             // NOTE: We need all attemps, also the ones with sheet=1 because the are the groups' template attempts.
@@ -1285,32 +1281,44 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2016101700) {
-        print('<div class="alert alert-block"><span> Due to a bug in the offline-quiz module, answer forms with multiple pages were not recognized properly. Therefore, the number of pages has to be re-calculated for each offline-quiz. This may take a while, depending on the number offline-quizzes in your Moodle platform.</span>
-                </div>' );
+        print('<div class="alert alert-block"><span>
+              Due to a bug in the offline-quiz module,
+              answer forms with multiple pages were not recognized properly.
+              Therefore, the number of pages has to be re-calculated for each offline-quiz.
+              This may take a while, depending on the number offline-quizzes in your Moodle platform.
+              </span>
+              </div>' );
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
         offlinequiz_update_refresh_all_pagecounts();
     }
 
-    // Information about the new Cron-Job in Moodle-API
+    // Information about the new Cron-Job in Moodle-API.
     if ($oldversion < 2017020201) {
         global $PAGE;
         global $OUTPUT;
         if (!optional_param('croninfo_read', false, PARAM_BOOL)) {
             if (!CLI_SCRIPT) {
-                print('<div class="alert alert-block"><span>The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore.
-                If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API, or disable your own cron, which is
-                only needed, if you run the evaluation on a dedicated server.
+                print('
+                <div class="alert alert-block"><span>
+                The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore.
+                If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API
+                or disable your own cron, which is only needed, if you run the evaluation on a dedicated server.
                 For more information read chapter III of the README.md, which comes with the plugin.<br></span>
-                <br><b>Continuing the upgrade:<br></b>If you have read and understood this message click the link below to continue the upgrade.
+                <br><b>Continuing the upgrade:<br></b>
+                If you have read and understood this message click the link below to continue the upgrade.
                 <br>
                 <br><b><a href='. $PAGE->url->__toString() . '&croninfo_read=true> CONTINUE </a> </b>
                 <br>
                 </div>' );
                 echo $OUTPUT->footer(); die;
                 return false;
-            }
-            else {
-                print('The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore. If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API, or disable your own cron, which is only needed, if you run the evaluation on a dedicated server. For more information read chapter III of the README.md, which comes with the plugin.');
+            } else {
+                print('The offline quiz cron works now with the Cron-API.'
+                      . ' This means, that the additional cronjob is not needed anymore.'
+                      . ' If you configured a cronjob for the Cron-API'
+                      . ' you have either the option to disable the job in the Cron-API'
+                      . ' or disable your own cron, which is only needed, if you run the evaluation on a dedicated server.'
+                      . ' For more information read chapter III of the README.md, which comes with the plugin.');
             }
 
         }
@@ -1370,7 +1378,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     if ($oldversion < 2018011601) {
 
-        // Define field id_digits to be added to offlinequiz, if not defined. this might miss due to an error in an old moodle-version
+        // Define field id_digits to be added to offlinequiz, if not defined.
+        // This might miss due to an error in an old moodle-version.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('id_digits', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'showtutorial');
 

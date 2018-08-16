@@ -47,7 +47,8 @@ class offlinequiz_html_translator
      * @param int $maxwidth The maximum width in pixels for images.
      * @return string The result string
      */
-    public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor, $maxwidth, $disableimgnewlines, $format = 'pdf') {
+    public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor,
+            $maxwidth, $disableimgnewlines, $format = 'pdf') {
         global $CFG, $DB;
 
         require_once($CFG->dirroot.'/filter/tex/lib.php');

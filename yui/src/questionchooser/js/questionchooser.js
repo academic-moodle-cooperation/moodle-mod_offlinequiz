@@ -4,7 +4,7 @@ var CSS = {
     CHOOSERDIALOGUE: 'div.chooserdialoguebody',
     CHOOSERHEADER: 'div.choosertitle'
 };
- 
+
 /**
  * The questionchooser class  is responsible for instantiating and displaying the question chooser
  * when viewing a offlinequiz in editing mode.
@@ -48,12 +48,12 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
 
         var nodes = Y.all('#chooseform input[type=radio]')._nodes;
         for(i = 0; i < nodes.length; i++) {
-        	if (nodes[i].id != 'item_qtype_multichoiceset' &&
-        		nodes[i].id != 'item_qtype_multichoice' &&
-        		nodes[i].id != 'item_qtype_description' ) {
-        		nodes[i].disabled = true;
-        	}
-        }        
+            if (nodes[i].id != 'item_qtype_multichoiceset' &&
+                nodes[i].id != 'item_qtype_multichoice' &&
+                nodes[i].id != 'item_qtype_description' ) {
+                nodes[i].disabled = true;
+            }
+        }
     },
 
     parameters_to_hidden_input: function(parameters, form, name) {

@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 if (!defined('AJAX_SCRIPT')) {
     define('AJAX_SCRIPT', true);
 }
@@ -53,7 +55,7 @@ $PAGE->set_url('/mod/offlinequiz/edit-rest.php',
 require_sesskey();
 
 $offlinequiz = $DB->get_record('offlinequiz', array('id' => $offlinequizid), '*', MUST_EXIST);
-if ($offlinequizgroup = $DB->get_record('offlinequiz_groups', array('id' => $offlinegroupid))){
+if ($offlinequizgroup = $DB->get_record('offlinequiz_groups', array('id' => $offlinegroupid))) {
     $offlinequiz->groupid = $offlinequizgroup->id;
 } else {
     print_error('invalidgroupnumber', 'offlinequiz');
@@ -97,7 +99,8 @@ switch($requestmethod) {
                     case 'getmaxmark':
                         require_capability('mod/offlinequiz:manage', $modcontext);
                         $slot = $DB->get_record('offlinequiz_group_questions', array('id' => $id), '*', MUST_EXIST);
-                        echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark)));
+                        echo json_encode(array('instancemaxmark'
+                                => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark)));
                         break;
 
                     case 'updatemaxmark':
@@ -105,25 +108,24 @@ switch($requestmethod) {
                         $slot = $structure->get_slot_by_id($id);
                         if (!is_numeric(str_replace(',', '.', $maxmark))) {
                             $summarks = $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $offlinequizgroup->id));
-                            echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
-                                            'newsummarks' => offlinequiz_format_grade($offlinequiz,$summarks)));
+                            echo json_encode(array('instancemaxmark' =>
+                                             offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
+                                            'newsummarks' => offlinequiz_format_grade($offlinequiz, $summarks)));
 
                             break;
                         }
                         if ($structure->update_slot_maxmark($slot, $maxmark)) {
-                            // Recalculate the sumgrades for all groups
-                            if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
-                                '*', 0, $offlinequiz->numgroups)) {
+                            // Recalculate the sumgrades for all groups.
+                            if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
+                                'number', '*', 0, $offlinequiz->numgroups)) {
                                 foreach ($groups as $group) {
                                     $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
                                 }
                             }
 
                             // Grade has really changed.
-                            // $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
                             offlinequiz_update_question_instance($offlinequiz, $slot->questionid, unformat_float($maxmark));
                             offlinequiz_update_all_attempt_sumgrades($offlinequiz);
-                            // offlinequiz_update_all_final_grades($offlinequiz);
                             offlinequiz_update_grades($offlinequiz, 0, true);
                         }
                         $newsummarks = $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $offlinequizgroup->id));

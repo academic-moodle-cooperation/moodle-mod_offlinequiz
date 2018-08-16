@@ -119,7 +119,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
         foreach ($results as $result) {
             set_time_limit(120);
 
-            $sql = "SELECT ogq.questionid, ogq.maxmark 
+            $sql = "SELECT ogq.questionid, ogq.maxmark
                       FROM {offlinequiz_group_questions} ogq
                      WHERE ogq.offlinequizid = :offlinequizid
                        AND ogq.offlinegroupid = :offlinegroupid";

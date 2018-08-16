@@ -166,7 +166,6 @@ function offlinequiz_update_instance($offlinequiz) {
                                                     0, $editoroptions,
                                                     $offlinequiz->pdfintro['text']);
         }
-        // $offlinequiz->pdfintro = $feedback->pdfintro['format'];
     }
 
     // Update the database.

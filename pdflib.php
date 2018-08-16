@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/filter/tex/filter.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/documentlib.php');
 
-define('LOGO_MAX_ASPECT_RATIO',3.714285714);
+define('LOGO_MAX_ASPECT_RATIO', 3.714285714);
 
 class offlinequiz_pdf extends pdf
 {
@@ -581,7 +581,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             // Remove all class info from paragraphs because TCPDF won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 1, 300, $offlinequiz->disableimgnewlines);
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
+                                1, 300, $offlinequiz->disableimgnewlines);
 
             $html = '';
 
@@ -606,7 +607,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                     // Remove <script> tags that are created by mathjax preview.
                     $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300, $offlinequiz->disableimgnewlines);
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer,
+                                      1, 300, $offlinequiz->disableimgnewlines);
 
                     if ($correction) {
                         if ($question->options->answers[$answer]->fraction > 0) {
@@ -717,7 +719,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             // Remove all class info from paragraphs because TCPDF won't use CSS.
             $questiontext = preg_replace ( '/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext );
 
-            $questiontext = $trans->fix_image_paths ( $questiontext, $question->contextid, 'questiontext', $question->id, 1, 300, $offlinequiz->disableimgnewlines );
+            $questiontext = $trans->fix_image_paths ( $questiontext, $question->contextid, 'questiontext', $question->id,
+                                  1, 300, $offlinequiz->disableimgnewlines );
 
             $html = '';
 
@@ -745,7 +748,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                     // Remove <script> tags that are created by mathjax preview.
                     $answertext = preg_replace ( "/<script[^>]*>[^<]*<\/script>/ms", "", $answertext );
                     $answertext = preg_replace ( "/<\/p[^>]*>/ms", "", $answertext );
-                    $answertext = $trans->fix_image_paths ( $answertext, $question->contextid, 'answer', $answer, 1, 300, $offlinequiz->disableimgnewlines );
+                    $answertext = $trans->fix_image_paths ( $answertext, $question->contextid, 'answer', $answer,
+                                      1, 300, $offlinequiz->disableimgnewlines );
 
                     if ($correction) {
                         if ($question->options->answers[$answer]->fraction > 0) {

@@ -138,7 +138,8 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
                        AND status = 'new'",
                     array('queueid' => $job->id));
 
-            list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $groups);
+            list($maxquestions, $maxanswers, $formtype, $questionsperpage)
+                  = offlinequiz_get_question_numbers($offlinequiz, $groups);
 
             $dirname = '';
             $doubleentry = 0;

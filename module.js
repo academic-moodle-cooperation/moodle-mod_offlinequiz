@@ -162,9 +162,6 @@ M.mod_offlinequiz.nav.init = function(Y) {
     var form = Y.one('#responseform');
     if (form) {
         function find_enabled_submit() {
-            // This is rather inelegant, but the CSS3 selector
-            //     return form.one('input[type=submit]:enabled');
-            // does not work in IE7, 8 or 9 for me.
             var enabledsubmit = null;
             form.all('input[type=submit]').each(function(submit) {
                 if (!enabledsubmit && !submit.get('disabled')) {

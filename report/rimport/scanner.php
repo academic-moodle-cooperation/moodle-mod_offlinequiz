@@ -593,7 +593,8 @@ class offlinequiz_page_scanner {
         $factor = $width / imagesx($this->image);
 
         for ($i = 0; $i <= 5; $i++) {
-            $point = new oq_point(($this->hotspots["g$i"]->x + $this->offset->x) * $width / imagesx($this->image) - 2 * $this->zoomx, ($this->hotspots["g$i"]->y + $this->offset->y) * $factor - 2 * $this->zoomy);
+            $point = new oq_point(($this->hotspots["g$i"]->x + $this->offset->x) * $width / imagesx($this->image)
+                      - 2 * $this->zoomx, ($this->hotspots["g$i"]->y + $this->offset->y) * $factor - 2 * $this->zoomy);
             $export["g$i"] = $point;
         }
         return $export;
@@ -907,8 +908,6 @@ class offlinequiz_page_scanner {
             } else if ($patternfactor2 > 2.8) {
                  return 1;
             } else if ($patternfactor < 1.4 or $patternfactor2 < 1.7) {
-                // Was
-                // } else if ($patternfactor < 2.45 or $patternfactor2 < 2.8) {
                 return 2;
             } else {
                 return 3;

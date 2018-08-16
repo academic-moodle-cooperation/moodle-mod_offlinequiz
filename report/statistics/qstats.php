@@ -239,8 +239,7 @@ class offlinequiz_statistics_question_stats {
         // corresponding questions.
 
         // This cannot be a foreach loop because we need to have both
-        // $question and $nextquestion available, but apart from that it is
-        // foreach ($this->questions as $qid => $question).
+        // $question and $nextquestion available.
         reset($this->questions);
         while (list($slot, $question) = each($this->questions)) {
             $nextquestion = current($this->questions);
@@ -295,7 +294,8 @@ class offlinequiz_statistics_question_stats {
                 if ($question->_stats->negcovar) {
                     $question->_stats->effectiveweight = null;
                 } else {
-                    $question->_stats->effectiveweight = 100 * sqrt($question->_stats->covariancewithoverallmark) / $sumofcovariancewithoverallmark;
+                    $question->_stats->effectiveweight = 100 * sqrt($question->_stats->covariancewithoverallmark)
+                                                         / $sumofcovariancewithoverallmark;
                 }
             } else {
                 $question->_stats->effectiveweight = null;

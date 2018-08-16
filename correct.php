@@ -215,7 +215,6 @@ onClick=\"self.close(); return false;\"><br />";
 
     $groupnumber = required_param('groupnumber', PARAM_TEXT);
     $groupnumber = intval($groupnumber);
-    // Old code  if (!property_exists($scannedpage, 'groupnumber') || $scannedpage->groupnumber == 0) {.
     $scanner->set_group($groupnumber);
     $scannedpage->groupnumber = $groupnumber;
 
@@ -240,8 +239,6 @@ onClick=\"self.close(); return false;\"><br />";
     }
 
     // Now we check the scanned page with potentially updated information.
-    // Removed $scannedpage = offlinequiz_check_for_changed_groupnumber($offlinequiz, $scanner, $scannedpage,
-    // $coursecontext, $questionsperpage, $offlinequizconfig);.
 
     $oldresultid = $scannedpage->resultid;
     $scannedpage = offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage, $coursecontext,
@@ -1187,7 +1184,7 @@ if ($sheetloaded) {
             }
             $questioncounter++;
         } // End if.
-    } // End if (!empty($group .
+    }
 }
 ?>
 

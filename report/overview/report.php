@@ -26,6 +26,8 @@
  *
  *
  */
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/tablelib.php');
 require_once('results_table.php');
 require_once($CFG->libdir . '/gradelib.php');
@@ -489,7 +491,6 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             $sort = ' ORDER BY ' . $tablesort . ', u.id';
         }
 
-        error_log($select . $from . $where . $sort);
         // Fetch the results.
         if (!$download) {
             $results = $DB->get_records_sql($select . $from . $where . $sort, $params,
@@ -544,8 +545,8 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 }
 
                 if (!empty($result) && $result->offlinegroupid) {
-                    $outputgrade = format_float(
-                            $result->sumgrades / $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints);
+                    $outputgrade = format_float($result->sumgrades /
+                            $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints);
                 } else {
                     $outputgrade = '-';
                 }
@@ -560,12 +561,14 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                  $result->resultid . '">' . $outputgrade . '</a>';
                     }
                     if ($withparticipants) {
-                        $row[] = !empty($checked[$result->userid]) ? "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/tick.gif\" alt=\"" .
-                                 get_string('ischecked', 'offlinequiz') . "\">" : "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/cross.gif\" alt=\"" .
+                        $row[] = !empty($checked[$result->userid])
+                                  ? "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/tick.gif\" alt=\"" .
+                                 get_string('ischecked', 'offlinequiz') . "\">"
+                                  : "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/cross.gif\" alt=\"" .
                                  get_string('isnotchecked', 'offlinequiz') . "\">";
                     }
                 } else if ($download != 'CSVplus1') {
-                	$row[] = $result->sumgrades === null ? '-' : format_float($outputgrade, $offlinequiz->decimalpoints, false);
+                    $row[] = $result->sumgrades === null ? '-' : format_float($outputgrade, $offlinequiz->decimalpoints, false);
                     $row[] = $this->get_grade($context, $course->id, $offlinequiz->id, $result->userid);
                     if ($withparticipants) {
                         if (array_key_exists($result->userid, $checked)) {
@@ -646,7 +649,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                         echo $text . "\n";
                     }
                 }
-            } // End foreach ($results...
+            } // End foreach results...
         } else if (!$download) {
             $table->print_initials_bar();
         }
@@ -730,10 +733,10 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         return true;
     }
 
-    private function get_grade($context,$courseid,$offlinequizid,$userid) {
-        $grading_info = grade_get_grades($courseid, 'mod', 'offlinequiz', $offlinequizid, $userid);
-        $gradeitem = $grading_info->items[0];
-        if($gradeitem != null) {
+    private function get_grade($context, $courseid, $offlinequizid, $userid) {
+        $gradinginfo = grade_get_grades($courseid, 'mod', 'offlinequiz', $offlinequizid, $userid);
+        $gradeitem = $gradinginfo->items[0];
+        if ($gradeitem != null) {
             $letters = grade_get_letters($context);
             return $this->get_gradeletter($letters, $gradeitem, $userid);
         } else {
@@ -741,7 +744,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         }
     }
 
-    private function get_gradeletter($letters, $gradeitem,$userid) {
+    private function get_gradeletter($letters, $gradeitem, $userid) {
         if (!$gradeitem) {
             return '-';
         }

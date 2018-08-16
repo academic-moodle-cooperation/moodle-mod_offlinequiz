@@ -1,5 +1,18 @@
 <?php
-// …
+// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_offlinequiz\privacy;
 
@@ -26,7 +39,6 @@ class provider implements
         $collection->link_subsystem('core_question', 'privacy:metadata:core_question');
         $collection->link_subsystem('mod_quiz', 'privacy:metadata:mod_quiz');
 
-        // Bsp2: hat eine Tabelle, wo userdaten gespeichert werden
         $collection->add_database_table(
           'offlinequiz',
           [
@@ -234,34 +246,31 @@ class provider implements
      * @return contextlist the list of contexts containing user info for the user.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
-
         global $DB;
-
         $offlinequizconfig = get_config('offlinequiz');
-
         // Fetch all choice answers.
-        $sql = "SELECT c.id FROM {context} c 
+        $sql = "SELECT c.id FROM {context} c
         JOIN {course_modules} cm ON cm.id = c.instanceid
         JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
         AND cm.instance IN (
-				SELECT l.offlinequizid id
-				FROM {offlinequiz_p_lists} l 
-				JOIN {offlinequiz_participants} p on l.id = p.listid 
-				WHERE userid = :participantsuserid
-			UNION ALL 
-				SELECT p.offlinequizid id
-				FROM {offlinequiz_scanned_p_pages} p
-				JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
-				WHERE c.userid = :choiceuserid
-			UNION ALL
-				SELECT q.offlinequizid id 
-				FROM {offlinequiz_queue} q 
-				WHERE importuserid = :queueuserid
-			UNION ALL
-				SELECT sp.offlinequizid id
-				FROM {offlinequiz_scanned_pages} sp
-				JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
-			    WHERE u.id = :scannedpageuserid)";
+            SELECT l.offlinequizid id
+                FROM {offlinequiz_p_lists} l
+                JOIN {offlinequiz_participants} p on l.id = p.listid
+                WHERE userid = :participantsuserid
+            UNION ALL
+                SELECT p.offlinequizid id
+                FROM {offlinequiz_scanned_p_pages} p
+                JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
+                WHERE c.userid = :choiceuserid
+            UNION ALL
+                SELECT q.offlinequizid id
+                FROM {offlinequiz_queue} q
+                WHERE importuserid = :queueuserid
+            UNION ALL
+                SELECT sp.offlinequizid id
+                FROM {offlinequiz_scanned_pages} sp
+                JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
+                WHERE u.id = :scannedpageuserid)";
 
         $params = [
           'participantsuserid'        => $userid,
@@ -293,40 +302,40 @@ class provider implements
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
         $sql = "SELECT DISTINCT c.id contextid, cm.instance offlinequizid
-        FROM {context} c 
+        FROM {context} c
         JOIN {course_modules} cm ON cm.id = c.instanceid
         JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70
         AND cm.instance IN (
-				SELECT l.offlinequizid id
-				FROM {offlinequiz_p_lists} l 
-				JOIN {offlinequiz_participants} p on l.id = p.listid 
-				WHERE userid = :participantsuserid
-			UNION ALL 
-				SELECT p.offlinequizid id
-				FROM {offlinequiz_scanned_p_pages} p
-				JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
-				WHERE c.userid = :choiceuserid
-			UNION ALL
-				SELECT q.offlinequizid id 
-				FROM {offlinequiz_queue} q 
-				WHERE importuserid = :queueuserid
-			UNION ALL
-				SELECT sp.offlinequizid id
-				FROM {offlinequiz_scanned_pages} sp
-				JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
-			    WHERE u.id = :scannedpageuserid)
-		AND (c.id {$contextsql})";
+                SELECT l.offlinequizid id
+                FROM {offlinequiz_p_lists} l
+                JOIN {offlinequiz_participants} p on l.id = p.listid
+                WHERE userid = :participantsuserid
+            UNION ALL
+                SELECT p.offlinequizid id
+                FROM {offlinequiz_scanned_p_pages} p
+                JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
+                WHERE c.userid = :choiceuserid
+            UNION ALL
+                SELECT q.offlinequizid id
+                FROM {offlinequiz_queue} q
+                WHERE importuserid = :queueuserid
+            UNION ALL
+                SELECT sp.offlinequizid id
+                FROM {offlinequiz_scanned_pages} sp
+                JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
+                WHERE u.id = :scannedpageuserid)
+        AND (c.id {$contextsql})";
 
         $params = [
-        		'participantsuserid'        => $user->id,
-        		'choiceuserid'              => $user->id,
-        		'queueuserid'               => $user->id,
-        		'scannedpageuserid'         => $user->id
+                'participantsuserid'        => $user->id,
+                'choiceuserid'              => $user->id,
+                'queueuserid'               => $user->id,
+                'scannedpageuserid'         => $user->id
         ] + $contextparams;
 
         $offlinequizes = $DB->get_records_sql($sql, $params);
         foreach ($offlinequizes as $offlinequiz) {
-        	static::export_offlinequiz($offlinequiz->offlinequizid, \context::instance_by_id($offlinequiz->contextid), $user->id);
+            static::export_offlinequiz($offlinequiz->offlinequizid, \context::instance_by_id($offlinequiz->contextid), $user->id);
         }
     }
 
@@ -339,36 +348,35 @@ class provider implements
         $offlinequizconfig = get_config('offlinequiz');
         $exportobject = new \stdClass();
 
-        $sql = "SELECT c.* 
-                FROM {offlinequiz_p_choices} c, 
-                     {offlinequiz_scanned_p_pages} s 
+        $sql = "SELECT c.*
+                FROM {offlinequiz_p_choices} c,
+                     {offlinequiz_scanned_p_pages} s
                 WHERE s.id = c.scannedppageid
                 AND   c.userid = :userid
-				AND   s.offlinequizid = :offlinequizid";
+                AND   s.offlinequizid = :offlinequizid";
 
-        $pchoices = $DB->get_records_sql($sql,["userid" => $userid, "offlinequizid" => $offlinequizid]);
+        $pchoices = $DB->get_records_sql($sql, ["userid" => $userid, "offlinequizid" => $offlinequizid]);
 
         if ($pchoices) {
             $exportobject->participantlists = static::get_scanned_p_page_objects($pchoices);
         }
 
         $sql = "SELECT sp.*
-				FROM {offlinequiz_scanned_pages} sp
-				JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
-			    WHERE u.id = :userid
-				AND   sp.offlinequizid = :offlinequizid";
+                FROM {offlinequiz_scanned_pages} sp
+                JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
+                WHERE u.id = :userid
+                AND   sp.offlinequizid = :offlinequizid";
         $scannedpages = $DB->get_records_sql($sql , ["userid" => $userid, "offlinequizid" => $offlinequizid]);
-        if($scannedpages) {
-            $exportobject->scannedpages = static::get_scanned_pages_objects($context,$scannedpages);
+        if ($scannedpages) {
+            $exportobject->scannedpages = static::get_scanned_pages_objects($context, $scannedpages);
         }
         $results = $DB->get_records("offlinequiz_results", ["userid" => $userid, "offlinequizid" => $offlinequizid]);
-        if($results) {
-        	$exportobject->results = static::get_results($results);
+        if ($results) {
+            $exportobject->results = static::get_results($results);
         }
-        $datafoldername = get_string('privacy:data_folder_name','mod_offlinequiz');
+        $datafoldername = get_string('privacy:data_folder_name', 'mod_offlinequiz');
         writer::with_context($context)
         ->export_data([$datafoldername], $exportobject);
-        
     }
 
     private static function get_scanned_p_page_objects($pchoices) {
@@ -405,33 +413,31 @@ class provider implements
 
     private static function get_group_name_by_result($result) {
         global $DB;
-        $SQL = "SELECT g.number 
+        $sql = "SELECT g.number
                 FROM   {offlinequiz_results} r,
-                       {offlinequiz_groups} g 
+                       {offlinequiz_groups} g
                 WHERE  r.offlinegroupid = g.id
                 AND    r.id = :resultid";
-        $groupnumber = $DB->get_record_sql($SQL,["resultid" => $result->id]);
+        $groupnumber = $DB->get_record_sql($sql, ["resultid" => $result->id]);
         return static::get_group_letter($groupnumber);
     }
 
     private static function get_scanned_pages_objects($context, $scannedpages) {
-
         foreach ($scannedpages as $scannedpage) {
             $scannedpageobjects[$scannedpage->id] = static::get_scanned_page_object($scannedpage);
             static::export_file($context, $scannedpage);
-            
         }
         return $scannedpageobjects;
     }
-    
+
     private static function export_file($context, $scannedpage) {
-    	$fs = get_file_storage();
-    	if($imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename)) {
-    		$datafoldername = get_string('privacy:data_folder_name','mod_offlinequiz');
-    		$scannedpage = get_string('scannedform','mod_offlinequiz');
-    		$filepath = [$datafoldername, $scannedpage];
-    		writer::with_context($context)->export_file($filepath, $imagefile);
-    	}
+        $fs = get_file_storage();
+        if ( $imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename)) {
+            $datafoldername = get_string('privacy:data_folder_name', 'mod_offlinequiz');
+            $scannedpage = get_string('scannedform', 'mod_offlinequiz');
+            $filepath = [$datafoldername, $scannedpage];
+            writer::with_context($context)->export_file($filepath, $imagefile);
+        }
     }
 
     private static function get_scanned_page_object($scannedpage) {
@@ -439,7 +445,7 @@ class provider implements
         $exportscannedpage = new \stdClass();
         $exportscannedpage->id = $scannedpage->id;
         $exportscannedpage->result = $scannedpage->resultid;
-        $exportscannedpage->group = static::get_group($scannedpage->offlinequizid,$scannedpage->groupnumber);
+        $exportscannedpage->group = static::get_group($scannedpage->offlinequizid, $scannedpage->groupnumber);
         $exportscannedpage->pagecorners = static::get_page_corners($scannedpage->id);
         return $exportscannedpage;
     }
@@ -449,11 +455,10 @@ class provider implements
         return $DB->get_records("offlinequiz_page_corners", ["scannedpageid" => $scannedpageid]);
     }
 
-    private static function get_group($offlinequizid,$groupnumber) {
+    private static function get_group($offlinequizid, $groupnumber) {
         global $DB;
 
         $group = $DB->get_record("offlinequiz_groups", ["offlinequizid" => $offlinequizid, "number" => $groupnumber ]);
-
         $exportgroup = new \stdClass();
         $exportgroup->letter = static::get_group_letter($groupnumber);
         $exportgroup->sumgrades = $group->sumgrades;
@@ -494,8 +499,7 @@ class provider implements
      *
      * @param   context $context The specific context to delete data for.
      */
-    public static function delete_data_for_all_users_in_context(\context $context)
-    {
+    public static function delete_data_for_all_users_in_context(\context $context) {
         // TODO: Implement delete_data_for_all_users_in_context() method.
     }
 
@@ -504,8 +508,7 @@ class provider implements
      *
      * @param   approved_contextlist $contextlist The approved contexts and user information to delete information for.
      */
-    public static function delete_data_for_user(approved_contextlist $contextlist)
-    {
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
         // TODO: Implement delete_data_for_user() method.
     }
 }
