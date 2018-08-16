@@ -14,4 +14,11 @@
         <license>MIT</license>
         <licenseversion></licenseversion>
     </library>
+    <library>
+        <location>jquery</location>
+        <name>jquery</name>
+        <version>1.7.2</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
 </libraries>

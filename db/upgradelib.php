@@ -995,7 +995,7 @@ function offlinequiz_update_form_file_names() {
 function offlinequiz_update_refresh_all_pagecounts() {
     global $DB;
     $groups = $DB->get_records('offlinequiz_groups');
-    if(empty($groups)) {
+    if (empty($groups)) {
         return;
     }
     $progressbar = new progress_bar('pagenumberupdate');
@@ -1013,7 +1013,7 @@ function offlinequiz_update_refresh_all_pagecounts() {
         $maxanswers = $DB->get_field_sql("SELECT max(count) from (SELECT count(*) as count from {question_answers} qa, {offlinequiz_groups} g, {offlinequiz_group_questions} gq where gq.offlinegroupid = g.id AND gq.questionid = qa.question AND g.id = :id group by gq.id) as count", $params);
         $columns = offlinequiz_get_number_of_columns($maxanswers);
         $pages = offlinequiz_get_number_of_pages($questions,$columns);
-        if($pages > 1 && $pages != $group->numberofpages) {
+        if ($pages > 1 && $pages != $group->numberofpages) {
             $group->numberofpages = $pages;
             $DB->update_record('offlinequiz_groups', $group);
         }
