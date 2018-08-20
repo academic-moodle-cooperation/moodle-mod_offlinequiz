@@ -2,7 +2,7 @@
 language: php
 
 # This tells Travis CI to use its new architecture.  Everything is better!
-sudo: false
+sudo: required
 
 # This tells Travis CI to cache Composer's cache.  Speeds up build times.
 cache:
@@ -18,7 +18,16 @@ php:
  - 7.2
 
 addons:
+  firefox: "47.0.1"
   postgresql: "9.3"
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+      - oracle-java9-installer
+      - oracle-java9-set-default
+      - chromium-chromedriver
 
 # This section sets up the environment variables for the build.
 env:
