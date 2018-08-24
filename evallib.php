@@ -903,8 +903,9 @@ function offlinequiz_process_scanned_participants_page($offlinequiz, offlinequiz
         foreach ($participants as $participant) {
             $choice = new StdClass();
             $choice->scannedppageid = $scannedpage->id;
-            $choice->userid = $participant->userid;
-
+            if(property_exists($participant, 'userid')) {
+                $choice->userid = $participant->userid;
+            }
             if ($participant->value == 'unknown'  || $participant->userid == 0) {
                 $choice->value = -1;
                 $insecuremarkings = true;
@@ -914,11 +915,12 @@ function offlinequiz_process_scanned_participants_page($offlinequiz, offlinequiz
                 $choice->value = 0;
             }
 
-            if (is_string($participant->userid) && $intuserid = intval($participant->userid)) {
+            if (property_exists($participant, 'userid') && is_string($participant->userid)
+                    && $intuserid = intval($participant->userid)) {
                 $participant->userid = $intuserid;
             }
 
-            if ($participant->userid != false) {
+            if (property_exists($participant, 'userid') && $participant->userid != false) {
                 $choice->userid = $participant->userid;
             } else {
                 $choice->userid = 0;

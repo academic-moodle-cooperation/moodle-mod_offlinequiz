@@ -739,27 +739,22 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
             $scannedpage = offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdata, $startindex, $endindex);
             if ($scannedpage->status == 'submitted') {
                 $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid));
-                echo '<p>';
-                if (offlinequiz_check_result_completed($offlinequiz, $group, $result)) {
-                    echo  get_string('userimported', 'offlinequiz', fullname($user) . " (" .
-                            $user->{$offlinequizconfig->ID_field}.")"  );
-                } else {
-                    echo  get_string('userpageimported', 'offlinequiz', fullname($user) . " (" .
-                            $user->{$offlinequizconfig->ID_field}.")");
-                }
-                echo '</p>';
-                echo '<html>';
-                echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
                 if ($overwrite) {
-                    echo "<input type=\"button\" value=\"".get_string('closewindow') .
-                            "\" onClick=\"window.opener.location.replace('" .
+                    echo '<script type="text/javascript">function closePage() {
+                          window.opener.location.replace(\'' .
                             $CFG->wwwroot . '/mod/offlinequiz/review.php?q=' . $offlinequiz->id . '&resultid=' .
-                            $scannedpage->resultid . "'); window.close(); return false;\">";
+                            $scannedpage->resultid . '\'); window.close(); return false;
+                          }
+                          window.onload = closePage;
+                          </script>';
                 } else {
-                    echo "<input type=\"button\" value=\"".get_string('closewindow') .
-                    "\" onClick=\"window.opener.location.reload(1); self.close(); return false;\">";
+                    echo '<script type="text/javascript">function closePage() {
+                          window.opener.location.reload(1); self.close(); return false;
+                          }
+                          window.onload = closePage;
+                          </script>';
                 }
-                echo '<html>';
+                echo '</html>';
                 return;
             }
         } else {

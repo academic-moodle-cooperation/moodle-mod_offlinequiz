@@ -820,8 +820,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
                 }
                 require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
-                list($maxquestions, $maxanswers, $formtype, $questionsperpage) =
-                    offlinequiz_get_question_numbers($offlinequiz, $newgroups);
+                list($maxquestions, $maxanswers, $formtype, $questionsperpage)
+                    = offlinequiz_get_question_numbers($offlinequiz, $newgroups);
                 foreach ($newgroups as $newgroup) {
                     // Now we know the number of pages of the group.
                     $newgroup->numberofpages = ceil($maxquestions / ($formtype * 24));

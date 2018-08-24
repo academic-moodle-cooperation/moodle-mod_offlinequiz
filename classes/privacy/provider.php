@@ -375,8 +375,9 @@ class provider implements
             $exportobject->results = static::get_results($results);
         }
         $datafoldername = get_string('privacy:data_folder_name', 'mod_offlinequiz');
-        writer::with_context($context)
-        ->export_data([$datafoldername], $exportobject);
+        writer::with_context($context)->export_data(
+                [$datafoldername], $exportobject)
+        ;
     }
 
     private static function get_scanned_p_page_objects($pchoices) {
