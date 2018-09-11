@@ -593,6 +593,9 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 % \newcommand{\answerIs}[1]{[#1]} %%%Enable showing the right answer
 %%%
 
+\usepackage{ifthen}
+\newif\ifprintstudycodefield
+\printstudycodefieldtrue % Feld für die Studienkennzahl anzeigen
 
 % ===========================================================================================================
 %%% Course data:
@@ -600,15 +603,15 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \newcommand{\Title}{{$a->coursename}}
 \newcommand{\Date}
 
-\newcommand{\TestTitle}{%
+\newcommand{\TestTitle}{
 \begin{center}
-{\bf \Large Questionnaire}\\\\[3mm]
+{\bf \Large Fragebogen} \vspace{5mm} \\\\
 \fbox{
-\begin{tabular}{rl}
-\rule{0pt}{25pt} Name: & $\underline{\hspace*{8cm}}$ \rule{20pt}{0pt}\\\\[5mm]
-Student ID: & $\underline{\hspace*{8cm}}$\\\\[5mm]
-\ifthenelse{\equal{true}{{$a->printstudycodefield}}}{\rule{10pt}{0pt} Program code: & $\underline{\hspace*{8cm}}$\\\\[5mm]}{}
-\rule[-20pt]{0pt}{20pt} Signature: & $\underline{\hspace*{8cm}}$
+\begin{tabular}{rl}\\\\
+Name: & $\underline{\hspace*{8cm}}$ \vspace{3mm}\\\\
+Matrikelnummer: & $\underline{\hspace*{8cm}}$\vspace{5mm} \\\\
+\ifprintstudycodefield Studienkennzahl: & $\underline{\hspace*{8cm}}$\fi\vspace{5mm}\\\\
+Unterschrift: & $\underline{\hspace*{8cm}}$\vspace{5mm}\\\\
 \end{tabular}}
 \end{center}
 }
