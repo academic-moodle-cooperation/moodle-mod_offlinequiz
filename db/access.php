@@ -26,6 +26,8 @@
  *
  **/
 
+defined('MOODLE_INTERNAL') || die();
+
 $capabilities = array(
     // The standard capability mod/offlinequiz:addinstance.
     'mod/offlinequiz:addinstance' => array(

@@ -242,7 +242,7 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
                 $qinstances = $DB->get_records_sql($sql,
                         array('offlinequizid' => $offlinequiz->id,
                               'offlinegroupid' => $group->id));
- 
+
                 // Clone it...
                 $quba = $templateusage->get_clone($qinstances);
 
@@ -462,7 +462,7 @@ function offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdat
             $quba->finish_question($slot, time());
         }
 
-    } // End for ($slotindex...
+    } // End for slotindex.
 
     question_engine::save_questions_usage_by_activity($quba);
 
@@ -765,7 +765,7 @@ function offlinequiz_get_question_numbers($offlinequiz, $groups) {
 
 // O=======================================================================.
 // O=======================================================================.
-//  Functions for lists of participants.
+// Functions for lists of participants.
 // O=======================================================================.
 // O=======================================================================.
 /**
@@ -903,8 +903,9 @@ function offlinequiz_process_scanned_participants_page($offlinequiz, offlinequiz
         foreach ($participants as $participant) {
             $choice = new StdClass();
             $choice->scannedppageid = $scannedpage->id;
-            $choice->userid = $participant->userid;
-
+            if(property_exists($participant, 'userid')) {
+                $choice->userid = $participant->userid;
+            }
             if ($participant->value == 'unknown'  || $participant->userid == 0) {
                 $choice->value = -1;
                 $insecuremarkings = true;
@@ -914,11 +915,12 @@ function offlinequiz_process_scanned_participants_page($offlinequiz, offlinequiz
                 $choice->value = 0;
             }
 
-            if (is_string($participant->userid) && $intuserid = intval($participant->userid)) {
+            if (property_exists($participant, 'userid') && is_string($participant->userid)
+                    && $intuserid = intval($participant->userid)) {
                 $participant->userid = $intuserid;
             }
 
-            if ($participant->userid != false) {
+            if (property_exists($participant, 'userid') && $participant->userid != false) {
                 $choice->userid = $participant->userid;
             } else {
                 $choice->userid = 0;

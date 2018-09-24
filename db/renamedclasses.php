@@ -27,7 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Array 'old_class_name' => 'new\class_name'.
+// Array old class name => new class name.
 $renamedclasses = array(
 
     // Changed in Moodle 2.8.

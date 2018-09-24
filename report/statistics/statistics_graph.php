@@ -73,7 +73,7 @@ if ($groupnumber > 0) {
     $sql = "SELECT DISTINCT(questionid)
               FROM {offlinequiz_group_questions}
              WHERE offlinequizid = :offlinequizid";
-            
+
     $questionids = $DB->get_fieldset_sql($sql, array('offlinequizid' => $offlinequiz->id));
     $offlinequiz->questions = $questionids;
 }

@@ -17,21 +17,20 @@ Feature: Within a moodle instance, an administrator should be able to set some d
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-	And I log in as "admin"
+    And I log in as "admin"
     And I navigate to "Offline Quiz" node in "Site administration > Plugins > Activity modules"
     And I set the field "White value of paper" to "Dark grey"
 #    And I set the field "Scanned form with grades" to "1"
-    And I pause scenario execution
-	And I press "Save changes"
+    And I press "Save changes"
     And I log out
-	And I log in as "teacher1"
-    And I follow "Course 1"
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
     And I turn editing mode on
     And I add a "Offline Quiz" to section "1" and I fill the form with:
       | Offline quiz name | Test offline quiz name |
-	  | Description | Add an offline quiz to the current course |
-	And I follow "Test offline quiz name"
-	And I navigate to "Edit settings" node in "Offline quiz administration"
+      | Description | Add an offline quiz to the current course |
+    And I follow "Test offline quiz name"
+    And I navigate to "Edit settings" node in "Offline quiz administration"
     And I expand all fieldsets
     Then I should see "Dark grey"
     #Then "Scanned form with grades" should contain "1"

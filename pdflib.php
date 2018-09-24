@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/filter/tex/filter.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/documentlib.php');
 
-define('LOGO_MAX_ASPECT_RATIO',3.714285714);
+define('LOGO_MAX_ASPECT_RATIO', 3.714285714);
 
 class offlinequiz_pdf extends pdf
 {
@@ -581,7 +581,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             // Remove all class info from paragraphs because TCPDF won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id, 1, 300);
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
+                                1, 300, $offlinequiz->disableimgnewlines);
 
             $html = '';
 
@@ -606,7 +607,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                     // Remove <script> tags that are created by mathjax preview.
                     $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300);
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer,
+                                      1, 300, $offlinequiz->disableimgnewlines);
 
                     if ($correction) {
                         if ($question->options->answers[$answer]->fraction > 0) {
@@ -634,7 +636,12 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 }
 
             }
-
+            if ($offlinequiz->disableimgnewlines) {
+                // This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
+                $html = preg_replace("/(<span class=\"MathJax_Preview\">.+?)+(title=\"TeX\" >)/ms", "", $html);
+                $html = preg_replace("/<\/a><\/span>/ms", "", $html);
+                $html = preg_replace("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
+            }
             // Finally print the question number and the HTML string.
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
                 $pdf->SetFont('FreeSans', 'B', $offlinequiz->fontsize);
@@ -712,7 +719,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             // Remove all class info from paragraphs because TCPDF won't use CSS.
             $questiontext = preg_replace ( '/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext );
 
-            $questiontext = $trans->fix_image_paths ( $questiontext, $question->contextid, 'questiontext', $question->id, 1, 300 );
+            $questiontext = $trans->fix_image_paths ( $questiontext, $question->contextid, 'questiontext', $question->id,
+                                  1, 300, $offlinequiz->disableimgnewlines );
 
             $html = '';
 
@@ -740,7 +748,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                     // Remove <script> tags that are created by mathjax preview.
                     $answertext = preg_replace ( "/<script[^>]*>[^<]*<\/script>/ms", "", $answertext );
                     $answertext = preg_replace ( "/<\/p[^>]*>/ms", "", $answertext );
-                    $answertext = $trans->fix_image_paths ( $answertext, $question->contextid, 'answer', $answer, 1, 300 );
+                    $answertext = $trans->fix_image_paths ( $answertext, $question->contextid, 'answer', $answer,
+                                      1, 300, $offlinequiz->disableimgnewlines );
 
                     if ($correction) {
                         if ($question->options->answers[$answer]->fraction > 0) {
@@ -772,6 +781,13 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
                 $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
                 $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
+            }
+
+            // This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
+            if ($offlinequiz->disableimgnewlines) {
+                $html = preg_replace("/(<span class=\"MathJax_Preview\">.+?)+(title=\"TeX\" >)/ms", "", $html);
+                $html = preg_replace("/<\/a><\/span>/ms", "", $html);
+                $html = preg_replace("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
             }
 
             $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $html );
@@ -983,7 +999,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
         $number ++;
     }
 
-    $group->numberofpages=$page;
+    $group->numberofpages = $page;
     $DB->update_record('offlinequiz_groups', $group);
 
     $fs = get_file_storage();

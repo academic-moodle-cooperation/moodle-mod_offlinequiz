@@ -66,8 +66,7 @@ class offlinequiz_statistics_response_analyser {
     public function __construct($questiondata) {
         $this->questiondata = $questiondata;
 
-        $this->responseclasses =
-                question_bank::get_qtype($questiondata->qtype)->get_possible_responses(
+        $this->responseclasses = question_bank::get_qtype($questiondata->qtype)->get_possible_responses(
                         $questiondata);
         foreach ($this->responseclasses as $subpartid => $responseclasses) {
             foreach ($responseclasses as $responseclassid => $notused) {
@@ -167,7 +166,7 @@ class offlinequiz_statistics_response_analyser {
     /**
      * Load the stored response analysis from the offlinequiz_q_response_stats
      * table.
-     * 
+     *
      * @param int $offlinequizstatisticsid the cached offlinequiz statistics to load the
      * data corresponding to.
      * @return bool true if cached data was found in the database and loaded,
@@ -195,7 +194,7 @@ class offlinequiz_statistics_response_analyser {
     /**
      * Store the computed response analysis in the offlinequiz_q_response_stats
      * table.
-     * 
+     *
      * @param int $offlinequizstatisticsid the cached offlinequiz statistics this correspons to.
      */
     public function store_cached($offlinequizstatisticsid) {

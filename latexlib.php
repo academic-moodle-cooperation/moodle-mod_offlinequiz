@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Creates the PDF forms for offlinequizzes
+ * Creates the Latex forms for offlinequizzes
  *
  * @package       mod
  * @subpackage    offlinequiz
@@ -141,7 +141,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
             if ($question->qtype == 'description') {
                 $latexforquestions .= "\n" . '\\ ' . $questiontext . "\n";
             } else {
-                $latexforquestions .= '\item ' .  $questiontext . "\n";
+                $latexforquestions .= '\item %' .  $question->name . "\n" . $questiontext . "\n";
             }
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
@@ -169,11 +169,17 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     $a['latexforquestions'] = $latexforquestions;
     $a['coursename'] = offlinequiz_convert_html_to_latex($course->fullname);
     $a['groupname'] = $groupletter;
-    // TODO exceptionhandling?
+    $a['pdfintrotext'] = offlinequiz_convert_html_to_latex(get_string('pdfintrotext', 'offlinequiz', $a));
     if ($offlinequiz->time) {
         $a['date'] = ', ' . userdate($offlinequiz->time);
     } else {
         $a['date'] = '';
+    }
+    $a['fontsize'] = $offlinequiz->fontsize;
+    if ($offlinequiz->printstudycodefield) {
+        $a['printstudycodefield'] = "true";
+    } else {
+        $a['printstudycodefield'] = "false";
     }
 
     $latex = get_string('questionsheetlatextemplate', 'offlinequiz', $a);
@@ -204,37 +210,162 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     return $file;
 }
 
+function offlinequiz_convert_html_to_latex_tagreplace($dom, $tag, $pre, $post) {
+    $elements = $dom->getElementsByTagName($tag);
+    foreach ($elements as $element) {
+        offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element);
+    }
+}
+
+function offlinequiz_convert_html_to_latex_paragraph($dom) {
+    $elements = $dom->getElementsByTagName('p');
+    foreach ($elements as $element) {
+        $style = $element->getAttribute("style");
+        if ( strpos($style, 'text-align: center') ) {
+            $pre = "\\begin{center}\n";
+            $post = "\\end{center}\n";
+        } else if ( strpos($style, 'text-align: left') ) {
+            $pre = "\\begin{flushleft}\n";
+            $post = "\\end{flushleft}\n";
+        } else if ( strpos($style, 'text-align: right') ) {
+            $pre = "\\begin{flushright}\n";
+            $post = "\\end{flushright}\n";
+        } else {
+            $pre = "";
+            $post = "\n\n";
+        }
+        offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element);
+    }
+}
+
+function offlinequiz_convert_html_to_latex_span($dom) {
+    $elements = $dom->getElementsByTagName('span');
+    foreach ($elements as $element) {
+        $style = $element->getAttribute("style");
+        if ( preg_match('/background-color:\s+rgb\((\d+),\s+(\d+),\s+(\d+)\)/', $style, $m) ) {
+            $pre = "\\colorbox[RGB]{{$m[1]},{$m[2]},{$m[3]}}{";
+            $post = "}";
+        } else if ( preg_match('/color:\s+rgb\((\d+),\s+(\d+),\s+(\d+)\)/', $style, $m) ) {
+            $pre = "\\textcolor[RGB]{{$m[1]},{$m[2]},{$m[3]}}{";
+            $post = "}";
+        } else {
+            $pre = "";
+            $post = "";
+        }
+        offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element);
+    }
+}
+
+function offlinequiz_convert_html_to_latex_tables($dom) {
+    $elements = $dom->getElementsByTagName('table');
+    foreach ($elements as $element) {
+        $pre = '\begin{tabular}';
+        $post = '\end{tabular}';
+        $caption = $element->getElementsByTagName('caption')->item(0);
+        if ( $caption and $caption->nodeValue !== '' ) {
+            $style = $caption->getAttribute("style");
+            if ( strpos($style, 'caption-side: bottom') !== false ) {
+                $post .= "\n" . "{\large " . $caption->nodeValue . "}\n\n";
+            } else {
+                $pre = "{\large " . $caption->nodeValue . "}\n\n" . $pre;
+            }
+            $element->removeChild($caption);
+        }
+        $rows = $element->getElementsByTagName('tr');
+        // TeX needs the number of columns.
+        $cmax = 0;
+        foreach ($rows as $row) {
+            $r++;
+            foreach (array("td", "th") as $item) {
+                $cols = $row->getElementsByTagName($item);
+                $c = 0;
+                foreach ($cols as $col) {
+                    $c++;
+                    if ($c > 1) {
+                        $col->nodeValue = "-amp- " . $col->nodeValue; // Add & between colums.
+                    }
+                }
+                $cmax = max($cmax, $c);
+            }
+            $r++;
+            if ($r > 1) {
+                $row->nodeValue = "\\\\\n" . $row->nodeValue; // Add \\ between colums.
+            }
+        }
+        $pre .= '{' . str_repeat ("c", $cmax) . '}';
+        offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element);
+    }
+}
+
+function offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element) {
+    $prenode = $dom->createTextNode($pre);
+    $postnode = $dom->createTextNode($post);
+    $element->parentNode->insertBefore($prenode, $element);
+    $element->appendChild($postnode);
+}
+
 /**
  * Return the LaTeX representation of a question or answer text.
  * @param string $text
  */
 function offlinequiz_convert_html_to_latex($text) {
+
+    $dom = new DOMDocument();
+    $dom->loadHTML('<meta http-equiv="content-type" content="text/html; charset=utf-8">' . $text);
+    // Replace tags.
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'h3', '{\LARGE ', "}\bigskip\n\n");
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'h4', '{\large ', "}\medskip\n\n");
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'h5', '{\large ', "}\medskip\n\n");
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'b', '\textbf{', '}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'strong', '\textbf{', '}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'i', '\textit{', '}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'u', '\underline{', '}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'strike', '\sout{', '}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'sup', '\textsuperscript{', '}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'sub', '\textsubscript{', '}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'pre', '\begin{verbatim}', '\end{verbatim}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'blockquote', '\begin{quotation}', '\end{quotation}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'center', '\begin{center}', '\end{center}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'ol', '\begin{enumerate}[label=(\arabic*)]', '\end{enumerate}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'ul', '\begin{itemize}', '\end{itemize}');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'li', '\item ', '');
+    offlinequiz_convert_html_to_latex_tagreplace($dom, 'br', "\n", ''); // Using newline might produce invalid TeX in some cases.
+    offlinequiz_convert_html_to_latex_tables($dom);
+    offlinequiz_convert_html_to_latex_paragraph($dom);
+    offlinequiz_convert_html_to_latex_span($dom);
+    $text = $dom->saveHTML();
+    // Replace "$$ ... $$" by "\[ ... \]".
+    $text = preg_replace('/\$\$(.*?)\$\$/s', '\[\1\]', $text);
+    // Replace "&amp;" by "&" in math mode.
+    $text = preg_replace_callback('/(\\\\[\(\[])(.*?)(\\\\[\)\]])/s', function ($m) {
+          $tmp = str_replace('&amp;', '&', $m[2]);
+        if ( !(strpos($tmp, '\begin{align}') !== false or strpos($tmp, '\begin{align*}') !== false or strpos($tmp,
+                 '\begin{eqnarray') !== false) ) {
+              $tmp = $m[1] . $tmp . $m[3];
+        }
+          return $tmp;
+    }, $text);
     $conversiontable = array(
-            'Ä' => '{\"A}',
-            'ä' => '{\"a}',
-            'Ö' => '{\"O}',
-            'ö' => '{\"o}',
-            'Ü' => '{\"U}',
-            'ü' => '{\"u}',
-            'ß' => '{\ss}',
-            '&nbsp;' => ' ',
-            '#' => '\#',
-            '%' => '\%',
-    		'<b>' => '\textbf{',
-    		'</b>' => '}',
-    		'<i>' => '\textit{',
-    		'</i>' => '}',
-    		'<u>' => '\underline{',
-    		'</u>' => '}',
-    		'&gt;' => '>',
-    		'&lt;' => '<',
-        '$$' => '$'
-    );
-    $text = strip_tags($text,"<i><b><u>");
+    '&Amul;' => 'Ä',
+    '&auml;' => 'ä',
+    '&Ouml;' => 'Ö',
+    '&ouml;' => 'ö',
+    '&Uuml;' => 'Ü',
+    '&uuml;' => 'ü',
+    '&szlig;' => 'ß',
+    '&nbsp;' => '~',
+    '&amp;' => '\&',
+    '-amp-' => '&', // Undo ugly hack to prevent the dom parser from rewriting &.
+    '#' => '\#',
+    '%' => '\%',
+    '&gt;' => '>',
+    '&lt;' => '<',
+    '$' => '\$');
     foreach ($conversiontable as $search => $replace) {
-        $text = str_ireplace($search, $replace, $text);
+         $text = str_ireplace($search, $replace, $text);
     }
-    return $text;
+    $text = strip_tags($text);
+    return trim($text);
 }
 
 /**

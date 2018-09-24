@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  *      - int offlinequizid: the id of the offlinequiz.
  *      - string reportname: the name of the report.
  *      - string doctype: the document type (PDF or DOCX).
- *      
+ *
  * }
  *
  * @package    mod_offlinequiz

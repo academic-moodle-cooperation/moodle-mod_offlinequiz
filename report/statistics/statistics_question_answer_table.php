@@ -437,14 +437,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * This function is not part of the public api.
      */
     public function download_buttons() {
-        //disabled due to problems with multiple tables
-//         global $OUTPUT;
-//         if ($this->is_downloadable() && !$this->is_downloading()) {
-//             return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'offlinequiz_statistics'),
-//                 $this->baseurl->out_omit_querystring(), 'download', $this->baseurl->params() + array('everything' => 1));
-//         } else {
-//             return '';
-//         }
+        // Disabled due to problems with multiple tables.
     }
     /**
      * The frequency with which this response was given.

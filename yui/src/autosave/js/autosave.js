@@ -386,7 +386,7 @@ M.mod_offlinequiz.autosave = {
 
     is_time_nearly_over: function() {
         return M.mod_offlinequiz.timer && M.mod_offlinequiz.timer.endtime &&
-                (new Date().getTime() + 2*this.delay) > M.mod_offlinequiz.timer.endtime;
+                (new Date().getTime() + 2 * this.delay) > M.mod_offlinequiz.timer.endtime;
     },
 
     stop_autosaving: function() {

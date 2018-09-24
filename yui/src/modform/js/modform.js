@@ -8,13 +8,6 @@ var MODFORM = function() {
     MODFORM.superclass.constructor.apply(this, arguments);
 };
 
-/**
- * The coursebase class to provide shared functionality to Modules within
- * Moodle.
- *
- * @class M.course.coursebase
- * @constructor
- */
 Y.extend(MODFORM, Y.Base, {
     repaginateCheckbox: null,
     qppSelect: null,
@@ -43,7 +36,7 @@ Y.extend(MODFORM, Y.Base, {
 
 });
 
-// Ensure that M.course exists and that coursebase is initialised correctly
+// Ensure that M.course exists and that coursebase is initialised correctly.
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 M.mod_offlinequiz.modform = M.mod_offlinequiz.modform || new MODFORM();
 M.mod_offlinequiz.modform.init = function() {

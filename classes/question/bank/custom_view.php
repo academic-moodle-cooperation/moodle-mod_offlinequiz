@@ -136,13 +136,13 @@ class custom_view extends \core_question\bank\view {
 
     public function offlinequiz_contains($questionid) {
         global $CFG, $DB;
-        
+
         if (in_array($questionid, $this->offlinequiz->questions)) {
             return true;
         }
-        return false; 
+        return false;
     }
-    
+
     /**
      * Renders the html question bank (same as display, but returns the result).
      *
@@ -181,7 +181,7 @@ class custom_view extends \core_question\bank\view {
                     'type' => 'submit',
                     'name' => 'add',
                     'value' => get_string('addtoofflinequiz', 'offlinequiz'),
-            		'class' => 'btn btn-primary'
+                    'class' => 'btn btn-primary'
             );
             if ($cmoptions->hasattempts) {
                 $params['disabled'] = 'disabled';
@@ -250,7 +250,7 @@ class custom_view extends \core_question\bank\view {
     protected function create_new_question_form($category, $canadd) {
         // Don't display this.
     }
-    
+
     /**
      * Create the SQL query to retrieve the indicated questions, based on
      * \core_question\bank\search\condition filters.

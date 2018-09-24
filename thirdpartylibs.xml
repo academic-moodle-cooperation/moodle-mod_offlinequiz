@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>lib/PHPWord</location>
+        <name>PHPWord</name>
+        <version>0.6.3</version>
+        <license>LGPL</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>lib/jquery</location>
+        <name>jquery</name>
+        <version>1.4.3</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>jquery</location>
+        <name>jquery</name>
+        <version>1.7.2</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>

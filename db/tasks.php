@@ -23,6 +23,9 @@
  * @since         Moodle 3.1+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 $tasks = array(
     array(
         'classname' => 'mod_offlinequiz\task\page_evaluation_task',

@@ -51,10 +51,12 @@ class structure {
      */
     protected $questions = array();
 
-    /** @var \stdClass[] offlinequiz_group_questions.id => the offlinequiz_group_questions rows for this offlinequiz, agumented by sectionid. */
+    /** @var \stdClass[] offlinequiz_group_questions.id =>
+     * the offlinequiz_group_questions rows for this offlinequiz, agumented by sectionid. */
     protected $slots = array();
 
-    /** @var \stdClass[] offlinequiz_group_questions.slot => the offlinequiz_group_questions rows for this offlinequiz, agumented by sectionid. */
+    /** @var \stdClass[] offlinequiz_group_questions.slot =>
+     * the offlinequiz_group_questions rows for this offlinequiz, agumented by sectionid. */
     protected $slotsinorder = array();
 
     /**
@@ -370,7 +372,7 @@ class structure {
         }
         if ($offlinequiz->timeclose > 0) {
             if ($timenow > $offlinequiz->timeclose) {
-                $dates[] = get_string('offlinequizclosed', 'offlinequiz', userdate($offlinequiz->timeclose));
+                $dates[] = get_string('offlinequizisclosed', 'offlinequiz', userdate($offlinequiz->timeclose));
             } else {
                 $dates[] = get_string('offlinequizcloseson', 'offlinequiz', userdate($offlinequiz->timeclose));
             }
@@ -746,8 +748,6 @@ class structure {
 
         // Now look at the maxmark of attemps.
         // We do this already in offlinequiz_update_question_instance.
-//         \question_engine::set_max_mark_in_attempts(new \result_qubaids_for_offlinequiz($slot->offlinequizid, $slot->offlinegroupid),
-//                 $slot->slot, $maxmark);
         $trans->allow_commit();
 
         return true;

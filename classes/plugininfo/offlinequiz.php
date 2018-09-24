@@ -23,7 +23,7 @@
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.8+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ */
 
 namespace mod_offlinequiz\plugininfo;
 

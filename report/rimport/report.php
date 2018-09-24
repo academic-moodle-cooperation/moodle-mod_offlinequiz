@@ -216,7 +216,6 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             // or one from the filesarea.
             $realfilename = $importform->get_new_filename('newfile');
             // Create a unique temp dir.
-            srand(microtime() * 1000000);
             $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
             $dirname = "{$CFG->tempdir}/offlinequiz/import/$unique";
             check_dir_exists($dirname, true, true);
@@ -235,11 +234,36 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 if ($files) {
                     unlink($importfile);
                     $files = get_directory_list($dirname);
+                    foreach ($files as $file) {
+                        $mimetype = mimeinfo('type', $file);
+                        if ($mimetype == 'application/pdf') {
+                            $this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file);
+                        }
+                    }
+                    $files = get_directory_list($dirname);
                 } else {
                     echo $OUTPUT->notification(get_string('couldnotunzip', 'offlinequiz_rimport', $realfilename), 'notifyproblem');
 
                 }
+            } else if ($mimetype == 'image/tiff') {
+                // Extract each TIFF subfiles into a file.
+                // (it would be better to know if there are subfiles, but it is pretty cheap anyway).
+                $newfile = "$importfile-%d.tiff";
+                $handle = popen("convert '$importfile' '$newfile'", 'r');
+                fread($handle, 1);
+                while (!feof($handle)) {
+                    fread($handle, 1);
+                }
+                pclose($handle);
+                if (count(get_directory_list($dirname)) > 1) {
+                    // It worked, remove original.
+                    unlink($importfile);
+                }
+                $files = get_directory_list($dirname);
+            } else if ($mimetype == 'application/pdf') {
+                $files = $this->extract_pdf_to_tiff ( $dirname, $importfile );
             } else if (preg_match('/^image/' , $mimetype)) {
+
                 $files[] = $realfilename;
             }
             $added = count($files);
@@ -258,6 +282,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
             // Add the files to the job.
             foreach ($files as $file) {
+                $this->convert_black_white($dirname . '/' . $file);
                 $jobfile = new stdClass();
                 $jobfile->queueid = $job->id;
                 $jobfile->filename = $dirname . '/' . $file;
@@ -327,5 +352,30 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     $importform->display();
             }
         }
+    }
+    /**
+     * @param dirname
+     * @param importfile
+     */
+    private function extract_pdf_to_tiff($dirname, $importfile) {
+        // Extract each page to a separate file.
+        $newfile = "$importfile-%03d.tiff";
+        $handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
+        fread($handle, 1);
+        while (!feof($handle)) {
+            fread($handle, 1);
+        }
+        pclose($handle);
+        if (count(get_directory_list($dirname)) > 1) {
+            // It worked, remove original.
+            unlink($importfile);
+        }
+        $files = get_directory_list($dirname);
+        return $files;
+    }
+
+    private function convert_black_white($file) {
+        $command = "convert " . realpath($file) . " -threshold 50% " . realpath($file);
+        popen($command, 'r');
     }
 }

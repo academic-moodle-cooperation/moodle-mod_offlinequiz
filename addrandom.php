@@ -27,13 +27,16 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/addrandomform.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/question/category_class.php');
 
-list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
-        question_edit_setup('editq', '/mod/offlinequiz/addrandom.php', true);
+
+
+list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars)
+    = question_edit_setup('editq', '/mod/offlinequiz/addrandom.php', true);
 
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
@@ -47,6 +50,8 @@ $groupnumber = optional_param('groupnumber', 1, PARAM_INT);
 if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
     print_error('invalidcourseid');
 }
+
+require_login($course, false, $cm);
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
 // You also need the moodle/question:useall capability somewhere.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
@@ -67,9 +72,6 @@ $offlinequiz->groupnumber = $groupnumber;
 // Load the offlinequiz group and set the groupid in the offlinequiz object.
 if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     $offlinequiz->groupid = $offlinequizgroup->id;
-    //$groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
-    // Clean layout. Remove empty pages if there are no questions in the offlinequiz group.
-    //$offlinequiz->questions = $groupquestions;
 } else {
     print_error('invalidgroupnumber', 'offlinequiz');
 }
@@ -105,7 +107,7 @@ $qcobject = new question_category_object(
 $mform = new offlinequiz_add_random_form(new moodle_url('/mod/offlinequiz/addrandom.php'),
                 array('contexts' => $contexts,
                       'cat' => $pagevars['cat'],
-                      'groupnumber'=> $offlinequiz->groupnumber
+                      'groupnumber' => $offlinequiz->groupnumber
                 ));
 
 if ($mform->is_cancelled()) {
@@ -131,7 +133,8 @@ if ($data = $mform->get_data()) {
                 'It seems a form was submitted without any button being pressed???');
     }
 
-    offlinequiz_add_random_questions($offlinequiz, $offlinequizgroup, $categoryid, $data->numbertoadd, $includesubcategories, $preventsamequestion);
+    offlinequiz_add_random_questions($offlinequiz, $offlinequizgroup, $categoryid,
+            $data->numbertoadd, $includesubcategories, $preventsamequestion);
     offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     redirect($returnurl);

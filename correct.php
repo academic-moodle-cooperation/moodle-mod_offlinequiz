@@ -215,7 +215,6 @@ onClick=\"self.close(); return false;\"><br />";
 
     $groupnumber = required_param('groupnumber', PARAM_TEXT);
     $groupnumber = intval($groupnumber);
-    // Old code  if (!property_exists($scannedpage, 'groupnumber') || $scannedpage->groupnumber == 0) {.
     $scanner->set_group($groupnumber);
     $scannedpage->groupnumber = $groupnumber;
 
@@ -240,8 +239,6 @@ onClick=\"self.close(); return false;\"><br />";
     }
 
     // Now we check the scanned page with potentially updated information.
-    // Removed $scannedpage = offlinequiz_check_for_changed_groupnumber($offlinequiz, $scanner, $scannedpage,
-    //   $coursecontext, $questionsperpage, $offlinequizconfig);.
 
     $oldresultid = $scannedpage->resultid;
     $scannedpage = offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage, $coursecontext,
@@ -721,7 +718,6 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
                     'filename'  => $scanner->filename . '_warning');
 
             // Create a unique temp dir.
-            srand(microtime() * 1000000);
             $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
             $dirname = "{$CFG->tempdir}/offlinequiz/import/$unique";
             check_dir_exists($dirname, true, true);
@@ -743,27 +739,22 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
             $scannedpage = offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdata, $startindex, $endindex);
             if ($scannedpage->status == 'submitted') {
                 $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid));
-                echo '<p>';
-                if (offlinequiz_check_result_completed($offlinequiz, $group, $result)) {
-                    echo  get_string('userimported', 'offlinequiz', fullname($user) . " (" .
-                            $user->{$offlinequizconfig->ID_field}.")"  );
-                } else {
-                    echo  get_string('userpageimported', 'offlinequiz', fullname($user) . " (" .
-                            $user->{$offlinequizconfig->ID_field}.")");
-                }
-                echo '</p>';
-                echo '<html>';
-                echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
                 if ($overwrite) {
-                    echo "<input type=\"button\" value=\"".get_string('closewindow') .
-                            "\" onClick=\"window.opener.location.replace('" .
+                    echo '<script type="text/javascript">function closePage() {
+                          window.opener.location.replace(\'' .
                             $CFG->wwwroot . '/mod/offlinequiz/review.php?q=' . $offlinequiz->id . '&resultid=' .
-                            $scannedpage->resultid . "'); window.close(); return false;\">";
+                            $scannedpage->resultid . '\'); window.close(); return false;
+                          }
+                          window.onload = closePage;
+                          </script>';
                 } else {
-                    echo "<input type=\"button\" value=\"".get_string('closewindow') .
-                    "\" onClick=\"window.opener.location.reload(1); self.close(); return false;\">";
+                    echo '<script type="text/javascript">function closePage() {
+                          window.opener.location.reload(1); self.close(); return false;
+                          }
+                          window.onload = closePage;
+                          </script>';
                 }
-                echo '<html>';
+                echo '</html>';
                 return;
             }
         } else {
@@ -1188,7 +1179,7 @@ if ($sheetloaded) {
             }
             $questioncounter++;
         } // End if.
-    } // End if (!empty($group .
+    }
 }
 ?>
 

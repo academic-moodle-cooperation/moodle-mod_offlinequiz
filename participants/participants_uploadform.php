@@ -25,6 +25,8 @@
  *
  **/
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir.'/formslib.php');
 
 class offlinequiz_participants_upload_form extends moodleform {
@@ -35,7 +37,8 @@ class offlinequiz_participants_upload_form extends moodleform {
         $mform->addElement('header', 'importfileupload', get_string('importpforms', 'offlinequiz_rimport'));
 
         $mform->addElement('filepicker', 'newfile', get_string('ziporimagefile', 'offlinequiz_rimport'), null,
-                array('subdirs' => 0, 'accepted_types' => array('web_image', '.zip', '.ZIP', '.tif', '.TIF', '.tiff', '.TIFF')));
+                      array('subdirs' => 0, 'accepted_types' => array('web_image', '.zip', '.ZIP', '.tif', '.TIF',
+                      '.tiff', '.TIFF', '.jpg', '.JPG', '.jpeg', '.JPEG')));
 
         $mform->addRule('newfile', null, 'required', null, 'client');
 

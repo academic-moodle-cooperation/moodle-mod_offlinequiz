@@ -25,11 +25,11 @@
  */
 
 var CSS = {
-        QBANKLOADING:       'div.questionbankloading',
-        ADDQUESTIONLINKS:   '.menu [data-action="questionbank"]',
-        ADDTOQUIZCONTAINER: 'td.addtoofflinequizaction',
-        PREVIEWCONTAINER:   'td.previewaction',
-        SEARCHOPTIONS:      '#advancedsearch'
+    QBANKLOADING:       'div.questionbankloading',
+    ADDQUESTIONLINKS:   '.menu [data-action="questionbank"]',
+    ADDTOQUIZCONTAINER: 'td.addtoofflinequizaction',
+    PREVIEWCONTAINER:   'td.previewaction',
+    SEARCHOPTIONS:      '#advancedsearch'
 };
 
 var PARAMS = {

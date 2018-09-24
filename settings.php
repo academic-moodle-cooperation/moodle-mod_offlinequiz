@@ -63,6 +63,11 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('offlinequiz/showcopyright', get_string('showcopyright', 'offlinequiz'),
             get_string('showcopyrightdesc', 'offlinequiz'), 1));
 
+    // Disable newlines around images.
+    $settings->add(new admin_setting_configcheckbox('offlinequiz/disableimgnewlines',
+            get_string('disableimgnewlines', 'offlinequiz'), get_string('configdisableimgnewlines', 'offlinequiz'),
+            0));
+
     // Review options.
     $settings->add(new admin_setting_heading('reviewheading',
             get_string('reviewoptionsheading', 'offlinequiz'), ''));

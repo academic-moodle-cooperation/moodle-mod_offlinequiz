@@ -413,24 +413,28 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Define custom list item style for question answers.
     $level1 = new PHPWord_Style_Paragraph();
-    $level1->setTabs(new PHPWord_Style_Tabs(array(
+    $tabslevel1 = new PHPWord_Style_Tabs(array(
             new PHPWord_Style_Tab('clear', 720),
             new PHPWord_Style_Tab('num', 360)
-    )));
-    $level1->setIndentions(new PHPWord_Style_Indentation(array(
+    ));
+    $level1->setTabs($tabslevel1);
+    $indentlevel1 = new PHPWord_Style_Indentation(array(
             'left' => 360,
             'hanging' => 360
-    )));
+    ));
+    $level1->setIndentions($indentlevel1);
 
     $level2 = new PHPWord_Style_Paragraph();
-    $level2->setTabs(new PHPWord_Style_Tabs(array(
+    $tabslevel2 = new PHPWord_Style_Tabs(array(
             new PHPWord_Style_Tab('left', 720),
             new PHPWord_Style_Tab('num', 720)
-    )));
-    $level2->setIndentions(new PHPWord_Style_Indentation(array(
+    ));
+    $level2->setTabs($tabslevel2);
+    $indentlevel2 = new PHPWord_Style_Indentation(array(
             'left' => 720,
             'hanging' => 360
-    )));
+    ));
+    $level2->setIndentions($indentlevel2);
 
     // Create the section that will be used for all outputs.
     $section = $docx->createSection();
@@ -566,7 +570,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
             $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
-                                                    0.6, 300, 'docx');
+                                                    0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
             offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
@@ -597,7 +601,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     // Remove <script> tags that are created by mathjax preview.
                     $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 0.6, 200, 'docx');
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid,
+                                   'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
 
                     $blocks = offlinequiz_convert_image_docx($answertext);
                     offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
@@ -654,7 +659,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
             $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
-                                                    0.6, 300, 'docx');
+                                                    0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
 
@@ -693,7 +698,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                     // Remove <script> tags that are created by mathjax preview.
                     $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
                     $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 0.6, 200, 'docx');
+                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer',
+                                   $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
 
                     $blocks = offlinequiz_convert_image_docx($answertext);
 
@@ -719,7 +725,6 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
         $fileprefix = get_string('fileprefixcorrection', 'offlinequiz');
     }
 
-    srand(microtime() * 1000000);
     $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
 
     $tempfilename = $CFG->dataroot . '/temp/offlinequiz/' . $unique . '.docx';

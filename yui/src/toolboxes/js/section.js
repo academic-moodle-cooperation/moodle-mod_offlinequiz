@@ -47,7 +47,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
 
         BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
         Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
-        Y.delegate('change', this.handle_data_action, BODY, SELECTOR.EDITSHUFFLEQUESTIONSACTION, this);    
+        Y.delegate('change', this.handle_data_action, BODY, SELECTOR.EDITSHUFFLEQUESTIONSACTION, this);
     },
 
     toggle_hide_section : function(e) {
@@ -59,7 +59,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
             button = e.target.ancestor('a', true),
             hideicon = button.one('img'),
 
-        // The value to submit
+        // The value to submit.
             value,
 
         // The text for strings and images. Also determines the icon to display.
@@ -85,7 +85,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         });
         button.set('title', newstring);
 
-        // Change the highlight status
+        // Change the highlight status.
         var data = {
             'class' : 'section',
             'field' : 'visible',

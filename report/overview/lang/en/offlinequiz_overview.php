@@ -27,3 +27,4 @@
  **/
 
 $string['pluginname'] = 'Offlinequiz Results Overview';
+$string['privacy:metadata'] = 'This plugin does not store any user related data.';

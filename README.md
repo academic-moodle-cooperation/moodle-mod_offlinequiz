@@ -60,7 +60,7 @@ halls) without the need for expensive e-testing equipment.
 Requirements
 ------------
 
-The plugin is available for Moodle 2.5+. This version is for Moodle 3.4.
+The plugin is available for Moodle 2.5+. This version is for Moodle 3.5.
 
 
 Installation

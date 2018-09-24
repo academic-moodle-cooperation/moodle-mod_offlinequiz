@@ -83,6 +83,7 @@ $string['position'] = 'Position';
 $string['positions'] = 'Position(s)';
 $string['preferencespage'] = 'Preferences just for this page';
 $string['preferencessave'] = 'Show report';
+$string['privacy:metadata'] = 'This plugin does not store any user related data.';
 $string['questionandanswerstats'] = 'Questions + Answers';
 $string['questionandanswerstatsheader'] = 'Statistics - Question- and Answer analysis';
 $string['questioninformation'] = 'Question information';

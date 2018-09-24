@@ -298,9 +298,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Adding keys to table offlinequiz_reports.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-        // Adding indexes to table offlinequiz_reports.
-        // $table->add_index('name', XMLDB_INDEX_UNIQUE, array('name'));.
-
         // Conditionally launch create table for offlinequiz_reports.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
@@ -721,7 +718,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     // -----------------------------------------------------
-    //  Update the contextid field in question_usages (compare lib/db/upgrade.php lines 6108 following).
+    // Update the contextid field in question_usages (compare lib/db/upgrade.php lines 6108 following).
     // -----------------------------------------------------
     if ($oldversion < 2012020500) {
 
@@ -754,7 +751,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     // -----------------------------------------------------
-    //  Now we migrate data from the old to the new tables.
+    // Now we migrate data from the old to the new tables.
     // -----------------------------------------------------
 
     // We have to delete redundant question instances from offlinequizzes because they are incompatible with the new code.
@@ -823,9 +820,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
                 }
                 require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
-                list($maxquestions, $maxanswers, $formtype, $questionsperpage) =
-                    offlinequiz_get_question_numbers($offlinequiz, $newgroups);
-
+                list($maxquestions, $maxanswers, $formtype, $questionsperpage)
+                    = offlinequiz_get_question_numbers($offlinequiz, $newgroups);
                 foreach ($newgroups as $newgroup) {
                     // Now we know the number of pages of the group.
                     $newgroup->numberofpages = ceil($maxquestions / ($formtype * 24));
@@ -882,7 +878,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     // In a first step we upgrade the offlinequiz_attempts exactly like quiz_attempts (see mod/quiz/db/upgrade.php).
     if ($oldversion < 2012030400) {
         $table = new xmldb_table('question_states');
-        // Echo "upgrading attempts to new question engine <br/>\n";.
 
         if ($dbman->table_exists($table)) {
             // NOTE: We need all attemps, also the ones with sheet=1 because the are the groups' template attempts.
@@ -1166,9 +1161,9 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
                 $questioninstances = array();
                 foreach ($instancesraw as $instance) {
-                	if (!array_key_exists($instance->questionid, $questioninstances)) {
-                		$questioninstances[$instance->questionid] = $instance;
-                	}
+                    if (!array_key_exists($instance->questionid, $questioninstances)) {
+                        $questioninstances[$instance->questionid] = $instance;
+                    }
                 }
 
                 foreach ($groups as $group) {
@@ -1200,8 +1195,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                         }
                         // If the slot is not set, then fill it.
                         if (!$groupquestion->slot) {
-	                        $groupquestion->slot = $currentslot;
-    	                    $needsupdate = true;
+                            $groupquestion->slot = $currentslot;
+                            $needsupdate = true;
                         }
 
                         if ($needsupdate) {
@@ -1285,39 +1280,49 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2016042100, 'offlinequiz');
     }
 
-    if($oldversion < 2016101700) {
-        print('<div class="alert alert-block"><span> Due to a bug in the offline-quiz module, answer forms with multiple pages were not recognized properly. Therefore, the number of pages has to be re-calculated for each offline-quiz. This may take a while, depending on the number offline-quizzes in your Moodle platform.</span>
-                </div>' );
+    if ($oldversion < 2016101700) {
+        print('<div class="alert alert-block"><span>
+              Due to a bug in the offline-quiz module,
+              answer forms with multiple pages were not recognized properly.
+              Therefore, the number of pages has to be re-calculated for each offline-quiz.
+              This may take a while, depending on the number offline-quizzes in your Moodle platform.
+              </span>
+              </div>' );
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
         offlinequiz_update_refresh_all_pagecounts();
     }
 
-    //Information about the new Cron-Job in Moodle-API
-    if($oldversion<2017020201) {
+    // Information about the new Cron-Job in Moodle-API.
+    if ($oldversion < 2017020201) {
         global $PAGE;
         global $OUTPUT;
-        if(!optional_param('croninfo_read', false, PARAM_BOOL)) {
-            if(!CLI_SCRIPT) {
-            print('<div class="alert alert-block"><span>The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore.
-                If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API, or disable your own cron, which is
-                only needed, if you run the evaluation on a dedicated server.
+        if (!optional_param('croninfo_read', false, PARAM_BOOL)) {
+            if (!CLI_SCRIPT) {
+                print('
+                <div class="alert alert-block"><span>
+                The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore.
+                If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API
+                or disable your own cron, which is only needed, if you run the evaluation on a dedicated server.
                 For more information read chapter III of the README.md, which comes with the plugin.<br></span>
-                <br><b>Continuing the upgrade:<br></b>If you have read and understood this message click the link below to continue the upgrade.
+                <br><b>Continuing the upgrade:<br></b>
+                If you have read and understood this message click the link below to continue the upgrade.
                 <br>
                 <br><b><a href='. $PAGE->url->__toString() . '&croninfo_read=true> CONTINUE </a> </b>
                 <br>
                 </div>' );
-            echo $OUTPUT->footer(); die;
-            return false;
-            }
-            else {
-                print('The offline quiz cron works now with the Cron-API. This means, that the additional cronjob is not needed anymore. If you configured a cronjob for the Cron-API you have either the option to disable the job in the Cron-API, or disable your own cron, which is only needed, if you run the evaluation on a dedicated server. For more information read chapter III of the README.md, which comes with the plugin.');
+                echo $OUTPUT->footer(); die;
+                return false;
+            } else {
+                print('The offline quiz cron works now with the Cron-API.'
+                      . ' This means, that the additional cronjob is not needed anymore.'
+                      . ' If you configured a cronjob for the Cron-API'
+                      . ' you have either the option to disable the job in the Cron-API'
+                      . ' or disable your own cron, which is only needed, if you run the evaluation on a dedicated server.'
+                      . ' For more information read chapter III of the README.md, which comes with the plugin.');
             }
 
         }
     }
-
-
 
     // Add id_digits containing amount of digits to match idnumber against.
     if ($oldversion < 2017020202) {
@@ -1356,24 +1361,51 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2017042501, 'offlinequiz');
     }
-    if($oldversion < 2017081102) {
-    	$table = new xmldb_table('offlinequiz_page_corners');
-		$index = new xmldb_index('offlinequiz_page_corners_scannedpageid_idx', XMLDB_INDEX_NOTUNIQUE, array('scannedpageid'));
-    	//Conditionally launch add index offlinequiz_userid_idx.
-    	if (!$dbman->index_exists($table, $index)) {
-    		$dbman->add_index($table, $index);
-		}    		
-    	$table = new xmldb_table('offlinequiz_scanned_pages');
-    	$index = new xmldb_index('offlinequiz_scanned_pages_resultid_idx', XMLDB_INDEX_NOTUNIQUE, array('resultid'));
-    	// Conditionally launch add index offlinequiz_userid_idx.
-    	if (!$dbman->index_exists($table, $index)) {
-    		$dbman->add_index($table, $index);
-		}
+    if ($oldversion < 2017081102) {
+        $table = new xmldb_table('offlinequiz_page_corners');
+        $index = new xmldb_index('offlinequiz_page_corners_scannedpageid_idx', XMLDB_INDEX_NOTUNIQUE, array('scannedpageid'));
+        // Conditionally launch add index offlinequiz_userid_idx.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        $table = new xmldb_table('offlinequiz_scanned_pages');
+        $index = new xmldb_index('offlinequiz_scanned_pages_resultid_idx', XMLDB_INDEX_NOTUNIQUE, array('resultid'));
+        // Conditionally launch add index offlinequiz_userid_idx.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+    }
+
+    if ($oldversion < 2018011601) {
+
+        // Define field id_digits to be added to offlinequiz, if not defined.
+        // This might miss due to an error in an old moodle-version.
+        $table = new xmldb_table('offlinequiz');
+        $field = new xmldb_field('id_digits', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'showtutorial');
+
+        // Conditionally launch add field id_digits.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            $DB->set_field('offlinequiz', 'id_digits', get_config('offlinequiz', 'ID_digits'));
+        }
+
+        // Define field disableimgnewlines to be added to offlinequiz.
+        $table = new xmldb_table('offlinequiz');
+        $field = new xmldb_field('disableimgnewlines', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'id_digits');
+
+        // Conditionally launch add field disableimgnewlines.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2018011601, 'offlinequiz');
     }
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
     // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the
-    //      position field to find new pages and insert them.
-    //      Adapt offlinequiz code to handle missing zeros as pagebreaks.
+    // position field to find new pages and insert them.
+    // Adapt offlinequiz code to handle missing zeros as pagebreaks.
 
     return true;
 }

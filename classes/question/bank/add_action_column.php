@@ -69,7 +69,7 @@ class add_action_column extends \core_question\bank\action_column_base {
         }
         $disabled = false;
         if ($this->qbank->offlinequiz_contains($question->id)) {
-            $disabled = true; 
+            $disabled = true;
         }
         $this->print_icon('t/add', $this->stradd, $this->qbank->add_to_offlinequiz_url($question->id), $disabled);
     }

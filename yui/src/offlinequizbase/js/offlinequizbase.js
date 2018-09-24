@@ -9,15 +9,8 @@ var QUIZBASE = function() {
     QUIZBASE.superclass.constructor.apply(this, arguments);
 };
 
-/**
- * The coursebase class to provide shared functionality to Modules within
- * Moodle.
- *
- * @class M.course.coursebase
- * @constructor
- */
 Y.extend(QUIZBASE, Y.Base, {
-    // Registered Modules
+    // Registered Modules.
     registermodules : [],
 
     /**
@@ -56,11 +49,11 @@ Y.extend(QUIZBASE, Y.Base, {
     ATTRS : {}
 });
 
-// Ensure that M.course exists and that coursebase is initialised correctly
+// Ensure that M.course exists and that coursebase is initialised correctly.
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 M.mod_offlinequiz.offlinequizbase = M.mod_offlinequiz.offlinequizbase || new QUIZBASE();
 
-// Abstract functions that needs to be defined per format (course/format/somename/format.js)
+// Abstract functions that needs to be defined per format (course/format/somename/format.js).
 M.mod_offlinequiz.edit = M.mod_offlinequiz.edit || {};
 
 /**

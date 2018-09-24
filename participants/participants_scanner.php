@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
 /**
  * Class that contains all the functions to interpret scanned participant forms.
  * Overwrites some methods of the class offlinequiz_page_scanner.
- * 
+ *
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  *
  */
@@ -61,7 +61,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
 
     /**
      * Returns the list number recognised on the scanned page.
-     * 
+     *
      * @return int the bar code value
      */
     public function get_list() {
@@ -106,7 +106,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
 
     /**
      * Returns the participants hotspots of this scanner.
-     * 
+     *
      * @param int $width
      * @return array The hotspots
      */

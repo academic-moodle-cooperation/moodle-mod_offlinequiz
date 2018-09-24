@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity extends \core_search\area\base_activity {
+class activity extends \core_search\base_activity {
     /**
      * Returns true if this area uses file indexing.
      *

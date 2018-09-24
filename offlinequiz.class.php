@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for offlinequizzes 
+ * Class for offlinequizzes
  *
  * @package       mod
  * @subpackage    offlinequiz
@@ -57,7 +57,6 @@ class offlinequiz {
     protected $accessmanager = null;
     protected $ispreviewuser = null;
 
-    // Constructor =============================================================
     /**
      * Constructor, assuming we already have the necessary data loaded.
      *
@@ -99,16 +98,7 @@ class offlinequiz {
         return new offlinequiz($offlinequiz, $cm, $course);
     }
 
-    /**
-     * Create a {@link offlinequiz_attempt} for an attempt at this offlinequiz.
-     * @param object $attemptdata row from the offlinequiz_attempts table.
-     * @return offlinequiz_attempt the new offlinequiz_attempt object.
-     */
-//     public function create_attempt_object($attemptdata) {
-//         return new offlinequiz_attempt($attemptdata, $this->offlinequiz, $this->cm, $this->course);
-//     }
-
-    // Functions for loading more data =========================================
+    // Functions for loading more data.
 
     /**
      * Load just basic information about all the questions in this offlinequiz.
@@ -117,7 +107,7 @@ class offlinequiz {
         $this->questions = question_preload_questions(null,
                 'slot.maxmark, slot.id AS slotid, slot.slot, slot.page',
                 '{offlinequiz_group_questions} slot ON slot.offlinequizid = :offlinequizid
-                  AND slot.offlinegroupid = :offlinegroupid 
+                  AND slot.offlinegroupid = :offlinegroupid
                   AND q.id = slot.questionid',
                 array('offlinequizid' => $this->offlinequiz->id,
                       'offlinegroupid' => $this->offlinequiz->groupid),
@@ -154,7 +144,7 @@ class offlinequiz {
         return \mod_offlinequiz\structure::create_for_offlinequiz($this);
     }
 
-    // Simple getters ==========================================================
+    // Simple getters.
     /** @return int the course id. */
     public function get_courseid() {
         return $this->course->id;
@@ -284,7 +274,7 @@ class offlinequiz {
         return require_capability($capability, $this->context, $userid, $doanything);
     }
 
-    // URLs related to this attempt ============================================
+    // URLs related to this attempt.
     /**
      * @return string the URL of this offlinequiz's view page.
      */
@@ -342,7 +332,7 @@ class offlinequiz {
         return new moodle_url('/mod/offlinequiz/summary.php', array('attempt' => $attemptid));
     }
 
-    // Bits of content =========================================================
+    // Bits of content.
 
     /**
      * @param bool $unfinished whether there is currently an unfinished attempt active.
@@ -407,7 +397,7 @@ class offlinequiz {
         return '';
     }
 
-    // Private methods =========================================================
+    // Private methods.
     /**
      * Check that the definition of a particular question is loaded, and if not throw an exception.
      * @param $id a questionid.

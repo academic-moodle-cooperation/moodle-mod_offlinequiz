@@ -26,6 +26,8 @@
  *
  **/
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->libdir . '/weblib.php');
 require_once("pdflib.php");
@@ -117,7 +119,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
         foreach ($results as $result) {
             set_time_limit(120);
 
-            $sql = "SELECT ogq.questionid, ogq.maxmark 
+            $sql = "SELECT ogq.questionid, ogq.maxmark
                       FROM {offlinequiz_group_questions} ogq
                      WHERE ogq.offlinequizid = :offlinequizid
                        AND ogq.offlinegroupid = :offlinegroupid";
@@ -128,7 +130,7 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
             if (! $questions = $DB->get_records_sql($sql, $params)) {
                 print_error("Failed to get questions for regrading!");
             }
-            
+
             $user = $DB->get_record('user', array('id' => $result->userid));
             echo '<strong>' . get_string('regradingresult', 'offlinequiz', $user->{$offlinequizconfig->ID_field}) .
             '</strong> ';

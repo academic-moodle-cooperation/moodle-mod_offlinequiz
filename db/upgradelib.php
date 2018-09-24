@@ -202,8 +202,7 @@ class offlinequiz_ilog_upgrader {
                                                                    'needsupgradetonewqe' => 0, 'sheet' => 0));
         $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
                                    'number', '*', 0, $offlinequiz->numgroups);
-        list($maxquestions, $maxanswers, $formtype, $questionsperpage) =
-            offlinequiz_get_question_numbers($offlinequiz, $groups);
+        list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $groups);
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($attempts as $attempt) {
@@ -987,16 +986,16 @@ function offlinequiz_update_form_file_names() {
             $DB->update_record('offlinequiz_groups', $group);
         }
         $done += 1;
-	    $a->done = $done;
+        $a->done = $done;
         $a->info = $offlinequiz->id;
-	    $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
-   }
+        $progressbar->update($done, $outof, get_string('upgradingfilenames', 'offlinequiz', $a));
+    }
 }
 
 function offlinequiz_update_refresh_all_pagecounts() {
     global $DB;
     $groups = $DB->get_records('offlinequiz_groups');
-    if(empty($groups)) {
+    if (empty($groups)) {
         return;
     }
     $progressbar = new progress_bar('pagenumberupdate');
@@ -1010,11 +1009,28 @@ function offlinequiz_update_refresh_all_pagecounts() {
     $progressbar->update($done, $outof, get_string('pagenumberupdate', 'offlinequiz', $a));
     foreach ($groups as $group) {
         $params = array('id' => $group->id);
-        $questions = $DB->get_field_sql("SELECT count(*) FROM {question} q, {offlinequiz_group_questions} gq where gq.offlinegroupid = :id AND gq.questionid = q.id AND qtype <> 'description' ", $params);
-        $maxanswers = $DB->get_field_sql("SELECT max(count) from (SELECT count(*) as count from {question_answers} qa, {offlinequiz_groups} g, {offlinequiz_group_questions} gq where gq.offlinegroupid = g.id AND gq.questionid = qa.question AND g.id = :id group by gq.id) as count", $params);
+        $sql = "SELECT count(*)
+                FROM   {question} q,
+                       {offlinequiz_group_questions} gq
+                WHERE  gq.offlinegroupid = :id
+                AND    gq.questionid = q.id
+                AND    qtype <> 'description'";
+        $questions = $DB->get_field_sql($sql, $params);
+        $sql = "SELECT max(count)
+                FROM  (
+                       SELECT count(*) as count
+                       FROM   {question_answers} qa,
+                              {offlinequiz_groups} g,
+                              {offlinequiz_group_questions} gq
+                       WHERE  gq.offlinegroupid = g.id
+                       AND    gq.questionid = qa.question
+                       AND    g.id = :id
+                       GROUP BY gq.id
+                      ) as count";
+        $maxanswers = $DB->get_field_sql($sql, $params);
         $columns = offlinequiz_get_number_of_columns($maxanswers);
-        $pages = offlinequiz_get_number_of_pages($questions,$columns);
-        if($pages > 1 && $pages != $group->numberofpages) {
+        $pages = offlinequiz_get_number_of_pages($questions, $columns);
+        if ($pages > 1 && $pages != $group->numberofpages) {
             $group->numberofpages = $pages;
             $DB->update_record('offlinequiz_groups', $group);
         }
@@ -1023,15 +1039,15 @@ function offlinequiz_update_refresh_all_pagecounts() {
     }
 }
 
-function offlinequiz_get_number_of_columns($maxanswers)  {
-    $i=1;
+function offlinequiz_get_number_of_columns($maxanswers) {
+    $i = 1;
     $columnlimits = array(1 => 13, 2 => 8, 3 => 6);
-    while(array_key_exists($i,$columnlimits) && $columnlimits[$i] > $maxanswers) {
+    while (array_key_exists($i, $columnlimits) && $columnlimits[$i] > $maxanswers) {
         $i++;
     }
     return $i;
 }
 
-function offlinequiz_get_number_of_pages($questions,$columns) {
-    return ceil($questions/$columns/24);
+function offlinequiz_get_number_of_pages($questions, $columns) {
+    return ceil($questions / $columns / 24);
 }

@@ -125,7 +125,7 @@ if ($action == 'load') {
 }
 
 // -------------------------------------------------------------
-//   Action cancel.
+// Action cancel.
 // -------------------------------------------------------------
 if ($action == 'cancel') {
     $scannedpage->filename = $origfilename;
@@ -185,7 +185,7 @@ onClick=\"self.close(); return false;\"><br />";
     }
 
     // -------------------------------------------------------------
-    //       Action setlist
+    // Action setlist
     // -------------------------------------------------------------
 } else if ($action == 'setlist') {
         $upperleft = new oq_point(required_param('c-0-x', PARAM_INT) + 8, required_param('c-0-y', PARAM_INT) + 8);
@@ -219,12 +219,12 @@ onClick=\"self.close(); return false;\"><br />";
 
         // The following calibrates the scanner.
         $scanner->get_list();
-        if ($scannedpage->listnumber) {
-            $listchosen = 1;
-        }
+    if ($scannedpage->listnumber) {
+        $listchosen = 1;
+    }
 
         // -------------------------------------------------------------
-        //       Action readjust
+        // Action readjust
         // -------------------------------------------------------------
 } else if ($action == 'readjust') {
     if (!confirm_sesskey()) {
