@@ -41,7 +41,7 @@ class offlinequiz_result_engine {
 
     public function __construct($offlinequiz, $contextid,$filepath,$scannedpageid) {
 
-    	$boxscanner = new weighted_diagonal_box_scanner();
+        $boxscanner = new weighted_diagonal_box_scanner();
         $this->contextid = $contextid;
         $this->offlinequizid = $offlinequiz->id;
         $this->page = new offlinequiz_result_page(new \Imagick(realpath($filepath)),$this->offlinequizid);
@@ -83,12 +83,12 @@ class offlinequiz_result_engine {
     }
     
     public function save_page($teacherid) {
-    	$this->pagesaver->save_page_information($this->page);
-    	global $DB;
-    	$status = $DB->get_field('offlinequiz_scanned_pages', 'status', ['id' => $this->page->scannedpageid]);
-    	if($status == 'ok' || $status == 'submitted') {
-    		$this->resultsaver->create_or_update_result_in_db($this->page->scannedpageid,$teacherid);
-    	}
+        $this->pagesaver->save_page_information($this->page);
+        global $DB;
+        $status = $DB->get_field('offlinequiz_scanned_pages', 'status', ['id' => $this->page->scannedpageid]);
+        if($status == 'ok' || $status == 'submitted') {
+            $this->resultsaver->create_or_update_result_in_db($this->page->scannedpageid,$teacherid);
+        }
     }
 
 }
