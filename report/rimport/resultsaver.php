@@ -165,7 +165,7 @@ class offlinequiz_resultsaver {
                         AND c1.slotnumber = c2.slotnumber
                         AND c1.choicenumber = c2.choicenumber
                         AND c1.value <> c2.value";
-        return $DB->count_records_sql($sql,["scannedpageid1"=>$scannedpageid1,$sql[]]);
+        return $DB->count_records_sql($sql,['scannedpageid1'=>$scannedpageid1, 'scannedpageid1' => $scannedpageid2]);
     }
     
     /**

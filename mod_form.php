@@ -122,6 +122,12 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('select', 'decimalpoints', get_string('decimalplaces', 'offlinequiz'), $options);
         $mform->addHelpButton('decimalpoints', 'decimalplaces', 'offlinequiz');
         $mform->setDefault('decimalpoints', $offlinequizconfig->decimalpoints);
+        
+        if($offlinequizconfig->experimentalevaluation) {
+        	$mform->addElement('selectyesno', 'experimentalevaluation', get_string('experimentalevaluation', 'offlinequiz'));
+        	$mform->addHelpButton('experimentalevaluation', 'experimentalevaluation', 'offlinequiz');
+        	$mform->setDefault('experimentalevaluation', 0);
+        }
 
         // -------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('formsheetsettings', 'offlinequiz'));
@@ -182,7 +188,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'disableimgnewlines', get_string("disableimgnewlines", "offlinequiz"), $attribs);
         $mform->addHelpButton('disableimgnewlines', 'disableimgnewlines', 'offlinequiz');
         $mform->setDefault('disableimgnewlines', $offlinequizconfig->disableimgnewlines);
-
+        
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'reviewoptionshdr', get_string("reviewoptions", "offlinequiz"));
         $mform->addHelpButton('reviewoptionshdr', 'reviewoptions', 'offlinequiz');
