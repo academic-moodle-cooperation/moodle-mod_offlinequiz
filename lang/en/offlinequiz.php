@@ -642,6 +642,7 @@ Student ID: & $\underline{\hspace*{8cm}}$\\\\[5mm]
 \end{document}';
 $string['questionsin'] = 'Questions in';
 $string['questionsingroup'] = 'Questions in group';
+$string['questionpage'] = 'Page';
 $string['questionsinthisofflinequiz'] = 'Questions in this offline quiz';
 $string['questiontextisempty'] = '[Empty question text]';
 $string['quizdate'] = 'Date of offline quiz';
