@@ -276,7 +276,8 @@ if ($mode == 'preview') {
             }
         } else {
             foreach ($questions as $question) {
-                print('questionpage '. $question->page . '\n');
+                // remember to add missing questionpage string in lang file !!!
+                echo get_string('questionpage', 'offlinequiz') . $question->page . '\n'                
                 if ($question->page > $currentpage) {
                     echo '<center>//---------------------- ' . get_string('newpage', 'offlinequiz') .
                             ' ----------------//</center>';
