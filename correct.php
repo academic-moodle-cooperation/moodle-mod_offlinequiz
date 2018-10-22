@@ -637,7 +637,7 @@ $user = $DB->get_record('user', array($offlinequizconfig->ID_field => $userkey))
 
 // Check whether the user is enrolled in the current course.
 $notincourse = false;
-$coursestudents = get_role_users(5, $coursecontext);
+$coursestudents = get_role_users(get_config('offlinequiz','oneclickrole'), $coursecontext);
 if ($user && empty($coursestudents[$user->id])) {
     $scannedpage->status = 'error';
     $scannedpage->error = 'usernotincourse';
