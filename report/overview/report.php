@@ -546,7 +546,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
                 if (!empty($result) && $result->offlinegroupid) {
                     $outputgrade = format_float($result->sumgrades /
-                            $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints);
+                            $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints,false);
                 } else {
                     $outputgrade = '-';
                 }
