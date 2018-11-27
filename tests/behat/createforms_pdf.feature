@@ -1,11 +1,11 @@
 @mod @mod_offlinequiz @createforms
-Feature: Within a moodle instance, a teacher should be able to create all forms of the offline quiz.
+Feature: Within a moodle instance, a teacher should be able to create all forms of the offline quiz as PDF.
   In order to create the forms of an offline quiz
   As a teacher
-  I need to be able to add an offline quiz, add some existing questions and finally create the forms.
+  I need to be able to add an offline quiz, add some existing questions and finally create the forms as PDF.
 
   @ javascript
-  Scenario: Login as a teacher, add a new offlinequiz to a course and there some multiple choice questions. Then create the forms for the offline quiz.
+  Scenario: Login as a teacher, add a new offlinequiz to a course and there some multiple choice questions. Then create the forms as PDF for the offline quiz.
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
@@ -31,9 +31,9 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
     And I am on "Course 1" course homepage
     And I turn editing mode on
     And I add a "Offline Quiz" to section "1" and I fill the form with:
-      | Offline quiz name | Add an offline quiz and multiple choice questions to create files |
-      | Description | Add an offline quiz and multiple choice questions to create files |
-    And I follow "Add an offline quiz and multiple choice questions to create files"
+      | Offline quiz name | Add an offline quiz and multiple choice questions to create files as PDF |
+      | Description | Add an offline quiz and multiple choice questions to create files as PDF |
+    And I follow "Add an offline quiz and multiple choice questions to create files as PDF"
     And I navigate to "Group Questions" in current page administration
     And I click on ".add-menu" "css_element"
     And I click on ".questionbank" "css_element"
