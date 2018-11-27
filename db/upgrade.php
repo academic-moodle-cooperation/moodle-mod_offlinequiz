@@ -1410,6 +1410,30 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         }
         upgrade_mod_savepoint(true, 2018100300, 'offlinequiz');
     }
+    
+    if($oldversion < 2018112700) {
+        // Define index offlinequiz_userid_idx (not unique) to be added to offlinequiz_results.
+        $table = new xmldb_table('offlinequiz_choices');
+        $index1 = new xmldb_index('offlinequiz_choices_slotnumber_idx', XMLDB_INDEX_NOTUNIQUE, array('slotnumber'));
+        $index2 = new xmldb_index('offlinequiz_choices_choicenumber_idx', XMLDB_INDEX_NOTUNIQUE, array('choicenumber'));
+
+        if (!$dbman->index_exists($table, $index1)) {
+            $dbman->add_index($table, $index1);
+        }
+        if (!$dbman->index_exists($table, $index2)) {
+            $dbman->add_index($table, $index2);
+        }
+        $sql = 'DELETE c1.*
+                FROM   mdl_offlinequiz_choices c1,
+                       mdl_offlinequiz_choices c2
+                WHERE  c1.scannedpageid = c2.scannedpageid
+                AND    c1.slotnumber = c2.slotnumber
+                AND    c1.choicenumber = c2.choicenumber
+                AND    c1.id < c2.id';
+        $DB->execute($sql);
+        upgrade_mod_savepoint(true, 2018112700, 'offlinequiz');
+    }
+    
     // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
     // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the
     // position field to find new pages and insert them.

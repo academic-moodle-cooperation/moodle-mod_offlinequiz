@@ -116,6 +116,8 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="scannedpageid" UNIQUE="false" FIELDS="scannedpageid"/>
+        <INDEX NAME="slotnumber" UNIQUE="false" FIELDS="slotnumber"/>
+        <INDEX NAME="choicenumber" UNIQUE="false" FIELDS="choicenumber"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="offlinequiz_page_corners" COMMENT="Contains the four corners for every page in offlinequiz_scanned_pages.">
