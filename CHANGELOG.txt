@@ -2,7 +2,7 @@ CHANGELOG
 =========
 3.5.2 (2018-11-29)
 ------------------
-Fixed a bug, where the update of scanned pages lead to wrong results with "missing pages", even though there is only one page in the test
+* Fixed a bug, where the update of scanned pages lead to wrong results with "missing pages", even though there is only one page in the test
 
 3.5.1 (2018-11-27)
 ------------------
