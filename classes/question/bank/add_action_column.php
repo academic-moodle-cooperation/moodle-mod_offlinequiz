@@ -55,7 +55,7 @@ class add_action_column extends \core_question\bank\action_column_base {
         } else {
             echo '<span class="greyed">';
         }
-        echo '<img src="' . $OUTPUT->pix_url($icon) . '" class="iconsmall" alt="' . $title . '" />';
+        echo '<img src="' . $OUTPUT->pix_icon($icon,'') . '" class="iconsmall" alt="' . $title . '" />';
         if (!$disabled) {
             echo '</a>';
         } else {
