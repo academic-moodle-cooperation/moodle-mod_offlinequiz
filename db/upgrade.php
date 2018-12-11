@@ -1433,11 +1433,14 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $DB->execute($sql);
         upgrade_mod_savepoint(true, 2018112700, 'offlinequiz');
     }
-    
-    // TODO migrate old offlinequiz_q_instances maxmarks to new maxmark field in offlinequiz_group_questions.
-    // TODO migrate  offlinequiz_group_questions to fill in page field correctly. For every group use the
-    // position field to find new pages and insert them.
-    // Adapt offlinequiz code to handle missing zeros as pagebreaks.
+    if($oldversion < 2018121100) {
+        $table = new xmldb_table('offlinequiz');
+        $field = new xmldb_field('experimentalevaluation', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'algorithmversion');
+    if (!$dbman->field_exists($table, $field)) {
+        $dbman->add_field($table, $field);
+    }
+        upgrade_mod_savepoint(true, 2018121100, 'offlinequiz');
+    }
 
     return true;
 }

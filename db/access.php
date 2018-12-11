@@ -122,5 +122,13 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
+    ),
+    // Change the way how answer sheets are evaluated.
+    'mod/offlinequiz:changeevaluationmode' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+        )
     )
 );

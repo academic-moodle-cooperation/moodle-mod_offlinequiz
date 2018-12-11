@@ -376,14 +376,10 @@ function offlinequiz_process_scanned_page($offlinequiz, offlinequiz_page_scanner
                 }
                 $oldchoice = $DB->get_record('offlinequiz_choices', ['slotnumber' => $choice->slotnumber, 'choicenumber' => $choice->choicenumber, 'scannedpageid' => $choice->scannedpageid]);
                 if(isset($oldchoice->id)) {
-                    print('old found');
-                    print_object($oldchoice);
                     $choice->id = $oldchoice->id;
                     $DB->update_record('offlinequiz_choices', $choice);
                 }
                 else {
-                    print('no old found');
-                    print_object($choice);
                     // We really want to save every single cross  in the database.
                     $choice->id = $DB->insert_record('offlinequiz_choices', $choice);
                 }

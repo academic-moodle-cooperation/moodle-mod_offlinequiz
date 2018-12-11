@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+3.6.0 (2018-XX-XX)
+-----------------
+* Moodle 3.6 compatible Version
+* added an experimantal way to evaluate answer sheets. This is the new way, but don't use it in production systems
+
 3.5.3 (2018-11-29)
 ------------------
 * Bugfix: Questions can not be sorted

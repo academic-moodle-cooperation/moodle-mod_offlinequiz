@@ -338,6 +338,32 @@ class provider implements
             static::export_offlinequiz($offlinequiz->offlinequizid, \context::instance_by_id($offlinequiz->contextid), $user->id);
         }
     }
+    
+    public static function get_users_in_context(userlist $userlist) {
+        global $DB;
+        $sql =  "SELECT DISTINCT c.id contextid, cm.instance offlinequizid
+                          FROM {context} c
+                          JOIN {course_modules} cm ON cm.id = c.instanceid
+                          JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70";
+      $contexts = $DB->get_record_sql($sql);
+      foreach ($contexts as $context) {
+
+     $sql = "(SELECT userid FROM {offlinequiz_participants} p,
+                        {offlinequiz_p_lists} l
+                  WHERE l.offlinequizid = :offlinequizid1
+                    AND l.id = p.listid 
+      ) UNION (
+      SELECT c.userid FROM {offlinequiz_p_choices} c,
+                           {offlinequiz_scanned_pages} p
+                     WHERE p.id = c.scannedppageid 
+                       AND p.offlinequizid = :offlinequizid2
+      ) UNION (
+      SELECT q.importuserid FROM {offlinequiz_queue} q 
+                           WHERE q.offlinequizid = offlinequizid3
+      )";
+        $userlist->add_from_sql('userid', $sql, $params);
+      }
+    }
 
     private static function export_offlinequiz($offlinequizid, $context, $userid) {
             static::export_student_data($offlinequizid, $context, $userid);

@@ -33,15 +33,11 @@ class offlinequiz_participants_upload_form extends moodleform {
 
     public function definition() {
         $mform = $this->_form;
-
         $mform->addElement('header', 'importfileupload', get_string('importpforms', 'offlinequiz_rimport'));
-
         $mform->addElement('filepicker', 'newfile', get_string('ziporimagefile', 'offlinequiz_rimport'), null,
-                      array('subdirs' => 0, 'accepted_types' => array('web_image', '.zip', '.ZIP', '.tif', '.TIF',
+                      array('subdirs' => 0, 'accepted_types' => array('.png', '.PNG', '.zip', '.ZIP', '.tif', '.TIF',
                       '.tiff', '.TIFF', '.jpg', '.JPG', '.jpeg', '.JPEG')));
-
         $mform->addRule('newfile', null, 'required', null, 'client');
-
         // Submit button.
         $mform->addElement('submit', 'submitbutton', get_string('import', 'offlinequiz_rimport'));
 
