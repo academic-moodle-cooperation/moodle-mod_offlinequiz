@@ -347,7 +347,6 @@ class provider implements
                           JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70";
       $contexts = $DB->get_record_sql($sql);
       foreach ($contexts as $context) {
-
      $sql = "(SELECT userid FROM {offlinequiz_participants} p,
                         {offlinequiz_p_lists} l
                   WHERE l.offlinequizid = :offlinequizid1
@@ -359,10 +358,50 @@ class provider implements
                        AND p.offlinequizid = :offlinequizid2
       ) UNION (
       SELECT q.importuserid FROM {offlinequiz_queue} q 
-                           WHERE q.offlinequizid = offlinequizid3
+                           WHERE q.offlinequizid = :offlinequizid3
       )";
-        $userlist->add_from_sql('userid', $sql, $params);
+     $userlist->add_from_sql('userid', $sql, ['offlinequizid1' => $context->offlinequizid, 'offlinequizid2' => $context->offlinequizid, 'offlinequizid3' => $context->offlinequizid]);
       }
+    }
+    
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+    global $DB;
+    
+    // Don't remove data from role_capabilities.
+    // Because this data affects the whole Moodle, there are override capabilities.
+    // Don't belong to the modifier user.
+    $context = $userlist->get_context();
+    $userids = $userlist->get_userids();
+    
+    if (empty($userids)) {
+    return;
+    }
+    
+    $sql = "SELECT distinct(list.id) FROM mdl_offlinequiz_p_lists list, mdl_context c
+                          JOIN mdl_course_modules cm ON cm.id = c.instanceid
+                          JOIN mdl_modules m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70
+                         WHERE c.id  = :contextid";
+    $listids = $DB->get_records_sql($sql,['contextid' => $context->id]);
+    
+    list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+    if (empty($pages)) {
+        return;
+    }
+    list($listidsql, $listidparams) = $DB->get_in_or_equal($listids, SQL_PARAMS_NAMED);
+    
+    $params = ['contextid' => $context->id] + $userparams;
+    
+    
+    
+    $DB->delete_records($table);
+    // Remove data from role_assignments.
+    $DB->delete_records_select('offlinequiz_participants',
+    "contextid = :contextid AND userid {$usersql}", $params);
     }
 
     private static function export_offlinequiz($offlinequizid, $context, $userid) {
