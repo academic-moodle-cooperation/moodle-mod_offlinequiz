@@ -394,14 +394,11 @@ class provider implements
     }
     list($listidsql, $listidparams) = $DB->get_in_or_equal($listids, SQL_PARAMS_NAMED);
     
-    $params = ['contextid' => $context->id] + $userparams;
-    
-    
-    
+    $params = listidparams + $userparams;
     $DB->delete_records($table);
     // Remove data from role_assignments.
     $DB->delete_records_select('offlinequiz_participants',
-    "contextid = :contextid AND userid {$usersql}", $params);
+    "listid {$listidsql} AND userid {$usersql}", $params);
     }
 
     private static function export_offlinequiz($offlinequizid, $context, $userid) {
@@ -449,7 +446,7 @@ class provider implements
 
         $scannedpages = [];
         foreach ($pchoices as $pchoice) {
-            $scannedpage = $DB->get_record("offlinequiz_scanned_p_page", ["id" => $pchoice->scannedppageid]);
+            $scannedpage = $DB->get_record("offlinequiz_scanned_p_pages", ["id" => $pchoice->scannedppageid]);
             $exportobject = new \stdClass();
             $exportobject->listnumber = $scannedpage->listnumber;
             $exportobject->time = $scannedpage->time;
