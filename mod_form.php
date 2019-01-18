@@ -122,14 +122,16 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('select', 'decimalpoints', get_string('decimalplaces', 'offlinequiz'), $options);
         $mform->addHelpButton('decimalpoints', 'decimalplaces', 'offlinequiz');
         $mform->setDefault('decimalpoints', $offlinequizconfig->decimalpoints);
+        $hasevalationrights=false;
         if($offlinequiz) {
             $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
             $context = context_module::instance($cm->id);
-            if($offlinequizconfig->experimentalevaluation && has_capability('mod/offlinequiz:changeevaluationmode', $context)) {
+            $hasevalationrights = $offlinequizconfig->experimentalevaluation && has_capability('mod/offlinequiz:changeevaluationmode', $context);
+        }
+        if(is_siteadmin() || $hasevalationrights) {
                 $mform->addElement('selectyesno', 'experimentalevaluation', get_string('experimentalevaluation', 'offlinequiz'));
                 $mform->addHelpButton('experimentalevaluation', 'experimentalevaluation', 'offlinequiz');
                 $mform->setDefault('experimentalevaluation', 0);
-            }
         }
         // -------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('formsheetsettings', 'offlinequiz'));

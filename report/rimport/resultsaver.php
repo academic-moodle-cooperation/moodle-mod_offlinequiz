@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 define('RESULT_STATUS_ERROR','error');
 define('RESULT_STATUS_RESULT_ALREADY_EXISTS_FOR_OTHER_GRUOP','resultfordifferentgroups');
 define('RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_SAME_CROSSES','sameresultexists');
-define(RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_OTHER_CROSSES,'otherresultexists');
+define('RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_OTHER_CROSSES','otherresultexists');
 
 class offlinequiz_resultsaver {
     

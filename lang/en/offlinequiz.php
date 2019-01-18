@@ -74,6 +74,7 @@ $string['calibratescanner'] = 'Calibrate scanner';
 $string['cannoteditafterattempts'] = 'You cannot add or remove questions because there are already complete results. ({$a})';
 $string['category'] = 'Category';
 $string['changed'] = 'Result has been changed.';
+$string['changeevaluationmode'] = 'Change the way how the evaluation is done. Only possible if allowed by the administrator.';
 $string['checkparts'] = 'Mark selected participants as present';
 $string['checkuserid'] = 'Check group/user ID';
 $string['chooseagroup'] = 'Choose a group...';

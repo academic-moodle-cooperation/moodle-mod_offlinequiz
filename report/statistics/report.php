@@ -429,6 +429,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $options = array();
         $letterstr = 'ABCDEFGH';
         $prefix = get_string('statisticsforgroup', 'offlinequiz_statistics');
+        $options[0] = get_string('allgroups', 'offlinequiz_statistics');
         foreach ($groups as $group) {
             $options[$group->number] = $prefix . ' ' . $letterstr[$group->number - 1];
         }
@@ -438,8 +439,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
 
         $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php', $urlparams);
-        echo $OUTPUT->single_select($url, 'offlinegroup', $options, $groupnumber,
-                array(0 => get_string('allgroups', 'offlinequiz_statistics')));
+        echo $OUTPUT->single_select($url, 'offlinegroup', $options, $groupnumber, null);
     }
 
 

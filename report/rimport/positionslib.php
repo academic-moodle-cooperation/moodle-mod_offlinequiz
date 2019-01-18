@@ -25,8 +25,8 @@ define("CORNER_SPACE_RIGHT","154.5");             //The space, between the right
 define("CORNER_SPACE_TOP","119.5");				//The space between the top of the side and the crosses on top
 define("CORNER_SPACE_BOTTOM","120.5");			//The space between the bottom of the side and the crosses on the bottom
 
-define("LAYER_WIDTH", A4_WIDTH - CORNER_SPACE_LEFT-CORNER_SPACE_RIGHT);
-define("LAYER_HEIGHT", A4_HEIGHT - CORNER_SPACE_TOP - CORNER_SPACE_BOTTOM);
+//define("LAYER_WIDTH", A4_WIDTH - CORNER_SPACE_LEFT-CORNER_SPACE_RIGHT);
+//define("LAYER_HEIGHT", A4_HEIGHT - CORNER_SPACE_TOP - CORNER_SPACE_BOTTOM); these two lines can be added again, once the old algorithm is excluded
 define("DIAGONAL_LENGTH",sqrt(pow(LAYER_WIDTH, 2)+pow(LAYER_HEIGHT, 2)) );
 
 function calculatewithoutadjustment($imagegeometry,offlinequiz_point $point ) {
