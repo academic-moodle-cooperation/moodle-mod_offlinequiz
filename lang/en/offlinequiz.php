@@ -364,6 +364,7 @@ $string['offlinequizopenedon'] = 'This offline quiz opened at {$a}';
 $string['offlinequizsettings'] = 'Offline settings';
 $string['offlinequiz:addinstance'] = 'Add an offline quiz';
 $string['offlinequiz:attempt'] = 'Attempt quizzes';
+$string['offlinequiz:changeevaluationmode'] = 'Make it possible to change the evaluationmode. WARNING: DO NOT USE IN PRODUCTION SYSTEMS!';
 $string['offlinequizcloses'] = 'Offline Quiz closes';
 $string['offlinequiz:createofflinequiz'] = 'Create offline quiz forms';
 $string['offlinequiz:deleteattempts'] = 'Delete offline quiz results';
