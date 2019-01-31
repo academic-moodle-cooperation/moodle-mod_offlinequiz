@@ -275,7 +275,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             $job->timecreated = time();
             $job->timestart = 0;
             $job->timefinish = 0;
-            $job->status = 'new';
+            $job->status = 'uploading';
             if (!$job->id = $DB->insert_record('offlinequiz_queue', $job)) {
                 echo $OUTPUT->notification(get_string('couldnotcreatejob', 'offlinequiz_rimport'), 'notifyproblem');
             }
@@ -292,6 +292,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     $added--;
                 }
             }
+            $DB->set_field('offlinequiz_queue', 'status', 'new', ['id' => $job->id]);
 
             // Notify the user.
             echo $OUTPUT->notification(get_string('addingfilestoqueue', 'offlinequiz_rimport', $added), 'notifysuccess');
