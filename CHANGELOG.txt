@@ -8,6 +8,7 @@ CHANGELOG
 * Icon for adding questions was not visible.
 * Privacy-API changes for moodle 3.6
 * return to default group if chosen in the statistics menu
+* fixed an evaluation error for big zip file uploads
 
 3.5.3 (2018-11-29)
 ------------------
