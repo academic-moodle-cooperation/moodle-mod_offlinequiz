@@ -1423,13 +1423,12 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         if (!$dbman->index_exists($table, $index2)) {
             $dbman->add_index($table, $index2);
         }
-        $sql = 'DELETE c1.*
-                FROM   mdl_offlinequiz_choices c1,
-                       mdl_offlinequiz_choices c2
-                WHERE  c1.scannedpageid = c2.scannedpageid
-                AND    c1.slotnumber = c2.slotnumber
-                AND    c1.choicenumber = c2.choicenumber
-                AND    c1.id < c2.id';
+        $sql = 'DELETE FROM   {offlinequiz_choices} c1 
+                WHERE (c1.scannedpageid, c1.slotnumber, c1.choicenumber)
+                IN (
+                    SELECT c2.scannedpageid,c2.slotnumber,c2.choicenumber
+                    FROM {offlinequiz_choices} c2 where c1.id < c2.id
+                )';
         $DB->execute($sql);
         upgrade_mod_savepoint(true, 2018112700, 'offlinequiz');
     }

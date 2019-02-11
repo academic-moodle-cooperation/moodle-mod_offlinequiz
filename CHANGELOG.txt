@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+3.6.1 (2019-02-11)
+-----------------
+* fixed a wrong hardcoded prefix in the offlinequiz plugin
+* fixed an upgrade-query not working on certain databases
 
 3.6.0 (2019-01-29)
 -----------------

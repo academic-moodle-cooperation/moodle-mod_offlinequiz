@@ -158,8 +158,8 @@ class offlinequiz_resultsaver {
     
         global $DB;
         $sql = "SELECT 1
-                 FROM   mdl_offlinequiz_choices c1,
-                        mdl_offlinequiz_choices c2
+                 FROM   {offlinequiz_choices} c1,
+                        {offlinequiz_choices} c2
                  WHERE  c1.scannedpageid = :scannedpageid1
                         AND c2.scannedpageid = :scannedpageid2
                         AND c1.slotnumber = c2.slotnumber

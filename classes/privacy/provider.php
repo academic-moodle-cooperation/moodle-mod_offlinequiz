@@ -382,9 +382,9 @@ class provider implements
     return;
     }
     
-    $sql = "SELECT distinct(list.id) FROM mdl_offlinequiz_p_lists list, mdl_context c
-                          JOIN mdl_course_modules cm ON cm.id = c.instanceid
-                          JOIN mdl_modules m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70
+    $sql = "SELECT distinct(list.id) FROM {offlinequiz_p_lists} list, {context} c
+                          JOIN {course_modules} cm ON cm.id = c.instanceid
+                          JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70
                          WHERE c.id  = :contextid";
     $listids = $DB->get_records_sql($sql,['contextid' => $context->id]);
     
