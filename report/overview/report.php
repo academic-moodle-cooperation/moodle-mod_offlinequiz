@@ -376,7 +376,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     foreach ($slots as $slot) {
                         $slotquestion = $quba->get_question($slot);
                         $qtype = $slotquestion->get_type_name();
-                        if ($qtype == 'multichoice' || $qtype == 'multichoiceset') {
+                        if ($qtype == 'multichoice' || $qtype == 'multichoiceset' || $question->qtype == 'oumultiresponse') {
                             $attempt = $quba->get_question_attempt($slot);
                             $order = $slotquestion->get_order($attempt); // Order of the answers.
                             $tempstr = ",";

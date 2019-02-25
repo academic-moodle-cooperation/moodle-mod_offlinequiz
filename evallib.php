@@ -447,11 +447,11 @@ function offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdat
                     // In case of singlechoice we count the crosses.
                     // If more than 1 cross have been made, we don't submit the response.
                     $count++;
-                } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
+                } else if ($slotquestion instanceof qtype_multichoice_multi_question || qtype_oumultiresponse_question) {
                     $response['choice' . $key] = 1;
                 }
             } else if ($choicesdata[$slot][$key]->value == 0) {
-                if ($slotquestion instanceof qtype_multichoice_multi_question) {
+                if ($slotquestion instanceof qtype_multichoice_multi_question || qtype_oumultiresponse_question) {
                     $response['choice' . $key] = 0;
                 }
             }
@@ -464,7 +464,7 @@ function offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdat
                 $quba->process_action($slot, $response);
                 $quba->finish_question($slot, time());
             }
-        } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
+        } else if ($slotquestion instanceof qtype_multichoice_multi_question || qtype_oumultiresponse_question) {
             $quba->process_action($slot, $response);
             $quba->finish_question($slot, time());
         }

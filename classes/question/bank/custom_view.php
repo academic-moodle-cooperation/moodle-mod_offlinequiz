@@ -294,7 +294,7 @@ class custom_view extends \core_question\bank\view {
         // Build the SQL.
         $sql = ' FROM {question} q ' . implode(' ', $joins);
         $sql .= ' WHERE ' . implode(' AND ', $tests);
-        $sql .= '   AND q.qtype IN (\'multichoice\', \'multichoiceset\', \'description\') ';
+        $sql .= '   AND q.qtype IN (\'multichoice\', \'multichoiceset\', \'description\', \'oumultiresponse\') ';
         $this->countsql = 'SELECT count(1)' . $sql;
         $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
     }
