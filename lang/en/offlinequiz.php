@@ -313,6 +313,7 @@ $string['moveselectedonpage'] = 'Move selected questions to page: {$a}';
 $string['copyselectedtogroup'] = 'Add selected questions to group: {$a}';
 $string['copytogroup'] = 'Add all questions to group: {$a}';
 $string['multichoice'] = 'Multiple choice';
+$string['multichoiceou'] = 'Multiple choice (OU)';
 $string['multipleanswers'] = 'Choose at least one answer.';
 $string['moodleprocessing'] = 'Let Moodle process data';
 $string['movecorners'] = 'Change the positions of the corner markings first. Use drag and drop.';

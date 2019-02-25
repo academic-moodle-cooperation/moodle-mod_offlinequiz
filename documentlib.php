@@ -64,6 +64,8 @@ function offlinequiz_get_questioninfo($offlinequiz, $question) {
             }
         } else if ($question->qtype == 'multichoiceset') {
             $questioninfo = get_string('allornothing', 'offlinequiz');
+        }  else if ($question->qtype == 'oumultiresponse') {
+            $questioninfo = get_string('multichoiceou', 'offlinequiz');
         }
         return $questioninfo;
 
