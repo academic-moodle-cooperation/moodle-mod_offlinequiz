@@ -259,6 +259,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
             if (!$questionid) {
                 $this->print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions);
+                echo '<br/>';
                 if ($statmode == 'statsoverview' && ($offlinequiz->sumgrades == -1 || $differentquestions)) {
                     echo $OUTPUT->box_start();
                     $notificationmessage = get_string('remarks', 'offlinequiz_statistics') . ":<br />";
@@ -425,6 +426,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      */
     private function print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions) {
         global $CFG, $OUTPUT;
+		
 
         $options = array();
         $letterstr = 'ABCDEFGH';
