@@ -1432,8 +1432,13 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                 AND    c1.id < c2.id';
         $idstodelete = $DB->get_fieldset_sql($sql);
         if ($idstodelete) {
-            list($querysql,$queryparams) = $DB->get_in_or_equal($idstodelete);
-            $DB->delete_records_select('offlinequiz_choices', 'id ' . $querysql, $queryparams);
+        $chunks = array_chunk($idstodelete, 250, true);
+        echo "Delete choices in ".count($chunks)." chunks of 250 entries...".PHP_EOL;
+        foreach ($chunks as $curchunk) {
+            echo "Delete chunk ".($i++)." of ".count($chunks)."!".PHP_EOL;
+            list($querysql, $queryparams) = $DB->get_in_or_equal($curchunk);
+            $DB->delete_records_select('offlinequiz_choices', 'id', $querysql, $queryparams);
+        }
         }
         
         upgrade_mod_savepoint(true, 2018112700, 'offlinequiz');

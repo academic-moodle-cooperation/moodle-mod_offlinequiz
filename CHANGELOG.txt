@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+3.6.2 (2019-02-28)
+-----------------
+* fixed a performance bug for upgrading big moodle-instances to 3.6.0. If you already upgraded to 3.6.0 this fix will not affect you at all.
+
+
 3.6.1 (2019-02-11)
 -----------------
 * fixed a wrong hardcoded prefix in the offlinequiz plugin
