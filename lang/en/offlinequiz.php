@@ -566,6 +566,7 @@ $string['questioninfocorrectanswers'] = 'correct answers';
 $string['questioninfonone'] = 'Nothing';
 $string['questioninfoqtype'] = 'Question type';
 $string['questionname'] = 'Question name';
+$string['questionpage'] = 'Page';
 $string['questionsheet'] = 'Question sheet';
 $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \documentclass[11pt,a4paper]{article}
