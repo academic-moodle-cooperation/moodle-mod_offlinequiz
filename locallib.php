@@ -1514,6 +1514,12 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
             $question->contextid, 'question', 'questiontext', $question->id,
             $context->id, 'offlinequiz');
+    // JR
+    if ($question->qtype == 'multichoice' && $question->options->single) {
+        $text .= get_string('selectone', 'qtype_multichoice');
+    } else {
+        $text .= get_string('selectmulti', 'qtype_multichoice');
+    }
 
     // Remove leading paragraph tags because the cause a line break after the question number.
     $text = preg_replace('!^<p>!i', '', $text);
