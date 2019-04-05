@@ -150,8 +150,10 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
             // This is neede because otherwise the scanner doesn't return answers (questionsonpage not set).
             $scanner->set_page($scannedpage->pagenumber);
         }
+        if ($scannedpage->pagenumber > 32760) {
+            $scannedpage->pagenumber = null;
+        }
         $page = $scannedpage->pagenumber;
-
         if ($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') {
             if ($page < 1 || $page > $group->numberofpages) {
                 $scannedpage->status = 'error';
