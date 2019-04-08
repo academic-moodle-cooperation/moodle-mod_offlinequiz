@@ -2,6 +2,7 @@ CHANGELOG
 =========
 3.6.2 (2019-02-28)
 -----------------
+* fixed broken image links in 'show student view' popup
 * fixed a performance bug for upgrading big moodle-instances to 3.6.0. If you already upgraded to 3.6.0 this fix will not affect you at all.
 * fixed a spacing issue in the statistics tab for choosing groups
 * fixed a missing langstring ('questionpage')
