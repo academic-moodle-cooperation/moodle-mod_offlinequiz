@@ -132,6 +132,10 @@ class offlinequiz_html_translator
                             $latex = new latex();
                             $density = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
                                 'name' => 'density'));
+			    // OSTFALIA
+                            // avoid too small density which creates small images with low resolution
+                            if ($density < 240)
+                                $density = 240;
                             $background = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
                                 'name' => 'latexbackground'));
                             $texexp = $texcache->rawtext; // The entities are now decoded before inserting to DB.
@@ -148,6 +152,10 @@ class offlinequiz_html_translator
                                 $texexp = '\Large '.$texexp;
                                 $cmd = filter_tex_get_cmd($teximagefile, $texexp);
                                 system($cmd, $status);
+                            }
+			    // print error message, OSTFALIA
+                            if (!file_exists($teximagefile)) {
+                                echo 'could not create image for ' . $texexp;
                             }
                         }
                     }
@@ -185,7 +193,9 @@ class offlinequiz_html_translator
                             if ($percent < 100) {
                                 $resize = ' -resize '.$percent.'%';
                             }
-                            $handle = popen($pathconvert . ' ' . $file . $resize . ' -background white -flatten +matte ' .
+                            // $handle = popen($pathconvert . ' ' . $file . $resize . ' -background white -flatten +matte ' .
+                            // no flatten and no matte because this results in an invalid pdf file :-(
+                            $handle = popen($pathconvert . ' ' . $file . $resize . ' -background white   ' .
                                     $newfile, 'r');
                             pclose($handle);
                             $this->tempfiles[] = $file;
