@@ -297,9 +297,10 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             $action = optional_param('action', '', PARAM_ACTION);
 
             switch ($action) {
+                case 'rescan':
+                case 'insert_dummies':
                 case 'delete':
                     if (confirm_sesskey()) {
-
                         $selectedpageids = array();
                         $params = (array) data_submitted();
 
@@ -311,7 +312,20 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
                         foreach ($selectedpageids as $pageid) {
                             if ($pageid && ($page = $DB->get_record('offlinequiz_scanned_pages', array('id' => $pageid)))) {
-                                offlinequiz_delete_scanned_page($page, $this->context);
+                                switch($action) {
+                                    case 'rescan':
+                                        echo 'rescan all selected pages';
+                                        offlinequiz_update_page_after_dummy_enrolment($page, $this->context);
+                                        break;
+                                    case 'insert_dummies':
+                                        echo 'we will insert some dummies';
+                                        offlinequiz_insert_dummy($page, $this->context);
+                                        break;
+                                    case 'delete':
+                                        echo 'delete pages';
+                                        offlinequiz_delete_scanned_page($page, $this->context);
+                                        break;
+                                }
                             }
                         }
 

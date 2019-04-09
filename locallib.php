@@ -35,6 +35,10 @@ require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/question/format.php');
 require_once($CFG->dirroot . '/question/engine/questionusage.php');
 
+// for user creation
+require_once($CFG->dirroot . '/user/lib.php');
+
+
 // These are the old error codes from the Moodle 1.9 module. We still need them for migration.
 define("OFFLINEQUIZ_IMPORT_LMS", "1");
 define("OFFLINEQUIZ_IMPORT_OK", "0");
@@ -555,6 +559,201 @@ function offlinequiz_delete_scanned_page($page, $context) {
 
         $file->delete();
     }
+}
+
+// OSTFALIA
+function offlinequiz_enrol_user($userid_created, $scannedpage) {
+    global $CFG, $DB, $COURSE;
+
+    require_once($CFG->libdir . '/enrollib.php');
+    require_once($CFG->dirroot.'/enrol/manual/locallib.php');
+    require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
+
+    if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $scannedpage->offlinequizid))) {
+        print_error('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    }
+
+    if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
+        print_error('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+                array('course' => $offlinequiz->course,
+                        'offlinequiz' => $offlinequiz->id));
+    }
+    $coursecontext = context_course::instance($course->id);
+
+    // Check that the user has the permission to manual enrol.
+    require_capability('enrol/manual:enrol', $coursecontext);
+
+    $offlinequizconfig = get_config('offlinequiz');
+
+    $userid = $userid_created; // $DB->get_field('user', 'id', array($offlinequizconfig->ID_field => $scannedpage->userkey), MUST_EXIST);
+
+    // Get the manual enrolment plugin.
+    $enrol = enrol_get_plugin('manual');
+    if (empty($enrol)) {
+        throw new moodle_exception('manualpluginnotinstalled', 'enrol_manual');
+    }
+
+    if (!is_enrolled($coursecontext, $userid)) {
+        // Now we need the correct instance of the manual enrolment plugin.
+        if (!$instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'), '*', IGNORE_MISSING)) {
+            if ($instanceid = $enrol->add_default_instance($course)) {
+                $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+            }
+        }
+
+        if ($instance != false) {
+            $enrol->enrol_user($instance, $userid, $offlinequizconfig->oneclickrole);
+        }
+    }
+}
+
+// OSTFALIA
+
+function offlinequiz_update_page_after_dummy_enrolment($scannedpage, $context) {
+    global $CFG, $DB, $COURSE, $USER;
+
+    require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
+
+    if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $scannedpage->offlinequizid))) {
+        print_error('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    }
+
+    // Now we look for other pages with that user and reset their status.
+    if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
+            '*', 0, $offlinequiz->numgroups)) {
+            print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    }
+    $selectedgroups = $groups;
+    $overwrite = false; // kommt von außen: ob überschrieben werden soll oder nicht
+    if ($overwrite && $scannedpage->resultid) {
+        $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid));
+        $resultgroup = $DB->get_record('offlinequiz_groups', array('id' => $result->offlinegroupid));
+        $selectedgroups = array($resultgroup);
+    }
+
+    if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
+        print_error('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+                array('course' => $offlinequiz->course,
+                        'offlinequiz' => $offlinequiz->id));
+    }
+
+    $coursecontext = context_course::instance($course->id);
+
+    list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $selectedgroups);
+    if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
+        print_error('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
+    }
+    $context = context_module::instance($cm->id);
+
+    $sql = "SELECT *
+              FROM {offlinequiz_scanned_pages}
+             WHERE offlinequizid = :offlinequizid
+               AND status = 'error'
+               AND error = 'usernotincourse'
+               AND userkey = :currentuserkey
+               AND id <> :currentpageid";
+    $params = array('offlinequizid' => $offlinequiz->id,
+            'currentuserkey' => $scannedpage->userkey,
+            'currentpageid' => $scannedpage->id);
+
+    $otherpages = $DB->get_records_sql($sql, $params);
+    foreach ($otherpages as $otherpage) {
+        $otherpage->status = 'ok';
+        $otherpage->error = '';
+        $tempscanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
+        $tempcorners = array();
+        if ($dbcorners = $DB->get_records('offlinequiz_page_corners', array('scannedpageid' => $otherpage->id), 'position')) {
+            foreach ($dbcorners as $corner) {
+                $tempcorners[] = new oq_point($corner->x, $corner->y);
+            }
+        } else {
+            $tempcorners[0] = new oq_point(55, 39);
+            $tempcorners[1] = new oq_point(805, 49);
+            $tempcorners[2] = new oq_point(44, 1160);
+            $tempcorners[3] = new oq_point(805, 1160);
+        }
+        $tempscanner->load_stored_image($otherpage->filename, $tempcorners);
+        $otherpage = offlinequiz_check_scanned_page($offlinequiz, $tempscanner, $otherpage, $USER->id, $coursecontext);
+        if ($otherpage->status == 'ok') {
+            $otherpage = offlinequiz_process_scanned_page($offlinequiz, $tempscanner, $otherpage, $USER->id,
+                    $questionsperpage, $coursecontext, true);
+        }
+
+        $DB->update_record('offlinequiz_scanned_pages', $otherpage);
+    }
+
+    // Now reset the status of the original page and check it again.
+    $scannedpage->status = 'ok';
+    $scannedpage->error = '';
+
+    // Now check the scanned page again. The user should be enrolled now.
+    $offlinequizconfig = get_config('offlinequiz');
+    // Initialize a page scanner.
+    $scanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
+
+    // Get the corners either from the request parameters of from the offlinequiz_page_corners table.
+    $corners = array();
+    $nodbcorners = false;
+    if ($dbcorners = $DB->get_records('offlinequiz_page_corners', array('scannedpageid' => $scannedpage->id), 'position')) {
+        foreach ($dbcorners as $corner) {
+            $corners[] = new oq_point($corner->x, $corner->y);
+        }
+    } else {
+        // Define some default corners.
+        $corners[0] = new oq_point(55, 39);
+        $corners[1] = new oq_point(805, 49);
+        $corners[2] = new oq_point(44, 1160);
+        $corners[3] = new oq_point(805, 1160);
+        $nodbcorners = true;
+    }
+    // Load the stored image file.
+    if (property_exists($scannedpage, 'id')) {
+        // If we re-adjust, rotate, or changed the user we have to delete the stored hotspots.
+        //if ($action == 'readjust' || $action == 'rotate' || $action == 'checkuser')
+        {
+            $DB->delete_records('offlinequiz_hotspots', array('scannedpageid' => $scannedpage->id));
+        }
+
+
+
+        // Load the stored image and the hotspots from the DB if they have not been deleted.
+        $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners, $scannedpage->id);
+    } else {
+        // Load the stored image and adjust the hotspots from scratch.
+        $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
+    }
+
+    $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
+
+    $userkey = $scannedpage->userkey;
+    $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
+    $groupnumber = intval($scannedpage->groupnumber);
+    $pagenumber = intval($scannedpage->pagenumber);
+
+}
+
+
+// OSTFALIA
+function offlinequiz_insert_dummy($page, $context) {
+    global $DB, $CFG;
+
+    $resultid = $page->resultid;
+
+    // generate dummy user in Moodle
+    $user = new stdClass();
+
+    $user->idnumber = $page->userkey;
+
+    $user->firstname = 'Hans';
+    $user->lastname  = 'Dummy'.$user->idnumber;
+    $user->email = $user->firstname . '.' . $user->lastname . '@dummy_university.org';
+    $user->username = 'dummy' . $page->userkey;
+    $user->mnethostid   = $CFG->mnet_localhost_id; // we support ONLY local accounts here, sorry
+
+    $id = user_create_user($user);
+
+    // enrol user to course
+    offlinequiz_enrol_user($id, $page);
 }
 
 /**

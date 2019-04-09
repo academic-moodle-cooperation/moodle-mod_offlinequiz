@@ -66,3 +66,8 @@ $string['showpage'] = 'Seite anzeigen';
 $string['username'] = 'Benutzername';
 $string['waitingforanalysis'] = 'Wartet auf Auswertung';
 $string['ziporimagefile'] = 'ZIP- oder Bild-Datei';
+
+$string['importusers'] = 'Teilnehmer als Dummies einfügen';
+$string['rescanpages'] = 'Seiten neu scannen';
+$string['reallyinsertdummies'] = 'Möchten Sie die ausgewählten Teilnehmer wirklich in Moodle als Dummies einfügen?';
+

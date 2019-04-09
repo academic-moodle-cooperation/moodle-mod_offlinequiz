@@ -66,3 +66,10 @@ $string['showpage'] = 'Show';
 $string['username'] = 'Username';
 $string['waitingforanalysis'] = 'Waiting for Analysis';
 $string['ziporimagefile'] = 'ZIP- or image-file';
+
+
+$string['importusers'] = 'insert users as dummies';
+$string['rescanpages'] = 'rescan pages';
+$string['reallyinsertdummies'] = 'Do you really want to insert new dummy users?';
+
+

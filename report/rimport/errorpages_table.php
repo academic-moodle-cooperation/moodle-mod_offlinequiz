@@ -52,13 +52,9 @@ class offlinequiz_selectall_table extends flexible_table {
 
         echo '<div id="tablecontainer" class="centerbox">';
         echo '<form id="reportform" method="post" action="'. $this->reportscript .
-             '" onsubmit="return confirm(\'' . $this->params['strreallydel'] . '\');">';
-        echo ' <div>';
+             '" ;">';
+        // '" onsubmit="return confirm(\'' . $this->params['strreallydel'] . '\');">';
 
-        foreach ($this->params as $name => $value) {
-            echo '<input type="hidden" name="' . $name .'" value="' . $value . '" />';
-        }
-        echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         echo '  <center>';
     }
 
@@ -71,11 +67,58 @@ class offlinequiz_selectall_table extends flexible_table {
         echo '<a href="#" class="selectall">'. $strselectall . '</a> / ';
         echo '<a href="#" class="deselectall">' . $strselectnone . '</a> ';
         echo '&nbsp;&nbsp;';
-        echo '<input type="submit" value="'.get_string('deleteselectedpages', 'offlinequiz_rimport').'" class="btn btn-secondary"/>';
+
+        // delete
+        echo ' <div>';
+            foreach ($this->params as $name => $value) {
+                if ($name != 'action' && $name != 'strreallydel') {
+                    echo '<input type="hidden" name="' . $name . '" value="' . $value . '" />';
+                }
+            }
+            echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+
+            //echo '<input type="submit" value="'.get_string('deleteselectedpages', 'offlinequiz_rimport').'" class="btn btn-secondary"/>';
+            $onclick = 'onclick= "return confirm(\''. $this->params['strreallydel'] .'\')"';
+            echo '<button type="submit" ' . $onclick . ' name="action" value="delete">'.get_string('deleteselectedpages', 'offlinequiz_rimport').'</button>';
+
+        echo ' </div>';
+
+        // insert dummies
+        echo ' <div>';
+            foreach ($this->params as $name => $value) {
+                if ($name != 'action' && $name != 'strreallydel') {
+                    echo '<input type="hidden" name="' . $name .'" value="' . $value . '" />';
+                }
+            }
+            //echo '<input type="hidden" name="action" value="insert_dummies" />';
+            echo '<input type="hidden" name="strreallydel" value="">';
+
+            echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+            $onclick = 'onclick= "return confirm(\''. get_string('reallyinsertdummies', 'offlinequiz_rimport').'\')"';
+            //echo '<input type="submit" value="'.get_string('importusers', 'offlinequiz_rimport').'" class="btn btn-secondary"/>';
+            echo '<button type="submit" ' . $onclick . ' name="action" value="insert_dummies">'.get_string('importusers', 'offlinequiz_rimport').'</button>';
+        echo ' </div>';
+
+        // rescan and assign results
+/*
+        echo ' <div>';
+            foreach ($this->params as $name => $value) {
+                if ($name != 'action' && $name != 'strreallydel') {
+                    echo '<input type="hidden" name="' . $name .'" value="' . $value . '" />';
+                }
+            }
+            //echo '<input type="hidden" name="action" value="rescan" />';
+            echo '<input type="hidden" name="strreallydel" value="wollen Sie die Seiten wirklich nochmals scannen?">';
+
+            echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+            //echo '<input type="submit" value="'.get_string('rescanpages', 'offlinequiz_rimport').'" class="btn btn-secondary"/>';
+            echo '<button type="submit" name="action" value="rescan">'.get_string('rescanpages', 'offlinequiz_rimport').'</button>';
+        echo ' </div>';
+*/
         echo '</td></tr></table>';
         echo '  </center>';
+
         // Close form.
-        echo ' </div>';
         echo '</form></div>';
     }
 } // End class.
