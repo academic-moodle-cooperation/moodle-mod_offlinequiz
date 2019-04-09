@@ -421,7 +421,16 @@ if ($mode == 'preview') {
                     $questionfile = offlinequiz_create_docx_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                     require_once('latexlib.php');
-                    $questionfile = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
+		    // get array of result files for latex (pdf, tex, log) // OSTFALIA
+                    // array('pdf' => $pdf, 'source' => $tex, 'log' => $log);
+                    $resultfiles = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
+                    $questionfile = $resultfiles['pdf'];
+                    if ($questionfile == null)
+                        $questionfile = $resultfiles['source'];
+                    if ($questionfile == null)
+                        $questionfile = $resultfiles['log'];
+
+//                    $questionfile = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 } else {
                     $questionfile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 }
@@ -445,6 +454,27 @@ if ($mode == 'preview') {
                             '/' . $questionfile->get_filearea() . '/' . $questionfile->get_itemid() . '/' .
                             $questionfile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, $filestring);
+		// output of all latex result files // OSTFALIA
+                echo '<br />&nbsp;<br />';
+
+                if (isset($resultfiles)) {
+                    if (isset($resultfiles['source']) && isset($resultfiles['pdf'])) {
+                        $source = $resultfiles['source'];
+                        $url = "$CFG->wwwroot/pluginfile.php/" . $source->get_contextid() . '/' . $source->get_component() .
+                                '/' . $source->get_filearea() . '/' . $source->get_itemid() . '/' .
+                                $source->get_filename() . '?forcedownload=1';
+                        echo $OUTPUT->action_link($url, 'Source') . '<br>';
+                    }
+
+                    if (isset($resultfiles['log'])) {
+                        $logfile = $resultfiles['log'];
+                        $url = "$CFG->wwwroot/pluginfile.php/" . $logfile->get_contextid() . '/' . $logfile->get_component() .
+                                '/' . $logfile->get_filearea() . '/' . $logfile->get_itemid() . '/' .
+                                $logfile->get_filename() . '?forcedownload=1';
+                        echo $OUTPUT->action_link($url, 'Log-File');
+                    }
+                }
+
                 echo '<br />&nbsp;<br />';
                 @flush();@ob_flush();
             } else {

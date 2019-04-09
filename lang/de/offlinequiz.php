@@ -424,7 +424,7 @@ $string['questioninfomultichoice'] = 'Multiple-Choice';
 $string['questionname'] = 'Frage';
 $string['questionsheet'] = 'Fragebogen';
 $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
-\documentclass[11pt,a4paper]{article}
+\documentclass[{$a->fontsize}pt,a4paper]{extarticle}
 \usepackage[ngerman]{babel}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
@@ -433,11 +433,13 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \setlength{\oddsidemargin}{0cm}
 \setlength{\evensidemargin}{0cm}
 \setlength{\topmargin}{-1cm}
+\usepackage{float} % für Bildposition
 \usepackage{amsmath} % für \implies etc
 \usepackage{amsfonts} % für \mathbb etc
 \usepackage{graphicx} % zum Bilder einfügen
 \usepackage{enumitem}
 \usepackage{xcolor}
+\usepackage{multicol} % für Möglichkeit der mehrspaltigen Ausgabe 
 \usepackage{ulem}
 \parindent 0pt % keine Einrückung am Beginn des Absatzes
 \renewcommand{\familydefault}{\sfdefault} % Schriftart
@@ -671,3 +673,6 @@ $string['quizfor'] = 'Test für Offline-Test';
 $string['quizquestions'] = 'Test-Fragen';
 $string['groupquestions'] = 'Bearbeiten';
 $string['reordergroupquestions'] = 'Gruppen-Fragen <br/> Reihenfolge und Seitenumbrüche';
+$string['pathpdflatex'] = 'Pfad zu pdflatex';
+$string['pathpdflatex_help'] = 'zum Erzeugen von pdf bei Nutzung von TeX';
+
