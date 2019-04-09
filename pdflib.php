@@ -719,7 +719,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
             $questiontext = $trans->fix_image_paths ( $questiontext, $question->contextid, 'questiontext', $question->id, 1, 300, $offlinequiz->disableimgnewlines );
 
-            $html = '';
+            $html = '<ol type="1" style = "padding-left: 0"><li value ="' . $number .'">';
 
             $html .= $questiontext . '<br/><br/>';
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
@@ -731,6 +731,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $attempt = $templateusage->get_question_attempt ( $slot );
                 $order = $slotquestion->get_order ( $attempt ); // Order of the answers.
 
+
+                $html .= '<ol type="a">';
                 foreach ($order as $key => $answer) {
                     $answertext = $question->options->answers[$answer]->answer;
                     // Filter only for tex formulas.
@@ -755,16 +757,17 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                         $answertext .= " (" . round ( $question->options->answers[$answer]->fraction * 100 ) . "%)";
                     }
 
-                    $html .= number_in_style ( $key, $question->options->answernumbering ) . ') &nbsp; ';
-                    $html .= $answertext;
+                    //$html .= number_in_style ( $key, $question->options->answernumbering ) . ') &nbsp; ';
+                    $html .= '<li>' .$answertext . '</li>';
 
                     if ($correction) {
                         if ($question->options->answers[$answer]->fraction > 0) {
                             $html .= '</b>';
                         }
                     }
-                    $html .= "<br/>\n";
+                    //$html .= "<br/>\n";
                 }
+                $html .= '</ol>';
 
                 $infostring = offlinequiz_get_question_infostring($offlinequiz, $question);
                 if ($infostring) {
@@ -772,10 +775,17 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 }
             }
 
+            $style = '<style>' .
+            'ol {'.
+                    'padding-left: 18px;'.
+            '}'.
+            '</style>';
+
+            $html .= '</li></ol>';
             // Finally print the question number and the HTML string.
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                $pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
-                $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
+                //$pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
+                //$pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
                 $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
             }
 
@@ -786,7 +796,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $html = preg_replace("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
             }
 
-            $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $html );
+            $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $html);
+                    // 0,0, false, true, 'LRTB'); // karins versuch
+
             $pdf->Ln ();
 
             if ($pdf->is_overflowing ()) {
@@ -796,8 +808,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
                 // Print the question number and the HTML string again on the new page.
                 if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                    $pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
-                    $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
+                    //$pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
+                    //$pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
                     $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
                 }
 
