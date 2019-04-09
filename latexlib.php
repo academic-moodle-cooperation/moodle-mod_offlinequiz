@@ -1,3 +1,4 @@
+
 <?php
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
@@ -86,132 +87,219 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
     $number = 1;
 
-    // We need a mapping from question IDs to slots, assuming that each question occurs only once.
-    $slots = $templateusage->get_slots();
-    $latexforquestions = '\begin{enumerate}' . "\n";
-    // If shufflequestions has been activated we go through the questions in the order determined by
-    // the template question usage.
-    if ($offlinequiz->shufflequestions) {
-        foreach ($slots as $slot) {
-            $slotquestion = $templateusage->get_question($slot);
-            $currentquestionid = $slotquestion->id;
+    $trans = new offlinequiz_html_translator();
+    $tmppath = null;
 
-            $question = $questions[$currentquestionid];
+    try {
+        // We need a mapping from question IDs to slots, assuming that each question occurs only once.
+        $slots = $templateusage->get_slots();
+        $latexforquestions = '\begin{enumerate}' . "\n";
+        // If shufflequestions has been activated we go through the questions in the order determined by
+        // the template question usage.
+        if ($offlinequiz->shufflequestions) {
+            foreach ($slots as $slot) {
+                $slotquestion = $templateusage->get_question($slot);
+                $currentquestionid = $slotquestion->id;
 
-            $questiontext = offlinequiz_convert_html_to_latex($question->questiontext);
+                $question = $questions[$currentquestionid];
 
-            $latexforquestions .= '\item ' .  $questiontext . "\n";
+                $questiontext = $trans->fix_image_paths($question->questiontext, $question->contextid,
+                        'questiontext', $question->id, 1, 300, $offlinequiz->disableimgnewlines, 'latex');
+                $questiontext = offlinequiz_convert_html_to_latex($questiontext);
 
-            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+                $latexforquestions .= '\item ' .  $questiontext . "\n";
 
-                // There is only a slot for multichoice questions.
-                $attempt = $templateusage->get_question_attempt($slot);
-                $order = $slotquestion->get_order($attempt);  // Order of the answers.
+                if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
-                $latexforquestions .= '\begin{enumerate}' . " \n";
-                foreach ($order as $key => $answer) {
-                    $latexforquestions .= offlinequiz_get_answer_latex($question, $answer);
+                    // There is only a slot for multichoice questions.
+                    $attempt = $templateusage->get_question_attempt($slot);
+                    $order = $slotquestion->get_order($attempt);  // Order of the answers.
+
+                    $latexforquestions .= '\begin{enumerate}' . " \n";
+                    foreach ($order as $key => $answer) {
+                        $answertext = $question->options->answers[$answer]->answer;
+                        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300,
+                                $offlinequiz->disableimgnewlines, 'latex');
+                        $latexforquestions .= offlinequiz_get_answer_latex($question, $answertext, $answer);
+                    }
+                    $latexforquestions .= '\end{enumerate}' . "\n";
+
+                    $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
+                    if ($infostr) {
+                        $latexforquestions .= $infostr . "\n";
+                    }
                 }
-                $latexforquestions .= '\end{enumerate}' . "\n";
 
-                $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
-                if ($infostr) {
-                    $latexforquestions .= $infostr . "\n";
-                }
+            }
+            $latexforquestions .= '\end{enumerate}' . "\n";
+
+        } else {
+            // No shufflequestions, so go through the questions as they have been added to the offlinequiz group.
+            // We also have to show description questions that are not in the template.
+
+            // First, compute mapping  questionid -> slotnumber.
+            $questionslots = array();
+            foreach ($slots as $slot) {
+                $questionslots[$templateusage->get_question($slot)->id] = $slot;
             }
 
-        }
-        $latexforquestions .= '\end{enumerate}' . "\n";
+            foreach ($questions as $question) {
+                $currentquestionid = $question->id;
 
-    } else {
-        // No shufflequestions, so go through the questions as they have been added to the offlinequiz group.
-        // We also have to show description questions that are not in the template.
+                $questiontext = $trans->fix_image_paths($question->questiontext, $question->contextid,
+                        'questiontext', $question->id, 1, 300, $offlinequiz->disableimgnewlines, 'latex');
 
-        // First, compute mapping  questionid -> slotnumber.
-        $questionslots = array();
-        foreach ($slots as $slot) {
-            $questionslots[$templateusage->get_question($slot)->id] = $slot;
-        }
-
-        foreach ($questions as $question) {
-            $currentquestionid = $question->id;
-
-            $questiontext = $question->questiontext;
-            $questiontext = offlinequiz_convert_html_to_latex($question->questiontext);
-            if ($question->qtype == 'description') {
-                $latexforquestions .= "\n" . '\\ ' . $questiontext . "\n";
-            } else {
+                $questiontext = offlinequiz_convert_html_to_latex($questiontext);
+                if ($question->qtype == 'description') {
+                    $latexforquestions .= "\n" . '\\ ' . $questiontext . "\n";
+                } else {
                 $latexforquestions .= '\item %' .  $question->name . "\n" . $questiontext . "\n";
+                }
+                if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+
+                    $slot = $questionslots[$currentquestionid];
+
+                    // There is only a slot for multichoice questions.
+                    $slotquestion = $templateusage->get_question ( $slot );
+                    $attempt = $templateusage->get_question_attempt ( $slot );
+                    $order = $slotquestion->get_order ( $attempt ); // Order of the answers.
+                    $latexforquestions .= '\begin{enumerate}' . " \n";
+                    foreach ($order as $key => $answer) {
+                        $answertext = $question->options->answers[$answer]->answer;
+                        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer, 1, 300,
+                                $offlinequiz->disableimgnewlines, 'latex');
+                        $latexforquestions .= offlinequiz_get_answer_latex($question, $answertext, $answer);
+
+                        //$latexforquestions .= offlinequiz_get_answer_latex($question, $answer);
+                    }
+                    $latexforquestions .= '\end{enumerate}' . "\n";
+                    $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
+                    if ($infostr) {
+                        $latexforquestions .= $infostr . "\n";
+                    }
+
+                }
             }
-            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+            $latexforquestions .= '\end{enumerate}' . "\n";
+        }
+        $a = array();
+        $a['latexforquestions'] = $latexforquestions;
+        $a['coursename'] = offlinequiz_convert_html_to_latex($offlinequiz->name); // $course->fullname);
+        $a['groupname'] = $groupletter;
+        print_object($offlinequiz);
+        if (empty($offlinequiz->pdfintro)) {
+            $a['pdfintrotext'] = offlinequiz_convert_html_to_latex(get_string('pdfintrotext', 'offlinequiz', $a));
+        } else {
+            $a['pdfintrotext'] = offlinequiz_convert_html_to_latex($offlinequiz->pdfintro);
+        }
+        if ($offlinequiz->time) {
+            $a['date'] = ', ' . userdate($offlinequiz->time);
+        } else {
+            $a['date'] = '';
+        }
+        $a['fontsize'] = $offlinequiz->fontsize;
+        if($offlinequiz->printstudycodefield) {
+    	    $a['printstudycodefield'] = "true";
+        } else {
+    	    $a['printstudycodefield'] = "false";
+        }
+        $latex = get_string('questionsheetlatextemplate', 'offlinequiz', $a);
+	
+        $fs = get_file_storage();
+        $fileprefix = get_string('fileprefixform', 'offlinequiz');
 
-                $slot = $questionslots[$currentquestionid];
+        // Prepare file record object.
+        $date = usergetdate(time());
+        $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
+                $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
 
-                // There is only a slot for multichoice questions.
-                $slotquestion = $templateusage->get_question ( $slot );
-                $attempt = $templateusage->get_question_attempt ( $slot );
-                $order = $slotquestion->get_order ( $attempt ); // Order of the answers.
-                $latexforquestions .= '\begin{enumerate}' . " \n";
-                foreach ($order as $key => $answer) {
-                    $latexforquestions .= offlinequiz_get_answer_latex($question, $answer);
-                }
-                $latexforquestions .= '\end{enumerate}' . "\n";
-                $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
-                if ($infostr) {
-                    $latexforquestions .= $infostr . "\n";
-                }
+        $tmppath = $CFG->dataroot . "/temp/offlinequiz/" . $fileprefix . '_' . $groupletter . '_' . $timestamp;
+        $filename = $tmppath . '.tex';
 
+
+        $offlinequizconfig = get_config('offlinequiz');
+
+        $fileinfo = array(
+                'contextid' => $context->id,
+                'component' => 'mod_offlinequiz',
+                'filearea' => 'pdfs',
+                'filepath' => '/',
+                'itemid' => 0);
+        // OSTFALIA: remove filename from array (why?)
+        //            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.tex');
+
+
+        $pdf = null;
+        $tex = null;
+        $log = null;
+        if ($offlinequizconfig->pathpdflatex) {
+            // create pdf from tex file
+
+            // write tex file
+            if (!file_put_contents ( $filename , $latex)) {
+                echo 'cannot create file ' . $filename . '<br>';
+            }
+
+            $logfile = $tmppath . '.log';
+            $pdffile = $tmppath . '.pdf';
+
+
+            $command = $offlinequizconfig->pathpdflatex . '  -output-directory ' . $CFG->dataroot . '/temp/offlinequiz ' .
+                    $filename . ' > /dev/null 2>&1';
+            // call twice in order to generate page numbers
+            if (system($command . ' && ' . $command) === FALSE) {
+                echo 'could not create pdf file from tex output<br>';
+            }
+
+            // echo 'Warning! Error creating pdf file ' . $pdffile . '<br>';
+            if (file_exists($logfile)) {
+                $fileinfo['filename'] = $fileprefix . '_' . $groupletter . '_' . $timestamp . '.log';
+                $log = create_persistent_file($fs, $fileinfo, null, $logfile);
+            }
+            $fileinfo['filename'] = $fileprefix . '_' . $groupletter . '_' . $timestamp . '.tex';
+            $tex = create_persistent_file($fs, $fileinfo, $latex);
+
+            if (file_exists($pdffile)) {
+                $fileinfo['filename'] = $fileprefix . '_' . $groupletter . '_' . $timestamp . '.pdf';
+                $pdf = create_persistent_file($fs, $fileinfo, null, $pdffile);
+            }
+        } else {
+            echo 'cannot create pdf file because pdflatex not defined<br>';
+
+            // create TeX file
+            $fileinfo['filename'] = $fileprefix . '_' . $groupletter . '_' . $timestamp . '.tex';
+            $tex = create_persistent_file($fs, $fileinfo, $latex);
+        }
+        return array('pdf' => $pdf, 'source' => $tex, 'log' => $log);
+    } finally {
+        // remove temporary files
+        if (isset($tmppath)) {
+            foreach (glob($tmppath . '.*') as $filename) {
+                unlink($filename);
             }
         }
-        $latexforquestions .= '\end{enumerate}' . "\n";
+        $trans->remove_temp_files();
     }
-    $a = array();
-    $a['latexforquestions'] = $latexforquestions;
-    $a['coursename'] = offlinequiz_convert_html_to_latex($course->fullname);
-    $a['groupname'] = $groupletter;
-    if (empty($offlinequiz->pdfintro)) {
-        $a['pdfintrotext'] = offlinequiz_convert_html_to_latex(get_string('pdfintrotext', 'offlinequiz', $a));
-    } else {
-        $a['pdfintrotext'] = offlinequiz_convert_html_to_latex($offlinequiz->pdfintro);
-    }
-    if ($offlinequiz->time) {
-        $a['date'] = ', ' . userdate($offlinequiz->time);
-    } else {
-        $a['date'] = '';
-    }
-    $a['fontsize'] = $offlinequiz->fontsize;
-    if ($offlinequiz->printstudycodefield) {
-        $a['printstudycodefield'] = "true";
-    } else {
-        $a['printstudycodefield'] = "false";
-    }
+}
 
-    $latex = get_string('questionsheetlatextemplate', 'offlinequiz', $a);
 
-    $fs = get_file_storage();
-    $fileprefix = get_string('fileprefixform', 'offlinequiz');
-
-    // Prepare file record object.
-    $date = usergetdate(time());
-    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
-            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
-
-    $fileinfo = array(
-            'contextid' => $context->id,
-            'component' => 'mod_offlinequiz',
-            'filearea' => 'pdfs',
-            'filepath' => '/',
-            'itemid' => 0,
-            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.tex');
-
+function create_persistent_file($fs, $fileinfo, $content, $path=null) {
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
         $oldfile->delete();
     }
 
-    $file = $fs->create_file_from_string($fileinfo, $latex);
-
-    return $file;
+    if (isset($content))
+        return $fs->create_file_from_string($fileinfo, $content);
+    else {
+        if (!isset($path)) {
+            throw new coding_exception('no content and no path given');
+        }
+        $file = $fs->create_file_from_pathname($fileinfo, $path);
+        // delete temporary file
+        unlink($path);
+        return $file;
+    }
 }
 
 function offlinequiz_convert_html_to_latex_tagreplace($dom, $tag, $pre, $post) {
@@ -278,6 +366,7 @@ function offlinequiz_convert_html_to_latex_tables($dom) {
         $rows = $element->getElementsByTagName('tr');
         // TeX needs the number of columns.
         $cmax = 0;
+
         $r = 0;
         foreach ($rows as $row) {
             $r++;
@@ -338,6 +427,7 @@ function offlinequiz_convert_html_to_latex($text) {
     offlinequiz_convert_html_to_latex_tables($dom);
     offlinequiz_convert_html_to_latex_paragraph($dom);
     offlinequiz_convert_html_to_latex_span($dom);
+
     $text = $dom->saveHTML();
     // Replace "$$ ... $$" by "\[ ... \]".
     $text = preg_replace('/\$\$(.*?)\$\$/s', '\[\1\]', $text);
@@ -350,6 +440,54 @@ function offlinequiz_convert_html_to_latex($text) {
         }
           return $tmp;
     }, $text);
+
+    // handle images
+    while (($startpos = strpos($text, '<img')) !== FALSE) {
+        // find image tag
+        $endpos = strpos($text, '/>', $startpos);
+        if ($endpos) {
+            $imagetext = substr($text, $startpos, $endpos-$startpos+2);
+            $endpos++; // increment for remaining text
+        } else {
+            $endpos = strpos($text, '>', $startpos);
+            $imagetext = substr($text, $startpos, $endpos-$startpos+1).'</img>';
+        }
+        $xmlDoc = new DOMDocument();
+        if (!$xmlDoc->loadXML($imagetext)) {
+            echo 'error parsing image: ' . $imagetext;
+        }
+        $elem = $xmlDoc->getElementsByTagName("img")[0];
+        $imgfile = $elem->getAttribute('src');
+        $width = $elem->getAttribute('width');
+        $height = $elem->getAttribute('height');
+
+        // strip beginning 'file://'
+        if (($filepos = strpos($imgfile, 'file://')) !== FALSE) {
+            $imgfile = substr($imgfile, $filepos + strlen('file://'));
+        } else {
+            echo 'Warning: File ' . $imgfile . ' has no local path!<br>';
+        }
+        //echo $imgfile . ' , width=' . $width . '<br>';
+        $filepos = strrpos($imgfile, '/');
+        //        $imgfile = 'example-image-a'; // substr($imgfile, $filepos + 1);
+
+        $startimage = <<<LATEX
+
+\\begin{figure}[H]
+\\begin{center}
+\\includegraphics[
+LATEX;
+
+        $endimage = <<<LATEX
+}
+\\end{center}
+\\end{figure}
+LATEX;
+
+        $newimagetext = $startimage .  'width=' . $width. 'bp]{' . $imgfile . $endimage;
+        $text = substr($text, 0, $startpos) . $newimagetext . substr($text, $endpos+1);
+    }
+
     $conversiontable = array(
     '&Amul;' => 'Ä',
     '&auml;' => 'ä',
@@ -370,8 +508,21 @@ function offlinequiz_convert_html_to_latex($text) {
          $text = str_ireplace($search, $replace, $text);
     }
     $text = strip_tags($text);
+
+    // strip starting and trailing /newline
+    $len = strlen('\newline');
+    $text = trim($text);
+    while (substr($text, 0, $len) === '\newline') {
+        $text = trim(substr($text, $len));
+    }
+    while (substr($text, strlen($text) - $len) === '\newline') {
+        $text = trim(substr($text, 0, strlen($text) - $len));
+    }
+
     return trim($text);
 }
+
+
 
 /**
  * Return the LaTeX representation of an answer.
@@ -380,8 +531,8 @@ function offlinequiz_convert_html_to_latex($text) {
  * @param unknown $answer
  * @return string
  */
-function offlinequiz_get_answer_latex($question, $answer) {
-    $answertext = $question->options->answers[$answer]->answer;
+function offlinequiz_get_answer_latex($question, $answertext, $answer) {
+    //$answertext = $question->options->answers[$answer]->answer;
     $answertext = offlinequiz_convert_html_to_latex($answertext);
     if ($question->options->answers [$answer]->fraction > 0) {
         $result = '\item\answerIs{true} ' . $answertext;
@@ -392,3 +543,5 @@ function offlinequiz_get_answer_latex($question, $answer) {
     $result .= "\n";
     return $result;
 }
+
+

@@ -575,7 +575,7 @@ $string['questionname'] = 'Question name';
 $string['questionpage'] = 'Page';
 $string['questionsheet'] = 'Question sheet';
 $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
-\documentclass[11pt,a4paper]{article}
+\documentclass[{$a->fontsize}pt,a4paper]{extarticle}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \textwidth 16truecm
@@ -583,12 +583,15 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \setlength{\oddsidemargin}{0cm}
 \setlength{\evensidemargin}{0cm}
 \setlength{\topmargin}{-1cm}
+\usepackage{float} % for image positions
 \usepackage{amsmath} % for \implies etc
 \usepackage{amsfonts} % for \mathbb etc
+\usepackage{graphicx} % for imserting images
 \usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using hyperlinks
 \usepackage{ifthen}
 \usepackage{enumitem}
 \usepackage{xcolor}
+\usepackage{multicol} % for multi column
 \usepackage{ulem}
 \parindent 0pt % no indent on the beginning of a section
 \renewcommand\UrlFont{\sf}
@@ -836,3 +839,6 @@ $string['withselected'] = 'With selected...';
 $string['zipfile'] = 'ZIP file';
 $string['zipok'] = 'ZIP file imported';
 $string['zerogradewarning'] = 'Warning: Your offline quiz grade is 0.0!';
+$string['pathpdflatex'] = 'path of pdflatex binary';
+$string['pathpdflatex_help'] = 'for creating pdf in case of use of tex';
+
