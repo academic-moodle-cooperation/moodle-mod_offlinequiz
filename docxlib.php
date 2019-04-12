@@ -552,6 +552,10 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // Either we print the question HTML.
             $questiontext = $question->questiontext;
 
+            if ($question->qtype !== 'description') {
+                $questiontext .= offlinequiz_get_answerprompt ($offlinequiz, $question);
+            }
+
             // Filter only for tex formulas.
             if (!empty($texfilter)) {
                 $questiontext = $texfilter->filter($questiontext);
@@ -640,6 +644,10 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
             // Print the question.
             $questiontext = $question->questiontext;
+
+            if ($question->qtype !== 'description') {
+                $questiontext .= offlinequiz_get_answerprompt ($offlinequiz, $question);
+            }
 
             // Filter only for tex formulas.
             if (!empty($texfilter)) {

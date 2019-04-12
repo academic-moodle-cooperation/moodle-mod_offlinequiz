@@ -186,6 +186,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $options[OFFLINEQUIZ_QUESTIONINFO_NONE] = get_string("questioninfonone", "offlinequiz");
         $options[OFFLINEQUIZ_QUESTIONINFO_QTYPE] = get_string("questioninfoqtype", "offlinequiz");
         $options[OFFLINEQUIZ_QUESTIONINFO_ANSWERS] = get_string("questioninfoanswers", "offlinequiz");
+        $options[OFFLINEQUIZ_QUESTIONINFO_PROMPT] = get_string("questioninfoprompt", "offlinequiz");
         $mform->addElement('select', 'showquestioninfo', get_string("showquestioninfo", "offlinequiz"), $options, $attribs);
         $mform->addHelpButton('showquestioninfo', "showquestioninfo", "offlinequiz");
 

@@ -70,6 +70,7 @@ define('OFFLINEQUIZ_LATEX_FORMAT', 2);  // LATEX file format for question sheets
 define('OFFLINEQUIZ_QUESTIONINFO_NONE', 0); // No info is printed.
 define('OFFLINEQUIZ_QUESTIONINFO_QTYPE', 1); // The question type is printed.
 define('OFFLINEQUIZ_QUESTIONINFO_ANSWERS', 2); // The number of correct answers is printed.
+define('OFFLINEQUIZ_QUESTIONINFO_PROMPT', 3); // The question prompt is printed.
 
 define('NUMBERS_PER_PAGE', 30);        // Number of students on participants list.
 define('OQ_IMAGE_WIDTH', 860);         // Width of correction form.
@@ -1495,7 +1496,7 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
  * @param int $number
  * @param object $context
  */
-function offlinequiz_print_question_preview($question, $choiceorder, $number, $context, $page) {
+function offlinequiz_print_question_preview($question, $choiceorder, $number, $context, $page, $offlinequiz) {
     global $CFG, $DB;
 
     require_once($CFG->dirroot . '/filter/mathjaxloader/filter.php' );
@@ -1514,13 +1515,13 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
             $question->contextid, 'question', 'questiontext', $question->id,
             $context->id, 'offlinequiz');
-    // JR
-    if ($question->qtype == 'multichoice' && $question->options->single) {
-        $text .= get_string('selectone', 'qtype_multichoice');
-    } else {
-        $text .= get_string('selectmulti', 'qtype_multichoice');
+    if ($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_PROMPT) {
+      if ($question->qtype == 'multichoice' && $question->options->single) {
+          $text .= get_string('selectone', 'qtype_multichoice');
+      } else {
+          $text .= get_string('selectmulti', 'qtype_multichoice');
+      }
     }
-
     // Remove leading paragraph tags because the cause a line break after the question number.
     $text = preg_replace('!^<p>!i', '', $text);
 
@@ -1578,7 +1579,8 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
             echo "</div>";
         }
     }
-    echo "</div>";
+    $txt = offlinequiz_get_question_infostring($offlinequiz, $question);
+    echo $txt. "</div>";
 }
 
 /**

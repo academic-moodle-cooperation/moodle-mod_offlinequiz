@@ -563,11 +563,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             $pdf->checkpoint();
 
             $questiontext = $question->questiontext;
-            // JR
-            if ($question->qtype == 'multichoice' && $question->options->single) {
-                $questiontext .= get_string('selectone', 'qtype_multichoice');
-            } elseif ($question->qtype !== 'description') {
-                $questiontext .= get_string('selectmulti', 'qtype_multichoice');
+
+            if ($question->qtype !== 'description') {
+                $questiontext .= offlinequiz_get_answerprompt ($offlinequiz, $question);
             }
 
             // Filter only for tex formulas.
@@ -707,11 +705,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             $pdf->checkpoint();
 
             $questiontext = $question->questiontext;
-            // JR
-            if ($question->qtype == 'multichoice' && $question->options->single) {
-                $questiontext .= get_string('selectone', 'qtype_multichoice');
-            } elseif ($question->qtype !== 'description') {
-                $questiontext .= get_string('selectmulti', 'qtype_multichoice');
+            if ($question->qtype !== 'description') {
+                $questiontext .= offlinequiz_get_answerprompt ($offlinequiz, $question);
             }
 
             // Filter only for tex formulas.
