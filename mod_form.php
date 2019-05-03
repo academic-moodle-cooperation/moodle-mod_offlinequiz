@@ -233,6 +233,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         	// If current language not supported, fall back to english.
         	$language = 'en';
         }
+
         $mform->addElement('html', '<input id="showviewbutton" type="button" class="btn btn-secondary" value="'.
                 get_string('showstudentview', 'offlinequiz') . '" onClick="showStudentView(); return false;">');
         $mform->addElement('html', '<div class="Popup"><center><input type="button" class="closePopup btn btn-primary"' .
