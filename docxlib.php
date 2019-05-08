@@ -357,7 +357,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     global $CFG, $DB, $OUTPUT;
 
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
-    $groupletter = strtoupper($letterstr[$group->number - 1]);
+    $groupletter = strtoupper($letterstr[$group->groupnumber - 1]);
 
     $coursecontext = context_course::instance($courseid);
 

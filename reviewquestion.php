@@ -58,7 +58,7 @@ if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $cour
     $COURSE->id, $offlinequiz->id);
 }
 if (!$groups = $DB->get_records('offlinequiz_groups',
-        array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+        array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
     print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
     $COURSE->id, $scannedpage->offlinequizid);
 }

@@ -103,7 +103,7 @@ class provider implements
           'offlinequiz_groups',
           [
          'offlinequizid' => 'privacy:metadata:offlinequiz_groups:offlinequizid',
-         'number' => 'privacy:metadata:offlinequiz_groups:number',
+         'groupnumber' => 'privacy:metadata:offlinequiz_groups:number',
          'sumgrades' => 'privacy:metadata:offlinequiz_groups:sumgrades',
          'numberofpages' => 'privacy:metadata:offlinequiz_groups:numberofpages',
          'templateusageid' => 'privacy:metadata:offlinequiz_groups:templateusageid',
@@ -163,7 +163,7 @@ class provider implements
           [
          'offlinequizid' => 'privacy:metadata:offlinequiz_p_lists:offlinequizid',
          'name' => 'privacy:metadata:offlinequiz_p_lists:name',
-         'number' => 'privacy:metadata:offlinequiz_p_lists:number',
+         'listnumber' => 'privacy:metadata:offlinequiz_p_lists:number',
          'filename' => 'privacy:metadata:offlinequiz_p_lists:filename'
           ],
           'privacy:metadata:offlinequiz_p_lists'

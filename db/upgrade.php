@@ -1451,6 +1451,32 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
         upgrade_mod_savepoint(true, 2018121100, 'offlinequiz');
     }
+    
+    if ($oldversion < 2019050800) {
+    	
+    	// Rename field groupnumber on table offlinequiz_groups to NEWNAMEGOESHERE.
+    	$table = new xmldb_table('offlinequiz_groups');
+    	$field = new xmldb_field('number', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'offlinequizid');
+    	
+    	// Launch rename field groupnumber.
+    	$dbman->rename_field($table, $field, 'groupnumber');
+    	
+    	// Offlinequiz savepoint reached.
+    	upgrade_mod_savepoint(true, 2019050800, 'offlinequiz');
+    }
+    if ($oldversion < 2019050801) {
+    	
+    	// Define field id to be added to offlinequiz_p_lists.
+    	$table = new xmldb_table('offlinequiz_p_lists');
+    	$field = new xmldb_field('number', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'offlinequizid');
+    	
+    	// Launch rename field groupnumber.
+    	$dbman->rename_field($table, $field, 'listnumber');
+    	
+    	// Offlinequiz savepoint reached.
+    	upgrade_mod_savepoint(true, 2019050801, 'offlinequiz');
+    }
+    
 
     return true;
 }

@@ -129,7 +129,7 @@ if ($result->userid <> $USER->id) {
             '&amp;course=' . $course->id . '">' . fullname($student, true) . ' ('.$student->username.')</a>');
 }
 
-$table->data[] = array(get_string('group') . ':', $letterstr[$group->number]);
+$table->data[] = array(get_string('group') . ':', $letterstr[$group->groupnumber]);
 if (!empty($offlinequiz->time)) {
     $table->data[] = array(get_string('quizdate', 'offlinequiz').':', userdate($offlinequiz->time));
 }

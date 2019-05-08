@@ -53,7 +53,7 @@ if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
     print_error('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
 }
-if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
+if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber',
         '*', 0, $offlinequiz->numgroups)) {
     print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
@@ -221,7 +221,7 @@ onClick=\"self.close(); return false;\"><br />";
     // O=======================================================.
     // O Adjust the maxanswers of the scanner according to the offlinequiz group
     // O=======================================================.
-    if ($newgroup = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'number' => $groupnumber))) {
+    if ($newgroup = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnumber))) {
         $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($newgroup));
         $scannedpage = $scanner->set_maxanswers($maxanswers, $scannedpage);
     }
@@ -626,7 +626,7 @@ if (!empty($choices)) {
 
 // Retrieve the offlinequiz group.
 if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz->numgroups) {
-    if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'number' => $groupnumber))) {
+    if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnumber))) {
         print_error('nogroup', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
     }
 } else {
@@ -706,7 +706,7 @@ if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('i
                     strlen($offlinequizconfig->ID_prefix),
                     $offlinequizconfig->ID_digits),
                     $origgroupnumber,
-                    $group->number,
+                    $group->groupnumber,
                     $changed);
 
             $filerecord = array(

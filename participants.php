@@ -158,11 +158,11 @@ switch($mode) {
                         $record = new stdClass();
                         $record->offlinequizid = $offlinequiz->id;
                         $record->name = $data->name;
-                        $sql = "SELECT max(number) as maxlist
+                        $sql = "SELECT max(listnumber) as maxlist
                                   FROM {offlinequiz_p_lists}
                                  WHERE offlinequizid = :offlinequizid";
                         $last = $DB->get_record_sql($sql, array('offlinequizid' => $offlinequiz->id));
-                        $record->number = $last->maxlist + 1;
+                        $record->listnumber = $last->maxlist + 1;
                         $DB->insert_record('offlinequiz_p_lists', $record);
                     } else {
                         $DB->set_field('offlinequiz_p_lists', 'name', $data->name, array('id' => $data->listid));
@@ -231,7 +231,7 @@ switch($mode) {
         $removeselect = optional_param_array('removeselect', array(), PARAM_RAW);
 
         if (!$list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid))) {
-            if (!$lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), ' number ASC ')) {
+            if (!$lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), ' listnumber ASC ')) {
                 $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
                         array('q' => $offlinequiz->id, 'mode' => 'editlists'));
                 redirect($url);
@@ -481,7 +481,7 @@ switch($mode) {
 
         echo $OUTPUT->box_start('boxaligncenter generalbox boxwidthnormal');
 
-        $sql = "SELECT id, name, number, filename
+        $sql = "SELECT id, name, listnumber, filename
                   FROM {offlinequiz_p_lists}
                  WHERE offlinequizid = :offlinequizid
               ORDER BY name ASC";

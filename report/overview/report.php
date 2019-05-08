@@ -135,7 +135,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                                    AND (error = 'resultexists' OR error = 'differentresultexists')";
                         $params = array('offlinequizid' => $offlinequiz->id,
                             'userkey' => $user->{$offlinequizconfig->ID_field},
-                            'groupnumber' => $group->number
+                            'groupnumber' => $group->groupnumber
                         );
                         $otherpages = $DB->get_records_sql($sql, $params);
                         foreach ($otherpages as $page) {
@@ -169,7 +169,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         // Fetch the group data.
         $groups = $DB->get_records('offlinequiz_groups',
                 array('offlinequizid' => $offlinequiz->id
-                ), 'number', '*', 0, $offlinequiz->numgroups);
+                ), 'groupnumber', '*', 0, $offlinequiz->numgroups);
 
         // Define table columns.
         $tablecolumns = array('checkbox', 'picture', 'fullname', $offlinequizconfig->ID_field,
@@ -372,7 +372,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                             $group->templateusageid);
                     $slots = $quba->get_slots();
                     echo ', ,' . get_string('correct', 'offlinequiz');
-                    echo ',' . $group->number;
+                    echo ',' . $group->groupnumber;
                     foreach ($slots as $slot) {
                         $slotquestion = $quba->get_question($slot);
                         $qtype = $slotquestion->get_type_name();
@@ -526,7 +526,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 }
 
                 if (!empty($result) && $result->offlinegroupid) {
-                    $groupletter = $letterstr[$groups[$result->offlinegroupid]->number];
+                    $groupletter = $letterstr[$groups[$result->offlinegroupid]->groupnumber];
                 } else {
                     $groupletter = '-';
                 }
@@ -594,7 +594,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     echo $text . "\n";
                 } else if ($download == 'CSVplus1' || $download == 'CSVpluspoints') {
                     $text = $row[1] . ',' . $row[2] . ',' . $row[0] . ',' .
-                             $letterstr[$groups[$result->offlinegroupid]->number];
+                             $letterstr[$groups[$result->offlinegroupid]->groupnumber];
                     if ($pages = $DB->get_records('offlinequiz_scanned_pages',
                             array('resultid' => $result->resultid
                             ), 'pagenumber ASC')) {
@@ -636,7 +636,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
                     if ($download == 'CSVpluspoints') {
                         $text = $row[1] . ',' . $row[2] . ',' . $row[0] . ',' .
-                                 $letterstr[$groups[$result->offlinegroupid]->number];
+                                 $letterstr[$groups[$result->offlinegroupid]->groupnumber];
                         $quba = question_engine::load_questions_usage_by_activity($result->usageid);
                         $slots = $quba->get_slots();
                         foreach ($slots as $slot) {

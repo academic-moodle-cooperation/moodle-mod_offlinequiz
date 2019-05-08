@@ -416,7 +416,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     global $CFG, $DB, $OUTPUT;
 
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
-    $groupletter = strtoupper($letterstr[$group->number - 1]);
+    $groupletter = strtoupper($letterstr[$group->groupnumber - 1]);
 
     $coursecontext = context_course::instance($courseid);
 
@@ -862,7 +862,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     global $CFG, $DB, $OUTPUT, $USER;
 
     $letterstr = ' abcdefghijklmnopqrstuvwxyz';
-    $groupletter = strtoupper($letterstr[$group->number]);
+    $groupletter = strtoupper($letterstr[$group->groupnumber]);
 
     $fm = new stdClass();
     $fm->q = 0;
@@ -877,7 +877,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     }
     $pdf->set_title($title);
     $pdf->group = $groupletter;
-    $pdf->groupid = $group->number;
+    $pdf->groupid = $group->groupnumber;
     $pdf->offlinequiz = $offlinequiz->id;
     $pdf->formtype = 4;
     $pdf->colwidth = 7 * 6.5;
@@ -1082,7 +1082,7 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
     }
 
     $pdf = new offlinequiz_participants_pdf('P', 'mm', 'A4');
-    $pdf->listno = $list->number;
+    $pdf->listno = $list->listnumber;
     $title = offlinequiz_str_html_pdf($offlinequiz->name);
     // Add the list name to the title.
     $title .= ', '.offlinequiz_str_html_pdf($listname);

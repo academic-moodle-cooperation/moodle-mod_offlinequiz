@@ -181,7 +181,7 @@ onClick=\"self.close(); return false;\"><br />";
     $scannedpage->error = '';
 
     if ($list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid))) {
-        $scannedpage->listnumber = intval($list->number);
+        $scannedpage->listnumber = intval($list->listnumber);
     }
 
     // -------------------------------------------------------------
@@ -206,8 +206,8 @@ onClick=\"self.close(); return false;\"><br />";
         $scannedpage->error = '';
         $listid = required_param('listid', PARAM_INT);
         $list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid));
-        $scannedpage->listnumber = intval($list->number);
-        $listnumber = $list->number;
+        $scannedpage->listnumber = intval($list->listnumber);
+        $listnumber = $list->listnumber;
 
         $DB->update_record('offlinequiz_scanned_p_pages', $scannedpage);
 
@@ -267,8 +267,8 @@ onClick=\"self.close(); return false;\"><br />";
         $listnumber = $scannedpage->listnumber;
     } else if (!$listchosen) {
         $list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid));
-        $scannedpage->listnumber = intval($list->number);
-        $listnumber = $list->number;
+        $scannedpage->listnumber = intval($list->listnumber);
+        $listnumber = $list->listnumber;
     }
     $scannedpage->participants = null;
 
@@ -326,7 +326,7 @@ onClick=\"self.close(); return false;\"><br />";
         $listnumber = $scannedpage->listnumber;
     } else {
         $list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid));
-        $scannedpage->listnumber = intval($list->number);
+        $scannedpage->listnumber = intval($list->listnumber);
         $scannedpage->status = 'ok';
         $scannedpage->error = '';
     }
@@ -338,7 +338,7 @@ $scannedpage = offlinequiz_check_scanned_participants_page($offlinequiz, $scanne
 
 $listnumber = $scannedpage->listnumber;
 if ($listnumber > 0) {
-    $list = $DB->get_record('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id, 'number' => $listnumber));
+    $list = $DB->get_record('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id, 'listnumber' => $listnumber));
 }
 
 $participants = $scanner->get_participants();
