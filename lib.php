@@ -797,7 +797,7 @@ function offlinequiz_cron() {
     $sql = "SELECT DISTINCT(scannedpageid)
               FROM {offlinequiz_hotspots}
              WHERE time < :expiretime";
-    $params = array('expiretime' => $timenow - 604800);
+    $params = array('expiretime' => (int) $timenow - 604800);
 
     // First we get the different IDs.
     $ids = $DB->get_fieldset_sql($sql, $params);
@@ -816,7 +816,7 @@ function offlinequiz_cron() {
     $sql = "SELECT id
               FROM {offlinequiz_queue}
              WHERE timecreated < :expiretime";
-    $params = array('expiretime' => $timenow - $keepseconds);
+    $params = array('expiretime' => (int) $timenow - $keepseconds);
 
     // First we get the IDs of cronjobs older than the configured number of days.
     $jobids = $DB->get_fieldset_sql($sql, $params);

@@ -52,7 +52,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 
 
     // Only count the jobs with status processing that have been started in the last 24 hours.
-    $expiretime = time() - 86400;
+    $expiretime = (int) time() - 86400;
     $runningsql = "SELECT COUNT(*)
                      FROM {offlinequiz_queue}
                     WHERE status = 'processing'
