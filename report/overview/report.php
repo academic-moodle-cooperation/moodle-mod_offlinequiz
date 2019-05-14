@@ -51,26 +51,15 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         $noresults = optional_param('noresults', 0, PARAM_INT);
         $pagesize = optional_param('pagesize', 10, PARAM_INT);
         $groupid = optional_param('group', 0, PARAM_INT);
-
+        
         if($download && $download == "html") {
         	$selectedresultids = array();
-        	$params = (array) data_submitted();
-        	print_object($params);
         	
         	$offlinequizid = required_param('q', PARAM_INT);
-        	foreach ($params as $key => $value) {
-        		if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
-        			$selectedresultids[] = $matches[1];
-        		}
-        	}
-        	$userids = null;
-        	if($selectedresultids) {
-        		list($insql, $inparams) = $DB->get_in_or_equal($selectedresultids);
-        		$userids = $DB->get_fieldset_select('offlinequiz_result', 'userid', "id $insql" ,$inparams);
-        	}
+
         	require_once('download_result_html.php');
         	$download = new html_download($offlinequizid);
-        	$download->printhtml($userids);
+        	$download->printhtml();
         	return;
         }
         

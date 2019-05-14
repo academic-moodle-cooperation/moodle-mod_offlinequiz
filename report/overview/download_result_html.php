@@ -99,6 +99,7 @@ class html_download {
 			}
 			$grade = offlinequiz_rescale_grade($result->sumgrades, $this->offlinequiz, $group);
 			$options = offlinequiz_get_review_options($this->offlinequiz, $result, $this->context);
+			$options->manualcommentlink = null;
 			echo '<div class="pagebreak">';
 			echo $OUTPUT->heading(get_string('reviewofresult', 'offlinequiz'));
 			// --------------------------------------
