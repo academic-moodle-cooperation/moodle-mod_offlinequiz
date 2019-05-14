@@ -1516,7 +1516,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     	
     	// Changing type of field info on table offlinequiz_queue_data to char.
     	$table = new xmldb_table('offlinequiz_queue_data');
-    	$field = new xmldb_field('info', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'info');
+    	$field = new xmldb_field('info', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'error');
     	
     	// Launch change of type for field info.
     	$dbman->change_field_type($table, $field);
