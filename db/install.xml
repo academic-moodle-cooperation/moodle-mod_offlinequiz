@@ -233,8 +233,8 @@
         <FIELD NAME="queueid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The ID of the queue job an entry belongs to."/>
         <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="status" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The status of a file ('new', 'ok', 'error'). In case of 'error', the error field contains the error message."/>
-        <FIELD NAME="error" TYPE="char" LENGTH="4000" NOTNULL="false" SEQUENCE="false" COMMENT="The error message (get_string label) in case the status is 'error'."/>
-        <FIELD NAME="info" TYPE="char" LENGTH="4000" NOTNULL="false" SEQUENCE="false" COMMENT="The info message (get_string label) in case the status is 'info'."/>
+        <FIELD NAME="error" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="The error message (get_string label) in case the status is 'error'."/>
+        <FIELD NAME="info" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="The info message (get_string label) in case the status is 'info'."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
