@@ -235,6 +235,7 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-report div.backlinkbox { padding-top: 10px; }
 #page-mod-offlinequiz-report table.errorpages td.checkbox input  { margin-left: 0px; float: none; }
 #page-mod-offlinequiz-report .boxaligncenter {margin: 0 auto;}
+#page-mod-offlinequiz-print-html .pagebreak {break-after: always;}
 
 /** settings.php */
 #adminofflinequizreviewoptions {margin-bottom: 0.5em;}

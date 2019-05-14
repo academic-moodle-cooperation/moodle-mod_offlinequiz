@@ -231,6 +231,7 @@ $string['group'] = 'Group';
 $string['groupoutofrange'] = 'Group was out of range and replaced with group A.';
 $string['groupquestions'] = 'Group Questions';
 $string['hasresult'] = 'Result exists';
+$string['html'] = 'HTML';
 $string['idnumber'] = 'ID number';
 $string['imagefile'] = 'Image file';
 $string['imagenotfound'] = 'Image file: {$a} not found!';

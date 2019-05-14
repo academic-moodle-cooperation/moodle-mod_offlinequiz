@@ -1,4 +1,6 @@
 <?php
+use offlinequiz_result_download\html_download;
+
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -41,7 +43,37 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
      */
     public function display($offlinequiz, $cm, $course) {
         global $CFG, $OUTPUT, $SESSION, $DB;
+        $download = optional_param('download', null, PARAM_TEXT);
+        // Deal with actions.
+        $action = optional_param('action', '', PARAM_ACTION);
+        
+        // Set table options.
+        $noresults = optional_param('noresults', 0, PARAM_INT);
+        $pagesize = optional_param('pagesize', 10, PARAM_INT);
+        $groupid = optional_param('group', 0, PARAM_INT);
 
+        if($download && $download == "html") {
+        	$selectedresultids = array();
+        	$params = (array) data_submitted();
+        	print_object($params);
+        	
+        	$offlinequizid = required_param('q', PARAM_INT);
+        	foreach ($params as $key => $value) {
+        		if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
+        			$selectedresultids[] = $matches[1];
+        		}
+        	}
+        	$userids = null;
+        	if($selectedresultids) {
+        		list($insql, $inparams) = $DB->get_in_or_equal($selectedresultids);
+        		$userids = $DB->get_fieldset_select('offlinequiz_result', 'userid', "id $insql" ,$inparams);
+        	}
+        	require_once('download_result_html.php');
+        	$download = new html_download($offlinequizid);
+        	$download->printhtml($userids);
+        	return;
+        }
+        
         // Define some strings.
         $strtimeformat = get_string('strftimedatetime');
         $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -49,19 +81,13 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         offlinequiz_load_useridentification();
         $offlinequizconfig = get_config('offlinequiz');
 
-        // Deal with actions.
-        $action = optional_param('action', '', PARAM_ACTION);
 
         $context = context_module::instance($cm->id);
         $systemcontext = context_system::instance();
 
-        // Set table options.
-        $noresults = optional_param('noresults', 0, PARAM_INT);
-        $pagesize = optional_param('pagesize', 10, PARAM_INT);
-        $groupid = optional_param('group', 0, PARAM_INT);
 
         // Only print headers if not asked to download data or delete data.
-        if ((!$download = optional_param('download', null, PARAM_TEXT)) && !$action == 'delete') {
+        if (!$download && !$action == 'delete') {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, 'overview');
             echo $OUTPUT->box_start('linkbox');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
@@ -672,7 +698,8 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     'ODS' => get_string('odsformat', 'offlinequiz'),
                     'CSV' => get_string('csvformat', 'offlinequiz'),
                     'CSVplus1' => get_string('csvplus1format', 'offlinequiz'),
-                    'CSVpluspoints' => get_string('csvpluspointsformat', 'offlinequiz')
+                    'CSVpluspoints' => get_string('csvpluspointsformat', 'offlinequiz'),
+                	'html' => get_string('html', 'offlinequiz')
                 );
                 print_string('downloadresultsas', 'offlinequiz');
                 echo "</td><td>";
