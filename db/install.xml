@@ -195,8 +195,8 @@
         <FIELD NAME="listnumber" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="The number of the list"/>
         <FIELD NAME="filename" TYPE="char" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="The ID of the image file in the files table."/>
         <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the page was scanned."/>
-        <FIELD NAME="status" TYPE="char" NOTNULL="true" SEQUENCE="false" COMMENT="The status of the page."/>
-        <FIELD NAME="error" TYPE="char" NOTNULL="false" SEQUENCE="false" COMMENT="The error of the page if status == error"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The status of the page."/>
+        <FIELD NAME="error" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The error of the page if status == error"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -221,7 +221,7 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the job has been submitted."/>
         <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="status" TYPE="char" NOTNULL="true" SEQUENCE="false" COMMENT="The status of a queue job ('new', 'processing', 'finished')."/>
+        <FIELD NAME="status" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The status of a queue job ('new', 'processing', 'finished')."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -232,9 +232,9 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="queueid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The ID of the queue job an entry belongs to."/>
         <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="status" TYPE="char" NOTNULL="true" SEQUENCE="false" COMMENT="The status of a file ('new', 'ok', 'error'). In case of 'error', the error field contains the error message."/>
-        <FIELD NAME="error" TYPE="char" NOTNULL="false" SEQUENCE="false" COMMENT="The error message (get_string label) in case the status is 'error'."/>
-        <FIELD NAME="info" TYPE="char" NOTNULL="false" SEQUENCE="false" COMMENT="The info message (get_string label) in case the status is 'info'."/>
+        <FIELD NAME="status" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The status of a file ('new', 'ok', 'error'). In case of 'error', the error field contains the error message."/>
+        <FIELD NAME="error" TYPE="char" LENGTH="4000" NOTNULL="false" SEQUENCE="false" COMMENT="The error message (get_string label) in case the status is 'error'."/>
+        <FIELD NAME="info" TYPE="char" LENGTH="4000" NOTNULL="false" SEQUENCE="false" COMMENT="The info message (get_string label) in case the status is 'info'."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -1509,14 +1509,14 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     	
     	// Changing type of field error on table offlinequiz_queue_data to char.
     	$table = new xmldb_table('offlinequiz_queue_data');
-    	$field = new xmldb_field('error', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'status');
+    	$field = new xmldb_field('error', XMLDB_TYPE_CHAR, '4000', null, null, null, null, 'status');
     	
     	// Launch change of type for field info.
     	$dbman->change_field_type($table, $field);
     	
     	// Changing type of field info on table offlinequiz_queue_data to char.
     	$table = new xmldb_table('offlinequiz_queue_data');
-    	$field = new xmldb_field('info', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'error');
+    	$field = new xmldb_field('info', XMLDB_TYPE_CHAR, '4000', null, null, null, null, 'error');
     	
     	// Launch change of type for field info.
     	$dbman->change_field_type($table, $field);
