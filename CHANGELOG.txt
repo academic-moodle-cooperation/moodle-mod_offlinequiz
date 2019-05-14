@@ -1,5 +1,11 @@
 CHANGELOG
 =========
+3.7.0
+-----------------
+[Feature] #6046 changed the place of reviewoptions to be more accurate
+[Feature] #
+
+
 3.6.2 (2019-02-28)
 -----------------
 * added information about imagemagick in the README.md
