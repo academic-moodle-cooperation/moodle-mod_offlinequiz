@@ -1476,6 +1476,52 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     	// Offlinequiz savepoint reached.
     	upgrade_mod_savepoint(true, 2019050801, 'offlinequiz');
     }
+    if($oldversion < 2019051400) {
+    	// Changing type of field info on table offlinequiz_scanned_pages to char.
+    	$table = new xmldb_table('offlinequiz_scanned_pages');
+    	$field = new xmldb_field('info', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'error');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	// Changing type of field status on table offlinequiz_scanned_p_pagesto char.
+    	$table = new xmldb_table('offlinequiz_scanned_p_pages');
+    	$field = new xmldb_field('status', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'time');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	// Changing type of field error on table offlinequiz_scanned_p_pagesto char.
+    	$table = new xmldb_table('offlinequiz_scanned_p_pages');
+    	$field = new xmldb_field('error', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'status');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	
+    	
+    	// Changing type of field status on table offlinequiz_queue_data to char.
+    	$table = new xmldb_table('offlinequiz_queue_data');
+    	$field = new xmldb_field('status', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'filename');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	// Changing type of field error on table offlinequiz_queue_data to char.
+    	$table = new xmldb_table('offlinequiz_queue_data');
+    	$field = new xmldb_field('error', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'status');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	// Changing type of field info on table offlinequiz_queue_data to char.
+    	$table = new xmldb_table('offlinequiz_queue_data');
+    	$field = new xmldb_field('info', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'info');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    }
     
 
     return true;
