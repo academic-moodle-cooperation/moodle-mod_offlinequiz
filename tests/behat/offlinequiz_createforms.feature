@@ -7,7 +7,7 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
   @ javascript
   Scenario: Login as a teacher, add a new grouptool to a course and there some multiple choice questions. Then create the forms for the offline quiz.
     Given the following "users" exist:
-      | username | firstname | lastname | email
+      | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category | groupmode |
