@@ -3,7 +3,7 @@ CHANGELOG
 3.7.0
 -----------------
 [Feature] #6046 changed the place of reviewoptions to be more accurate
-[Feature] #
+[Bug] #6166 deletion of hotspots and old temp-files has not been done, now done by an own task
 
 
 3.6.2 (2019-02-28)
