@@ -4,6 +4,8 @@ CHANGELOG
 -----------------
 [Feature] #6046 changed the place of reviewoptions to be more accurate
 [Bug] #6166 deletion of hotspots and old temp-files has not been done, now done by an own task
+[Feature] #6038 export results as printable html for face to face review
+[Feature] #6125 support of the plugin editdates
 
 
 3.6.2 (2019-02-28)
