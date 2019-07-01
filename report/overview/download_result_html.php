@@ -170,8 +170,8 @@ class html_download {
 		global $DB;
 		if($userids) {
 			list($insql, $inparams) = $DB->get_in_or_equal($userids);
-			return $DB->get_fieldset_sql("SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND userid IN $insql", [$this->offlinequiz->id, $inparams]);
+			return $DB->get_fieldset_sql("SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND status='complete' AND userid IN $insql", [$this->offlinequiz->id, $inparams]);
 		}
-		return $DB->get_fieldset_sql('SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ?', [$this->offlinequiz->id]);
+		return $DB->get_fieldset_sql("SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND status='complete'", [$this->offlinequiz->id]);
 	}
 }
