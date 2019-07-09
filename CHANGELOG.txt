@@ -2,10 +2,15 @@ CHANGELOG
 =========
 3.7.0
 -----------------
+[Feature] Moodle 3.7 compatible Version
 [Feature] #6046 changed the place of reviewoptions to be more accurate
 [Bug] #6166 deletion of hotspots and old temp-files has not been done, now done by an own task
 [Feature] #6038 export results as printable html for face to face review
 [Feature] #6125 support of the plugin editdates
+[Bug] #6047 question tagging now works properly as in quiz
+[Feature] #4375 extended information about review options in offlinequiz
+[Bug] #6054, github issue #79: fixed that only students could be enroled into courses
+[Bug] #6115, github issue #81: fixed a couple of problems with oracle databases.
 
 
 3.6.2 (2019-02-28)
