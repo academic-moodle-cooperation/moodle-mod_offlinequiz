@@ -714,6 +714,14 @@ This option can only be activated if the option "The attempt" is activated. If a
 The group (e.g. B), scores (achieved grade, total grade for questions, achieved in percent, e.g. 40/80 (50)) and the grade (e.g. 50 out of a maximum of 100) are displayed.
 Additionally, if "The attempt" is selected, the achieved score and the maximum score are shown for every question.
 </td></tr>
+<tr><td style="vertical-align: top;"><b>Specific feedback</b></td><td>
+Feedback that depens on what response the student gave.
+</td></tr>
+<tr><td style="vertical-align: top;"><b>General feedback</b></td><td>
+<p>General feedback is shown to the student after the results were imported.
+Unlike specific feedback, which depends on the question type and what response the student gave, the same general feedback text is shown to all students.</p>
+<p></p><p>You can use the general feedback to give students a fully worked answer and perhaps a link to more information they can use if they did not understand the questions.</p>
+</td></tr>
 <tr><td style="vertical-align: top;"><b>Right Answers</b></td><td>
 It is shown which answers are correct or wrong. This option is only available if "The attempt" is set.
 </td></tr>
