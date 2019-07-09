@@ -69,7 +69,7 @@ class offlinequiz_resultsaver {
         $scannedpage = $scannedpages[$scannedpageid];
         
 
-        $conditions = array('number' =>  $scannedpage->groupnumber, 'offlinequizid' => $scannedpage->offlinequizid);
+        $conditions = array('groupnumber' =>  $scannedpage->groupnumber, 'offlinequizid' => $scannedpage->offlinequizid);
         $group = $DB->get_record('offlinequiz_groups', $conditions);
         
                 

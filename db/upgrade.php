@@ -1432,13 +1432,14 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                 AND    c1.id < c2.id';
         $idstodelete = $DB->get_fieldset_sql($sql);
         if ($idstodelete) {
-        $chunks = array_chunk($idstodelete, 250, true);
-        echo "Delete choices in ".count($chunks)." chunks of 250 entries...".PHP_EOL;
-        foreach ($chunks as $curchunk) {
-            echo "Delete chunk ".($i++)." of ".count($chunks)."!".PHP_EOL;
-            list($querysql, $queryparams) = $DB->get_in_or_equal($curchunk);
-            $DB->delete_records_select('offlinequiz_choices', 'id', $querysql, $queryparams);
-        }
+	        $chunks = array_chunk($idstodelete, 250, true);
+	        $i=1;
+	        echo "Delete choices in ".count($chunks)." chunks of 250 entries...".PHP_EOL;
+	        foreach ($chunks as $curchunk) {
+	            echo "Delete chunk ".($i++)." of ".count($chunks)."!".PHP_EOL;
+	            list($querysql, $queryparams) = $DB->get_in_or_equal($curchunk);
+	            $DB->delete_records_select('offlinequiz_choices', 'id ', $querysql, $queryparams);
+	        }
         }
         
         upgrade_mod_savepoint(true, 2018112700, 'offlinequiz');
@@ -1451,6 +1452,79 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
         upgrade_mod_savepoint(true, 2018121100, 'offlinequiz');
     }
+    
+    if ($oldversion < 2019050800) {
+    	
+    	// Rename field groupnumber on table offlinequiz_groups to NEWNAMEGOESHERE.
+    	$table = new xmldb_table('offlinequiz_groups');
+    	$field = new xmldb_field('number', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'offlinequizid');
+    	
+    	// Launch rename field groupnumber.
+    	$dbman->rename_field($table, $field, 'groupnumber');
+    	
+    	// Offlinequiz savepoint reached.
+    	upgrade_mod_savepoint(true, 2019050800, 'offlinequiz');
+    }
+    if ($oldversion < 2019050801) {
+    	
+    	// Define field id to be added to offlinequiz_p_lists.
+    	$table = new xmldb_table('offlinequiz_p_lists');
+    	$field = new xmldb_field('number', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'offlinequizid');
+    	
+    	// Launch rename field groupnumber.
+    	$dbman->rename_field($table, $field, 'listnumber');
+    	
+    	// Offlinequiz savepoint reached.
+    	upgrade_mod_savepoint(true, 2019050801, 'offlinequiz');
+    }
+    if($oldversion < 2019051401) {
+    	// Changing type of field info on table offlinequiz_scanned_pages to char.
+    	$table = new xmldb_table('offlinequiz_scanned_pages');
+    	$field = new xmldb_field('info', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'error');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	// Changing type of field status on table offlinequiz_scanned_p_pagesto char.
+    	$table = new xmldb_table('offlinequiz_scanned_p_pages');
+    	$field = new xmldb_field('status', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'time');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	// Changing type of field error on table offlinequiz_scanned_p_pagesto char.
+    	$table = new xmldb_table('offlinequiz_scanned_p_pages');
+    	$field = new xmldb_field('error', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'status');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	
+    	
+    	// Changing type of field status on table offlinequiz_queue_data to char.
+    	$table = new xmldb_table('offlinequiz_queue_data');
+    	$field = new xmldb_field('status', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'filename');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	// Changing type of field error on table offlinequiz_queue_data to char.
+    	$table = new xmldb_table('offlinequiz_queue_data');
+    	$field = new xmldb_field('error', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'status');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	// Changing type of field info on table offlinequiz_queue_data to char.
+    	$table = new xmldb_table('offlinequiz_queue_data');
+    	$field = new xmldb_field('info', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'error');
+    	
+    	// Launch change of type for field info.
+    	$dbman->change_field_type($table, $field);
+    	
+    	upgrade_mod_savepoint(true, 2019051401, 'offlinequiz');
+    }
+    
 
     return true;
 }

@@ -1,9 +1,20 @@
 CHANGELOG
 =========
+3.7.0
+-----------------
+[Feature] #6046 changed the place of reviewoptions to be more accurate
+[Bug] #6166 deletion of hotspots and old temp-files has not been done, now done by an own task
+[Feature] #6038 export results as printable html for face to face review
+[Feature] #6125 support of the plugin editdates
+
+
 3.6.2 (2019-02-28)
 -----------------
+* added information about imagemagick in the README.md
+* fixed broken image links in 'show student view' popup
 * fixed a performance bug for upgrading big moodle-instances to 3.6.0. If you already upgraded to 3.6.0 this fix will not affect you at all.
 * fixed a spacing issue in the statistics tab for choosing groups
+* fixed a missing langstring ('questionpage')
 
 3.6.1 (2019-02-11)
 -----------------

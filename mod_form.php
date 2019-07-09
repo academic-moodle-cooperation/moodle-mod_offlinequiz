@@ -106,14 +106,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
                 '<br/><a href="'.$CFG->wwwroot.'/mod/offlinequiz/tutorial/index.php">' . $CFG->wwwroot .
                 '/mod/offlinequiz/tutorial/index.php</a>');
 
-        // Timeopen and timeclose.
-        $mform->addElement('date_time_selector', 'timeopen', get_string("reviewopens", "offlinequiz"),
-                array('optional' => true, 'step' => 1));
-        $mform->addHelpButton('timeopen', 'quizopenclose', 'offlinequiz');
-
-        $mform->addElement('date_time_selector', 'timeclose', get_string("reviewcloses", "offlinequiz"),
-                array('optional' => true, 'step' => 1));
-
         unset($options);
         $options = array();
         for ($i = 0; $i <= 3; $i++) {
@@ -197,6 +189,15 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'reviewoptionshdr', get_string("reviewoptions", "offlinequiz"));
         $mform->addHelpButton('reviewoptionshdr', 'reviewoptions', 'offlinequiz');
 
+        
+        // Timeopen and timeclose.
+        $mform->addElement('date_time_selector', 'timeopen', get_string("reviewopens", "offlinequiz"),
+        		array('optional' => true, 'step' => 1));
+        $mform->addHelpButton('timeopen', 'quizopenclose', 'offlinequiz');
+        
+        $mform->addElement('date_time_selector', 'timeclose', get_string("reviewcloses", "offlinequiz"),
+        		array('optional' => true, 'step' => 1));
+        
         $closedoptionsgrp = array();
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'attemptclosed', '', get_string('theattempt', 'offlinequiz'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'correctnessclosed', '', get_string('whethercorrect', 'question'));
@@ -229,6 +230,10 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         // Try to insert student view for teachers.
 
         $language = current_language();
+        if (is_dir($CFG->dirroot.'/mod/offlinequiz/pix/studentview/'.$language) === false) {
+        	// If current language not supported, fall back to english.
+        	$language = 'en';
+        }
 
         $mform->addElement('html', '<input id="showviewbutton" type="button" class="btn btn-secondary" value="'.
                 get_string('showstudentview', 'offlinequiz') . '" onClick="showStudentView(); return false;">');

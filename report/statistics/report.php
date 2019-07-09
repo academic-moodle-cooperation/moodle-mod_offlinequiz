@@ -88,7 +88,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         }
 
         if (!$groups = $DB->get_records('offlinequiz_groups',
-                array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups)) {
+                array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
             print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
                 $COURSE->id, $scannedpage->offlinequizid);
         }
@@ -103,7 +103,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $pageoptions['offlinegroup'] = $groupnumber;
             $offlinequiz->groupnumber = $groupnumber;
             $offlinequiz->sumgrades = $DB->get_field('offlinequiz_groups', 'sumgrades',
-                    array('offlinequizid' => $offlinequiz->id, 'number' => $groupnumber));
+                    array('offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnumber));
 
             if ($offlinegroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
                 $offlinequiz->groupid = $offlinegroup->id;
@@ -433,7 +433,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $prefix = get_string('statisticsforgroup', 'offlinequiz_statistics');
         $options[0] = get_string('allgroups', 'offlinequiz_statistics');
         foreach ($groups as $group) {
-            $options[$group->number] = $prefix . ' ' . $letterstr[$group->number - 1];
+            $options[$group->groupnumber] = $prefix . ' ' . $letterstr[$group->groupnumber - 1];
         }
         $urlparams = array('id' => $cm->id, 'mode' => 'statistics', 'statmode' => $pageoptions['statmode']);
         if (key_exists('offlinegroup', $pageoptions)) {

@@ -51,7 +51,7 @@ class offlinequiz_groupnumberscanner {
         else {
             $number++;
             print("groupnumber: " . $number . "\n");
-            $group = $DB->get_record('offlinequiz_groups',array('offlinequizid' => $page->offlinequizid, 'number' => $number ));
+            $group = $DB->get_record('offlinequiz_groups',array('offlinequizid' => $page->offlinequizid, 'groupnumber' => $number ));
             if($group) {
                 $page->group = $group;
             }

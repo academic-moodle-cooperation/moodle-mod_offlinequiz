@@ -163,7 +163,7 @@ class provider implements
           [
          'offlinequizid' => 'privacy:metadata:offlinequiz_p_lists:offlinequizid',
          'name' => 'privacy:metadata:offlinequiz_p_lists:name',
-         'number' => 'privacy:metadata:offlinequiz_p_lists:number',
+         'listnumber' => 'privacy:metadata:offlinequiz_p_lists:number',
          'filename' => 'privacy:metadata:offlinequiz_p_lists:filename'
           ],
           'privacy:metadata:offlinequiz_p_lists'
@@ -479,7 +479,7 @@ class provider implements
 
     private static function get_group_name_by_result($result) {
         global $DB;
-        $sql = "SELECT g.number
+        $sql = "SELECT g.groupnumber
                 FROM   {offlinequiz_results} r,
                        {offlinequiz_groups} g
                 WHERE  r.offlinegroupid = g.id
@@ -524,7 +524,7 @@ class provider implements
     private static function get_group($offlinequizid, $groupnumber) {
         global $DB;
 
-        $group = $DB->get_record("offlinequiz_groups", ["offlinequizid" => $offlinequizid, "number" => $groupnumber ]);
+        $group = $DB->get_record("offlinequiz_groups", ["offlinequizid" => $offlinequizid, "groupnumber" => $groupnumber ]);
         $exportgroup = new \stdClass();
         $exportgroup->letter = static::get_group_letter($groupnumber);
         $exportgroup->sumgrades = $group->sumgrades;

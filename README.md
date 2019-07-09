@@ -60,7 +60,9 @@ halls) without the need for expensive e-testing equipment.
 Requirements
 ------------
 
-The plugin is available for Moodle 2.5+. This version is for Moodle 3.6.
+The plugin is available for Moodle 2.5+. This version is for Moodle 3.7.
+
+You need to have imagemagick and the relating php module (http://pecl.php.net/package/imagick) installed.
 
 
 Installation
@@ -72,6 +74,8 @@ Installation
 
 * Open the administration area (http://your-moodle-site/admin) to start the installation
   automatically.
+
+*If you plan to import your answer sheets as PDF in one file, you might need to change your 
 
 
 Cron Job
@@ -138,7 +142,9 @@ Scanning of Answer Forms
 ------------------------
 
 Answer forms should be scanned as black-and-white images with 200 - 300 dpi. Do not scan in
-greyscale! Supported file types are TIF, PNG and GIF.
+greyscale! Supported file types are TIF, PNG and GIF and PDF.
+
+If you have problems that not all pdf pages are recognized try to increase the memory limit of imagemagick which can be found in the policy.xml (in linux based systems in /etc/ImageMagick-${version}/policy.xml).
 
 
 Documentation

@@ -52,7 +52,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 
 
     // Only count the jobs with status processing that have been started in the last 24 hours.
-    $expiretime = time() - 86400;
+    $expiretime = (int) time() - 86400;
     $runningsql = "SELECT COUNT(*)
                      FROM {offlinequiz_queue}
                     WHERE status = 'processing'
@@ -129,7 +129,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
                 continue;
             }
             if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
-                    'number', '*', 0, $offlinequiz->numgroups)) {
+                    'groupnumber', '*', 0, $offlinequiz->numgroups)) {
                 $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
                 $DB->set_field('offlinequiz_queue', 'info', 'no offlinequiz groups found', array('id' => $job->id));
                 continue;

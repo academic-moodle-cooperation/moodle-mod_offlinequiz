@@ -35,5 +35,23 @@ $tasks = array(
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*'
+    ),
+    array(
+        'classname' => 'mod_offlinequiz\task\hotspot_deletion_task',
+        'blocking' => 0,
+        'minute' => '17',
+        'hour' => '4',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
+    array(
+        'classname' => 'mod_offlinequiz\task\temporary_file_deletion_task',
+        'blocking' => 0,
+        'minute' => '22',
+        'hour' => '4',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
     )
 );

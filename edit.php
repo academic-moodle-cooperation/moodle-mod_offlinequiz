@@ -281,7 +281,7 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
     }
 
     // Redmine 983: Upgrade sumgrades for all offlinequiz groups.
-    if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
+    if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber',
             '*', 0, $offlinequiz->numgroups)) {
         foreach ($groups as $group) {
             $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);

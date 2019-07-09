@@ -95,11 +95,11 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
         }
 
         // Fetch all groups.
-        if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number',
+        if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber',
                 '*', 0, $offlinequiz->numgroups)) {
             foreach ($groups as $group) {
                 $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
-                $groupletter = $letterstr[$group->number - 1];
+                $groupletter = $letterstr[$group->groupnumber - 1];
                 $a = new StdClass();
                 $a->letter = $groupletter;
                 $a->grade = round($sumgrade, $offlinequiz->decimalpoints);

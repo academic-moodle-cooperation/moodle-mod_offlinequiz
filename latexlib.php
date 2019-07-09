@@ -49,7 +49,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     global $CFG, $DB, $OUTPUT;
 
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
-    $groupletter = strtoupper($letterstr[$group->number - 1]);
+    $groupletter = strtoupper($letterstr[$group->groupnumber - 1]);
 
     $coursecontext = context_course::instance($courseid);
     $course = $DB->get_record('course', array('id' => $courseid));

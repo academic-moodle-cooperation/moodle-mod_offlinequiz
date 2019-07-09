@@ -60,4 +60,4 @@ $slots = $structure->refresh_page_numbers_and_update_db($structure->get_offlineq
 
 redirect(new moodle_url('edit.php',
     array('cmid' => $offlinequizobj->get_cmid(),
-          'groupnumber' => $group->number)));
+          'groupnumber' => $group->groupnumber)));

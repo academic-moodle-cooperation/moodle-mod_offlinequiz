@@ -797,7 +797,7 @@ function offlinequiz_cron() {
     $sql = "SELECT DISTINCT(scannedpageid)
               FROM {offlinequiz_hotspots}
              WHERE time < :expiretime";
-    $params = array('expiretime' => $timenow - 604800);
+    $params = array('expiretime' => (int) $timenow - 604800);
 
     // First we get the different IDs.
     $ids = $DB->get_fieldset_sql($sql, $params);
@@ -816,7 +816,7 @@ function offlinequiz_cron() {
     $sql = "SELECT id
               FROM {offlinequiz_queue}
              WHERE timecreated < :expiretime";
-    $params = array('expiretime' => $timenow - $keepseconds);
+    $params = array('expiretime' => (int) $timenow - $keepseconds);
 
     // First we get the IDs of cronjobs older than the configured number of days.
     $jobids = $DB->get_fieldset_sql($sql, $params);
@@ -918,10 +918,10 @@ function offlinequiz_after_add_or_update($offlinequiz) {
     // Create group entries if they don't exist.
     if (property_exists($offlinequiz, 'numgroups')) {
         for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
-            if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'number' => $i))) {
+            if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'groupnumber' => $i))) {
                 $group = new stdClass();
                 $group->offlinequizid = $offlinequiz->id;
-                $group->number = $i;
+                $group->groupnumber = $i;
                 $group->numberofpages = 1;
                 $DB->insert_record('offlinequiz_groups', $group);
             }
@@ -1132,7 +1132,7 @@ function offlinequiz_get_user_grades($offlinequiz, $userid=0) {
 
     $maxgrade = $offlinequiz->grade;
     $groups = $DB->get_records('offlinequiz_groups',
-                               array('offlinequizid' => $offlinequiz->id), 'number', '*', 0, $offlinequiz->numgroups);
+                               array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0, $offlinequiz->numgroups);
 
     $user = $userid ? " AND userid =  $userid " : "";
 

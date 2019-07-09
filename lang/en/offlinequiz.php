@@ -231,6 +231,8 @@ $string['group'] = 'Group';
 $string['groupoutofrange'] = 'Group was out of range and replaced with group A.';
 $string['groupquestions'] = 'Group Questions';
 $string['hasresult'] = 'Result exists';
+$string['hotspotdeletiontask'] = 'Deletion of hotspots';
+$string['html'] = 'HTML';
 $string['idnumber'] = 'ID number';
 $string['imagefile'] = 'Image file';
 $string['imagenotfound'] = 'Image file: {$a} not found!';
@@ -566,6 +568,7 @@ $string['questioninfocorrectanswers'] = 'correct answers';
 $string['questioninfonone'] = 'Nothing';
 $string['questioninfoqtype'] = 'Question type';
 $string['questionname'] = 'Question name';
+$string['questionpage'] = 'Page';
 $string['questionsheet'] = 'Question sheet';
 $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \documentclass[11pt,a4paper]{article}
@@ -786,6 +789,7 @@ $string['statistics'] = 'Statistics';
 $string['statisticsplural'] = 'Statistics';
 $string['statsoverview'] = 'Statistics Overview';
 $string['studycode'] = 'Study code';
+$string['temporaryfiledeletiontask'] = 'Delete temporary files';
 $string['theattempt'] = 'The attempt';
 $string['timesup'] = 'Time is up!';
 $string['totalmarksx'] = 'Total of marks: {$a}';

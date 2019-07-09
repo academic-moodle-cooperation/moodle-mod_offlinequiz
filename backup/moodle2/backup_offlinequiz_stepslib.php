@@ -52,7 +52,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
 
         $groups = new backup_nested_element('groups');
         $group = new backup_nested_element('group', array('id'), array(
-                'number', 'sumgrades', 'numberofpages', 'templateusageid',
+                'groupnumber', 'sumgrades', 'numberofpages', 'templateusageid',
                 'questionfilename', 'answerfilename', 'correctionfilename'));
 
         $groupquestions = new backup_nested_element('groupquestions');
@@ -83,7 +83,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
 
         $plists = new backup_nested_element('plists');
         $plist = new backup_nested_element('plist', array('id'), array(
-                'name', 'number', 'filename'));
+                'name', 'listnumber', 'filename'));
 
         $participants = new backup_nested_element('participants');
         $participant = new backup_nested_element('participant', array('id'), array(
