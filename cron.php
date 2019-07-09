@@ -57,7 +57,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
                      FROM {offlinequiz_queue}
                     WHERE status = 'processing'
                       AND timestart > :expiretime";
-    $runningjobs = $DB->count_records_sql($runningsql, array('expiretime' => $expiretime));
+    $runningjobs = $DB->count_records_sql($runningsql, array('expiretime' => (int) $expiretime));
 
     if ($runningjobs >= OFFLINEQUIZ_MAX_CRON_JOBS) {
         echo "Too many jobs running! Exiting!";
