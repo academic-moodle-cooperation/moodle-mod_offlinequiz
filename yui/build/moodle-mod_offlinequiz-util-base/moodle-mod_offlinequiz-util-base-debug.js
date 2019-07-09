@@ -9,12 +9,4 @@ YUI.add('moodle-mod_offlinequiz-util-base', function (Y, NAME) {
 
 Y.namespace('Moodle.mod_offlinequiz.util');
 
-/**
- * A collection of general utility functions for use in offlinequiz.
- *
- * @class Moodle.mod_offlinequiz.util
- * @static
- */
-
-
 }, '@VERSION@');

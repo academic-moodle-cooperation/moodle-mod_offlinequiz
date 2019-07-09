@@ -8,7 +8,9 @@
             "io-form",
             "yui-later",
             "moodle-question-qbankmanager",
-            "moodle-core-notification-dialogue"
+            "moodle-question-chooser",
+            "moodle-question-searchform",
+            "moodle-core-notification"
         ]
     }
 }

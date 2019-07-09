@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
+    global $DB;
     require_once($CFG->dirroot.'/mod/offlinequiz/lib.php');
     require_once($CFG->dirroot.'/mod/offlinequiz/settingslib.php');
 

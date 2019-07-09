@@ -11,62 +11,62 @@ YUI.add('moodle-mod_offlinequiz-toolboxes', function (Y, NAME) {
  */
 
 // The CSS classes we use.
-    var CSS = {
-        ACTIVITYINSTANCE : 'activityinstance',
-        AVAILABILITYINFODIV : 'div.availabilityinfo',
-        CONTENTWITHOUTLINK : 'contentwithoutlink',
-        CONDITIONALHIDDEN : 'conditionalhidden',
-        DIMCLASS : 'dimmed',
-        DIMMEDTEXT : 'dimmed_text',
-        EDITINSTRUCTIONS : 'editinstructions',
-        EDITINGMAXMARK: 'editor_displayed',
-        HIDE : 'hide',
-        JOIN: 'page_join',
-        MODINDENTCOUNT : 'mod-indent-',
-        MODINDENTHUGE : 'mod-indent-huge',
-        MODULEIDPREFIX : 'slot-',
-        PAGE: 'page',
-        SECTIONHIDDENCLASS : 'hidden',
-        SECTIONIDPREFIX : 'section-',
-        SLOT : 'slot',
-        SHOW : 'editing_show',
-        TITLEEDITOR : 'titleeditor'
-    },
-    // The CSS selectors we use.
-    SELECTOR = {
-        ACTIONAREA: '.actions',
-        ACTIONLINKTEXT : '.actionlinktext',
-        ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_maxmark',
-        ACTIVITYFORM : 'span.instancemaxmarkcontainer form',
-        ACTIVITYICON : 'img.activityicon',
-        ACTIVITYINSTANCE : '.' + CSS.ACTIVITYINSTANCE,
-        ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a',
-        ACTIVITYLI : 'li.activity',
-        ACTIVITYMAXMARK : 'input[name=maxmark]',
-        COMMANDSPAN : '.commands',
-        CONTENTAFTERLINK : 'div.contentafterlink',
-        CONTENTWITHOUTLINK : 'div.contentwithoutlink',
-        DESELECTALL: '.deselectall',
-        EDITMAXMARK: 'a.editing_maxmark',
-        HIDE : 'a.editing_hide',
-        HIGHLIGHT : 'a.editing_highlight',
-        INSTANCENAME : 'span.instancename',
-        INSTANCEMAXMARK : 'span.instancemaxmark',
-        MODINDENTDIV : '.mod-indent',
-        MODINDENTOUTER : '.mod-indent-outer',
-        NUMQUESTIONS : '.numberofquestions',
-        PAGECONTENT : 'div#page-content',
-        PAGELI : 'li.page',
-        SECTIONUL : 'ul.section',
-        SELECTMULTIPLECHECKBOX : '.offlinequizbulkcopyform input[type^=checkbox], .select-multiple-checkbox',
-        SELECTALL: '.selectall',
-        SELECTALLCHECKBOX: '.select-all-checkbox',
-        SHOW : 'a.' + CSS.SHOW,
-        SHOWHIDE : 'a.editing_showhide',
-        SLOTLI : 'li.slot',
-        SUMMARKS : '.mod_offlinequiz_summarks'
-    },
-    BODY = Y.one(document.body);
+var CSS = {
+    ACTIVITYINSTANCE : 'activityinstance',
+    AVAILABILITYINFODIV : 'div.availabilityinfo',
+    CONTENTWITHOUTLINK : 'contentwithoutlink',
+    CONDITIONALHIDDEN : 'conditionalhidden',
+    DIMCLASS : 'dimmed',
+    DIMMEDTEXT : 'dimmed_text',
+    EDITINSTRUCTIONS : 'editinstructions',
+    EDITINGMAXMARK: 'editor_displayed',
+    HIDE : 'hide',
+    JOIN: 'page_join',
+    MODINDENTCOUNT : 'mod-indent-',
+    MODINDENTHUGE : 'mod-indent-huge',
+    MODULEIDPREFIX : 'slot-',
+    PAGE: 'page',
+    SECTIONHIDDENCLASS : 'hidden',
+    SECTIONIDPREFIX : 'section-',
+    SLOT : 'slot',
+    SHOW : 'editing_show',
+    TITLEEDITOR : 'titleeditor'
+},
+// The CSS selectors we use.
+SELECTOR = {
+    ACTIONAREA: '.actions',
+    ACTIONLINKTEXT : '.actionlinktext',
+    ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_maxmark',
+    ACTIVITYFORM : 'span.instancemaxmarkcontainer form',
+    ACTIVITYICON : 'img.activityicon',
+    ACTIVITYINSTANCE : '.' + CSS.ACTIVITYINSTANCE,
+    ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a',
+    ACTIVITYLI : 'li.activity',
+    ACTIVITYMAXMARK : 'input[name=maxmark]',
+    COMMANDSPAN : '.commands',
+    CONTENTAFTERLINK : 'div.contentafterlink',
+    CONTENTWITHOUTLINK : 'div.contentwithoutlink',
+    DESELECTALL: '.deselectall',
+    EDITMAXMARK: 'a.editing_maxmark',
+    HIDE : 'a.editing_hide',
+    HIGHLIGHT : 'a.editing_highlight',
+    INSTANCENAME : 'span.instancename',
+    INSTANCEMAXMARK : 'span.instancemaxmark',
+    MODINDENTDIV : '.mod-indent',
+    MODINDENTOUTER : '.mod-indent-outer',
+    NUMQUESTIONS : '.numberofquestions',
+    PAGECONTENT : 'div#page-content',
+    PAGELI : 'li.page',
+    SECTIONUL : 'ul.section',
+    SELECTMULTIPLECHECKBOX : '.offlinequizbulkcopyform input[type^=checkbox], .select-multiple-checkbox',
+    SELECTALL: '.selectall',
+    SELECTALLCHECKBOX: '.select-all-checkbox',
+    SHOW : 'a.' + CSS.SHOW,
+    SHOWHIDE : 'a.editing_showhide',
+    SLOTLI : 'li.slot',
+    SUMMARKS : '.mod_offlinequiz_summarks'
+},
+BODY = Y.one(document.body);
 
 // Setup the basic namespace.
 M.mod_offlinequiz = M.mod_offlinequiz || {};
@@ -96,25 +96,22 @@ Y.extend(TOOLBOX, Y.Base, {
      * @chainable
      */
     send_request: function(data, statusspinner, success_callback, optionalconfig) {
-        // Default data structure
+            // Default data structure.
         if (!data) {
             data = {};
         }
-        // Handle any variables which we must pass back through to
+        // Handle any variables which we must pass back through to.
         var pageparams = this.get('config').pageparams,
             varname;
         for (varname in pageparams) {
             data[varname] = pageparams[varname];
         }
-
         data.sesskey = M.cfg.sesskey;
         data.courseid = this.get('courseid');
         data.offlinequizid = this.get('offlinequizid');
         data.offlinegroupid = this.get('offlinegroupid');
-
         var uri = M.cfg.wwwroot + this.get('ajaxurl');
-
-        // Define the configuration to send with the request
+        // Define the configuration to send with the request.
         var responsetext = [];
         var config = {
             method: 'POST',
@@ -126,8 +123,8 @@ Y.extend(TOOLBOX, Y.Base, {
                         if (responsetext.error) {
                             new M.core.ajaxException(responsetext);
                         }
-                    } catch (e) {}
-
+                    } catch (e) {
+                    }
                     // Run the callback if we have one.
                     if (responsetext.hasOwnProperty('newsummarks')) {
                         Y.one(SELECTOR.SUMMARKS).setHTML(responsetext.newsummarks);
@@ -138,7 +135,6 @@ Y.extend(TOOLBOX, Y.Base, {
                     if (success_callback) {
                         Y.bind(success_callback, this, responsetext)();
                     }
-
                     if (statusspinner) {
                         window.setTimeout(function() {
                             statusspinner.hide();
@@ -155,7 +151,7 @@ Y.extend(TOOLBOX, Y.Base, {
             context: this
         };
 
-        // Apply optional config
+        // Apply optional config.
         if (optionalconfig) {
             for (varname in optionalconfig) {
                 config[varname] = optionalconfig[varname];
@@ -166,7 +162,7 @@ Y.extend(TOOLBOX, Y.Base, {
             statusspinner.show();
         }
 
-        // Send the request
+        // Send the request.
         Y.io(uri, config);
         return this;
     }
@@ -315,13 +311,11 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
             Y.all(SELECTOR.SELECTALLCHECKBOX).set('checked', '');
         });
-        
         Y.all(SELECTOR.SELECTALLCHECKBOX).on('click', function(e) {
             if (e.target._node.checked){
-            	Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
-            }
-            else {
-            	Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
+                Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
+            } else {
+                Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
             }
         });
     },
@@ -407,7 +401,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
 
         // Get the element we're working on.
         var element   = activity,
-            // Create confirm string (different if element has or does not have name)
+            // Create confirm string (different if element has or does not have name).
             confirmstring = '',
             qtypename = M.util.get_string('pluginname',
                         'qtype_' + element.getAttribute('class').match(/qtype_([^\s]*)/)[1]);
@@ -459,20 +453,20 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @return Boolean
      */
     edit_maxmark : function(ev, button, activity) {
-        // Get the element we're working on
+        // Get the element we're working on.
         var activityid = Y.Moodle.mod_offlinequiz.util.slot.getId(activity),
-            instancemaxmark  = activity.one(SELECTOR.INSTANCEMAXMARK),
-            instance = activity.one(SELECTOR.ACTIVITYINSTANCE),
-            currentmaxmark = instancemaxmark.get('firstChild'),
-            oldmaxmark = currentmaxmark.get('data'),
-            maxmarktext = oldmaxmark,
-            thisevent,
-            anchor = instancemaxmark,// Grab the anchor so that we can swap it with the edit form.
-            data = {
-                'class'   : 'resource',
-                'field'   : 'getmaxmark',
-                'id'      : activityid
-            };
+        instancemaxmark  = activity.one(SELECTOR.INSTANCEMAXMARK),
+        instance = activity.one(SELECTOR.ACTIVITYINSTANCE),
+        currentmaxmark = instancemaxmark.get('firstChild'),
+        oldmaxmark = currentmaxmark.get('data'),
+        maxmarktext = oldmaxmark,
+        thisevent,
+        anchor = instancemaxmark,// Grab the anchor so that we can swap it with the edit form.
+        data = {
+            'class'   : 'resource',
+            'field'   : 'getmaxmark',
+            'id'      : activityid
+        };
 
         // Prevent the default actions.
         ev.preventDefault();
@@ -511,7 +505,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                 padside = 'right';
             }
 
-            // We hide various components whilst editing:
+            // We hide various components whilst editing.
             activity.addClass(CSS.EDITINGMAXMARK);
 
             // Focus and select the editor text.
@@ -584,7 +578,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity  The activity whose maxmark we were altering.
      */
     edit_maxmark_clear : function(activity) {
-        // Detach all listen events to prevent duplicate triggers
+        // Detach all listen events to prevent duplicate triggers.
         new Y.EventHandle(this.editmaxmarkevents).detach();
 
         var editform = activity.one(SELECTOR.ACTIVITYFORM),
@@ -624,11 +618,10 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @chainable
      */
     update_page_break: function(ev, button, activity, action) {
-        // Prevent the default button action
+        // Prevent the default button action.
         ev.preventDefault();
 
         var nextactivity = activity.next('li.activity.slot');
-//        var spinner = this.add_spinner(nextactivity),
         var spinner = null;
         var value = action === 'removepagebreak' ? 1 : 2;
 
@@ -675,7 +668,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             'value' : 0
         },
         offlinegroupid : {
-        	'value' : 0
+            'value' : 0
         }
     }
 });
@@ -734,7 +727,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
 
         BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
         Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
-        Y.delegate('change', this.handle_data_action, BODY, SELECTOR.EDITSHUFFLEQUESTIONSACTION, this);    
+        Y.delegate('change', this.handle_data_action, BODY, SELECTOR.EDITSHUFFLEQUESTIONSACTION, this);
     },
 
     toggle_hide_section : function(e) {
@@ -746,7 +739,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
             button = e.target.ancestor('a', true),
             hideicon = button.one('img'),
 
-        // The value to submit
+        // The value to submit.
             value,
 
         // The text for strings and images. Also determines the icon to display.
@@ -772,7 +765,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         });
         button.set('title', newstring);
 
-        // Change the highlight status
+        // Change the highlight status.
         var data = {
             'class' : 'section',
             'field' : 'visible',
