@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+3.6.3 (2019-07-22)
+-----------------
+* fixed wrong upgrade to 3.6.2
+
 3.6.2 (2019-02-28)
 -----------------
 * added information about imagemagick in the README.md

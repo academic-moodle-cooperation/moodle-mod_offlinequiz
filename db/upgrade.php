@@ -1437,7 +1437,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         foreach ($chunks as $curchunk) {
             echo "Delete chunk ".($i++)." of ".count($chunks)."!".PHP_EOL;
             list($querysql, $queryparams) = $DB->get_in_or_equal($curchunk);
-            $DB->delete_records_select('offlinequiz_choices', 'id', $querysql, $queryparams);
+            $DB->delete_records_select('offlinequiz_choices', 'id' . $querysql, $queryparams);
         }
         }
         
