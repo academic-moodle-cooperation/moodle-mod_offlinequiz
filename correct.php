@@ -636,9 +636,15 @@ if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz
 $user = $DB->get_record('user', array($offlinequizconfig->ID_field => $userkey));
 
 // Check whether the user is enrolled in the current course.
-$notincourse = false;
-$coursestudents = get_role_users(get_config('offlinequiz','oneclickrole'), $coursecontext);
-if ($user && empty($coursestudents[$user->id])) {
+$sql = "SELECT ra.id
+        FROM {role_assignments} ra,
+             {role} r
+        WHERE r.id = ra.roleid
+          AND ra.userid = :userid
+          AND r.archetype = 'student'
+          AND ra.contextid = :contextid";
+    $userincourse = $DB->get_field_sql($sql,['userid' => $user->id, 'contextid' => $coursecontext->id],IGNORE_MISSING);
+if(!$userincourse) {
     $scannedpage->status = 'error';
     $scannedpage->error = 'usernotincourse';
 }
