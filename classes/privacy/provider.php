@@ -300,11 +300,12 @@ class provider implements
             return;
         }
 
+        $columns = $DB->get_columns("user");
+        $type = $columns[$offlinequizconfig->ID_field]->type;
         $user = $contextlist->get_user();
         $contextids = $contextlist->get_contextids();
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
-
         $sql = "SELECT DISTINCT c.id contextid, cm.instance offlinequizid
         FROM {context} c
         JOIN {course_modules} cm ON cm.id = c.instanceid
@@ -325,9 +326,14 @@ class provider implements
                 WHERE importuserid = :queueuserid
             UNION ALL
                 SELECT sp.offlinequizid id
-                FROM {offlinequiz_scanned_pages} sp
-                JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
-                WHERE u.id = :scannedpageuserid)
+                FROM {offlinequiz_scanned_pages} sp";
+        if($type == "int") {
+                $sql.= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey";
+        }
+        else {
+            $sql  .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = " . $DB->sql_cast_char2int(sp.userkey);
+        }
+               $sql.=" WHERE u.id = :scannedpageuserid)
         AND (c.id {$contextsql})";
 
         $params = [
