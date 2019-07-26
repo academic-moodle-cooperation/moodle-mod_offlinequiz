@@ -272,9 +272,13 @@ class provider implements
                 WHERE importuserid = :queueuserid
             UNION ALL
                 SELECT sp.offlinequizid id
-                FROM {offlinequiz_scanned_pages} sp
-                JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
-                WHERE u.id = :scannedpageuserid)";
+                FROM {offlinequiz_scanned_pages} sp";
+        if($type == "int") {
+            $sql  .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = " . $DB->sql_cast_char2int(sp.userkey);
+        } else {
+            $sql.= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey";
+        }
+               $sql .= " WHERE u.id = :scannedpageuserid)";
 
         $params = [
           'participantsuserid'        => $userid,
