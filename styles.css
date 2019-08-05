@@ -208,17 +208,13 @@ table.offlinequizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: l
 #page-mod-offlinequiz-report table#attempts .cell{padding: 4px;}
 #page-mod-offlinequiz-report table#attempts .header .commands {display: inline;}
 #page-mod-offlinequiz-report table#attempts .picture {width: 40px;}
-#page-mod-offlinequiz-report table#attempts td {border-left-width: 1px;border-right-width: 1px;border-left-style: solid;border-right-style: solid;vertical-align: middle; border-color: #DDD;}
-#page-mod-offlinequiz-report table#attempts th.userkey {text-align: center;}
-#page-mod-offlinequiz-report table#attempts td.userkey {text-align: center;}
-#page-mod-offlinequiz-report table#attempts th.timestart {text-align: center;}
-#page-mod-offlinequiz-report table#attempts td.timestart {text-align: center;}
-#page-mod-offlinequiz-report table#attempts th.offlinegroupid {text-align: center;}
-#page-mod-offlinequiz-report table#attempts td.offlinegroupid {text-align: center;}
+#page-mod-offlinequiz-report table#attempts td {border-left-width: 1px;border-right-width: 1px;border-left-style: solid;border-right-style: solid;vertical-align: middle; border-color: #DDD; text-align: center;}
 #page-mod-offlinequiz-report table#attempts th.sumgrades {text-align: right;}
 #page-mod-offlinequiz-report table#attempts td.sumgrades {text-align: right;}
 
-#page-mod-offlinequiz-report table#attempts .header {text-align: left;}
+#page-mod-offlinequiz-report table#attempts .header {text-align: center;}
+#page-mod-offlinequiz-report table#attempts .header.c2,
+#page-mod-offlinequiz-report table#attempts td.c2 {text-align: left;}
 #page-mod-offlinequiz-report table#attempts .picture {text-align: center !important;}
 #page-mod-offlinequiz-report table#attempts.grades span.que,
 #page-mod-offlinequiz-report table#attempts span.avgcell {white-space: nowrap;}
