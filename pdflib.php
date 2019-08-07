@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/moodlelib.php');
-require_once($CFG->libdir . '/pdflib.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/lib/pdflib.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/type/questionbase.php');
 require_once($CFG->dirroot . '/filter/tex/filter.php');
@@ -648,7 +648,6 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $pdf->Cell(4, round($offlinequiz->fontsize / 2), "$number)  ", 0, 0, 'R');
                 $pdf->SetFont('FreeSans', '', $offlinequiz->fontsize);
             }
-
             $pdf->writeHTMLCell(165,  round($offlinequiz->fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
             $pdf->Ln();
 
@@ -789,10 +788,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $html = preg_replace("/<\/a><\/span>/ms", "", $html);
                 $html = preg_replace("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
             }
-
+            
             $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $html );
             $pdf->Ln ();
-
             if ($pdf->is_overflowing ()) {
                 $pdf->backtrack ();
                 $pdf->AddPage ();

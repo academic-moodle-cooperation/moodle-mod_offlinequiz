@@ -50,12 +50,10 @@ class offlinequiz_html_translator
     public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor,
             $maxwidth, $disableimgnewlines, $format = 'pdf') {
         global $CFG, $DB;
-
         require_once($CFG->dirroot.'/filter/tex/lib.php');
         require_once($CFG->dirroot.'/filter/tex/latex.php');
         $file = null;
         $fs = get_file_storage();
-
         $output = $input;
         $strings = preg_split("/<img/i", $output);
         $output = array_shift($strings);
@@ -89,7 +87,6 @@ class offlinequiz_html_translator
                 $pluginfilename = $attributes['src'];
                 $imageurl = false;
                 $teximage = false;
-                $pluginfile = false;
                 $parts = preg_split("!$CFG->wwwroot/filter/tex/pix.php/!", $pluginfilename);
 
                 if (preg_match('!@@PLUGINFILE@@/!', $pluginfilename)) {
@@ -112,6 +109,7 @@ class offlinequiz_html_translator
                             print_error("Could not create data directory");
                         }
                         $imagefile->copy_content_to($file);
+                        
                         $pluginfile = true;
                     } else {
                         $output .= 'Image file not found ' . $pathparts['dirname'] . '/' . $pathparts['basename'];
@@ -166,7 +164,6 @@ class offlinequiz_html_translator
                 }
 
                 $factor = 2; // Per default show images half sized.
-
                 if (!$imageurl) {
                     if (!file_exists($file)) {
                         $output .= get_string('imagenotfound', 'offlinequiz', $file);
@@ -229,10 +226,14 @@ class offlinequiz_html_translator
                         if ($filearea == 'answer' and $disableimgnewlines == 0) {
                             $output .= '<br/>';
                         }
-
+//                         if($format == "pdf") {
+//                             $output .= '<img src="' . $file . '" align="middle" width="' . $width . '" height="' .
+//                             $height .'"/>';
+//                         } else {
                         // Finally, add the image tag for tcpdf.
-                        $output .= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' .
-                            $height .'"/>';
+                            $output .= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' .
+                                $height .'"/>';
+//                         }
                     }
                 } else {
 
@@ -251,6 +252,7 @@ class offlinequiz_html_translator
             }
             $output .= substr($string, strpos($string, '>') + 1);
         }
+        
         return $output;
     }
 
