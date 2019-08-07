@@ -128,6 +128,15 @@ Y.extend(POPUP, Y.Base, {
         Y.log('Load completed.', 'debug', 'moodle-mod_offlinequiz-offlinequizquestionbank');
 
         this.dialogue.bodyNode.setHTML(result.contents);
+        Y.one('#qbheadercheckbox').on('click', function(e) {
+            if(e._currentTarget.checked === true) {
+                Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('checked', 'true');
+            }
+            else {
+                Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('unchecked', '');
+            }
+        });
+
         Y.use('moodle-question-chooser', function() {M.question.init_chooser({});});
         this.dialogue.bodyNode.one('form').delegate('change', this.options_changed, '.searchoptions', this);
         if (this.dialogue.visible) {
