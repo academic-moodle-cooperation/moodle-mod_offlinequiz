@@ -47,8 +47,8 @@ Y.extend(POPUP, Y.Base, {
     loadingDiv: '',
     dialogue: null,
     addonpage: 0,
-    loaded: false,
     searchRegionInitialised: false,
+    tags: '',
 
     create_dialogue: function() {
         // Create a dialogue on the page and hide it.
@@ -128,14 +128,16 @@ Y.extend(POPUP, Y.Base, {
         Y.log('Load completed.', 'debug', 'moodle-mod_offlinequiz-offlinequizquestionbank');
 
         this.dialogue.bodyNode.setHTML(result.contents);
-        Y.one('#qbheadercheckbox').on('click', function(e) {
-            if(e._currentTarget.checked === true) {
-                Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('checked', 'true');
-            }
-            else {
-                Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('unchecked', '');
-            }
-        });
+        if(Y.one('#qbheadercheckbox')) {
+             Y.one('#qbheadercheckbox').on('click', function(e) {
+                if(e._currentTarget.checked === true) {
+                    Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('checked', 'true');
+                }
+                else {
+                    Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('unchecked', '');
+                }
+            });
+        }
 
         Y.use('moodle-question-chooser', function() {M.question.init_chooser({});});
         this.dialogue.bodyNode.one('form').delegate('change', this.options_changed, '.searchoptions', this);
@@ -189,7 +191,6 @@ Y.extend(POPUP, Y.Base, {
             this.dialogue.hide();
             this.dialogue.show();
         }
-        Y.later(1000, this, function() {this.loaded = true;});
     },
 
     load_failed: function() {
@@ -233,13 +234,25 @@ Y.extend(POPUP, Y.Base, {
             e.preventDefault();
             this.load_content('?' + Y.IO.stringify(e.currentTarget.get('form')));
         } else {
-            if(e.nodes._nodes[0].id.startsWith("form_autocomplete_selection") && this.loaded) {
-                this.loaded = false;
-                var displayoptions = Y.IO.stringify(Y.one('#displayoptions'));
-                this.load_content('?' + displayoptions );
-                window.onbeforeunload = null;
+            var classes = e.nodes._nodes[0].className;
+            if(classes.includes("form-autocomplete-selection") && classes.includes("form-autocomplete-multiple")) {
+                var newtags = this.get_tags(e.nodes._nodes[0].children);
+                if(newtags !== this.tags) {
+                    this.tags = newtags;
+                    var displayoptions = Y.IO.stringify(Y.one('#displayoptions'));
+                    this.load_content('?' + displayoptions );
+                    window.onbeforeunload = null;
+                }
             }
         }
+    },
+
+    get_tags: function(nodes) {
+        var result = '';
+        for(node in nodes) {
+            result += nodes[node].textContent;
+        }
+        return result;
     },
 
     initialiseSearchRegion: function() {
@@ -261,7 +274,6 @@ M.mod_offlinequiz.offlinequizquestionbank = M.mod_offlinequiz.offlinequizquestio
 M.mod_offlinequiz.offlinequizquestionbank.init = function() {
     return new POPUP();
 };
-
 
 }, '@VERSION@', {
     "requires": [
