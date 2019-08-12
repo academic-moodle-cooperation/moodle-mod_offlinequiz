@@ -129,10 +129,10 @@ Y.extend(POPUP, Y.Base, {
         if(Y.one('#qbheadercheckbox')) {
              Y.one('#qbheadercheckbox').on('click', function(e) {
                 if(e._currentTarget.checked === true) {
-                    Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('checked', 'true');
+                    Y.all('.questionbankformforpopup .select-multiple-checkbox').set('checked', 'true');
                 }
                 else {
-                    Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('checked', '');
+                    Y.all('.questionbankformforpopup .select-multiple-checkbox').set('checked', '');
                 }
             });
         }
