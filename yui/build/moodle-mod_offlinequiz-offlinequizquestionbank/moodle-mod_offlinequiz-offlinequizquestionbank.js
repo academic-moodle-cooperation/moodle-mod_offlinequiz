@@ -130,7 +130,7 @@ Y.extend(POPUP, Y.Base, {
                     Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('checked', 'true');
                 }
                 else {
-                    Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('unchecked', '');
+                    Y.all('.questionbankformforpopup input[type^=checkbox], .select-multiple-checkbox').set('checked', '');
                 }
             });
         }
