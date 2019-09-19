@@ -564,6 +564,10 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
             $questiontext = $question->questiontext;
 
+            if ($question->qtype !== 'description') {
+                $questiontext .= offlinequiz_get_answerprompt ($offlinequiz, $question);
+            }
+
             // Filter only for tex formulas.
             if (!empty($texfilter)) {
                 $questiontext = $texfilter->filter($questiontext);
@@ -700,6 +704,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             $pdf->checkpoint();
 
             $questiontext = $question->questiontext;
+            if ($question->qtype !== 'description') {
+                $questiontext .= offlinequiz_get_answerprompt ($offlinequiz, $question);
+            }
 
             // Filter only for tex formulas.
             if (! empty ( $texfilter )) {

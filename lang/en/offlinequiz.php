@@ -565,6 +565,7 @@ $string['questionanalysistitle'] = 'Difficulty Analysis Table';
 $string['questionbankcontents'] = 'Question bank contents';
 $string['questionforms'] = 'Question forms';
 $string['questioninfoanswers'] = 'Number of correct answers';
+$string['questioninfoprompt'] = 'Answer prompt';
 $string['questioninfocorrectanswer'] = 'correct answer';
 $string['questioninfocorrectanswers'] = 'correct answers';
 $string['questioninfonone'] = 'Nothing';
@@ -777,6 +778,7 @@ You can choose one of these:
 <li> Nothing
 <li> Question type - Depending on question type Single-Choice, Multiple-Choice, All-or-Nothing Multiple-Choice will be printed
 <li> Number of correct answers - The number of correct answers will be printed
+<li> Answer prompt - Depending on question type "Select one:" or "Select one or more:" will be printed
 </ul>';
 $string['showstudentview'] = 'Show student view';
 $string['showtutorial'] = 'Show an offline quiz tutorial to students.';

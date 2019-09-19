@@ -98,7 +98,12 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
             $question = $questions[$currentquestionid];
 
-            $questiontext = offlinequiz_convert_html_to_latex($question->questiontext);
+            $questiontext = $question->questiontext;
+            if ($question->qtype !== 'description') {
+                $questiontext .= offlinequiz_get_answerprompt ($offlinequiz, $question);
+            }
+
+            $questiontext = offlinequiz_convert_html_to_latex($questiontext);
 
             $latexforquestions .= '\item ' .  $questiontext . "\n";
 
@@ -137,7 +142,11 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
             $currentquestionid = $question->id;
 
             $questiontext = $question->questiontext;
-            $questiontext = offlinequiz_convert_html_to_latex($question->questiontext);
+            if ($question->qtype !== 'description') {
+                $questiontext .= offlinequiz_get_answerprompt ($offlinequiz, $question);
+            }
+
+            $questiontext = offlinequiz_convert_html_to_latex($questiontext);
             if ($question->qtype == 'description') {
                 $latexforquestions .= "\n" . '\\ ' . $questiontext . "\n";
             } else {

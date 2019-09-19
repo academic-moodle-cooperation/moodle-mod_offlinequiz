@@ -28,7 +28,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 function offlinequiz_get_question_infostring($offlinequiz, $question) {
-    if ($offlinequiz->showgrades || $offlinequiz->showquestioninfo) {
+    if ($offlinequiz->showgrades || $offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_QTYPE
+        || $offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_ANSWERS) {
         $infostr = '(';
         $questioninfo = offlinequiz_get_questioninfo($offlinequiz, $question);
         if ($questioninfo) {
@@ -88,4 +89,17 @@ function offlinequiz_get_amount_correct_answers($question) {
         }
     }
     return $amount;
+}
+
+function offlinequiz_get_answerprompt($offlinequiz, $question) {
+    if ($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_PROMPT) {
+        if ($question->qtype == 'multichoice' && $question->options->single) {
+            $answerprompt = get_string('selectone', 'qtype_multichoice');
+        } elseif ($question->qtype !== 'description') {
+            $answerprompt = get_string('selectmulti', 'qtype_multichoice');
+        }
+        return $answerprompt;
+    } else {
+        return null;
+    }
 }
