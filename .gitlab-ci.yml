@@ -1,0 +1,37 @@
+services:
+  - name: mariadb:latest
+
+cache:
+  paths:
+    - .composer/cache
+
+variables:
+  DB: "mariadb"
+  MYSQL_ROOT_PASSWORD: "superrootpass"
+  TRAVIS_BUILD_DIR: "$CI_PROJECT_DIR"
+  MUSTACHE_IGNORE_NAMES: "email_html_body.mustache, email_html.mustache, email_text.mustache"
+  COMPOSER_HOME: "$CI_PROJECT_DIR/.composer/cache"
+
+before_script:
+  # Wait until database is ready
+  - timeout 3m bash -c 'echo -e "DB...\c"; until </dev/tcp/127.0.0.1/3306; do echo -e ".\c"; sleep 1; done; echo "ok";' 2> /dev/null
+  - cd ../..
+  - moodle-plugin-ci install --moodle="moodle-upstream-core" --db-user=root --db-pass=superrootpass --db-host=127.0.0.1
+
+.job_template: &job_definition
+  script:
+    - moodle-plugin-ci phplint
+    - moodle-plugin-ci phpdoc
+    - moodle-plugin-ci phpcpd
+    - moodle-plugin-ci phpcbf
+    - moodle-plugin-ci phpmd
+    - moodle-plugin-ci codechecker
+    - moodle-plugin-ci validate
+    - moodle-plugin-ci phpunit
+    - moodle-plugin-ci behat
+
+code_checker:
+  <<: *job_definition
+  image: amcdev/moodle-plugin-ci:7.1
+  variables:
+    MOODLE_BRANCH: "MOODLE_37_STABLE"
