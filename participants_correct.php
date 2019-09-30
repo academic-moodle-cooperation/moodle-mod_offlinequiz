@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/participants/participants_scanner
 require_once($CFG->dirroot . '/mod/offlinequiz/participants/participants_report.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require(__DIR__ . "/participants/participantslib.php");
-global $DB,$CFG;
+global $DB, $CFG;
 $pageid     = optional_param('pageid', 0, PARAM_INT);
 $action     = optional_param('action', 'load', PARAM_TEXT);
 $listchosen = optional_param('listchosen', 0, PARAM_INT);

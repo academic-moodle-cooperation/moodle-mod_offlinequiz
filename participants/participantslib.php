@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -40,7 +39,7 @@ class mod_offlinequiz_corners {
     private $_lowerleft;
     private $_lowerright;
     
-    function __construct($upperleft, $upperright, $lowerleft, $lowerright) {
+    public function __construct($upperleft, $upperright, $lowerleft, $lowerright) {
         $this->_upperleft = $upperleft;
         $this->_upperright = $upperright;
         $this->_lowerleft = $lowerleft;
@@ -50,7 +49,7 @@ class mod_offlinequiz_corners {
      * 
      * @param string $cornerid id of the form uly (upperleft y value)
      */
-    function get_corner_value($cornerid) {
+    public function get_corner_value($cornerid) {
         $position = substr($cornerid, 0, 2);
         if ($position == 'ul') {
             $corner = $this->_upperleft;

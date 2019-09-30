@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
-require (__DIR__ . '/statistics/statisticslib.php');
+require(__DIR__ . '/report/statistics/statisticslib.php');
 
 /**
  * This table has one row for each question in the offlinequiz, with sub-rows when

@@ -168,7 +168,7 @@ function get_course_objects($id,$q) {
             print_error("The course module for the offlinequiz with id $q is missing");
         }
     }
-    return [$offlinequiz,$course,$cm];
+    return [$offlinequiz, $course, $cm];
     
 }
 
@@ -1915,7 +1915,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
                           get_string('present', 'offlinequiz'));
 
     if ($fileformat == 'ODS' || $fileformat == 'Excel') {
-        if($fileformat == 'ODS') {
+        if ($fileformat == 'ODS') {
             require_once("$CFG->libdir/odslib.class.php");
     
             $filename .= ".ods";

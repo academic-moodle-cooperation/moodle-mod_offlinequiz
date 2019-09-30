@@ -42,7 +42,7 @@ $mode = optional_param('mode', 'editparticipants', PARAM_ALPHA);
 $action = optional_param('action', '', PARAM_ALPHA);
 $download = optional_param('download', false, PARAM_ALPHA);
 
-list($offlinequiz,$course,$cm) = get_course_objects($id,$q);
+list($offlinequiz, $course, $cm) = get_course_objects($id,$q);
 
 require_login($course->id, false, $cm);
 
