@@ -1,5 +1,4 @@
 <?php
-use offlinequiz_result_download\html_download;
 
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
@@ -28,6 +27,8 @@ use offlinequiz_result_download\html_download;
  *
  *
  */
+use offlinequiz_result_download\html_download;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
@@ -52,7 +53,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         $pagesize = optional_param('pagesize', 10, PARAM_INT);
         $groupid = optional_param('group', 0, PARAM_INT);
         
-        if($download && $download == "html") {
+        if ($download && $download == "html") {
         	$selectedresultids = array();
         	
         	$offlinequizid = required_param('q', PARAM_INT);
@@ -561,7 +562,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
                 if (!empty($result) && $result->offlinegroupid) {
                     $outputgrade = format_float($result->sumgrades /
-                            $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints,false);
+                            $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints, false);
                 } else {
                     $outputgrade = '-';
                 }

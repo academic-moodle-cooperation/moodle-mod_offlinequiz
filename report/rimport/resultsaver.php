@@ -27,17 +27,19 @@
  */
 namespace offlinequiz_result_import;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
-define('RESULT_STATUS_ERROR','error');
-define('RESULT_STATUS_RESULT_ALREADY_EXISTS_FOR_OTHER_GRUOP','resultfordifferentgroups');
-define('RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_SAME_CROSSES','sameresultexists');
-define('RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_OTHER_CROSSES','otherresultexists');
+define('RESULT_STATUS_ERROR', 'error');
+define('RESULT_STATUS_RESULT_ALREADY_EXISTS_FOR_OTHER_GRUOP', 'resultfordifferentgroups');
+define('RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_SAME_CROSSES', 'sameresultexists');
+define('RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_OTHER_CROSSES', 'otherresultexists');
 
 class offlinequiz_resultsaver {
     
     
-    public function create_or_update_result_in_db($scannedpageid,$teacherid) {
+    public function create_or_update_result_in_db($scannedpageid, $teacherid) {
         
         global $DB;
         $sql = "SELECT p2.* FROM {offlinequiz_scanned_pages} p1, {offlinequiz_scanned_pages} p2
@@ -48,20 +50,20 @@ class offlinequiz_resultsaver {
         $scannedpages = $DB->get_records_sql($sql, array('scannedpageid' =>  $scannedpageid));
         //TODO check, ob Seite mit gleicher Seitenzahl und userkey + andere scannedpageid existiert
 
-        if(!$scannedpages || !$scannedpages[$scannedpageid]) {
+        if (!$scannedpages || !$scannedpages[$scannedpageid]) {
          throw new \coding_exception('A scannedpage can not be updated if it has errors');
         }
         $resulterror = $this->get_result_exists_errors($scannedpageid);
-        if($resulterror) {
+        if ($resulterror) {
             self::save_page_status($scannedpageid, 'error', $resulterror);
         }
-        if($this->result_with_same_)
+        if ($this->result_with_same_)
         $groupnumber=0;
-        foreach($scannedpages as $scannedpage) {
+        foreach ($scannedpages as $scannedpage) {
             if(!$groupnumber) {
                 $groupnumber = $scannedpage->groupnumber;
             } elseif ($groupnumber != $scannedpage->groupnumber) {
-                self::save_page_status($scannedpageid,RESULT_STATUS_ERROR, RESULT_STATUS_RESULT_ALREADY_EXISTS_FOR_OTHER_GRUOP);
+                self::save_page_status($scannedpageid, RESULT_STATUS_ERROR, RESULT_STATUS_RESULT_ALREADY_EXISTS_FOR_OTHER_GRUOP);
             }
             
         }
@@ -76,8 +78,8 @@ class offlinequiz_resultsaver {
         $scannedpageids = array_keys($scannedpages);
         list($scannedpagesql, $params) = $DB->get_in_or_equal($scannedpageids, SQL_PARAMS_QM, 'pages');
         $sql = "SELECT * FROM {offlinequiz_choices} choice 
-                WHERE  scannedpageid " . $scannedpagesql;
-        $choices = $DB->get_records_sql($sql,$params);
+                WHERE  scannedpageid" . $scannedpagesql;
+        $choices = $DB->get_records_sql($sql, $params);
         
 
         $resultid = self::get_result_id($scannedpages);
@@ -88,7 +90,7 @@ class offlinequiz_resultsaver {
             $result = new \stdClass();
             $result->offlinequizid = $scannedpage->offlinequizid;
             $result->userid = self::get_userid_by_userkey($scannedpage->userkey);
-            $quba = $this->clone_template_usage($scannedpage->offlinequizid,$group->id);
+            $quba = $this->clone_template_usage($scannedpage->offlinequizid, $group->id);
             $result->usageid = $quba->id;
             $result->status = 'partial';
             $result->teacherid = $teacherid;
@@ -121,11 +123,11 @@ class offlinequiz_resultsaver {
                     AND   page2.resultid IS NOT NULL
                     AND   page1.id <> page2.id
                     AND   page1.offlinequizid = page2.offlinequizid";
-        $otherresults = $DB->get_records_sql($sql,['scannedpageid' => $scannedpageid]);
+        $otherresults = $DB->get_records_sql($sql, ['scannedpageid' => $scannedpageid]);
         if(!$otherresults) {
             return;
         }
-        if($this->results_have_same_crosses($scannedpageid,$otherresults[0]->id)) {
+        if($this->results_have_same_crosses($scannedpageid, $otherresults[0]->id)) {
             return RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_SAME_CROSSES;
         }
     }
@@ -144,7 +146,7 @@ class offlinequiz_resultsaver {
                        AND offlinegroupid = :offlinegroupid";
         
         $qinstances = $DB->get_records_sql($sql,
-                array('offlinequizid' => $offlinequizid,
+                array('offlinequizid' => $offlinequizid, 
                         'offlinegroupid' => $groupid));
                 
         // Clone it...
@@ -165,7 +167,7 @@ class offlinequiz_resultsaver {
                         AND c1.slotnumber = c2.slotnumber
                         AND c1.choicenumber = c2.choicenumber
                         AND c1.value <> c2.value";
-        return $DB->count_records_sql($sql,['scannedpageid1'=>$scannedpageid1, 'scannedpageid1' => $scannedpageid2]);
+        return $DB->count_records_sql($sql, ['scannedpageid1'=>$scannedpageid1, 'scannedpageid1' => $scannedpageid2]);
     }
     
     /**
@@ -245,7 +247,7 @@ class offlinequiz_resultsaver {
     
 
     
-    static function get_result_id($scannedpages) {
+    private static function get_result_id($scannedpages) {
         foreach ($scannedpages as $currentpage) {
             if(!empty($currentpage->resultid)) {
                 return $currentpage->resultid;
@@ -254,14 +256,14 @@ class offlinequiz_resultsaver {
         return 0;
     }
     
-    static function get_userid_by_userkey($userkey) {
+    private static function get_userid_by_userkey($userkey) {
         global $DB;
         $offlinequizconfig = get_config('offlinequiz');
         //TODO prefix and suffix
         return $DB->get_field('user', 'id', [$offlinequizconfig->ID_field => $userkey]);
     }
     
-    static function save_page_status($scannedpageid,$status, $error) {
+    private static function save_page_status($scannedpageid, $status, $error) {
         global $DB;
         $sql = "UPDATE {offlinequiz_scanned_pages} SET status = :status, error = :error
                 WHERE id=:scannedpageid";

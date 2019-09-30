@@ -1,7 +1,4 @@
 <?php
-use offlinequiz_result_import\offlinequiz_result_engine;
-use offlinequiz_result_import\offlinequiz_point;
-use offlinequiz_result_import\offlinequiz_result_page;
 
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
@@ -29,6 +26,10 @@ use offlinequiz_result_import\offlinequiz_result_page;
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  **/
+
+use offlinequiz_result_import\offlinequiz_result_engine;
+use offlinequiz_result_import\offlinequiz_point;
+use offlinequiz_result_import\offlinequiz_result_page;
 
 if (!defined('CLI_SCRIPT')) {
     define('CLI_SCRIPT', true);
@@ -163,7 +164,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
                 set_time_limit(120);
                 try {
                     $version = $offlinequiz->algorithmversion;
-                    if($version < 2) {
+                    if ($version < 2) {
                         // Create a new scanner for every page.
                         $scanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
                         // Try to load the image file.
@@ -225,12 +226,9 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
                         if ($scannedpage->error == 'doublepage') {
                             $doubleentry++;
                         }
-                        else {
-                        
-                        }
                     } else {
                         $contextid = 0;
-                        $engine = new offlinequiz_result_engine($offlinequiz, $context->id,$data->filename,0);
+                        $engine = new offlinequiz_result_engine($offlinequiz, $context->id, $data->filename, 0);
                         $resultpage = $engine->scanpage();
                         $engine->save_page(2);
                     }
