@@ -21,7 +21,7 @@ before_script:
 .job_template: &job_definition
   script:
     - moodle-plugin-ci phplint
-    - moodle-plugin-ci phpdoc
+#    - moodle-plugin-ci phpdoc
     - moodle-plugin-ci phpcpd
     - moodle-plugin-ci phpcbf
     - moodle-plugin-ci phpmd
