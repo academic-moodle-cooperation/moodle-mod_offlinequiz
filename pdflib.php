@@ -397,6 +397,39 @@ function number_in_style($num, $style) {
         return $number = chr(ord('a') + $num);
 }
 
+/**
+ * prints the question to the pdf
+ */
+function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz) {
+    $pdf->checkpoint();
+    
+    $questiontext = $question->questiontext;
+    
+    // Filter only for tex formulas.
+    if (!empty($texfilter)) {
+        $questiontext = $texfilter->filter($questiontext);
+    }
+    
+    // Remove all HTML comments (typically from MS Office).
+    $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
+    
+    // Remove <font> tags.
+    $questiontext = preg_replace("/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext);
+    
+    // Remove <script> tags that are created by mathjax preview.
+    $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
+    
+    // Remove all class info from paragraphs because TCPDF won't use CSS.
+    $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
+    
+    $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
+        1, 300, $offlinequiz->disableimgnewlines);
+    
+    $html = '';
+    
+    $html .= $questiontext . '<br/><br/>';
+    return $html;
+}
 
 /**
  * Generates the PDF question/correction form for an offlinequiz group.
@@ -554,37 +587,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             }
             set_time_limit(120);
             $question = $questions[$currentquestionid];
-
-            /*****************************************************/
-            /*  Either we print the question HTML */
-            /*****************************************************/
-            $pdf->checkpoint();
-
-            $questiontext = $question->questiontext;
-
-            // Filter only for tex formulas.
-            if (!empty($texfilter)) {
-                $questiontext = $texfilter->filter($questiontext);
-            }
-
-            // Remove all HTML comments (typically from MS Office).
-            $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
-
-            // Remove <font> tags.
-            $questiontext = preg_replace("/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext);
-
-            // Remove <script> tags that are created by mathjax preview.
-            $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
-
-            // Remove all class info from paragraphs because TCPDF won't use CSS.
-            $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
-
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
-                                1, 300, $offlinequiz->disableimgnewlines);
-
-            $html = '';
-
-            $html .= $questiontext . '<br/><br/>';
+            
+            $html = offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
+            
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 // There is only a slot for multichoice questions.
@@ -694,34 +699,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             set_time_limit( 120 );
 
             // Either we print the question HTML.
-
-            $pdf->checkpoint();
-
-            $questiontext = $question->questiontext;
-
-            // Filter only for tex formulas.
-            if (! empty ( $texfilter )) {
-                $questiontext = $texfilter->filter ( $questiontext );
-            }
-
-            // Remove all HTML comments (typically from MS Office).
-            $questiontext = preg_replace ( "/<!--.*?--\s*>/ms", "", $questiontext );
-
-            // Remove <font> tags.
-            $questiontext = preg_replace ( "/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext );
-
-            // Remove <script> tags that are created by mathjax preview.
-            $questiontext = preg_replace ( "/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext );
-
-            // Remove all class info from paragraphs because TCPDF won't use CSS.
-            $questiontext = preg_replace ( '/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext );
-
-            $questiontext = $trans->fix_image_paths ( $questiontext, $question->contextid, 'questiontext', $question->id,
-                                  1, 300, $offlinequiz->disableimgnewlines );
-
-            $html = '';
-
-            $html .= $questiontext . '<br/><br/>';
+            offlinequiz_get_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
+            
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 $slot = $questionslots[$currentquestionid];
