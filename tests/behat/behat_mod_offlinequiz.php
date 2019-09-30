@@ -1,4 +1,4 @@
-<?php
+// <?php
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Step definitions for offlinequiz behat features.
@@ -30,9 +30,9 @@
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../../question/tests/behat/behat_question_base.php');
 
-use Behat\Behat\Context\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Mink\Exception\ExpectationException as ExpectationException;
+// use Behat\Behat\Context\Step\Given as Given,
+//     Behat\Gherkin\Node\TableNode as TableNode,
+//     Behat\Mink\Exception\ExpectationException as ExpectationException;
 
 /**
  * Steps definitions related to mod_offlinequiz.
