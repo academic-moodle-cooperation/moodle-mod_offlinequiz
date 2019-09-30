@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
+require(__DIR__ . '/report/statistics/statisticslib.php');
 
 
 /**

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -46,7 +45,7 @@ class offlinequiz_barcodewriter {
      * @param int $x
      * @param int $y
      */
-    static function print_barcode($pdf,$barcode,$x,$y) {
+    public static function print_barcode($pdf, $barcode, $x, $y) {
         // Print bar code for page.
         $value = substr('000000000000000000000000'.base_convert($barcode,  10,  2), -25);
         $pdf->Rect($x, $y, 0.2, 3.5, 'F');
@@ -102,6 +101,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
      * (non-PHPdoc)
      * @see TCPDF::Header()
      */
+    //codechecker_intentional
     public function Header() {
         $this->SetFont('FreeSans', 'I', 8);
         // Title.

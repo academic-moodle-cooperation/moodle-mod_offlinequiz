@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -27,10 +26,8 @@
  *
  *
  */
-use offlinequiz_result_download\html_download;
-
 defined('MOODLE_INTERNAL') || die();
-
+use offlinequiz_result_download\html_download;
 require_once($CFG->libdir . '/tablelib.php');
 require_once('results_table.php');
 require_once($CFG->libdir . '/gradelib.php');
