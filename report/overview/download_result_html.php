@@ -57,8 +57,8 @@ class html_download {
 	
 	
 	public function printhtml($userids = null) {
-		global $DB,$PAGE,$OUTPUT,$CFG;
-		if(!$userids) {
+		global $DB, $PAGE, $OUTPUT, $CFG;
+		if (!$userids) {
 			$sql = 'SELECT u.id FROM {user} u, {offlinequiz_results} r
                      WHERE r.offlinequizid = :offlinequizid
                        AND r.userid = u.id';
@@ -168,9 +168,10 @@ class html_download {
 	
 	private function get_result_ids($userids) {
 		global $DB;
-		if($userids) {
+		if ($userids) {
 			list($insql, $inparams) = $DB->get_in_or_equal($userids);
-			return $DB->get_fieldset_sql("SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND status='complete' AND userid IN $insql", [$this->offlinequiz->id, $inparams]);
+			return $DB->get_fieldset_sql("SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND status='complete' AND userid IN $insql", 
+			    [$this->offlinequiz->id, $inparams]);
 		}
 		return $DB->get_fieldset_sql("SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND status='complete'", [$this->offlinequiz->id]);
 	}

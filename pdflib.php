@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -36,6 +37,37 @@ require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/documentlib.php');
 
 define('LOGO_MAX_ASPECT_RATIO', 3.714285714);
+
+class offlinequiz_barcodewriter {
+    /**
+     * 
+     * @param pdf $pdf
+     * @param int $barcode
+     * @param int $x
+     * @param int $y
+     */
+    static function print_barcode($pdf,$barcode,$x,$y) {
+        // Print bar code for page.
+        $value = substr('000000000000000000000000'.base_convert($barcode,  10,  2), -25);
+        $pdf->Rect($x, $y, 0.2, 3.5, 'F');
+        $pdf->Rect($x, $y, 0.7, 0.2, 'F');
+        $pdf->Rect($x, $y + 3.5, 0.7, 0.2, 'F');
+        $x += 0.7;
+        for ($i = 0; $i < 25; $i++) {
+            if ($value[$i] == '1') {
+                $pdf->Rect($x, $y, 0.7, 3.5, 'F');
+                $pdf->Rect($x, $y, 1.2, 0.2, 'F');
+                $pdf->Rect($x, $y + 3.5, 1.2, 0.2, 'F');
+                $x += 1;
+            } else {
+                $pdf->Rect($x, $y, 0.2, 3.5, 'F');
+                $pdf->Rect($x, $y, 0.7, 0.2, 'F');
+                $pdf->Rect($x, $y + 3.5, 0.7, 0.2, 'F');
+                $x += 0.7;
+            }
+        }
+    }
+}
 
 class offlinequiz_pdf extends pdf
 {
@@ -255,29 +287,12 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
             $title = substr($title,  0,  strlen($title) - 1);
         }
         $this->Cell($width, 4, $title, 1, 0, 'C');
-
-        // Print bar code for page.
-        $this->Cell(5, 4, '', 0, 0, 'C');
-        $value = substr('000000000000000000000000'.base_convert($this->PageNo(),  10,  2), -25);
+        
         $y = $this->GetY();
         $x = $this->GetX();
-        $this->Rect($x, $y, 0.2, 3.5, 'F');
-        $this->Rect($x, $y, 0.7, 0.2, 'F');
-        $this->Rect($x, $y + 3.5, 0.7, 0.2, 'F');
-        $x += 0.7;
-        for ($i = 0; $i < 25; $i++) {
-            if ($value[$i] == '1') {
-                $this->Rect($x, $y, 0.7, 3.5, 'F');
-                $this->Rect($x, $y, 1.2, 0.2, 'F');
-                $this->Rect($x, $y + 3.5, 1.2, 0.2, 'F');
-                $x += 1;
-            } else {
-                $this->Rect($x, $y, 0.2, 3.5, 'F');
-                $this->Rect($x, $y, 0.7, 0.2, 'F');
-                $this->Rect($x, $y + 3.5, 0.7, 0.2, 'F');
-                $x += 0.7;
-            }
-        }
+        // Print bar code for page
+        offlinequiz_barcodewriter::print_barcode($this, $this->PageNo(), $x, $y);
+        
         $this->Rect($x, $y, 0.2, 3.7, 'F');
 
         // Page number.
@@ -363,26 +378,10 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf
                                              $this->getAliasNumPage().'/' . $this->getAliasNbPages() .
                                              ' ( '.$this->listno.' )'), 0, 0, 'C');
         // Print barcode for list.
-        $value = substr('000000000000000000000000'.base_convert($this->listno, 10, 2), -25);
         $y = $this->GetY() - 5;
         $x = 170;
-        $this->Rect($x, $y, 0.2, 3.5, 'F');
-        $this->Rect($x, $y, 0.7, 0.2, 'F');
-        $this->Rect($x, $y + 3.5, 0.7, 0.2, 'F');
-        $x += 0.7;
-        for ($i = 0; $i < 25; $i++) {
-            if ($value[$i] == '1') {
-                $this->Rect($x, $y, 0.7, 3.5, 'F');
-                $this->Rect($x, $y, 1.2, 0.2, 'F');
-                $this->Rect($x, $y + 3.5, 1.2, 0.2, 'F');
-                $x += 1;
-            } else {
-                $this->Rect($x, $y, 0.2, 3.5, 'F');
-                $this->Rect($x, $y, 0.7, 0.2, 'F');
-                $this->Rect($x, $y + 3.5, 0.7, 0.2, 'F');
-                $x += 0.7;
-            }
-        }
+        offlinequiz_barcodewriter::print_barcode($this, $this->PageNo(), $x, $y);
+
         $this->Rect($x, $y, 0.2, 3.7, 'F');
     }
 }
@@ -399,6 +398,39 @@ function number_in_style($num, $style) {
         return $number = chr(ord('a') + $num);
 }
 
+/**
+ * prints the question to the pdf
+ */
+function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz) {
+    $pdf->checkpoint();
+    
+    $questiontext = $question->questiontext;
+    
+    // Filter only for tex formulas.
+    if (!empty($texfilter)) {
+        $questiontext = $texfilter->filter($questiontext);
+    }
+    
+    // Remove all HTML comments (typically from MS Office).
+    $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
+    
+    // Remove <font> tags.
+    $questiontext = preg_replace("/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext);
+    
+    // Remove <script> tags that are created by mathjax preview.
+    $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
+    
+    // Remove all class info from paragraphs because TCPDF won't use CSS.
+    $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
+    
+    $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
+        1, 300, $offlinequiz->disableimgnewlines);
+    
+    $html = '';
+    
+    $html .= $questiontext . '<br/><br/>';
+    return $html;
+}
 
 /**
  * Generates the PDF question/correction form for an offlinequiz group.
@@ -556,37 +588,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             }
             set_time_limit(120);
             $question = $questions[$currentquestionid];
-
-            /*****************************************************/
-            /*  Either we print the question HTML */
-            /*****************************************************/
-            $pdf->checkpoint();
-
-            $questiontext = $question->questiontext;
-
-            // Filter only for tex formulas.
-            if (!empty($texfilter)) {
-                $questiontext = $texfilter->filter($questiontext);
-            }
-
-            // Remove all HTML comments (typically from MS Office).
-            $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
-
-            // Remove <font> tags.
-            $questiontext = preg_replace("/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext);
-
-            // Remove <script> tags that are created by mathjax preview.
-            $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
-
-            // Remove all class info from paragraphs because TCPDF won't use CSS.
-            $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
-
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
-                                1, 300, $offlinequiz->disableimgnewlines);
-
-            $html = '';
-
-            $html .= $questiontext . '<br/><br/>';
+            
+            $html = offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
+            
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 // There is only a slot for multichoice questions.
@@ -696,34 +700,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             set_time_limit( 120 );
 
             // Either we print the question HTML.
-
-            $pdf->checkpoint();
-
-            $questiontext = $question->questiontext;
-
-            // Filter only for tex formulas.
-            if (! empty ( $texfilter )) {
-                $questiontext = $texfilter->filter ( $questiontext );
-            }
-
-            // Remove all HTML comments (typically from MS Office).
-            $questiontext = preg_replace ( "/<!--.*?--\s*>/ms", "", $questiontext );
-
-            // Remove <font> tags.
-            $questiontext = preg_replace ( "/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext );
-
-            // Remove <script> tags that are created by mathjax preview.
-            $questiontext = preg_replace ( "/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext );
-
-            // Remove all class info from paragraphs because TCPDF won't use CSS.
-            $questiontext = preg_replace ( '/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext );
-
-            $questiontext = $trans->fix_image_paths ( $questiontext, $question->contextid, 'questiontext', $question->id,
-                                  1, 300, $offlinequiz->disableimgnewlines );
-
-            $html = '';
-
-            $html .= $questiontext . '<br/><br/>';
+            offlinequiz_get_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
+            
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 $slot = $questionslots[$currentquestionid];
@@ -1116,26 +1094,9 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
         $pdf->Cell(40, 3.5, $participant->firstname, 0, 0, 'L');
         $pdf->Cell(10, 3.5, '', 0, 1, 'R');
         // Print barcode.
-        $value = substr('000000000000000000000000'.base_convert($participant->id, 10, 2), -25);
         $y = $pdf->GetY() - 3.5;
         $x = 170;
-        $pdf->Rect($x, $y, 0.2, 3.5, 'F');
-        $pdf->Rect($x, $y, 0.7, 0.2, 'F');
-        $pdf->Rect($x, $y + 3.5, 0.7, 0.2, 'F');
-        $x += 0.7;
-        for ($i = 0; $i < 25; $i++) {
-            if ($value[$i] == '1') {
-                $pdf->Rect($x, $y, 0.7, 3.5, 'F');
-                $pdf->Rect($x, $y, 1.2, 0.2, 'F');
-                $pdf->Rect($x, $y + 3.5, 1.2, 0.2, 'F');
-                $x += 1.2;
-            } else {
-                $pdf->Rect($x, $y, 0.2, 3.5, 'F');
-                $pdf->Rect($x, $y, 0.7, 0.2, 'F');
-                $pdf->Rect($x, $y + 3.5, 0.7, 0.2, 'F');
-                $x += 0.7;
-            }
-        }
+        offlinequiz_barcodewriter::print_barcode($pdf, $participant->id, $x, $y);
         $pdf->Rect($x, $y, 0.2, 3.7, 'F');
         $pdf->Rect(15, ($pdf->GetY() + 1), 175, 0.2, 'F');
         if ($position % NUMBERS_PER_PAGE != 0) {

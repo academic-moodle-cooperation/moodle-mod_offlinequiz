@@ -102,33 +102,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         $columns[] = 'frequency';
         $headers[] = get_string('frequency', 'offlinequiz_statistics');
 
-        $columns[] = 's';
-        $headers[] = get_string('attempts', 'offlinequiz_statistics');
-
-        if ($s > 1) {
-            $columns[] = 'facility';
-            $headers[] = get_string('facility', 'offlinequiz_statistics');
-
-            $columns[] = 'sd';
-            $headers[] = get_string('standarddeviationq', 'offlinequiz_statistics');
-        }
-
-        $columns[] = 'intended_weight';
-        $headers[] = get_string('intended_weight', 'offlinequiz_statistics');
-
-        $columns[] = 'effective_weight';
-        $headers[] = get_string('effective_weight', 'offlinequiz_statistics');
-
-        $columns[] = 'discrimination_index';
-        $headers[] = get_string('discrimination_index', 'offlinequiz_statistics');
-
-        // Redmine 1302: New table columns s.t. the data can be exported.
-        $columns[] = 'correct';
-        $headers[] = get_string('correct', 'offlinequiz_statistics');
-        $columns[] = 'partially';
-        $headers[] = get_string('partially', 'offlinequiz_statistics');
-        $columns[] = 'wrong';
-        $headers[] = get_string('wrong', 'offlinequiz_statistics');
+        mod_offlinequiz_create_common_statistics_headers($headers, $columns);
 
         $this->define_columns($columns);
         $this->define_headers($headers);

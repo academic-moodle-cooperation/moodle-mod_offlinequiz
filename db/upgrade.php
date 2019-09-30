@@ -1402,7 +1402,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2018011601, 'offlinequiz');
     }
-    if($oldversion < 2018100300) {
+    if ($oldversion < 2018100300) {
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('algorithmversion', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'disableimgnewlines');
         if (!$dbman->field_exists($table, $field)) {
@@ -1411,7 +1411,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2018100300, 'offlinequiz');
     }
     
-    if($oldversion < 2018112700) {
+    if ($oldversion < 2018112700) {
         // Define index offlinequiz_userid_idx (not unique) to be added to offlinequiz_results.
         $table = new xmldb_table('offlinequiz_choices');
         $index1 = new xmldb_index('offlinequiz_choices_slotnumber_idx', XMLDB_INDEX_NOTUNIQUE, array('slotnumber'));
@@ -1444,7 +1444,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         
         upgrade_mod_savepoint(true, 2018112700, 'offlinequiz');
     }
-    if($oldversion < 2018121100) {
+    if ($oldversion < 2018121100) {
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('experimentalevaluation', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'algorithmversion');
     if (!$dbman->field_exists($table, $field)) {
@@ -1477,7 +1477,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     	// Offlinequiz savepoint reached.
     	upgrade_mod_savepoint(true, 2019050801, 'offlinequiz');
     }
-    if($oldversion < 2019051401) {
+    if ($oldversion < 2019051401) {
     	// Changing type of field info on table offlinequiz_scanned_pages to char.
     	$table = new xmldb_table('offlinequiz_scanned_pages');
     	$field = new xmldb_field('info', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'error');
