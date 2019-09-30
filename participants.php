@@ -25,13 +25,13 @@
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/pdflib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/participants/participants_listform.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/participants/participants_uploadform.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/participants/participants_report.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/participants/participants_scanner.php');
+require_once('locallib.php');
+require_once(__DIR__ . '/pdflib.php');
+require_once(__DIR__ . '/evallib.php');
+require_once(__DIR__ . '/participants/participants_listform.php');
+require_once(__DIR__ . '/participants/participants_uploadform.php');
+require_once(__DIR__ . '/participants/participants_report.php');
+require_once(__DIR__ . '/participants/participants_scanner.php');
 
 define("MAX_USERS_PER_PAGE", 5000);
 
@@ -42,30 +42,7 @@ $mode = optional_param('mode', 'editparticipants', PARAM_ALPHA);
 $action = optional_param('action', '', PARAM_ALPHA);
 $download = optional_param('download', false, PARAM_ALPHA);
 
-$letterstr = 'ABCDEFGHIJKL';
-
-if ($id) {
-    if (!$cm = get_coursemodule_from_id('offlinequiz', $id)) {
-        print_error("There is no coursemodule with id $id");
-    }
-    if (!$course = $DB->get_record("course", array('id' => $cm->course))) {
-        print_error("Course is misconfigured");
-    }
-    if (!$offlinequiz = $DB->get_record("offlinequiz", array('id' => $cm->instance))) {
-        print_error("The offlinequiz with id $cm->instance corresponding to this coursemodule $id is missing");
-    }
-
-} else {
-    if (!$offlinequiz = $DB->get_record("offlinequiz", array('id' => $q))) {
-        print_error("There is no offlinequiz with id $q");
-    }
-    if (!$course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
-        print_error("The course with id $offlinequiz->course that the offlinequiz with id $q belongs to is missing");
-    }
-    if (!$cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $course->id)) {
-        print_error("The course module for the offlinequiz with id $q is missing");
-    }
-}
+list($offlinequiz,$course,$cm) = get_course_objects($id,$q);
 
 require_login($course->id, false, $cm);
 
@@ -81,9 +58,6 @@ $systemcontext = context_system::instance();
 if (!has_capability('mod/offlinequiz:createofflinequiz', $context)) {
     redirect('view.php?q='.$offlinequiz->id);
 }
-
-$strpreview = get_string('participantslist', 'offlinequiz');
-$strofflinequizzes = get_string("modulenameplural", "offlinequiz");
 
 $thispageurl = new moodle_url('/mod/offlinequiz/participants.php',
                               array('id' => $id, 'q' => $q, 'mode' => $mode, 'forcenew' => $forcenew));
@@ -126,7 +100,6 @@ switch($mode) {
         if (!$download && $action != 'savelist') {
             echo $OUTPUT->header();
             // Print the tabs.
-            $currenttab = 'participants';
             include('tabs.php');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
         }
