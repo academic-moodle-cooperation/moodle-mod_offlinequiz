@@ -22,7 +22,7 @@ before_script:
   script:
     - moodle-plugin-ci phplint
 #    - moodle-plugin-ci phpdoc
-    - moodle-plugin-ci phpcpd
+#    - moodle-plugin-ci phpcpd
     - moodle-plugin-ci phpcbf
     - moodle-plugin-ci phpmd
     - moodle-plugin-ci codechecker
