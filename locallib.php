@@ -1870,7 +1870,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
  * @param unknown_type $systemcontext
  */
 function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontext, &$systemcontext) {
-    global $CFG, $DB, $COURSE;
+    global $CFG, $DB;
 
     offlinequiz_load_useridentification();
     $offlinequizconfig = get_config('offlinequiz');
@@ -1931,33 +1931,14 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
         // Sending HTTP headers.
         $workbook->send($filename);
         // Creating the first worksheet.
-        $sheettitle = get_string('participants', 'offlinequiz');
-        $myxls = $workbook->add_worksheet($sheettitle);
-        // Format types.
-        $format = $workbook->add_format();
-        $format->set_bold(0);
-        $formatbc = $workbook->add_format();
-        $formatbc->set_bold(1);
-        $formatbc->set_align('center');
-        $formatb = $workbook->add_format();
-        $formatb->set_bold(1);
-        $formaty = $workbook->add_format();
-        $formaty->set_bg_color('yellow');
-        $formatc = $workbook->add_format();
-        $formatc->set_align('center');
-        $formatr = $workbook->add_format();
-        $formatr->set_bold(1);
-        $formatr->set_color('red');
-        $formatr->set_align('center');
-        $formatg = $workbook->add_format();
-        $formatg->set_bold(1);
-        $formatg->set_color('green');
-        $formatg->set_align('center');
+        
+        require(__DIR__ . '/sheetlib.php');
+        list($myxls, $formats) = offlinequiz_sheetlib_initialize_headers($workbook);
 
         // Print worksheet headers.
         $colnum = 0;
         foreach ($tableheaders as $item) {
-            $myxls->write(0, $colnum, $item, $formatbc);
+            $myxls->write(0, $colnum, $item, $formats['formatbc']);
             $colnum++;
         }
         $rownum = 1;
@@ -1999,7 +1980,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
             if ($fileformat == 'Excel' or $fileformat == 'ODS') {
                 $colnum = 0;
                 foreach ($row as $item) {
-                    $myxls->write($rownum, $colnum, $item, $format);
+                    $myxls->write($rownum, $colnum, $item, $formats['format']);
                     $colnum++;
                 }
                 $rownum++;

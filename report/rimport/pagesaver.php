@@ -39,7 +39,7 @@ class offlinequiz_page_saver {
             $scannedpage = new \stdClass();
             $scannedpage->offlinequizid = $page->offlinequizid;
             // TODO
-            $filename = null;// $page->filename;
+            $filename = null;
             $scannedpage->status = 'ok';
             $scannedpage->time = time();
             $scannedpage->id = $DB->insert_record('offlinequiz_scanned_pages', $scannedpage);
@@ -97,7 +97,7 @@ class offlinequiz_page_saver {
 
 
     private function save_status($page) {
-        if($page->status) {
+        if ($page->status) {
 
             global $DB;
             $conditions = array('id' => $page->scannedpageid);
@@ -152,7 +152,7 @@ class offlinequiz_page_saver {
         $corners = $DB->get_records("offlinequiz_page_corners", $conditions);
         if ($corners) {
             foreach ($corners as $corner) {
-                $this->update_corner($page,$corner);
+                $this->update_corner($page, $corner);
             }
         } else {
             for ($i = 0; $i < 4; $i++) {

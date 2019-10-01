@@ -303,8 +303,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
     }
 }
 
-class offlinequiz_participants_pdf extends offlinequiz_pdf
-{
+class offlinequiz_participants_pdf extends offlinequiz_pdf {
     public $listno;
 
     /**
@@ -432,6 +431,78 @@ function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $o
     return $html;
 }
 
+function offlinequiz_get_answers_html($offlinequiz, $templateusage,
+    $slot, $slotquestion, $question, $texfilter, $trans, $correction) {
+    $html = '';
+    // There is only a slot for multichoice questions.
+    $attempt = $templateusage->get_question_attempt($slot);
+    $order = $slotquestion->get_order($attempt);  // Order of the answers.
+    
+    foreach ($order as $key => $answer) {
+        $answertext = $question->options->answers[$answer]->answer;
+        // Filter only for tex formulas.
+        if (!empty($texfilter)) {
+            $answertext = $texfilter->filter($answertext);
+        }
+        
+        // Remove all HTML comments (typically from MS Office).
+        $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
+        // Remove all paragraph tags because they mess up the layout.
+        $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
+        // Remove <script> tags that are created by mathjax preview.
+        $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
+        $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
+        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer,
+            1, 300, $offlinequiz->disableimgnewlines);
+        
+        if ($correction) {
+            if ($question->options->answers[$answer]->fraction > 0) {
+                $html .= '<b>';
+            }
+            
+            $answertext .= " (".round($question->options->answers[$answer]->fraction * 100)."%)";
+        }
+        
+        $html .= number_in_style($key, $question->options->answernumbering) . ') &nbsp; ';
+        $html .= $answertext;
+        
+        if ($correction) {
+            if ($question->options->answers[$answer]->fraction > 0) {
+                $html .= '</b>';
+            }
+        }
+        
+        $html .= "<br/>\n";
+    }
+    
+    $infostring = offlinequiz_get_question_infostring($offlinequiz, $question);
+    if ($infostring) {
+        $html .= '<br/>' . $infostring . '<br/>';
+    }
+    return $html;
+}
+
+function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html, $number) {
+
+    $pdf->writeHTMLCell(165,  round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
+    $pdf->Ln();
+    
+    if ($pdf->is_overflowing()) {
+        $pdf->backtrack();
+        $pdf->AddPage();
+        $pdf->Ln(14);
+        
+        // Print the question number and the HTML string again on the new page.
+        if ($questiontype == 'multichoice' || $questiontype == 'multichoiceset') {
+            $pdf->SetFont('FreeSans', 'B', $fontsize);
+            $pdf->Cell(4, round($fontsize / 2), "$number)  ", 0, 0, 'R');
+            $pdf->SetFont('FreeSans', '', $fontsize);
+        }
+        
+        $pdf->writeHTMLCell(165,  round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
+        $pdf->Ln();
+    }
+}
 /**
  * Generates the PDF question/correction form for an offlinequiz group.
  *
@@ -593,51 +664,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
-                // There is only a slot for multichoice questions.
-                $attempt = $templateusage->get_question_attempt($slot);
-                $order = $slotquestion->get_order($attempt);  // Order of the answers.
-
-                foreach ($order as $key => $answer) {
-                    $answertext = $question->options->answers[$answer]->answer;
-                    // Filter only for tex formulas.
-                    if (!empty($texfilter)) {
-                        $answertext = $texfilter->filter($answertext);
-                    }
-
-                    // Remove all HTML comments (typically from MS Office).
-                    $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
-                    // Remove all paragraph tags because they mess up the layout.
-                    $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
-                    // Remove <script> tags that are created by mathjax preview.
-                    $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
-                    $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer,
-                                      1, 300, $offlinequiz->disableimgnewlines);
-
-                    if ($correction) {
-                        if ($question->options->answers[$answer]->fraction > 0) {
-                            $html .= '<b>';
-                        }
-
-                        $answertext .= " (".round($question->options->answers[$answer]->fraction * 100)."%)";
-                    }
-
-                    $html .= number_in_style($key, $question->options->answernumbering) . ') &nbsp; ';
-                    $html .= $answertext;
-
-                    if ($correction) {
-                        if ($question->options->answers[$answer]->fraction > 0) {
-                            $html .= '</b>';
-                        }
-                    }
-
-                    $html .= "<br/>\n";
-                }
-
-                $infostring = offlinequiz_get_question_infostring($offlinequiz, $question);
-                if ($infostring) {
-                    $html .= '<br/>' . $infostring . '<br/>';
-                }
+                $html = $html . offlinequiz_get_answers_html($offlinequiz, $templateusage,
+                    $slot, $slotquestion, $question, $texfilter, $trans, $correction);
 
             }
             if ($offlinequiz->disableimgnewlines) {
@@ -652,24 +680,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $pdf->Cell(4, round($offlinequiz->fontsize / 2), "$number)  ", 0, 0, 'R');
                 $pdf->SetFont('FreeSans', '', $offlinequiz->fontsize);
             }
-            $pdf->writeHTMLCell(165,  round($offlinequiz->fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
-            $pdf->Ln();
-
-            if ($pdf->is_overflowing()) {
-                $pdf->backtrack();
-                $pdf->AddPage();
-                $pdf->Ln(14);
-
-                // Print the question number and the HTML string again on the new page.
-                if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                    $pdf->SetFont('FreeSans', 'B', $offlinequiz->fontsize);
-                    $pdf->Cell(4, round($offlinequiz->fontsize / 2), "$number)  ", 0, 0, 'R');
-                    $pdf->SetFont('FreeSans', '', $offlinequiz->fontsize);
-                }
-
-                $pdf->writeHTMLCell(165,  round($offlinequiz->fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
-                $pdf->Ln();
-            }
+            offlinequiz_write_question_to_pdf($pdf, $offlinequiz->fontsize, $question->qtype, $html, $number);
             $number += $questions[$currentquestionid]->length;
         }
     } else {
@@ -706,51 +717,8 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
                 $slot = $questionslots[$currentquestionid];
 
-                // There is only a slot for multichoice questions.
-                $slotquestion = $templateusage->get_question ( $slot );
-                $attempt = $templateusage->get_question_attempt ( $slot );
-                $order = $slotquestion->get_order ( $attempt ); // Order of the answers.
-
-                foreach ($order as $key => $answer) {
-                    $answertext = $question->options->answers[$answer]->answer;
-                    // Filter only for tex formulas.
-                    if (! empty ( $texfilter )) {
-                        $answertext = $texfilter->filter ( $answertext );
-                    }
-
-                    // Remove all HTML comments (typically from MS Office).
-                    $answertext = preg_replace ( "/<!--.*?--\s*>/ms", "", $answertext );
-                    // Remove all paragraph tags because they mess up the layout.
-                    $answertext = preg_replace ( "/<p[^>]*>/ms", "", $answertext );
-                    // Remove <script> tags that are created by mathjax preview.
-                    $answertext = preg_replace ( "/<script[^>]*>[^<]*<\/script>/ms", "", $answertext );
-                    $answertext = preg_replace ( "/<\/p[^>]*>/ms", "", $answertext );
-                    $answertext = $trans->fix_image_paths ( $answertext, $question->contextid, 'answer', $answer,
-                                      1, 300, $offlinequiz->disableimgnewlines );
-
-                    if ($correction) {
-                        if ($question->options->answers[$answer]->fraction > 0) {
-                            $html .= '<b>';
-                        }
-
-                        $answertext .= " (" . round ( $question->options->answers[$answer]->fraction * 100 ) . "%)";
-                    }
-
-                    $html .= number_in_style ( $key, $question->options->answernumbering ) . ') &nbsp; ';
-                    $html .= $answertext;
-
-                    if ($correction) {
-                        if ($question->options->answers[$answer]->fraction > 0) {
-                            $html .= '</b>';
-                        }
-                    }
-                    $html .= "<br/>\n";
-                }
-
-                $infostring = offlinequiz_get_question_infostring($offlinequiz, $question);
-                if ($infostring) {
-                    $html .= '<br/>' . $infostring . '<br/>';
-                }
+                $html = $html . offlinequiz_get_answers_html($offlinequiz, $templateusage,
+                    $slot, $slotquestion, $question, $texfilter, $trans, $correction);
             }
 
             // Finally print the question number and the HTML string.
@@ -767,23 +735,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $html = preg_replace("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
             }
 
-            $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $html );
-            $pdf->Ln ();
-            if ($pdf->is_overflowing ()) {
-                $pdf->backtrack ();
-                $pdf->AddPage ();
-                $pdf->Ln ( 14 );
-
-                // Print the question number and the HTML string again on the new page.
-                if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                    $pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
-                    $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
-                    $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
-                }
-
-                $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $html );
-                $pdf->Ln ();
-            }
+            offlinequiz_write_question_to_pdf($pdf, $offlinequiz->fontsize, $question->qtype, $html, $number);
             $number += $questions[$currentquestionid]->length;
         }
 
