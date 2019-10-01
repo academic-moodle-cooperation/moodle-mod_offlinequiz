@@ -44,23 +44,23 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         $download = optional_param('download', null, PARAM_TEXT);
         // Deal with actions.
         $action = optional_param('action', '', PARAM_ACTION);
-        
+
         // Set table options.
         $noresults = optional_param('noresults', 0, PARAM_INT);
         $pagesize = optional_param('pagesize', 10, PARAM_INT);
         $groupid = optional_param('group', 0, PARAM_INT);
-        
-        if ($download && $download == "html") {
-        	$selectedresultids = array();
-        	
-        	$offlinequizid = required_param('q', PARAM_INT);
 
-        	require_once('download_result_html.php');
-        	$download = new html_download($offlinequizid);
-        	$download->printhtml();
-        	return;
+        if ($download && $download == "html") {
+            $selectedresultids = array();
+
+            $offlinequizid = required_param('q', PARAM_INT);
+
+            require_once('download_result_html.php');
+            $download = new html_download($offlinequizid);
+            $download->printhtml();
+            return;
         }
-        
+
         // Define some strings.
         $strtimeformat = get_string('strftimedatetime');
         $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -68,10 +68,8 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         offlinequiz_load_useridentification();
         $offlinequizconfig = get_config('offlinequiz');
 
-
         $context = context_module::instance($cm->id);
         $systemcontext = context_system::instance();
-
 
         // Only print headers if not asked to download data or delete data.
         if (!$download && !$action == 'delete') {
@@ -686,7 +684,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     'CSV' => get_string('csvformat', 'offlinequiz'),
                     'CSVplus1' => get_string('csvplus1format', 'offlinequiz'),
                     'CSVpluspoints' => get_string('csvpluspointsformat', 'offlinequiz'),
-                	'html' => get_string('html', 'offlinequiz')
+                    'html' => get_string('html', 'offlinequiz')
                 );
                 print_string('downloadresultsas', 'offlinequiz');
                 echo "</td><td>";

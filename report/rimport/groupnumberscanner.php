@@ -24,22 +24,22 @@ define('BOX_A_CORNER_Y', 455);
 define('GROUP_BOXES', 6);
 class offlinequiz_groupnumberscanner {
 
-   private $boxscanner;
+    private $boxscanner;
 
-   public function __construct($boxscanner) {
-       $this->boxscanner = $boxscanner;
-   }
-	//Read the group number of the page.
+    public function __construct($boxscanner) {
+        $this->boxscanner = $boxscanner;
+    }
+    // Read the group number of the page.
     public function scan_group_number(offlinequiz_result_page $page) {
         global $DB;
-        //Find the guessed middles of all group question boxes.
+        // Find the guessed middles of all group question boxes.
         $points = $this->calculate_group_number_middles($page);
         $amountofcrosses = 0;
         $number = -1;
-        //Go through every box and find out if its crossed out.
+        // Go through every box and find out if its crossed out.
         for ($i = 0, $size = count($points); $i < $size; ++$i) {
             $boxresult = $this->boxscanner->scan_box($page,$points[$i],BOX_SIZE);
-            //If the result of the box is "crossed" or "uncertain" raise the number of crosses.
+            // If the result of the box is "crossed" or "uncertain" raise the number of crosses.
             if ($boxresult) {
                 $amountofcrosses++;
                 $number = $i;
@@ -64,7 +64,7 @@ class offlinequiz_groupnumberscanner {
         $grouppoints = array();
 
         for ($i = 0; $i < GROUP_BOXES; $i++) {
-            $boxmiddlepoint = new offlinequiz_point(BOX_A_CORNER_X+BOX_SIZE/2+BOX_DISTANCE_X * $i,BOX_A_CORNER_Y + BOX_SIZE / 2,2);
+            $boxmiddlepoint = new offlinequiz_point(BOX_A_CORNER_X + BOX_SIZE / 2 + BOX_DISTANCE_X * $i,BOX_A_CORNER_Y + BOX_SIZE / 2,2);
             $grouppoints[$i] = calculate_point_relative_to_corner($page,$boxmiddlepoint);
         }
         $page->expectedgroupnumberpositions = $grouppoints;

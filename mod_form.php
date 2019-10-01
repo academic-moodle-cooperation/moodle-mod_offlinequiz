@@ -114,7 +114,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('select', 'decimalpoints', get_string('decimalplaces', 'offlinequiz'), $options);
         $mform->addHelpButton('decimalpoints', 'decimalplaces', 'offlinequiz');
         $mform->setDefault('decimalpoints', $offlinequizconfig->decimalpoints);
-        $hasevalationrights=false;
+        $hasevalationrights = false;
         if ($offlinequiz) {
             $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
             $context = context_module::instance($cm->id);
@@ -184,20 +184,19 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'disableimgnewlines', get_string("disableimgnewlines", "offlinequiz"), $attribs);
         $mform->addHelpButton('disableimgnewlines', 'disableimgnewlines', 'offlinequiz');
         $mform->setDefault('disableimgnewlines', $offlinequizconfig->disableimgnewlines);
-        
+
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'reviewoptionshdr', get_string("reviewoptions", "offlinequiz"));
         $mform->addHelpButton('reviewoptionshdr', 'reviewoptions', 'offlinequiz');
 
-        
         // Timeopen and timeclose.
         $mform->addElement('date_time_selector', 'timeopen', get_string("reviewopens", "offlinequiz"),
-        		array('optional' => true, 'step' => 1));
+                array('optional' => true, 'step' => 1));
         $mform->addHelpButton('timeopen', 'quizopenclose', 'offlinequiz');
-        
+
         $mform->addElement('date_time_selector', 'timeclose', get_string("reviewcloses", "offlinequiz"),
-        		array('optional' => true, 'step' => 1));
-        
+                array('optional' => true, 'step' => 1));
+
         $closedoptionsgrp = array();
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'attemptclosed', '', get_string('theattempt', 'offlinequiz'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'correctnessclosed', '', get_string('whethercorrect', 'question'));
@@ -231,8 +230,8 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
         $language = current_language();
         if (is_dir($CFG->dirroot.'/mod/offlinequiz/pix/studentview/'.$language) === false) {
-        	// If current language not supported, fall back to english.
-        	$language = 'en';
+            // If current language not supported, fall back to english.
+            $language = 'en';
         }
 
         $mform->addElement('html', '<input id="showviewbutton" type="button" class="btn btn-secondary" value="'.

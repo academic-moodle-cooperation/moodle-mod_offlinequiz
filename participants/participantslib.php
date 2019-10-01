@@ -17,7 +17,7 @@
 /**
  * Internal library of functions for participants_corner
  *
- * 
+ *
  *
  * @package       mod
  * @subpackage    offlinequiz
@@ -29,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 /**
- * 
+ *
  * @author Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
  *
  */
@@ -38,7 +38,7 @@ class mod_offlinequiz_corners {
     private $_upperright;
     private $_lowerleft;
     private $_lowerright;
-    
+
     public function __construct($upperleft, $upperright, $lowerleft, $lowerright) {
         $this->_upperleft = $upperleft;
         $this->_upperright = $upperright;
@@ -46,7 +46,7 @@ class mod_offlinequiz_corners {
         $this->_lowerright = $lowerright;
     }
     /**
-     * 
+     *
      * @param string $cornerid id of the form uly (upperleft y value)
      */
     public function get_corner_value($cornerid) {
