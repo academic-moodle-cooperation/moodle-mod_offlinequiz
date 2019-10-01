@@ -22,7 +22,7 @@ define("BLACK_DOTS_CHANGE_LIMIT", 0.85);
 define("CROSS_FOUND_LOWER_LIMIT", 0.04);
 define("CROSS_FOUND_REASK_MARGIN", 0.03);
 define("CROSS_FOUND_UPPER_LIMIT",  0.50);
-define("WEIGHTEDVALUE_LOWER_LIMIT",0.8);
+define("WEIGHTEDVALUE_LOWER_LIMIT", 0.8);
 define("WEIGHTEDVALUE_UPPER_LIMIT", 0.9);
 define("NORMAL_DISTRIBUTION_VARIANCE", 0.1);
 class pixelcountboxscanner {
@@ -38,24 +38,25 @@ class pixelcountboxscanner {
      * @param integer $marginedboxsize the size of the box in pixels from left to right and from top to bottom
      * @return number 0, if not crossed out, 1 if crossed out. -1 if uncertain
      */
-    public function scan_box(offlinequiz_result_page $page,offlinequiz_point $boxmiddlepoint,$boxsize) {
-        // first we find out, where the upper left of the box SHOULD be (plus some margin to be sure we hit the whole box)
+    public function scan_box(offlinequiz_result_page $page, offlinequiz_point $boxmiddlepoint, $boxsize) {
+        // First we find out, where the upper left of the box SHOULD be (plus some margin to be sure we hit the whole box).
         $marginedboxsize = $boxsize + BOX_MARGIN;
         $middletoupperleft = new offlinequiz_point(round(-$marginedboxsize / 2), round(-$marginedboxsize / 2), 2);
-        $boxupperleft = add_with_adjustment($page,$boxmiddlepoint,$middletoupperleft);
-        // get the cropped Image of the box
+        $boxupperleft = add_with_adjustment($page, $boxmiddlepoint, $middletoupperleft);
+        // Get the cropped Image of the box.
         $zoomfactorx = $page->scanproperties->zoomfactorx;
         $zoomfactory = $page->scanproperties->zoomfactory;
         $boximage = clone $page->image;
-        $boximage->cropimage(round($marginedboxsize * $zoomfactorx),round($marginedboxsize * $zoomfactory),$boxupperleft->getx(),$boxupperleft->gety());
+        $boximage->cropimage(round($marginedboxsize * $zoomfactorx), round($marginedboxsize * $zoomfactory),
+            $boxupperleft->getx(),$boxupperleft->gety());
 
-        // find out how many black points we have in the image
+        // Find out how many black points we have in the image.
         $blackpoints = $this->get_image_black_value($boximage);
 
         self::$count++;
         $maxpoints = ($marginedboxsize * $zoomfactory) * ($marginedboxsize * $zoomfactorx);
 
-        // Depending on how many black pixels we have in comparison to all pixels, decide if it is crossed out or not
+        // Depending on how many black pixels we have in comparison to all pixels, decide if it is crossed out or not.
         if ($blackpoints < $maxpoints * (CROSS_FOUND_LOWER_LIMIT - CROSS_FOUND_REASK_MARGIN)) {
             print("box empty \n");
             return 0;
@@ -98,40 +99,33 @@ class weighted_diagonal_box_scanner{
      * @param integer $marginedboxsize the size of the box in pixels from left to right and from top to bottom
      * @return number 0, if not crossed out, 1 if crossed out. -1 if uncertain
      */
-    public function scan_box(offlinequiz_result_page $page,offlinequiz_point $boxmiddlepoint,$boxsize) {
+    public function scan_box(offlinequiz_result_page $page, offlinequiz_point $boxmiddlepoint, $boxsize) {
         self::$count++;
         // First we find out, where the upper left of the box SHOULD be (plus some margin to be sure we hit the whole box).
         $marginedboxsize = $boxsize + BOX_MARGIN;
         $middletoupperleft = new offlinequiz_point(-$marginedboxsize / 2, -$marginedboxsize / 2, 2);
-        $boxupperleft = add_with_adjustment($page,$boxmiddlepoint,$middletoupperleft);
-        // print_object($boxupperleft);
+        $boxupperleft = add_with_adjustment($page, $boxmiddlepoint, $middletoupperleft);
 
         // Get the cropped Image of the box.
         $zoomfactorx = $page->scanproperties->zoomfactorx;
         $zoomfactory = $page->scanproperties->zoomfactory;
         $boximage = clone $page->image;
-        $boximage->cropimage(round($marginedboxsize * $zoomfactorx), round($marginedboxsize * $zoomfactory), $boxupperleft->getx(), $boxupperleft->gety());
+        $boximage->cropimage(round($marginedboxsize * $zoomfactorx), round($marginedboxsize * $zoomfactory),
+            $boxupperleft->getx(), $boxupperleft->gety());
         $blackdotsbefore = $this->get_image_black_value($boximage);
 
-        $boximage->writeImage("/tmp/boxtest" . self::$count . ".tif");
         $this->remove_edges($boximage);
         // Find out how many black dots we have in the image.
         $blackdots = $this->get_image_black_value($boximage);
         $maxdots = pow($marginedboxsize * $zoomfactory,2);
-        // Depending on how many black pixels we have in comparison to all pixels, decide if it is crossed out or not
+        // Depending on how many black pixels we have in comparison to all pixels, decide if it is crossed out or not.
         if ($blackdotsbefore > $maxdots * CROSS_FOUND_UPPER_LIMIT){
-            print("box filled " . $blackdotsbefore / $maxdots .  " \n");
-            $boximage->writeImage("/tmp/boxtest_filled" . self::$count . ".tif");
             return 0;
         }
         if ($blackdotsbefore * (1 - BLACK_DOTS_CHANGE_LIMIT) > $blackdots) {
-            print("box empty because too many changes " . $blackdotsbefore / $blackdots . "\n");
-            $boximage->writeImage("/tmp/boxtest_empty_change" . self::$count . ".tif");
             return 0;
         }
         if ($blackdots < $maxdots * CROSS_FOUND_LOWER_LIMIT) {
-            print("box empty " . $blackdots / $maxdots . "\n");
-            $boximage->writeImage("/tmp/boxtest_empty" . self::$count . ".tif");
             return 0;
         }
 
@@ -140,13 +134,10 @@ class weighted_diagonal_box_scanner{
 
         $boxdiagvalue = $boxdiagupvalue + $boxdiagdownvalue;
         if ($boxdiagvalue < WEIGHTEDVALUE_LOWER_LIMIT) {
-            $boximage->writeImage("/tmp/boxtest_empty_lw" . self::$count . ".tif");
             return 0;
         } else if ($boxdiagvalue > WEIGHTEDVALUE_UPPER_LIMIT) {
-            $boximage->writeImage("/tmp/boxtest_crossed" . self::$count . ".tif");
             return 1;
         } else {
-            $boximage->writeImage("/tmp/boxtest_uncertain" . self::$count . ".tif");
             return -1;
         }
 
@@ -234,7 +225,7 @@ class weighted_diagonal_box_scanner{
         for ($i = 0; $i < $geometry["width"]; $i++) {
             for ($j = 0; $j < $geometry["height"]; $j++) {
                 if (pixelisblack($image, $i, $j)) {
-                    $totaldiagblackvalue += $this->get_diag_down_value($i,$j,$geometry["width"],$geometry["height"]);
+                    $totaldiagblackvalue += $this->get_diag_down_value($i, $j, $geometry["width"], $geometry["height"]);
                 }
             }
         }
@@ -242,23 +233,23 @@ class weighted_diagonal_box_scanner{
     }
 
     private function get_diag_up_value($i, $j, $width, $height) {
-        $distance = $this->get_diag_up_distance($i,$j,$width,$height);
+        $distance = $this->get_diag_up_distance($i, $j, $width, $height);
         return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI) * pow(M_E,(-1 / 2) * pow($distance / NORMAL_DISTRIBUTION_VARIANCE,2));
     }
 
     private function get_diag_down_value($i, $j, $width, $height) {
-        $distance = $this->get_diag_down_distance($i,$j,$width,$height);
-        // normal distribution
+        $distance = $this->get_diag_down_distance($i, $j, $width, $height);
+        // Normal distribution.
         return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI) * pow(M_E, (-1 / 2) * pow($distance / NORMAL_DISTRIBUTION_VARIANCE,2));
     }
 
     private function get_diag_up_distance($i, $j, $width, $height) {
-        // the linear functions for the cross, the shift is 0 for downwards, $height for upwards
+        // The linear functions for the cross, the shift is 0 for downwards, $height for upwards.
         $gradiantupwardsdiag = -$height / $width;
-        // the orthogonal lines of these equations
+        // The orthogonal lines of these equations.
         $orthogonalupwards = -1 / $gradiantupwardsdiag;
                 $shiftupwards = $j - $i * $orthogonalupwards;
-        // some fancy linear equations here: find out the meeting points from the two lines with their orthogonals
+        // Some fancy linear equations here: find out the meeting points from the two lines with their orthogonals.
 
         $meetingpointupwardsx = ($shiftupwards - $height) / ($gradiantupwardsdiag - $orthogonalupwards);
         $meetingpointupwardsy = $orthogonalupwards * $meetingpointupwardsx + $shiftupwards;
@@ -268,16 +259,16 @@ class weighted_diagonal_box_scanner{
         return $distanceupwards / sqrt($width * $height);
     }
     private function get_diag_down_distance($i, $j, $width, $height) {
-        // the linear functions for the cross, the shift is 0 for downwards, $height for upwards
+        // The linear functions for the cross, the shift is 0 for downwards, $height for upwards.
         $gradiantdiag = $height / $width;
-        // the orthogonal lines of these equations
+        // The orthogonal lines of these equations.
         $orthogonal = -1 / $gradiantdiag;
                 $shiftdownwards = $j - $i * $orthogonal;
-        // some fancy linear equations here: find out the meeting points from the two lines with their orthogonals
+        // Some fancy linear equations here: find out the meeting points from the two lines with their orthogonals.
         $meetingpointx = $shiftdownwards / ($gradiantdiag - $orthogonal);
         $meetingpointy = $orthogonal * $meetingpointx + $shiftdownwards;
 
-        $distancedownwards = (new offlinequiz_point($meetingpointx - $i,$meetingpointy - $j,0))->getdistance();
+        $distancedownwards = (new offlinequiz_point($meetingpointx - $i, $meetingpointy - $j,0))->getdistance();
 
         return $distancedownwards / sqrt($width * $height);
     }

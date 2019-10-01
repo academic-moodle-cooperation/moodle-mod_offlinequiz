@@ -38,7 +38,7 @@ class offlinequiz_groupnumberscanner {
         $number = -1;
         // Go through every box and find out if its crossed out.
         for ($i = 0, $size = count($points); $i < $size; ++$i) {
-            $boxresult = $this->boxscanner->scan_box($page,$points[$i],BOX_SIZE);
+            $boxresult = $this->boxscanner->scan_box($page, $points[$i], BOX_SIZE);
             // If the result of the box is "crossed" or "uncertain" raise the number of crosses.
             if ($boxresult) {
                 $amountofcrosses++;
@@ -64,8 +64,9 @@ class offlinequiz_groupnumberscanner {
         $grouppoints = array();
 
         for ($i = 0; $i < GROUP_BOXES; $i++) {
-            $boxmiddlepoint = new offlinequiz_point(BOX_A_CORNER_X + BOX_SIZE / 2 + BOX_DISTANCE_X * $i,BOX_A_CORNER_Y + BOX_SIZE / 2,2);
-            $grouppoints[$i] = calculate_point_relative_to_corner($page,$boxmiddlepoint);
+            $boxmiddlepoint = new offlinequiz_point(BOX_A_CORNER_X + BOX_SIZE / 2 + BOX_DISTANCE_X * $i,
+                BOX_A_CORNER_Y + BOX_SIZE / 2, 2);
+            $grouppoints[$i] = calculate_point_relative_to_corner($page, $boxmiddlepoint);
         }
         $page->expectedgroupnumberpositions = $grouppoints;
         return $grouppoints;

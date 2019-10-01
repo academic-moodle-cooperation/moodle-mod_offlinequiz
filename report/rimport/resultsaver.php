@@ -80,7 +80,7 @@ class offlinequiz_resultsaver {
                 WHERE  scannedpageid" . $scannedpagesql;
 
         $resultid = self::get_result_id($scannedpages);
-        if ($resultid){
+        if ($resultid) {
             $result = $DB->get_record('offlinequiz_results', ['id' => $resultid]);
             $quba = question_engine::load_questions_usage_by_activity($result->usageid);
         } else {
