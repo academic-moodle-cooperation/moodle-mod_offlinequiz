@@ -482,6 +482,27 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
     return $html;
 }
 
+function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html, $number) {
+
+    $pdf->writeHTMLCell(165,  round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
+    $pdf->Ln();
+    
+    if ($pdf->is_overflowing()) {
+        $pdf->backtrack();
+        $pdf->AddPage();
+        $pdf->Ln(14);
+        
+        // Print the question number and the HTML string again on the new page.
+        if ($questiontype == 'multichoice' || $questiontype == 'multichoiceset') {
+            $pdf->SetFont('FreeSans', 'B', $fontsize);
+            $pdf->Cell(4, round($fontsize / 2), "$number)  ", 0, 0, 'R');
+            $pdf->SetFont('FreeSans', '', $fontsize);
+        }
+        
+        $pdf->writeHTMLCell(165,  round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
+        $pdf->Ln();
+    }
+}
 /**
  * Generates the PDF question/correction form for an offlinequiz group.
  *
@@ -659,24 +680,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $pdf->Cell(4, round($offlinequiz->fontsize / 2), "$number)  ", 0, 0, 'R');
                 $pdf->SetFont('FreeSans', '', $offlinequiz->fontsize);
             }
-            $pdf->writeHTMLCell(165,  round($offlinequiz->fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
-            $pdf->Ln();
-
-            if ($pdf->is_overflowing()) {
-                $pdf->backtrack();
-                $pdf->AddPage();
-                $pdf->Ln(14);
-
-                // Print the question number and the HTML string again on the new page.
-                if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                    $pdf->SetFont('FreeSans', 'B', $offlinequiz->fontsize);
-                    $pdf->Cell(4, round($offlinequiz->fontsize / 2), "$number)  ", 0, 0, 'R');
-                    $pdf->SetFont('FreeSans', '', $offlinequiz->fontsize);
-                }
-
-                $pdf->writeHTMLCell(165,  round($offlinequiz->fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
-                $pdf->Ln();
-            }
+            offlinequiz_write_question_to_pdf($pdf, $offlinequiz->fontsize, $question->qtype, $html, $number);
             $number += $questions[$currentquestionid]->length;
         }
     } else {
@@ -731,23 +735,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $html = preg_replace("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
             }
 
-            $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $html );
-            $pdf->Ln ();
-            if ($pdf->is_overflowing ()) {
-                $pdf->backtrack ();
-                $pdf->AddPage ();
-                $pdf->Ln ( 14 );
-
-                // Print the question number and the HTML string again on the new page.
-                if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                    $pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
-                    $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
-                    $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
-                }
-
-                $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $html );
-                $pdf->Ln ();
-            }
+            offlinequiz_write_question_to_pdf($pdf, $offlinequiz->fontsize, $question->qtype, $html, $number);
             $number += $questions[$currentquestionid]->length;
         }
 
