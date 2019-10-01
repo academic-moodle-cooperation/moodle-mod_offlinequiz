@@ -34,7 +34,7 @@ class provider implements
 
 // This plugin currently implements the original plugin\provider interface.
 \core_privacy\local\request\plugin\provider,
-// This plugin implements the userlist-provider
+// This plugin implements the userlist-provider.    
 \core_privacy\local\request\core_userlist_provider
 {
     public static function get_metadata(collection $collection) : collection {
@@ -273,7 +273,7 @@ class provider implements
             UNION ALL
                 SELECT sp.offlinequizid id
                 FROM {offlinequiz_scanned_pages} sp";
-        if($type == "int") {
+        if ($type == "int") {
             $sql  .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = " . $DB->sql_cast_char2int(sp.userkey);
         } else {
             $sql.= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey";
@@ -331,10 +331,9 @@ class provider implements
             UNION ALL
                 SELECT sp.offlinequizid id
                 FROM {offlinequiz_scanned_pages} sp";
-        if($type == "int") {
+        if ($type == "int") {
             $sql  .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = " . $DB->sql_cast_char2int(sp.userkey);
-        }
-        else {
+        } else {
             $sql.= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey";
         }
                $sql.=" WHERE u.id = :scannedpageuserid)
@@ -364,17 +363,18 @@ class provider implements
      $sql = "(SELECT userid FROM {offlinequiz_participants} p,
                         {offlinequiz_p_lists} l
                   WHERE l.offlinequizid = :offlinequizid1
-                    AND l.id = p.listid 
+                    AND l.id = p.listid
       ) UNION (
       SELECT c.userid FROM {offlinequiz_p_choices} c,
                            {offlinequiz_scanned_pages} p
                      WHERE p.id = c.scannedppageid 
                        AND p.offlinequizid = :offlinequizid2
       ) UNION (
-      SELECT q.importuserid FROM {offlinequiz_queue} q 
+      SELECT q.importuserid FROM {offlinequiz_queue} q
                            WHERE q.offlinequizid = :offlinequizid3
       )";
-     $userlist->add_from_sql('userid', $sql, ['offlinequizid1' => $context->offlinequizid, 'offlinequizid2' => $context->offlinequizid, 'offlinequizid3' => $context->offlinequizid]);
+     $userlist->add_from_sql('userid', $sql, ['offlinequizid1' => $context->offlinequizid,
+         'offlinequizid2' => $context->offlinequizid, 'offlinequizid3' => $context->offlinequizid]);
       }
     }
     
@@ -400,7 +400,7 @@ class provider implements
                           JOIN {course_modules} cm ON cm.id = c.instanceid
                           JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70
                          WHERE c.id  = :contextid";
-    $listids = $DB->get_records_sql($sql,['contextid' => $context->id]);
+    $listids = $DB->get_records_sql($sql, ['contextid' => $context->id]);
     
     list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
     if (empty($pages)) {

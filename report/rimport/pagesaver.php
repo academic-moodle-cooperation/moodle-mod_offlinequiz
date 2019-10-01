@@ -27,6 +27,7 @@
  */
 namespace offlinequiz_result_import;
 
+defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 
 class offlinequiz_page_saver {

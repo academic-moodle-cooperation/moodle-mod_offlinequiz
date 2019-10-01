@@ -27,7 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 class offlinequiz_html_translator
 {
     private $tempfiles = array();
@@ -226,14 +225,9 @@ class offlinequiz_html_translator
                         if ($filearea == 'answer' and $disableimgnewlines == 0) {
                             $output .= '<br/>';
                         }
-//                         if($format == "pdf") {
-//                             $output .= '<img src="' . $file . '" align="middle" width="' . $width . '" height="' .
-//                             $height .'"/>';
-//                         } else {
                         // Finally, add the image tag for tcpdf.
                             $output .= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' .
                                 $height .'"/>';
-//                         }
                     }
                 } else {
 

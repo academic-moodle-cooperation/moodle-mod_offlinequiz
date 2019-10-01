@@ -144,7 +144,7 @@ function offlinequiz_make_questions_usage_by_activity($component, $context) {
     return new offlinequiz_question_usage_by_activity($component, $context);
 }
 
-function get_course_objects($id,$q) {
+function get_course_objects($id, $q) {
     global $DB;
     if ($id) {
         if (!$cm = get_coursemodule_from_id('offlinequiz', $id)) {

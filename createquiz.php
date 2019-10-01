@@ -40,7 +40,7 @@ $downloadall = optional_param('downloadall' , false, PARAM_BOOL);
 
 $letterstr = 'ABCDEFGHIJKL';
 
-list($offlinequiz, $course, $cm) = get_course_objects($id,$q);
+list($offlinequiz, $course, $cm) = get_course_objects($id, $q);
 
 $offlinequiz->optionflags = 0;
 

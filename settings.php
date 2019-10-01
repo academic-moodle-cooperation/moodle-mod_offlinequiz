@@ -139,6 +139,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('offlinequiz/keepfilesfordays', get_string('keepfilesfordays', 'offlinequiz'),
              get_string('configkeepfilesfordays', 'offlinequiz'), 8, PARAM_INT));
-    $settings->add(new admin_setting_configcheckbox('offlinequiz/experimentalevaluation', get_string('configexperimentalevaluation','offlinequiz'),
-            get_string('configexperimentalevaluationdesc','offlinequiz'), 0));
+    $settings->add(new admin_setting_configcheckbox('offlinequiz/experimentalevaluation', 
+            get_string('configexperimentalevaluation', 'offlinequiz'),
+            get_string('configexperimentalevaluationdesc', 'offlinequiz'), 0));
 }

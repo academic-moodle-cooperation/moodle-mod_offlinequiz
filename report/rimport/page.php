@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace offlinequiz_result_import;
 
+defined('MOODLE_INTERNAL') || die();
 define('PAGE_STATUS_OK', 'ok');
 define('PAGE_STATUS_ALIGNMENT_ERROR','notadjusted');
 define('PAGE_STATUS_GROUP_ERROR','grouperror');

@@ -45,7 +45,8 @@ class html_download {
 		}
 		$this->offlinequiz = $offlinequiz;#
 		if (!$course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
-			print_error("The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
+			print_error(
+			    "The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
 		}
 		$this->course = $course;
 		if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
@@ -170,9 +171,10 @@ class html_download {
 		global $DB;
 		if ($userids) {
 			list($insql, $inparams) = $DB->get_in_or_equal($userids);
-			return $DB->get_fieldset_sql("SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND status='complete' AND userid IN $insql", 
-			    [$this->offlinequiz->id, $inparams]);
+			$sql = "SELECT id FROM {offlinequiz_results}WHERE offlinequizid = ? AND status='complete' AND userid IN $insql";
+			return $DB->get_fieldset_sql($sql, [$this->offlinequiz->id, $inparams]);
 		}
-		return $DB->get_fieldset_sql("SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND status='complete'", [$this->offlinequiz->id]);
+		return $DB->get_fieldset_sql("SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND status='complete'", 
+		    [$this->offlinequiz->id]);
 	}
 }

@@ -17,8 +17,8 @@ namespace offlinequiz_result_import;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/positionslib.php');
+require_once(__DIR__ .  '/report/rimport/page.php');
+require_once(__DIR__ . '/report/rimport/positionslib.php');
 //horizontal distance between the upper left corner and the beginning of the page number box
 define('PAGE_NUMBER_DISTANCE_X', 1570);
 //vertical distance between the upper left corner and the beginning of the page number box

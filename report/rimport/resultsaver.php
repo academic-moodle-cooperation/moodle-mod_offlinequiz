@@ -48,7 +48,7 @@ class offlinequiz_resultsaver {
                 AND   p1.userkey = p2.userkey
                 AND   (p1.status = 'ok' OR p1.status = 'submitted') ";
         $scannedpages = $DB->get_records_sql($sql, array('scannedpageid' =>  $scannedpageid));
-        //TODO check, ob Seite mit gleicher Seitenzahl und userkey + andere scannedpageid existiert
+        //TODO check, if page with same page and userky, but other scannedpageid exists
 
         if (!$scannedpages || !$scannedpages[$scannedpageid]) {
          throw new \coding_exception('A scannedpage can not be updated if it has errors');
@@ -60,14 +60,14 @@ class offlinequiz_resultsaver {
         if ($this->result_with_same_)
         $groupnumber=0;
         foreach ($scannedpages as $scannedpage) {
-            if(!$groupnumber) {
+            if (!$groupnumber) {
                 $groupnumber = $scannedpage->groupnumber;
             } elseif ($groupnumber != $scannedpage->groupnumber) {
                 self::save_page_status($scannedpageid, RESULT_STATUS_ERROR, RESULT_STATUS_RESULT_ALREADY_EXISTS_FOR_OTHER_GRUOP);
             }
             
         }
-        //TODO was ist bei unterschiedlichen Gruppen? -> Ergebnis existiert bereits
+        //TODO what happens with differend group versions?
         $scannedpage = $scannedpages[$scannedpageid];
         
 
@@ -77,13 +77,13 @@ class offlinequiz_resultsaver {
                 
         $scannedpageids = array_keys($scannedpages);
         list($scannedpagesql, $params) = $DB->get_in_or_equal($scannedpageids, SQL_PARAMS_QM, 'pages');
-        $sql = "SELECT * FROM {offlinequiz_choices} choice 
+        $sql = "SELECT * FROM {offlinequiz_choices} choice
                 WHERE  scannedpageid" . $scannedpagesql;
         $choices = $DB->get_records_sql($sql, $params);
         
 
         $resultid = self::get_result_id($scannedpages);
-        if ($resultid) {
+        if ($resultid){
             $result = $DB->get_record('offlinequiz_results', ['id'=> $resultid]);
             $quba = question_engine::load_questions_usage_by_activity($result->usageid);
         } else {
@@ -104,12 +104,7 @@ class offlinequiz_resultsaver {
             $this->submit_scanned_page_to_result($quba, $scannedpage);
         }
         question_engine::save_questions_usage_by_activity($quba);
-        
-
-        
-
-        
-        
+                
     }
     
     private function get_result_exists_errors($scannedpageid) {
@@ -249,7 +244,7 @@ class offlinequiz_resultsaver {
     
     private static function get_result_id($scannedpages) {
         foreach ($scannedpages as $currentpage) {
-            if(!empty($currentpage->resultid)) {
+            if (!empty($currentpage->resultid)) {
                 return $currentpage->resultid;
             }
         }

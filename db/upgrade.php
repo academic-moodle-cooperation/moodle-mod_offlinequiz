@@ -1404,7 +1404,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
     if ($oldversion < 2018100300) {
         $table = new xmldb_table('offlinequiz');
-        $field = new xmldb_field('algorithmversion', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'disableimgnewlines');
+        $field = new xmldb_field('algorithmversion', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL,
+            null, '0', 'disableimgnewlines');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -1446,7 +1447,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
     if ($oldversion < 2018121100) {
         $table = new xmldb_table('offlinequiz');
-        $field = new xmldb_field('experimentalevaluation', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'algorithmversion');
+        $field = new xmldb_field('experimentalevaluation', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null,
+            '0', 'algorithmversion');
     if (!$dbman->field_exists($table, $field)) {
         $dbman->add_field($table, $field);
     }

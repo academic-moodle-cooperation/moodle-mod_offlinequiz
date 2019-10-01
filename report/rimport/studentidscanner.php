@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace offlinequiz_result_import;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 
 define('STUDENT_BOX_SIZE','35');
