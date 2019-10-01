@@ -108,7 +108,7 @@ class offlinequiz_html_translator
                             print_error("Could not create data directory");
                         }
                         $imagefile->copy_content_to($file);
-                        
+
                         $pluginfile = true;
                     } else {
                         $output .= 'Image file not found ' . $pathparts['dirname'] . '/' . $pathparts['basename'];
@@ -246,7 +246,7 @@ class offlinequiz_html_translator
             }
             $output .= substr($string, strpos($string, '>') + 1);
         }
-        
+
         return $output;
     }
 

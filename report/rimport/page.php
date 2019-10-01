@@ -47,7 +47,7 @@ class offlinequiz_result_page {
     public function __construct($imagick, $offlinequizid) {
         $imagick->quantizeimage(2, \Imagick::COLORSPACE_GRAY, 0, false, false);
         $this->image = $imagick;
-        $this->offlinequizid=$offlinequizid;
+        $this->offlinequizid = $offlinequizid;
     }
 
 }

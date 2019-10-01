@@ -85,17 +85,17 @@ define('K_TCPDF_EXTERNAL_CONFIG', 1);
  */
 function tcpdf_init_k_font_path() {
     global $CFG;
-    
+
     $defaultfonts = $CFG->dirroot.'/mod/offlinequiz/lib/tcpdf/fonts/';
-    
+
     if (!defined('K_PATH_FONTS')) {
         if (is_dir(PDF_CUSTOM_FONT_PATH)) {
             // NOTE:
-            //   There used to be an option to have just one file and having it set as default
-            //   but that does not make sense any more because add-ons using standard fonts
-            //   would fail very badly, also font families consist of multiple php files for
-            //   regular, bold, italic, etc.
-            
+            // There used to be an option to have just one file and having it set as default
+            // but that does not make sense any more because add-ons using standard fonts
+            // would fail very badly, also font families consist of multiple php files for
+            // regular, bold, italic, etc.
+
             // Check for some standard font files if present and if not do not use the custom path.
             $somestandardfiles = array('courier',  'helvetica', 'times', 'symbol', 'zapfdingbats', 'freeserif', 'freesans');
             $missing = false;
@@ -114,7 +114,7 @@ function tcpdf_init_k_font_path() {
             define('K_PATH_FONTS', $defaultfonts);
         }
     }
-    
+
     if (!defined('PDF_FONT_NAME_MAIN')) {
         define('PDF_FONT_NAME_MAIN', strtolower(PDF_DEFAULT_FONT));
     }
@@ -140,7 +140,7 @@ define('K_BLANK_IMAGE', K_PATH_IMAGES . 'pix/spacer.gif');
 define('K_CELL_HEIGHT_RATIO', 1.25);
 
 /** reduction factor for small font */
-define('K_SMALL_RATIO', 2/3);
+define('K_SMALL_RATIO', 2 / 3);
 
 /** Throw exceptions from errors so they can be caught and recovered from. */
 define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
@@ -156,7 +156,7 @@ require_once(__DIR__.'/tcpdf/tcpdf.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pdf extends TCPDF {
-    
+
     /**
      * Class constructor
      *
@@ -164,16 +164,16 @@ class pdf extends TCPDF {
      */
     public function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {
         make_cache_directory('tcpdf');
-        
+
         parent::__construct($orientation, $unit, $format, $unicode, $encoding);
-        
+
         // theses replace the tcpdf's config/lang/ definitions
         $this->l['w_page']          = get_string('page');
         $this->l['a_meta_language'] = current_language();
         $this->l['a_meta_charset']  = 'UTF-8';
         $this->l['a_meta_dir']      = get_string('thisdirection', 'langconfig');
     }
-    
+
     /**
      * Send the document to a given destination: string, local file or browser.
      * In the last case, the plug-in may be used (if present) or a download ("Save as" dialog box) may be forced.<br />
@@ -190,7 +190,7 @@ class pdf extends TCPDF {
         error_reporting($olddebug);
         return $result;
     }
-    
+
     /**
      * Is this font family one of core fonts?
      * @param string $fontfamily
@@ -199,7 +199,7 @@ class pdf extends TCPDF {
     public function is_core_font_family($fontfamily) {
         return isset($this->CoreFonts[$fontfamily]);
     }
-    
+
     /**
      * Returns list of font families and types of fonts.
      *
@@ -240,13 +240,13 @@ class pdf extends TCPDF {
             // This must be a Family or incomplete set of fonts present.
             $families[$font]['R'] = 'R';
         }
-        
+
         // Sort everything consistently.
         ksort($families);
         foreach ($families as $k => $v) {
             krsort($families[$k]);
         }
-        
+
         return $families;
     }
 }

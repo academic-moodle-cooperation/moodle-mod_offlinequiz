@@ -46,7 +46,7 @@ class temporary_file_deletion_task extends \core\task\scheduled_task {
               FROM {offlinequiz_queue}
              WHERE timecreated < :expiretime";
         $params = array('expiretime' => (int) $timenow - $keepseconds);
-        
+
         // First we get the IDs of cronjobs older than the configured number of days.
         $jobids = $DB->get_fieldset_sql($sql, $params);
         foreach ($jobids as $jobid) {

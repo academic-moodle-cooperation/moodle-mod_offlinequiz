@@ -426,7 +426,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
      */
     private function print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions) {
         global $CFG, $OUTPUT;
-		
 
         $options = array();
         $letterstr = 'ABCDEFGH';

@@ -274,7 +274,7 @@ function offlinequiz_convert_html_to_latex_tables($dom) {
         $rows = $element->getElementsByTagName('tr');
         // TeX needs the number of columns.
         $cmax = 0;
-        $r=0;
+        $r = 0;
         foreach ($rows as $row) {
             $r++;
             foreach (array("td", "th") as $item) {
