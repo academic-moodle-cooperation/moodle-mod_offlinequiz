@@ -248,37 +248,24 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         // Start working -- this is necessary as soon as the niceties are over.
         $table->setup();
 
-        if ($download == 'ODS') {
-            require_once("$CFG->libdir/odslib.class.php");
-
-            $filename .= ".ods";
-            // Creating a workbook.
-            $workbook = new MoodleODSWorkbook("-");
+        if ($download == 'ODS' || $download == 'Excel') {
+            if($download == 'ODS' ) {
+                require_once("$CFG->libdir/odslib.class.php");
+    
+                $filename .= ".ods";
+                // Creating a workbook.
+                $workbook = new MoodleODSWorkbook("-");
+            } else {
+                require_once("$CFG->libdir/excellib.class.php");
+                
+                $filename .= ".xls";
+                // Creating a workbook.
+                $workbook = new MoodleExcelWorkbook("-");
+            }
             // Sending HTTP headers.
             $workbook->send($filename);
-            // Creating the first worksheet.
-            $sheettitle = get_string('reportoverview', 'offlinequiz');
-            $myxls = $workbook->add_worksheet($sheettitle);
-            // Format types.
-            $format = $workbook->add_format();
-            $format->set_bold(0);
-            $formatbc = $workbook->add_format();
-            $formatbc->set_bold(1);
-            $formatbc->set_align('center');
-            $formatb = $workbook->add_format();
-            $formatb->set_bold(1);
-            $formaty = $workbook->add_format();
-            $formaty->set_bg_color('yellow');
-            $formatc = $workbook->add_format();
-            $formatc->set_align('center');
-            $formatr = $workbook->add_format();
-            $formatr->set_bold(1);
-            $formatr->set_color('red');
-            $formatr->set_align('center');
-            $formatg = $workbook->add_format();
-            $formatg->set_bold(1);
-            $formatg->set_color('green');
-            $formatg->set_align('center');
+            require(__DIR__ . '/sheetlib.php');
+            list($myxls, $formats) = offlinequiz_sheetlib_initialize_headers($workbook);
 
             // Here starts workshhet headers.
             $headers = array(get_string($offlinequizconfig->ID_field), get_string('firstname'),
@@ -290,53 +277,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             }
             $colnum = 0;
             foreach ($headers as $item) {
-                $myxls->write(0, $colnum, $item, $formatbc);
-                $colnum++;
-            }
-            $rownum = 1;
-        } else if ($download == 'Excel') {
-            require_once("$CFG->libdir/excellib.class.php");
-
-            $filename .= ".xls";
-            // Creating a workbook.
-            $workbook = new MoodleExcelWorkbook("-");
-            // Sending HTTP headers.
-            $workbook->send($filename);
-            // Creating the first worksheet.
-            $sheettitle = get_string('results', 'offlinequiz');
-            $myxls = $workbook->add_worksheet($sheettitle);
-            // Format types.
-            $format = $workbook->add_format();
-            $format->set_bold(0);
-            $formatbc = $workbook->add_format();
-            $formatbc->set_bold(1);
-            $formatbc->set_align('center');
-            $formatb = $workbook->add_format();
-            $formatb->set_bold(1);
-            $formaty = $workbook->add_format();
-            $formaty->set_bg_color('yellow');
-            $formatc = $workbook->add_format();
-            $formatc->set_align('center');
-            $formatr = $workbook->add_format();
-            $formatr->set_bold(1);
-            $formatr->set_color('red');
-            $formatr->set_align('center');
-            $formatg = $workbook->add_format();
-            $formatg->set_bold(1);
-            $formatg->set_color('green');
-            $formatg->set_align('center');
-
-            // Here starts worksheet headers.
-            $headers = array(get_string($offlinequizconfig->ID_field), get_string('firstname'),
-                get_string('lastname'), get_string('importedon', 'offlinequiz'),
-                get_string('group'), get_string('grade', 'offlinequiz'), get_string('letter', 'offlinequiz')
-            );
-            if (!empty($withparticipants)) {
-                $headers[] = get_string('present', 'offlinequiz');
-            }
-            $colnum = 0;
-            foreach ($headers as $item) {
-                $myxls->write(0, $colnum, $item, $formatbc);
+                $myxls->write(0, $colnum, $item, $formats['formatsbc']);
                 $colnum++;
             }
             $rownum = 1;
@@ -596,7 +537,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 } else if ($download == 'Excel' or $download == 'ODS') {
                     $colnum = 0;
                     foreach ($row as $item) {
-                        $myxls->write($rownum, $colnum, $item, $format);
+                        $myxls->write($rownum, $colnum, $item, $formats['format']);
                         $colnum++;
                     }
                     $rownum++;
