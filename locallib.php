@@ -156,7 +156,7 @@ function get_course_objects($id, $q) {
         if (!$offlinequiz = $DB->get_record("offlinequiz", array('id' => $cm->instance))) {
             print_error("The offlinequiz with id $cm->instance corresponding to this coursemodule $id is missing");
         }
-        
+
     } else {
         if (!$offlinequiz = $DB->get_record("offlinequiz", array('id' => $q))) {
             print_error("There is no offlinequiz with id $q");
@@ -169,7 +169,7 @@ function get_course_objects($id, $q) {
         }
     }
     return [$offlinequiz, $course, $cm];
-    
+
 }
 
 /**
@@ -1917,13 +1917,13 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
     if ($fileformat == 'ODS' || $fileformat == 'Excel') {
         if ($fileformat == 'ODS') {
             require_once("$CFG->libdir/odslib.class.php");
-    
+
             $filename .= ".ods";
             // Creating a workbook.
             $workbook = new MoodleODSWorkbook("-");
         } else {
             require_once("$CFG->libdir/excellib.class.php");
-            
+
             $filename .= ".xls";
             // Creating a workbook.
             $workbook = new MoodleExcelWorkbook("-");

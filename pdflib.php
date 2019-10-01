@@ -39,7 +39,7 @@ define('LOGO_MAX_ASPECT_RATIO', 3.714285714);
 
 class offlinequiz_barcodewriter {
     /**
-     * 
+     *
      * @param pdf $pdf
      * @param int $barcode
      * @param int $x
@@ -101,7 +101,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
      * (non-PHPdoc)
      * @see TCPDF::Header()
      */
-    //codechecker_intentional
+    // codechecker_intentional
     public function Header() {
         $this->SetFont('FreeSans', 'I', 8);
         // Title.
@@ -287,12 +287,12 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
             $title = substr($title,  0,  strlen($title) - 1);
         }
         $this->Cell($width, 4, $title, 1, 0, 'C');
-        
+
         $y = $this->GetY();
         $x = $this->GetX();
         // Print bar code for page
         offlinequiz_barcodewriter::print_barcode($this, $this->PageNo(), $x, $y);
-        
+
         $this->Rect($x, $y, 0.2, 3.7, 'F');
 
         // Page number.
@@ -403,31 +403,31 @@ function number_in_style($num, $style) {
  */
 function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz) {
     $pdf->checkpoint();
-    
+
     $questiontext = $question->questiontext;
-    
+
     // Filter only for tex formulas.
     if (!empty($texfilter)) {
         $questiontext = $texfilter->filter($questiontext);
     }
-    
+
     // Remove all HTML comments (typically from MS Office).
     $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
-    
+
     // Remove <font> tags.
     $questiontext = preg_replace("/<font[^>]*>[^<]*<\/font>/ms", "", $questiontext);
-    
+
     // Remove <script> tags that are created by mathjax preview.
     $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
-    
+
     // Remove all class info from paragraphs because TCPDF won't use CSS.
     $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
-    
+
     $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
         1, 300, $offlinequiz->disableimgnewlines);
-    
+
     $html = '';
-    
+
     $html .= $questiontext . '<br/><br/>';
     return $html;
 }
@@ -588,9 +588,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             }
             set_time_limit(120);
             $question = $questions[$currentquestionid];
-            
+
             $html = offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
-            
+
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 // There is only a slot for multichoice questions.
@@ -701,7 +701,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
             // Either we print the question HTML.
             offlinequiz_get_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
-            
+
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 $slot = $questionslots[$currentquestionid];
@@ -766,7 +766,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $html = preg_replace("/<\/a><\/span>/ms", "", $html);
                 $html = preg_replace("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
             }
-            
+
             $pdf->writeHTMLCell ( 165, round ( $offlinequiz->fontsize / 2 ), $pdf->GetX (), $pdf->GetY () + 0.3, $html );
             $pdf->Ln ();
             if ($pdf->is_overflowing ()) {

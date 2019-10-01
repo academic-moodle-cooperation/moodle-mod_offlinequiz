@@ -47,7 +47,7 @@ class offlinequiz_result_engine {
         $this->contextid = $contextid;
         $this->offlinequizid = $offlinequiz->id;
         $this->page = new offlinequiz_result_page(new \Imagick(realpath($filepath)), $this->offlinequizid);
-        $this->page->scannedpageid=$scannedpageid;
+        $this->page->scannedpageid = $scannedpageid;
         $this->pagepositionscanner = new offlinequiz_pagepositionscanner($this->page);
         $this->groupnumberscanner = new offlinequiz_groupnumberscanner($boxscanner);
         $this->pagenumberscanner = new offlinequiz_pagenumberscanner();
@@ -83,7 +83,7 @@ class offlinequiz_result_engine {
         return $this->page;
 
     }
-    
+
     public function save_page($teacherid) {
         $this->pagesaver->save_page_information($this->page);
         global $DB;

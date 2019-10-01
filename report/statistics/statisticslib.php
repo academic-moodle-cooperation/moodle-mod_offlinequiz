@@ -26,29 +26,28 @@
  * @since         Moodle 3.8+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();#
-
+defined('MOODLE_INTERNAL') || die();
 function mod_offlinequiz_create_common_statistics_headers($headers, $columns, $s) {
     $columns[] = 's';
     $headers[] = get_string('attempts', 'offlinequiz_statistics');
-    
+
     if ($s > 1) {
         $columns[] = 'facility';
         $headers[] = get_string('facility', 'offlinequiz_statistics');
-        
+
         $columns[] = 'sd';
         $headers[] = get_string('standarddeviationq', 'offlinequiz_statistics');
     }
-    
+
     $columns[] = 'intended_weight';
     $headers[] = get_string('intended_weight', 'offlinequiz_statistics');
-    
+
     $columns[] = 'effective_weight';
     $headers[] = get_string('effective_weight', 'offlinequiz_statistics');
-    
+
     $columns[] = 'discrimination_index';
     $headers[] = get_string('discrimination_index', 'offlinequiz_statistics');
-    
+
     // Redmine 1302: New table columns s.t. the data can be exported.
     $columns[] = 'correct';
     $headers[] = get_string('correct', 'offlinequiz_statistics');
