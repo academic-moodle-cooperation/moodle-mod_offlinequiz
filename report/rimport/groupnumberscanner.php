@@ -17,12 +17,11 @@ namespace offlinequiz_result_import;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
-
-define('BOX_SIZE','35');
-define('BOX_DISTANCE_X','95.7');
-define('BOX_A_CORNER_X',288);
-define('BOX_A_CORNER_Y',455);
-define('GROUP_BOXES',6);
+define('BOX_SIZE', '35');
+define('BOX_DISTANCE_X', '95.7');
+define('BOX_A_CORNER_X', 288);
+define('BOX_A_CORNER_Y', 455);
+define('GROUP_BOXES', 6);
 class offlinequiz_groupnumberscanner {
 
    private $boxscanner;
@@ -30,33 +29,31 @@ class offlinequiz_groupnumberscanner {
    public function __construct($boxscanner) {
        $this->boxscanner = $boxscanner;
    }
-	//Read the group number of the page
+	//Read the group number of the page.
     public function scan_group_number(offlinequiz_result_page $page) {
         global $DB;
-        //Find the guessed middles of all group question boxes
+        //Find the guessed middles of all group question boxes.
         $points = $this->calculate_group_number_middles($page);
         $amountofcrosses = 0;
         $number = -1;
-        // go through every box and find out if its crossed out
-        for($i = 0, $size = count($points); $i < $size; ++$i) {
+        //Go through every box and find out if its crossed out.
+        for ($i = 0, $size = count($points); $i < $size; ++$i) {
             $boxresult = $this->boxscanner->scan_box($page,$points[$i],BOX_SIZE);
-            //if the result of the box is "crossed" or "uncertain" raise the number of crosses
-            if($boxresult) {
+            //If the result of the box is "crossed" or "uncertain" raise the number of crosses.
+            if ($boxresult) {
                 $amountofcrosses++;
                 $number = $i;
             }
         }
-        if($amountofcrosses > 1 || $amountofcrosses == 0 ) {
+        if ($amountofcrosses > 1 || $amountofcrosses == 0 ) {
             $page->status = PAGE_STATUS_GROUP_ERROR;
-        }
-        else {
+        } else {
             $number++;
-            print("groupnumber: " . $number . "\n");
-            $group = $DB->get_record('offlinequiz_groups',array('offlinequizid' => $page->offlinequizid, 'groupnumber' => $number ));
-            if($group) {
+            $group = $DB->get_record('offlinequiz_groups',
+                array('offlinequizid' => $page->offlinequizid, 'groupnumber' => $number ));
+            if ($group) {
                 $page->group = $group;
-            }
-            else {
+            } else {
                 $page->status = PAGE_STATUS_GROUP_ERROR;
             }
         }
@@ -66,8 +63,8 @@ class offlinequiz_groupnumberscanner {
     private function calculate_group_number_middles(offlinequiz_result_page $page) {
         $grouppoints = array();
 
-        for($i=0;$i<GROUP_BOXES;$i++) {
-            $boxmiddlepoint = new offlinequiz_point(BOX_A_CORNER_X+BOX_SIZE/2+BOX_DISTANCE_X*$i,BOX_A_CORNER_Y+BOX_SIZE/2,2);
+        for ($i = 0; $i < GROUP_BOXES; $i++) {
+            $boxmiddlepoint = new offlinequiz_point(BOX_A_CORNER_X+BOX_SIZE/2+BOX_DISTANCE_X * $i,BOX_A_CORNER_Y + BOX_SIZE / 2,2);
             $grouppoints[$i] = calculate_point_relative_to_corner($page,$boxmiddlepoint);
         }
         $page->expectedgroupnumberpositions = $grouppoints;

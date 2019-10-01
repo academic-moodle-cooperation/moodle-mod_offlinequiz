@@ -56,16 +56,16 @@ class pixelcountboxscanner {
         $maxpoints = ($marginedboxsize*$zoomfactory)*($marginedboxsize*$zoomfactorx);
 
 		//Depending on how many black pixels we have in comparison to all pixels, decide if it is crossed out or not
-        if($blackpoints<$maxpoints*(CROSS_FOUND_LOWER_LIMIT-CROSS_FOUND_REASK_MARGIN)) {
+        if ($blackpoints<$maxpoints*(CROSS_FOUND_LOWER_LIMIT-CROSS_FOUND_REASK_MARGIN)) {
         	print("box empty \n");
             return 0;
-        } else if($blackpoints<$maxpoints*(CROSS_FOUND_LOWER_LIMIT+CROSS_FOUND_REASK_MARGIN)) {
+        } else if ($blackpoints<$maxpoints*(CROSS_FOUND_LOWER_LIMIT+CROSS_FOUND_REASK_MARGIN)) {
         	print("box empty or crossed \n");
             return -1;
-        } else if($blackpoints<$maxpoints*(CROSS_FOUND_UPPER_LIMIT-CROSS_FOUND_REASK_MARGIN)) {
+        } else if ($blackpoints<$maxpoints*(CROSS_FOUND_UPPER_LIMIT-CROSS_FOUND_REASK_MARGIN)) {
         	print("box crossed \n");
             return 1;
-        } elseif($blackpoints<$maxpoints*(CROSS_FOUND_UPPER_LIMIT+CROSS_FOUND_REASK_MARGIN)) {
+        } elseif ($blackpoints<$maxpoints*(CROSS_FOUND_UPPER_LIMIT+CROSS_FOUND_REASK_MARGIN)) {
         	print("box crossed or filled \n");
             return -1;
         } else {
@@ -142,7 +142,7 @@ class weighted_diagonal_box_scanner{
 		if ($boxdiagvalue<WEIGHTEDVALUE_LOWER_LIMIT) {
 			$boximage->writeImage("/tmp/boxtest_empty_lw" . self::$count . ".tif");
 			return 0;
-		} else if($boxdiagvalue>WEIGHTEDVALUE_UPPER_LIMIT) {
+		} else if ($boxdiagvalue>WEIGHTEDVALUE_UPPER_LIMIT) {
 			$boximage->writeImage("/tmp/boxtest_crossed" . self::$count . ".tif");
 			return 1;
 		} else {
@@ -172,8 +172,8 @@ class weighted_diagonal_box_scanner{
 		}
 		for ($i=0;$i<$geometry["height"];$i++) {
 			$county[$i]=0;
-			for($j=0;$j<$geometry["width"];$j++) {
-				if(pixelisblack($image, $j, $i)) {
+			for ($j=0;$j<$geometry["width"];$j++) {
+				if (pixelisblack($image, $j, $i)) {
 					$county[$i]++;
 				}
 			}
@@ -185,17 +185,17 @@ class weighted_diagonal_box_scanner{
 		$draw->setFillColor(new \ImagickPixel('#FFFFFF'));
 
 		
-		for($i=0;$i<$geometry["width"];$i++) {
-			if($maxx <= $countx[$i] + 5) {
-				for($j=0;$j<$geometry["height"];$j++) {
+		for ($i=0;$i<$geometry["width"];$i++) {
+			if ($maxx <= $countx[$i] + 5) {
+				for ($j=0;$j<$geometry["height"];$j++) {
 					$draw->point($i,$j);
 				}
 			}
 		}
 		
-		for($i=0;$i<$geometry["height"];$i++) {
-			if($maxy <= $county[$i] + 5) {
-				for($j=0;$j<$geometry["width"];$j++) {
+		for ($i=0;$i<$geometry["height"];$i++) {
+			if ($maxy <= $county[$i] + 5) {
+				for ($j=0;$j<$geometry["width"];$j++) {
 					$draw->point($j,$i);
 				}
 			}
@@ -232,9 +232,9 @@ class weighted_diagonal_box_scanner{
 		$geometry = $image->getimagegeometry();
 		$dots= $geometry["width"]* $geometry["height"];
 		$totaldiagblackvalue = 0;
-		for($i=0;$i<$geometry["width"];$i++) {
-			for($j=0;$j<$geometry["height"];$j++) {
-				if(pixelisblack($image, $i, $j)) {
+		for ($i=0;$i<$geometry["width"];$i++) {
+			for ($j=0;$j<$geometry["height"];$j++) {
+				if (pixelisblack($image, $i, $j)) {
 					$totaldiagblackvalue+= $this->get_diag_down_value($i,$j,$geometry["width"],$geometry["height"]);
 				}
 			}

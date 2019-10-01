@@ -17,15 +17,15 @@ namespace offlinequiz_result_import;
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/questionlib.php');
 
-define('ANSWERS_BLOCK_SIZE',8);
+define('ANSWERS_BLOCK_SIZE', 8);
 define('ANSWERS_MAX_QUESTIONS_PER_COLUMN', 24);
-//serialize arrays, as until php 7 arrays aren't supported in define
 define('ANSWERS_COLUMNS_PER_PAGE_LIMITS' , [1 => 13, 2 => 8, 3 => 6]);
 
 define('ANSWERS_DISTANCE_X', 100);
 define('ANSWERS_DISTANCE_Y', 988);
 define('ANSWERS_BOX_DISTANCE_X_NORMAL', 65);
-define('ANSWERS_BOX_DISTANCE_X_NEW_COLUMN', [1 => 0, 2 => 906, 3 => 582, 4 => 454.7]); //Distance between the begin of two columns, 1 => 0 for programming necessary  
+//Distance between the begin of two columns, 1 => 0 for programming necessary
+define('ANSWERS_BOX_DISTANCE_X_NEW_COLUMN', [1 => 0, 2 => 906, 3 => 582, 4 => 454.7]);   
 define('ANSWERS_BOX_DISTANCE_Y_NORMAL', 65);
 define('ANSWERS_BOX_DISTANCE_Y_NEW_BLOCK', 564.6);
 define('ANSWERS_BOX_SIZE', 35);
@@ -36,11 +36,11 @@ class offlinequiz_resultscanner {
         $this->boxscanner = $boxscanner;
     }
 	
-    //scans the results of a page
+    //Scans the results of a page.
     public function scanresults(offlinequiz_result_page $page) {
-    	//firstly load the questions
+    	//Firstly load the questions.
         $quba = \question_engine::load_questions_usage_by_activity($page->group->templateusageid);
-        //find out, how whats the maximum of options for a single question in this offlinequiz group
+        //Find out, how whats the maximum of options for a single question in this offlinequiz group.
         $max_answers = $this->get_max_answers($page);
         
         

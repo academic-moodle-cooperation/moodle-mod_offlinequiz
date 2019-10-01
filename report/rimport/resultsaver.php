@@ -48,7 +48,7 @@ class offlinequiz_resultsaver {
                 AND   p1.userkey = p2.userkey
                 AND   (p1.status = 'ok' OR p1.status = 'submitted') ";
         $scannedpages = $DB->get_records_sql($sql, array('scannedpageid' =>  $scannedpageid));
-        //TODO check, if page with same page and userky, but other scannedpageid exists
+        //TODO check, if page with same page and userky, but other scannedpageid exists.
 
         if (!$scannedpages || !$scannedpages[$scannedpageid]) {
          throw new \coding_exception('A scannedpage can not be updated if it has errors');
@@ -79,8 +79,6 @@ class offlinequiz_resultsaver {
         list($scannedpagesql, $params) = $DB->get_in_or_equal($scannedpageids, SQL_PARAMS_QM, 'pages');
         $sql = "SELECT * FROM {offlinequiz_choices} choice
                 WHERE  scannedpageid" . $scannedpagesql;
-        $choices = $DB->get_records_sql($sql, $params);
-        
 
         $resultid = self::get_result_id($scannedpages);
         if ($resultid){
@@ -112,17 +110,17 @@ class offlinequiz_resultsaver {
         $sql = "SELECT page2.*
                     FROM {offlinequiz_scanned_pages} page1,
                          {offlinequiz_scanned_pages} page2
-                    WHERE page1.id = :scannedpageid 
+                    WHERE page1.id = :scannedpageid
                     AND   page1.pagenumber = page2.pagenumber
                     AND   page1.userkey = page2.userkey
                     AND   page2.resultid IS NOT NULL
                     AND   page1.id <> page2.id
                     AND   page1.offlinequizid = page2.offlinequizid";
         $otherresults = $DB->get_records_sql($sql, ['scannedpageid' => $scannedpageid]);
-        if(!$otherresults) {
+        if (!$otherresults) {
             return;
         }
-        if($this->results_have_same_crosses($scannedpageid, $otherresults[0]->id)) {
+        if ($this->results_have_same_crosses($scannedpageid, $otherresults[0]->id)) {
             return RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_SAME_CROSSES;
         }
     }
@@ -227,8 +225,7 @@ class offlinequiz_resultsaver {
                 $quba->process_action($slot, $response);
                 $quba->finish_question($slot, time());
             }
-            
-        } // End for ($slotindex...
+        } // End of for slotindex...
         
         
         $scannedpage->status = 'submitted';
@@ -254,7 +251,7 @@ class offlinequiz_resultsaver {
     private static function get_userid_by_userkey($userkey) {
         global $DB;
         $offlinequizconfig = get_config('offlinequiz');
-        //TODO prefix and suffix
+        //TODO prefix and suffix.
         return $DB->get_field('user', 'id', [$offlinequizconfig->ID_field => $userkey]);
     }
     

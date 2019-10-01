@@ -20,22 +20,22 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/point.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 
-define("A4_WIDTH", "2100");                    // Paper size.
+define("A4_WIDTH", "2100");                     //Paper size.
 define("A4_HEIGHT", "2970");
-define("CORNER_SPACE_LEFT", "124.5");				// The space, between the left side of paper and the cross of the left side 
-define("CORNER_SPACE_RIGHT", "154.5");             //The space, between the right side of paper and the cross of the right side 
-define("CORNER_SPACE_TOP", "119.5");				//The space between the top of the side and the crosses on top
-define("CORNER_SPACE_BOTTOM", "120.5");			//The space between the bottom of the side and the crosses on the bottom
+define("CORNER_SPACE_LEFT", "124.5");		    //The space, between the left side of paper and the cross of the left side.
+define("CORNER_SPACE_RIGHT", "154.5");          //The space, between the right side of paper and the cross of the right side.
+define("CORNER_SPACE_TOP", "119.5");			//The space between the top of the side and the crosses on top.
+define("CORNER_SPACE_BOTTOM", "120.5");			//The space between the bottom of the side and the crosses on the bottom.
 
 //define("LAYER_WIDTH", A4_WIDTH - CORNER_SPACE_LEFT-CORNER_SPACE_RIGHT);
 //define("LAYER_HEIGHT", A4_HEIGHT - CORNER_SPACE_TOP - CORNER_SPACE_BOTTOM); these two lines can be added again, once the old algorithm is excluded
 define("DIAGONAL_LENGTH", sqrt(pow(LAYER_WIDTH, 2)+pow(LAYER_HEIGHT, 2)) );
 
-function calculatewithoutadjustment($imagegeometry,offlinequiz_point $point ) {
+function calculatewithoutadjustment($imagegeometry, offlinequiz_point $point ) {
 
      $xpercentage = $point->getx() / A4_WIDTH;
      $ypercentage = $point->gety() / A4_HEIGHT;
-     return new offlinequiz_point($xpercentage*$imagegeometry['width'], $ypercentage*$imagegeometry['height'],false);
+     return new offlinequiz_point($xpercentage*$imagegeometry['width'], $ypercentage*$imagegeometry['height'], false);
 }
 
 function add_with_adjustment(offlinequiz_result_page $page, offlinequiz_point $initialpoint, offlinequiz_point $toadd) {
