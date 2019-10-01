@@ -221,7 +221,8 @@ onClick=\"self.close(); return false;\"><br />";
     // O=======================================================.
     // O Adjust the maxanswers of the scanner according to the offlinequiz group
     // O=======================================================.
-    if ($newgroup = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnumber))) {
+    if ($newgroup = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id,
+        'groupnumber' => $groupnumber))) {
         $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($newgroup));
         $scannedpage = $scanner->set_maxanswers($maxanswers, $scannedpage);
     }
@@ -626,7 +627,8 @@ if (!empty($choices)) {
 
 // Retrieve the offlinequiz group.
 if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz->numgroups) {
-    if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnumber))) {
+    if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id,
+        'groupnumber' => $groupnumber))) {
         print_error('nogroup', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
     }
 } else {
@@ -643,8 +645,8 @@ $sql = "SELECT ra.id
           AND ra.userid = :userid
           AND r.archetype = 'student'
           AND ra.contextid = :contextid";
-    $userincourse = $DB->get_field_sql($sql,['userid' => $user->id, 'contextid' => $coursecontext->id],IGNORE_MISSING);
-if(!$userincourse) {
+    $userincourse = $DB->get_field_sql($sql, ['userid' => $user->id, 'contextid' => $coursecontext->id], IGNORE_MISSING);
+if (!$userincourse) {
     $scannedpage->status = 'error';
     $scannedpage->error = 'usernotincourse';
 }

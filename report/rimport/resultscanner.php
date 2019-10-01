@@ -14,21 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace offlinequiz_result_import;
+defined('MOODLE_INTERNAL') || die();
+require_once($CFG->libdir . '/questionlib.php');
 
-require_once ($CFG->libdir . '/questionlib.php');
-
-define('ANSWERS_BLOCK_SIZE',8);
-define('ANSWERS_MAX_QUESTIONS_PER_COLUMN',24);
-//serialize arrays, as until php 7 arrays aren't supported in define
+define('ANSWERS_BLOCK_SIZE', 8);
+define('ANSWERS_MAX_QUESTIONS_PER_COLUMN', 24);
 define('ANSWERS_COLUMNS_PER_PAGE_LIMITS' , [1 => 13, 2 => 8, 3 => 6]);
 
-define('ANSWERS_DISTANCE_X',100);
-define('ANSWERS_DISTANCE_Y',988);
-define('ANSWERS_BOX_DISTANCE_X_NORMAL',65);
-define('ANSWERS_BOX_DISTANCE_X_NEW_COLUMN',[1 => 0, 2 => 906, 3 => 582, 4 => 454.7]); //Distance between the begin of two columns, 1 => 0 for programming necessary  
-define('ANSWERS_BOX_DISTANCE_Y_NORMAL',65);
-define('ANSWERS_BOX_DISTANCE_Y_NEW_BLOCK',564.6);
-define('ANSWERS_BOX_SIZE',35);
+define('ANSWERS_DISTANCE_X', 100);
+define('ANSWERS_DISTANCE_Y', 988);
+define('ANSWERS_BOX_DISTANCE_X_NORMAL', 65);
+//Distance between the begin of two columns, 1 => 0 for programming necessary
+define('ANSWERS_BOX_DISTANCE_X_NEW_COLUMN', [1 => 0, 2 => 906, 3 => 582, 4 => 454.7]);   
+define('ANSWERS_BOX_DISTANCE_Y_NORMAL', 65);
+define('ANSWERS_BOX_DISTANCE_Y_NEW_BLOCK', 564.6);
+define('ANSWERS_BOX_SIZE', 35);
 class offlinequiz_resultscanner {
     private $boxscanner;
 
@@ -36,35 +36,30 @@ class offlinequiz_resultscanner {
         $this->boxscanner = $boxscanner;
     }
 	
-    //scans the results of a page
+    //Scans the results of a page.
     public function scanresults(offlinequiz_result_page $page) {
-    	print("scan results\n");
-    	//firstly load the questions
+    	//Firstly load the questions.
         $quba = \question_engine::load_questions_usage_by_activity($page->group->templateusageid);
-        //find out, how whats the maximum of options for a single question in this offlinequiz group
+        //Find out, how whats the maximum of options for a single question in this offlinequiz group.
         $max_answers = $this->get_max_answers($page);
         
         
         // Depending on the amount of max_answers there is a limit of columns per page
         $columns = $this->get_number_of_columns($max_answers);
         $questionsperpage = $this->get_questions_per_page($columns);
-        $columndistance=ANSWERS_BOX_DISTANCE_X_NEW_COLUMN[$columns];
+        $columndistance = ANSWERS_BOX_DISTANCE_X_NEW_COLUMN[$columns];
         
         
         //load the first and the last number of the questions on the page 
         $startingnumber = ($page->pagenumber-1) * $questionsperpage;
         $page->startanswer = $startingnumber;
         $endnumber = $startingnumber + $questionsperpage;
-		print_object("startingnumber: " . $startingnumber ."\n");
-		print_object("endnumber: " . $endnumber . "\n");
         $slots = $quba->get_slots();
-        print("get_answer_counts");
         $answercounts = $this->get_answer_counts($page->group->id);
-        print_object($answercounts);
         //for every question on the sheet
-        for($i=$startingnumber;$i<=$endnumber;$i++) {
+        for ($i=$startingnumber;$i<=$endnumber;$i++) {
         	// if there are still questions
-            if(array_key_exists($i, $slots)) {
+            if (array_key_exists($i, $slots)) {
             	//find out where the question is on the page
                 $position = $this->get_question_cell($startingnumber, $i);
 				
@@ -74,9 +69,8 @@ class offlinequiz_resultscanner {
 				$answercount = $answercounts[$slotquestion->id]->count;
 				print("answercount" . $answercount . "\n");
                	//calculate the result of this answer and store it on the page-object
-                $this->calculate_result($page,$columndistance,$position,$i,$answercount);
-            }
-            else {
+                $this->calculate_result($page,$columndistance,$position, $i, $answercount);
+            } else {
                 break;
             }
         }
@@ -95,8 +89,7 @@ class offlinequiz_resultscanner {
                                  WHERE ogq.offlinegroupid = :groupid
                                    AND qa.question = ogq.questionid)
     	              GROUP BY qa.question) AS answercount";
-        $params['groupid'] = $page->group->id;
-        return $DB->get_field_sql($sql, $params);
+        return $DB->get_field_sql($sql, ['groupid' => $page->group->id]);
 
     }
     
@@ -110,18 +103,16 @@ class offlinequiz_resultscanner {
 					 WHERE ogq.offlinegroupid = :groupid
 					 AND qa.question = ogq.questionid)
 				GROUP BY qa.question";
-    	$params['groupid'] = $groupid;
-    	return $DB->get_records_sql($sql,$params);
+    	return $DB->get_records_sql($sql, ['groupid' => $groupid]);
     	
     }
 
     private function get_number_of_columns ($maxanswers) {
         $i = 1;
         $columnlimits = ANSWERS_COLUMNS_PER_PAGE_LIMITS;
-        while(array_key_exists($i,$columnlimits) && $columnlimits[$i] > $maxanswers) {
+        while (array_key_exists($i,$columnlimits) && $columnlimits[$i] > $maxanswers) {
             $i++;
         }
-
         return $i;
     }
 
@@ -140,17 +131,11 @@ class offlinequiz_resultscanner {
 
 
 
-    private function calculate_result(offlinequiz_result_page $page,$columndistance,$position,$questiononpage,$answercount) {
-    	print("position:");
-    	print_object($position);
-    	print("\nanswercount:" . $answercount . "\n");
+    private function calculate_result(offlinequiz_result_page $page, $columndistance, $position, $questiononpage, $answercount) {
         for($i=0;$i<$answercount;$i++) {
             $expectedx = ANSWERS_DISTANCE_X + ($columndistance * $position['column']) + (ANSWERS_BOX_DISTANCE_X_NORMAL * $i) + (ANSWERS_BOX_SIZE/2);
             $expectedy = ANSWERS_DISTANCE_Y + (ANSWERS_BOX_DISTANCE_Y_NEW_BLOCK * $position['block']) + (ANSWERS_BOX_DISTANCE_Y_NORMAL * $position['blockposition']) + (ANSWERS_BOX_SIZE/2);
-            print("expectedx: " . $expectedx . "\n");
-            print("expectedy: " . $expectedy . "\n");
             $page->answers[$questiononpage][$i]['position'] = calculate_point_relative_to_corner($page, new offlinequiz_point($expectedx, $expectedy, 1));
-//             print_object($page->answers[$questiononpage][$i]['position']);
             $result  = $this->boxscanner->scan_box($page,$page->answers[$questiononpage][$i]['position'],ANSWERS_BOX_SIZE);
             $page->answers[$questiononpage][$i]['result'] = $result;
             if($result == -1) {

@@ -47,10 +47,9 @@ class offlinequiz_pagepositionscanner {
     	$this->expectedcrosspositions = [
     			"upperleft" => new offlinequiz_point(CORNER_SPACE_LEFT * $zoomfactorx, CORNER_SPACE_TOP * $zoomfactory, false),
     			"upperright" => new offlinequiz_point((A4_WIDTH-CORNER_SPACE_RIGHT) * $zoomfactorx, CORNER_SPACE_TOP * $zoomfactory, false),
-    			"lowerright" => new offlinequiz_point((A4_WIDTH-CORNER_SPACE_RIGHT)*$zoomfactorx, (A4_HEIGHT-CORNER_SPACE_BOTTOM)*$zoomfactory, false),
-    			"lowerleft" => new offlinequiz_point(CORNER_SPACE_LEFT*$zoomfactorx, (A4_HEIGHT-CORNER_SPACE_BOTTOM)*$zoomfactory,false)
+    			"lowerright" => new offlinequiz_point((A4_WIDTH-CORNER_SPACE_RIGHT) * $zoomfactorx, (A4_HEIGHT-CORNER_SPACE_BOTTOM)*$zoomfactory, false),
+    			"lowerleft" => new offlinequiz_point(CORNER_SPACE_LEFT * $zoomfactorx, (A4_HEIGHT-CORNER_SPACE_BOTTOM) * $zoomfactory,false)
     	];
-//     	print_object($this->expectedcrosspositions);
 
         $this->page->positionproperties["upperright"] = $this->findcross("upperright");
         $this->page->positionproperties["lowerright"] = $this->findcross("lowerright");
@@ -72,34 +71,13 @@ class offlinequiz_pagepositionscanner {
         
         $this->page->positionproperties["pageangle"] = calculatepointangle($horizontaldiff);
 		$this->page->status = PAGE_STATUS_OK;
-//         if($upperright->isfound() && $lowerleft->isfound()) {
-
-//             $this->calculatepositions($lowerleft, $upperright);
-//         }
-//         else {
-//             $lowerright = $this->findcross("lowerright");
-//             $upperleft = $this->findcross("upperleft");
-
-//             if($upperleft->isfound() && $lowerright->isfound()) {
-//                $this->calculatepositions($upperleft,$lowerright);
-//             }
-//             else {
-//                 $this->page->status = PAGE_STATUS_ALIGNMENT_ERROR;
-//             }
-//         }
-			
-//         print_object($this->page);
     }
 
     private function calculatepositions (offlinequiz_point $leftpoint, offlinequiz_point $rightpoint) {
     	$diagvector = new offlinequiz_point($rightpoint->getx()-$leftpoint->getx(), $rightpoint->gety()-$leftpoint->gety(), 0);
-//     	print_object($diagvector);
     	$diagzoomfactor= $diagvector->getdistance()/DIAGONAL_LENGTH;
     	$this->page->scanproperties->zoomfactorx= $diagzoomfactor*$this->page->scanproperties->zoomfactorx*$this->page->scanproperties->zoomfactory;
     	$this->page->scanproperties->zoomfactory= $diagzoomfactor*$this->page->scanproperties->zoomfactory*$this->page->scanproperties->zoomfactorx;
-//     	print("zoomfaktor" . $diagzoomfactor . "\n");
-//     	print($diagvector->getdistance() . "\n");
-//     	print(DIAGONAL_LENGTH);
         if ($leftpoint->gety() > $rightpoint->gety()) {
             $lowerleft = $leftpoint;
             $upperright = $rightpoint;
@@ -148,24 +126,8 @@ class offlinequiz_pagepositionscanner {
         else if ($cornername=="upperright") {
         	$startpoint = new offlinequiz_point($geometry['width'] - $zoomfactor*CORNER_SEARCH_AREA_START_SIZE, $zoomfactor*CORNER_SEARCH_AREA_START_SIZE, 0);
         }
-        print_object($startpoint);
         $result = $crossscanner->findcross($this->page->image, $startpoint, $startpoint);
-//         print($cornername . "\n");
-//         print_object($result);
         return $result;
-        
-//         $upperleftbound = add($guessedcrosspoint, round(-CORNER_AREA_WIDTH/2*$this->page->scanproperties->zoomfactorx), 
-//              round(-CORNER_AREA_HEIGHT/2*$this->page->scanproperties->zoomfactory),false);
-//         $lowerrightbound = add($guessedcrosspoint, round(CORNER_AREA_WIDTH/2*$this->page->scanproperties->zoomfactorx), 
-//              round(CORNER_AREA_HEIGHT/2*$this->page->scanproperties->zoomfactory),false);
-// //         print("guessed point:\n");
-// //         print_object($guessedcrosspoint);
-// // 		print("upperleft:\n");
-// //         print_object($upperleftbound);
-// //         print("lowerright:\n");
-// // 		print_object($lowerrightbound);
-//         $crossfinder = new crossfinder();
-//         return $crossfinder->findcross($image, $upperleftbound, $lowerrightbound);
 
     }
 

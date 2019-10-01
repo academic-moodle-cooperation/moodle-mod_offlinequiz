@@ -14,13 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace offlinequiz_result_import;
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/point.php');
 define('CROSSSIZEBOUNDRY', 15);
-define('SIMPLE_CROSSFINDER_MARGIN',200);
-define('CROSS_SEARCH_MARGIN',5);
-define('ALIGNMENTCROSSBOUNDRY',3);
-define('CROSSTHICKNESS',2);
+define('SIMPLE_CROSSFINDER_MARGIN', 200);
+define('CROSS_SEARCH_MARGIN', 5);
+define('ALIGNMENTCROSSBOUNDRY', 3);
+define('CROSSTHICKNESS', 2);
 class crossfinder {
 
 	/**
@@ -41,87 +42,86 @@ class crossfinder {
         $xright=0;
         $count=0;
 
-		//try to go downwards from the middle 
-        for($j=$middle->gety();$j<$lowerright->gety() + 1;$j++) {
+		//Try to go downwards from the middle.
+        for ($j=$middle->gety();$j<$lowerright->gety() + 1;$j++) {
         	//count for every line the amount of black pixels
-            for($i = $upperleft->getx(); $i < $lowerright->getx() ; $i++) {
-                if(pixelisblack($image,$i,$j)) {
+            for ($i = $upperleft->getx(); $i < $lowerright->getx() ; $i++) {
+                if (pixelisblack($image, $i, $j)) {
                     $count++;
-                    //if the amount of pixels exceeds a certain amount, save the linenumber and stop
-                    if($count==CROSSSIZEBOUNDRY) {
+                    //If the amount of pixels exceeds a certain amount, save the linenumber and stop.
+                    if ($count==CROSSSIZEBOUNDRY) {
                         $ylower = $j;
                         break;
                     }
                 }
             }
             $count=0;
-            //if you have found line with a lot of black pixels stop
-            if($ylower) {
+            //If you have found line with a lot of black pixels stop.
+            if ($ylower) {
                 break;
             }
         }
 
 		//the same as above but going upwards
-        for($j=$middle->gety();$j>$upperleft->gety();$j--) {
-            for($i = $upperleft->getx(); $i < $lowerright->getx() ; $i++) {
-                if(pixelisblack($image,$i,$j)) {
+        for ($j=$middle->gety();$j>$upperleft->gety();$j--) {
+            for ($i = $upperleft->getx(); $i < $lowerright->getx(); $i++) {
+                if (pixelisblack($image, $i, $j)) {
                     $count++;
-                    if($count==CROSSSIZEBOUNDRY) {
+                    if ($count==CROSSSIZEBOUNDRY) {
                         $yupper = $j;
                         break;
                     }
                 }
             }
             $count=0;
-            if($yupper) {
+            if ($yupper) {
                 break;
             }
         }
 		// we now (hopefully) have found the horizontal line. If we have found two, we choose the one closer to the guessed middle 
-        if($yupper || $ylower) {
-            $y = $this->findclosest($middle->gety(),$ylower,$yupper);
+        if ($yupper || $ylower) {
+            $y = $this->findclosest($middle->gety(), $ylower, $yupper);
         }
 
 
 		//Do the exact same thing as above for the vertical line
-        for($j= $middle->getx();$j<$lowerright->getx();$j++) {
-            for($i = $upperleft->gety(); $i < $lowerright->gety() ; $i++) {
-                if(pixelisblack($image,$j,$i)) {
+        for ($j= $middle->getx();$j<$lowerright->getx();$j++) {
+            for ($i = $upperleft->gety(); $i < $lowerright->gety() ; $i++) {
+                if (pixelisblack($image, $j, $i)) {
                     $count++;
-                    if($count==CROSSSIZEBOUNDRY) {
+                    if ($count==CROSSSIZEBOUNDRY) {
                         $xright = $j;
                         break;
                     }
                 }
             }
             $count = 0;
-            if($xright) {
+            if ($xright) {
                 break;
             }
         }
 
-        for($j= $middle->getx();$j>$upperleft->getx();$j--) {
-            for($i = $upperleft->gety(); $i < $lowerright->gety() ; $i++) {
-                if(pixelisblack($image,$j,$i)) {
+        for ($j= $middle->getx();$j>$upperleft->getx();$j--) {
+            for ($i = $upperleft->gety(); $i < $lowerright->gety() ; $i++) {
+                if (pixelisblack($image,$j, $i)) {
                     $count++;
-                    if($count==CROSSSIZEBOUNDRY) {
+                    if ($count==CROSSSIZEBOUNDRY) {
                         $xleft = $j;
                         break;
                     }
                 }
             }
             $count = 0;
-            if($xleft) {
+            if ($xleft) {
                 break;
             }
         }
-        $x=$this->findclosest($middle->getx(),$xright,$xleft);
+        $x=$this->findclosest($middle->getx(), $xright, $xleft);
 
-        if($x && $y) {
+        if ($x && $y) {
             //point found
             return new offlinequiz_point($x, $y, true);
-        }
-        else {
+        } else {
             //guess the point
             return $middle;
         }

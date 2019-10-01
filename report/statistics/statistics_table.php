@@ -83,7 +83,7 @@ class offlinequiz_statistics_table extends flexible_table {
         $columns[] = 'name';
         $headers[] = get_string('questionname', 'offlinequiz_statistics');
 
-        mod_offlinequiz_create_common_statistics_headers($headers, $columns);
+        mod_offlinequiz_create_common_statistics_headers($headers, $columns, $s);
 
         $this->define_columns($columns);
         $this->define_headers($headers);
