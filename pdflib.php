@@ -101,7 +101,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
      * (non-PHPdoc)
      * @see TCPDF::Header()
      */
-    // codechecker_intentional
+    // phpcs:disable
     public function Header() {
         $this->SetFont('FreeSans', 'I', 8);
         // Title.
@@ -114,6 +114,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
         $this->Ln(15);
         $this->diskcache = false;
     }
+    // phpcs:enable
 
     /**
      * (non-PHPdoc)
