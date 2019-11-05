@@ -1931,7 +1931,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
         // Sending HTTP headers.
         $workbook->send($filename);
         // Creating the first worksheet.
-        
+
         require(__DIR__ . '/sheetlib.php');
         list($myxls, $formats) = offlinequiz_sheetlib_initialize_headers($workbook);
 

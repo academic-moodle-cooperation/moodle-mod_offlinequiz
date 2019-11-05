@@ -28,5 +28,12 @@
         <license>LGPL</license>
         <licenseversion></licenseversion>
     </library>
+    <library>
+        <location>lib/pdflib.php</location>
+        <name>tcpdc</name>
+        <version>6.2.25</version>
+        <license>LGPL</license>
+        <licenseversion></licenseversion>
+    </library>
 
 </libraries>

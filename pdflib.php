@@ -437,14 +437,14 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
     // There is only a slot for multichoice questions.
     $attempt = $templateusage->get_question_attempt($slot);
     $order = $slotquestion->get_order($attempt);  // Order of the answers.
-    
+
     foreach ($order as $key => $answer) {
         $answertext = $question->options->answers[$answer]->answer;
         // Filter only for tex formulas.
         if (!empty($texfilter)) {
             $answertext = $texfilter->filter($answertext);
         }
-        
+
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
         // Remove all paragraph tags because they mess up the layout.
@@ -459,10 +459,10 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
             if ($question->options->answers[$answer]->fraction > 0) {
                 $html .= '<b>';
             }
-            
+
             $answertext .= " (".round($question->options->answers[$answer]->fraction * 100)."%)";
         }
-        
+
         $html .= number_in_style($key, $question->options->answernumbering) . ') &nbsp; ';
         $html .= $answertext;
         
@@ -474,7 +474,7 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         
         $html .= "<br/>\n";
     }
-    
+
     $infostring = offlinequiz_get_question_infostring($offlinequiz, $question);
     if ($infostring) {
         $html .= '<br/>' . $infostring . '<br/>';
@@ -486,19 +486,19 @@ function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html
 
     $pdf->writeHTMLCell(165,  round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
     $pdf->Ln();
-    
+
     if ($pdf->is_overflowing()) {
         $pdf->backtrack();
         $pdf->AddPage();
         $pdf->Ln(14);
-        
+
         // Print the question number and the HTML string again on the new page.
         if ($questiontype == 'multichoice' || $questiontype == 'multichoiceset') {
             $pdf->SetFont('FreeSans', 'B', $fontsize);
             $pdf->Cell(4, round($fontsize / 2), "$number)  ", 0, 0, 'R');
             $pdf->SetFont('FreeSans', '', $fontsize);
         }
-        
+
         $pdf->writeHTMLCell(165,  round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
         $pdf->Ln();
     }
