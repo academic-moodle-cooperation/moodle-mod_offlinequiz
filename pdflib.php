@@ -103,6 +103,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
      */
     // phpcs:disable
     public function Header() {
+        
         $this->SetFont('FreeSans', 'I', 8);
         // Title.
         $this->Ln(15);
@@ -115,6 +116,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
         $this->diskcache = false;
     }
     // phpcs:enable
+
 
     /**
      * (non-PHPdoc)
