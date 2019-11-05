@@ -469,7 +469,7 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
 
         $html .= number_in_style($key, $question->options->answernumbering) . ') &nbsp; ';
         $html .= $answertext;
-        
+
         if ($correction) {
             if ($question->options->answers[$answer]->fraction > 0) {
                 $html .= '</b>';

@@ -133,7 +133,7 @@ class crossfinder {
             } else {
                 return $upper;
             }
-        } else if($lower) {
+        } else if ($lower) {
             return $lower;
         } else if ($upper) {
             return $upper;
@@ -144,7 +144,7 @@ class crossfinder {
 
 class simple_cross_scanner {
 
-    public function findcross(\Imagick $image,offlinequiz_point $upperleft,offlinequiz_point $lowerright) {
+    public function findcross(\Imagick $image, offlinequiz_point $upperleft, offlinequiz_point $lowerright) {
         $geometry = $image->getimagegeometry();
         $downwards = ($geometry["height"]) / 2 > $upperleft->y;
         $margin = $geometry["height"] / A4_HEIGHT * SIMPLE_CROSSFINDER_MARGIN;
@@ -182,7 +182,7 @@ class simple_cross_scanner {
                 if ($lastfoundx) {
                     if (!$pointx) {
                         $pointx = $lastfoundx;
-                    } else if($lastfoundx != $i) {
+                    } else if ($lastfoundx != $i) {
                         if (abs($pointx - $lastfoundx) > ALIGNMENTCROSSBOUNDRY * $geometry["height"] / A4_HEIGHT) {
                             $pointx += $realcrossthickness / 2;
                             break;
@@ -221,7 +221,7 @@ class simple_cross_scanner {
                     }
                 }
                 if ($lastfoundx) {
-                    if(!$pointx) {
+                    if (!$pointx) {
                         $pointx = $lastfoundx;
                     } else if ($lastfoundx != $i) {
                         if (abs($pointx - $lastfoundx) > ALIGNMENTCROSSBOUNDRY * $geometry["height"] / A4_HEIGHT) {
@@ -261,10 +261,9 @@ class simple_cross_scanner {
                     }
                 }
                 if ($lastfoundy) {
-                    if(!$pointy) {
+                    if (!$pointy) {
                         $pointy = $lastfoundy;
-                    }
-                    else if ($lastfoundy != $i) {
+                    } else if ($lastfoundy != $i) {
                         if (abs($pointy - $lastfoundy) > ALIGNMENTCROSSBOUNDRY * $geometry["height"] / A4_HEIGHT) {
                             $pointy += $realcrossthickness / 2;
                             break;
@@ -291,7 +290,7 @@ class simple_cross_scanner {
                     }
                 } else {
                     for ($j = $upperleft->getx(); $j > $upperleft->getx() - $margin; $j--) {
-                        if (pixelisblack($image,$j,$i)) {
+                        if (pixelisblack($image, $j, $i)) {
                             $count++;
                             if ($count == $boundry) {
                                 $lastfoundy = $i;
@@ -303,8 +302,7 @@ class simple_cross_scanner {
                 if ($lastfoundy) {
                     if (!$pointy) {
                         $pointy = $lastfoundy;
-                    }
-                    else if ($lastfoundy != $i) {
+                    } else if ($lastfoundy != $i) {
                         if (abs($pointy - $lastfoundy) > ALIGNMENTCROSSBOUNDRY * $geometry["height"] / A4_HEIGHT) {
                             $pointy -= $realcrossthickness / 2;
                             break;
@@ -316,7 +314,7 @@ class simple_cross_scanner {
                 }
             }
         }
-        // TODO Fehlerbehandlung
+        // TODO Fehlerbehandlung.
         return new offlinequiz_point($pointx, $pointy, 1);
 
     }
