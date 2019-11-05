@@ -200,21 +200,8 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         }
 
         if (property_exists($question, '_stats')) {
-            $url = null;
-            if ($question->_stats->subquestion) {
-                $url = new moodle_url($this->baseurl, array('qid' => $question->id));
-            } else if ($question->_stats->questionid && $question->qtype != 'random') {
-                $url = new moodle_url($this->baseurl, array('questionid' => $question->_stats->questionid));
-            }
-
-            if ($url) {
-                $name = html_writer::link($url, $name,
-                        array('title' => get_string('detailedanalysis', 'offlinequiz_statistics')));
-            }
-
-            if ($this->is_dubious_question($question)) {
-                $name = html_writer::tag('div', $name, array('class' => 'dubious'));
-            }
+            require('statisticslib.php');
+            return mod_offlinequiz_print_column_stats_name($question, $this->baseurl, $name, $this->is_dubious_question($question));
         }
         return $name;
     }

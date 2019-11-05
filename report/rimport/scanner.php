@@ -1346,11 +1346,10 @@ class offlinequiz_page_scanner {
      * @param int $width
      * @return multitype:oq_point
      */
-    public function get_corners() {
-        global $CFG;
+    public function get_corners($width = OQ_IMAGE_WIDTH ) {
 
         $export = array();
-        $factor = OQ_IMAGE_WIDTH / imagesx($this->image);
+        $factor = $width / imagesx($this->image);
 
         $point = new oq_point(($this->upperleft->x) * $factor - 2 * $this->zoomx,
                 ($this->upperleft->y) * $factor - 2 * $this->zoomy);

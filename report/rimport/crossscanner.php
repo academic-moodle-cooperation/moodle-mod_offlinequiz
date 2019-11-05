@@ -187,7 +187,7 @@ class simple_cross_scanner {
                     if (!$pointx) {
                         $pointx = $lastfoundx;
                     } else if($lastfoundx != $i) {
-                        if(abs($pointx - $lastfoundx) > ALIGNMENTCROSSBOUNDRY * $geometry["height"] / A4_HEIGHT) {
+                        if (abs($pointx - $lastfoundx) > ALIGNMENTCROSSBOUNDRY * $geometry["height"] / A4_HEIGHT) {
                             $pointx += $realcrossthickness / 2;
                             break;
                         } else {

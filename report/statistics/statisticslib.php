@@ -56,3 +56,22 @@ function mod_offlinequiz_create_common_statistics_headers($headers, $columns, $s
     $columns[] = 'wrong';
     $headers[] = get_string('wrong', 'offlinequiz_statistics');
 }
+
+function mod_offlinequiz_print_column_stats_name($question, $baseurl, $name, $dubiousquestion) {
+    $url = null;
+    if ($question->_stats->subquestion) {
+        $url = new moodle_url($baseurl, array('qid' => $question->id));
+    } else if ($question->_stats->questionid && $question->qtype != 'random') {
+        $url = new moodle_url($baseurl, array('questionid' => $question->_stats->questionid));
+    }
+    
+    if ($url) {
+        $name = html_writer::link($url, $name,
+            array('title' => get_string('detailedanalysis', 'offlinequiz_statistics')));
+    }
+    
+    if ($dubiousquestion) {
+        $name = html_writer::tag('div', $name, array('class' => 'dubious'));
+    }
+    return name;
+}

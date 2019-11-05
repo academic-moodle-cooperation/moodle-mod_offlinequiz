@@ -531,17 +531,7 @@ function offlinequiz_check_for_changed_groupnumber($offlinequiz, $scanner, $scan
                     }
                     // Delete the old result.
                     $DB->delete_records('offlinequiz_results', array('id' => $oldresultid));
-
-                    // Now the old result cannot be found and we can check the page again which will produce a new result.
-                    $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
-                    if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
-                        // Already process the answers but don't submit them.
-                        $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id,
-                                                                        $questionsperpage, $coursecontext, false);
-
-                        // Compare the old and the new result wrt. the choices.
-                        $scannedpage = offlinequiz_check_different_result($scannedpage);
-                    }
+                    offlinequiz_reprocess_scannedpage($offlinequiz, $scanner, $oldresultid, $scannedpage, $coursecontext, $questionsperpage);
                 }
             }
         } else {
@@ -558,7 +548,20 @@ function offlinequiz_check_for_changed_groupnumber($offlinequiz, $scanner, $scan
     return $scannedpage;
 }
 
-
+function offlinequiz_reprocess_scannedpage($offlinequiz, $scanner, $oldresultid, $scannedpage, $coursecontext, $questionsperpage) {
+    global $USER;
+    
+    // Now the old result cannot be found and we can check the page again which will produce a new result.
+    $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
+    if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
+        // Already process the answers but don't submit them.
+        $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id,
+            $questionsperpage, $coursecontext, false);
+        
+        // Compare the old and the new result wrt. the choices.
+        $scannedpage = offlinequiz_check_different_result($scannedpage);
+    }
+}
 /**
  * Checks whether the userkey of a scannedpage has been changed. If so, we have to create a new result
  * using the new user ID.
@@ -585,22 +588,11 @@ function offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage
                     unset($scannedpage->resultid);
                     $DB->set_field('offlinequiz_scanned_pages', 'resultid', 0, array('id' => $scannedpage->id));
 
-                    // TODO what do we do with other pages that contributed to the old result?
-
                     if (!$DB->get_record('offlinequiz_scanned_pages', array('resultid' => $oldresultid))) {
                         // Delete the result if no other pages use this result.
                         $DB->delete_records('offlinequiz_results', array('id' => $oldresultid));
                     }
-                    // Now the old result cannot be found and we can check the page again which will produce a new result.
-                    $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
-                    if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
-                        // Already process the answers but don't submit them.
-                        $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage,
-                                                                        $USER->id, $questionsperpage, $coursecontext, false);
-
-                        // Compare the old and the new result wrt. the choices.
-                        $scannedpage = offlinequiz_check_different_result($scannedpage);
-                    }
+                    offlinequiz_reprocess_scannedpage($offlinequiz, $scanner, $oldresultid, $scannedpage, $coursecontext, $questionsperpage);
                 }
             }
         } else {

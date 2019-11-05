@@ -155,7 +155,6 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
      * @return array of oq_points (upperleft, upperright, lowerleft, lowerright).
      */
     public function export_corners($width) {
-        global $CFG;
 
         $export = array();
         $factor = $width / imagesx($this->image);
