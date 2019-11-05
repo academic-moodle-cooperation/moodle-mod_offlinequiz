@@ -264,7 +264,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             }
             // Sending HTTP headers.
             $workbook->send($filename);
-            require(__DIR__ . '/sheetlib.php');
+            require($CFG->dirroot  . '/mod/offlinequiz/sheetlib.php');
             list($myxls, $formats) = offlinequiz_sheetlib_initialize_headers($workbook);
 
             // Here starts workshhet headers.

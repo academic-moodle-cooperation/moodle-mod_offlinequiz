@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
-require(__DIR__ . '/report/statistics/statisticslib.php');
+require(__DIR__ . '/statisticslib.php');
 
 
 /**
@@ -354,10 +354,8 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
                         $negcovar . $OUTPUT->help_icon('negcovar', 'offlinequiz_statistics'),
                         array('class' => 'negcovar'));
             }
-
             return $negcovar;
         }
-
         return format_float($question->_stats->effectiveweight, 2) . '%';
     }
 
