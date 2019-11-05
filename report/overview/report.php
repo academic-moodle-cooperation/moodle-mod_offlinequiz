@@ -249,15 +249,13 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         $table->setup();
 
         if ($download == 'ODS' || $download == 'Excel') {
-            if($download == 'ODS' ) {
+            if ($download == 'ODS' ) {
                 require_once("$CFG->libdir/odslib.class.php");
-    
                 $filename .= ".ods";
                 // Creating a workbook.
                 $workbook = new MoodleODSWorkbook("-");
             } else {
                 require_once("$CFG->libdir/excellib.class.php");
-                
                 $filename .= ".xls";
                 // Creating a workbook.
                 $workbook = new MoodleExcelWorkbook("-");

@@ -550,14 +550,13 @@ function offlinequiz_check_for_changed_groupnumber($offlinequiz, $scanner, $scan
 
 function offlinequiz_reprocess_scannedpage($offlinequiz, $scanner, $oldresultid, $scannedpage, $coursecontext, $questionsperpage) {
     global $USER;
-    
+
     // Now the old result cannot be found and we can check the page again which will produce a new result.
     $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
     if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
         // Already process the answers but don't submit them.
         $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id,
             $questionsperpage, $coursecontext, false);
-        
         // Compare the old and the new result wrt. the choices.
         $scannedpage = offlinequiz_check_different_result($scannedpage);
     }

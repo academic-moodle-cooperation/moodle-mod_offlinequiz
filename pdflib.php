@@ -100,8 +100,8 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
      * (non-PHPdoc)
      * @see TCPDF::Header()
      */
-    public function Header() { // @codingStandardsIgnoreLine
-        
+    // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
+    public function Header() {
         $this->SetFont('FreeSans', 'I', 8);
         // Title.
         $this->Ln(15);
@@ -118,6 +118,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
      * (non-PHPdoc)
      * @see TCPDF::Footer()
      */
+    // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
     public function Footer() {
         // Position at 2.5 cm from bottom.
         $this->SetY(-25);
@@ -135,8 +136,9 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
      * (non-PHPdoc)
      * @see TCPDF::Header()
      */
+    // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
     public function Header() {
-        global $CFG, $DB;
+        global $CFG;
 
         $offlinequizconfig = get_config('offlinequiz');
 
@@ -254,6 +256,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
      * (non-PHPdoc)
      * @see TCPDF::Footer()
      */
+    // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
     public function Footer() {
         $letterstr = ' ABCDEF';
 
@@ -289,7 +292,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
         $y = $this->GetY();
         $x = $this->GetX();
-        // Print bar code for page
+        // Print bar code for page.
         offlinequiz_barcodewriter::print_barcode($this, $this->PageNo(), $x, $y);
 
         $this->Rect($x, $y, 0.2, 3.7, 'F');
@@ -309,6 +312,7 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
      * (non-PHPdoc)
      * @see TCPDF::Header()
      */
+    // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
     public function Header() {
         global $CFG,  $DB;
 
@@ -358,6 +362,7 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
      * (non-PHPdoc)
      * @see TCPDF::Footer()
      */
+    // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
     public function Footer() {
         $this->Line(11, 285, 14, 285);
         $this->Line(12.5, 283.5, 12.5, 286.5);
@@ -393,7 +398,7 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
  * @return string the number $num in the requested style.
  */
 function number_in_style($num, $style) {
-        return $number = chr(ord('a') + $num);
+        return chr(ord('a') + $num);
 }
 
 /**
@@ -453,7 +458,7 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
         $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer,
             1, 300, $offlinequiz->disableimgnewlines);
-        
+
         if ($correction) {
             if ($question->options->answers[$answer]->fraction > 0) {
                 $html .= '<b>';
@@ -470,7 +475,7 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
                 $html .= '</b>';
             }
         }
-        
+
         $html .= "<br/>\n";
     }
 

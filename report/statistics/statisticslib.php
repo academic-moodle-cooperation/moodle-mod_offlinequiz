@@ -64,12 +64,12 @@ function mod_offlinequiz_print_column_stats_name($question, $baseurl, $name, $du
     } else if ($question->_stats->questionid && $question->qtype != 'random') {
         $url = new moodle_url($baseurl, array('questionid' => $question->_stats->questionid));
     }
-    
+
     if ($url) {
         $name = html_writer::link($url, $name,
             array('title' => get_string('detailedanalysis', 'offlinequiz_statistics')));
     }
-    
+
     if ($dubiousquestion) {
         $name = html_writer::tag('div', $name, array('class' => 'dubious'));
     }

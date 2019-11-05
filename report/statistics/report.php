@@ -831,14 +831,12 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $rowdata->fraction = $fraction;
         $rowdata->count = $count;
         $rowdata->part = $letterstr[$counter] . ')';
-        
         $classname = '';
         if ($rowdata->fraction > 0) {
             $classname = 'greenrow';
         } else if ($rowdata->fraction < 0) {
             $classname = 'redrow';
         }
-        
         if ($counter2 == 0 && $partcounter == 0) {
             if ($this->table->is_downloading()) {
                 $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);

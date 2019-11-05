@@ -127,18 +127,15 @@ class crossfinder {
     }
 
     private function findclosest ($middle, $upper, $lower) {
-        if($upper && $lower) {
-            if( abs($upper - $middle) > abs($lower - $middle) ) {
+        if ($upper && $lower) {
+            if ( abs($upper - $middle) > abs($lower - $middle) ) {
                 return $lower;
-            }
-            else {
+            } else {
                 return $upper;
             }
-        }
-        else if($lower) {
+        } else if($lower) {
             return $lower;
-        }
-        else if ($upper) {
+        } else if ($upper) {
             return $upper;
         }
         return 0;
@@ -160,11 +157,10 @@ class simple_cross_scanner {
         $pointy = 0;
         if ($right) {
             for ($i = $upperleft->getx(); $i < $upperleft->getx() + $margin; $i++) {
-
                 $count = 0;
                 if ($downwards) {
                     for ($j = $upperleft->gety(); $j < $upperleft->gety() + $margin; $j++) {
-                        if (pixelisblack($image,$i,$j)) {
+                        if (pixelisblack($image, $i, $j)) {
                             $count++;
                             if ($count == $boundry) {
                                 $lastfoundx = $i;
@@ -174,7 +170,7 @@ class simple_cross_scanner {
                     }
                 } else {
                     for ($j = $upperleft->gety(); $j > $upperleft->gety() - $margin; $j--) {
-                        if (pixelisblack($image,$i,$j)) {
+                        if (pixelisblack($image, $i, $j)) {
                             $count++;
                             if ($count == $boundry) {
                                 $lastfoundx = $i;
@@ -204,7 +200,7 @@ class simple_cross_scanner {
                 $count = 0;
                 if ($downwards) {
                     for ($j = $upperleft->gety(); $j < $upperleft->gety() + $margin; $j++) {
-                        if (pixelisblack($image,$i,$j)) {
+                        if (pixelisblack($image, $i, $j)) {
                             $count++;
                             if ($count == $boundry) {
                                 $lastfoundx = $i;
@@ -215,7 +211,7 @@ class simple_cross_scanner {
                 } else {
 
                     for ($j = $upperleft->gety(); $j > $upperleft->gety() - $margin; $j--) {
-                        if (pixelisblack($image,$i,$j)) {
+                        if (pixelisblack($image, $i, $j)) {
                             $count++;
                             if ($count == $boundry) {
                                 $lastfoundx = $i;
@@ -245,7 +241,7 @@ class simple_cross_scanner {
                 $count = 0;
                 if ($right) {
                     for ($j = $upperleft->getx(); $j < $upperleft->getx() + $margin; $j++) {
-                        if (pixelisblack($image,$j,$i)) {
+                        if (pixelisblack($image, $j, $i)) {
                             $count++;
                             if ($count == $boundry) {
                                 $lastfoundy = $i;
@@ -255,7 +251,7 @@ class simple_cross_scanner {
                     }
                 } else {
                     for ($j = $upperleft->getx(); $j > $upperleft->getx() - $margin; $j--) {
-                        if (pixelisblack($image,$j,$i)) {
+                        if (pixelisblack($image, $j, $i)) {
                             $count++;
                             if ($count == $boundry) {
                                 $lastfoundy = $i;

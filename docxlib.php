@@ -341,10 +341,11 @@ function offlinequiz_convert_image_docx($text) {
     return $result;
 }
 
-function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question, $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2 ) {
+function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
+      $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2 ) {
     $attempt = $templateusage->get_question_attempt($slot);
     $order = $slotquestion->get_order($attempt);  // Order of the answers.
-    
+
     foreach ($order as $key => $answer) {
         $answertext = $question->options->answers[$answer]->answer;
         // Filter only for tex formulas.
@@ -360,7 +361,7 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
         $answertext = $trans->fix_image_paths($answertext, $question->contextid,
             'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
-        
+
         $blocks = offlinequiz_convert_image_docx($answertext);
         offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
     }
