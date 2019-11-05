@@ -100,7 +100,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
      * (non-PHPdoc)
      * @see TCPDF::Header()
      */
-    public function Header() { // phpcs:ignore
+    public function Header() { // @codingStandardsIgnoreLine
         
         $this->SetFont('FreeSans', 'I', 8);
         // Title.
