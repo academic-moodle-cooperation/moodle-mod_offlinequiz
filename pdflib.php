@@ -92,7 +92,6 @@ class offlinequiz_pdf extends pdf
     }
 
 }
-// phpcs:disable
 class offlinequiz_question_pdf extends offlinequiz_pdf
 {
     private $tempfiles = array();
@@ -101,8 +100,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
      * (non-PHPdoc)
      * @see TCPDF::Header()
      */
-
-    public function Header() {
+    public function Header() { // phpcs:ignore
         
         $this->SetFont('FreeSans', 'I', 8);
         // Title.
@@ -129,7 +127,6 @@ class offlinequiz_question_pdf extends offlinequiz_pdf
                 '/' . $this->getAliasNbPages(), 0, 0, 'C');
     }
 }
-// phpcs:enable
 
 class offlinequiz_answer_pdf extends offlinequiz_pdf {
     public $groupid = 0;
