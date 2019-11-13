@@ -367,7 +367,7 @@ class provider implements
       ) UNION (
       SELECT c.userid FROM {offlinequiz_p_choices} c,
                            {offlinequiz_scanned_pages} p
-                     WHERE p.id = c.scannedppageid 
+                     WHERE p.id = c.scannedppageid
                        AND p.offlinequizid = :offlinequizid2
       ) UNION (
       SELECT q.importuserid FROM {offlinequiz_queue} q

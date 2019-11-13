@@ -109,7 +109,7 @@ class offlinequiz_page_scanner {
     public $sourcefile;
     public $pageimage;
     public $path;
-    public $id_digits;
+    public $iddigits;
     public $maxanswers;
     public $maxquestions;
     public $questionsonpage;
@@ -174,7 +174,7 @@ class offlinequiz_page_scanner {
         }
         $this->numpages = ceil($maxquestions / ($this->formtype * 24));
 
-        $this->id_digits = $offlinequiz->id_digits;
+        $this->iddigits = $offlinequiz->id_digits;
     }
 
     /**
@@ -1346,11 +1346,10 @@ class offlinequiz_page_scanner {
      * @param int $width
      * @return multitype:oq_point
      */
-    public function get_corners() {
-        global $CFG;
+    public function get_corners($width = OQ_IMAGE_WIDTH ) {
 
         $export = array();
-        $factor = OQ_IMAGE_WIDTH / imagesx($this->image);
+        $factor = $width / imagesx($this->image);
 
         $point = new oq_point(($this->upperleft->x) * $factor - 2 * $this->zoomx,
                 ($this->upperleft->y) * $factor - 2 * $this->zoomy);
@@ -1532,7 +1531,7 @@ class offlinequiz_page_scanner {
         $offlinequizconfig = get_config('offlinequiz');
 
         $usernumber = '';
-        for ($i = 0; $i < $this->id_digits; $i++) {
+        for ($i = 0; $i < $this->iddigits; $i++) {
             $found = 0;
             $value = 'X';                   // If we cannot read the value, set it to X.
             $insecure = false;
@@ -1559,7 +1558,7 @@ class offlinequiz_page_scanner {
          * We are handling the cases where answer sheets have been created with 7 digits and the
          * student IDs contain already 8 digits. This has no effect on other systems/instances.
          */
-        if ($offlinequizconfig->ID_digits > $this->id_digits) {
+        if ($offlinequizconfig->ID_digits > $this->iddigits) {
             // Fill the usernumber to the new length with 0 on the left!
             $usernumber = str_pad($usernumber, $offlinequizconfig->ID_digits, "0", STR_PAD_LEFT);
         }

@@ -21,7 +21,7 @@ define("BOX_MARGIN", 10);
 define("BLACK_DOTS_CHANGE_LIMIT", 0.85);
 define("CROSS_FOUND_LOWER_LIMIT", 0.04);
 define("CROSS_FOUND_REASK_MARGIN", 0.03);
-define("CROSS_FOUND_UPPER_LIMIT",  0.50);
+define("CROSS_FOUND_UPPER_LIMIT", 0.50);
 define("WEIGHTEDVALUE_LOWER_LIMIT", 0.8);
 define("WEIGHTEDVALUE_UPPER_LIMIT", 0.9);
 define("NORMAL_DISTRIBUTION_VARIANCE", 0.1);
@@ -48,7 +48,7 @@ class pixelcountboxscanner {
         $zoomfactory = $page->scanproperties->zoomfactory;
         $boximage = clone $page->image;
         $boximage->cropimage(round($marginedboxsize * $zoomfactorx), round($marginedboxsize * $zoomfactory),
-            $boxupperleft->getx(),$boxupperleft->gety());
+            $boxupperleft->getx(), $boxupperleft->gety());
 
         // Find out how many black points we have in the image.
         $blackpoints = $this->get_image_black_value($boximage);
@@ -117,9 +117,9 @@ class weighted_diagonal_box_scanner{
         $this->remove_edges($boximage);
         // Find out how many black dots we have in the image.
         $blackdots = $this->get_image_black_value($boximage);
-        $maxdots = pow($marginedboxsize * $zoomfactory,2);
+        $maxdots = pow($marginedboxsize * $zoomfactory, 2);
         // Depending on how many black pixels we have in comparison to all pixels, decide if it is crossed out or not.
-        if ($blackdotsbefore > $maxdots * CROSS_FOUND_UPPER_LIMIT){
+        if ($blackdotsbefore > $maxdots * CROSS_FOUND_UPPER_LIMIT) {
             return 0;
         }
         if ($blackdotsbefore * (1 - BLACK_DOTS_CHANGE_LIMIT) > $blackdots) {
@@ -178,7 +178,7 @@ class weighted_diagonal_box_scanner{
         for ($i = 0; $i < $geometry["width"]; $i++) {
             if ($maxx <= $countx[$i] + 5) {
                 for ($j = 0; $j < $geometry["height"]; $j++) {
-                    $draw->point($i,$j);
+                    $draw->point($i, $j);
                 }
             }
         }
@@ -186,7 +186,7 @@ class weighted_diagonal_box_scanner{
         for ($i = 0; $i < $geometry["height"]; $i++) {
             if ($maxy <= $county[$i] + 5) {
                 for ($j = 0; $j < $geometry["width"]; $j++) {
-                    $draw->point($j,$i);
+                    $draw->point($j, $i);
                 }
             }
         }
@@ -211,7 +211,7 @@ class weighted_diagonal_box_scanner{
         for ($i = 0; $i < $geometry["width"]; $i++) {
             for ($j = 0; $j < $geometry["height"]; $j++) {
                 if (pixelisblack($image, $i, $j)) {
-                    $totaldiagblackvalue += $this->get_diag_up_value($i,$j,$geometry["width"],$geometry["height"]);
+                    $totaldiagblackvalue += $this->get_diag_up_value($i, $j, $geometry["width"], $geometry["height"]);
                 }
             }
         }
@@ -234,13 +234,13 @@ class weighted_diagonal_box_scanner{
 
     private function get_diag_up_value($i, $j, $width, $height) {
         $distance = $this->get_diag_up_distance($i, $j, $width, $height);
-        return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI) * pow(M_E,(-1 / 2) * pow($distance / NORMAL_DISTRIBUTION_VARIANCE,2));
+        return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI) * pow(M_E, (-1 / 2) * pow($distance / NORMAL_DISTRIBUTION_VARIANCE, 2));
     }
 
     private function get_diag_down_value($i, $j, $width, $height) {
         $distance = $this->get_diag_down_distance($i, $j, $width, $height);
         // Normal distribution.
-        return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI) * pow(M_E, (-1 / 2) * pow($distance / NORMAL_DISTRIBUTION_VARIANCE,2));
+        return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI) * pow(M_E, (-1 / 2) * pow($distance / NORMAL_DISTRIBUTION_VARIANCE, 2));
     }
 
     private function get_diag_up_distance($i, $j, $width, $height) {
@@ -254,7 +254,7 @@ class weighted_diagonal_box_scanner{
         $meetingpointupwardsx = ($shiftupwards - $height) / ($gradiantupwardsdiag - $orthogonalupwards);
         $meetingpointupwardsy = $orthogonalupwards * $meetingpointupwardsx + $shiftupwards;
 
-        $distanceupwards = (new offlinequiz_point($meetingpointupwardsx - $i,$meetingpointupwardsy - $j,0))->getdistance();
+        $distanceupwards = (new offlinequiz_point($meetingpointupwardsx - $i, $meetingpointupwardsy - $j, 0))->getdistance();
 
         return $distanceupwards / sqrt($width * $height);
     }
@@ -268,7 +268,7 @@ class weighted_diagonal_box_scanner{
         $meetingpointx = $shiftdownwards / ($gradiantdiag - $orthogonal);
         $meetingpointy = $orthogonal * $meetingpointx + $shiftdownwards;
 
-        $distancedownwards = (new offlinequiz_point($meetingpointx - $i, $meetingpointy - $j,0))->getdistance();
+        $distancedownwards = (new offlinequiz_point($meetingpointx - $i, $meetingpointy - $j, 0))->getdistance();
 
         return $distancedownwards / sqrt($width * $height);
     }

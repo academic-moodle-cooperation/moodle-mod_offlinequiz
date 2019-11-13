@@ -48,7 +48,7 @@ class offlinequiz_resultscanner {
         $questionsperpage = $this->get_questions_per_page($columns);
         $columndistance = ANSWERS_BOX_DISTANCE_X_NEW_COLUMN[$columns];
 
-        // load the first and the last number of the questions on the page.
+        // Load the first and the last number of the questions on the page.
         $startingnumber = ($page->pagenumber - 1) * $questionsperpage;
         $page->startanswer = $startingnumber;
         $endnumber = $startingnumber + $questionsperpage;
@@ -137,7 +137,7 @@ class offlinequiz_resultscanner {
                 + (ANSWERS_BOX_DISTANCE_Y_NORMAL * $position['blockposition']) + (ANSWERS_BOX_SIZE / 2);
             $page->answers[$questiononpage][$i]['position'] =
                 calculate_point_relative_to_corner($page, new offlinequiz_point($expectedx, $expectedy, 1));
-            $result  = $this->boxscanner->scan_box($page,$page->answers[$questiononpage][$i]['position'],ANSWERS_BOX_SIZE);
+            $result  = $this->boxscanner->scan_box($page, $page->answers[$questiononpage][$i]['position'], ANSWERS_BOX_SIZE);
             $page->answers[$questiononpage][$i]['result'] = $result;
             if ($result == -1) {
                 $page->status = PAGE_STATUS_INSECURE_RESULT;

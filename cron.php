@@ -30,9 +30,7 @@ use offlinequiz_result_import\offlinequiz_result_engine;
 use offlinequiz_result_import\offlinequiz_point;
 use offlinequiz_result_import\offlinequiz_result_page;
 
-if (!defined('CLI_SCRIPT')) {
-    define('CLI_SCRIPT', true);
-}
+defined('MOODLE_INTERNAL') || die();
 
 define("OFFLINEQUIZ_MAX_CRON_JOBS", "5");
 define("OFFLINEQUIZ_TOP_QUEUE_JOBS", "5");

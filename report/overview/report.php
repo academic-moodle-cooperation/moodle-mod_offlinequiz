@@ -249,22 +249,20 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         $table->setup();
 
         if ($download == 'ODS' || $download == 'Excel') {
-            if($download == 'ODS' ) {
+            if ($download == 'ODS' ) {
                 require_once("$CFG->libdir/odslib.class.php");
-    
                 $filename .= ".ods";
                 // Creating a workbook.
                 $workbook = new MoodleODSWorkbook("-");
             } else {
                 require_once("$CFG->libdir/excellib.class.php");
-                
                 $filename .= ".xls";
                 // Creating a workbook.
                 $workbook = new MoodleExcelWorkbook("-");
             }
             // Sending HTTP headers.
             $workbook->send($filename);
-            require(__DIR__ . '/sheetlib.php');
+            require($CFG->dirroot  . '/mod/offlinequiz/sheetlib.php');
             list($myxls, $formats) = offlinequiz_sheetlib_initialize_headers($workbook);
 
             // Here starts workshhet headers.
