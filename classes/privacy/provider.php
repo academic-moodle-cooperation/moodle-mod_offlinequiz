@@ -635,7 +635,7 @@ class provider implements
         global $DB;
         $select = 'offlinequizid = :oqid AND userid = :userid';
         $resultids = $DB->get_fieldset_select('offlinequiz_results', 'id', $select, ['oqid' => $offlinequizid, 'userid' => $user->id]);
-        foreach($resultids as $resultid) {
+        foreach ($resultids as $resultid) {
             \offlinequiz_delete_result($resultid, $context);
         }
     }
@@ -648,7 +648,7 @@ class provider implements
     private static function remove_from_lists($offlinequizid, $user) {
         global $DB;
         $DB->delete_records('offlinequiz_participants', ['offlinequizid' => $offlinequizid, 'userid' => $user->id]);
-        $sql = "SELECT c.id 
+        $sql = "SELECT c.id
                 FROM   {offlinequiz_scanned_p_pages} p
                 JOIN   {offlinequiz_p_choices} c ON p.id = c.scannedppageid
                 WHERE  c.userid = :userid
