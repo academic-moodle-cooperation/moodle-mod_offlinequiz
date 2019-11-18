@@ -582,7 +582,7 @@ class provider implements
         }
         list($course, $cm) = get_course_and_cm_from_cmid($cm);
         if (!$course) {
-            //A Module without course? Something that should never happen better do nothing!
+            // A Module without course? Something that should never happen better do nothing!
             return;
         }
         $users = user_get_participants($course->id);
