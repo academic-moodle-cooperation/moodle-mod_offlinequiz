@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
-require(__DIR__ . '/report/statistics/statisticslib.php');
+require_once(__DIR__ . '/statisticslib.php');
 
 /**
  * This table has one row for each question in the offlinequiz, with sub-rows when
@@ -163,7 +163,7 @@ class offlinequiz_statistics_table extends flexible_table {
         if ($this->is_downloading()) {
             return $name;
         }
-        require('statisticslib.php');
+        require_once('statisticslib.php');
         return mod_offlinequiz_print_column_stats_name($question, $this->baseurl, $name, $this->is_dubious_question($question));
 
         return $name;

@@ -148,30 +148,5 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
         return $export;
     }
 
-    /**
-     * Returns the corners of the scanned page.
-     *
-     * @param int $width
-     * @return array of oq_points (upperleft, upperright, lowerleft, lowerright).
-     */
-    public function export_corners($width) {
 
-        $export = array();
-        $factor = $width / imagesx($this->image);
-
-        $point = new oq_point(($this->upperleft->x) * $factor - 2 * $this->zoomx,
-                ($this->upperleft->y) * $factor - 2 * $this->zoomy);
-        $export[0] = $point;
-        $point = new oq_point(($this->upperright->x) * $factor - 2 * $this->zoomx,
-                ($this->upperright->y) * $factor - 2 * $this->zoomy);
-        $export[1] = $point;
-        $point = new oq_point(($this->lowerleft->x) * $factor - 2 * $this->zoomx,
-                ($this->lowerleft->y) * $factor - 2 * $this->zoomy);
-        $export[2] = $point;
-        $point = new oq_point(($this->lowerright->x) * $factor - 2 * $this->zoomx,
-                ($this->lowerright->y) * $factor - 2 * $this->zoomy);
-        $export[3] = $point;
-
-        return $export;
-    }
 }

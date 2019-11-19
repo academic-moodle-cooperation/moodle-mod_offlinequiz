@@ -339,7 +339,7 @@ switch($mode) {
                 }
             }
         }
-
+        $strpreview = get_string('participantslist', 'offlinequiz');
         include('participants/members.html');
         break;
     case 'attendances':

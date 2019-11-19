@@ -436,8 +436,9 @@ function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $o
 }
 
 function offlinequiz_get_answers_html($offlinequiz, $templateusage,
-    $slot, $slotquestion, $question, $texfilter, $trans, $correction) {
+    $slot, $question, $texfilter, $trans, $correction) {
     $html = '';
+    $slotquestion = $templateusage->get_question ( $slot );
     // There is only a slot for multichoice questions.
     $attempt = $templateusage->get_question_attempt($slot);
     $order = $slotquestion->get_order($attempt);  // Order of the answers.
@@ -669,7 +670,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 $html = $html . offlinequiz_get_answers_html($offlinequiz, $templateusage,
-                    $slot, $slotquestion, $question, $texfilter, $trans, $correction);
+                    $slot, $question, $texfilter, $trans, $correction);
 
             }
             if ($offlinequiz->disableimgnewlines) {
@@ -715,14 +716,14 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             set_time_limit( 120 );
 
             // Either we print the question HTML.
-            offlinequiz_get_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
+            $html = offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 $slot = $questionslots[$currentquestionid];
 
                 $html = $html . offlinequiz_get_answers_html($offlinequiz, $templateusage,
-                    $slot, $slotquestion, $question, $texfilter, $trans, $correction);
+                    $slot, $question, $texfilter, $trans, $correction);
             }
 
             // Finally print the question number and the HTML string.
