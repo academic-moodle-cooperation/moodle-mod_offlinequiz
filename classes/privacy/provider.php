@@ -638,16 +638,16 @@ class provider implements
         require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
         global $DB;
         $select = 'offlinequizid = :oqid AND userid = :userid';
-        $resultids = $DB->get_fieldset_select('offlinequiz_results', 'id', $select, ['oqid' => $offlinequizid, 'userid' => $user->id]);
+        $resultids = $DB->get_fieldset_select('offlinequiz_results', 'id',
+            $select, ['oqid' => $offlinequizid, 'userid' => $user->id]);
         foreach ($resultids as $resultid) {
             // First delete all scannedpages.
             $scannedpages = $DB->get_records_select('offlinequiz_scanned_pages', 'resultid = :resultid', ['resultid' => $resultid]);
             foreach ($scannedpages as $scannedpage) {
                 \offlinequiz_delete_scanned_page($scannedpage, $context);
             }
-            //then the corresponding result
+            // Then the corresponding result.
             \offlinequiz_delete_result($resultid, $context);
-            
         }
     }
 
