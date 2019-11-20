@@ -639,8 +639,8 @@ if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz
 }
 // Check whether the user exists in Moodle.
 $user = $DB->get_record('user', array($offlinequizconfig->ID_field => $userkey));
-if($user) {
-// Check whether the user is enrolled in the current course.
+if ($user) {
+    // Check whether the user is enrolled in the current course.
     $sql = "SELECT ra.id
             FROM {role_assignments} ra,
                  {role} r
