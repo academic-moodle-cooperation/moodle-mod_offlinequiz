@@ -250,6 +250,9 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
         global $DB;
+        $columns = $DB->get_columns("user");
+        $offlinequizconfig = get_config('offlinequiz');
+        $type = $columns[$offlinequizconfig->ID_field]->type;
         $offlinequizconfig = get_config('offlinequiz');
         // Fetch all choice answers.
         $sql = "SELECT c.id FROM {context} c
@@ -599,14 +602,14 @@ class provider implements
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         global $DB;
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
-        $sql = "SELECT c.instanceid
+        $sql = "SELECT cm.instance
                 FROM {context} c
                 JOIN {course_modules} cm ON cm.id = c.instanceid
                 JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70
                 AND (c.id {$contextsql} )";
         $offlinequizes = $DB->get_records_sql($sql, $contextparams);
-        foreach ($offlinequizes as $offlinequizid) {
-            static::delete_data_for_user_in_offlinequiz($offlinequizid, $contextlist->get_user());
+        foreach ($offlinequizes as $offlinequiz) {
+            static::delete_data_for_user_in_offlinequiz($offlinequiz->instance, $contextlist->get_user());
         }
     }
 
@@ -616,7 +619,10 @@ class provider implements
      * @param \stdClass $user
      */
     private static function delete_data_for_user_in_offlinequiz(int $offlinequizid, $user) {
-        if (! $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course)) {
+        print_object('offlinequizid: ' . $offlinequizid);
+        $cm = get_coursemodule_from_instance("offlinequiz", $offlinequizid);
+        print_object($cm);
+        if (! $cm) {
             return false;
         }
         $context = \context_module::instance($cm->id);
@@ -635,8 +641,21 @@ class provider implements
         global $DB;
         $select = 'offlinequizid = :oqid AND userid = :userid';
         $resultids = $DB->get_fieldset_select('offlinequiz_results', 'id', $select, ['oqid' => $offlinequizid, 'userid' => $user->id]);
+        print_object($resultids);
+        print($offlinequizid);
+        print_object($user);
         foreach ($resultids as $resultid) {
+            print("delete resultid" . $resultid . "\n");
+            // First delete all scannedpages.
+            $scannedpages = $DB->get_records_select('offlinequiz_scanned_pages', 'resultid = :resultid', ['resultid' => $resultid]);
+            print_object($scannedpages);
+            foreach ($scannedpages as $scannedpage) {
+                print_object($scannedpage);
+                \offlinequiz_delete_scanned_page($scannedpage, $context);
+            }
+            //then the corresponding result
             \offlinequiz_delete_result($resultid, $context);
+            
         }
     }
 
