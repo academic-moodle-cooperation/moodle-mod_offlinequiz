@@ -341,6 +341,37 @@ function offlinequiz_convert_image_docx($text) {
     return $result;
 }
 
+function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
+      $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2 ) {
+    $attempt = $templateusage->get_question_attempt($slot);
+    $order = $slotquestion->get_order($attempt);  // Order of the answers.
+
+    foreach ($order as $key => $answer) {
+        $answertext = $question->options->answers[$answer]->answer;
+        // Filter only for tex formulas.
+        if (!empty($texfilter)) {
+            $answertext = $texfilter->filter($answertext);
+        }
+        // Remove all HTML comments (typically from MS Office).
+        $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
+        // Remove all paragraph tags because they mess up the layout.
+        $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
+        // Remove <script> tags that are created by mathjax preview.
+        $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
+        $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
+        $answertext = $trans->fix_image_paths($answertext, $question->contextid,
+            'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
+
+        $blocks = offlinequiz_convert_image_docx($answertext);
+        offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
+    }
+    $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
+    if ($infostr) {
+        // Indent the question grade like the answers.
+        $textrun = $section->createTextRun($level2);
+        $textrun->addText($infostr, 'nStyle');
+    }
+}
 /**
  * Generates the DOCX question/correction form for an offlinequiz group.
  *
@@ -585,34 +616,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 // There is only a slot for multichoice questions.
-                $attempt = $templateusage->get_question_attempt($slot);
-                $order = $slotquestion->get_order($attempt);  // Order of the answers.
-
-                foreach ($order as $key => $answer) {
-                    $answertext = $question->options->answers[$answer]->answer;
-                    // Filter only for tex formulas.
-                    if (!empty($texfilter)) {
-                        $answertext = $texfilter->filter($answertext);
-                    }
-                    // Remove all HTML comments (typically from MS Office).
-                    $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
-                    // Remove all paragraph tags because they mess up the layout.
-                    $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
-                    // Remove <script> tags that are created by mathjax preview.
-                    $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
-                    $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid,
-                                   'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
-
-                    $blocks = offlinequiz_convert_image_docx($answertext);
-                    offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
-                }
-                $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
-                if ($infostr) {
-                    // Indent the question grade like the answers.
-                    $textrun = $section->createTextRun($level2);
-                    $textrun->addText($infostr, 'nStyle');
-                }
+                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question, $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2);
             }
             $section->addTextBreak();
             $number++;
@@ -682,35 +686,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
                 // Now retrieve the order of the answers.
                 $slotquestion = $templateusage->get_question($slot);
-                $attempt = $templateusage->get_question_attempt($slot);
-                $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
-                foreach ($order as $key => $answer) {
-                    $answertext = $question->options->answers[$answer]->answer;
-                    // Filter only for tex formulas.
-                    if (!empty($texfilter)) {
-                        $answertext = $texfilter->filter($answertext);
-                    }
-                    // Remove all HTML comments (typically from MS Office).
-                    $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
-                    // Remove all paragraph tags because they mess up the layout.
-                    $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
-                    // Remove <script> tags that are created by mathjax preview.
-                    $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
-                    $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-                    $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer',
-                                   $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
-
-                    $blocks = offlinequiz_convert_image_docx($answertext);
-
-                    offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
-                }
-                $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
-                if ($infostr) {
-                    // Indent the question grade like the answers.
-                    $textrun = $section->createTextRun($level2);
-                    $textrun->addText($infostr, 'nStyle');
-                }
+                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question, $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2);
                 $section->addTextBreak();
                 $number++;
                 // End if multichoice.

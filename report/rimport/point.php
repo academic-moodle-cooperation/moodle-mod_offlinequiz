@@ -15,19 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace offlinequiz_result_import;
 
+defined('MOODLE_INTERNAL') || die();
 class offlinequiz_point {
 
     public $x;
     public $y;
-    //Mode of the point:
-    //Mode 0: guessed point in millimeter*10 (x = 10 and x=0 are 1 mm away from each other)
-    //Mode 1: found pixel in an image;
-    //Mode 2: guessed point relative to corner in millimeter/10
+    // Mode of the point:
+    // Mode 0: guessed point in millimeter*10 (x = 10 and x=0 are 1 mm away from each other)
+    // Mode 1: found pixel in an image;
+    // Mode 2: guessed point relative to corner in millimeter/10.
     public $mode;
 
     public function __construct($x, $y , $mode) {
-        $this->x=$x;
-        $this->y=$y;
+        $this->x = $x;
+        $this->y = $y;
         $this->mode = $mode;
     }
 
@@ -41,17 +42,17 @@ class offlinequiz_point {
         return $this->y;
     }
     public function isfound() {
-       return ($this->mode == 1 );
+        return ($this->mode == 1 );
     }
     public function getdistance() {
-        return sqrt(pow($this->x, 2)+ pow($this->y,2));
+        return sqrt(pow($this->x, 2) + pow($this->y, 2));
     }
 
 }
 
-function pixelisblack($image,$x,$y) {
+function pixelisblack($image, $x, $y) {
 
-    if($x<0 || $y<0) {
+    if ($x < 0 || $y < 0) {
         return false;
     }
 

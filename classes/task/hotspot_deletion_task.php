@@ -40,19 +40,19 @@ class hotspot_deletion_task extends \core\task\scheduled_task {
         global $DB;
         // Remove all saved hotspot data that is older than 7 days.
         $timenow = time();
-        
+
         // We have to make sure we do this atomic for each scanned page.
         $sql = "SELECT DISTINCT(scannedpageid)
               FROM {offlinequiz_hotspots}
              WHERE time < :expiretime";
         $params = array('expiretime' => (int) $timenow - 604800);
-        
+
         // First we get the different IDs.
         $ids = $DB->get_fieldset_sql($sql, $params);
-        
+
         if (!empty($ids)) {
             list($isql, $iparams) = $DB->get_in_or_equal($ids);
-            
+
             // Now we delete the records.
             $DB->delete_records_select('offlinequiz_hotspots', 'scannedpageid ' . $isql, $iparams);
         }

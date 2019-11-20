@@ -4,7 +4,7 @@ Feature: Within a moodle instance, an administrator should be able to set the va
   As an admin
   I need to default values for offline quiz settings.
 
-  @javascript
+@javascript
   Scenario: Switch as an admin to the adminsettings of the module offlinequiz and change
             the value of "Print study code field on question sheet". Then login as a teacher and add a new offline quiz to
             a course and check whether the default value has changed.

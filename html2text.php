@@ -27,7 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 class offlinequiz_html_translator
 {
     private $tempfiles = array();
@@ -109,7 +108,7 @@ class offlinequiz_html_translator
                             print_error("Could not create data directory");
                         }
                         $imagefile->copy_content_to($file);
-                        
+
                         $pluginfile = true;
                     } else {
                         $output .= 'Image file not found ' . $pathparts['dirname'] . '/' . $pathparts['basename'];
@@ -226,14 +225,9 @@ class offlinequiz_html_translator
                         if ($filearea == 'answer' and $disableimgnewlines == 0) {
                             $output .= '<br/>';
                         }
-//                         if($format == "pdf") {
-//                             $output .= '<img src="' . $file . '" align="middle" width="' . $width . '" height="' .
-//                             $height .'"/>';
-//                         } else {
                         // Finally, add the image tag for tcpdf.
                             $output .= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' .
                                 $height .'"/>';
-//                         }
                     }
                 } else {
 
@@ -252,7 +246,7 @@ class offlinequiz_html_translator
             }
             $output .= substr($string, strpos($string, '>') + 1);
         }
-        
+
         return $output;
     }
 

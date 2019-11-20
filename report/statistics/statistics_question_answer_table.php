@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
+require_once(__DIR__ . '/statisticslib.php');
 
 
 /**
@@ -102,33 +103,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         $columns[] = 'frequency';
         $headers[] = get_string('frequency', 'offlinequiz_statistics');
 
-        $columns[] = 's';
-        $headers[] = get_string('attempts', 'offlinequiz_statistics');
-
-        if ($s > 1) {
-            $columns[] = 'facility';
-            $headers[] = get_string('facility', 'offlinequiz_statistics');
-
-            $columns[] = 'sd';
-            $headers[] = get_string('standarddeviationq', 'offlinequiz_statistics');
-        }
-
-        $columns[] = 'intended_weight';
-        $headers[] = get_string('intended_weight', 'offlinequiz_statistics');
-
-        $columns[] = 'effective_weight';
-        $headers[] = get_string('effective_weight', 'offlinequiz_statistics');
-
-        $columns[] = 'discrimination_index';
-        $headers[] = get_string('discrimination_index', 'offlinequiz_statistics');
-
-        // Redmine 1302: New table columns s.t. the data can be exported.
-        $columns[] = 'correct';
-        $headers[] = get_string('correct', 'offlinequiz_statistics');
-        $columns[] = 'partially';
-        $headers[] = get_string('partially', 'offlinequiz_statistics');
-        $columns[] = 'wrong';
-        $headers[] = get_string('wrong', 'offlinequiz_statistics');
+        mod_offlinequiz_create_common_statistics_headers($headers, $columns, $s);
 
         $this->define_columns($columns);
         $this->define_headers($headers);
@@ -225,21 +200,8 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         }
 
         if (property_exists($question, '_stats')) {
-            $url = null;
-            if ($question->_stats->subquestion) {
-                $url = new moodle_url($this->baseurl, array('qid' => $question->id));
-            } else if ($question->_stats->questionid && $question->qtype != 'random') {
-                $url = new moodle_url($this->baseurl, array('questionid' => $question->_stats->questionid));
-            }
-
-            if ($url) {
-                $name = html_writer::link($url, $name,
-                        array('title' => get_string('detailedanalysis', 'offlinequiz_statistics')));
-            }
-
-            if ($this->is_dubious_question($question)) {
-                $name = html_writer::tag('div', $name, array('class' => 'dubious'));
-            }
+            require('statisticslib.php');
+            return mod_offlinequiz_print_column_stats_name($question, $this->baseurl, $name, $this->is_dubious_question($question));
         }
         return $name;
     }
@@ -379,10 +341,8 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
                         $negcovar . $OUTPUT->help_icon('negcovar', 'offlinequiz_statistics'),
                         array('class' => 'negcovar'));
             }
-
             return $negcovar;
         }
-
         return format_float($question->_stats->effectiveweight, 2) . '%';
     }
 

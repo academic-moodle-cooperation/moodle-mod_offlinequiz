@@ -40,30 +40,7 @@ $downloadall = optional_param('downloadall' , false, PARAM_BOOL);
 
 $letterstr = 'ABCDEFGHIJKL';
 
-if ($id) {
-    if (!$cm = get_coursemodule_from_id('offlinequiz', $id)) {
-        print_error("There is no coursemodule with id $id");
-    }
-
-    if (!$course = $DB->get_record("course", array('id' => $cm->course))) {
-        print_error("Course is misconfigured");
-    }
-
-    if (!$offlinequiz = $DB->get_record("offlinequiz", array('id' => $cm->instance))) {
-        print_error("The offlinequiz with id $cm->instance corresponding to this coursemodule $id is missing");
-    }
-
-} else {
-    if (! $offlinequiz = $DB->get_record("offlinequiz", array('id' => $q))) {
-        print_error("There is no offlinequiz with id $q");
-    }
-    if (! $course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
-        print_error("The course with id $offlinequiz->course that the offlinequiz with id $q belongs to is missing");
-    }
-    if (! $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-        print_error("The course module for the offlinequiz with id $q is missing");
-    }
-}
+list($offlinequiz, $course, $cm) = get_course_objects($id, $q);
 
 $offlinequiz->optionflags = 0;
 
