@@ -73,5 +73,5 @@ function mod_offlinequiz_print_column_stats_name($question, $baseurl, $name, $du
     if ($dubiousquestion) {
         $name = html_writer::tag('div', $name, array('class' => 'dubious'));
     }
-    return name;
+    return $name;
 }
