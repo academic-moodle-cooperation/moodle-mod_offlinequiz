@@ -200,7 +200,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         }
 
         if (property_exists($question, '_stats')) {
-            require('statisticslib.php');
+            require_once('statisticslib.php');
             return mod_offlinequiz_print_column_stats_name($question, $this->baseurl, $name, $this->is_dubious_question($question));
         }
         return $name;
@@ -230,10 +230,9 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_fraction($response) {
-        if (!isset($response->fraction)) {
+        if (!isset($response->fraction) || !is_numeric($response->fraction)) {
             return '';
         }
-
         return format_float(100.0 * $response->fraction, $this->offlinequiz->decimalpoints) . '%';
     }
 

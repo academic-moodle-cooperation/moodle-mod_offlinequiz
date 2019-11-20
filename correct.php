@@ -27,6 +27,9 @@
  **/
 
 require_once('../../config.php');
+
+global $DB, $CFG;
+
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/default.php');
@@ -636,16 +639,17 @@ if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz
 }
 // Check whether the user exists in Moodle.
 $user = $DB->get_record('user', array($offlinequizconfig->ID_field => $userkey));
-
+if($user) {
 // Check whether the user is enrolled in the current course.
-$sql = "SELECT ra.id
-        FROM {role_assignments} ra,
-             {role} r
-        WHERE r.id = ra.roleid
-          AND ra.userid = :userid
-          AND r.archetype = 'student'
-          AND ra.contextid = :contextid";
-    $userincourse = $DB->get_field_sql($sql, ['userid' => $user->id, 'contextid' => $coursecontext->id], IGNORE_MISSING);
+    $sql = "SELECT ra.id
+            FROM {role_assignments} ra,
+                 {role} r
+            WHERE r.id = ra.roleid
+              AND ra.userid = :userid
+              AND r.archetype = 'student'
+              AND ra.contextid = :contextid";
+        $userincourse = $DB->get_field_sql($sql, ['userid' => $user->id, 'contextid' => $coursecontext->id], IGNORE_MISSING);
+}
 if (!$userincourse) {
     $scannedpage->status = 'error';
     $scannedpage->error = 'usernotincourse';
