@@ -37,9 +37,13 @@ before_script:
 code_checker:
   <<: *job_definition
 <<<<<<< HEAD
+<<<<<<< HEAD
   image: amcdev/moodle-plugin-ci:7.2
 =======
   image: amcdev/moodle-plugin-ci:7.3
 >>>>>>> change from mariadb to postgres
+=======
+  image: amcdev/moodle-plugin-ci:7.1
+>>>>>>> php version back to 7.1
   variables:
     MOODLE_BRANCH: "MOODLE_38_STABLE"
