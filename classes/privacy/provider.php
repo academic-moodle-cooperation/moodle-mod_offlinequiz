@@ -309,7 +309,6 @@ class provider implements
         $columns = $DB->get_columns("user");
         $type = $columns[$offlinequizconfig->ID_field]->type;
         $user = $contextlist->get_user();
-        $contextids = $contextlist->get_contextids();
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
         $sql = "SELECT DISTINCT c.id contextid, cm.instance offlinequizid
@@ -405,13 +404,9 @@ class provider implements
         $listids = $DB->get_records_sql($sql, ['contextid' => $context->id]);
 
         list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        if (empty($pages)) {
-            return;
-        }
         list($listidsql, $listidparams) = $DB->get_in_or_equal($listids, SQL_PARAMS_NAMED);
 
         $params = listidparams + $userparams;
-        $DB->delete_records($table);
         // Remove data from role_assignments.
         $DB->delete_records_select('offlinequiz_participants',
         "listid {$listidsql} AND userid {$usersql}", $params);
