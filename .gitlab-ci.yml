@@ -1,5 +1,9 @@
 services:
+<<<<<<< HEAD
   - name: postgres:11
+=======
+  - name: postgres:latest
+>>>>>>> change from mariadb to postgres
 
 cache:
   paths:
@@ -32,6 +36,10 @@ before_script:
 
 code_checker:
   <<: *job_definition
+<<<<<<< HEAD
   image: amcdev/moodle-plugin-ci:7.2
+=======
+  image: amcdev/moodle-plugin-ci:7.3
+>>>>>>> change from mariadb to postgres
   variables:
-    MOODLE_BRANCH: "MOODLE_37_STABLE"
+    MOODLE_BRANCH: "MOODLE_38_STABLE"
