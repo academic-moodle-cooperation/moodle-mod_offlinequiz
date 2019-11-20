@@ -831,72 +831,10 @@ input#showviewbutton {
     text-indent: 0;
     padding-left: 0;
 }
-
-
-#categoryquestions > tbody > tr:nth-of-type(even) {
-    background: #e4e4e4;
-}
-#categoryquestions > tbody > tr:nth-of-type(even).highlight {
-    background-color: #AAFFAA;
-}
-#categoryquestions .header {
-    text-align: center;
-    padding: 0 2px;
-    border: 0 none;
-}
-#categoryquestions th.modifiername .sorters,
-#categoryquestions th.creatorname .sorters {
-    font-weight: normal;
-    font-size: 0.8em;
-}
-table#categoryquestions {
-    width: 100%;
-    overflow: hidden;
-    table-layout: fixed;
-}
-#categoryquestions .iconcol {
-    width: 15px;
-    text-align: center;
-    padding: 0;
-}
-#categoryquestions .checkbox {
-    width: 19px;
-    text-align: center;
-    padding: 0;
-}
-#categoryquestions .qtype {
-    text-align: center;
-}
-#categoryquestions .qtype {
-    width: 28px;
-    padding: 0;
-}
-#categoryquestions .questiontext {
-    position: relative;
-    zoom: 1;
-    padding-left: 0.3em;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
 #page-mod-offlinequiz-edit #categoryquestions .questionnametext .greyed,
 #page-mod-offlinequiz-edit #categoryquestions .addtoofflinequizaction .greyed,
 #page-mod-offlinequiz-edit #categoryquestions .qtype .greyed {
     opacity: 0.4;
-}
-
-.dir-rtl #categoryquestions .questiontext {
-    padding-left: 0;
-    padding-right: 0.3em;
-}
-#categoryquestions .questionname {
-    white-space: nowrap;
-    overflow: hidden;
-    zoom: 1;
-    position: relative;
-}
-#categoryquestions .questiontext p {
-    margin: 0;
 }
 
 #page-mod-offlinequiz-edit table#categoryquestions td,
@@ -932,11 +870,6 @@ table#categoryquestions {
 .offlinequizquestionlistcontrols {
     text-align: center;
 }
-
-.categoryinfo {
-    padding: 0.3em;
-}
-
 .path-mod-offlinequiz .gradingdetails {
     font-size: small;
 }
