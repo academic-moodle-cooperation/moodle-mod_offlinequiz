@@ -1,5 +1,5 @@
 services:
-  - name: postgres:latest
+  - name: postgres:11
 
 cache:
   paths:
