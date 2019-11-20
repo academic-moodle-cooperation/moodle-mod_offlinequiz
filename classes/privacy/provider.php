@@ -619,9 +619,7 @@ class provider implements
      * @param \stdClass $user
      */
     private static function delete_data_for_user_in_offlinequiz(int $offlinequizid, $user) {
-        print_object('offlinequizid: ' . $offlinequizid);
         $cm = get_coursemodule_from_instance("offlinequiz", $offlinequizid);
-        print_object($cm);
         if (! $cm) {
             return false;
         }
@@ -641,16 +639,10 @@ class provider implements
         global $DB;
         $select = 'offlinequizid = :oqid AND userid = :userid';
         $resultids = $DB->get_fieldset_select('offlinequiz_results', 'id', $select, ['oqid' => $offlinequizid, 'userid' => $user->id]);
-        print_object($resultids);
-        print($offlinequizid);
-        print_object($user);
         foreach ($resultids as $resultid) {
-            print("delete resultid" . $resultid . "\n");
             // First delete all scannedpages.
             $scannedpages = $DB->get_records_select('offlinequiz_scanned_pages', 'resultid = :resultid', ['resultid' => $resultid]);
-            print_object($scannedpages);
             foreach ($scannedpages as $scannedpage) {
-                print_object($scannedpage);
                 \offlinequiz_delete_scanned_page($scannedpage, $context);
             }
             //then the corresponding result
