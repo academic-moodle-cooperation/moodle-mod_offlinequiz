@@ -1,4 +1,4 @@
-@mod @mod_offlinequiz @adminsetting
+@mod @mod_offlinequiz @adminsetting @amc
 Feature: Within a moodle instance, an administrator should be able to set the value for "Print study code field on question sheet" for the entire Moodle installation.
   In order to define the adminsetting of an offline quiz.
   As an admin

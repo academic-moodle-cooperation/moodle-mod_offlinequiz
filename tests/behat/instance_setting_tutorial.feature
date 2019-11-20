@@ -24,7 +24,7 @@ Feature: Within a moodle instance, a teacher should be able to show an offline q
       | Offline quiz name | Test offline quiz 'Settings - Tutorial' |
       | Description | Add an offline quiz and multiple choice questions to create files |
       | Show an offline quiz tutorial to students. | Yes |
-      | Visible | Show |
+      | Availability | Show on course page |
     And I log out
     When I log in as "student1"
     And I follow "Course 1"
