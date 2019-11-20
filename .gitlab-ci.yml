@@ -6,7 +6,7 @@ cache:
     - .composer/cache
 
 variables:
-  DB: "mariadb"
+  DB: "pgsql"
   POSTGRES_USER: "moodle"
   POSTGRES_PASSWORD: moodleing
   TRAVIS_BUILD_DIR: "$CI_PROJECT_DIR"
@@ -17,7 +17,7 @@ before_script:
   # Wait until database is ready
   - timeout 5m bash -c 'echo -e "DB...\c"; until </dev/tcp/127.0.0.1/5432; do echo -e ".\c"; sleep 1; done; echo "ok";' 2> /dev/null
   - cd ../..
-  - moodle-plugin-ci install --moodle="moodle-upstream-core" --db-type=pgsql --db-user=moodle --db-pass=moodleing --db-host=127.0.0.1
+  - moodle-plugin-ci install --moodle="moodle-upstream-core" --db-user=moodle --db-pass=moodleing --db-host=127.0.0.1
 
 .job_template: &job_definition
   script:
