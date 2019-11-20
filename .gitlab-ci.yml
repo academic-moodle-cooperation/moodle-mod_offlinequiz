@@ -32,6 +32,6 @@ before_script:
 
 code_checker:
   <<: *job_definition
-  image: amcdev/moodle-plugin-ci:7.1
+  image: amcdev/moodle-plugin-ci:latest
   variables:
     MOODLE_BRANCH: "MOODLE_37_STABLE"
