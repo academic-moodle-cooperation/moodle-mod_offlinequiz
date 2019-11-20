@@ -4,10 +4,15 @@ language: php
 # This tells Travis CI to use its new architecture.  Everything is better!
 sudo: required
 
+services:
+  - mysql
+  - postgresql
+
 # This tells Travis CI to cache Composer's cache.  Speeds up build times.
 cache:
   directories:
     - $HOME/.composer/cache
+    - $HOME/.npm
 
 # Determines which versions of PHP to test our project against.  Each version listed
 # here will create a separate build and run the tests against that version of PHP.
