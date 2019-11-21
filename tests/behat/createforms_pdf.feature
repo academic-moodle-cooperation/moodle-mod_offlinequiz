@@ -1,4 +1,4 @@
-@mod @mod_offlinequiz @createforms @javascript
+@mod @mod_offlinequiz @createforms @amc
 Feature: Within a moodle instance, a teacher should be able to create all forms of the offline quiz as PDF.
   In order to create the forms of an offline quiz
   As a teacher
@@ -21,6 +21,7 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
       | questioncategory | qtype       | name             | template    |
       | Test questions   | multichoice | Multi-choice-001 | two_of_four |
 
+  @javascript
   Scenario: Login as a teacher, add a new offline quiz to a course and there some multiple choice questions. Then create the forms as PDF for the offline quiz.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage

@@ -1,4 +1,4 @@
-@mod @mod_offlinequiz @createforms @ javascript
+@mod @mod_offlinequiz @createforms @amc
 Feature: Within a moodle instance, a teacher should be able to create all forms of the offline quiz for 6 groups.
   In order to create the forms of an offline quiz
   As a teacher
@@ -21,6 +21,7 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
       | questioncategory | qtype       | name             | template    |
       | Test questions   | multichoice | Multi-choice-001 | two_of_four |
 
+  @javascript
   Scenario: Login as a teacher, add a new offlinequiz to a course and set the value for groups to 6. Then add there some multiple choice questions and create the forms for all groups within the offline quiz.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage

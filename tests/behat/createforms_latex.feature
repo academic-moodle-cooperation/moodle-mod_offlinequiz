@@ -1,11 +1,11 @@
-@mod @mod_offlinequiz @createforms @javascript
+@mod @mod_offlinequiz @createforms @amc
 Feature: Within a moodle instance, a teacher should be able to create the question form of the offline quiz as LATEX.
   In order to create the forms of an offline quiz
   As a teacher
   I need to be able to add an offline quiz, add some existing questions and finally create the question forms as LATEX.
 
   Background:
-      Given the following "users" exist:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
@@ -21,6 +21,7 @@ Feature: Within a moodle instance, a teacher should be able to create the questi
       | questioncategory | qtype       | name             | template    |
       | Test questions   | multichoice | Multi-choice-001 | two_of_four |
 
+  @javascript
   Scenario: Login as a teacher, add a new offline quiz to a course and there some multiple choice questions. Then create the question forms as LATEX for the offline quiz.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
