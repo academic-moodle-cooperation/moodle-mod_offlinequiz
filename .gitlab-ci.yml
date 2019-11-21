@@ -1,13 +1,6 @@
 services:
-<<<<<<< HEAD
   - name: postgres:11
-<<<<<<< HEAD
-=======
-  - name: postgres:latest
->>>>>>> change from mariadb to postgres
 
-=======
->>>>>>> 613370319df16de4cc432c30ba56ff2b05576b2d
 cache:
   paths:
     - .composer/cache
@@ -24,11 +17,7 @@ before_script:
   # Wait until database is ready
   - timeout 5m bash -c 'echo -e "DB...\c"; until </dev/tcp/127.0.0.1/5432; do echo -e ".\c"; sleep 1; done; echo "ok";' 2> /dev/null
   - cd ../..
-<<<<<<< HEAD
   - moodle-plugin-ci install --moodle="moodle-upstream-core" --db-user=moodleci --db-pass=moodleing --db-host=127.0.0.1
-=======
-  - moodle-plugin-ci install --moodle="moodle-upstream-core" --db-user=root --db-pass=superrootpass --db-host=postgres
->>>>>>> dbhost postgres
 
 .job_template: &job_definition
   script:
@@ -43,14 +32,6 @@ before_script:
 
 code_checker:
   <<: *job_definition
-<<<<<<< HEAD
-<<<<<<< HEAD
   image: amcdev/moodle-plugin-ci:7.2
-=======
-  image: amcdev/moodle-plugin-ci:7.3
->>>>>>> change from mariadb to postgres
-=======
-  image: amcdev/moodle-plugin-ci:7.1
->>>>>>> php version back to 7.1
   variables:
     MOODLE_BRANCH: "MOODLE_38_STABLE"
