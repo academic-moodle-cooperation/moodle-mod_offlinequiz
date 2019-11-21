@@ -250,6 +250,9 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
         global $DB;
+        $columns = $DB->get_columns("user");
+        $offlinequizconfig = get_config('offlinequiz');
+        $type = $columns[$offlinequizconfig->ID_field]->type;
         $offlinequizconfig = get_config('offlinequiz');
         // Fetch all choice answers.
         $sql = "SELECT c.id FROM {context} c
@@ -306,7 +309,6 @@ class provider implements
         $columns = $DB->get_columns("user");
         $type = $columns[$offlinequizconfig->ID_field]->type;
         $user = $contextlist->get_user();
-        $contextids = $contextlist->get_contextids();
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
         $sql = "SELECT DISTINCT c.id contextid, cm.instance offlinequizid
@@ -402,13 +404,9 @@ class provider implements
         $listids = $DB->get_records_sql($sql, ['contextid' => $context->id]);
 
         list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        if (empty($pages)) {
-            return;
-        }
         list($listidsql, $listidparams) = $DB->get_in_or_equal($listids, SQL_PARAMS_NAMED);
 
         $params = listidparams + $userparams;
-        $DB->delete_records($table);
         // Remove data from role_assignments.
         $DB->delete_records_select('offlinequiz_participants',
         "listid {$listidsql} AND userid {$usersql}", $params);
@@ -599,14 +597,14 @@ class provider implements
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         global $DB;
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
-        $sql = "SELECT c.instanceid
+        $sql = "SELECT cm.instance
                 FROM {context} c
                 JOIN {course_modules} cm ON cm.id = c.instanceid
                 JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70
                 AND (c.id {$contextsql} )";
         $offlinequizes = $DB->get_records_sql($sql, $contextparams);
-        foreach ($offlinequizes as $offlinequizid) {
-            static::delete_data_for_user_in_offlinequiz($offlinequizid, $contextlist->get_user());
+        foreach ($offlinequizes as $offlinequiz) {
+            static::delete_data_for_user_in_offlinequiz($offlinequiz->instance, $contextlist->get_user());
         }
     }
 
@@ -616,7 +614,8 @@ class provider implements
      * @param \stdClass $user
      */
     private static function delete_data_for_user_in_offlinequiz(int $offlinequizid, $user) {
-        if (! $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course)) {
+        $cm = get_coursemodule_from_instance("offlinequiz", $offlinequizid);
+        if (! $cm) {
             return false;
         }
         $context = \context_module::instance($cm->id);
@@ -634,8 +633,15 @@ class provider implements
         require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
         global $DB;
         $select = 'offlinequizid = :oqid AND userid = :userid';
-        $resultids = $DB->get_fieldset_select('offlinequiz_results', 'id', $select, ['oqid' => $offlinequizid, 'userid' => $user->id]);
+        $resultids = $DB->get_fieldset_select('offlinequiz_results', 'id',
+            $select, ['oqid' => $offlinequizid, 'userid' => $user->id]);
         foreach ($resultids as $resultid) {
+            // First delete all scannedpages.
+            $scannedpages = $DB->get_records_select('offlinequiz_scanned_pages', 'resultid = :resultid', ['resultid' => $resultid]);
+            foreach ($scannedpages as $scannedpage) {
+                \offlinequiz_delete_scanned_page($scannedpage, $context);
+            }
+            // Then the corresponding result.
             \offlinequiz_delete_result($resultid, $context);
         }
     }
