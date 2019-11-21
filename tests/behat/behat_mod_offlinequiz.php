@@ -34,6 +34,8 @@ use Behat\Behat\Context\Step\Given as Given,
     Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ExpectationException as ExpectationException;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Steps definitions related to mod_offlinequiz.
  *
