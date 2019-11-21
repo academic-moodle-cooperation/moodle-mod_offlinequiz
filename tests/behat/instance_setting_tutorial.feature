@@ -1,11 +1,10 @@
-@mod @mod_offlinequiz @settings_tutorial
+@mod @mod_offlinequiz @settings_tutorial @amc
 Feature: Within a moodle instance, a teacher should be able to show an offline quiz tutorial for students.
   In order to show an offline quiz tutorial at an offline quiz
   As a teacher
   I need to be able to set this value via the settings.
 
-  @javascript
-  Scenario: Login as a teacher, add a new offline quiz to a course and set the value to show an offline quiz tutorial. Then log in as a student and check if the tutorial is shown.
+  Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
@@ -17,6 +16,9 @@ Feature: Within a moodle instance, a teacher should be able to show an offline q
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+
+  @javascript
+  Scenario: Login as a teacher, add a new offline quiz to a course and set the value to show an offline quiz tutorial. Then log in as a student and check if the tutorial is shown.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I turn editing mode on
