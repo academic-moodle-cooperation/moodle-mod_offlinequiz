@@ -1,4 +1,4 @@
-@mod @mod_offlinequiz @createforms
+@mod @mod_offlinequiz @createforms @amc
 Feature: Within a moodle instance, a teacher should be able to create the question forms of the offline quiz as DOCX.
   In order to create the forms of an offline quiz
   As a teacher
@@ -41,3 +41,4 @@ Feature: Within a moodle instance, a teacher should be able to create the questi
     Then I should see "Question form for group A (DOCX)"
     Then I should see "Answer form for group A"
     Then I should see "Correction form for group A"
+
