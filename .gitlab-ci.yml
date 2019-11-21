@@ -1,10 +1,13 @@
 services:
 <<<<<<< HEAD
   - name: postgres:11
+<<<<<<< HEAD
 =======
   - name: postgres:latest
 >>>>>>> change from mariadb to postgres
 
+=======
+>>>>>>> 613370319df16de4cc432c30ba56ff2b05576b2d
 cache:
   paths:
     - .composer/cache
