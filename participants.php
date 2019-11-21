@@ -99,6 +99,7 @@ switch($mode) {
         // Only print headers and tabs if not asked to download data.
         if (!$download && $action != 'savelist') {
             echo $OUTPUT->header();
+            $currenttab = 'participants';
             // Print the tabs.
             include('tabs.php');
             echo $OUTPUT->heading(format_string($offlinequiz->name));
