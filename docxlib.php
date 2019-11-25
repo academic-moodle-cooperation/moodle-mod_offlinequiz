@@ -583,7 +583,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 // There is only a slot for multichoice questions.
-                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question, $texfilter, $offlinequiz, $trans, $section, $questionnumbering, $level2);
+                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
+                    $texfilter, $offlinequiz, $trans, $section, $questionnumbering, $level2);
             }
             $section->addTextBreak();
             $number++;
@@ -648,7 +649,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 // Now retrieve the order of the answers.
                 $slotquestion = $templateusage->get_question($slot);
 
-                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question, $texfilter, $offlinequiz, $trans, $section, $questionnumbering, $level2);
+                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
+                    $texfilter, $offlinequiz, $trans, $section, $questionnumbering, $level2);
                 $section->addTextBreak();
                 $number++;
                 // End if multichoice.

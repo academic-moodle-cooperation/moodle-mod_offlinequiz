@@ -28,11 +28,11 @@ defined('MOODLE_INTERNAL') || die();
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 /**
- * 
- * @param string $pClassName the classname to load
+ *
+ * @param string $pclassname the classname to load
  */
-function mod_offlinequiz_phpword_autoload ($pClassName) {
-    include(__DIR__ . "/" . str_replace('\\', '/', $pClassName) . ".php");
+function mod_offlinequiz_phpword_autoload ($pclassname) {
+    include(__DIR__ . "/" . str_replace('\\', '/', $pclassname) . ".php");
 }
-// 
+// Load PhpWord classes through autoload.
 spl_autoload_register("mod_offlinequiz_phpword_autoload");
