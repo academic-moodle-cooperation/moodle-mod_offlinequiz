@@ -37,7 +37,6 @@ Feature: Within a moodle instance, a teacher should be able to create the questi
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
     And I press "Add to offline quiz"
     And I navigate to "Create forms" in current page administration
-    And I pause
     And I follow "Download forms"
     Then I should see "Question form for group A (DOCX)"
     Then I should see "Answer form for group A"
