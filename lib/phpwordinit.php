@@ -32,7 +32,10 @@ defined('MOODLE_INTERNAL') || die();
  * @param string $pclassname the classname to load
  */
 function mod_offlinequiz_phpword_autoload ($pclassname) {
-    include(__DIR__ . "/" . str_replace('\\', '/', $pclassname) . ".php");
+    $filename = __DIR__ . "/" . str_replace('\\', '/', $pclassname) . ".php";
+    if (file_exists($filename)) {
+        include(__DIR__ . "/" . str_replace('\\', '/', $pclassname) . ".php");
+    }
 }
 // Load PhpWord classes through autoload.
 spl_autoload_register("mod_offlinequiz_phpword_autoload");
