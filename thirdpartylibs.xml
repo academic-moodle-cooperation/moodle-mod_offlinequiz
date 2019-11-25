@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <libraries>
     <library>
-        <location>lib/PHPWord</location>
-        <name>PHPWord</name>
-        <version>0.6.3</version>
+        <location>lib/PHPOffice</location>
+        <name>PHPOffice</name>
+        <version>0.17.0</version>
         <license>LGPL</license>
-        <licenseversion></licenseversion>
+        <licenseversion>3</licenseversion>
     </library>
     <library>
         <location>lib/jquery</location>

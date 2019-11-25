@@ -26,11 +26,11 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
+global $CFG;
 require_once($CFG->libdir . '/moodlelib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/lib/PHPWord.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/documentlib.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/lib/phpwordinit.php');
 
 /**
  * Function to print all blocks (parts) of a question or answer text in one textrun.
@@ -38,12 +38,12 @@ require_once($CFG->dirroot . '/mod/offlinequiz/documentlib.php');
  * If the first block is a string it is printed as a listitem using the numbering and depth provided.
  * Otherwise, the empty string is used as the list item string.
  *
- * @param PHPWord_Section $section A PHP Word section
+ * @param $section A PHP Word section
  * @param array $blocks The array of blocks as created by the conversion functions.
  * @param PHPWord_Numbering_AbstractNumbering $numbering The numbering used for the list item
  * @param int $depth The depth in the enumeration (0 for questions, 1 for answers).
  */
-function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbering = null, $depth = 0) {
+function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $depth = 0) {
 
     // We skip leading newlines.
     while ($blocks[0]['type'] == 'newline') {
@@ -61,7 +61,7 @@ function offlinequiz_print_blocks_docx(PHPWord_Section $section, $blocks, $numbe
             }
             array_shift($blocks);
         }
-        $section->addListItem($itemstring, $depth, $numbering, $style);
+        $section->addListItem($itemstring, $depth, null, 'questionnumbering');
 
         // We also skip the first sequential newline because we got a newline with addListItem.
         if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
@@ -246,9 +246,6 @@ function offlinequiz_convert_bold_text_docx($text) {
  * @param string $text
  */
 function offlinequiz_convert_newline_docx($text) {
-    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
-    $replace = array('"', '&', '>', '<');
-
     // Now add the remaining text after the image tag.
     $parts = preg_split("!<br>|<br />!i", $text);
     $result = array();
@@ -277,17 +274,10 @@ function offlinequiz_convert_newline_docx($text) {
 /**
  * Function to transform Moodle HTML code of a question into proprietary markup that only supports italic, underline and bold.
  *
- * @param unknown_type $input The input text.
- * @param unknown_type $stripalltags Whether all tags should be stripped.
- * @param unknown_type $questionid The ID of the question the text stems from.
- * @param unknown_type $coursecontextid The course context ID.
+ * @param string $text The input text.
  * @return mixed
  */
 function offlinequiz_convert_image_docx($text) {
-    global $CFG;
-
-    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
-    $replace = array('"', '&', '>', '<');
     $result = array();
 
     // Remove paragraphs.
@@ -342,7 +332,7 @@ function offlinequiz_convert_image_docx($text) {
 }
 
 function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
-      $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2 ) {
+      $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2) {
     $attempt = $templateusage->get_question_attempt($slot);
     $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
@@ -390,11 +380,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
     $groupletter = strtoupper($letterstr[$group->groupnumber - 1]);
 
-    $coursecontext = context_course::instance($courseid);
-
-    PHPWord_Media::resetMedia();
-
-    $docx = new PHPWord();
+    $docx = new \PhpOffice\PhpWord\PhpWord();
     $trans = new offlinequiz_html_translator();
 
     // Define cell style arrays.
@@ -409,14 +395,14 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $docx->addFontStyle('bStyle', array('bold' => true, 'size' => $offlinequiz->fontsize));
     $docx->addFontStyle('brStyle', array('bold' => true, 'align' => 'right', 'size' => $offlinequiz->fontsize));
     // Underline style.
-    $docx->addFontStyle('uStyle', array('underline' => PHPWord_Style_Font::UNDERLINE_SINGLE, 'size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('uStyle', array('underline' => 'single', 'size' => $offlinequiz->fontsize));
 
     $docx->addFontStyle('ibStyle', array('italic' => true, 'bold' => true, 'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('iuStyle', array('italic' => true, 'underline' => PHPWord_Style_Font::UNDERLINE_SINGLE,
+    $docx->addFontStyle('iuStyle', array('italic' => true, 'underline' => 'single',
                                          'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('buStyle', array('bold' => true, 'underline' => PHPWord_Style_Font::UNDERLINE_SINGLE,
+    $docx->addFontStyle('buStyle', array('bold' => true, 'underline' => 'single',
                                          'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('ibuStyle', array('italic' => true, 'bold' => true, 'underline' => PHPWord_Style_Font::UNDERLINE_SINGLE,
+    $docx->addFontStyle('ibuStyle', array('italic' => true, 'bold' => true, 'underline' => 'single',
                                           'size' => $offlinequiz->fontsize));
 
     // Header style.
@@ -426,7 +412,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $docx->addParagraphStyle('cStyle', array('align' => 'center', 'spaceAfter' => 100));
     $docx->addParagraphStyle('questionTab', array(
             'tabs' => array(
-                    new PHPWord_Style_Tab("left", 360)
+                new \PhpOffice\PhpWord\Style\Tab('left', 360)
             )
     ));
 
@@ -435,40 +421,29 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $firstrowstyle = array('borderBottomSize' => 0, 'borderBottomColor' => 'FFFFFF', 'bgColor' => 'FFFFFF');
     $docx->addTableStyle('tableStyle', $tablestyle, $firstrowstyle);
 
-    $boldfont = new PHPWord_Style_Font();
-    $boldfont->setBold(true);
-    $boldfont->setSize($offlinequiz->fontsize);
-
-    $normalfont = new PHPWord_Style_Font();
-    $normalfont->setSize($offlinequiz->fontsize);
-
     // Define custom list item style for question answers.
-    $level1 = new PHPWord_Style_Paragraph();
-    $tabslevel1 = new PHPWord_Style_Tabs(array(
-            new PHPWord_Style_Tab('clear', 720),
-            new PHPWord_Style_Tab('num', 360)
-    ));
+    $level1 = new \PhpOffice\PhpWord\Style\Paragraph();
+    $tabslevel1 = [new \PhpOffice\PhpWord\Style\Tab('clear', 720),
+            new \PhpOffice\PhpWord\Style\Tab('num', 360)];
     $level1->setTabs($tabslevel1);
-    $indentlevel1 = new PHPWord_Style_Indentation(array(
+    $indentlevel1 = new \PhpOffice\PhpWord\Style\Indentation(array(
             'left' => 360,
             'hanging' => 360
     ));
-    $level1->setIndentions($indentlevel1);
+    $level1->setIndentation($indentlevel1);
 
-    $level2 = new PHPWord_Style_Paragraph();
-    $tabslevel2 = new PHPWord_Style_Tabs(array(
-            new PHPWord_Style_Tab('left', 720),
-            new PHPWord_Style_Tab('num', 720)
-    ));
+    $level2 = new \PhpOffice\PhpWord\Style\Paragraph();
+    $tabslevel2 = [new \PhpOffice\PhpWord\Style\Tab('left', 720),
+            new \PhpOffice\PhpWord\Style\Tab('num', 720)];
     $level2->setTabs($tabslevel2);
-    $indentlevel2 = new PHPWord_Style_Indentation(array(
+    $indentlevel2 = new \PhpOffice\PhpWord\Style\Indentation(array(
             'left' => 720,
             'hanging' => 360
     ));
-    $level2->setIndentions($indentlevel2);
+    $level2->setIndentation($indentlevel2);
 
     // Create the section that will be used for all outputs.
-    $section = $docx->createSection();
+    $section = $docx->addSection();
 
     $title = offlinequiz_str_html_docx($offlinequiz->name);
     if (!empty($offlinequiz->time)) {
@@ -484,12 +459,12 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $title .= ",  " . offlinequiz_str_html_docx(get_string('group') . " $groupletter");
 
     // Add a header.
-    $header = $section->createHeader();
+    $header = $section->addHeader();
     $header->addText($title, array('size' => 10), 'cStyle' );
     $header->addImage($CFG->dirroot . '/mod/offlinequiz/pix/line.png', array('width' => 600, 'height' => 5, 'align' => 'center'));
 
     // Add a footer.
-    $footer = $section->createFooter();
+    $footer = $section->addFooter();
     $footer->addImage($CFG->dirroot . '/mod/offlinequiz/pix/line.png', array('width' => 600, 'height' => 5, 'align' => 'center'));
     $footer->addPreserveText($title . '  |  ' . get_string('page') . ' ' . '{PAGE} / {NUMPAGES}', null, array('align' => 'left'));
 
@@ -501,20 +476,20 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
         $table = $section->addTable('tableStyle');
         $table->addRow();
-        $cell = $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('name')) . ':  ', 'brStyle');
+        $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('name')) . ':  ', 'brStyle');
 
         $table->addRow();
-        $cell = $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('idnumber', 'offlinequiz')) .
+        $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('idnumber', 'offlinequiz')) .
                                                           ':  ', 'brStyle');
 
         if ($offlinequiz->printstudycodefield) {
             $table->addRow();
-            $cell = $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('studycode', 'offlinequiz')) .
+            $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('studycode', 'offlinequiz')) .
                                                           ':  ', 'brStyle');
         }
 
         $table->addRow();
-        $cell = $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('signature', 'offlinequiz')) .
+        $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('signature', 'offlinequiz')) .
                                                           ':  ', 'brStyle');
 
         $section->addTextBreak(2);
@@ -561,13 +536,12 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $slots = $templateusage->get_slots();
 
     $texfilter = new filter_tex($context, array());
-
     // Create the docx question numbering. This is only created once since we number all questions from 1...n.
-    $questionnumbering = new PHPWord_Numbering_AbstractNumbering("Question-level", array(
-            new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_DECIMAL, "%1)", "left", $level1, $boldfont),
-            new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_LOWER_LETTER, "%2)", "left", $level2, $normalfont)
-        ));
-    $docx->addNumbering($questionnumbering);
+    $questionnumbering = $docx->addNumberingStyle('questionnumbering', ['type' => 'multilevel', 'levels' => array(
+        ['pStyle' => 'bStyle', 'format' => 'decimal', 'text' => '%1)',  'left' => 10, 'hanging' => 300, 'tabPos' => 10],
+        ['pStyle' => 'nStyle', 'format' => 'lowerLetter', 'text' => '%2)', 'left' => 10, 'hanging' => 10, 'tabPos' => 250],
+    )
+    ]);
 
     // If shufflequestions has been activated we go through the questions in the order determined by
     // the template question usage.
@@ -606,17 +580,10 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $blocks = offlinequiz_convert_image_docx($questiontext);
             offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
 
-            $answernumbering = new PHPWord_Numbering_AbstractNumbering("Adv Multi-level", array(
-                    new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_DECIMAL, "%1.", "left", $level1, $boldfont),
-                    new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_LOWER_LETTER, "%2)", "left",
-                                                $level2, $normalfont)
-            ));
-            $docx->addNumbering($answernumbering);
-
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 // There is only a slot for multichoice questions.
-                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question, $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2);
+                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question, $texfilter, $offlinequiz, $trans, $section, $questionnumbering, $level2);
             }
             $section->addTextBreak();
             $number++;
@@ -674,12 +641,6 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
             }
 
-            $answernumbering = new PHPWord_Numbering_AbstractNumbering("Adv Multi-level", array(
-                    new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_DECIMAL, "%1.", "left", $level1),
-                    new PHPWord_Numbering_Level("1", PHPWord_Numbering_Level::NUMFMT_LOWER_LETTER, "%2)", "left", $level2)
-            ));
-            $docx->addNumbering($answernumbering);
-
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 $slot = $questionslots[$question->id];
@@ -687,7 +648,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 // Now retrieve the order of the answers.
                 $slotquestion = $templateusage->get_question($slot);
 
-                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question, $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2);
+                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question, $texfilter, $offlinequiz, $trans, $section, $questionnumbering, $level2);
                 $section->addTextBreak();
                 $number++;
                 // End if multichoice.
@@ -712,7 +673,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     }
 
     // Save file.
-    $objwriter = PHPWord_IOFactory::createWriter($docx, 'Word2007');
+    $objwriter = \PhpOffice\PhpWord\IOFactory::createWriter($docx, 'Word2007');
     $objwriter->save($tempfilename);
 
     // Prepare file record object.
@@ -749,15 +710,10 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 /**
  * Function to transform Moodle HTML code of a question into proprietary markup that only supports italic, underline and bold.
  *
- * @param unknown_type $input The input text.
- * @param unknown_type $stripalltags Whether all tags should be stripped.
- * @param unknown_type $questionid The ID of the question the text stems from.
- * @param unknown_type $coursecontextid The course context ID.
+ * @param string $input The input text.
  * @return mixed
  */
 function offlinequiz_str_html_docx($input) {
-    global $CFG;
-
     $output = $input;
 
     // First replace the plugin image tags.
