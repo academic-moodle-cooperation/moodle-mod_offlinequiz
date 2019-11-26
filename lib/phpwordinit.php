@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
 function mod_offlinequiz_phpword_autoload ($pclassname) {
     $filename = __DIR__ . "/" . str_replace('\\', '/', $pclassname) . ".php";
     if (file_exists($filename)) {
-        include(__DIR__ . "/" . str_replace('\\', '/', $pclassname) . ".php");
+        include($filename);
     }
 }
 // Load PhpWord classes through autoload.
