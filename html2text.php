@@ -102,14 +102,13 @@ class offlinequiz_html_translator
                         $imagefilename = $imagefile->get_filename();
                         // Copy image content to temporary file.
                         $pathparts = pathinfo($imagefilename);
-                        $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($pathparts["extension"]);
+                        $filetype = $pathparts["extension"];
+                        $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($filetype);
                         clearstatcache();
                         if (!check_dir_exists($CFG->dataroot."/temp/offlinequiz", true, true)) {
                             print_error("Could not create data directory");
                         }
                         $imagefile->copy_content_to($file);
-
-                        $pluginfile = true;
                     } else {
                         $output .= 'Image file not found ' . $pathparts['dirname'] . '/' . $pathparts['basename'];
                     }
@@ -225,8 +224,17 @@ class offlinequiz_html_translator
                         if ($filearea == 'answer' and $disableimgnewlines == 0) {
                             $output .= '<br/>';
                         }
-                        // Finally, add the image tag for tcpdf.
-                            $output .= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' .
+                        $img = file_get_contents(
+                            $file);
+                        if($format == 'pdf') {
+                            // Encode the image string data into base64
+                            $data = base64_encode($img);
+                            // Finally, add the image tag for tcpdf.
+                            $output .= '<img src="@' . $data . '"';
+                        } else {
+                            $output .= '<img src="file://' . $file . '"';
+                        }
+                        $output .= ' align="middle" width="' . $width . '" height="' .
                                 $height .'"/>';
                     }
                 } else {
@@ -246,7 +254,6 @@ class offlinequiz_html_translator
             }
             $output .= substr($string, strpos($string, '>') + 1);
         }
-
         return $output;
     }
 
