@@ -226,8 +226,8 @@ class offlinequiz_html_translator
                         }
                         $img = file_get_contents(
                             $file);
-                        if($format == 'pdf') {
-                            // Encode the image string data into base64
+                        if ($format == 'pdf') {
+                            // Encode the image string data into base64.
                             $data = base64_encode($img);
                             // Finally, add the image tag for tcpdf.
                             $output .= '<img src="@' . $data . '"';
