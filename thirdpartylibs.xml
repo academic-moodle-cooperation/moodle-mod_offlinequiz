@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <libraries>
     <library>
-        <location>lib/PHPWord</location>
-        <name>PHPWord</name>
-        <version>0.6.3</version>
+        <location>lib/PhpOffice</location>
+        <name>PHPOffice</name>
+        <version>0.17.0</version>
         <license>LGPL</license>
-        <licenseversion></licenseversion>
+        <licenseversion>3</licenseversion>
     </library>
     <library>
         <location>lib/jquery</location>
@@ -19,20 +19,6 @@
         <name>jquery</name>
         <version>1.7.2</version>
         <license>MIT</license>
-        <licenseversion></licenseversion>
-    </library>
-    <library>
-        <location>lib/tcpdf</location>
-        <name>tcpdc</name>
-        <version>6.2.25</version>
-        <license>LGPL</license>
-        <licenseversion></licenseversion>
-    </library>
-    <library>
-        <location>lib/pdflib.php</location>
-        <name>tcpdc</name>
-        <version>6.2.25</version>
-        <license>LGPL</license>
         <licenseversion></licenseversion>
     </library>
 
