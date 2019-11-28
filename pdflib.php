@@ -1113,6 +1113,7 @@ function offlinequiz_str_html_pdf($input, $stripalltags=true, $questionid=null, 
     $output = preg_replace('!</p>!i', "\n", $output);
 
     if (!$stripalltags) {
+        $output = preg_replace('data:image\/[a-z]*;base64,', '@', $output);
         // First replace the plugin image tags.
         $output = str_replace('[', '(', $output);
         $output = str_replace(']', ')', $output);
@@ -1168,7 +1169,6 @@ function offlinequiz_str_html_pdf($input, $stripalltags=true, $questionid=null, 
         $output = preg_replace($search, $replace, $output);
     }
     $output = strip_tags($output);
-
     $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
     $replace = array('"', '&', '>', '<');
     $result = str_ireplace($search, $replace, $output);
