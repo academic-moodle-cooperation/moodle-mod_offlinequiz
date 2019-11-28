@@ -1,5 +1,11 @@
 CHANGELOG
 =========
+3.8.0
+-----------------
+[Feature] Moodle 3.8 compatible Version
+[Feature] Updated PDFWord version to 0.17.0
+
+
 3.7.0
 -----------------
 [Feature] Moodle 3.7 compatible Version
