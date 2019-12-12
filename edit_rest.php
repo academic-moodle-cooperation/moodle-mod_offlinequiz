@@ -21,11 +21,8 @@
  * @copyright 2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-if (!defined('AJAX_SCRIPT')) {
-    define('AJAX_SCRIPT', true);
-}
+define('AJAX_SCRIPT', true);
 require_once(__DIR__ . '/../../config.php');
-
 
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
