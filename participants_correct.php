@@ -94,7 +94,7 @@ $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
 $scanner->get_list();
 
 if ($sheetloaded) {
-    $corners = $scanner->export_corners(OQ_IMAGE_WIDTH);
+    $corners = $scanner->get_corners(OQ_IMAGE_WIDTH);
 }
 
 if ($action == 'load') {
@@ -643,7 +643,7 @@ lass', 'barcodeselect');}; checkinput(false);\">\n>";
         echo "<input type=\"hidden\" name=\"item[$key]\" value=\"{$participant->value}\">\n";
         echo "<input type=\"hidden\" name=\"userid[$key]\" value=\"{$participant->userid}\">\n";
     }
-    foreach ($scanner->export_corners(OQ_IMAGE_WIDTH) as $key => $hotspot) {
+    foreach ($scanner->get_corners(OQ_IMAGE_WIDTH) as $key => $hotspot) {
         echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/corner.gif\" border=\"0\" name=\"c-$key\" id=\"c-$key\" " .
             " style=\"position:absolute; top:" .
             ($hotspot->y - 7) . "px; left:" . ($hotspot->x - 7) . "px; cursor:pointer;\">";
