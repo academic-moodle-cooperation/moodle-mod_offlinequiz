@@ -282,7 +282,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             $threshold = get_config('offlinequiz', 'blackwhitethreshold');
             // Add the files to the job.
             foreach ($files as $file) {
-                if($threshold && $threshold > 0 && $threshold < 100) {
+                if ($threshold && $threshold > 0 && $threshold < 100) {
                     $this->convert_black_white("$dirname/$file", $threshold);
                 }
                 $jobfile = new stdClass();
