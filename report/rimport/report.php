@@ -279,13 +279,15 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             if (!$job->id = $DB->insert_record('offlinequiz_queue', $job)) {
                 echo $OUTPUT->notification(get_string('couldnotcreatejob', 'offlinequiz_rimport'), 'notifyproblem');
             }
-
+            $threshold = get_config('offlinequiz', 'blackwhitethreshold');
             // Add the files to the job.
             foreach ($files as $file) {
-                $this->convert_black_white($dirname . '/' . $file);
+                if($threshold && $threshold > 0 && $threshold < 100) {
+                    $this->convert_black_white("$dirname/$file", $threshold);
+                }
                 $jobfile = new stdClass();
                 $jobfile->queueid = $job->id;
-                $jobfile->filename = $dirname . '/' . $file;
+                $jobfile->filename = "$dirname/$file";
                 $jobfile->status = 'new';
                 if (!$jobfile->id = $DB->insert_record('offlinequiz_queue_data', $jobfile)) {
                     echo $OUTPUT->notification(get_string('couldnotcreatejobfile', 'offlinequiz_rimport'), 'notifyproblem');
@@ -375,8 +377,8 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
         return $files;
     }
 
-    private function convert_black_white($file) {
-        $command = "convert " . realpath($file) . " -threshold 50% " . realpath($file);
+    private function convert_black_white($file, $threshold) {
+        $command = "convert " . realpath($file) . " -threshold $threshold% " . realpath($file);
         popen($command, 'r');
     }
 }

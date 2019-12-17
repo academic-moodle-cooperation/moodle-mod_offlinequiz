@@ -112,6 +112,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('offlinequiz/papergray', get_string('papergray', 'offlinequiz'),
             get_string('configpapergray', 'offlinequiz'), 670, $options));
 
+    $settings->add(new admin_setting_configtext('offlinequiz/blackwhitethreshold', get_string('blackwhitethreshold', 'offlinequiz'),
+            get_string('configblackwhitethreshold', 'offlinequiz'), '75', PARAM_INT));
+
     $settings->add(new admin_setting_heading('correctionheading',
             get_string('correctionoptionsheading', 'offlinequiz'), ''));
 
