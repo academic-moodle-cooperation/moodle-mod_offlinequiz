@@ -650,7 +650,7 @@ if ($user) {
               AND ra.contextid = :contextid";
         $userincourse = $DB->get_field_sql($sql, ['userid' => $user->id, 'contextid' => $coursecontext->id], IGNORE_MISSING);
 }
-if ($user && !$userincourse) {
+if (!$user || !$userincourse) {
     $scannedpage->status = 'error';
     $scannedpage->error = 'usernotincourse';
 }
