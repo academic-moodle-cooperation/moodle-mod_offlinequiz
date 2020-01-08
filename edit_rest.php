@@ -21,11 +21,9 @@
  * @copyright 2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+define('AJAX_SCRIPT', true);
 require_once(__DIR__ . '/../../config.php');
 
-if (!defined('AJAX_SCRIPT')) {
-    define('AJAX_SCRIPT', true);
-}
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
 
@@ -46,8 +44,7 @@ $visible    = optional_param('visible', 0, PARAM_INT);
 $pageaction = optional_param('action', '', PARAM_ALPHA); // Used to simulate a DELETE command.
 $maxmark    = optional_param('maxmark', '', PARAM_RAW);
 $page       = optional_param('page', '', PARAM_INT);
-$PAGE->set_url('/mod/offlinequiz/edit-rest.php',
-        array('offlinequizid' => $offlinequizid, 'class' => $class));
+
 
 require_sesskey();
 
@@ -66,7 +63,6 @@ $offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
 $structure = $offlinequizobj->get_structure();
 $modcontext = context_module::instance($cm->id);
 
-echo $OUTPUT->header(); // Send headers.
 
 // OK, now let's process the parameters and do stuff
 // MDL-10221 the DELETE method is not allowed on some web servers,

@@ -53,7 +53,7 @@ abstract class offlinequiz_default_report {
      * Initialise some parts of $PAGE and start output.
      *
      * @param object $cm the course_module information.
-     * @param object $coures the course settings.
+     * @param object $course the course settings.
      * @param object $offlinequiz the offlinequiz settings.
      * @param string $reportmode the report name.
      */

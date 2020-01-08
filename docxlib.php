@@ -61,7 +61,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
             }
             array_shift($blocks);
         }
-        $section->addListItem($itemstring, $depth, null, 'questionnumbering');
+        $section->addListItem($itemstring, $depth, $style, 'questionnumbering');
 
         // We also skip the first sequential newline because we got a newline with addListItem.
         if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
@@ -538,8 +538,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $texfilter = new filter_tex($context, array());
     // Create the docx question numbering. This is only created once since we number all questions from 1...n.
     $questionnumbering = $docx->addNumberingStyle('questionnumbering', ['type' => 'multilevel', 'levels' => array(
-        ['pStyle' => 'bStyle', 'format' => 'decimal', 'text' => '%1)',  'left' => 10, 'hanging' => 300, 'tabPos' => 10],
-        ['pStyle' => 'nStyle', 'format' => 'lowerLetter', 'text' => '%2)', 'left' => 10, 'hanging' => 10, 'tabPos' => 250],
+        ['format' => 'decimal', 'text' => '%1)',  'left' => 10, 'hanging' => 300, 'tabPos' => 10],
+        ['format' => 'lowerLetter', 'text' => '%2)', 'left' => 10, 'hanging' => 10, 'tabPos' => 250],
     )
     ]);
 

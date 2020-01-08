@@ -40,5 +40,5 @@ function offlinequiz_sheetlib_initialize_headers($workbook) {
     $formats['formatg']->set_bold(1);
     $formats['formatg']->set_color('green');
     $formats['formatg']->set_align('center');
-    return ['formats' => $formats, 'xls' => $myxls];
+    return [$myxls, $formats];
 }
