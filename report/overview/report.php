@@ -275,7 +275,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             }
             $colnum = 0;
             foreach ($headers as $item) {
-                $myxls->write(0, $colnum, $item, $formats['formatsbc']);
+                $myxls->write(0, $colnum, $item, $formats['formatbc']);
                 $colnum++;
             }
             $rownum = 1;
