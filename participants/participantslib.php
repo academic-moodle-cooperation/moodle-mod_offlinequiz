@@ -66,4 +66,16 @@ class mod_offlinequiz_corners {
             return $corner->x;
         }
     }
+    /**
+     * 
+     * @return array of all offlinequiz corners
+     */
+    public function all() {
+        $result = [];
+        $result[] = $this->_upperleft;
+        $result[] = $this->_upperright;
+        $result[] = $this->_lowerleft;
+        $result[] = $this->_lowerright;
+        return $result;
+    }
 }
