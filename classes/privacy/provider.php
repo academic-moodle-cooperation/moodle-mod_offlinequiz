@@ -653,7 +653,15 @@ class provider implements
      */
     private static function remove_from_lists($offlinequizid, $user) {
         global $DB;
-        $DB->delete_records('offlinequiz_participants', ['offlinequizid' => $offlinequizid, 'userid' => $user->id]);
+        $sql = "SELECT c.id
+                FROM   {offlinequiz_p_lists} p
+                JOIN   {offlinequiz_participants} c ON c.listid = p.id
+                WHERE  p.offlinequizid = :offlinequizid
+                AND    c.userid = :userid";
+        $participantsid = $DB->get_field_sql($sql,['offlinequizid' => $offlinequizid, 'userid' => $user->id]);
+        if ($participantsid) {
+            $DB->delete_records('offlinequiz_participants', ['id' => $participantsid]);
+        }
         $sql = "SELECT c.id
                 FROM   {offlinequiz_scanned_p_pages} p
                 JOIN   {offlinequiz_p_choices} c ON p.id = c.scannedppageid
@@ -661,7 +669,9 @@ class provider implements
                 AND    p.offlinequizid = :oqid";
 
         $choiceids = $DB->get_fieldset_sql($sql, ['userid' => $user->id, 'oqid' => $offlinequizid]);
-        list($choicesql, $choiceparams) = $DB->get_in_or_equal($choiceids, SQL_PARAMS_NAMED);
-        $DB->delete_records_select('offlinequiz_p_choices', "id {$choicesql}", $choiceparams);
+        if ($choiceids) {
+            list($choicesql, $choiceparams) = $DB->get_in_or_equal($choiceids, SQL_PARAMS_NAMED);
+            $DB->delete_records_select('offlinequiz_p_choices', "id {$choicesql}", $choiceparams);
+        }
     }
 }
