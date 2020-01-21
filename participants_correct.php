@@ -94,7 +94,7 @@ $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
 $scanner->get_list();
 
 if ($sheetloaded) {
-    $corners = $scanner->get_corners(OQ_IMAGE_WIDTH);
+    $corners = $scanner->export_corners(OQ_IMAGE_WIDTH);
 }
 
 if ($action == 'load') {
@@ -204,11 +204,11 @@ if ($action == 'cancel') {
     $corners  = new mod_offlinequiz_corners($upperleft, $upperright, $lowerleft, $lowerright);
     $offlinequizconfig->papergray = $offlinequiz->papergray;
 
-    $corners = array($upperleft, $upperright, $lowerleft, $lowerright);
+    $cornersarray = array($upperleft, $upperright, $lowerleft, $lowerright);
 
     // Create a completely new scanner and load the image with the submitted corners.
     $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
-    $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
+    $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $cornersarray);
     // The following calibrates the scanner.
     $scanner->get_list();
 
@@ -509,7 +509,7 @@ foreach ($participants as $key => $participant) {
 }
 
 if (!empty($corners)) {
-    foreach ($corners as $key => $hotspot) {
+    foreach ($corners->all() as $key => $hotspot) {
         echo "<input type=\"hidden\" name=\"c-old-$key-x\" value=\"".($hotspot->x - 7)."\">\n";
         echo "<input type=\"hidden\" name=\"c-old-$key-y\" value=\"".($hotspot->y - 7)."\">\n";
         echo "<input type=\"hidden\" name=\"c-$key-x\" value=\"".($hotspot->x - 7)."\">\n";
