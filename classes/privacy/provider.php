@@ -658,7 +658,7 @@ class provider implements
                 JOIN   {offlinequiz_participants} c ON c.listid = p.id
                 WHERE  p.offlinequizid = :offlinequizid
                 AND    c.userid = :userid";
-        $participantsid = $DB->get_field_sql($sql,['offlinequizid' => $offlinequizid, 'userid' => $user->id]);
+        $participantsid = $DB->get_field_sql($sql, ['offlinequizid' => $offlinequizid, 'userid' => $user->id]);
         if ($participantsid) {
             $DB->delete_records('offlinequiz_participants', ['id' => $participantsid]);
         }
