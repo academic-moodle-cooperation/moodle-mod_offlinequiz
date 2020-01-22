@@ -67,7 +67,7 @@ class mod_offlinequiz_corners {
         }
     }
     /**
-     * 
+     *
      * @return array of all offlinequiz corners
      */
     public function all() {
