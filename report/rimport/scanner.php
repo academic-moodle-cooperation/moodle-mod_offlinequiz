@@ -1151,7 +1151,7 @@ class offlinequiz_page_scanner {
                 }
             }
         } else {
-            for($i = 0; $i < count($data); $i++) {
+            for ($i = 0; $i < count($data); $i++) {
                 if ($data[$i] <= $trigger) {
                     $values[0] .= '0';
                 } else {
@@ -1193,7 +1193,7 @@ class offlinequiz_page_scanner {
                 }
             }
         } else {
-            for($i = 0; $i < count($data); $i++) {
+            for ($i = 0; $i < count($data); $i++) {
                 if ($data[$i] <= $trigger) {
                     $values[1] .= '0';
                 } else {
@@ -1235,7 +1235,7 @@ class offlinequiz_page_scanner {
                 }
             }
         } else {
-            for($i = 0; $i < count($data); $i++) {
+            for ($i = 0; $i < count($data); $i++) {
                 if ($data[$i] <= $trigger) {
                     $values[2] .= '0';
                 } else {
