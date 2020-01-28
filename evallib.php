@@ -792,7 +792,7 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
     // Check the list number.
     if (!property_exists($scannedpage, 'listnumber') || $scannedpage->listnumber == 0) {
         $listnumber = $scanner->get_list();
-
+        print("listnumber:" . $listnumber . "\n");
         if (is_string($listnumber)) {
             $intln = intval($listnumber);
             if ($intln > 0) {
@@ -808,6 +808,7 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
                   FROM {offlinequiz_p_lists}
                  WHERE offlinequizid = :offlinequizid",
                 array('offlinequizid' => $offlinequiz->id));
+        print_object($scannedpage);
         if (!property_exists($scannedpage, 'listnumber') ||
                 (!is_int($scannedpage->listnumber)) ||
                 $scannedpage->listnumber < 1 ||
@@ -861,6 +862,7 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
                         FROM {offlinequiz_p_lists}
                         WHERE offlinequizid = :offlinequizid",
                         array('offlinequizid' => $offlinequiz->id));
+                print_object($scannedpage);
                 if ((!is_int($scannedpage->listnumber)) ||
                     $scannedpage->listnumber < 1 ||
                     $scannedpage->listnumber > $maxlistnumber) {
