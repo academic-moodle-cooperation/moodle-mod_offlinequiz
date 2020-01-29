@@ -792,7 +792,6 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
     // Check the list number.
     if (!property_exists($scannedpage, 'listnumber') || $scannedpage->listnumber == 0) {
         $listnumber = $scanner->get_list();
-
         if (is_string($listnumber)) {
             $intln = intval($listnumber);
             if ($intln > 0) {

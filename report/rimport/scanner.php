@@ -1150,6 +1150,14 @@ class offlinequiz_page_scanner {
                     $values[0] .= '1';
                 }
             }
+        } else {
+            for ($i = 0; $i < count($data); $i++) {
+                if ($data[$i] <= $trigger) {
+                    $values[0] .= '0';
+                } else {
+                    $values[0] .= '1';
+                }
+            }
         }
 
         // Scan second line.
@@ -1178,6 +1186,14 @@ class offlinequiz_page_scanner {
         $values[1] = '';
         if (count($data) == 27) {
             for ($i = 1; $i <= 25; $i++) {
+                if ($data[$i] <= $trigger) {
+                    $values[1] .= '0';
+                } else {
+                    $values[1] .= '1';
+                }
+            }
+        } else {
+            for ($i = 0; $i < count($data); $i++) {
                 if ($data[$i] <= $trigger) {
                     $values[1] .= '0';
                 } else {
@@ -1218,8 +1234,15 @@ class offlinequiz_page_scanner {
                     $values[2] .= '1';
                 }
             }
+        } else {
+            for ($i = 0; $i < count($data); $i++) {
+                if ($data[$i] <= $trigger) {
+                    $values[2] .= '0';
+                } else {
+                    $values[2] .= '1';
+                }
+            }
         }
-
         // If two values are equal, return them, else false.
         if ($values[0] == $values[1]) {
             return base_convert($values[0], 2, 10);
