@@ -60,7 +60,7 @@ halls) without the need for expensive e-testing equipment.
 Requirements
 ------------
 
-The plugin is available for Moodle 2.5+. This version is for Moodle 3.7.
+The plugin is available for Moodle 2.5+. This version is for Moodle 3.8.
 
 You need to have imagemagick and the relating php module (http://pecl.php.net/package/imagick) installed.
 
@@ -151,7 +151,7 @@ Documentation
 -------------
 
 You can find a cheat sheet for the plugin on the [AMC
-website](http://www.academic-moodle-cooperation.org/en/modules/offline-quiz/) and a video tutorial
+website](http://www.academic-moodle-cooperation.org/en/module/offline-quiz/) and a video tutorial
 in German only in the [AMC YouTube Channel](https://www.youtube.com/c/AMCAcademicMoodleCooperation).
 
 
