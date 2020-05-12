@@ -240,31 +240,6 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="offlinequiz_attempts" COMMENT="Stores various attempts on a offlinequiz">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="uniqueid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="offlinequiz" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="attempt" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="sumgrades" TYPE="float" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="timefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="layout" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="sheet" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="preview" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for offlinequiz_attempts"/>
-        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_attempts" REFFIELDS="id"/>
-        <KEY NAME="offlinequiz" TYPE="foreign" FIELDS="offlinequiz" REFTABLE="offlinequiz" REFFIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
-      </INDEXES>
-    </TABLE>
     <TABLE NAME="offlinequiz_reports" COMMENT="Lists all the installed offlinequiz reports and their display order and so on. No need to worry about deleting old records. Only records with an equivalent directory are displayed.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
