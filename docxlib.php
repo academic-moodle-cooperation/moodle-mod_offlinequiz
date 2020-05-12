@@ -169,16 +169,16 @@ function offlinequiz_convert_underline_text_docx($text) {
 function offlinequiz_convert_super_text_docx($text) {
     $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
     $replace = array('"', '&', '>', '<');
-    
+
     // Now add the remaining text after the image tag.
     $parts = preg_split("/<sup>/i", $text);
     $result = array();
-    
+
     $firstpart = array_shift($parts);
     if (!empty($firstpart)) {
         $result = offlinequiz_convert_sub_text_docx($firstpart);
     }
-    
+
     foreach ($parts as $part) {
         if ($closetagpos = strpos($part, '</sup>')) {
             $supertextremain = substr($part, $closetagpos + 6);
@@ -187,7 +187,7 @@ function offlinequiz_convert_super_text_docx($text) {
             $supertextremain = '';
         }
         $supertext = strip_tags(substr($part, 0, $closetagpos));
-        
+
         $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $supertext), 'style' => 'supStyle');
         if (!empty($supertextremain)) {
             $superremainblocks = offlinequiz_convert_sub_text_docx($supertextremain);
@@ -200,25 +200,25 @@ function offlinequiz_convert_super_text_docx($text) {
 function offlinequiz_convert_sub_text_docx($text) {
     $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
     $replace = array('"', '&', '>', '<');
-    
+
     // Now add the remaining text after the image tag.
     $parts = preg_split("/<sub>/i", $text);
     $result = array();
-    
+
     $firstpart = array_shift($parts);
     if (!empty($firstpart)) {
         $result = offlinequiz_convert_bold_text_docx($firstpart);
     }
-    
+
     foreach ($parts as $part) {
         if ($closetagpos = strpos($part, '</sub>')) {
             $subtextremain = substr($part, $closetagpos + 6);
         } else {
-            $closetagpos = strlen($part) -1;
+            $closetagpos = strlen($part) - 1;
             $subtextremain = '';
         }
         $subtext = strip_tags(substr($part, 0, $closetagpos));
-        
+
         $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $subtext), 'style' => 'subStyle');
         if (!empty($subtextremain)) {
             $subremainblocks = offlinequiz_convert_bold_text_docx($subtextremain);
