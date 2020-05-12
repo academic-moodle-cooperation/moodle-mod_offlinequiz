@@ -1524,6 +1524,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
         upgrade_mod_savepoint(true, 2019051401, 'offlinequiz');
     }
+    
+    if ($oldversion < 2020051200) {
+        
+        // Define table offlinequiz_attempts to be dropped.
+        $table = new xmldb_table('offlinequiz_attempts');
+        
+        // Conditionally launch drop table for offlinequiz_attempts.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2020051200, 'offlinequiz');
+    }
 
     return true;
 }
