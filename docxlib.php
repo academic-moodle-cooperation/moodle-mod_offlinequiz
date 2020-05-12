@@ -166,6 +166,67 @@ function offlinequiz_convert_underline_text_docx($text) {
     return $result;
 }
 
+function offlinequiz_convert_super_text_docx($text) {
+    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
+    $replace = array('"', '&', '>', '<');
+    
+    // Now add the remaining text after the image tag.
+    $parts = preg_split("/<sup>/i", $text);
+    $result = array();
+    
+    $firstpart = array_shift($parts);
+    if (!empty($firstpart)) {
+        $result = offlinequiz_convert_sub_text_docx($firstpart);
+    }
+    
+    foreach ($parts as $part) {
+        if ($closetagpos = strpos($part, '</sup>')) {
+            $supertextremain = substr($part, $closetagpos + 6);
+        } else {
+            $closetagpos = strlen($part) - 1;
+            $supertextremain = '';
+        }
+        $supertext = strip_tags(substr($part, 0, $closetagpos));
+        
+        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $supertext), 'style' => 'supStyle');
+        if (!empty($supertextremain)) {
+            $superremainblocks = offlinequiz_convert_sub_text_docx($supertextremain);
+            $result = array_merge($result, $superremainblocks);
+        }
+    }
+    return $result;
+}
+
+function offlinequiz_convert_sub_text_docx($text) {
+    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
+    $replace = array('"', '&', '>', '<');
+    
+    // Now add the remaining text after the image tag.
+    $parts = preg_split("/<sub>/i", $text);
+    $result = array();
+    
+    $firstpart = array_shift($parts);
+    if (!empty($firstpart)) {
+        $result = offlinequiz_convert_bold_text_docx($firstpart);
+    }
+    
+    foreach ($parts as $part) {
+        if ($closetagpos = strpos($part, '</sub>')) {
+            $subtextremain = substr($part, $closetagpos + 6);
+        } else {
+            $closetagpos = strlen($part) -1;
+            $subtextremain = '';
+        }
+        $subtext = strip_tags(substr($part, 0, $closetagpos));
+        
+        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $subtext), 'style' => 'subStyle');
+        if (!empty($subtextremain)) {
+            $subremainblocks = offlinequiz_convert_bold_text_docx($subtextremain);
+            $result = array_merge($result, $subremainblocks);
+        }
+    }
+    return $result;
+}
 
 /**
  * Function to convert bold characters (HTML <b> tags) into string blocks with bold style.
@@ -257,14 +318,14 @@ function offlinequiz_convert_newline_docx($text) {
         if ($firstpart == '<br/>' || $firstpart == '<br />') {
             $result = array(array('type' => 'newline'));
         } else {
-            $result = offlinequiz_convert_bold_text_docx($firstpart);
+            $result = offlinequiz_convert_super_text_docx($firstpart);
         }
     }
 
     foreach ($parts as $part) {
         $result[] = array('type' => 'newline');
         if (!empty($part)) {
-            $newlineremainblocks = offlinequiz_convert_bold_text_docx($part);
+            $newlineremainblocks = offlinequiz_convert_super_text_docx($part);
             $result = array_merge($result, $newlineremainblocks);
         }
     }
@@ -406,6 +467,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $docx->addFontStyle('ibuStyle', array('italic' => true, 'bold' => true, 'underline' => 'single',
                                           'size' => $offlinequiz->fontsize));
 
+    $docx->addFontStyle('subStyle', array('size' => $offlinequiz->fontsize, 'subScript' => true));
+    $docx->addFontStyle('supStyle', array('size' => $offlinequiz->fontsize, 'superScript' => true));
     // Header style.
     $docx->addFontStyle('hStyle', array('bold' => true, 'size' => $offlinequiz->fontsize + 4));
     // Center style.
@@ -711,7 +774,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
 
 /**
- * Function to transform Moodle HTML code of a question into proprietary markup that only supports italic, underline and bold.
+ * Function to transform Moodle HTML code of a question into proprietary markup that only supports italic, underline, bold, super and subtext.
  *
  * @param string $input The input text.
  * @return mixed
