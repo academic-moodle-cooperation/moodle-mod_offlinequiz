@@ -350,26 +350,26 @@ function offlinequiz_convert_html_to_latex($text) {
         }
           return $tmp;
     }, $text);
-    $conversiontable = array(
-    '&Amul;' => 'Ä',
-    '&auml;' => 'ä',
-    '&Ouml;' => 'Ö',
-    '&ouml;' => 'ö',
-    '&Uuml;' => 'Ü',
-    '&uuml;' => 'ü',
-    '&szlig;' => 'ß',
-    '&nbsp;' => '~',
-    '&amp;' => '\&',
-    '-amp-' => '&', // Undo ugly hack to prevent the dom parser from rewriting &.
-    '#' => '\#',
-    '%' => '\%',
-    '&gt;' => '>',
-    '&lt;' => '<',
-    '$' => '\$');
-    foreach ($conversiontable as $search => $replace) {
-         $text = str_ireplace($search, $replace, $text);
-    }
     $text = strip_tags($text);
+    $conversiontable = array(
+        '&Amul;' => 'Ä',
+        '&auml;' => 'ä',
+        '&Ouml;' => 'Ö',
+        '&ouml;' => 'ö',
+        '&Uuml;' => 'Ü',
+        '&uuml;' => 'ü',
+        '&szlig;' => 'ß',
+        '&nbsp;' => '~',
+        '&amp;' => '\&',
+        '-amp-' => '&', // Undo ugly hack to prevent the dom parser from rewriting &.
+        '#' => '\#',
+        '%' => '\%',
+        '&gt;' => '>',
+        '&lt;' => '<',
+        '$' => '\$');
+    foreach ($conversiontable as $search => $replace) {
+        $text = str_ireplace($search, $replace, $text);
+    }
     return trim($text);
 }
 
