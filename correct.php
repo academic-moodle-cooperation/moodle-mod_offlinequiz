@@ -643,7 +643,7 @@ $user = null;
 $useridcount = 0;
 $userarray = $DB->get_records('user', array($offlinequizconfig->ID_field => $userkey));
 
-//multiple users with the same id are possible so we have to check if that's the case
+// multiple users with the same id are possible so we have to check if that's the case
 foreach ($userarray as $userelement) {
     $sql = "SELECT ra.id
     FROM {role_assignments} ra,
