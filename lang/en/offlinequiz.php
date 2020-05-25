@@ -824,6 +824,7 @@ $string['upperwarningzero'] = 'Higher first boundary is zero';
 $string['useradded'] = 'User {$a} added';
 $string['userdoesnotexist'] = 'User {$a} does not exist in system';
 $string['useridentification'] = 'User identification';
+$string['useridviolation'] = 'Multiple users found';
 $string['userimported'] = 'User {$a} imported and graded';
 $string['usernotincourse'] = 'User {$a} not in course.';
 $string['userpageimported'] = 'Single page imported for user {$a}';

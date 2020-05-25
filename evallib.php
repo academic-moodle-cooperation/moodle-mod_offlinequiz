@@ -128,15 +128,21 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
     }
 
     if ($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') {
-        if (!$user = $DB->get_record('user', array($offlinequizconfig->ID_field => $scannedpage->userkey))) {
+        $user = new stdClass();
+        if (!$userarray = $DB->get_records('user', array($offlinequizconfig->ID_field => $scannedpage->userkey))) {
             $scannedpage->status = 'error';
             $scannedpage->error = 'nonexistinguser';
         } else {
             $coursestudents = get_enrolled_users($coursecontext, 'mod/offlinequiz:attempt');
-            if (empty($coursestudents[$user->id])) {
-                $scannedpage->status = 'error';
-                $scannedpage->error = 'usernotincourse';
+            foreach ($userarray as $userelement) {
+                if (!empty($coursestudents[$userelement->id])) {
+                    $user = $userelement;
+                }
             }
+        }
+        if (!$user) {
+            $scannedpage->status = 'error';
+            $scannedpage->error = 'usernotincourse';
         }
     }
 

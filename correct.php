@@ -637,22 +637,37 @@ if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz
 } else {
     $group = null;
 }
+
 // Check whether the user exists in Moodle.
-$user = $DB->get_record('user', array($offlinequizconfig->ID_field => $userkey));
-if ($user) {
-    // Check whether the user is enrolled in the current course.
+$user = null;
+$useridcount = 0;
+$userarray = $DB->get_records('user', array($offlinequizconfig->ID_field => $userkey));
+
+//multiple users with the same id are possible so we have to check if that's the case
+foreach ($userarray as $userelement) {
     $sql = "SELECT ra.id
-            FROM {role_assignments} ra,
-                 {role} r
-            WHERE r.id = ra.roleid
-              AND ra.userid = :userid
-              AND r.archetype = 'student'
-              AND ra.contextid = :contextid";
-        $userincourse = $DB->get_field_sql($sql, ['userid' => $user->id, 'contextid' => $coursecontext->id], IGNORE_MISSING);
+    FROM {role_assignments} ra,
+         {role} r
+    WHERE r.id = ra.roleid
+      AND ra.userid = :userid
+      AND r.archetype = 'student'
+      AND ra.contextid = :contextid";
+    $userincourse = $DB->get_field_sql($sql, ['userid' => $userelement->id, 'contextid' => $coursecontext->id], IGNORE_MISSING);
+
+    if ($userincourse) {
+        $user = $userelement;
+        $useridcount++;
+    } else if (!$user) {
+        $user = $userelement;
+    }
 }
-if (!$user || !$userincourse) {
+
+if ($useridcount == 0) {
     $scannedpage->status = 'error';
     $scannedpage->error = 'usernotincourse';
+} else if ($useridcount > 1) {
+    $scannedpage->status = 'error';
+    $scannedpage->error = 'useridviolation';
 }
 
 // Retrieve the result from the database.
