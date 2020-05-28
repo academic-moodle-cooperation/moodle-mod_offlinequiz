@@ -662,14 +662,6 @@ foreach ($userarray as $userelement) {
     }
 }
 
-if ($useridcount == 0) {
-    $scannedpage->status = 'error';
-    $scannedpage->error = 'usernotincourse';
-} else if ($useridcount > 1) {
-    $scannedpage->status = 'error';
-    $scannedpage->error = 'useridviolation';
-}
-
 // Retrieve the result from the database.
 $result = null;
 

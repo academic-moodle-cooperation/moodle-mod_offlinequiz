@@ -35,6 +35,7 @@ $string['errordifferentpage'] = 'Differing page exists';
 $string['errordoublepage'] = 'Page already exists';
 $string['errorfilenotfound'] = 'File not found';
 $string['errorgrouperror'] = 'Group error';
+$string['erroruseridviolation'] = 'Multiple users found';
 $string['errorinsecuremarkings'] = 'Insecure markings';
 $string['errorinvalidpagenumber'] = 'Invalid page number';
 $string['errorinvalidlistnumber'] = 'Invalid Listnumber';
