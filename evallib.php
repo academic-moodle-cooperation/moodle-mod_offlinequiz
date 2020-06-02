@@ -128,12 +128,23 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
     }
 
     if ($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') {
-        if (!$user = $DB->get_record('user', array($offlinequizconfig->ID_field => $scannedpage->userkey))) {
+        $user = null;
+        if (!$userarray = $DB->get_records('user', array($offlinequizconfig->ID_field => $scannedpage->userkey))) {
             $scannedpage->status = 'error';
             $scannedpage->error = 'nonexistinguser';
         } else {
             $coursestudents = get_enrolled_users($coursecontext, 'mod/offlinequiz:attempt');
-            if (empty($coursestudents[$user->id])) {
+            foreach ($userarray as $userelement) {
+                if (!empty($coursestudents[$userelement->id])) {
+                    if (!$user) {
+                        $user = $userelement;
+                    } else {
+                        $scannedpage->status = 'error';
+                        $scannedpage->error = 'useridviolation';
+                    }
+                }
+            }
+            if (!$user) {
                 $scannedpage->status = 'error';
                 $scannedpage->error = 'usernotincourse';
             }
@@ -221,7 +232,7 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
 
     // Still everything OK, so we have a user and a group. Thus we can get/create the associated result
     // we also do that if another result exists, s.t. we have the answers later.
-    if (empty($scannedpage->resultid)) {
+    if (empty($scannedpage->resultid) && $user) {
         if ($scannedpage->status == 'ok' || $scannedpage->status == 'suspended' ||
                 ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') ||
                 ($scannedpage->status == 'error' && $scannedpage->error == 'usernotincourse')) {
