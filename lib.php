@@ -1202,7 +1202,7 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
     require_once($CFG->libdir . '/gradelib.php');
     require_once($CFG->libdir . '/questionlib.php');
 
-    if (array_key_exists('cmidnumber', $offlinequiz)) {
+    if (isset($offlinequiz->cmidnumber)) {
         // May not be always present.
         $params = array('itemname' => $offlinequiz->name, 'idnumber' => $offlinequiz->cmidnumber);
     } else {
