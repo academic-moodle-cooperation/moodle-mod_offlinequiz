@@ -27,7 +27,7 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-function mod_offlinequiz_create_common_statistics_headers($headers, $columns, $s) {
+function mod_offlinequiz_create_common_statistics_headers(&$headers, &$columns, $s) {
     $columns[] = 's';
     $headers[] = get_string('attempts', 'offlinequiz_statistics');
 
