@@ -32,6 +32,6 @@ before_script:
 
 code_checker:
   <<: *job_definition
-  image: amcdev/moodle-plugin-ci:7.2
+  image: amcdev/moodle-plugin-ci:7.3.node14
   variables:
     MOODLE_BRANCH: "MOODLE_38_STABLE"
