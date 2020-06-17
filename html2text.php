@@ -103,9 +103,9 @@ class offlinequiz_html_translator
                         // Copy image content to temporary file.
                         $pathparts = pathinfo($imagefilename);
                         $filetype = $pathparts["extension"];
-                        $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($filetype);
+                        $file = $CFG->tempdir ."/offlinequiz/" . $unique . '.' . strtolower($filetype);
                         clearstatcache();
-                        if (!check_dir_exists($CFG->dataroot."/temp/offlinequiz", true, true)) {
+                        if (!check_dir_exists($CFG->tempdir . "/offlinequiz", true, true)) {
                             print_error("Could not create data directory");
                         }
                         $imagefile->copy_content_to($file);
@@ -149,9 +149,9 @@ class offlinequiz_html_translator
                     }
                     $pathparts = pathinfo($teximagefile);
 
-                    $file = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '.' . strtolower($pathparts["extension"]);
+                    $file = $CFG->tempdir . "/offlinequiz/" . $unique . '.' . strtolower($pathparts["extension"]);
                     clearstatcache();
-                    if (!check_dir_exists($CFG->dataroot."/temp/offlinequiz", true, true)) {
+                    if (!check_dir_exists($CFG->tempdir . "/offlinequiz", true, true)) {
                         print_error("Could not create data directory");
                     }
                     copy($teximagefile, $file);
@@ -174,7 +174,7 @@ class offlinequiz_html_translator
                                           'name' => 'pathconvert'));
 
                         if (file_exists($pathconvert)) {
-                            $newfile = $CFG->dataroot . "/temp/offlinequiz/" . $unique . '_c.png';
+                            $newfile = $CFG->tempdir . "/offlinequiz/" . $unique . '_c.png';
                             $resize = '';
                             $percent = round(200000000 / ($filewidth * $fileheight));
                             if ($percent < 100) {
