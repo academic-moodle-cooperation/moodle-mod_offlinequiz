@@ -665,7 +665,7 @@ foreach ($userarray as $userelement) {
 // Retrieve the result from the database.
 $result = null;
 
-if ($group && $user && property_exists($scannedpage,'resultid') &&
+if ($group && $user && property_exists($scannedpage, 'resultid') &&
     $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid))) {
     $quba = question_engine::load_questions_usage_by_activity($result->usageid);
     $slots = $quba->get_slots();
