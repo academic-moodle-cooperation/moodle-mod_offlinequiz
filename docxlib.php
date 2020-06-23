@@ -467,8 +467,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $docx->addFontStyle('ibuStyle', array('italic' => true, 'bold' => true, 'underline' => 'single',
                                           'size' => $offlinequiz->fontsize));
 
-    $docx->addFontStyle('subStyle', array('size' => $offlinequiz->fontsize, 'subScript' => true, 'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('supStyle', array('size' => $offlinequiz->fontsize, 'superScript' => true, 'size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('subStyle', array('size' => $offlinequiz->fontsize, 'subScript' => true));
+    $docx->addFontStyle('supStyle', array('size' => $offlinequiz->fontsize, 'superScript' => true));
     // Header style.
     $docx->addFontStyle('hStyle', array('bold' => true, 'size' => $offlinequiz->fontsize + 4));
     // Center style.
