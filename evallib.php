@@ -127,8 +127,8 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
         $scannedpage->userkey = $offlinequizconfig->ID_prefix . $usernumber . $offlinequizconfig->ID_postfix;
     }
 
+    $user = null;
     if ($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') {
-        $user = null;
         if (!$userarray = $DB->get_records('user', array($offlinequizconfig->ID_field => $scannedpage->userkey))) {
             $scannedpage->status = 'error';
             $scannedpage->error = 'nonexistinguser';

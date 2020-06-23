@@ -982,8 +982,8 @@ class offlinequiz_page_scanner {
         global $CFG;
 
         $uniquename = time();
-        $tempsrc = $CFG->dataroot . "/temp/$uniquename" . "_src.png";
-        $tempdst = $CFG->dataroot . "/temp/$uniquename" . "_dst.png";
+        $tempsrc = $CFG->tempdir ."/$uniquename" . "_src.png";
+        $tempdst = $CFG->tempdir ."/$uniquename" . "_dst.png";
         if (imagepng($this->image, $tempsrc)) {
             $handle = popen("convert '" . $tempsrc . "' -rotate 180 '" . $tempdst . "' ", 'r');
             pclose($handle);
@@ -1047,8 +1047,8 @@ class offlinequiz_page_scanner {
         global $CFG;
 
         $uniquename = time();
-        $tempsrc = $CFG->dataroot."/temp/$uniquename"."_src.png";
-        $tempdst = $CFG->dataroot."/temp/$uniquename"."_dst.png";
+        $tempsrc = $CFG->tempdir ."/$uniquename"."_src.png";
+        $tempdst = $CFG->tempdir ."/$uniquename"."_dst.png";
         if (imagepng($this->image, $tempsrc)) {
             $handle = popen("convert '" . $tempsrc . "' -rotate 90 '" . $tempdst . "' ", 'r');
             pclose($handle);
