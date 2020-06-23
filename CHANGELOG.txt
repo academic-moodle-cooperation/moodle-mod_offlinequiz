@@ -1,5 +1,6 @@
 CHANGELOG
 =========
+
 3.9.0
 -----------------
 [Feature] Support for all kinds of special characters in pdf/docx/LaTeX documents.
@@ -11,9 +12,14 @@ CHANGELOG
           It will choose the one in the course. Otherwise it will throw an error.
 [Feature] Rewrote some of the privacy lang strings to make them more clear.
 
+
+3.8.2
+-----------------
+[Bug] Fixed a long existing bug with offlinequiz not using the right temp folder which leads to errors when setting localcache-directory in config.php.
+
 3.8.1
 -----------------
-[Feature] Bugfix question statistics
+[Bug] Fixed a bug that not all questions were shown in question statistics
 
 3.8.0
 -----------------
