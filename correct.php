@@ -248,7 +248,7 @@ onClick=\"self.close(); return false;\"><br />";
     $scannedpage = offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage, $coursecontext,
                 $questionsperpage, $offlinequizconfig);
 
-    if ($oldresultid != $scannedpage->resultid) {
+    if ($scannedpage && property_exists($scannedpage, 'resultid') && $oldresultid != $scannedpage->resultid) {
         // A new result has been linked to the scanned page.
         // Already process the answers but don't submit them yet.
         $scannedpage = offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id,
@@ -665,7 +665,8 @@ foreach ($userarray as $userelement) {
 // Retrieve the result from the database.
 $result = null;
 
-if ($group && $user && $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid))) {
+if ($group && $user && property_exists($scannedpage,'resultid') &&
+    $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid))) {
     $quba = question_engine::load_questions_usage_by_activity($result->usageid);
     $slots = $quba->get_slots();
 
