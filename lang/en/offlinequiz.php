@@ -615,12 +615,12 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 
 \newcommand{\TestTitle}{%
 \begin{center}
-{\bf \Large Questionnaire}\\\\[3mm]
+{\bf \Large Question sheet}\\\\[3mm]
 \fbox{
 \begin{tabular}{rl}
 \rule{0pt}{25pt} Name: & $\underline{\hspace*{8cm}}$ \rule{20pt}{0pt}\\\\[5mm]
-Student ID: & $\underline{\hspace*{8cm}}$\\\\[5mm]
-\ifthenelse{\equal{true}{{$a->printstudycodefield}}}{\rule{10pt}{0pt} Program code: & $\underline{\hspace*{8cm}}$\\\\[5mm]}{}
+ID number: & $\underline{\hspace*{8cm}}$\\\\[5mm]
+\ifthenelse{\equal{true}{{$a->printstudycodefield}}}{\rule{10pt}{0pt} Study code: & $\underline{\hspace*{8cm}}$\\\\[5mm]}{}
 \rule[-20pt]{0pt}{20pt} Signature: & $\underline{\hspace*{8cm}}$
 \end{tabular}}
 \end{center}
