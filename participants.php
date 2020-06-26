@@ -198,7 +198,6 @@ switch($mode) {
         // Print the heading.
         $strsearch = get_string('search');
         $strshowall = get_string('showall');
-        $searchtext = optional_param('searchtext', '', PARAM_RAW);
         $listid = optional_param('listid', 0, PARAM_INT);
         $group = optional_param('group', 0, PARAM_INT);
         $addselect = optional_param_array('addselect', array(), PARAM_INT);
