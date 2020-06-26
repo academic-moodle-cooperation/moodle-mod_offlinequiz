@@ -5,7 +5,7 @@ CHANGELOG
 -----------------
 [Feature] Support for all kinds of special characters in pdf/docx/LaTeX documents.
 [Feature] Deleted table offlinequiz_attempts, which wasn't used since moodle/offlinequiz 2.0.
-[Feature] Support of superscrupt and subscript in docx documents.
+[Feature] Support of superscript and subscript in docx documents.
 [Feature] Support of "<" and ">" in LaTeX documents.
 [Bug] Changed css so it doesn't interfere with quiz anymore.
 [Feature] Offlinequiz now recognizes, if there are multiple users with a given idnumber.
