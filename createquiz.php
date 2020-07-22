@@ -397,16 +397,20 @@ if ($mode == 'preview') {
                     $questionfile = offlinequiz_create_docx_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                     require_once('latexlib.php');
-		    // get array of result files for latex (pdf, tex, log) // OSTFALIA
+
+                    // get array of result files for latex (pdf, tex, log) // OSTFALIA
                     // array('pdf' => $pdf, 'source' => $tex, 'log' => $log);
                     $resultfiles = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
+                    // set questionfile to pdf file if available
                     $questionfile = $resultfiles['pdf'];
-                    if ($questionfile == null)
+                    if ($questionfile == null) {
+                        // no pdf => set questionfile to tex file if available
                         $questionfile = $resultfiles['source'];
-                    if ($questionfile == null)
-                        $questionfile = $resultfiles['log'];
-
-//                    $questionfile = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
+                        if ($questionfile == null) {
+                            // no pdf => set questionfile to error log
+                            $questionfile = $resultfiles['log'];
+                        }
+                    }
                 } else {
                     $questionfile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 }
@@ -425,21 +429,26 @@ if ($mode == 'preview') {
                     $filestring = get_string('formforgroupdocx', 'offlinequiz', $groupletter);
                 } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                     $filestring = get_string('formforgrouplatex', 'offlinequiz', $groupletter);
+                    // display file extension as indicator for type of file (can be different types in case of error)
+                    $ext = strtolower(pathinfo($questionfile->get_filename(), PATHINFO_EXTENSION));
+                    $filestring .= ' (' . $ext . ')';
                 }
                 $url = "$CFG->wwwroot/pluginfile.php/" . $questionfile->get_contextid() . '/' . $questionfile->get_component() .
                             '/' . $questionfile->get_filearea() . '/' . $questionfile->get_itemid() . '/' .
                             $questionfile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, $filestring);
-		// output of all latex result files // OSTFALIA
-                echo '<br />&nbsp;<br />';
 
                 if (isset($resultfiles)) {
+                    // LATEX (OSTFALIA):
+                    // offer Tex file and Pdflatex Log file for debugging or other purposes
+                    echo '<br />&nbsp;<br />';
+
                     if (isset($resultfiles['source']) && isset($resultfiles['pdf'])) {
                         $source = $resultfiles['source'];
                         $url = "$CFG->wwwroot/pluginfile.php/" . $source->get_contextid() . '/' . $source->get_component() .
                                 '/' . $source->get_filearea() . '/' . $source->get_itemid() . '/' .
                                 $source->get_filename() . '?forcedownload=1';
-                        echo $OUTPUT->action_link($url, 'Source') . '<br>';
+                        echo $OUTPUT->action_link($url, 'Tex-File') . '<br>';
                     }
 
                     if (isset($resultfiles['log'])) {

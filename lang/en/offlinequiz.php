@@ -577,7 +577,8 @@ $string['questionsheet'] = 'Question sheet';
 $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \documentclass[{$a->fontsize}pt,a4paper]{extarticle}
 \usepackage[utf8x]{inputenc}
-\usepackage[T1]{fontenc}
+%\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \textwidth 16truecm
 \textheight 23truecm
 \setlength{\oddsidemargin}{0cm}
@@ -614,7 +615,7 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 %%% Course data:
 \newcommand{\Group}{{$a->groupname}}
 \newcommand{\Title}{{$a->coursename}}
-\newcommand{\Date}
+\newcommand{\Date}{$a->date}
 
 \newcommand{\TestTitle}{%
 \begin{center}
