@@ -153,7 +153,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
                 if ($question->qtype == 'description') {
                     $latexforquestions .= "\n" . '\\ ' . $questiontext . "\n";
                 } else {
-                $latexforquestions .= '\item %' .  $question->name . "\n" . $questiontext . "\n";
+                    $latexforquestions .= '\item %' .  $question->name . "\n" . $questiontext . "\n";
                 }
                 if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
@@ -186,7 +186,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
         $a['latexforquestions'] = $latexforquestions;
         $a['coursename'] = offlinequiz_convert_html_to_latex($offlinequiz->name); // $course->fullname);
         $a['groupname'] = $groupletter;
-        print_object($offlinequiz);
+        // print_object($offlinequiz);
         if (empty($offlinequiz->pdfintro)) {
             $a['pdfintrotext'] = offlinequiz_convert_html_to_latex(get_string('pdfintrotext', 'offlinequiz', $a));
         } else {
@@ -204,7 +204,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     	    $a['printstudycodefield'] = "false";
         }
         $latex = get_string('questionsheetlatextemplate', 'offlinequiz', $a);
-	
+
         $fs = get_file_storage();
         $fileprefix = get_string('fileprefixform', 'offlinequiz');
 

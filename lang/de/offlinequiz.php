@@ -427,7 +427,8 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \documentclass[{$a->fontsize}pt,a4paper]{extarticle}
 \usepackage[ngerman]{babel}
 \usepackage[utf8x]{inputenc}
-\usepackage[T1]{fontenc}
+%\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \textwidth 16truecm
 \textheight 23truecm
 \setlength{\oddsidemargin}{0cm}
@@ -437,6 +438,8 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \usepackage{amsmath} % für \implies etc
 \usepackage{amsfonts} % für \mathbb etc
 \usepackage{graphicx} % zum Bilder einfügen
+\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % Für Einfügen von Hyperlinks
+\usepackage{ifthen}
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{multicol} % für Möglichkeit der mehrspaltigen Ausgabe 
@@ -448,7 +451,6 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \pagestyle{fancy}
 \chead{\sc \Title, Gruppe \Group}
 \cfoot{Seite \thepage/\pageref{LastPage}}
-\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % Für Einfügen von Hyperlinks
 \makeatletter %%% Seitenumbrüche zwischen Antwortmöglichkeiten unterdrücken (funktioniert meistens!)
 \@beginparpenalty=10000
 \@itempenalty=10000
@@ -473,7 +475,7 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \begin{tabular}{rl}
 \rule{0pt}{25pt} Name: & $\underline{\hspace*{8cm}}$ \rule{20pt}{0pt}\\\\[5mm]
 Matrikelnummer: & $\underline{\hspace*{8cm}}$\\\\[5mm]
-%\rule{10pt}{0pt} Studienkennzahl: & $\underline{\hspace*{8cm}}$\\\\[5mm]
+\ifthenelse{\equal{true}{{$a->printstudycodefield}}}{\rule{10pt}{0pt} Studienkennzahl: & $\underline{\hspace*{8cm}}$\\\\[5mm]}{}
 \rule[-20pt]{0pt}{20pt} Unterschrift: & $\underline{\hspace*{8cm}}$
 \end{tabular}}
 \end{center}
