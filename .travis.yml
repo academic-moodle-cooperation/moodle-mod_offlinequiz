@@ -49,7 +49,8 @@ env:
 notifications:
   email:
     recipients:
-      - thomas.wedekind@univie.ac.at
+#      - thomas.wedekind@univie.ac.at
+      - k.borm@ostfalia.de
     on_success: change # default: change
     on_failure: always # default: always
 
