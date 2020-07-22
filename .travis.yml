@@ -25,12 +25,10 @@ php:
 addons:
   firefox: "47.0.1"
   postgresql: "9.3"
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
-      - chromium-chromedriver
+  addons:
+    chrome: stable
+  packages:
+    - chromium-chromedriver
 
 # This section sets up the environment variables for the build.
 env:
@@ -60,8 +58,8 @@ before_install:
 # line is if you are trying to generate code coverage with PHPUnit.
   - phpenv config-rm xdebug.ini
   
-  - nvm install 8.9
-  - nvm use 8.9
+  - nvm install 14.2.0
+  - nvm use 14.2.0
 # Currently we are inside of the clone of your repository.  We move up two
 # directories to build the project.
   - cd ../..
