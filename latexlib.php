@@ -211,6 +211,10 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
         $tmppath = $CFG->dataroot . "/temp/offlinequiz/" . $fileprefix . '_' . $groupletter . '_' . $timestamp;
         $filename = $tmppath . '.tex';
+        // Create temporary directory if it does not exist.
+        if (!check_dir_exists($CFG->dataroot . "/temp/offlinequiz", true, true)) {
+            print_error("Could not create data directory");
+        }
 
         $offlinequizconfig = get_config('offlinequiz');
 
@@ -228,7 +232,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
             // Create pdf from tex file.
 
             // Create tex file.
-            if (!file_put_contents ( $filename , $latex)) {
+            if (file_put_contents ( $filename , $latex) === false) {
                 echo 'cannot create file ' . $filename . '<br>';
             }
 
