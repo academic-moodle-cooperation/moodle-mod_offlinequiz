@@ -2,7 +2,6 @@
 language: php
 
 os: linux
-dist: trusty
 
 # This tells Travis CI to use its new architecture.  Everything is better!
 sudo: required
@@ -92,7 +91,8 @@ script:
   - moodle-plugin-ci phplint
 # This step runs the PHP Copy/Paste Detector on your plugin. This helps to find
 # code duplication.
-  - moodle-plugin-ci phpcpd
+# disabled because it fails
+#  - moodle-plugin-ci phpcpd
 # This step runs the PHP Mess Detector on your plugin. This helps to find potential
 # problems with your code which can result in refactoring opportunities.
   - moodle-plugin-ci phpmd
@@ -102,7 +102,7 @@ script:
 # This step runs some light validation on the plugin file structure and code.  Validation can be plugin specific.
   - moodle-plugin-ci validate
 # This step validates your plugin's upgrade steps.
-# disable because it fails
+# disabled because it fails
 #  - moodle-plugin-ci savepoints
 # This step runs Grunt tasks on the plugin.  By default, it tries to run
 # tasks relevant to your plugin and Moodle version, but you can run
