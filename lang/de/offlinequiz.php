@@ -442,7 +442,7 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \usepackage{ifthen}
 \usepackage{enumitem}
 \usepackage{xcolor}
-\usepackage{multicol} % für Möglichkeit der mehrspaltigen Ausgabe 
+\usepackage{multicol} % für Möglichkeit der mehrspaltigen Ausgabe
 \usepackage{ulem}
 \parindent 0pt % keine Einrückung am Beginn des Absatzes
 \renewcommand{\familydefault}{\sfdefault} % Schriftart
@@ -467,7 +467,7 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \newcommand{\Group}{{$a->groupname}}
 \newcommand{\Title}{{$a->coursename}}
 \newcommand{\Date}{$a->date}
- 
+
 \newcommand{\TestTitle}{%
 \begin{center}
 {\bf \Large Fragebogen}\\\\[3mm]
@@ -480,9 +480,9 @@ Matrikelnummer: & $\underline{\hspace*{8cm}}$\\\\[5mm]
 \end{tabular}}
 \end{center}
 }
- 
+
 \InputIfFileExists{offline_test_extras.tex}{}{} % Input extra user definitions
- 
+
 \begin{document}
 
 

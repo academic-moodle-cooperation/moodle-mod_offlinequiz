@@ -18,9 +18,8 @@ cache:
 # here will create a separate build and run the tests against that version of PHP.
 # WARNING, PHP7 only works in Moodle 3.0.1 or later!
 php:
-# - 7.1
- - 7.2
- - 7.3
+  # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
+ - 7.1.30 # Make this sticky because current default version (7.1.11) has a bug with redis-extension output (MDL-66062)
  - 7.4
 
 addons:
@@ -110,4 +109,5 @@ script:
   - moodle-plugin-ci phpunit
 # This step runs the Behat tests of your plugin.  If your plugin has Behat tests, then
 # it is highly recommended that you keep this step.
-  - moodle-plugin-ci behat --profile chrome
+#  - moodle-plugin-ci behat --profile chrome
+  - moodle-plugin-ci behat

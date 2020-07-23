@@ -398,17 +398,17 @@ if ($mode == 'preview') {
                 } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                     require_once('latexlib.php');
 
-                    // get array of result files for latex (pdf, tex, log) // OSTFALIA
-                    // array('pdf' => $pdf, 'source' => $tex, 'log' => $log);
-                    $resultfiles = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
-                    // set questionfile to pdf file if available
-                    $questionfile = $resultfiles['pdf'];
+                    // Get array of result files for latex (pdf, tex, log)
+                    // Values are: pdf' => $pdf, 'source' => $tex, 'log' => $log.
+                    $latexfiles = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
+                    // Set questionfile to pdf file if available.
+                    $questionfile = $latexfiles['pdf'];
                     if ($questionfile == null) {
-                        // no pdf => set questionfile to tex file if available
-                        $questionfile = $resultfiles['source'];
+                        // No pdf => set questionfile to tex file if available.
+                        $questionfile = $latexfiles['source'];
                         if ($questionfile == null) {
-                            // no pdf => set questionfile to error log
-                            $questionfile = $resultfiles['log'];
+                            // No tex => set questionfile to error log.
+                            $questionfile = $latexfiles['log'];
                         }
                     }
                 } else {
@@ -429,7 +429,7 @@ if ($mode == 'preview') {
                     $filestring = get_string('formforgroupdocx', 'offlinequiz', $groupletter);
                 } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                     $filestring = get_string('formforgrouplatex', 'offlinequiz', $groupletter);
-                    // display file extension as indicator for type of file (can be different types in case of error)
+                    // Display file extension as indicator for file type (can be different types in case of error).
                     $ext = strtolower(pathinfo($questionfile->get_filename(), PATHINFO_EXTENSION));
                     $filestring .= ' (' . $ext . ')';
                 }
@@ -438,21 +438,21 @@ if ($mode == 'preview') {
                             $questionfile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, $filestring);
 
-                if (isset($resultfiles)) {
-                    // LATEX (OSTFALIA):
-                    // offer Tex file and Pdflatex Log file for debugging or other purposes
+                if (isset($latexfiles)) {
+                    // Special handling for Latex format:
+                    // Offer Tex file and Pdflatex Log file for debugging or further processing.
                     echo '<br />&nbsp;<br />';
 
-                    if (isset($resultfiles['source']) && isset($resultfiles['pdf'])) {
-                        $source = $resultfiles['source'];
+                    if (isset($latexfiles['source']) && isset($latexfiles['pdf'])) {
+                        $source = $latexfiles['source'];
                         $url = "$CFG->wwwroot/pluginfile.php/" . $source->get_contextid() . '/' . $source->get_component() .
                                 '/' . $source->get_filearea() . '/' . $source->get_itemid() . '/' .
                                 $source->get_filename() . '?forcedownload=1';
                         echo $OUTPUT->action_link($url, 'Tex-File') . '<br>';
                     }
 
-                    if (isset($resultfiles['log'])) {
-                        $logfile = $resultfiles['log'];
+                    if (isset($latexfiles['log'])) {
+                        $logfile = $latexfiles['log'];
                         $url = "$CFG->wwwroot/pluginfile.php/" . $logfile->get_contextid() . '/' . $logfile->get_component() .
                                 '/' . $logfile->get_filearea() . '/' . $logfile->get_itemid() . '/' .
                                 $logfile->get_filename() . '?forcedownload=1';
