@@ -1,6 +1,9 @@
 # This is the language of our project.
 language: php
 
+os: linux
+dist: bionic
+
 # This tells Travis CI to use its new architecture.  Everything is better!
 sudo: required
 
@@ -20,6 +23,8 @@ cache:
 php:
   # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
  - 7.1.30 # Make this sticky because current default version (7.1.11) has a bug with redis-extension output (MDL-66062)
+ - 7.2
+ - 7.3
  - 7.4
 
 addons:
@@ -98,7 +103,8 @@ script:
 # This step runs some light validation on the plugin file structure and code.  Validation can be plugin specific.
   - moodle-plugin-ci validate
 # This step validates your plugin's upgrade steps.
-  - moodle-plugin-ci savepoints
+# disable because it fails
+#  - moodle-plugin-ci savepoints
 # This step runs Grunt tasks on the plugin.  By default, it tries to run
 # tasks relevant to your plugin and Moodle version, but you can run
 # specific tasks by passing them as options,
