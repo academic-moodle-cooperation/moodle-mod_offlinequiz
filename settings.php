@@ -69,13 +69,9 @@ if ($ADMIN->fulltree) {
             get_string('disableimgnewlines', 'offlinequiz'), get_string('configdisableimgnewlines', 'offlinequiz'),
             0));
 
-
-
-    // OSTFALIA
-    // path to pdflatex
+    // Path to pdflatex.
     $settings->add(new admin_setting_configtext('offlinequiz/pathpdflatex', get_string('pathpdflatex', 'offlinequiz'),
             get_string('pathpdflatex_help', 'offlinequiz'), '/usr/bin/pdflatex'));
-
 
     // Review options.
     $settings->add(new admin_setting_heading('reviewheading',
