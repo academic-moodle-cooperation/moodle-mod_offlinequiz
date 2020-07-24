@@ -480,6 +480,8 @@ LATEX;
         $text = substr($text, 0, $startpos) . $newimagetext . substr($text, $endpos + 1);
     }
 
+    $text = strip_tags($text);
+
     $conversiontable = array(
     '&Amul;' => 'Ä',
     '&auml;' => 'ä',
@@ -499,7 +501,6 @@ LATEX;
     foreach ($conversiontable as $search => $replace) {
          $text = str_ireplace($search, $replace, $text);
     }
-    $text = strip_tags($text);
 
     // Strip starting and trailing /newline.
     $len = strlen('\newline');
