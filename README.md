@@ -65,11 +65,10 @@ The plugin is available for Moodle 2.5+. This version is for Moodle 3.9.
 You need to have imagemagick and the relating php module (http://pecl.php.net/package/imagick) installed.
 
 For questions with LaTeX formulas the best output format is LATEX which can be automatically converted into pdf
-in order to embed images and for ease of user handling. This conversion requires pdflatex to be installed and
-set in the offlinequiz options.
-
-Release Notes: The latex template has been updated. 
-If you have changed your questionsheetlatextemplate language string then you should reset it to the default value.
+in order to embed images and for ease of user handling. This conversion requires pdflatex (e.g. texlive-latex-extra) to be installed 
+and the path set in the offlinequiz settings. 
+If your Moodle language is not English then you possibly need to install a LaTeX language package as well 
+(e.g. texlive-lang-german for German).
  
 Installation
 ------------
