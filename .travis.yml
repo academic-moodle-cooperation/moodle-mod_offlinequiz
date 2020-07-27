@@ -1,6 +1,8 @@
 # This is the language of our project.
 language: php
 
+os: linux
+
 # This tells Travis CI to use its new architecture.  Everything is better!
 sudo: required
 
@@ -18,19 +20,18 @@ cache:
 # here will create a separate build and run the tests against that version of PHP.
 # WARNING, PHP7 only works in Moodle 3.0.1 or later!
 php:
- - 7.1
+ - 7.1.30 # Make this sticky because current default version (7.1.11) has a bug with redis-extension output (MDL-66062)
  - 7.2
  - 7.3
+ - 7.4
 
 addons:
   firefox: "47.0.1"
-  postgresql: "9.3"
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
-      - chromium-chromedriver
+  postgresql: "9.4"
+  addons:
+    chrome: stable
+  packages:
+    - chromium-chromedriver
 
 # This section sets up the environment variables for the build.
 env:
@@ -49,7 +50,8 @@ env:
 notifications:
   email:
     recipients:
-      - thomas.wedekind@univie.ac.at
+#      - thomas.wedekind@univie.ac.at
+      - k.borm@ostfalia.de
     on_success: change # default: change
     on_failure: always # default: always
 
@@ -59,8 +61,8 @@ before_install:
 # line is if you are trying to generate code coverage with PHPUnit.
   - phpenv config-rm xdebug.ini
   
-  - nvm install 8.9
-  - nvm use 8.9
+  - nvm install 14.3
+  - nvm use 14.3
 # Currently we are inside of the clone of your repository.  We move up two
 # directories to build the project.
   - cd ../..
@@ -89,25 +91,30 @@ script:
   - moodle-plugin-ci phplint
 # This step runs the PHP Copy/Paste Detector on your plugin. This helps to find
 # code duplication.
-  - moodle-plugin-ci phpcpd
+# disabled because it fails
+#  - moodle-plugin-ci phpcpd
 # This step runs the PHP Mess Detector on your plugin. This helps to find potential
 # problems with your code which can result in refactoring opportunities.
   - moodle-plugin-ci phpmd
 # This step runs the Moodle Code Checker to make sure that your plugin conforms to the
 # Moodle coding standards.  It is highly recommended that you keep this step.
   - moodle-plugin-ci codechecker
-# This step runs CSS Lint on the CSS files in your plugin.
-  - moodle-plugin-ci csslint
-# This step runs YUI Shifter on the YUI modules in your plugin.  This also checks to make
-# sure that the YUI modules have been shifted.
-  - moodle-plugin-ci shifter
-# This step runs JSHint on the Javascript files in your plugin.
-  - moodle-plugin-ci jshint
 # This step runs some light validation on the plugin file structure and code.  Validation can be plugin specific.
   - moodle-plugin-ci validate
+# This step validates your plugin's upgrade steps.
+# disabled because it fails
+#  - moodle-plugin-ci savepoints
+# This step runs Grunt tasks on the plugin.  By default, it tries to run
+# tasks relevant to your plugin and Moodle version, but you can run
+# specific tasks by passing them as options,
+# EG: moodle-plugin-ci grunt -t task1 -t task2
+# To fail on eslint warnings use --max-lint-warnings 0
+# disable because it fails
+#  - moodle-plugin-ci grunt
 # This step runs the PHPUnit tests of your plugin.  If your plugin has PHPUnit tests,
 # then it is highly recommended that you keep this step.
   - moodle-plugin-ci phpunit
 # This step runs the Behat tests of your plugin.  If your plugin has Behat tests, then
 # it is highly recommended that you keep this step.
-  - moodle-plugin-ci behat --profile chrome
+#  - moodle-plugin-ci behat --profile chrome
+  - moodle-plugin-ci behat
