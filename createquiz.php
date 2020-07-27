@@ -397,7 +397,20 @@ if ($mode == 'preview') {
                     $questionfile = offlinequiz_create_docx_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                     require_once('latexlib.php');
-                    $questionfile = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
+
+                    // Get array of result files for latex (pdf, tex, log)
+                    // Values are: pdf' => $pdf, 'source' => $tex, 'log' => $log.
+                    $latexfiles = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
+                    // Set questionfile to pdf file if available.
+                    $questionfile = $latexfiles['pdf'];
+                    if ($questionfile == null) {
+                        // No pdf => set questionfile to tex file if available.
+                        $questionfile = $latexfiles['source'];
+                        if ($questionfile == null) {
+                            // No tex => set questionfile to error log.
+                            $questionfile = $latexfiles['log'];
+                        }
+                    }
                 } else {
                     $questionfile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 }
@@ -416,11 +429,37 @@ if ($mode == 'preview') {
                     $filestring = get_string('formforgroupdocx', 'offlinequiz', $groupletter);
                 } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                     $filestring = get_string('formforgrouplatex', 'offlinequiz', $groupletter);
+                    // Display file extension as indicator for file type (can be different types in case of error).
+                    $ext = strtolower(pathinfo($questionfile->get_filename(), PATHINFO_EXTENSION));
+                    $filestring .= ' (' . $ext . ')';
                 }
                 $url = "$CFG->wwwroot/pluginfile.php/" . $questionfile->get_contextid() . '/' . $questionfile->get_component() .
                             '/' . $questionfile->get_filearea() . '/' . $questionfile->get_itemid() . '/' .
                             $questionfile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, $filestring);
+
+                if (isset($latexfiles)) {
+                    // Special handling for Latex format:
+                    // Offer Tex file and Pdflatex Log file for debugging or further processing.
+                    echo '<br />&nbsp;<br />';
+
+                    if (isset($latexfiles['source']) && isset($latexfiles['pdf'])) {
+                        $source = $latexfiles['source'];
+                        $url = "$CFG->wwwroot/pluginfile.php/" . $source->get_contextid() . '/' . $source->get_component() .
+                                '/' . $source->get_filearea() . '/' . $source->get_itemid() . '/' .
+                                $source->get_filename() . '?forcedownload=1';
+                        echo $OUTPUT->action_link($url, 'Tex-File') . '<br>';
+                    }
+
+                    if (isset($latexfiles['log'])) {
+                        $logfile = $latexfiles['log'];
+                        $url = "$CFG->wwwroot/pluginfile.php/" . $logfile->get_contextid() . '/' . $logfile->get_component() .
+                                '/' . $logfile->get_filearea() . '/' . $logfile->get_itemid() . '/' .
+                                $logfile->get_filename() . '?forcedownload=1';
+                        echo $OUTPUT->action_link($url, 'Log-File');
+                    }
+                }
+
                 echo '<br />&nbsp;<br />';
                 @flush();@ob_flush();
             } else {
