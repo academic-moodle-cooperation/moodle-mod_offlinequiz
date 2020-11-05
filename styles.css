@@ -768,7 +768,6 @@ input#showviewbutton {
     overflow: hidden;
     word-break: break-word;
     width: 90%;
-    display: inline-block;
     height: 20px;
 }
 

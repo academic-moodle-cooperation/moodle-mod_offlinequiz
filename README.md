@@ -60,7 +60,7 @@ halls) without the need for expensive e-testing equipment.
 Requirements
 ------------
 
-The plugin is available for Moodle 2.5+. This version is for Moodle 3.9.
+The plugin is available for Moodle 2.5+. This version is for Moodle 3.10.
 
 You need to have imagemagick and the relating php module (http://pecl.php.net/package/imagick) installed.
 
