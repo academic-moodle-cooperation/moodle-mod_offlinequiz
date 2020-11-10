@@ -56,7 +56,7 @@ function add_with_adjustment(offlinequiz_result_page $page, offlinequiz_point $i
 function add(offlinequiz_point $point, $addx, $addy, $mode) {
     return new offlinequiz_point($point->getx() + $addx, $point->gety() + $addy, $mode);
 }
-/* 
+/*
  * Returns the angle between the horizontal and the diagonal of the layer-rectangle.
  */
 function getdiagonalangle() {
