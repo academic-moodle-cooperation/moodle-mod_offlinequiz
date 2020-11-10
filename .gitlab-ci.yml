@@ -41,7 +41,7 @@ variables:
 
 .job_template: &job_definition
   script:
-    - moodle-plugin-ci phplint
+#    - moodle-plugin-ci phplint
 #    - moodle-plugin-ci phpdoc
 #    - moodle-plugin-ci phpcpd
     - moodle-plugin-ci phpmd
