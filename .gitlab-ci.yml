@@ -54,4 +54,4 @@ code_checker:
   <<: *job_definition
   image: amcdev/moodle-plugin-ci:7.3-docker-node-14.15.0
   variables:
-    MOODLE_BRANCH: "master"
+    MOODLE_BRANCH: "MOODLE_310_STABLE"
