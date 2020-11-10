@@ -192,7 +192,6 @@ class edit_renderer extends \plugin_renderer_base {
     }
 
     private function add_to_group_button($structure, $offlinequiz, $pageurl) {
-        global $OUTPUT;
         $letterstr = 'ABCDEFGHIJKL';
         $options = array();
         $options[0] = get_string('selectagroup', 'offlinequiz');
@@ -243,7 +242,6 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string
      */
     public function offlinequiz_group_selector($offlinequiz, \moodle_url $pageurl) {
-        global $OUTPUT;
 
         $output = '';
         // Print the group choice select.
@@ -261,7 +259,7 @@ class edit_renderer extends \plugin_renderer_base {
         $selecturl = unserialize(serialize($pageurl));
         $selecturl->remove_params('groupnumber');
         $output .= html_writer::start_div('groupchoice');
-        $output .= $OUTPUT->single_select(
+        $output .= $this->single_select(
                    $selecturl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
         $output .= html_writer::end_div();
         return $output;

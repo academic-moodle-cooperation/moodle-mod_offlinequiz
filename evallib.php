@@ -542,7 +542,8 @@ function offlinequiz_check_for_changed_groupnumber($offlinequiz, $scanner, $scan
                     }
                     // Delete the old result.
                     $DB->delete_records('offlinequiz_results', array('id' => $oldresultid));
-                    offlinequiz_reprocess_scannedpage($offlinequiz, $scanner, $oldresultid, $scannedpage, $coursecontext, $questionsperpage);
+                    offlinequiz_reprocess_scannedpage($offlinequiz, $scanner,
+                        $oldresultid, $scannedpage, $coursecontext, $questionsperpage);
                 }
             }
         } else {
@@ -602,7 +603,8 @@ function offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage
                         // Delete the result if no other pages use this result.
                         $DB->delete_records('offlinequiz_results', array('id' => $oldresultid));
                     }
-                    offlinequiz_reprocess_scannedpage($offlinequiz, $scanner, $oldresultid, $scannedpage, $coursecontext, $questionsperpage);
+                    offlinequiz_reprocess_scannedpage($offlinequiz, $scanner,
+                        $oldresultid, $scannedpage, $coursecontext, $questionsperpage);
                 }
             }
         } else {
