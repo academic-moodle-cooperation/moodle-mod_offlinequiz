@@ -32,6 +32,6 @@ before_script:
 
 code_checker:
   <<: *job_definition
-  image: amcdev/moodle-plugin-ci:7.3.node14
+  image: amcdev/moodle-plugin-ci:7.3-docker-node-14.15.0
   variables:
     MOODLE_BRANCH: "master"
