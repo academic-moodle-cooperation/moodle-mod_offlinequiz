@@ -20,7 +20,7 @@ Feature: Within a moodle instance, an administrator should be able to set the va
   Scenario: Switch as an admin to the adminsettings of the module offlinequiz and change the value of "Print study code field on question sheet". Then login as a teacher and add a new offline quiz to a course and check whether the default value has changed.
     Given I log in as "admin"
     And I navigate to "Plugins > Activity modules > Offline Quiz" in site administration
-	And I set the field "Print study code field on question sheet" to "1"
+    And I set the field "Print study code field on question sheet" to "1"
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
@@ -33,3 +33,4 @@ Feature: Within a moodle instance, an administrator should be able to set the va
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     Then the field "Print study code field on question sheet" matches value "1"
+

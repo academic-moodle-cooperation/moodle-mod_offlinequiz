@@ -40,3 +40,4 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
     Then I should see "Question form for group A"
     Then I should see "Answer form for group A"
     Then I should see "Correction form for group A"
+
