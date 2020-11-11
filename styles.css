@@ -98,6 +98,7 @@ body.jsenabled .questionflagcheckbox {
     background: #ddd;
     text-align: center;
     vertical-align: middle;
+    /* stylelint-disable-line */
     line-height: 1.5em !important;
     font-weight: bold;
     text-decoration: none;
