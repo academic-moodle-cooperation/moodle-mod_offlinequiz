@@ -4,7 +4,6 @@ Feature: Within a moodle instance, an administrator should be able to set the va
   As an admin
   I need to default values for offline quiz settings.
 
-
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -33,4 +32,3 @@ Feature: Within a moodle instance, an administrator should be able to set the va
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     Then the field "Print study code field on question sheet" matches value "1"
-

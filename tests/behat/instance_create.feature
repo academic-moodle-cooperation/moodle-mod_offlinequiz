@@ -8,7 +8,7 @@ Feature: In a course, a teacher should be able to add a new offlinequiz
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@teacher.com |
-	And the following "courses" exist:
+    And the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 0|
     And the following "course enrolments" exist:

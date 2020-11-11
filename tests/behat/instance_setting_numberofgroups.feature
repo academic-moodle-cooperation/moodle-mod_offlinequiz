@@ -87,4 +87,3 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
     Then I should see "Correction form for group D"
     Then I should see "Correction form for group E"
     Then I should see "Correction form for group F"
-

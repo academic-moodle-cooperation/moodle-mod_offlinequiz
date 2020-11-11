@@ -89,7 +89,8 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         var data = {
             'class' : 'section',
             'field' : 'visible',
-            'id'    : Y.Moodle.core_course.util.section.getId(section.ancestor(M.mod_offlinequiz.edit.get_section_wrapper(Y), true)),
+            'id'    : Y.Moodle.core_course.util.section.getId(
+                        section.ancestor(M.mod_offlinequiz.edit.get_section_wrapper(Y), true)),
             'value' : value
         };
         var lightbox = M.util.add_lightbox(Y, section);
