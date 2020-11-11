@@ -44,25 +44,37 @@
     border-width: 3px;
     color: #000;
     margin-top: 15px;
-    }
+}
 #page-mod-offlinequiz-review  div.correct i.icon,
 #page-mod-offlinequiz-review  div.incorrect i.icon {
     margin-left: 0.5em;
 }
 
-body.jsenabled .questionflagcheckbox { display: none; }
+body.jsenabled .questionflagcheckbox {
+    display: none;
+}
 
 /** Mod offlinequiz attempt **/
-.generalbox#passwordbox { /* Should probably match .generalbox#intro above */width: 70%; margin-left: auto; margin-right: auto;}
+.generalbox#passwordbox {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
 #passwordform { margin: 1em 0; }
 
 /* Question navigation block. */
 #offlinequiznojswarning { color: red; }
-#offlinequiznojswarning { font-size: 0.7em; line-height: 1.1; }
+#offlinequiznojswarning {
+    font-size: 0.7em;
+    line-height: 1.1;
+}
 .jsenabled #offlinequiznojswarning { display: none; }
 
 .path-mod-offlinequiz #user-picture { margin: 0.5em 0; }
-.path-mod-offlinequiz #user-picture img { width: auto; height: auto; float: left; }
+.path-mod-offlinequiz #user-picture img {
+    width: auto;
+    height: auto; float: left;
+}
 
 .path-mod-offlinequiz .qnbutton {
     display: block;
@@ -82,7 +94,10 @@ body.jsenabled .questionflagcheckbox { display: none; }
     text-decoration: none;
 }
 .path-mod-offlinequiz .qnbutton:hover { text-decoration: underline; }
-.path-mod-offlinequiz .qnbutton span { cursor: pointer; cursor: hand; }
+.path-mod-offlinequiz .qnbutton span {
+    cursor: pointer;
+   cursor: hand;
+}
 
 .path-mod-offlinequiz .qnbutton .trafficlight,
 .path-mod-offlinequiz .qnbutton .thispageholder {
@@ -116,7 +131,9 @@ body.jsenabled .questionflagcheckbox { display: none; }
     border-top: 3px solid #800;
 }
 
-.path-mod-offlinequiz .othernav { clear: both; margin: 0.5em 0; }
+.path-mod-offlinequiz .othernav {
+    clear: both;
+    margin: 0.5em 0; }
 .path-mod-offlinequiz .othernav a,
 .path-mod-offlinequiz .othernav input {
     display: block;
@@ -144,8 +161,15 @@ body.jsenabled .questionflagcheckbox { display: none; }
 #offlinequiz-timer.timeleft0 { background: #f00; }
 
 /** mod offlinequiz mod **/
-#page-mod-offlinequiz-mod #reviewoptionshdr .fitem { width: 23%; margin-left: 10px; }
-#page-mod-offlinequiz-mod #reviewoptionshdr fieldset.fgroup { width: 100%; text-align: left; margin-left: 0; }
+#page-mod-offlinequiz-mod #reviewoptionshdr .fitem {
+    width: 23%;
+    margin-left: 10px;
+}
+#page-mod-offlinequiz-mod #reviewoptionshdr fieldset.fgroup {
+    width: 100%;
+    text-align: left;
+    margin-left: 0;
+}
 
 
 #page-mod-offlinequiz-mod #reviewoptionshdr .fitem,
@@ -213,11 +237,22 @@ body.jsenabled .questionflagcheckbox { display: none; }
 #page-mod-offlinequiz-view #page .offlinequizattemptsummary td p { margin-top: 0; }
 table.offlinequizattemptsummary .bestrow td { background-color: #e8e8e8; }
 table.offlinequizattemptsummary .noreviewmessage { color: gray; }
-#page-mod-offlinequiz-view .generaltable.offlinequizattemptsummary { margin-left: auto; margin-right: auto; }
-#page-mod-offlinequiz-view .generalbox#feedback { width: 70%; margin-left: auto; margin-right: auto; padding-bottom: 15px; }
+#page-mod-offlinequiz-view .generaltable.offlinequizattemptsummary {
+    margin-left: auto;
+    margin-right: auto;
+}
+#page-mod-offlinequiz-view .generalbox#feedback {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 15px;
+}
 #page-mod-offlinequiz-view .generalbox#feedback h2 { margin: 0; }
 #page-mod-offlinequiz-view .generalbox#feedback h3 { text-align: left; }
-#page-mod-offlinequiz-view .generalbox#feedback .overriddennotice { text-align: center; font-size: 0.7em; }
+#page-mod-offlinequiz-view .generalbox#feedback .overriddennotice {
+    text-align: center;
+    font-size: 0.7em;
+}
 .offlinequizstartbuttondiv.offlinequizsecuremoderequired input { display: none; }
 .jsenabled .offlinequizstartbuttondiv.offlinequizsecuremoderequired input { display: inline; }
 
@@ -226,12 +261,22 @@ table.offlinequizattemptsummary .noreviewmessage { color: gray; }
     background-color: #e8e8e8;
 }
 
-.offlinequizattemptcounts { clear: left; text-align: center; }
+.offlinequizattemptcounts {
+    clear: left;
+    text-align: center;
+}
 
 /** Mod offlinequiz summary **/
-#page-mod-offlinequiz-summary #content {text-align: center; }
-#page-mod-offlinequiz-summary .questionflag { width: 16px; height: 16px; vertical-align: middle; }
-#page-mod-offlinequiz-summary #offlinequiz-timer { text-align: center; margin-top: 1em; }
+#page-mod-offlinequiz-summary #content { text-align: center; }
+#page-mod-offlinequiz-summary .questionflag {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+#page-mod-offlinequiz-summary #offlinequiz-timer {
+    text-align: center;
+    margin-top: 1em;
+}
 #page-mod-offlinequiz-summary .submitbtns { margin-top: 1.5em; }
 @media print {
     .offlinequiz-secure-window * { display: none !important; }
@@ -239,8 +284,18 @@ table.offlinequizattemptsummary .noreviewmessage { color: gray; }
 
 /** Mod offlinequiz review **/
 table.offlinequizreviewsummary { width: 100%;}
-table.offlinequizreviewsummary th.cell { padding: 1px 0.5em 1px 1em; font-weight: bold; text-align: right; width: 10em; background: #f0f0f0; }
-table.offlinequizreviewsummary td.cell { padding: 1px 1em 1px 0.5em; text-align: left; background: #fafafa; }
+table.offlinequizreviewsummary th.cell {
+    padding: 1px 0.5em 1px 1em;
+    font-weight: bold;
+    text-align: right;
+    width: 10em;
+    background: #f0f0f0;
+}
+table.offlinequizreviewsummary td.cell {
+    padding: 1px 1em 1px 0.5em;
+    text-align: left;
+    background: #fafafa;
+}
 
 /** Mod offlinequiz make comment or override grade popup. **/
 #page-mod-offlinequiz-comment .mform {  width: 100%; }
@@ -261,21 +316,43 @@ table.offlinequizreviewsummary td.cell { padding: 1px 1em 1px 0.5em; text-align:
     text-align: center;
 }
 
-#page-mod-offlinequiz-report .display-options { margin-top: 1em; text-align: center; }
-#page-mod-offlinequiz-report .downloadoptions .text-xs-right { text-align: center !important; }
-#page-mod-offlinequiz-report table#overview-options { margin-left: auto; margin-right: auto; }
+#page-mod-offlinequiz-report .display-options {
+    margin-top: 1em;
+    text-align: center;
+}
+#page-mod-offlinequiz-report .downloadoptions .text-xs-right {
+    text-align: center !important;
+}
+#page-mod-offlinequiz-report table#overview-options {
+    margin-left: auto;
+    margin-right: auto;
+}
 #page-mod-offlinequiz-report .menunoresults { margin-top: 1em; }
 #page-mod-offlinequiz-report .dubious{ background-color: #fcc; }
-#page-mod-offlinequiz-report .highlight{ border: medium solid yellow; background-color: lightYellow; }
-#page-mod-offlinequiz-report .negcovar{ border: medium solid pink; width: 70%; float: right; }
+#page-mod-offlinequiz-report .highlight{
+    border: medium solid yellow;
+    background-color: lightYellow;
+}
+#page-mod-offlinequiz-report .negcovar{
+    border: medium solid pink;
+    width: 70%;
+    float: right;
+}
 #page-mod-offlinequiz-report .toggleincludeauto { text-align: center; }
 #page-mod-offlinequiz-report .gradetheselink { font-size: 0.8em; }
 #page-mod-offlinequiz-report .mform fieldset { margin: 0; }
 #page-mod-offlinequiz-report fieldset.felement.fgroup { margin: 0; }
 #page-mod-offlinequiz-report table.titlesleft td.c0 { font-weight: bold; }
-#page-mod-offlinequiz-report table .numcol { text-align: center;vertical-align: middle !important; }
+#page-mod-offlinequiz-report table .numcol {
+    text-align: center;
+    vertical-align: middle !important;
+}
 
-#page-mod-offlinequiz-report table#attempts { clear: both;width: 80%; margin: 0.2em auto; }
+#page-mod-offlinequiz-report table#attempts {
+    clear: both;
+    width: 80%;
+    margin: 0.2em auto;
+}
 #page-mod-offlinequiz-report table#attempts .header,
 #page-mod-offlinequiz-report table#attempts .cell{
     padding: 4px;
@@ -305,17 +382,34 @@ table.offlinequizreviewsummary td.cell { padding: 1px 1em 1px 0.5em; text-align:
     white-space: nowrap;
 }
 #page-mod-offlinequiz-report table#attempts span.que .requiresgrading { white-space: normal; }
-#page-mod-offlinequiz-report table#attempts .questionflag { width: 16px; height: 16px; vertical-align: middle; }
+#page-mod-offlinequiz-report table#attempts .questionflag {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
 
-#page-mod-offlinequiz-report .graph.flexible-wrap { text-align: center; overflow: auto; }
+#page-mod-offlinequiz-report .graph.flexible-wrap { 
+    text-align: center;
+    overflow: auto;
+}
 
-#page-mod-offlinequiz-report #cachingnotice { margin-bottom: 1em; padding: 0.2em; }
+#page-mod-offlinequiz-report #cachingnotice {
+    margin-bottom: 1em;
+    padding: 0.2em;
+}
 #page-mod-offlinequiz-report #cachingnotice .singlebutton { margin: 0.5em 0 0; }
 #page-mod-offlinequiz-report .bold .reviewlink { font-weight: normal; }
 #page-mod-offlinequiz-report div.notify { text-align: center; }
-#page-mod-offlinequiz-report div.notifynote { background-color: lightYellow; color: #3a3a3a; border: 0 }
+#page-mod-offlinequiz-report div.notifynote {
+    background-color: lightYellow;
+    color: #3a3a3a;
+    border: 0;
+}
 #page-mod-offlinequiz-report div.backlinkbox { padding-top: 10px; }
-#page-mod-offlinequiz-report table.errorpages td.checkbox input  { margin-left: 0; float: none; }
+#page-mod-offlinequiz-report table.errorpages td.checkbox input  {
+    margin-left: 0;
+    float: none;
+}
 #page-mod-offlinequiz-report .boxaligncenter { margin: 0 auto; }
 #page-mod-offlinequiz-print-html .pagebreak { page-break-after: always; }
 
@@ -374,9 +468,18 @@ table.offlinequizreviewsummary td.cell { padding: 1px 1em 1px 0.5em; text-align:
 #page-mod-offlinequiz-report .errorpages .username {  text-align: left; }
 
 /* RTL Mode */
-#page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr .fitem, .dir-rtl  #adminofflinequizreviewoptions .group { width: 23%;float: right;}
-#page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr .fitemtitle, .dir-rtl  #adminofflinequizreviewoptions .fitemtitle {text-align: right;}
-#page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr fieldset.fgroup span, .dir-rtl  #adminofflinequizreviewoptions span {clear: right;float: right;}
+#page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr .fitem,
+.dir-rtl  #adminofflinequizreviewoptions .group {
+    width: 23%;
+    float: right;
+}
+#page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr .fitemtitle,
+.dir-rtl  #adminofflinequizreviewoptions .fitemtitle {text-align: right;}
+#page-mod-offlinequiz-mod.dir-rtl #reviewoptionshdr fieldset.fgroup span,
+.dir-rtl  #adminofflinequizreviewoptions span {
+    clear: right;
+    float: right;
+}
 
 #page-mod-offlinequiz-createquiz div.answer img.texrender {
     vertical-align: middle;
