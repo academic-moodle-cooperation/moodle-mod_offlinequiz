@@ -65,14 +65,14 @@ body.jsenabled .questionflagcheckbox {
 }
 
 /* Question navigation block. */
-#offlinequiznojswarning { 
+#offlinequiznojswarning {
     color: red;
 }
 #offlinequiznojswarning {
     font-size: 0.7em;
     line-height: 1.1;
 }
-.jsenabled #offlinequiznojswarning { 
+.jsenabled #offlinequiznojswarning {
     display: none;
 }
 
@@ -81,7 +81,8 @@ body.jsenabled .questionflagcheckbox {
 }
 .path-mod-offlinequiz #user-picture img {
     width: auto;
-    height: auto; float: left;
+    height: auto;
+    float: left;
 }
 
 .path-mod-offlinequiz .qnbutton {
@@ -105,7 +106,7 @@ body.jsenabled .questionflagcheckbox {
     text-decoration: underline;
 }
 .path-mod-offlinequiz .qnbutton span {
-   cursor: hand;
+    cursor: hand;
 }
 
 .path-mod-offlinequiz .qnbutton .trafficlight,
@@ -134,13 +135,13 @@ body.jsenabled .questionflagcheckbox {
 .path-mod-offlinequiz .qnbutton.invalidanswer {
     background-color: white;
 }
-.path-mod-offlinequiz .answer .correct { 
+.path-mod-offlinequiz .answer .correct {
     background-color: #cfc;
 }
 .path-mod-offlinequiz .qnbutton.correct .trafficlight {
     border-bottom: 3px solid #080;
 }
-.path-mod-offlinequiz .qnbutton.partiallycorrect { 
+.path-mod-offlinequiz .qnbutton.partiallycorrect {
     background-color: #ffa;
 }
 .path-mod-offlinequiz .qnbutton.notanswered,
@@ -163,24 +164,61 @@ body.jsenabled .questionflagcheckbox {
 }
 
 /* Countdown timer. */
-#offlinequiz-timer { display: none; margin-top: 1em; }
-#offlinequiz-time-left { font-weight: bold; }
-#offlinequiz-timer.timeleft15 { background: #fff; }
-#offlinequiz-timer.timeleft14 { background: #fee; }
-#offlinequiz-timer.timeleft13 { background: #fdd; }
-#offlinequiz-timer.timeleft12 { background: #fcc; }
-#offlinequiz-timer.timeleft11 { background: #fbb; }
-#offlinequiz-timer.timeleft10 { background: #faa; }
-#offlinequiz-timer.timeleft9 { background: #f99; }
-#offlinequiz-timer.timeleft8 { background: #f88; }
-#offlinequiz-timer.timeleft7 { background: #f77; }
-#offlinequiz-timer.timeleft6 { background: #f66; }
-#offlinequiz-timer.timeleft5 { background: #f55; }
-#offlinequiz-timer.timeleft4 { background: #f44; }
-#offlinequiz-timer.timeleft3 { background: #f33; }
-#offlinequiz-timer.timeleft2 { background: #f22; }
-#offlinequiz-timer.timeleft1 { background: #f11; }
-#offlinequiz-timer.timeleft0 { background: #f00; }
+#offlinequiz-timer {
+    display: none;
+    margin-top: 1em;
+}
+#offlinequiz-time-left {
+    font-weight: bold;
+}
+#offlinequiz-timer.timeleft15 {
+    background: #fff;
+}
+#offlinequiz-timer.timeleft14 {
+    background: #fee;
+}
+#offlinequiz-timer.timeleft13 {
+    background: #fdd;
+}
+#offlinequiz-timer.timeleft12 {
+    background: #fcc;
+}
+#offlinequiz-timer.timeleft11 {
+    background: #fbb;
+}
+#offlinequiz-timer.timeleft10 {
+    background: #faa;
+}
+#offlinequiz-timer.timeleft9 {
+    background: #f99;
+     }
+#offlinequiz-timer.timeleft8 {
+    background: #f88;
+}
+#offlinequiz-timer.timeleft7 {
+    background: #f77;
+}
+#offlinequiz-timer.timeleft6 {
+    background: #f66;
+}
+#offlinequiz-timer.timeleft5 {
+    background: #f55;
+}
+#offlinequiz-timer.timeleft4 {
+    background: #f44;
+}
+#offlinequiz-timer.timeleft3 {
+    background: #f33;
+}
+#offlinequiz-timer.timeleft2 {
+    background: #f22;
+}
+#offlinequiz-timer.timeleft1 {
+    background: #f11;
+}
+#offlinequiz-timer.timeleft0 {
+    background: #f00;
+}
 
 /** mod offlinequiz mod **/
 #page-mod-offlinequiz-mod #reviewoptionshdr .fitem {
@@ -240,7 +278,7 @@ body.jsenabled .questionflagcheckbox {
     text-align: right;
 }
 
-#page-mod-offlinequiz-participants a.editlistlink { 
+#page-mod-offlinequiz-participants a.editlistlink {
     margin-left: 3px;
 }
 #page-mod-offlinequiz-participants a.deletelistlink {
@@ -260,13 +298,13 @@ body.jsenabled .questionflagcheckbox {
     text-align: center;
 }
 
-#page-mod-offlinequiz-view #page .offlinequizattemptsummary td p { 
+#page-mod-offlinequiz-view #page .offlinequizattemptsummary td p {
     margin-top: 0;
 }
-table.offlinequizattemptsummary .bestrow td { 
+table.offlinequizattemptsummary .bestrow td {
     background-color: #e8e8e8;
 }
-table.offlinequizattemptsummary .noreviewmessage { 
+table.offlinequizattemptsummary .noreviewmessage {
     color: gray;
 }
 #page-mod-offlinequiz-view .generaltable.offlinequizattemptsummary {
@@ -282,17 +320,17 @@ table.offlinequizattemptsummary .noreviewmessage {
 #page-mod-offlinequiz-view .generalbox#feedback h2 {
     margin: 0;
 }
-#page-mod-offlinequiz-view .generalbox#feedback h3 { 
+#page-mod-offlinequiz-view .generalbox#feedback h3 {
     text-align: left;
 }
 #page-mod-offlinequiz-view .generalbox#feedback .overriddennotice {
     text-align: center;
     font-size: 0.7em;
 }
-.offlinequizstartbuttondiv.offlinequizsecuremoderequired input { 
+.offlinequizstartbuttondiv.offlinequizsecuremoderequired input {
     display: none;
 }
-.jsenabled .offlinequizstartbuttondiv.offlinequizsecuremoderequired input { 
+.jsenabled .offlinequizstartbuttondiv.offlinequizsecuremoderequired input {
     display: inline;
 }
 
@@ -307,7 +345,7 @@ table.offlinequizattemptsummary .noreviewmessage {
 }
 
 /** Mod offlinequiz summary **/
-#page-mod-offlinequiz-summary #content { 
+#page-mod-offlinequiz-summary #content {
     text-align: center;
 }
 #page-mod-offlinequiz-summary .questionflag {
@@ -319,7 +357,7 @@ table.offlinequizattemptsummary .noreviewmessage {
     text-align: center;
     margin-top: 1em;
 }
-#page-mod-offlinequiz-summary .submitbtns { 
+#page-mod-offlinequiz-summary .submitbtns {
     margin-top: 1.5em;
 }
 @media print {
@@ -346,18 +384,18 @@ table.offlinequizreviewsummary td.cell {
 }
 
 /** Mod offlinequiz make comment or override grade popup. **/
-#page-mod-offlinequiz-comment .mform { 
+#page-mod-offlinequiz-comment .mform {
     width: 100%;
 }
-#page-mod-offlinequiz-comment .mform fieldset { 
+#page-mod-offlinequiz-comment .mform fieldset {
     margin: 0;
 }
-#page-mod-offlinequiz-comment .que { 
+#page-mod-offlinequiz-comment .que {
     margin: 0;
 }
 
 /** Mod offlinequiz report **/
-#page-mod-offlinequiz-report h2.main { 
+#page-mod-offlinequiz-report h2.main {
     clear: both;
 }
 /* Fix tab link colors messed up by university theme */
@@ -472,7 +510,7 @@ table.offlinequizreviewsummary td.cell {
     vertical-align: middle;
 }
 
-#page-mod-offlinequiz-report .graph.flexible-wrap { 
+#page-mod-offlinequiz-report .graph.flexible-wrap {
     text-align: center;
     overflow: auto;
 }
@@ -524,7 +562,7 @@ table.offlinequizreviewsummary td.cell {
 #page-mod-offlinequiz-createquiz div.preview div.question span.number {
     font-weight: bold;
     text-align: left;
-    }
+}
 #page-mod-offlinequiz-createquiz div.preview div.question {
     float: left;
     padding: 5px;
@@ -536,7 +574,7 @@ table.offlinequizreviewsummary td.cell {
     padding: 5px;
     text-align: right;
     width: 10%;
-    }
+}
 
 #page-mod-offlinequiz-createquiz div.preview div.answer {
     clear: both;
