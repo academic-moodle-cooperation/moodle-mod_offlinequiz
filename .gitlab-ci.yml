@@ -42,16 +42,27 @@ variables:
 .job_template: &job_definition
   script:
     - moodle-plugin-ci phplint
-#    - moodle-plugin-ci phpdoc
-#    - moodle-plugin-ci phpcpd
+    #- moodle-plugin-ci phpcpd
     - moodle-plugin-ci phpmd
     - moodle-plugin-ci codechecker
     - moodle-plugin-ci validate
+    - moodle-plugin-ci savepoints
+    - moodle-plugin-ci mustache
+    - moodle-plugin-ci grunt
+    - moodle-plugin-ci phpdoc
     - moodle-plugin-ci phpunit
     - moodle-plugin-ci behat
 
-code_checker:
+code_checker_pgsql:
+  extends: .postgres
   <<: *job_definition
   image: amcdev/moodle-plugin-ci:7.3-docker-node-14.15.0
   variables:
-    MOODLE_BRANCH: "MOODLE_39_STABLE"
+    MOODLE_BRANCH: "MOODLE_310_STABLE"
+
+code_checker_mariadb:
+  extends: .mariadb
+  <<: *job_definition
+  image: amcdev/moodle-plugin-ci:7.3-docker-node-14.15.0
+  variables:
+    MOODLE_BRANCH: "MOODLE_310_STABLE"
