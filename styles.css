@@ -191,7 +191,7 @@ body.jsenabled .questionflagcheckbox {
 }
 #offlinequiz-timer.timeleft9 {
     background: #f99;
-     }
+}
 #offlinequiz-timer.timeleft8 {
     background: #f88;
 }
@@ -360,6 +360,7 @@ table.offlinequizattemptsummary .noreviewmessage {
 #page-mod-offlinequiz-summary .submitbtns {
     margin-top: 1.5em;
 }
+
 @media print {
     .offlinequiz-secure-window * {
         display: none !important;
@@ -367,7 +368,7 @@ table.offlinequizattemptsummary .noreviewmessage {
 }
 
 /** Mod offlinequiz review **/
-table.offlinequizreviewsummary { 
+table.offlinequizreviewsummary {
     width: 100%;
 }
 table.offlinequizreviewsummary th.cell {
@@ -421,17 +422,17 @@ table.offlinequizreviewsummary td.cell {
     margin-left: auto;
     margin-right: auto;
 }
-#page-mod-offlinequiz-report .menunoresults { 
+#page-mod-offlinequiz-report .menunoresults {
     margin-top: 1em;
 }
 #page-mod-offlinequiz-report .dubious {
     background-color: #fcc;
 }
-#page-mod-offlinequiz-report .highlight{
+#page-mod-offlinequiz-report .highlight {
     border: medium solid yellow;
     background-color: lightYellow;
 }
-#page-mod-offlinequiz-report .negcovar{
+#page-mod-offlinequiz-report .negcovar {
     border: medium solid pink;
     width: 70%;
     float: right;
@@ -440,7 +441,7 @@ table.offlinequizreviewsummary td.cell {
     text-align: center;
 }
 #page-mod-offlinequiz-report .gradetheselink {
-    font-size: 0.8em; 
+    font-size: 0.8em;
 }
 #page-mod-offlinequiz-report .mform fieldset {
     margin: 0;
@@ -462,7 +463,7 @@ table.offlinequizreviewsummary td.cell {
     margin: 0.2em auto;
 }
 #page-mod-offlinequiz-report table#attempts .header,
-#page-mod-offlinequiz-report table#attempts .cell{
+#page-mod-offlinequiz-report table#attempts .cell {
     padding: 4px;
 }
 #page-mod-offlinequiz-report table#attempts .header .commands {
@@ -472,7 +473,7 @@ table.offlinequizreviewsummary td.cell {
     width: 40px;
 }
 #page-mod-offlinequiz-report table#attempts td {
-    order-left-width: 1px;
+    border-left-width: 1px;
     border-right-width: 1px;
     border-left-style: solid;
     border-right-style: solid;
@@ -536,7 +537,7 @@ table.offlinequizreviewsummary td.cell {
 #page-mod-offlinequiz-report div.backlinkbox {
     padding-top: 10px;
 }
-#page-mod-offlinequiz-report table.errorpages td.checkbox input  {
+#page-mod-offlinequiz-report table.errorpages td.checkbox input {
     margin-left: 0;
     float: none;
 }
@@ -585,8 +586,8 @@ table.offlinequizreviewsummary td.cell {
 }
 
 #page-mod-offlinequiz-createquiz div.docsbox {
-     border-bottom: 1px solid #e3e3e3;
-     clear: both;
+    border-bottom: 1px solid #e3e3e3;
+    clear: both;
 }
 
 #page-mod-offlinequiz-createquiz div.downloadalllink {
@@ -719,9 +720,8 @@ table.offlinequizreviewsummary td.cell {
 }
 
 
-
 /* CSS for student view in mod_form.php */
-.Popup{
+.Popup {
     display: none;
     background: #fff;
     left: 50%;
@@ -734,14 +734,15 @@ table.offlinequizreviewsummary td.cell {
     box-shadow: 0 0 10px #222;
     padding: 10px;
 }
-#overlay{
+#overlay {
     display: none;
-    background: -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.5) 100%);
-    background: -webkit-gradient(radial, center center, 0, center center, 100%, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0.5)));
-    background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);
-    background: -o-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);
-    background: -ms-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);
-    background: radial-gradient(ellipse at center,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.5) 100%);
+    background: -moz-radial-gradient(center, ellipse cover,  rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.5) 100%);
+    background: -webkit-gradient(radial, center center, 0, center center, 100%, color-stop(0%, rgba(0, 0, 0, 0.65)),
+                  color-stop(100%, rgba(0, 0, 0, 0.5)));
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(0, 0, 0, 0.65) 0%,rgba(0, 0, 0, 0.5) 100%);
+    background: -o-radial-gradient(center, ellipse cover,  rgba(0, 0, 0, 0.65) 0%,rgba(0, 0, 0, 0.5) 100%);
+    background: -ms-radial-gradient(center, ellipse cover,  rgba(0, 0, 0, 0.65) 0%,rgba(0, 0, 0, 0.5) 100%);
+    background: radial-gradient(ellipse at center,  rgba(0, 0, 0, 0.65) 0%,rgba(0, 0, 0, 0.5) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#80000000',GradientType=1 );
     width: 100%;
     height: 100%;
@@ -751,7 +752,7 @@ table.offlinequizreviewsummary td.cell {
     left: 0;
 }
 input#showviewbutton {
-     display: none;
+    display: none;
 }
 
 .jsenabled input#showviewbutton {
@@ -774,7 +775,7 @@ input#showviewbutton {
     background-color: #ffc;
     clear: both;
     margin: 0.3em 1em 0.3em 0;
-    padding: 1px ;
+    padding: 1px;
     /* Stop margin collapse. */
 }
 #page-mod-offlinequiz-edit .emptystatusdisplay {
@@ -817,7 +818,7 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit .slotnumber {
-    background-color: #D3D3D3;
+    background-color: #d3d3d3;
     text-align: center;
     margin: 0.1em 1em;
     min-width: 2em;
@@ -828,8 +829,8 @@ input#showviewbutton {
     border: 0;
 }
 #page-mod-offlinequiz-edit ul.slots li.section .content {
-    background-color:#fafafa;
-    padding:5px 10px;
+    background-color: #fafafa;
+    padding: 5px 10px;
 }
 #page-mod-offlinequiz-edit ul.slots li.section .content h3 {
     margin: 0;
@@ -1260,6 +1261,8 @@ input#showviewbutton {
         margin-bottom: 1.5em;
     }
 }
+
+
 @media only screen and (min-width: 50em) and (max-width: 60em) {
     #page-mod-offlinequiz-edit div.removeselected {
         margin-top: -0.5em;
