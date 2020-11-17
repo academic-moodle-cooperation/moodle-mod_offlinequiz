@@ -1290,6 +1290,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
               </div>' );
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
         offlinequiz_update_refresh_all_pagecounts();
+        upgrade_mod_savepoint(true, 2016101700, 'offlinequiz');
     }
 
     // Information about the new Cron-Job in Moodle-API.
@@ -1322,6 +1323,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
             }
 
         }
+        upgrade_mod_savepoint(true, 2017020201, 'offlinequiz');
     }
 
     // Add id_digits containing amount of digits to match idnumber against.
@@ -1374,6 +1376,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
+        upgrade_mod_savepoint(true, 2017081102, 'offlinequiz');
     }
 
     if ($oldversion < 2018011601) {

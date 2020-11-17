@@ -38,13 +38,12 @@ class offlinequiz_page_saver {
         if (!$page->scannedpageid) {
             $scannedpage = new \stdClass();
             $scannedpage->offlinequizid = $page->offlinequizid;
-            // TODO
             $filename = null;
             $scannedpage->status = 'ok';
             $scannedpage->time = time();
             $scannedpage->id = $DB->insert_record('offlinequiz_scanned_pages', $scannedpage);
             $page->scannedpageid = $scannedpage->id;
-            // TODO warningfilename und info aus der Tabelle rausnehmen
+            // TODO Warningfilename und info aus der Tabelle rausnehmen.
         }
 
         $this->save_page_corners($page);
