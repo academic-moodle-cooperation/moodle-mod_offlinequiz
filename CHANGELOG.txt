@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+3.9.1
+-----------------
+[Bug] Fix privacy bug for people using integer-idnumber
 
 3.9.0
 -----------------
