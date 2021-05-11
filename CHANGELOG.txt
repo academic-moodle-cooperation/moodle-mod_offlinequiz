@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+3.11.0
+-----------------
+[Feature] Compatible Version for Moodle 3.11
+
 3.10.1
 -----------------
 [Bug] Fix privacy bug for people using integer-idnumber
