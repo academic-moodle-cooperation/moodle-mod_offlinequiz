@@ -58,4 +58,4 @@ code_checker_pgsql:
   <<: *job_definition
   image: amcdev/moodle-plugin-ci:7.3-docker-node-14.15.0
   variables:
-    MOODLE_BRANCH: "MOODLE_310_STABLE"
+    MOODLE_BRANCH: "MOODLE_311_STABLE"
