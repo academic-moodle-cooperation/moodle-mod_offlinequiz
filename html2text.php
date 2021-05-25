@@ -82,6 +82,7 @@ class offlinequiz_html_translator
             }
 
             $imagefilename = '';
+            print_object($attributes);
             if (array_key_exists('src', $attributes) && strlen($attributes['src']) > 10) {
                 $pluginfilename = $attributes['src'];
                 $imageurl = false;
