@@ -115,6 +115,7 @@ class offlinequiz_html_translator
                 } else if (count($parts) > 1) {
                     $teximagefile = $CFG->dataroot . '/filter/tex/' . $parts[1];
                     if (!file_exists($teximagefile)) {
+                        print_object($teximagefile);
                         // Create the TeX image if it does not exist yet.
                         $convertformat = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
                                 'name' => 'convertformat'));
