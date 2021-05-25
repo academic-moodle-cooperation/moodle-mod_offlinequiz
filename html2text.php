@@ -134,6 +134,7 @@ class offlinequiz_html_translator
                             $texexp = $texcache->rawtext; // The entities are now decoded before inserting to DB.
                             $latexpath = $latex->render($texexp, $md5, 12, $density, $background);
                             if ($latexpath) {
+                                print_object('using latex');
                                 copy($latexpath, $teximagefile);
                                 $latex->clean_up($md5);
                             } else {
@@ -146,7 +147,6 @@ class offlinequiz_html_translator
                                 $cmd = filter_tex_get_cmd($teximagefile, $texexp);
                                 print_object($cmd);
                                 $err = system($cmd, $status);
-                                print_object($err);
                             }
                         }
                     }
