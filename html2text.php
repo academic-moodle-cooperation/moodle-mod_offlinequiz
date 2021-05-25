@@ -82,7 +82,6 @@ class offlinequiz_html_translator
             }
 
             $imagefilename = '';
-            print_object($attributes);
             if (array_key_exists('src', $attributes) && strlen($attributes['src']) > 10) {
                 $pluginfilename = $attributes['src'];
                 $imageurl = false;
@@ -116,11 +115,12 @@ class offlinequiz_html_translator
                 } else if (count($parts) > 1) {
                     $teximagefile = $CFG->dataroot . '/filter/tex/' . $parts[1];
                     if (!file_exists($teximagefile)) {
-                        print_object($teximagefile);
                         // Create the TeX image if it does not exist yet.
                         $convertformat = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
                                 'name' => 'convertformat'));
                         $md5 = str_replace(".{$convertformat}", '', $parts[1]);
+                        print_object($md5);
+                        print_object($parts);
                         if ($texcache = $DB->get_record('cache_filters', array('filter' => 'tex', 'md5key' => $md5))) {
                             if (!file_exists($CFG->dataroot . '/filter/tex')) {
                                 make_upload_directory('filter/tex');
@@ -135,7 +135,6 @@ class offlinequiz_html_translator
                             $texexp = $texcache->rawtext; // The entities are now decoded before inserting to DB.
                             $latexpath = $latex->render($texexp, $md5, 12, $density, $background);
                             if ($latexpath) {
-                                print_object('using latex');
                                 copy($latexpath, $teximagefile);
                                 $latex->clean_up($md5);
                             } else {
@@ -146,8 +145,7 @@ class offlinequiz_html_translator
                                 $texexp = preg_replace('!\r\n?!', ' ', $texexp);
                                 $texexp = '\Large '.$texexp;
                                 $cmd = filter_tex_get_cmd($teximagefile, $texexp);
-                                print_object($cmd);
-                                $err = system($cmd, $status);
+                                system($cmd, $status);
                             }
                         }
                     }
