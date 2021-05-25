@@ -119,8 +119,6 @@ class offlinequiz_html_translator
                         $convertformat = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
                                 'name' => 'convertformat'));
                         $md5 = str_replace(".{$convertformat}", '', $parts[1]);
-                        print_object($md5);
-                        print_object($parts);
                         if ($texcache = $DB->get_record('cache_filters', array('filter' => 'tex', 'md5key' => $md5))) {
                             if (!file_exists($CFG->dataroot . '/filter/tex')) {
                                 make_upload_directory('filter/tex');
@@ -134,6 +132,9 @@ class offlinequiz_html_translator
                                 'name' => 'latexbackground'));
                             $texexp = $texcache->rawtext; // The entities are now decoded before inserting to DB.
                             $latexpath = $latex->render($texexp, $md5, 12, $density, $background);
+                            print_object($md5);
+                            print_object($texcache);
+                            print_object($texexp);
                             if ($latexpath) {
                                 copy($latexpath, $teximagefile);
                                 $latex->clean_up($md5);
