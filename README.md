@@ -48,6 +48,10 @@ actually took part in the exam. Lists of participants are pre-filled with studen
 versions of those lists can be created in the module for easy marking during the exam. The marked
 lists can be uploaded and evaluated automatically.
 
+Furthermore you can use the Offline Quiz Cron plugin (report_offlinequizcron), which adds an interface to the Offline Quiz activity (mod_offlinequiz) to inspect and change pending cronjobs for the Offline Quiz.
+https://moodle.org/plugins/report_offlinequizcron
+https://github.com/academic-moodle-cooperation/moodle-report_offlinequizcron
+
 
 Example
 -------
@@ -74,8 +78,6 @@ Installation
 
 * Open the administration area (http://your-moodle-site/admin) to start the installation
   automatically.
-
-*If you plan to import your answer sheets as PDF in one file, you might need to change your 
 
 
 Cron Job
