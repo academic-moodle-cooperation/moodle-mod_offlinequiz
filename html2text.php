@@ -132,9 +132,6 @@ class offlinequiz_html_translator
                                 'name' => 'latexbackground'));
                             $texexp = $texcache->rawtext; // The entities are now decoded before inserting to DB.
                             $latexpath = $latex->render($texexp, $md5, 12, $density, $background);
-                            print_object($md5);
-                            print_object($texcache);
-                            print_object($texexp);
                             if ($latexpath) {
                                 copy($latexpath, $teximagefile);
                                 $latex->clean_up($md5);
