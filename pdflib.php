@@ -286,7 +286,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $width = 100;
 
         while ($this->GetStringWidth($title) > ($width - 1)) {
-            $title = substr($title,  0,  strlen($title) - 1);
+            $title = mb_substr($title,  0,  mb_strlen($title) - 1);
         }
         $this->Cell($width, 4, $title, 1, 0, 'C');
 

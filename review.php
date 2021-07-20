@@ -84,7 +84,7 @@ if (!$isteacher) {
 }
 
 $strscore  = get_string("marks", "offlinequiz");
-$strgrade  = get_string("grade");
+$strgrade  = get_string("grade", "offlinequiz");
 $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 // Setup the page and print the page header.
