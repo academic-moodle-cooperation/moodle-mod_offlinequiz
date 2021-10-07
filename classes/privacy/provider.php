@@ -359,7 +359,7 @@ class provider implements
                           FROM {context} c
                           JOIN {course_modules} cm ON cm.id = c.instanceid
                           JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70";
-        $contexts = $DB->get_record_sql($sql);
+        $contexts = $DB->get_records_sql($sql);
         foreach ($contexts as $context) {
             $sql = "(SELECT userid FROM {offlinequiz_participants} p,
                         {offlinequiz_p_lists} l
