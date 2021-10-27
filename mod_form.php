@@ -126,6 +126,17 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
                 $mform->setDefault('experimentalevaluation', 0);
         }
         // -------------------------------------------------------------------------
+        $this->standard_grading_coursemodule_elements();
+
+        $mform->removeElement('grade');
+        if (property_exists($this->current, 'grade')) {
+            $currentgrade = $this->current->grade;
+        } else {
+            $currentgrade = 0;
+        }
+        $mform->addElement('hidden', 'grade', $currentgrade);
+        $mform->setType('grade', PARAM_FLOAT);
+        // -------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('formsheetsettings', 'offlinequiz'));
 
         unset($options);
@@ -337,5 +348,26 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $errors['timeclose'] = get_string('closebeforeopen', 'offlinequiz');
         }
         return $errors;
+    }
+
+    /**
+     * Display module-specific activity completion rules.
+     * Part of the API defined by moodleform_mod
+     * @return array Array of string IDs of added items, empty array if none
+     */
+    public function add_completion_rules() {
+        $mform = $this->_form;
+        $items = array();
+
+        $group = array();
+        $group[] = $mform->createElement('advcheckbox', 'completionpass', null, get_string('completionpass', 'offlinequiz'),
+            array('group' => 'cpass'));
+        $mform->disabledIf('completionpass', 'completionusegrade', 'notchecked');
+
+        $mform->addGroup($group, 'completionpassgroup', get_string('completionpass', 'offlinequiz'), ' &nbsp; ', false);
+        $mform->addHelpButton('completionpassgroup', 'completionpass', 'offlinequiz');
+        $items[] = 'completionpassgroup';
+
+        return $items;
     }
 }

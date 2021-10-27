@@ -56,6 +56,6 @@ variables:
 code_checker_pgsql:
   extends: .postgres
   <<: *job_definition
-  image: amcdev/moodle-plugin-ci:7.3-docker-node-14.15.0
+  image: amcdev/moodle-plugin-ci:7.4
   variables:
     MOODLE_BRANCH: "MOODLE_311_STABLE"

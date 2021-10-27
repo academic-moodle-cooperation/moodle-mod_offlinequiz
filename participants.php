@@ -58,7 +58,8 @@ $systemcontext = context_system::instance();
 if (!has_capability('mod/offlinequiz:createofflinequiz', $context)) {
     redirect('view.php?q='.$offlinequiz->id);
 }
-
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
 $thispageurl = new moodle_url('/mod/offlinequiz/participants.php',
                               array('id' => $id, 'q' => $q, 'mode' => $mode, 'forcenew' => $forcenew));
 

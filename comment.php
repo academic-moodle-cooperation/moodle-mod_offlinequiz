@@ -65,7 +65,8 @@ if (!$quba = question_engine::load_questions_usage_by_activity($result->usageid)
 }
 
 $slotquestion = $quba->get_question($slot);
-
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
 // Print the page header.
 $PAGE->set_pagelayout('popup');
 echo $OUTPUT->header();
