@@ -52,6 +52,8 @@ if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
 }
 
 require_login($course, false, $cm);
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
 // You also need the moodle/question:useall capability somewhere.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());

@@ -62,7 +62,8 @@ offlinequiz_load_useridentification();
 
 $strpreview = get_string('createquiz', 'offlinequiz');
 $strofflinequizzes = get_string("modulenameplural", "offlinequiz");
-
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
 $PAGE->set_url('/mod/offlinequiz/createquiz.php?id=' . $cm->id);
 $PAGE->set_title($strpreview);
 $PAGE->set_heading($course->fullname);

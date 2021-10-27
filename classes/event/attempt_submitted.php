@@ -76,7 +76,7 @@ class attempt_submitted extends \core\event\base {
      *
      * @return string legacy event name
      */
-    static public function get_legacy_eventname() {
+    public static function get_legacy_eventname() {
         return 'offlinequiz_attempt_submitted';
     }
 
