@@ -96,7 +96,7 @@ run this cron job on a separate application server to take load from the fronten
 If you want to run the cron job on a dedicated server you have to disable it in the moodle settings
 and create an additional job on the dedicated server looking like this:
 
-    */10 * * * * DATE=`date +\%Y\%m\%d`; php <your moodle root dir>/mod/offlinequiz/cron.php --cli=1 >> /var/log/moodle/cron-olq.log.$DATE 2>&1
+    */10 * * * * DATE=`date +\%Y\%m\%d`; php <your moodle root dir>/admin/cli/scheduled_task.php --execute="\mod_offlinequiz\task\page_evaluation_task" >> /var/log/moodle/cron-olq.log.$DATE 2>&1
 
 
 Admin Settings
