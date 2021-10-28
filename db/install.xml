@@ -95,7 +95,7 @@
         <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The latest point in time the page was evaluated or modified."/>
         <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The status of the scanned page ( 'error', 'ok', 'submitted')."/>
         <FIELD NAME="error" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The errorcode (in case status is 'error') as Moodle language string identifiers (insecuremarkings, unknownuser, unknowngroup, unkownusername, etc)."/>
-        <FIELD NAME="info" TYPE="char" NOTNULL="false" SEQUENCE="false" COMMENT="Info text, e.g. the filename if a file could not be read at all."/>
+        <FIELD NAME="info" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Info text, e.g. the filename if a file could not be read at all."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

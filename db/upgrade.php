@@ -1557,5 +1557,18 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2021070801.01, 'offlinequiz');
     }
 
+    if ($oldversion < 2021070801.03) {
+
+        // Changing precision of field info on table offlinequiz_scanned_pages to (255).
+        $table = new xmldb_table('offlinequiz_scanned_pages');
+        $field = new xmldb_field('info', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'error');
+
+        // Launch change of precision for field info.
+        $dbman->change_field_precision($table, $field);
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2021070801.03, 'offlinequiz');
+    }
+
     return true;
 }
