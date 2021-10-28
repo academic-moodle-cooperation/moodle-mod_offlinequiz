@@ -67,6 +67,13 @@ Requirements
 The plugin is available for Moodle 2.5+.
 
 You need to have imagemagick and the relating php module (http://pecl.php.net/package/imagick) installed.
+It is used for converting the uploaded answer sheets.
+
+If you want to use LaTeX formulas in the questions it is necessary to have LaTeX installed.
+See https://www.latex-project.org/get/ for more information how to install it.
+You can set your latex path in the admin settings at:
+Plugins -> Filters -> Manage filters -> TeX Notation -> Settings
+Everything should work if the "pathconvert" has a tick symbol.
 
 
 Installation
