@@ -47,6 +47,7 @@ use quiz_access_manager;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_completion extends activity_custom_completion {
+
     /**
      * Check passing grade (or no attempts left) requirement for completion.
      *
@@ -82,6 +83,7 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_state(string $rule): int {
         $this->validate_rule($rule);
+
         switch ($rule) {
             case 'completionpass':
                 $status = static::check_passing_grade();
