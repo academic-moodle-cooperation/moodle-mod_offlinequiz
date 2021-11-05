@@ -258,29 +258,34 @@ class provider implements
         $sql = "SELECT c.id FROM {context} c
         JOIN {course_modules} cm ON cm.id = c.instanceid
         JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
-        AND cm.instance IN (
-            SELECT l.offlinequizid id
+        JOIN {offlinequiz} oq ON cm.instance = oq.id
+        WHERE EXISTS (
+                SELECT 1
                 FROM {offlinequiz_p_lists} l
-                JOIN {offlinequiz_participants} p on l.id = p.listid
+                JOIN {offlinequiz_participants} p ON l.id = p.listid
                 WHERE userid = :participantsuserid
-            UNION ALL
-                SELECT p.offlinequizid id
-                FROM {offlinequiz_scanned_p_pages} p
-                JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
+                AND l.offlinequizid = oq.id)
+        OR EXISTS (
+                SELECT 1
+                FROM moofflinequiz_scanned_p_pages p
+                JOIN moofflinequiz_p_choices c ON p.id = c.scannedppageid
                 WHERE c.userid = :choiceuserid
-            UNION ALL
-                SELECT q.offlinequizid id
+                AND p.offlinequizid = oq.id)
+        OR EXISTS (
+                SELECT 1
                 FROM {offlinequiz_queue} q
                 WHERE importuserid = :queueuserid
-            UNION ALL
-                SELECT sp.offlinequizid id
+                AND q.offlinequizid = oq.id)
+        OR EXISTS (
+                SELECT 1
                 FROM {offlinequiz_scanned_pages} sp";
         if ($type == "int") {
             $sql  .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = " . $DB->sql_cast_char2int("sp.userkey");
         } else {
             $sql .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey";
         }
-               $sql .= " WHERE u.id = :scannedpageuserid)";
+               $sql .= " WHERE u.id = :scannedpageuserid
+                AND sp.offlinequizid = oq.id)";
 
         $params = [
           'participantsuserid'        => $userid,
@@ -315,30 +320,35 @@ class provider implements
         FROM {context} c
         JOIN {course_modules} cm ON cm.id = c.instanceid
         JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70
-        AND cm.instance IN (
-                SELECT l.offlinequizid id
+                JOIN {offlinequiz} oq ON cm.instance = oq.id
+        WHERE EXISTS (
+                SELECT 1
                 FROM {offlinequiz_p_lists} l
-                JOIN {offlinequiz_participants} p on l.id = p.listid
+                JOIN {offlinequiz_participants} p ON l.id = p.listid
                 WHERE userid = :participantsuserid
-            UNION ALL
-                SELECT p.offlinequizid id
-                FROM {offlinequiz_scanned_p_pages} p
-                JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
+                AND l.offlinequizid = oq.id)
+        OR EXISTS (
+                SELECT 1
+                FROM moofflinequiz_scanned_p_pages p
+                JOIN moofflinequiz_p_choices c ON p.id = c.scannedppageid
                 WHERE c.userid = :choiceuserid
-            UNION ALL
-                SELECT q.offlinequizid id
+                AND p.offlinequizid = oq.id)
+        OR EXISTS (
+                SELECT 1
                 FROM {offlinequiz_queue} q
                 WHERE importuserid = :queueuserid
-            UNION ALL
-                SELECT sp.offlinequizid id
+                AND q.offlinequizid = oq.id)
+        OR EXISTS (
+                SELECT 1
                 FROM {offlinequiz_scanned_pages} sp";
         if ($type == "int") {
             $sql  .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = " . $DB->sql_cast_char2int("sp.userkey");
         } else {
             $sql .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey";
         }
-               $sql .= " WHERE u.id = :scannedpageuserid)
-        AND (c.id {$contextsql})";
+               $sql .= " WHERE u.id = :scannedpageuserid
+                AND sp.offlinequizid = oq.id)
+        WHERE (c.id {$contextsql})";
 
         $params = [
                 'participantsuserid'        => $user->id,
@@ -494,6 +504,7 @@ class provider implements
     }
 
     private static function get_scanned_pages_objects($context, $scannedpages) {
+        $scannedpageobjects = [];
         foreach ($scannedpages as $scannedpage) {
             $scannedpageobjects[$scannedpage->id] = static::get_scanned_page_object($scannedpage);
             static::export_file($context, $scannedpage);
