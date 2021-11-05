@@ -1543,7 +1543,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2021070801.01) {
-
         // Define field completionpass to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('completionpass', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'experimentalevaluation');
