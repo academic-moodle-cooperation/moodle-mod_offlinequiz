@@ -240,9 +240,8 @@ class offlinequiz_statistics_question_stats {
 
         // This cannot be a foreach loop because we need to have both
         // $question and $nextquestion available.
-        reset($this->questions);
-        while (list($slot, $question) = each($this->questions)) {
-            $nextquestion = current($this->questions);
+        foreach ($this->questions as $question) {
+            $nextquestion = next($this->questions);
             $question->_stats->allattempts = $this->allattempts;
             $question->_stats->positions = $question->number;
             $question->_stats->maxmark = $question->maxmark;
