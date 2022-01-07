@@ -84,7 +84,7 @@ if (!$isteacher) {
 }
 
 $strscore  = get_string("marks", "offlinequiz");
-$strgrade  = get_string("grade");
+$strgrade  = get_string("grade", "offlinequiz");
 $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 // Setup the page and print the page header.
@@ -107,6 +107,10 @@ if ($isteacher) {
     }
     include('tabs.php');
 }
+
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+echo $OUTPUT->heading(format_string($offlinequiz->name));
 
 // Load the module's global config.
 offlinequiz_load_useridentification();

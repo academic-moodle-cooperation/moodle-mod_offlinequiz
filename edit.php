@@ -115,7 +115,8 @@ if ($warning = optional_param('warning', '', PARAM_TEXT)) {
 require_login($course, false, $cm);
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
-
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
 // Log this visit.
 $params = array(
     'courseid' => $course->id,

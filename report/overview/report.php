@@ -63,6 +63,9 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
         // Define some strings.
         $strtimeformat = get_string('strftimedatetime');
+        if ($download == 'CSV') {
+            $strtimeformat = str_replace(',', '', $strtimeformat);
+        }
         $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
         offlinequiz_load_useridentification();

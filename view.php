@@ -65,7 +65,8 @@ $PAGE->set_url('/mod/offlinequiz/view.php', array('id' => $cm->id));
 $PAGE->set_title($offlinequiz->name);
 $PAGE->set_heading($course->shortname);
 $PAGE->set_pagelayout('report');
-
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
 // Output starts here.
 echo $OUTPUT->header();
 

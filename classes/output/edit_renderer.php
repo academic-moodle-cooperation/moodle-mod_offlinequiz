@@ -822,12 +822,9 @@ class edit_renderer extends \plugin_renderer_base {
             $output .= $this->question_move_icon($question);
         }
 
-        $output .= html_writer::start_div('mod-indent-outer');
+        $output .= html_writer::start_div('questionblock');
         // Checkbox for question selection.
         $output .= $this->question_number($question->displayednumber);
-
-        // This div is used to indent the content.
-        $output .= html_writer::div('', 'mod-indent');
 
         // Display the link to the question (or do nothing if question has no url).
         if ($question->qtype == 'random') {
@@ -940,7 +937,7 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function question_number($number) {
         if (is_numeric($number)) {
-            $number = html_writer::span(get_string('question'), 'accesshide') .
+            $number = html_writer::span(get_string('question'), 'accesshide hidden') .
                     ' ' . $number;
         }
         return html_writer::tag('span', $number, array('class' => 'slotnumber'));

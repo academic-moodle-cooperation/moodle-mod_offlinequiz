@@ -48,6 +48,10 @@ actually took part in the exam. Lists of participants are pre-filled with studen
 versions of those lists can be created in the module for easy marking during the exam. The marked
 lists can be uploaded and evaluated automatically.
 
+Furthermore you can use the Offline Quiz Cron plugin (report_offlinequizcron), which adds an interface to the Offline Quiz activity (mod_offlinequiz) to inspect and change pending cronjobs for the Offline Quiz.
+https://moodle.org/plugins/report_offlinequizcron
+https://github.com/academic-moodle-cooperation/moodle-report_offlinequizcron
+
 
 Example
 -------
@@ -60,9 +64,16 @@ halls) without the need for expensive e-testing equipment.
 Requirements
 ------------
 
-The plugin is available for Moodle 2.5+. This version is for Moodle 3.10.
+The plugin is available for Moodle 2.5+.
 
 You need to have imagemagick and the relating php module (http://pecl.php.net/package/imagick) installed.
+It is used for converting the uploaded answer sheets.
+
+If you want to use LaTeX formulas in the questions it is necessary to have LaTeX installed.
+See https://www.latex-project.org/get/ for more information how to install it.
+You can set your latex path in the admin settings at:
+Plugins -> Filters -> Manage filters -> TeX Notation -> Settings
+Everything should work if the "pathconvert" has a tick symbol.
 
 
 Installation
@@ -74,8 +85,6 @@ Installation
 
 * Open the administration area (http://your-moodle-site/admin) to start the installation
   automatically.
-
-*If you plan to import your answer sheets as PDF in one file, you might need to change your 
 
 
 Cron Job
@@ -94,7 +103,7 @@ run this cron job on a separate application server to take load from the fronten
 If you want to run the cron job on a dedicated server you have to disable it in the moodle settings
 and create an additional job on the dedicated server looking like this:
 
-    */10 * * * * DATE=`date +\%Y\%m\%d`; php <your moodle root dir>/mod/offlinequiz/cron.php --cli=1 >> /var/log/moodle/cron-olq.log.$DATE 2>&1
+    */10 * * * * DATE=`date +\%Y\%m\%d`; php <your moodle root dir>/admin/cli/scheduled_task.php --execute="\mod_offlinequiz\task\page_evaluation_task" >> /var/log/moodle/cron-olq.log.$DATE 2>&1
 
 
 Admin Settings

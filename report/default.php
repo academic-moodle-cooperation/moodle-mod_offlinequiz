@@ -47,7 +47,7 @@ abstract class offlinequiz_default_report {
      * @param $course the coures we are in.
      * @param $offlinequiz this offlinequiz.
      */
-    public abstract function display($cm, $course, $offlinequiz);
+    abstract public function display($cm, $course, $offlinequiz);
 
     /**
      * Initialise some parts of $PAGE and start output.

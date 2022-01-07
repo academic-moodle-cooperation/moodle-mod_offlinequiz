@@ -1,5 +1,20 @@
 CHANGELOG
 =========
+3.11.2
+-----------------
+[Feature] Autocompletion rules from quiz: grade and passing grade as well as view have been added.
+
+3.11.1
+-----------------
+[Feature] Solve version confusion with 3.11.0 and 3.10.1
+
+3.11.0
+-----------------
+[Feature] Compatible Version for Moodle 3.11
+
+3.10.1
+-----------------
+[Bug] Fix privacy bug for people using integer-idnumber
 
 3.10.0
 -----------------

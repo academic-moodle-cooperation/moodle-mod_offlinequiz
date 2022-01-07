@@ -66,6 +66,8 @@ require_login($course->id, false, $cm);
 $context = context_module::instance($cm->id);
 $coursecontext = context_course::instance($course->id);
 require_capability('mod/offlinequiz:viewreports', $context);
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
 
 $url = new moodle_url('/mod/offlinequiz/correct.php', array('pageid' => $scannedpage->id));
 $PAGE->set_url($url);
