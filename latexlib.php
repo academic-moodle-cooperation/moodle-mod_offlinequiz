@@ -169,6 +169,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     $a['latexforquestions'] = $latexforquestions;
     $a['coursename'] = offlinequiz_convert_html_to_latex($course->fullname);
     $a['groupname'] = $groupletter;
+    $a['activityname'] = offlinequiz_convert_html_to_latex($offlinequiz->name);
     if (empty($offlinequiz->pdfintro)) {
         $a['pdfintrotext'] = offlinequiz_convert_html_to_latex(get_string('pdfintrotext', 'offlinequiz', $a));
     } else {
