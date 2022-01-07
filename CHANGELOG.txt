@@ -3,6 +3,13 @@ CHANGELOG
 3.11.2
 -----------------
 [Feature] Autocompletion rules from quiz: grade and passing grade as well as view have been added.
+[Bug] fix github #157 Privacy Provider if there are multiple users in an offlinequiz context. Thank you to micaherne for the fix.
+[Bug] Heading Consistency: Every Page has a heading before the tabs.
+[Feature] Question Sheet: Latex question sheet now shows activityname instead of coursename, both variables are still possible.
+[Bug] CLI execution on another server than the cron server is now possible again.
+[Bug] Non-Breaking-Spaces are now possible to use in docx-Documents.
+[Bug] Removed Deprecation message on the statistics page.
+[Bug] The edit page for the questions looks much nicer and without any strange artifacts.
 
 3.11.1
 -----------------
