@@ -613,7 +613,7 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 %%% Course data:
 \newcommand{\Group}{{$a->groupname}}
 \newcommand{\Title}{{$a->activityname}}
-%%% Or use {{$a->coursename}} as course name instead
+%%% Or use {$a->coursename} as course name instead
 \newcommand{\Date}
 
 \newcommand{\TestTitle}{%
