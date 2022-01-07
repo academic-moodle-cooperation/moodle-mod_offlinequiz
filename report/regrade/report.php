@@ -50,7 +50,6 @@ class offlinequiz_regrade_report extends offlinequiz_default_report {
 
         // Print heading.
         echo $OUTPUT->box_start('linkbox');
-        echo $OUTPUT->heading(format_string($offlinequiz->name));
         echo $OUTPUT->heading(get_string('regradingquiz', 'offlinequiz'));
         echo $OUTPUT->box_end('linkbox');
 

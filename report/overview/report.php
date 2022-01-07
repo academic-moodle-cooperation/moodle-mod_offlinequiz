@@ -75,7 +75,6 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         if (!$download && !$action == 'delete') {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, 'overview');
             echo $OUTPUT->box_start('linkbox');
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading(get_string('results', 'offlinequiz'));
 
             require_once($CFG->libdir . '/grouplib.php');

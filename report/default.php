@@ -84,6 +84,7 @@ abstract class offlinequiz_default_report {
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
 
+        echo $OUTPUT->heading(format_string($offlinequiz->name));
         // Print the tabs.
         if ($currenttab == 'statistics') {
             $statmode = $reportmode;

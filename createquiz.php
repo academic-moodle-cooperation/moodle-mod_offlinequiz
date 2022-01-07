@@ -127,8 +127,6 @@ echo $OUTPUT->header();
 // Print the offlinequiz name heading and tabs for teacher.
 $currenttab = 'createofflinequiz';
 
-require('tabs.php');
-
 $hasscannedpages = offlinequiz_has_scanned_pages($offlinequiz->id);
 
 if ($offlinequiz->grade == 0) {
@@ -139,10 +137,10 @@ if ($offlinequiz->grade == 0) {
 
 // Preview.
 if ($mode == 'preview') {
+    echo $OUTPUT->heading(get_string('formspreview', 'offlinequiz'));
+    require('tabs.php');
     // Print shuffle again buttons.
     if (!$offlinequiz->docscreated && !$hasscannedpages) {
-
-        echo $OUTPUT->heading(get_string('formspreview', 'offlinequiz'));
 
         echo $OUTPUT->box_start('generalbox controlbuttonbox');
 
@@ -282,7 +280,7 @@ if ($mode == 'preview') {
 
     // Print the heading.
     echo $OUTPUT->heading(get_string('downloadpdfs', 'offlinequiz'));
-
+    require('tabs.php');
     $emptygroups = offlinequiz_get_empty_groups($offlinequiz);
     if (!empty($emptygroups)) {
         echo $OUTPUT->box_start('linkbox');
