@@ -1,3 +1,4 @@
+<?PHP
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -613,6 +614,7 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 %%% Course data:
 \newcommand{\Group}{{$a->groupname}}
 \newcommand{\Title}{{$a->activityname}}
+%%% Or use {{$a->coursename} as course name instead
 \newcommand{\Date}
 
 \newcommand{\TestTitle}{%
