@@ -67,7 +67,6 @@ class edit_renderer extends \plugin_renderer_base {
                 'editingofflinequiz', 'offlinequiz', '',
                 get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
 
-
         // Now we echo the tabs.
         $currenttab = 'editq';
         $mode = 'edit';
