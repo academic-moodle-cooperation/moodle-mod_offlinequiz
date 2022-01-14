@@ -598,7 +598,7 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 \usepackage{lastpage}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\chead{\sc \Title, Group \Group}
+\chead{\sc \TestTitle, Group \Group}
 \cfoot{Seite \thepage/\pageref{LastPage}}
 \makeatletter %%% disable pagebreaks between answers
 \@beginparpenalty=10000
@@ -613,7 +613,8 @@ $string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
 % ===========================================================================================================
 %%% Course data:
 \newcommand{\Group}{{$a->groupname}}
-\newcommand{\Title}{{$a->coursename}}
+\newcommand{\Title}{{$a->activityname}}
+%%% Or use {{$a->coursename} as course name instead
 \newcommand{\Date}
 
 \newcommand{\TestTitle}{%

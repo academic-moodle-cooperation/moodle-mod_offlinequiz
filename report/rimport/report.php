@@ -193,7 +193,6 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
         if ($action != 'delete') {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, 'rimport');
             if (!$offlinequiz->docscreated) {
-                echo $OUTPUT->heading(format_string($offlinequiz->name));
                 echo $OUTPUT->heading(get_string('nopdfscreated', 'offlinequiz'));
                 return true;
             }

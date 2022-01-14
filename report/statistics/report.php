@@ -253,7 +253,6 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
             $helpaction = $OUTPUT->action_icon($url, $pixicon, new popup_action('click', $url, 'help123', $options));
 
             echo $OUTPUT->box_start('linkbox');
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading(get_string($statmode . 'header', 'offlinequiz_statistics') . $helpaction);
             echo $OUTPUT->box_end();
 

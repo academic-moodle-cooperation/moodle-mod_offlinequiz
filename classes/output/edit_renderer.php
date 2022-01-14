@@ -55,16 +55,24 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function edit_page(\offlinequiz $offlinequizobj, structure $structure,
             \question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
+        global $CFG;
         $offlinequiz = $offlinequizobj->get_offlinequiz();
-        $output = '';
+        $cm = $offlinequizobj->get_cm();
+        $thispageurl = $pageurl;
 
         // Page title.
-        $output .= $this->heading_with_help(get_string('editingofflinequizx', 'offlinequiz',
+        echo $this->heading_with_help(get_string('editingofflinequizx', 'offlinequiz',
                 format_string($offlinequizobj->get_offlinequiz_name())) .
                 ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
                 'editingofflinequiz', 'offlinequiz', '',
                 get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
 
+        // Now we echo the tabs.
+        $currenttab = 'editq';
+        $mode = 'edit';
+        require_once('./tabs.php');
+
+        $output = '';
         // Information at the top.
         $output .= $this->offlinequiz_group_selector($offlinequiz, $pageurl);
         $output .= $this->offlinequiz_information($structure);
@@ -125,7 +133,7 @@ class edit_renderer extends \plugin_renderer_base {
             $output .= $this->question_chooser();
         }
 
-        return $output;
+        echo $output;
     }
 
 
@@ -142,16 +150,24 @@ class edit_renderer extends \plugin_renderer_base {
     public function edit_grades_page(\offlinequiz $offlinequizobj, structure $structure,
             \question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
 
+        global $CFG;
         $offlinequiz = $offlinequizobj->get_offlinequiz();
+        $cm = $offlinequizobj->get_cm();
+        $thispageurl = $pageurl;
 
-        $output = '';
-
-        // Page title.
-        $output .= $this->heading_with_help(
+        // First we echo the Page title.
+        echo $this->heading_with_help(
                 get_string('gradingofflinequizx', 'offlinequiz', format_string($offlinequizobj->get_offlinequiz_name())) .
                 ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
                 'editingofflinequiz', 'offlinequiz', '',  get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
+        $offlinequiz = $offlinequizobj->get_offlinequiz();
+        // Now we echo the tabs.
+        $currenttab = 'editq';
+        $mode = 'grade';
+        require_once('./tabs.php');
+
         // Information at the top.
+        $output = '';
         $output .= $this->offlinequiz_group_selector($offlinequiz, $pageurl);
         $output .= $this->offlinequiz_information($structure);
         $output .= html_writer::div('<br/>', 'clear');
@@ -178,7 +194,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= $this->end_section_list();
         $output .= $this->end_grading_form();
 
-        return $output;
+        echo $output;
     }
 
     private function start_add_to_group_form($offlinequiz, $pageurl) {

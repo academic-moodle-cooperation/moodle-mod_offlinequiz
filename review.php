@@ -95,6 +95,8 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('report');
 echo $OUTPUT->header();
 
+echo $OUTPUT->heading(format_string($offlinequiz->name));
+
 // Print heading and tabs if this is part of a preview.
 if ($isteacher) {
     if ($result->userid == $USER->id) { // This is the report on a preview.
@@ -105,6 +107,7 @@ if ($isteacher) {
     }
     include('tabs.php');
 }
+
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 echo $OUTPUT->heading(format_string($offlinequiz->name));

@@ -331,17 +331,9 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
 $PAGE->requires->data_for_js('offlinequiz_edit_config', $offlinequizeditconfig);
 $PAGE->requires->js('/question/qengine.js');
 
-$currenttab = 'editq';
-if ($offlinequizgradetool) {
-    $mode = 'grade';
-} else {
-    $mode = 'edit';
-}
-
-require_once('tabs.php');
 
 // Questions wrapper start.
-if ($mode == 'grade') {
+if ($offlinequizgradetool) {
     echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content edit_grades'));
 } else {
     echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content'));
@@ -355,9 +347,9 @@ for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
 }
 
 if ($offlinequizgradetool) {
-    echo $output->edit_grades_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars, $groupletters);
+    $output->edit_grades_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars, $groupletters);
 } else {
-    echo $output->edit_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars, $groupletters);
+    $output->edit_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars, $groupletters);
 }
 
 // Questions wrapper end.

@@ -75,13 +75,13 @@ if ($edit != -1 and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
 }
 
+echo $OUTPUT->heading(format_string($offlinequiz->name));
+
 // Print the tabs to switch mode.
 if (has_capability('mod/offlinequiz:viewreports', $context)) {
     $currenttab = 'info';
     include_once('tabs.php');
 }
-
-echo $OUTPUT->heading(format_string($offlinequiz->name));
 
 // If not in all group questions have been output a link to edit.php.
 $emptygroups = offlinequiz_get_empty_groups($offlinequiz);
