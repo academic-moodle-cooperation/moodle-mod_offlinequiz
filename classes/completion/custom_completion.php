@@ -109,7 +109,6 @@ class custom_completion extends activity_custom_completion {
      * @return array
      */
     public function get_custom_rule_descriptions(): array {
-
         return [
             'completionpass' => get_string('completiondetail:passgrade', 'mod_offlinequiz')
         ];

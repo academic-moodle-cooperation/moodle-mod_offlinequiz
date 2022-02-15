@@ -1403,3 +1403,41 @@ function offlinequiz_questions_in_use($questionids) {
            question_engine::questions_in_use($questionids, new qubaid_join('{offlinequiz_groups} groupa',
             'groupa.templateusageid', ''));
 }
+
+/**
+ * Add a get_coursemodule_info function in case any offlinequiz type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function offlinequiz_get_coursemodule_info($coursemodule) {
+    global $DB;
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = 'id, name, intro, introformat, completionpass';
+    if (!$offlinequiz = $DB->get_record('offlinequiz', $dbparams, $fields)) {
+        return false;
+    }
+    $result = new cached_cm_info();
+    $result->name = $offlinequiz->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('offlinequiz', $offlinequiz, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        if ($offlinequiz->completionpass) {
+            $result->customdata['customcompletionrules']['completionpass'] = [
+                'completionpass' => $offlinequiz->completionpass];
+        } else {
+            $result->customdata['customcompletionrules']['completionpass'] = [];
+        }
+    }
+    return $result;
+}
