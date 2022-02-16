@@ -267,8 +267,8 @@ class provider implements
                 AND l.offlinequizid = oq.id)
         OR EXISTS (
                 SELECT 1
-                FROM moofflinequiz_scanned_p_pages p
-                JOIN moofflinequiz_p_choices c ON p.id = c.scannedppageid
+                FROM {offlinequiz_scanned_p_pages} p
+                JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
                 WHERE c.userid = :choiceuserid
                 AND p.offlinequizid = oq.id)
         OR EXISTS (
@@ -329,8 +329,8 @@ class provider implements
                 AND l.offlinequizid = oq.id)
         OR EXISTS (
                 SELECT 1
-                FROM moofflinequiz_scanned_p_pages p
-                JOIN moofflinequiz_p_choices c ON p.id = c.scannedppageid
+                FROM {offlinequiz_scanned_p_pages} p
+                JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
                 WHERE c.userid = :choiceuserid
                 AND p.offlinequizid = oq.id)
         OR EXISTS (

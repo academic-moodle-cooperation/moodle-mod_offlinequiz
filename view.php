@@ -81,6 +81,7 @@ echo $OUTPUT->heading(format_string($offlinequiz->name));
 if (has_capability('mod/offlinequiz:viewreports', $context)) {
     $currenttab = 'info';
     include_once('tabs.php');
+    echo $OUTPUT->heading(get_string('info', 'offlinequiz'));
 }
 
 // If not in all group questions have been output a link to edit.php.
