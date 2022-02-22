@@ -348,7 +348,7 @@ class provider implements
         }
                $sql .= " WHERE u.id = :scannedpageuserid
                 AND sp.offlinequizid = oq.id)
-        WHERE (c.id {$contextsql})";
+        AND (c.id {$contextsql})";
 
         $params = [
                 'participantsuserid'        => $user->id,
