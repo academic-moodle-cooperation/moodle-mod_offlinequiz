@@ -87,6 +87,9 @@ $strscore  = get_string("marks", "offlinequiz");
 $strgrade  = get_string("grade", "offlinequiz");
 $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 // Setup the page and print the page header.
 $url = new moodle_url('/mod/offlinequiz/review.php', array('resultid' => $resultid, 'page' => $page));
 $PAGE->set_url($url);
@@ -108,8 +111,6 @@ if ($isteacher) {
     include('tabs.php');
 }
 
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
 echo $OUTPUT->heading(format_string($offlinequiz->name));
 
 // Load the module's global config.
