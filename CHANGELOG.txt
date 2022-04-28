@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+3.11.3
+-----------------
+[Bug] Fixed a bug that special html characters would break docx documents
+
 3.11.2
 -----------------
 [Feature] Autocompletion rules from quiz: grade and passing grade as well as view have been added.

@@ -62,7 +62,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
             array_shift($blocks);
         }
 
-        $section->addListItem(html_entity_decode($itemstring), $depth, $style, 'questionnumbering');
+        $section->addListItem(htmlspecialchars(html_entity_decode($itemstring)), $depth, $style, 'questionnumbering');
 
         // We also skip the first sequential newline because we got a newline with addListItem.
         if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
@@ -87,9 +87,9 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
                     continue;
                 }
                 if (array_key_exists('style', $block) && !empty($block['style'])) {
-                    $textrun->addText(html_entity_decode($block['value']), $block['style']);
+                    $textrun->addText(htmlspecialchars(html_entity_decode($block['value'])), $block['style']);
                 } else {
-                    $textrun->addText(html_entity_decode($block['value']), 'nStyle');
+                    $textrun->addText(htmlspecialchars(html_entity_decode($block['value'])), 'nStyle');
                 }
             } else if ($block['type'] == 'newline') {
                 if (empty($numbering)) {
