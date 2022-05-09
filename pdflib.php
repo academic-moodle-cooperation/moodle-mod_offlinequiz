@@ -173,7 +173,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('lastname')).":", 1, 1, 'L');
         $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('signature',  'offlinequiz')).":", 1, 1, 'L');
         $this->Ln(5);
-        $this->Cell(20, 7, offlinequiz_str_html_pdf(get_string('group')).":", 0, 0, 'L');
+        $this->Cell(20, 7, offlinequiz_str_html_pdf(get_string('group', 'offlinequiz')).":", 0, 0, 'L');
         $this->SetXY(34.4,  57.4);
 
         // Print boxes for groups.
@@ -535,7 +535,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     if (!empty($offlinequiz->time)) {
         $title .= ": ".offlinequiz_str_html_pdf(userdate($offlinequiz->time));
     }
-    $title .= ",  ".offlinequiz_str_html_pdf(get_string('group')." $groupletter");
+    $title .= ",  ".offlinequiz_str_html_pdf(get_string('group', 'offlinequiz')." $groupletter");
     $pdf->set_title($title);
     $pdf->SetMargins(15, 28, 15);
     $pdf->SetAutoPageBreak(false, 25);
