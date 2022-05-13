@@ -56,7 +56,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
     $title = format_text($offlinequiz->name, FORMAT_HTML);
 
-    $title .= ",  " . get_string('group') . $groupletter;
+    $title .= ",  " . get_string('group', 'offlinequiz') . $groupletter;
 
     // Load all the questions needed for this offline quiz group.
     $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
