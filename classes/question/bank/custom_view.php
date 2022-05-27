@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_view extends \core_question\bank\view {
+class custom_view extends \core_question\local\bank\view {
     /** @var bool whether the offlinequiz this is used by has been attemptd. */
     protected $offlinequizhasattempts = false;
     /** @var \stdClass the offlinequiz settings. */
@@ -57,7 +57,7 @@ class custom_view extends \core_question\bank\view {
         $this->offlinequiz = $offlinequiz;
     }
 
-    protected function wanted_columns() {
+    protected function wanted_columns(): array {
         global $CFG;
 
         if (empty($CFG->offlinequizquestionbankcolumns)) {
@@ -97,11 +97,11 @@ class custom_view extends \core_question\bank\view {
      *
      * @return string Column name for the heading
      */
-    protected function heading_column() {
+    protected function heading_column(): string {
         return 'mod_offlinequiz\\question\\bank\\question_name_text_column';
     }
 
-    protected function default_sort() {
+    protected function default_sort(): array {
         return array(
             'core_question\\bank\\question_type_column' => 1,
             'mod_offlinequiz\\question\\bank\\question_name_text_column' => 1,
@@ -167,7 +167,7 @@ class custom_view extends \core_question\bank\view {
      * @param \context  $catcontext  The context of the category being displayed.
      * @param array     $addcontexts contexts where the user is allowed to add new questions.
      */
-    protected function display_bottom_controls($totalnumber, $recurse, $category, \context $catcontext, array $addcontexts) {
+    protected function display_bottom_controls(\context $catcontext): void {
         $cmoptions = new \stdClass();
         $cmoptions->hasattempts = !empty($this->offlinequizhasattempts);
 
@@ -198,7 +198,7 @@ class custom_view extends \core_question\bank\view {
      * @see \core_question\bank\search\category_condition
      * @todo MDL-41978 This will be deleted in Moodle 2.8
      */
-    protected function print_choose_category_message($categoryandcontext) {
+    protected function print_choose_category_message(): void {
         global $OUTPUT;
         debugging('print_choose_category_message() is deprecated, ' .
                 'please use \core_question\bank\search\category_condition instead.', DEBUG_DEVELOPER);
@@ -212,7 +212,7 @@ class custom_view extends \core_question\bank\view {
     }
 
     protected function display_options_form($showquestiontext, $scriptpath = '/mod/offlinequiz/edit.php',
-            $showtextoption = false) {
+            $showtextoption = false): void {
         // Overridden just to change the default values of the arguments.
         parent::display_options_form($showquestiontext, $scriptpath, $showtextoption);
     }
@@ -247,7 +247,7 @@ class custom_view extends \core_question\bank\view {
         echo '</div></noscript></fieldset></form>';
     }
 
-    protected function create_new_question_form($category, $canadd) {
+    protected function create_new_question_form($category, $canadd): void {
         // Don't display this.
     }
 
@@ -255,7 +255,7 @@ class custom_view extends \core_question\bank\view {
      * Create the SQL query to retrieve the indicated questions, based on
      * \core_question\bank\search\condition filters.
      */
-    protected function build_query() {
+    protected function build_query(): void {
         global $DB;
 
         // Get the required tables and fields.

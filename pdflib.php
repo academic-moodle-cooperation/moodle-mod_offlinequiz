@@ -617,13 +617,13 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
     // Load all the questions needed for this offline quiz group.
     $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
-              FROM {offlinequiz_group_questions} ogq,
-                   {question} q,
-                   {question_categories} c
+              FROM {offlinequiz_group_questions} ogq
+              JOIN {question} q ON q.id = ogq.questionid
+              JOIN {question_versions} qv ON qv.questionid = q.id
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_categories} c ON c.id = qbe.questioncategoryid
              WHERE ogq.offlinequizid = :offlinequizid
                AND ogq.offlinegroupid = :offlinegroupid
-               AND q.id = ogq.questionid
-               AND q.category = c.id
           ORDER BY ogq.slot ASC ";
     $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
 
@@ -838,13 +838,13 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     $slots = $templateusage->get_slots();
 
     $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
-              FROM {offlinequiz_group_questions} ogq,
-                   {question} q,
-                   {question_categories} c
+              FROM {offlinequiz_group_questions} ogq
+              JOIN {question} q ON ogq.questionid = q.id
+              JOIN {question_versions} qv ON qv.questionid = q.id
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_categories} c ON qbe.questioncategoryid = c.id
              WHERE ogq.offlinequizid = :offlinequizid
                AND ogq.offlinegroupid = :offlinegroupid
-               AND q.id = ogq.questionid
-               AND q.category = c.id
           ORDER BY ogq.slot ASC ";
     $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
 
