@@ -39,7 +39,7 @@ class add_action_column extends \core_question\bank\action_column_base {
     /** @var string caches a lang string used repeatedly. */
     protected $stradd;
 
-    public function init() {
+    public function init(): void {
         parent::init();
         $this->stradd = get_string('addtoofflinequiz', 'offlinequiz');
     }
@@ -48,7 +48,7 @@ class add_action_column extends \core_question\bank\action_column_base {
         return 'addtoofflinequizaction';
     }
 
-    protected function print_icon($icon, $title, $url, $disabled = false) {
+    protected function print_icon($icon, $title, $url): void {
         global $OUTPUT;
         if (!$disabled) {
             echo '<a title="' . $title . '" href="' . $url . '">';
@@ -74,7 +74,7 @@ class add_action_column extends \core_question\bank\action_column_base {
         $this->print_icon('t/add', $this->stradd, $this->qbank->add_to_offlinequiz_url($question->id), $disabled);
     }
 
-    public function get_required_fields() {
+    public function get_required_fields(): array {
         return array('q.id');
     }
 }

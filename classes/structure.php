@@ -410,7 +410,9 @@ class structure {
                        q.*, qc.contextid
                   FROM {offlinequiz_group_questions} slot
                   LEFT JOIN {question} q ON q.id = slot.questionid
-                  LEFT JOIN {question_categories} qc ON qc.id = q.category
+                  LEFT JOIN {question_versions} qv ON q.id = qv.questionid
+                  LEFT JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                  LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                  WHERE slot.offlinequizid = ?
                    AND slot.offlinegroupid = ?
               ORDER BY slot.slot", array($offlinequiz->id, $offlinequiz->groupid));

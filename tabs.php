@@ -40,39 +40,12 @@ if (!isset($offlinequizcm)) {
 $context = context_module::instance($offlinequizcm->id);
 
 if (!isset($contexts)) {
-    $contexts = new question_edit_contexts($context);
+    $contexts = new core_question\local\bank\question_edit_contexts($context);
 }
 $tabs = array();
 $row  = array();
 $inactive = array();
 $activated = array();
-
-if (has_capability('mod/offlinequiz:view', $context)) {
-    $row[] = new tabobject('info', "$CFG->wwwroot/mod/offlinequiz/view.php?q=$offlinequiz->id", get_string('info', 'offlinequiz'));
-}
-if (has_capability('mod/offlinequiz:manage', $context)) {
-    $row[] = new tabobject('editq', "$CFG->wwwroot/mod/offlinequiz/edit.php?cmid=$cm->id",
-            get_string('groupquestions', 'offlinequiz'));
-}
-if (has_capability('mod/offlinequiz:createofflinequiz', $context)) {
-    $row[] = new tabobject('createofflinequiz', "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=$offlinequiz->id",
-            get_string('createofflinequiz', 'offlinequiz'));
-    $row[] = new tabobject('participants', "$CFG->wwwroot/mod/offlinequiz/participants.php?q=$offlinequiz->id",
-            get_string('participantslists', 'offlinequiz'));
-}
-if (has_capability('mod/offlinequiz:viewreports', $context)) {
-    $row[] = new tabobject('reports', "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id",
-            get_string('results', 'offlinequiz'));
-}
-if (has_capability('mod/offlinequiz:viewreports', $context) &&
-        has_capability('offlinequiz/statistics:view', $context)) {
-    $row[] = new tabobject('statistics', "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id&mode=statistics",
-            get_string('statisticsplural', 'offlinequiz'));
-}
-
-if ($currenttab != 'info' || count($row) != 1) {
-    $tabs[] = $row;
-}
 
 if ($currenttab == 'reports' && isset($mode)) {
     $inactive[] = 'reports';

@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 class checkbox_column extends \core_question\bank\checkbox_column {
     protected $strselect;
 
-    protected function display_content($question, $rowclasses) {
+    protected function display_content($question, $rowclasses): void {
         global $PAGE;
         $disabled = '';
         if ($this->qbank->offlinequiz_contains($question->id)) {

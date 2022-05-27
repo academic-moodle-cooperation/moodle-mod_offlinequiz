@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/classes/output/question_chooser.p
 use \mod_offlinequiz\structure;
 use \html_writer;
 use renderable;
-
+use \core_question\local\bank;
 /**
  * Renderer outputting the offlinequiz editing UI.
  *
@@ -54,8 +54,8 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function edit_page(\offlinequiz $offlinequizobj, structure $structure,
-            \question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
-        global $CFG;
+            \core_question\local\bank\question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
+        global CFG
         $offlinequiz = $offlinequizobj->get_offlinequiz();
         $cm = $offlinequizobj->get_cm();
         $thispageurl = $pageurl;
@@ -678,7 +678,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function add_menu_actions(structure $structure, $page, \moodle_url $pageurl,
-            \question_edit_contexts $contexts, array $pagevars) {
+            \core_question\local\bank\question_edit_contexts $contexts, array $pagevars) {
 
         $actions = $this->edit_menu_actions($structure, $page, $pageurl, $pagevars);
         if (empty($actions)) {
@@ -1178,7 +1178,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @return string HTML to output.
      */
-    protected function random_question_form(\moodle_url $thispageurl, \question_edit_contexts $contexts, array $pagevars) {
+    protected function random_question_form(\moodle_url $thispageurl, \core_question\local\bank\question_edit_contexts $contexts, array $pagevars) {
 
         if (!$contexts->have_cap('moodle/question:useall')) {
             return '';
@@ -1210,7 +1210,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @return bool Always returns true
      */
     protected function initialise_editing_javascript($course, $offlinequiz, structure $structure,
-            \question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
+            \core_question\local\bank\question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
 
         $config = new \stdClass();
         $config->resourceurl = '/mod/offlinequiz/edit_rest.php';
@@ -1313,7 +1313,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML for a new page.
      */
     protected function new_page_template(structure $structure,
-            \question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
+            \core_question\local\bank\question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
         if (!$structure->has_questions()) {
             return '';
         }
