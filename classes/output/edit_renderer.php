@@ -55,7 +55,7 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function edit_page(\offlinequiz $offlinequizobj, structure $structure,
             \core_question\local\bank\question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
-        global CFG;
+        global $CFG;
         $offlinequiz = $offlinequizobj->get_offlinequiz();
         $cm = $offlinequizobj->get_cm();
         $thispageurl = $pageurl;
