@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
  * @since         Moodle 2.8+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_type_column extends \core_question\bank\question_type_column {
+class question_type_column extends \core_question\local\bank\question_type_column {
     protected function display_content($question, $rowclasses): void {
         $contains = $this->qbank->offlinequiz_contains($question->id);
         if ($contains) {
