@@ -161,7 +161,7 @@ function offlinequiz_print_tabs($offlinequiz, $currenttab, $context, $mode = nul
     $row  = array();
     $inactive = array();
     $activated = array();
-    
+
     if ($currenttab == 'reports' && isset($mode)) {
         $inactive[] = 'reports';
         $activated[] = 'reports';
@@ -213,9 +213,9 @@ function offlinequiz_print_tabs($offlinequiz, $currenttab, $context, $mode = nul
     if ($currenttab == 'participants' and isset($mode)) {
         $inactive[] = 'participants';
         $activated[] = 'participants';
-        
+
         $participantstabs = array ('editlists', 'editparticipants', 'attendances', 'createpdfs', 'upload');
-        
+
         $row  = array();
         $currenttab = '';
         foreach ($participantstabs as $participantstab) {
@@ -256,7 +256,7 @@ function offlinequiz_print_tabs($offlinequiz, $currenttab, $context, $mode = nul
         $row  = array();
         $currenttab = $statmode;
         $offlinegroup = optional_param('offlinegroup', -1, PARAM_INT);
-        
+
         $row[] = new tabobject('statsoverview', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
             array('mode' => 'statistics', 'statmode' => 'statsoverview', 'offlinegroup' => $offlinegroup)),
             get_string('statsoverview', 'offlinequiz_statistics'));
