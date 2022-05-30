@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_view extends \core_question\local\bank\view {
+class custom_view extends \qbank_previewquestion\preview_action_column {
     /** @var bool whether the offlinequiz this is used by has been attemptd. */
     protected $offlinequizhasattempts = false;
     /** @var \stdClass the offlinequiz settings. */
