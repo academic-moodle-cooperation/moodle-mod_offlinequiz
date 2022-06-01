@@ -148,7 +148,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function edit_grades_page(\offlinequiz $offlinequizobj, structure $structure,
-            \question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
+        \core_question\local\bank\question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
 
         global $CFG;
         $offlinequiz = $offlinequizobj->get_offlinequiz();
