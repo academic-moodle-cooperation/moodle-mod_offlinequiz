@@ -685,7 +685,7 @@ class edit_renderer extends \plugin_renderer_base {
             return '';
         }
         $menu = new \action_menu();
-        $menu->set_alignment(\action_menu::TR, \action_menu::BR);
+        $menu->set_menu_left();
         $menu->set_constraint('.mod-offlinequiz-edit-content');
         $trigger = html_writer::tag('span', get_string('add'), array('class' => 'add-menu'));
         $menu->set_menu_trigger($trigger);
