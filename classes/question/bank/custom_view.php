@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_view extends \core_question\bank\view {
+class custom_view extends \core_question\local\bank\view {
     /** @var bool whether the offlinequiz this is used by has been attemptd. */
     protected $offlinequizhasattempts = false;
     /** @var \stdClass the offlinequiz settings. */
@@ -76,8 +76,8 @@ class custom_view extends \core_question\bank\view {
             if (!class_exists($fullname)) {
                 if (class_exists('mod_offlinequiz\\question\\bank\\' . $fullname)) {
                     $fullname = 'mod_offlinequiz\\question\\bank\\' . $fullname;
-                } else if (class_exists('core_question\\bank\\' . $fullname)) {
-                    $fullname = 'core_question\\bank\\' . $fullname;
+                } else if (class_exists('qbank_previewquestion\\' . $fullname)) {
+                    $fullname = 'qbank_previewquestion\\' . $fullname;
                 } else if (class_exists('question_bank_' . $fullname)) {
                     debugging('Legacy question bank column class question_bank_' .
                             $fullname . ' should be renamed to mod_offlinequiz\\question\\bank\\' .
