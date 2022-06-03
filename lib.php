@@ -1337,19 +1337,25 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
     }
 
     if (has_capability('mod/offlinequiz:manage', $PAGE->cm->context)) {
-        $node = navigation_node::create(get_string('groupquestions', 'offlinequiz'),
+        $node = navigation_node::create(get_string('tabofflinequizcontent', 'offlinequiz'),
                 new moodle_url('/mod/offlinequiz/edit.php', array('cmid' => $PAGE->cm->id)),
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_edit',
                 new pix_icon('t/edit', ''));
         $offlinequiznode->add_node($node, $beforekey);
 
-        $node = navigation_node::create(get_string('results', 'offlinequiz'),
+        $node = navigation_node::create(get_string('tabresults', 'offlinequiz'),
             new moodle_url('/mod/offlinequiz/report.php', array('id' => $PAGE->cm->id, 'mode' => 'overview')),
             navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_results',
             new pix_icon('i/report', ''));
         $offlinequiznode->add_node($node, $beforekey);
 
-        $node = navigation_node::create(get_string('participantslists', 'offlinequiz'),
+                $node = navigation_node::create(get_string('tabstatistics', 'offlinequiz'),
+            new moodle_url('/mod/offlinequiz/report.php', array('id' => $PAGE->cm->id, 'mode' => 'statistics')),
+            navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_statistics',
+            new pix_icon('i/report', ''));
+        $offlinequiznode->add_node($node, $beforekey);
+
+        $node = navigation_node::create(get_string('tabattendances', 'offlinequiz'),
                 new moodle_url('/mod/offlinequiz/participants.php', array('id' => $PAGE->cm->id)),
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_participants',
                 new pix_icon('i/group', ''));
