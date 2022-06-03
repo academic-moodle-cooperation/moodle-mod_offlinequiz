@@ -68,9 +68,7 @@ class edit_renderer extends \plugin_renderer_base {
                 get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
 
         // Now we echo the tabs.
-        $currenttab = 'editq';
-        $mode = 'edit';
-        require_once('./tabs.php');
+        offlinequiz_print_tabs($offlinequiz, 'tabeditgrades', $cm);
 
         $output = '';
         // Information at the top.
@@ -152,14 +150,17 @@ class edit_renderer extends \plugin_renderer_base {
 
         global $CFG;
         $offlinequiz = $offlinequizobj->get_offlinequiz();
+        $cm = $offlinequizobj->get_cm();
+
+        $offlinequiz = $offlinequizobj->get_offlinequiz();
+        offlinequiz_print_tabs($offlinequiz, 'tabeditgroupquestions', $cm);
 
         // First we echo the Page title.
         echo $this->heading_with_help(
                 get_string('gradingofflinequizx', 'offlinequiz', format_string($offlinequizobj->get_offlinequiz_name())) .
                 ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
                 'editingofflinequiz', 'offlinequiz', '',  get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
-        $offlinequiz = $offlinequizobj->get_offlinequiz();
-        offlinequiz_print_tabs($offlinequiz, 'tabeditgrades');
+
 
         // Information at the top.
         $output = '';

@@ -57,41 +57,40 @@ abstract class offlinequiz_default_report {
      * @param object $offlinequiz the offlinequiz settings.
      * @param string $reportmode the report name.
      */
-    public function print_header_and_tabs($cm, $course, $offlinequiz, $reportmode = 'overview', $currenttab = 'reports') {
+    public function print_header_and_tabs($cm, $course, $offlinequiz, $reportmode = 'overview') {
         global $CFG, $PAGE, $OUTPUT;
-
         switch ($reportmode) {
             case 'overview':
                 $reporttitle = get_string('results', 'offlinequiz');
+                $currenttab = 'tabresultsoverview';
                 break;
             case 'rimport':
                 $reporttitle = get_string('resultimport', 'offlinequiz');
+                $currenttab = 'tabresultsoverview';
                 break;
             case 'regrade':
                 $reporttitle = get_string('regradingquiz', 'offlinequiz');
+                $currenttab = 'tabregrade';
                 break;
-            case 'statistics':
+            case 'statsoverview':
                 $reporttitle = get_string('statisticsplural', 'offlinequiz');
+                $currenttab = 'tabstatsoverview';
                 break;
-        }
-
-        if ($currenttab == 'statistics') {
-            $reporttitle = get_string('statisticsplural', 'offlinequiz');
+           case 'questionstats':
+                $reporttitle = get_string('statisticsplural', 'offlinequiz');
+                $currenttab = 'tabquestionstats';
+                break;
+           case 'questionandanswerstats':
+                $reporttitle = get_string('statisticsplural', 'offlinequiz');
+                $currenttab = 'tabquestionandanswerstats';
+                break;
         }
 
         // Print the page header.
         $PAGE->set_title(format_string($offlinequiz->name) . ' -- ' . $reporttitle);
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
-
-        echo $OUTPUT->heading(format_string($offlinequiz->name));
-        // Print the tabs.
-        if ($currenttab == 'statistics') {
-            $statmode = $reportmode;
-        } else {
-            $mode = $reportmode;
-        }
-        include($CFG->dirroot . '/mod/offlinequiz/tabs.php');
+        offlinequiz_print_tabs($offlinequiz, $currenttab, $cm);
     }
 
     /**

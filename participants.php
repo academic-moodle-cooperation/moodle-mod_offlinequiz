@@ -103,7 +103,7 @@ switch($mode) {
             $currenttab = 'participants';
             echo $OUTPUT->heading(format_string($offlinequiz->name));
             // Print the tabs.
-            include('tabs.php');
+            offlinequiz_print_tabs($offlinequiz, 'tabeditparticipants', $cm);
         }
 
         switch ($action) {
@@ -218,8 +218,7 @@ switch($mode) {
             echo $OUTPUT->header();
             echo $OUTPUT->heading(format_string($offlinequiz->name));
             // Print the tabs.
-            $currenttab = 'participants';
-            include('tabs.php');
+            offlinequiz_print_tabs($offlinequiz, 'tabeditparticipants', $cm);
         }
 
         echo $OUTPUT->heading_with_help(get_string('participantsinlists', 'offlinequiz'), 'participants', 'offlinequiz');
@@ -347,11 +346,9 @@ switch($mode) {
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
             echo $OUTPUT->header();
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
-            echo $OUTPUT->heading_with_help(get_string('attendances', 'offlinequiz'), 'participants', 'offlinequiz');
             // Print the tabs.
-            $currenttab = 'participants';
-            include('tabs.php');
+            offlinequiz_print_tabs($offlinequiz, 'tabattendancesoverview', $cm);
+            echo $OUTPUT->heading_with_help(get_string('attendances', 'offlinequiz'), 'participants', 'offlinequiz');
             if (!$lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), 'name ASC')) {
                 error('No list created for offlinequiz');
             }
@@ -427,11 +424,10 @@ switch($mode) {
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
             echo $OUTPUT->header();
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
-            echo $OUTPUT->heading_with_help(get_string('createpdfsparticipants', 'offlinequiz'), 'participants', 'offlinequiz');
             // Print the tabs.
-            $currenttab = 'participants';
-            include('tabs.php');
+            offlinequiz_print_tabs($offlinequiz,'tabdownloadparticipantsforms', $cm);
+            echo $OUTPUT->heading_with_help(get_string('createpdfsparticipants', 'offlinequiz'), 'participants', 'offlinequiz');
+            
         }
         // Show update button.
         ?>
@@ -529,11 +525,9 @@ switch($mode) {
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
             echo $OUTPUT->header();
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
-            echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimportnew', 'offlinequiz');
             // Print the tabs.
-            $currenttab = 'participants';
-            include('tabs.php');
+            offlinequiz_print_tabs($offlinequiz, 'tabparticipantsupload', $cm);
+            echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimportnew', 'offlinequiz');
         }
         $report = new participants_report();
         $importform = new offlinequiz_participants_upload_form($thispageurl);

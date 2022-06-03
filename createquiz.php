@@ -138,8 +138,8 @@ if ($offlinequiz->grade == 0) {
 
 // Preview.
 if ($mode == 'preview') {
+    offlinequiz_print_tabs($offlinequiz, 'tabpreview', $cm);
     echo $OUTPUT->heading(get_string('formspreview', 'offlinequiz'));
-    require('tabs.php');
     // Print shuffle again buttons.
     if (!$offlinequiz->docscreated && !$hasscannedpages) {
 
@@ -279,9 +279,9 @@ if ($mode == 'preview') {
     // O==============================================================.
 } else if ($mode == 'createpdfs') {
 
+    offlinequiz_print_tabs($offlinequiz, 'tabdownloadquizforms', $cm);
     // Print the heading.
     echo $OUTPUT->heading(get_string('downloadpdfs', 'offlinequiz'));
-    require('tabs.php');
     $emptygroups = offlinequiz_get_empty_groups($offlinequiz);
     if (!empty($emptygroups)) {
         echo $OUTPUT->box_start('linkbox');

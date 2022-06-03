@@ -140,30 +140,90 @@ class offlinequiz_question_usage_by_activity extends question_usage_by_activity 
     }
 }
 
-function offlinequiz_print_tabs($offlinequiz, $currenttab, $offlinequizcm = null, $thispageurl = null, $contexts = null) {
-    global $CFG;
-    if (empty($offlinequiz) || !$currenttab) {
+function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
+    global $CFG, $OUTPUT;
+    if (empty($offlinequiz) || empty($currenttab) || empty($cm) ) {
         return;
     }
-    ['tabeditgroupquestions' => 'tabofflinequizcontent',
-     'tabeditgrades' => 'tabofflinequizcontent',
-     'tabpreview' => 'tabofflinequizcontent',
-     'tabdownloadquizforms' => 'tabofflinequizcontent',
-     'tabquizupload' => 'tabresults',
-     'tabquizcorrect' => 'tabresults',
-     'tabresultoverview' => 'tabresults',
-     'tabgrades' => 'tabresults',
-     'tabstatisticsoverview' => 'tabstatistics',
-     'tabquestionanalysis' => 'tabstatistics',
-     'tabquestionandanswers' => 'tabstatistics',
-     'tabparticipantlists' => 'tabparticipants',
-     'tabeditparticipants' => 'tabparticipants',
-     'tabdownloadparticipantsforms' => 'tabparticipants',
-     'tabpaticipantsupload' => 'tabparticipants',
-     'tabparticipantscorrect' => 'tabparticipants',
-     'tabattendances' => 'tabparticipants'
+    $tabs = offlinequiz_get_tabs_object($offlinequiz, $cm);
+    $ct = $tabs[$currenttab];
+    $options = [];
+    foreach ($tabs as $tabname => $tabobject) {
+        if ($tabobject['tab'] == $ct['tab']) {
+            $options[$tabobject['url']->out()] = get_string($tabname, 'offlinequiz');
+        }
+    }
+    $selectobject = new \url_select($options);
+    echo $OUTPUT->render($selectobject);
+}
+
+function offlinequiz_get_tabs_object($offlinequiz, $cm) {
+    global $CFG;
+    if (empty($offlinequiz) || empty($cm) ) {
+        return [];
+    }
+    $tabs = ['tabeditgroupquestions' =>
+         ['tab' => 'tabofflinequizcontent',
+          'url'  => new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id])],
+     'tabeditgrades' =>
+         ['tab' => 'tabofflinequizcontent',
+          'url' =>  new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 1])],
+     'tabpreview' =>
+         ['tab' => 'tabofflinequizcontent',
+          'url' =>  new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id])],
+     'tabdownloadquizforms' =>
+         ['tab' => 'tabofflinequizcontent',
+          'url' =>  new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs'])],
+     'tabofflinequizupload' =>
+         ['tab' => 'tabresults',
+          'url' =>  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport'])],
+     'tabofflinequizcorrect' =>
+         ['tab' => 'tabresults',
+          'url' =>  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct'])],
+     'tabresultsoverview' => 
+         ['tab' => 'tabresults',
+          'url' =>  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview'])],
+     'tabregrade' =>
+         ['tab' => 'tabresults',
+          'url' =>  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'regrade'])],
+     'tabstatsoverview' =>
+         ['tab' => 'tabstatistics',
+          'url' =>  new moodle_url('/mod/offlinequiz/report.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'statistics'])],
+     'tabquestionstats' =>
+         ['tab' => 'tabstatistics',
+          'url' =>  new moodle_url('/mod/offlinequiz/report.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionstats'])],
+     'tabquestionandanswerstats' =>
+         ['tab' => 'tabstatistics',
+          'url' =>  new moodle_url('/mod/offlinequiz/report.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionandanswerstats'])],
+     'tabparticipantlists' =>
+         ['tab' => 'tabattendances',
+          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'editlists'])],
+     'tabeditparticipants' =>
+         ['tab' => 'tabattendances',
+          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'editparticipants'])],
+     'tabdownloadparticipantsforms' =>
+         ['tab' => 'tabattendances',
+          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'createpdfs'])],
+     'tabparticipantsupload' =>
+         ['tab' => 'tabattendances',
+          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'upload'])],
+     'tabparticipantscorrect' =>
+         ['tab' => 'tabattendances',
+          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'correct'])],
+     'tabattendancesoverview' =>
+         ['tab' => 'tabattendances',
+          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'attendances'])],
      ];
-    
+     return $tabs;
 }
 
 function offlinequiz_make_questions_usage_by_activity($component, $context) {
