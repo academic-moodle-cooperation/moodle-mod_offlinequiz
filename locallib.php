@@ -140,140 +140,30 @@ class offlinequiz_question_usage_by_activity extends question_usage_by_activity 
     }
 }
 
-function offlinequiz_print_tabs($offlinequiz, $currenttab, $context, $mode = null, $offlinequizcm = null, $thispageurl = null, $contexts = null) {
+function offlinequiz_print_tabs($offlinequiz, $currenttab, $offlinequizcm = null, $thispageurl = null, $contexts = null) {
     global $CFG;
-    if (empty($offlinequiz)) {
+    if (empty($offlinequiz) || !$currenttab) {
         return;
     }
-    if (!isset($currenttab)) {
-        $currenttab = '';
-    }
-    if (!isset($offlinequizcm)) {
-        $offlinequizcm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id);
-    }
-
-    $context = context_module::instance($offlinequizcm->id);
-
-    if (!isset($contexts)) {
-        $contexts = new core_question\local\bank\question_edit_contexts($context);
-    }
-    $tabs = array();
-    $row  = array();
-    $inactive = array();
-    $activated = array();
-
-    if ($currenttab == 'reports' && isset($mode)) {
-        $inactive[] = 'reports';
-        $activated[] = 'reports';
-        $allreports = core_component::get_plugin_list('offlinequiz');
-        $reportlist = array('overview', 'rimport'); // Standard reports we want to show first.
-
-        foreach ($allreports as $key => $path) {
-            if (!in_array($key, $reportlist)) {
-                $reportlist[] = $key;
-            }
-        }
-
-        $row  = array();
-        $currenttab = '';
-        foreach ($reportlist as $report) {
-            if ($report != 'statistics') {
-                $row[] = new tabobject($report, "$CFG->wwwroot/mod/offlinequiz/report.php?q=$offlinequiz->id&amp;mode=$report",
-                    get_string($report, 'offlinequiz'));
-                if ($report == $mode) {
-                    $currenttab = $report;
-                }
-            }
-        }
-        $tabs = $row;
-    }
-
-    if ($currenttab == 'createofflinequiz' and isset($mode)) {
-        $inactive[] = 'createofflinequiz';
-        $activated[] = 'createofflinequiz';
-
-        $createlist = array ('preview', 'createpdfs');
-
-        $row  = array();
-        $currenttab = '';
-        foreach ($createlist as $createtab) {
-            $row[] = new tabobject($createtab,
-                "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=$offlinequiz->id&amp;mode=$createtab",
-                get_string($createtab, 'offlinequiz'));
-            if ($createtab == $mode) {
-                $currenttab = $createtab;
-            }
-        }
-        if ($currenttab == '') {
-            $currenttab = 'preview';
-        }
-        $tabs = $row;
-    }
-
-    if ($currenttab == 'participants' and isset($mode)) {
-        $inactive[] = 'participants';
-        $activated[] = 'participants';
-
-        $participantstabs = array ('editlists', 'editparticipants', 'attendances', 'createpdfs', 'upload');
-
-        $row  = array();
-        $currenttab = '';
-        foreach ($participantstabs as $participantstab) {
-            $row[] = new tabobject($participantstab,
-               "$CFG->wwwroot/mod/offlinequiz/participants.php?q=$offlinequiz->id&amp;mode=$participantstab",
-                get_string($participantstab, 'offlinequiz'));
-            if ($participantstab == $mode) {
-                $currenttab = $participantstab;
-            }
-        }
-        $tabs = $row;
-    }
-
-    if ($currenttab == 'editq' and isset($mode)) {
-        $inactive[] = 'editq';
-        $activated[] = 'editq';
-
-        $row  = array();
-        $currenttab = $mode;
-
-        $strofflinequizzes = get_string('modulenameplural', 'offlinequiz');
-        $strofflinequiz = get_string('modulename', 'offlinequiz');
-        $streditingofflinequiz = get_string("editinga", "moodle", $strofflinequiz);
-        $strupdate = get_string('updatethis', 'moodle', $strofflinequiz);
-
-        $row[] = new tabobject('edit', new moodle_url($thispageurl,
-            array('gradetool' => 0)), get_string('editingofflinequiz', 'offlinequiz'));
-        $row[] = new tabobject('grade', new moodle_url($thispageurl,
-            array('gradetool' => 1)), get_string('gradingofflinequiz', 'offlinequiz'));
-
-        $tabs = $row;
-    }
-
-    if ($currenttab == 'statistics' and isset($statmode)) {
-        $inactive[] = 'statistics';
-        $activated[] = 'statistics';
-
-        $row  = array();
-        $currenttab = $statmode;
-        $offlinegroup = optional_param('offlinegroup', -1, PARAM_INT);
-
-        $row[] = new tabobject('statsoverview', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
-            array('mode' => 'statistics', 'statmode' => 'statsoverview', 'offlinegroup' => $offlinegroup)),
-            get_string('statsoverview', 'offlinequiz_statistics'));
-        $row[] = new tabobject('questionstats', new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
-            array('mode' => 'statistics', 'statmode' => 'questionstats', 'offlinegroup' => $offlinegroup)),
-            get_string('questionstats', 'offlinequiz_statistics'));
-        $row[] = new tabobject('questionandanswerstats',
-            new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id,
-            array('mode' => 'statistics',
-                'statmode' => 'questionandanswerstats',
-                'offlinegroup' => $offlinegroup)),
-            get_string('questionandanswerstats', 'offlinequiz_statistics'));
-
-        $tabs = $row;
-    }
-
-    print_tabs($tabs, $currenttab, $inactive, $activated);
+    ['tabeditgroupquestions' => 'tabofflinequizcontent',
+     'tabeditgrades' => 'tabofflinequizcontent',
+     'tabpreview' => 'tabofflinequizcontent',
+     'tabdownloadquizforms' => 'tabofflinequizcontent',
+     'tabquizupload' => 'tabresults',
+     'tabquizcorrect' => 'tabresults',
+     'tabresultoverview' => 'tabresults',
+     'tabgrades' => 'tabresults',
+     'tabstatisticsoverview' => 'tabstatistics',
+     'tabquestionanalysis' => 'tabstatistics',
+     'tabquestionandanswers' => 'tabstatistics',
+     'tabparticipantlists' => 'tabparticipants',
+     'tabeditparticipants' => 'tabparticipants',
+     'tabdownloadparticipantsforms' => 'tabparticipants',
+     'tabpaticipantsupload' => 'tabparticipants',
+     'tabparticipantscorrect' => 'tabparticipants',
+     'tabattendances' => 'tabparticipants'
+     ];
+    
 }
 
 function offlinequiz_make_questions_usage_by_activity($component, $context) {

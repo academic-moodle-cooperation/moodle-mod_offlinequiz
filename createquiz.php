@@ -126,7 +126,7 @@ if ($downloadall && $offlinequiz->docscreated) {
 echo $OUTPUT->header();
 
 // Print the offlinequiz name heading and tabs for teacher.
-$currenttab = 'createofflinequiz';
+$currenttab = 'editq';
 
 $hasscannedpages = offlinequiz_has_scanned_pages($offlinequiz->id);
 

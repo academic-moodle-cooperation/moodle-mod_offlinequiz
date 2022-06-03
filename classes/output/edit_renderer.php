@@ -152,8 +152,6 @@ class edit_renderer extends \plugin_renderer_base {
 
         global $CFG;
         $offlinequiz = $offlinequizobj->get_offlinequiz();
-        $cm = $offlinequizobj->get_cm();
-        $thispageurl = $pageurl;
 
         // First we echo the Page title.
         echo $this->heading_with_help(
@@ -161,10 +159,7 @@ class edit_renderer extends \plugin_renderer_base {
                 ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
                 'editingofflinequiz', 'offlinequiz', '',  get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
         $offlinequiz = $offlinequizobj->get_offlinequiz();
-        // Now we echo the tabs.
-        $currenttab = 'editq';
-        $mode = 'grade';
-        require_once('./tabs.php');
+        offlinequiz_print_tabs($offlinequiz, 'tabeditgrades');
 
         // Information at the top.
         $output = '';
