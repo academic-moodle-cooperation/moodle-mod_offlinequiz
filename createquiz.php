@@ -164,12 +164,18 @@ if ($mode == 'preview') {
         } else {
             echo $OUTPUT->single_button($buttonurl,  get_string('reloadquestionlist', 'offlinequiz'));
         }
-
+        $buttonoptions['mode'] = 'createpdfs';
+        echo $OUTPUT->single_button(new moodle_url('/mod/offlinequiz/createquiz.php', $buttonoptions),
+                get_string('createpdfforms', 'offlinequiz'), 'get');
+            
         echo '</div>';
 
         echo $OUTPUT->box_end();
+    } else {
+        $createformsurl = new moodle_url('/mod/offlinequiz/createquiz.php', ['mode' => 'createpdfs', 'q' => $offlinequiz->id]);
+        $text = get_string('formsexistx', 'offlinequiz', $createformsurl->out(false));
+        echo "<p>$text</p>";
     }
-
     // Shuffle again if no scanned pages.
     if ($forcenew) {
         if ($offlinequiz->docscreated || $hasscannedpages) {

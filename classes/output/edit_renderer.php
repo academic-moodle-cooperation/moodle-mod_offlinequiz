@@ -960,7 +960,7 @@ class edit_renderer extends \plugin_renderer_base {
         $image = $this->pix_icon('t/preview', $strpreviewquestion);
 
         $action = new \popup_action('click', $url, 'questionpreview',
-                                        question_preview_popup_params());
+                                        \qbank_previewquestion\helper::question_preview_popup_params());
 
         return $this->action_link($url, $image . $strpreviewlabel, $action,
                 array('title' => $strpreviewquestion, 'class' => 'preview'));
