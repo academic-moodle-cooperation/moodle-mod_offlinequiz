@@ -1341,34 +1341,74 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
     }
 
     if (has_capability('mod/offlinequiz:manage', $PAGE->cm->context)) {
+        $active = offlinequiz_get_active_tab();
+        //Tab Offlinequiz content.
+        if($active == 'tabofflinequizcontent') {
+            $url = $PAGE->url;
+        } else {
+            $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $PAGE->cm->id, 'tab' => 'tabofflinequizcontent']);
+        }
         $node = navigation_node::create(get_string('tabofflinequizcontent', 'offlinequiz'),
-                new moodle_url('/mod/offlinequiz/edit.php', array('cmid' => $PAGE->cm->id)),
+                $url,
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_edit',
                 new pix_icon('t/edit', ''));
         $offlinequiznode->add_node($node, $beforekey);
-
+        //Tab results.
+        if($active == 'tabresults') {
+            $url = $PAGE->url;
+        } else {
+            $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $PAGE->cm->id, 'tab' => 'tabresults']);
+        }
         $node = navigation_node::create(get_string('tabresults', 'offlinequiz'),
-            new moodle_url('/mod/offlinequiz/report.php', array('id' => $PAGE->cm->id, 'mode' => 'overview')),
+            $url,
             navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_results',
             new pix_icon('i/report', ''));
         $offlinequiznode->add_node($node, $beforekey);
-
-                $node = navigation_node::create(get_string('tabstatistics', 'offlinequiz'),
-            new moodle_url('/mod/offlinequiz/report.php', array('id' => $PAGE->cm->id, 'mode' => 'statistics')),
+        //Tab statistics.
+        if($active == 'tabstatistics') {
+            $url = $PAGE->url;
+        } else {
+            $url = new moodle_url('/mod/offlinequiz/report.php', array('id' => $PAGE->cm->id, 'mode' => 'statistics'));
+        }
+        $node = navigation_node::create(get_string('tabstatistics', 'offlinequiz'),
+            $url,
             navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_statistics',
             new pix_icon('i/report', ''));
         $offlinequiznode->add_node($node, $beforekey);
-
+        //Tab attendances
+        if($active == 'tabattendances') {
+            $url = $PAGE->url;
+        } else {
+            $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $PAGE->cm->id, 'tab' => 'tabattendances']);
+        }
         $node = navigation_node::create(get_string('tabattendances', 'offlinequiz'),
-                new moodle_url('/mod/offlinequiz/participants.php', array('id' => $PAGE->cm->id)),
+                $url,
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_participants',
                 new pix_icon('i/group', ''));
+        if($active == 'tabattendances') {
+            $node->make_active();
+        }
         $offlinequiznode->add_node($node, $beforekey);
 
 
     }
 
     question_extend_settings_navigation($offlinequiznode, $PAGE->cm->context)->trim_if_empty();
+}
+
+
+function offlinequiz_get_active_tab() {
+    global $PAGE;
+    $url = $PAGE->url->out();
+    if(strpos($url,'/mod/offlinequiz/edit.php') || strpos($url, '/mod/offlinequiz/createquiz.php')) {
+        return 'tabofflinequizcontent';
+    } else if (strpos($url, '/mod/offlinequiz/report.php') && strpos($url, 'mode=statistics')) {
+        return 'tabstatistics';
+    } else if (strpos($url, '/mod/offlinequiz/report.php')) {
+        return 'tabresults';
+    } else if (strpos($url, '/mod/offlinequiz/participants.php')) {
+        return 'tabattendance';
+    }
 }
 
 /**

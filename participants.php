@@ -101,7 +101,6 @@ switch($mode) {
         if (!$download && $action != 'savelist') {
             echo $OUTPUT->header();
             $currenttab = 'participants';
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
             // Print the tabs.
             offlinequiz_print_tabs($offlinequiz, 'tabeditparticipants', $cm);
         }
@@ -216,7 +215,6 @@ switch($mode) {
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
             echo $OUTPUT->header();
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
             // Print the tabs.
             offlinequiz_print_tabs($offlinequiz, 'tabeditparticipants', $cm);
         }
