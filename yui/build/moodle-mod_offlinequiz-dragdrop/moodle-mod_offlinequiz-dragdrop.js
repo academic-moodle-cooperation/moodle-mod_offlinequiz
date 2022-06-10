@@ -131,9 +131,13 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         // Get our drag object.
         var drag = e.target;
         // Creat a dummy structure of the outer elemnents for clean styles application.
-        var containernode = Y.Node.create('<' + M.mod_offlinequiz.edit.get_containernode() + '></' + M.mod_offlinequiz.edit.get_containernode() + '>');
+        var containernode = Y.Node.create(
+                '<' + M.mod_offlinequiz.edit.get_containernode() +
+                '></' + M.mod_offlinequiz.edit.get_containernode() + '>');
         containernode.addClass(M.mod_offlinequiz.edit.get_containerclass());
-        var sectionnode = Y.Node.create('<' + M.mod_offlinequiz.edit.get_sectionwrappernode() + '></' + M.mod_offlinequiz.edit.get_sectionwrappernode() + '>');
+        var sectionnode = Y.Node.create(
+                '<' + M.mod_offlinequiz.edit.get_sectionwrappernode() +
+                '></' + M.mod_offlinequiz.edit.get_sectionwrappernode() + '>');
         sectionnode.addClass( M.mod_offlinequiz.edit.get_sectionwrapperclass());
         sectionnode.setStyle('margin', 0);
         sectionnode.setContent(drag.get('node').get('innerHTML'));
