@@ -153,7 +153,15 @@ class custom_view extends \core_question\local\bank\view {
      */
     public function render($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext, $tagids) {
         ob_start();
-        $this->display($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext, $tagids);
+        $pagevars = [];
+        $pagevars['qpage'] = $page;
+        $pagevars['qperpage'] = $perpage;
+        $pagevars['cat'] = $cat;
+        $pagevars['recurse'] = $recurse;
+        $pagevars['showhidden'] = $showhidden;
+        $pagevars['qbshowtext'] = $showquestiontext;
+        $pagevars['qtagids'] = $tagids;
+        $this->display($pagevars, $tabname);
         $out = ob_get_contents();
         ob_end_clean();
         return $out;
@@ -256,33 +264,39 @@ class custom_view extends \core_question\local\bank\view {
      * \core_question\bank\search\condition filters.
      */
     protected function build_query(): void {
-        global $DB;
-
         // Get the required tables and fields.
-        $joins = array();
-        $fields = array('q.hidden', 'q.category');
-        foreach ($this->requiredcolumns as $column) {
-            $extrajoins = $column->get_extra_joins();
-            foreach ($extrajoins as $prefix => $join) {
-                if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
-                    throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
+        $joins = [];
+        $fields = ['qv.status', 'qc.id as categoryid', 'qv.version', 'qv.id as versionid', 'qbe.id as questionbankentryid'];
+        if (!empty($this->requiredcolumns)) {
+            foreach ($this->requiredcolumns as $column) {
+                $extrajoins = $column->get_extra_joins();
+                foreach ($extrajoins as $prefix => $join) {
+                    if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
+                        throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
+                    }
+                    $joins[$prefix] = $join;
                 }
-                $joins[$prefix] = $join;
+                $fields = array_merge($fields, $column->get_required_fields());
             }
-            $fields = array_merge($fields, $column->get_required_fields());
         }
         $fields = array_unique($fields);
-
+        
         // Build the order by clause.
-        $sorts = array();
+        $sorts = [];
         foreach ($this->sort as $sort => $order) {
             list($colname, $subsort) = $this->parse_subsort($sort);
             $sorts[] = $this->requiredcolumns[$colname]->sort_expression($order < 0, $subsort);
         }
-
+        
         // Build the where clause.
-        $tests = array('q.parent = 0');
-        $this->sqlparams = array();
+        $latestversion = 'qv.version = (SELECT MAX(v.version)
+                                          FROM {question_versions} v
+                                          JOIN {question_bank_entries} be
+                                            ON be.id = v.questionbankentryid
+                                         WHERE be.id = qbe.id)';
+        $readyonly = "qv.status = '" . \core_question\local\bank\question_version_status::QUESTION_STATUS_READY . "' ";
+        $tests = ['q.parent = 0', $latestversion, $readyonly];
+        $this->sqlparams = [];
         foreach ($this->searchconditions as $searchcondition) {
             if ($searchcondition->where()) {
                 $tests[] = '((' . $searchcondition->where() .'))';
@@ -297,6 +311,6 @@ class custom_view extends \core_question\local\bank\view {
         $sql .= '   AND q.qtype IN (\'multichoice\', \'multichoiceset\', \'description\') ';
         $this->countsql = 'SELECT count(1)' . $sql;
         $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
-    }
+        }
 
 }

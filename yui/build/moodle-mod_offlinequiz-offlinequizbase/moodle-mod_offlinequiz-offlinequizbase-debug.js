@@ -157,7 +157,8 @@ M.mod_offlinequiz.edit.get_section_selector = function() {
     if (config.section_node && config.section_class) {
         return config.section_node + '.' + config.section_class;
     }
-    Y.log('section_node and section_class are not defined in M.mod_offlinequiz.edit.get_config', 'warn', 'moodle-mod_offlinequiz-offlinequizbase');
+    Y.log('section_node and section_class are not defined in M.mod_offlinequiz.edit.get_config',
+            'warn', 'moodle-mod_offlinequiz-offlinequizbase');
     return null;
 };
 
@@ -187,7 +188,8 @@ M.mod_offlinequiz.edit.get_containernode = function() {
     if (config.container_node) {
         return config.container_node;
     } else {
-        Y.log('container_node is not defined in M.mod_offlinequiz.edit.get_config', 'warn', 'moodle-mod_offlinequiz-offlinequizbase');
+        Y.log('container_node is not defined in M.mod_offlinequiz.edit.get_config',
+                'warn', 'moodle-mod_offlinequiz-offlinequizbase');
     }
 };
 
@@ -201,7 +203,8 @@ M.mod_offlinequiz.edit.get_containerclass = function() {
     if (config.container_class) {
         return config.container_class;
     } else {
-        Y.log('container_class is not defined in M.mod_offlinequiz.edit.get_config', 'warn', 'moodle-mod_offlinequiz-offlinequizbase');
+        Y.log('container_class is not defined in M.mod_offlinequiz.edit.get_config',
+                'warn', 'moodle-mod_offlinequiz-offlinequizbase');
     }
 };
 
@@ -243,7 +246,8 @@ M.mod_offlinequiz.edit.get_sectionnode = function() {
     if (config.section_node) {
         return config.section_node;
     } else {
-        Y.log('section_node is not defined in M.mod_offlinequiz.edit.get_config', 'warn', 'moodle-mod_offlinequiz-offlinequizbase');
+        Y.log('section_node is not defined in M.mod_offlinequiz.edit.get_config',
+                 'warn', 'moodle-mod_offlinequiz-offlinequizbase');
     }
 };
 
@@ -257,7 +261,8 @@ M.mod_offlinequiz.edit.get_sectionclass = function() {
     if (config.section_class) {
         return config.section_class;
     } else {
-        Y.log('section_class is not defined in M.mod_offlinequiz.edit.get_config', 'warn', 'moodle-mod_offlinequiz-offlinequizbase');
+        Y.log('section_class is not defined in M.mod_offlinequiz.edit.get_config',
+                'warn', 'moodle-mod_offlinequiz-offlinequizbase');
     }
 };
 

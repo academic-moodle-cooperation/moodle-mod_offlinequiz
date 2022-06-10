@@ -137,7 +137,7 @@ Y.extend(POPUP, Y.Base, {
             });
         }
 
-        Y.use('moodle-question-chooser', function() {M.question.init_chooser({});});
+        Y.use('moodle-qbank_editquestion-chooser', function() {M.question.init_chooser({});});
         this.dialogue.bodyNode.one('form').delegate('change', this.options_changed, '.searchoptions', this);
         if (this.dialogue.visible) {
             Y.later(0, this.dialogue, this.dialogue.centerDialogue);
