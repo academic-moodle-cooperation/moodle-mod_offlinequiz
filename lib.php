@@ -600,6 +600,8 @@ function offlinequiz_supports($feature) {
             return true;
         case FEATURE_MOD_INTRO:
             return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_ASSESSMENT;
         case FEATURE_SHOW_DESCRIPTION:
             return true;
         case FEATURE_USES_QUESTIONS:
