@@ -56,8 +56,10 @@ $offlinequizconfig = get_config('offlinequiz');
 
 $usernumber = substr($USER->{$offlinequizconfig->ID_field}, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
 
-if (strlen($usernumber) < $offlinequizconfig->ID_digits || !intval($usernumber)) {
+if ( !intval($usernumber)) {
     $usernumber = substr('0000000000000000000', 0, $offlinequizconfig->ID_digits);
+} else {
+    $usernumber = str_pad($usernumber, $offlinequizconfig->ID_digits, '0', STR_PAD_LEFT);
 }
 
 for ($i = 0; $i < strlen($usernumber); $i++) {
