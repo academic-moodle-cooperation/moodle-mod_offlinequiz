@@ -62,8 +62,8 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
             array_shift($blocks);
         }
 
-        $section->addListItem(htmlspecialchars(html_entity_decode($itemstring)), $depth, $style, 'questionnumbering');
-
+        $listItemRun = $section->addListItemRun($depth, 'questionnumbering');
+        $listItemRun->addText(htmlspecialchars(html_entity_decode($itemstring)), $style);
         // We also skip the first sequential newline because we got a newline with addListItem.
         if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
             array_shift($blocks);
@@ -75,8 +75,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
         if (empty($numbering)) {
             $textrun = $section->createTextRun();
         } else {
-            $textrun = $section->createTextRun('questionTab');
-            $textrun->addText("\t", 'nStyle');
+            $textrun = $listItemRun;
         }
         $counter = count($blocks);
         foreach ($blocks as $block) {
