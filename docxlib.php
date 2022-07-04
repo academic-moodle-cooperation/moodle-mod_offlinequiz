@@ -143,6 +143,7 @@ function offlinequiz_convert_underline_text_docx($text) {
 
     // Now add the remaining text after the image tag.
     $parts = preg_split('/<span style="text-decoration: underline;">|<u>/i', $text);
+    $span_u = preg_match('<span style="text-decoration: underline;">', $text); // Is it the span-underline?
     $result = array();
 
     $firstpart = array_shift($parts);
@@ -152,7 +153,7 @@ function offlinequiz_convert_underline_text_docx($text) {
     }
 
     foreach ($parts as $part) {
-        if ($closetagpos = strpos($part, '</span>')) {
+        if ($span_u && $closetagpos = strpos($part, '</span>')) {
             $underlineremain = substr($part, $closetagpos + 7);
         } else if ($closetagpos = strpos($part, '</u>')) {
             $underlineremain = substr($part, $closetagpos + 4);
@@ -164,7 +165,7 @@ function offlinequiz_convert_underline_text_docx($text) {
 
         $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $underlinetext), 'style' => 'uStyle');
         if (!empty($underlineremain)) {
-            $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $underlineremain));
+            $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, strip_tags($underlineremain)));
         }
     }
     return $result;
@@ -254,7 +255,7 @@ function offlinequiz_convert_italic_text_docx($text) {
         if ($closetagpos = strpos($part, '</em>')) {
             $italicremain = substr($part, $closetagpos + 5);
         } else if ($closetagpos = strpos($part, '</i>')) {
-            $italicremain = substr($part, $closetagpos + 9);
+            $italicremain = substr($part, $closetagpos + 4);
         } else {
             $closetagpos = strlen($part) - 1;
             $italicremain = '';
