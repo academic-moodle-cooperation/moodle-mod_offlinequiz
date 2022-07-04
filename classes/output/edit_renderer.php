@@ -1035,7 +1035,7 @@ class edit_renderer extends \plugin_renderer_base {
     public function question_name(structure $structure, $question, $pageurl) {
         $output = '';
 
-        $editurl = new \moodle_url('/question/question.php', array(
+        $editurl = new \moodle_url('/question/bank/editquestion/question.php', array(
                 'returnurl' => $pageurl->out_as_local_url(),
                 'cmid' => $structure->get_cmid(), 'id' => $question->id));
 
@@ -1071,7 +1071,7 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function random_question(structure $structure, $question, $pageurl) {
 
-        $editurl = new \moodle_url('/question/question.php', array(
+        $editurl = new \moodle_url('/question/bank/editquestion/question.php', array(
                 'returnurl' => $pageurl->out_as_local_url(),
                 'cmid' => $structure->get_cmid(), 'id' => $question->id));
 
