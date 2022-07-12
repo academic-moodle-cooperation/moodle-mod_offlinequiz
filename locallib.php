@@ -2258,7 +2258,9 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
 
     $sql = "SELECT id
               FROM {question} q
-             WHERE q.category $qcsql
+              JOIN {question_versions} qv ON qv.questionid = q.id
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+             WHERE qbe.questioncategoryid $qcsql
                AND q.parent = 0
                AND q.hidden = 0
                AND q.qtype IN ('multichoice', 'multichoiceset') ";
