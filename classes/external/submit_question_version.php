@@ -72,10 +72,10 @@ class submit_question_version extends external_api {
         // Get the required data.
         $referencedata = $DB->get_record('question_references',
             ['itemid' => $params['slotid'], 'component' => 'mod_offlinequiz', 'questionarea' => 'slot']);
-        $slotdata = $DB->get_record('offlinequiz_slots', ['id' => $slotid]);
+        $slotdata = $DB->get_record('offlinequiz_group_questions', ['id' => $slotid]);
 
         // Capability check.
-        list($course, $cm) = get_course_and_cm_from_instance($slotdata->quizid, 'offlinequiz');
+        list($course, $cm) = get_course_and_cm_from_instance($slotdata->offlinequizid, 'offlinequiz');
         $context = \context_module::instance($cm->id);
         self::validate_context($context);
         require_capability('mod/offlinequiz:manage', $context);
@@ -88,6 +88,19 @@ class submit_question_version extends external_api {
             $reference->version = $params['newversion'];
         }
         $response['result'] = $DB->update_record('question_references', $reference);
+
+        $newdata = new stdClass();
+        $newdata->id = $slotdata->id;
+
+        $questionbankentryid = $DB->get_field('question_versions', 'questionbankentryid', ['questionid' => $slotdata->questionid]);
+        if ($params['newversion'] === 0) {
+            $newdata->questionid = $DB->get_field_sql("SELECT MAX(questionid) FROM {question_versions} WHERE ? ", ['questionbankentryid' => $questionbankentryid]); 
+        } else {
+            $newdata->questionid = $DB->get_field('question_versions', 'questionid', ['questionbankentryid' => $questionbankentryid, 'version' => $newversion]);
+        }
+
+        $DB->update_record('offlinequiz_group_questions', $newdata);
+
         return $response;
     }
 

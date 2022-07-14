@@ -408,12 +408,14 @@ class structure {
 
         $slots = $DB->get_records_sql("
                 SELECT slot.id AS slotid, slot.slot, slot.questionid, slot.page, slot.maxmark,
-                       q.*, qc.contextid
+                       q.*, qc.contextid, qr.version AS requestedversion
                   FROM {offlinequiz_group_questions} slot
                   LEFT JOIN {question} q ON q.id = slot.questionid
                   LEFT JOIN {question_versions} qv ON q.id = qv.questionid
                   LEFT JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                   LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                  LEFT JOIN {question_references} qr ON qr.questionbankentryid = qbe.id AND qr.component = 'mod_offlinequiz'
+                    AND qr.questionarea = 'slot' AND qr.itemid = slot.id
                  WHERE slot.offlinequizid = ?
                    AND slot.offlinegroupid = ?
               ORDER BY slot.slot", array($offlinequiz->id, $offlinequiz->groupid));
@@ -434,6 +436,7 @@ class structure {
             $slot->page = $slotdata->page;
             $slot->questionid = $slotdata->questionid;
             $slot->maxmark = $slotdata->maxmark;
+            $slot->requestedversion = $slotdata->requestedversion;
 
             $this->slots[$slot->id] = $slot;
             $this->slotsinorder[$slot->slot] = $slot;
@@ -677,6 +680,21 @@ class structure {
         }
 
         $trans = $DB->start_delegated_transaction();
+
+        // Delete the reference if its a question.
+        $questionreference = $DB->get_record('question_references',
+                ['component' => 'mod_offlinequiz', 'questionarea' => 'slot', 'itemid' => $slot->id]);
+        if ($questionreference) {
+            $DB->delete_records('question_references', ['id' => $questionreference->id]);
+        }
+        // Delete the set reference if its a random question.
+        $questionsetreference = $DB->get_record('question_set_references',
+                ['component' => 'mod_offlinequiz', 'questionarea' => 'slot', 'itemid' => $slot->id]);
+        if ($questionsetreference) {
+            $DB->delete_records('question_set_references',
+                ['id' => $questionsetreference->id, 'component' => 'mod_offlinequiz', 'questionarea' => 'slot']);
+        }
+
         $DB->delete_records('offlinequiz_group_questions', array('id' => $slot->id));
         for ($i = $slot->slot + 1; $i <= $maxslot; $i++) {
             $DB->set_field('offlinequiz_group_questions', 'slot', $i - 1,
@@ -842,7 +860,6 @@ class structure {
      */
     public function get_version_choices_for_slot(int $slotnumber): array {
         $slot = $this->get_slot_by_number($slotnumber);
-        $slot-> requestedversion = null; // Hack!
 
         // Get all the versions which exist.
         $versions = qbank_helper::get_version_options($slot->questionid);

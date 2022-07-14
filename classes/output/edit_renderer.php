@@ -821,7 +821,7 @@ class edit_renderer extends \plugin_renderer_base {
         }
 
         $data = [
-            'slotid' => $slotid, // muss ich noch was für finden
+            'slotid' => $slotid,
             'canbeedited' => $structure->can_be_edited(),
             'checkbox' => $this->question_checkbox($question),
             'questionnumber' =>$this->question_number($question->displayednumber),
@@ -983,7 +983,7 @@ class edit_renderer extends \plugin_renderer_base {
      * Display an icon to split or join two pages of the offlinequiz.
      *
      * @param \stdClass $offlinequiz the offlinequiz settings from the database.
-     * @param \stdClass $slot slot number.
+     * @param int $slot slot number.
      * @param bool $insertpagebreak if true, show an insert page break icon.
      *      else show a join pages icon.
      * @return string HTML to output.
@@ -993,7 +993,7 @@ class edit_renderer extends \plugin_renderer_base {
                 array('cmid' => $offlinequiz->cmid,
                       'offlinequizid' => $offlinequiz->id,
                       'offlinegroupid' => $offlinequiz->groupid,
-                      'slot' => $slot->slot,
+                      'slot' => $slot,
                       'repag' => $insertpagebreak ? 2 : 1,
                       'sesskey' => sesskey()));
 
@@ -1346,7 +1346,7 @@ class edit_renderer extends \plugin_renderer_base {
         }
 
         $question = $structure->get_question_in_slot(1);
-        $html = $this->page_split_join_button($offlinequiz, $question, true);
+        $html = $this->page_split_join_button($offlinequiz, $question->slot, true);
         return str_replace('&amp;slot=1&amp;', '&amp;slot=%%SLOT%%&amp;', $html);
     }
 
