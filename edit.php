@@ -63,6 +63,12 @@ if (array_key_exists('offlinequizdeleteselected', $_POST) && $_POST['offlinequiz
 list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
    question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
 
+$course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);
+
+require_login($course, false, $cm);
+// You need mod/offlinequiz:manage in addition to question capabilities to access this page.
+require_capability('mod/offlinequiz:manage', $contexts->lowest());
+
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
@@ -104,17 +110,39 @@ $docscreated = $offlinequiz->docscreated;
 
 $PAGE->set_url($thispageurl);
 
+// update database before get_structure
+if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
+    $questionupdate = $DB->get_record_sql('SELECT qv.version, qr.id, qr.itemid FROM {question_versions} qv JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid WHERE qv.questionid = ?', [$newquestionid]);
+
+    if ($questionupdate && !$docscreated) {
+        $updategroupquestion = new stdClass();
+        $updategroupquestion->id = $questionupdate->itemid;
+        $updategroupquestion->questionid = $newquestionid;
+
+        $DB->update_record('offlinequiz_group_questions', $updategroupquestion);
+
+        $updatereference = new stdClass();
+        $updatereference->id = $questionupdate->id;
+        $updatereference->version = $questionupdate->version;
+
+        $DB->update_record('question_references', $updatereference);
+    } else {
+        $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
+    }
+}
+
 // Get the course object and related bits.
-$course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);
 $offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
 $structure = $offlinequizobj->get_structure();
 
 if ($warning = optional_param('warning', '', PARAM_TEXT)) {
     $structure->add_warning(urldecode($warning));
 }
-require_login($course, false, $cm);
-// You need mod/offlinequiz:manage in addition to question capabilities to access this page.
-require_capability('mod/offlinequiz:manage', $contexts->lowest());
+
+if ($recordupdateanddocscreated) {
+    $structure->add_warning($recordupdateanddocscreated);
+}
+
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 // Log this visit.
@@ -155,7 +183,6 @@ foreach ($params as $key => $value) {
 
 if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
         !empty($selectedquestionids) && confirm_sesskey()) {
-
     offlinequiz_remove_questionlist($offlinequiz, $selectedquestionids);
     offlinequiz_delete_template_usages($offlinequiz);
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
@@ -166,7 +193,7 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     // Re-paginate the offlinequiz.
     $structure->check_can_be_edited();
     $questionsperpage = optional_param('questionsperpage', $offlinequiz->questionsperpage, PARAM_INT);
-    offlinequiz_repaginate_questions($offlinequiz->id, $offlinequiz->groupid, $questionsperpage );
+    offlinequiz_repaginate_questions($offlinequiz->id, $offlinequiz->groupid, $questionsperpage);
     offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
@@ -177,9 +204,12 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     offlinequiz_require_question_use($addquestion);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     // If the question is already in another group, take the maxmark of that.
-    if ($maxmarks = $DB->get_fieldset_select('offlinequiz_group_questions', 'maxmark',
-            'offlinequizid = :offlinequizid AND questionid = :questionid',
-            array('offlinequizid' => $offlinequiz->id, 'questionid' => $addquestion))) {
+    if ($maxmarks = $DB->get_fieldset_select(
+        'offlinequiz_group_questions',
+        'maxmark',
+        'offlinequizid = :offlinequizid AND questionid = :questionid',
+        array('offlinequizid' => $offlinequiz->id, 'questionid' => $addquestion)
+    )) {
         offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage, $maxmarks[0]);
     } else {
         offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage);
@@ -200,9 +230,12 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             $key = $matches[1];
             offlinequiz_require_question_use($key);
             // If the question is already in another group, take the maxmark of that.
-            if ($maxmarks = $DB->get_fieldset_select('offlinequiz_group_questions', 'maxmark',
-                    'offlinequizid = :offlinequizid AND questionid = :questionid',
-                    array('offlinequizid' => $offlinequiz->id, 'questionid' => $key))) {
+            if ($maxmarks = $DB->get_fieldset_select(
+                'offlinequiz_group_questions',
+                'maxmark',
+                'offlinequizid = :offlinequizid AND questionid = :questionid',
+                array('offlinequizid' => $offlinequiz->id, 'questionid' => $key)
+            )) {
                 offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage, $maxmarks[0]);
             } else {
                 offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage);
@@ -236,7 +269,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     $copyselectedtogroup = optional_param('copyselectedtogrouptop', 0, PARAM_INT);
 
     if ($copyselectedtogroup) {
-
         if (($selectedquestionids) && ($newgroup = offlinequiz_get_group($offlinequiz, $copyselectedtogroup))) {
             $fromofflinegroup = optional_param('fromofflinegroup', 0, PARAM_INT);
 
@@ -251,7 +283,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     // If rescaling is required save the new maximum.
     $maxgrade = str_replace(',', '.', optional_param('maxgrade', -1, PARAM_RAW));
-    if (!is_numeric( $maxgrade)) {
+    if (!is_numeric($maxgrade)) {
         $afteractionurl->param('warning', urlencode(get_string('maxgradewarning', 'offlinequiz')));
     } else {
         $maxgrade = unformat_float($maxgrade);
@@ -282,8 +314,14 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
     }
 
     // Redmine 983: Upgrade sumgrades for all offlinequiz groups.
-    if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber',
-            '*', 0, $offlinequiz->numgroups)) {
+    if ($groups = $DB->get_records(
+        'offlinequiz_groups',
+        array('offlinequizid' => $offlinequiz->id),
+        'groupnumber',
+        '*',
+        0,
+        $offlinequiz->numgroups
+    )) {
         foreach ($groups as $group) {
             $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
         }
