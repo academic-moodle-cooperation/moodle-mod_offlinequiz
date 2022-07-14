@@ -865,6 +865,10 @@ class structure {
         $versions = qbank_helper::get_version_options($slot->questionid);
         $latestversion = reset($versions);
 
+        if ($slot->requestedversion === null) {
+            $slot->requestedversion = $latestversion->version;
+        }
+
         // Format the choices for display.
         $versionoptions = [];
         foreach ($versions as $version) {
@@ -878,14 +882,6 @@ class structure {
 
             $versionoptions[] = $version;
         }
-
-        // Make a choice for 'Always latest'.
-        $alwaysuselatest = new \stdClass();
-        $alwaysuselatest->versionid = 0;
-        $alwaysuselatest->version = 0;
-        $alwaysuselatest->versionvalue = get_string('alwayslatest', 'quiz');
-        $alwaysuselatest->selected = $slot->requestedversion === null;
-        array_unshift($versionoptions, $alwaysuselatest);
 
         return $versionoptions;
     }
