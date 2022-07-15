@@ -224,6 +224,12 @@ if($upload['status'] == 'done') {
 } else {
     $upload['collapsestatus'] = 'open';
 }
+if($upload['status'] == 'done') {
+    $upload['collapsestatus'] = 'collapsed';
+} else {
+    $upload['collapsestatus'] = 'open';
+}
+$url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'rimport', 'q' => $offlinequiz->id]);
 
 $upload[$upload['status']] = true;
 

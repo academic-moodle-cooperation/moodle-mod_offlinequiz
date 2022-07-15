@@ -1,4 +1,4 @@
-<?PHP
+ <?PHP
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -7,7 +7,7 @@
 // (at your option) any later version.
 //
 // Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// but WITHOUT ANY WARRANTYe; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
@@ -875,6 +875,7 @@ $string['usernotincourse'] = 'User {$a} not in course.';
 $string['userpageimported'] = 'Single page imported for user {$a}';
 $string['usernotinlist'] = 'User not registered in list!';
 $string['usernotregistered'] = 'User {$a} not registered in course';
+$string['userswithoutresult'] = 'Amount of users without result: ';
 $string['valuezero'] = 'Value should not be zero';
 $string['viewresults'] = 'View results';
 $string['white'] = 'White';
