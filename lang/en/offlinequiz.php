@@ -1,4 +1,4 @@
-<?PHP
+ <?PHP
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -7,7 +7,7 @@
 // (at your option) any later version.
 //
 // Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// but WITHOUT ANY WARRANTYe; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
@@ -105,6 +105,7 @@ $string['copy'] = 'Copy';
 $string['correct'] = 'correct';
 $string['correcterror'] = 'solve';
 $string['correctforgroup'] = 'Correct answers for Group {$a}';
+$string['correctionerrors'] = 'Forms with correction errors: ';
 $string['correctionform'] = 'Correction';
 $string['correctionforms'] = 'Correction forms';
 $string['correctionoptionsheading'] = 'Correction options';
@@ -157,9 +158,11 @@ $string['downloadpdfs'] = 'Download documents';
 $string['downloadresultsas'] = 'Download results as: ';
 $string['dragtoafter'] = 'After {$a}';
 $string['dragtostart'] = 'To the start';
+$string['editingofflinequizx'] = 'Edit offline quiz: {$a}';
 $string['editlist'] = 'Edit list';
-$string['editthislist'] = 'Edit this list';
 $string['editlists'] = 'Edit lists';
+$string['editgrades'] = 'Edit grades';
+$string['editgradeslistitem'] = '{$a} total of marks';
 $string['editgroups'] = 'Edit Offline Groups';
 $string['editgroupquestions'] = 'Edit group questions';
 $string['editingofflinequiz'] = 'Editing group questions';
@@ -167,17 +170,19 @@ $string['editingofflinequiz_help'] = 'When creating an offline quiz, the main co
 <ul><li> The offline quiz, containing questions over one or more pages</li>
 <li> The question bank, which stores copies of all questions organised into categories</li></ul>';
 $string['editofflinequiz'] = 'Edit offline quiz';
-$string['editingofflinequizx'] = 'Edit offline quiz: {$a}';
 $string['editmaxmark'] = 'Edit maximum mark';
 $string['editorder'] = 'Edit order';
 $string['editparticipants'] = 'Edit participants';
 $string['editquestion'] = 'Edit question';
+$string['editquestionlistitem'] = '{$a} questions added';
 $string['editquestions'] = 'Edit questions';
 $string['editscannedform'] = 'Edit scanned form';
+$string['editthislist'] = 'Edit this list';
 $string['emptygroups'] = 'Some offline quiz groups are empty. Please add some questions.';
 $string['enroluser'] = 'Enrol user';
 $string['erroraccessingreport'] = 'You are not allowed to view this report.';
 $string['errorreport'] = 'Report of import errors';
+$string['evaluation'] = 'Evaluation';
 $string['eventattemptdeleted'] = 'Offline quiz attempt deleted';
 $string['eventattemptpreviewstarted'] = 'Offline quiz attempt preview started';
 $string['eventattemptreviewed'] = 'Offline quiz attempt reviewed';
@@ -349,6 +354,7 @@ $string['noresults'] = 'There are no results.';
 $string['noreview'] = 'You are not allowed to review this offline quiz';
 $string['notagselected'] = 'No tag selected';
 $string['nothingtodo'] = 'Nothing to do!';
+$string['notonattendancelist'] = 'Not on attendance list:';
 $string['notxtfile'] = 'No TXT file';
 $string['notyetgraded'] = 'Not yet graded';
 $string['nozipfile'] = 'No ZIP file';
@@ -441,6 +447,7 @@ $string['pdfintrotoolarge'] = 'The introduction is too long (max. 2000 character
 $string['pearlywhite'] = 'Pearly white';
 $string['pluginadministration'] = 'Offline quiz administration';
 $string['point'] = 'point';
+$string['preparation'] = 'Preparation for test';
 $string['present'] = 'present';
 $string['preventsamequestion'] = 'Prevent multiple usage of the same question in different groups';
 $string['previewforgroup'] = 'Preview for group {$a}';
@@ -567,6 +574,7 @@ $string['privacy:metadata:offlinequiz_scanned_p_pages:error'] = 'The error (if e
 $string['privacy:metadata:offlinequiz_scanned_p_pages'] = 'This table saves participant pages and their general information.';
 $string['questionanalysis'] = 'Difficulty analysis';
 $string['questionanalysistitle'] = 'Difficulty Analysis Table';
+$string['questionandansweranalysis'] = 'Question and Answer Analysis';
 $string['questionbankcontents'] = 'Question bank contents';
 $string['questionforms'] = 'Question forms';
 $string['questioninfoanswers'] = 'Number of correct answers';
@@ -855,6 +863,7 @@ $string['usernotincourse'] = 'User {$a} not in course.';
 $string['userpageimported'] = 'Single page imported for user {$a}';
 $string['usernotinlist'] = 'User not registered in list!';
 $string['usernotregistered'] = 'User {$a} not registered in course';
+$string['userswithoutresult'] = 'Amount of users without result: ';
 $string['valuezero'] = 'Value should not be zero';
 $string['viewresults'] = 'View results';
 $string['white'] = 'White';
