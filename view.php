@@ -336,7 +336,6 @@ $editlistsdata = [];
 $editlistsdata['attendancelists'] = [];
 foreach($status['attendancelists'] as $list) {
     $listobject = [];
-    print_object($list);
     $url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'editparticipants', 'action' => 'edit', 'q' => $offlinequiz->id, 'listid' => $list->id]);
     $listobject['link'] = $url->out(false);
     $listobject['name'] = $list->name;
