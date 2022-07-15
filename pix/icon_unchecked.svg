@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="24px" height="24px" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1.95596 1.95596"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil1 {fill:none}
+    .fil0 {fill:#F7A604}
+   ]]>
+  </style>
+   <clipPath id="id0">
+    <path d="M-0 0l1.95596 0 0 1.95596 -1.95596 0 0 -1.95596z"/>
+   </clipPath>
+ </defs>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g>
+  </g>
+  <g style="clip-path:url(#id0)">
+   <g>
+    <path class="fil0" d="M0.977978 0.0210324c0.528415,0 0.956942,0.428531 0.956942,0.956946 0,0.528411 -0.428527,0.956942 -0.956942,0.956942 -0.528415,0 -0.956942,-0.428531 -0.956942,-0.956942 0,-0.528415 0.428527,-0.956946 0.956942,-0.956946zm0 0.233692c0.399374,0 0.72325,0.32388 0.72325,0.723254 0,0.399371 -0.323876,0.72325 -0.72325,0.72325 -0.399374,0 -0.72325,-0.32388 -0.72325,-0.72325 0,-0.399374 0.323876,-0.723254 0.72325,-0.723254z"/>
+   </g>
+  </g>
+  <polygon class="fil1" points="-0,0 1.95596,0 1.95596,1.95596 -0,1.95596 "/>
+ </g>
+</svg>
