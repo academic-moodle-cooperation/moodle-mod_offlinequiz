@@ -107,27 +107,36 @@ $offlinequiz->sumgrades = $offlinequizgroup->sumgrades;
 
 $offlinequizhasattempts = offlinequiz_has_scanned_pages($offlinequiz->id);
 $docscreated = $offlinequiz->docscreated;
+$recordupdateanddocscreated = null;
 
 $PAGE->set_url($thispageurl);
 
-// update database before get_structure
+// update version references before get_structure()
 if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
     $questionupdate = $DB->get_record_sql('SELECT qv.version, qr.id, qr.itemid FROM {question_versions} qv JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid WHERE qv.questionid = ?', [$newquestionid]);
 
-    if ($questionupdate && !$docscreated) {
-        $updategroupquestion = new stdClass();
-        $updategroupquestion->id = $questionupdate->itemid;
-        $updategroupquestion->questionid = $newquestionid;
+    if ($questionupdate) {
+        if (!$docscreated) {
+            $updategroupquestion = new stdClass();
+            $updategroupquestion->id = $questionupdate->itemid;
+            $updategroupquestion->questionid = $newquestionid;
 
-        $DB->update_record('offlinequiz_group_questions', $updategroupquestion);
+            $DB->update_record('offlinequiz_group_questions', $updategroupquestion);
 
-        $updatereference = new stdClass();
-        $updatereference->id = $questionupdate->id;
-        $updatereference->version = $questionupdate->version;
+            $updatereference = new stdClass();
+            $updatereference->id = $questionupdate->id;
+            $updatereference->version = $questionupdate->version;
 
-        $DB->update_record('question_references', $updatereference);
-    } else {
-        $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
+            $DB->update_record('question_references', $updatereference);
+        } else {
+            $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
+
+            $updatereference = new stdClass();
+            $updatereference->id = $questionupdate->id;
+            $updatereference->version = $questionupdate->version - 1;
+
+            $DB->update_record('question_references', $updatereference);
+        }
     }
 }
 

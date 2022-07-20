@@ -833,7 +833,7 @@ class edit_renderer extends \plugin_renderer_base {
         ];
 
         $data['versionoptions'] = [];
-        if ($structure->get_question_in_slot($slot)->qtype !== 'random') {
+        if ($structure->get_question_in_slot($slot)->qtype !== 'random' && $structure->can_be_edited()) {
             $data['versionselection'] = true;
             $data['versionoption'] = $structure->get_version_choices_for_slot($slot);
             $this->page->requires->js_call_amd('mod_offlinequiz/question_slot', 'init', [$slotid]);
