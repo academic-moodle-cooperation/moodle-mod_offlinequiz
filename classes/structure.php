@@ -687,13 +687,6 @@ class structure {
         if ($questionreference) {
             $DB->delete_records('question_references', ['id' => $questionreference->id]);
         }
-        // Delete the set reference if its a random question.
-        $questionsetreference = $DB->get_record('question_set_references',
-                ['component' => 'mod_offlinequiz', 'questionarea' => 'slot', 'itemid' => $slot->id]);
-        if ($questionsetreference) {
-            $DB->delete_records('question_set_references',
-                ['id' => $questionsetreference->id, 'component' => 'mod_offlinequiz', 'questionarea' => 'slot']);
-        }
 
         $DB->delete_records('offlinequiz_group_questions', array('id' => $slot->id));
         for ($i = $slot->slot + 1; $i <= $maxslot; $i++) {
