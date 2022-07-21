@@ -49,8 +49,7 @@ class submit_question_version extends external_api {
         return new external_function_parameters (
             [
                 'slotid' => new external_value(PARAM_INT, ''),
-                'newversion' => new external_value(PARAM_INT, ''),
-                'canbeedited' => new external_value(PARAM_BOOL, '')
+                'newversion' => new external_value(PARAM_INT, '')
             ]
         );
     }
@@ -60,74 +59,35 @@ class submit_question_version extends external_api {
      *
      * @param int $slotid Slot id to display.
      * @param int $newversion the version to set. 0 means 'always latest'.
-     * @param bool $canbeedited Wheter the forms were already created
      * @return array
      */
-    public static function execute(int $slotid, int $newversion, bool $canbeedited): array {
+    public static function execute(int $slotid, int $newversion): array {
         global $DB;
         $params = [
             'slotid' => $slotid,
-            'newversion' => $newversion,
-            'canbeedited' => $canbeedited
+            'newversion' => $newversion
         ];
         $params = self::validate_parameters(self::execute_parameters(), $params);
         $response = ['result' => false];
         // Get the required data.
         $referencedata = $DB->get_record('question_references',
             ['itemid' => $params['slotid'], 'component' => 'mod_offlinequiz', 'questionarea' => 'slot']);
-        $slotdata = $DB->get_record('offlinequiz_group_questions', ['id' => $slotid]);
-        $questionbankentryid = $DB->get_field('question_versions',
-                                                'questionbankentryid',
-                                                ['questionid' => $slotdata->questionid]
-                                            );
+        $slotdata = $DB->get_record('offlinequiz_slots', ['id' => $slotid]);
 
         // Capability check.
-        list($course, $cm) = get_course_and_cm_from_instance($slotdata->offlinequizid, 'offlinequiz');
+        list($course, $cm) = get_course_and_cm_from_instance($slotdata->quizid, 'offlinequiz');
         $context = \context_module::instance($cm->id);
         self::validate_context($context);
         require_capability('mod/offlinequiz:manage', $context);
 
-        // Check, if a new version can be chosen if grading.
-        $oldquestionid = $slotdata->questionid;
-        if ($newversion === 0) {
-            $sql = "SELECT MAX(questionid) FROM {question_versions} WHERE ? ";
-            $newquestionid = $DB->get_field_sql($sql, ['questionbankentryid' => $questionbankentryid]);
+        $reference = new stdClass();
+        $reference->id = $referencedata->id;
+        if ($params['newversion'] === 0) {
+            $reference->version = null;
         } else {
-            $newquestionid = $DB->get_field('question_versions',
-                                            'questionid',
-                                            ['questionbankentryid' => $questionbankentryid, 'version' => $newversion]
-                                            );
+            $reference->version = $params['newversion'];
         }
-
-        $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
-        $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
-
-        if ($oldquestioncountanswers == $newquestioncountanswers) {
-            $response['answersdiffer'] = false;
-        } else {
-            $response['answersdiffer'] = true;
-        }
-
-        // The forms are either still not created or the number of answers matches, so a question can be updated ex-post.
-        if ($canbeedited || $oldquestioncountanswers == $newquestioncountanswers) {
-
-            $newdata = new stdClass();
-            $newdata->id = $slotdata->id;
-            $newdata->questionid = $newquestionid;
-            $response['result'] = $DB->update_record('offlinequiz_group_questions', $newdata);
-
-            $reference = new stdClass();
-            $reference->id = $referencedata->id;
-            if ($params['newversion'] === 0) {
-                $reference->version = null;
-            } else {
-                $reference->version = $params['newversion'];
-            }
-            if ($response['result']) {
-                $response['result'] = $DB->update_record('question_references', $reference);
-            }
-        }
-
+        $response['result'] = $DB->update_record('question_references', $reference);
         return $response;
     }
 
@@ -139,8 +99,7 @@ class submit_question_version extends external_api {
     public static function execute_returns() {
         return new external_single_structure(
             [
-                'result' => new external_value(PARAM_BOOL, ''),
-                'answersdiffer' => new external_value(PARAM_BOOL)
+                'result' => new external_value(PARAM_BOOL, '')
             ]
         );
     }
