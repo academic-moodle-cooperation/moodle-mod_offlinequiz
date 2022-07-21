@@ -1499,8 +1499,7 @@ function offlinequiz_delete_references($offlinequizid): void {
             'component' => 'mod_offlinequiz',
             'questionarea' => 'slot'
         ];
-        // Delete any set references.
-        $DB->delete_records('question_set_references', $params);
+
         // Delete any references.
         $DB->delete_records('question_references', $params);
     }

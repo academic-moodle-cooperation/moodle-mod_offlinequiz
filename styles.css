@@ -97,7 +97,6 @@ body.jsenabled .questionflagcheckbox {
     border: 1px solid #bbb;
     background: #ddd;
     text-align: center;
-    vertical-align: middle;
     line-height: 1.5em !important;
     font-weight: bold;
     text-decoration: none;
@@ -970,7 +969,7 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .question_checkbox {
     padding-left: 0.3em;
     padding-top: 0.2em;
-    display: none;
+    display: block;
 }
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .activityinstance {
@@ -1085,7 +1084,6 @@ input#showviewbutton {
 }
 #page-mod-offlinequiz-edit div.removeselected {
     display: inline-block;
-    float: right;
 }
 #page-mod-offlinequiz-edit div.removeselected input {
     margin-left: 0;

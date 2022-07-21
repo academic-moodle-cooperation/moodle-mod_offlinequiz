@@ -76,7 +76,6 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $paths[] = $groupquestion;
         if ($this->task->get_old_moduleversion() >= 2021091700) {
             $this->add_question_references($groupquestion, $paths);
-            $this->add_question_set_references($groupquestion, $paths);
         }
 
         // We only add the results if userinfo was activated.
