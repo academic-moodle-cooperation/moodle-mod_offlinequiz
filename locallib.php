@@ -165,16 +165,22 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm) {
     $tabs = ['tabeditgroupquestions' =>
          ['tab' => 'tabofflinequizcontent',
           'url'  => new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0])],
+     'tabeditgrades' =>
+         ['tab' => 'tabofflinequizcontent',
+          'url' => new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 1])],
      'tabpreview' =>
          ['tab' => 'tabofflinequizcontent',
-          'url' => new moodle_url('/mod/offlinequiz/navigate.php', ['tab' => 'tabforms', 'id' => $cm->id])],
-      'tabofflinequizupload' =>
-        ['tab' => 'tabresults',
-            'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport'])],
-        'tabofflinequizcorrect' =>
-        ['tab' => 'tabresults',
-            'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct'])],
-        'tabresultsoverview' =>
+          'url' => new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id])],
+     'tabdownloadquizforms' =>
+         ['tab' => 'tabofflinequizcontent',
+          'url' => new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs'])],
+     'tabofflinequizupload' =>
+         ['tab' => 'tabresults',
+          'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport'])],
+     'tabofflinequizcorrect' =>
+         ['tab' => 'tabresults',
+          'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct'])],
+     'tabresultsoverview' =>
          ['tab' => 'tabresults',
           'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview'])],
      'tabregrade' =>
@@ -654,7 +660,7 @@ function offlinequiz_repaginate_questions($offlinequizid, $offlinegroupid, $slot
  * @param boolean $shuffle Should the questions be reordered randomly?
  */
 function offlinequiz_shuffle_questions($questionids) {
-    srand((int)microtime() * 1000000); // For php < 4.2.
+    srand((float)microtime() * 1000000); // For php < 4.2.
     shuffle($questionids);
     return $questionids;
 }
@@ -1480,7 +1486,7 @@ function offlinequiz_question_preview_button($offlinequiz, $question, $label = f
     $image = $OUTPUT->pix_icon('t/preview', $strpreviewquestion);
 
     $action = new popup_action('click', $url, 'questionpreview',
-            \qbank_previewquestion\helper::question_preview_popup_params());
+            \qbank_previewquestion\previewquestion_helper::question_preview_popup_params());
 
     return $OUTPUT->action_link($url, $image, $action, array('title' => $strpreviewquestion));
 }
@@ -1500,7 +1506,7 @@ function offlinequiz_question_preview_url($offlinequiz, $question) {
     }
 
     // Work out the correct preview URL.
-    return \qbank_previewquestion\helper::question_preview_url($question->id, null,
+    return qbank_previewquestion\helper::question_preview_url($question->id, null,
             $maxmark, $displayoptions);
 }
 
@@ -1516,6 +1522,7 @@ function offlinequiz_question_preview_url($offlinequiz, $question) {
  */
 function offlinequiz_get_group_template_usage($offlinequiz, $group, $context) {
     global $CFG, $DB;
+
     if (!empty($group->templateusageid) && $group->templateusageid > 0) {
         $templateusage = question_engine::load_questions_usage_by_activity($group->templateusageid);
     } else {
@@ -1665,7 +1672,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
             $context->id, 'offlinequiz');
 
     // Remove leading paragraph tags because the cause a line break after the question number.
-    $text = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', $text);
+    $text = preg_replace('!^<p>!i', '', $text);
 
     // Filter only for tex formulas.
     $texfilter = null;
@@ -1705,10 +1712,11 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
 
         foreach ($choiceorder as $key => $answer) {
             $answertext = $question->options->answers[$answer]->answer;
+
             // Remove all HTML comments (typically from MS Office).
             $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
             // Remove all paragraph tags because they mess up the layout.
-            $answertext = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', $answertext);
+            $answertext = preg_replace( '/&lt;p&gt;(.+)<\/p>/Uuis', '$1', $answertext );
             // Rewrite image URLs.
             $answertext = question_rewrite_question_preview_urls($answertext, $question->id,
             $question->contextid, 'question', 'answer', $question->options->answers[$answer]->id,
@@ -2290,32 +2298,26 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
 
     list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
 
-    $sql = "SELECT q.id
+    $sql = "SELECT id
               FROM {question} q
               JOIN {question_versions} qv ON qv.questionid = q.id
               JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
              WHERE qbe.questioncategoryid $qcsql
                AND q.parent = 0
-               AND qv.status = 'ready'
-               AND q.qtype IN ('multichoice', 'multichoiceset') 
-               AND NOT EXISTS (SELECT 1
-                                 FROM {question_versions} qv2
-                                 WHERE qv2.questionbankentryid = qv.questionbankentryid
-                                   AND qv.version < qv2.version) ";
+               AND q.hidden = 0
+               AND q.qtype IN ('multichoice', 'multichoiceset') ";
     if (!$preventsamequestion) {
         // Find all questions in the selected categories that are not in the offline group yet.
         $sql .= "AND NOT EXISTS (SELECT 1
                                    FROM {offlinequiz_group_questions} ogq
-                                   JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
-                                  WHERE qv3.questionbankentryid = qv.questionbankentryid
+                                  WHERE ogq.questionid = q.id
                                     AND ogq.offlinequizid = :offlinequizid
                                     AND ogq.offlinegroupid = :offlinegroupid)";
     } else {
         // Find all questions in the selected categories that are not in the offline test yet.
         $sql .= "AND NOT EXISTS (SELECT 1
                                    FROM {offlinequiz_group_questions} ogq
-                                   JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
-                                  WHERE qv3.questionbankentryid = qv.questionbankentryid
+                                  WHERE ogq.questionid = q.id
                                     AND ogq.offlinequizid = :offlinequizid)";
     }
     $qcparams['offlinequizid'] = $offlinequiz->id;
