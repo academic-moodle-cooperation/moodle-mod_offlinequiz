@@ -167,10 +167,10 @@ if ($mode == 'preview') {
         if ($offlinequiz->shufflequestions and $offlinequiz->shuffleanswers) {
             echo $OUTPUT->single_button($buttonurl, get_string('shufflequestionsanswers', 'offlinequiz').' / ' .
                     get_string('reloadquestionlist', 'offlinequiz'), 'post');
-        } elseif ($offlinequiz->shufflequestions) {
+        } else if ($offlinequiz->shufflequestions) {
             echo $OUTPUT->single_button($buttonurl, get_string('shufflequestions', 'offlinequiz').' / ' .
                     get_string('reloadquestionlist', 'offlinequiz'), 'post');
-        } elseif ($offlinequiz->shuffleanswers) {
+        } else if ($offlinequiz->shuffleanswers) {
             echo $OUTPUT->single_button($buttonurl, get_string('shuffleanswers', 'offlinequiz').' / ' .
                     get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else {
@@ -182,7 +182,7 @@ if ($mode == 'preview') {
             get_string('createpdfforms', 'offlinequiz'),
             'get'
         );
-            
+
         echo '</div>';
 
         echo $OUTPUT->box_end();
@@ -225,8 +225,6 @@ if ($mode == 'preview') {
               JOIN {question_versions} qv ON q.id = qv.questionid
               JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
               JOIN {question_categories} c ON qbe.questioncategoryid = c.id
-              JOIN {question_references} qr ON qr.questionbankentryid = qbe.id AND qr.component = 'mod_offlinequiz'
-                AND qr.questionarea = 'slot' AND qr.itemid = ogq.id
               WHERE ogq.offlinequizid = :offlinequizid
                 AND ogq.offlinegroupid = :offlinegroupid
               ORDER BY ogq.slot ASC ";
@@ -311,7 +309,7 @@ if ($mode == 'preview') {
     // O==============================================================.
     // O TAB for creating, downloading and deleting PDF forms.
     // O==============================================================.
-} elseif ($mode == 'createpdfs') {
+} else if ($mode == 'createpdfs') {
     offlinequiz_print_tabs($offlinequiz, 'tabdownloadquizforms', $cm);
     // Print the heading.
     echo $OUTPUT->heading(get_string('downloadpdfs', 'offlinequiz'));
@@ -379,7 +377,7 @@ if ($mode == 'preview') {
             $doctype = 'PDF';
             if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                 $doctype = 'DOCX';
-            } elseif ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+            } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                 $doctype = 'LATEX';
             }
             $params = array(
@@ -433,7 +431,7 @@ if ($mode == 'preview') {
                 if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                     require_once('docxlib.php');
                     $questionfile = offlinequiz_create_docx_question($templateusage, $offlinequiz, $group, $course->id, $context);
-                } elseif ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+                } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                     require_once('latexlib.php');
                     $questionfile = offlinequiz_create_latex_question($templateusage, $offlinequiz, $group, $course->id, $context);
                 } else {
@@ -452,7 +450,7 @@ if ($mode == 'preview') {
                 $filestring = get_string('formforgroup', 'offlinequiz', $groupletter);
                 if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                     $filestring = get_string('formforgroupdocx', 'offlinequiz', $groupletter);
-                } elseif ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+                } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                     $filestring = get_string('formforgrouplatex', 'offlinequiz', $groupletter);
                 }
                 $url = "$CFG->wwwroot/pluginfile.php/" . $questionfile->get_contextid() . '/' . $questionfile->get_component() .
@@ -577,7 +575,7 @@ if ($mode == 'preview') {
         $doctype = 'PDF';
         if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
             $doctype = 'DOCX';
-        } elseif ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+        } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
             $doctype = 'LATEX';
         }
         $params = array(
