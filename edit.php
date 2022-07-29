@@ -111,9 +111,12 @@ $recordupdateanddocscreated = null;
 
 $PAGE->set_url($thispageurl);
 
-// update version references before get_structure()
+// Update version references before get_structure().
 if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
-    $questionupdate = $DB->get_record_sql('SELECT qv.version, qr.id, qr.itemid FROM {question_versions} qv JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid WHERE qv.questionid = ?', [$newquestionid]);
+    $questionupdate = $DB->get_record_sql('SELECT qv.version, qr.id, qr.itemid
+                                        FROM {question_versions} qv
+                                        JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid
+                                        WHERE qv.questionid = ?', [$newquestionid]);
 
     if ($questionupdate) {
         if (!$docscreated) {
