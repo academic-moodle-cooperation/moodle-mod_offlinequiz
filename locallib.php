@@ -2297,7 +2297,7 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
               JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
              WHERE qbe.questioncategoryid $qcsql
                AND q.parent = 0
-               AND qbe.status = 'ready'
+               AND qv.status = 'ready'
                AND q.qtype IN ('multichoice', 'multichoiceset') 
                AND NOT EXISTS (SELECT 1
                                  FROM {question_versions} qv2
