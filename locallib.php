@@ -2297,20 +2297,26 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
               JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
              WHERE qbe.questioncategoryid $qcsql
                AND q.parent = 0
-               AND q.hidden = 0
-               AND q.qtype IN ('multichoice', 'multichoiceset') ";
+               AND qbe.status = 'ready'
+               AND q.qtype IN ('multichoice', 'multichoiceset') 
+               AND NOT EXISTS (SELECT 1
+                                 FROM {question_versions} qv2
+                                 WHERE qv2.questionbankentryid = qv.questionbankentryid
+                                   AND qv.version < qv2.version) ";
     if (!$preventsamequestion) {
         // Find all questions in the selected categories that are not in the offline group yet.
         $sql .= "AND NOT EXISTS (SELECT 1
                                    FROM {offlinequiz_group_questions} ogq
-                                  WHERE ogq.questionid = q.id
+                                   JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
+                                  WHERE qv3.questionbankentryid = qv.questionbankentryid
                                     AND ogq.offlinequizid = :offlinequizid
                                     AND ogq.offlinegroupid = :offlinegroupid)";
     } else {
         // Find all questions in the selected categories that are not in the offline test yet.
         $sql .= "AND NOT EXISTS (SELECT 1
                                    FROM {offlinequiz_group_questions} ogq
-                                  WHERE ogq.questionid = q.id
+                                   JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
+                                  WHERE qv3.questionbankentryid = qv.questionbankentryid
                                     AND ogq.offlinequizid = :offlinequizid)";
     }
     $qcparams['offlinequizid'] = $offlinequiz->id;
