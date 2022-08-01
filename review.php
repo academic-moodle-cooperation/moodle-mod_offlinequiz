@@ -98,17 +98,13 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('report');
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading(format_string($offlinequiz->name));
-
 // Print heading and tabs if this is part of a preview.
 if ($isteacher) {
     if ($result->userid == $USER->id) { // This is the report on a preview.
-        $currenttab = 'preview';
     } else {
-        $currenttab = 'reports';
-        $mode = 'review';
+        $currenttab = 'tabresultsoverview';
+        offlinequiz_print_tabs($offlinequiz, $currenttab, $cm);
     }
-    include('tabs.php');
 }
 
 echo $OUTPUT->heading(format_string($offlinequiz->name));

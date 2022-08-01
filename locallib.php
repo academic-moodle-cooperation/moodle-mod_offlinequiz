@@ -177,10 +177,7 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm) {
      'tabofflinequizupload' =>
          ['tab' => 'tabresults',
           'url' =>  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport'])],
-     'tabofflinequizcorrect' =>
-         ['tab' => 'tabresults',
-          'url' =>  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct'])],
-     'tabresultsoverview' => 
+     'tabresultsoverview' =>
          ['tab' => 'tabresults',
           'url' =>  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview'])],
      'tabregrade' =>
@@ -214,10 +211,6 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm) {
          ['tab' => 'tabattendances',
           'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
                      ['q' => $offlinequiz->id, 'mode' => 'upload'])],
-     'tabparticipantscorrect' =>
-         ['tab' => 'tabattendances',
-          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
-                     ['q' => $offlinequiz->id, 'mode' => 'correct'])],
      'tabattendancesoverview' =>
          ['tab' => 'tabattendances',
           'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
