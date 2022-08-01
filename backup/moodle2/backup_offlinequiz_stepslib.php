@@ -50,6 +50,8 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $qinstance = new backup_nested_element('question_instance', array('id'), array(
                 'questionid', 'grade'));
 
+        $this->add_question_references($qinstance, 'mod_offlinequiz', 'slot');
+
         $groups = new backup_nested_element('groups');
         $group = new backup_nested_element('group', array('id'), array(
                 'groupnumber', 'sumgrades', 'numberofpages', 'templateusageid',

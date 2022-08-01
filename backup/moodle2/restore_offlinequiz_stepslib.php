@@ -71,8 +71,12 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         // Add template question usages for offline groups.
         $this->add_question_usages($offlinequizgroup, $paths, 'group_');
 
-        $paths[] = new restore_path_element('offlinequiz_groupquestion',
+        $groupquestion = new restore_path_element('offlinequiz_groupquestion',
                  '/activity/offlinequiz/groups/group/groupquestions/groupquestion');
+        $paths[] = $groupquestion;
+        if ($this->task->get_old_moduleversion() >= 2022071500) {
+            $this->add_question_references($groupquestion, $paths);
+        }
 
         // We only add the results if userinfo was activated.
         if ($userinfo) {
@@ -182,6 +186,20 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             $data->questionid = $newid;
         }
         $newitemid = $DB->insert_record('offlinequiz_group_questions', $data);
+
+        if ($this->task->get_old_moduleversion() < 2022071500 || $newid == false) {
+            $data = (object) $data;
+            $data->usingcontextid = $this->task->get_contextid();
+            $data->itemid = $newitemid;
+            $this->get_new_parentid('offlinequiz_group_question');
+            $data->component = 'mod_offlinequiz';
+            $data->questionarea = 'slot';
+            // Fill in the selected version form question_version.
+            if ($entry = $DB->get_field('question_versions', 'questionbankentryid', array('questionid' => $data->questionid))) {
+                $data->questionbankentryid = $entry;
+            }
+            $DB->insert_record('question_references', $data);
+        }
     }
 
     // Restore method for scanned pages.

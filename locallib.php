@@ -167,53 +167,53 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm) {
           'url'  => new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0])],
      'tabeditgrades' =>
          ['tab' => 'tabofflinequizcontent',
-          'url' =>  new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 1])],
+          'url' => new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 1])],
      'tabpreview' =>
          ['tab' => 'tabofflinequizcontent',
-          'url' =>  new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id])],
+          'url' => new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id])],
      'tabdownloadquizforms' =>
          ['tab' => 'tabofflinequizcontent',
-          'url' =>  new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs'])],
+          'url' => new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs'])],
      'tabofflinequizupload' =>
          ['tab' => 'tabresults',
-          'url' =>  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport'])],
+          'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport'])],
      'tabresultsoverview' =>
          ['tab' => 'tabresults',
-          'url' =>  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview'])],
+          'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview'])],
      'tabregrade' =>
          ['tab' => 'tabresults',
-          'url' =>  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'regrade'])],
+          'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'regrade'])],
      'tabstatsoverview' =>
          ['tab' => 'tabstatistics',
-          'url' =>  new moodle_url('/mod/offlinequiz/report.php',
+          'url' => new moodle_url('/mod/offlinequiz/report.php',
                      ['q' => $offlinequiz->id, 'mode' => 'statistics'])],
      'tabquestionstats' =>
          ['tab' => 'tabstatistics',
-          'url' =>  new moodle_url('/mod/offlinequiz/report.php',
+          'url' => new moodle_url('/mod/offlinequiz/report.php',
                      ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionstats'])],
      'tabquestionandanswerstats' =>
          ['tab' => 'tabstatistics',
-          'url' =>  new moodle_url('/mod/offlinequiz/report.php',
+          'url' => new moodle_url('/mod/offlinequiz/report.php',
                      ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionandanswerstats'])],
      'tabparticipantlists' =>
          ['tab' => 'tabattendances',
-          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
                      ['q' => $offlinequiz->id, 'mode' => 'editlists'])],
      'tabeditparticipants' =>
          ['tab' => 'tabattendances',
-          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
                      ['q' => $offlinequiz->id, 'mode' => 'editparticipants'])],
      'tabdownloadparticipantsforms' =>
          ['tab' => 'tabattendances',
-          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
                      ['q' => $offlinequiz->id, 'mode' => 'createpdfs'])],
      'tabparticipantsupload' =>
          ['tab' => 'tabattendances',
-          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
                      ['q' => $offlinequiz->id, 'mode' => 'upload'])],
      'tabattendancesoverview' =>
          ['tab' => 'tabattendances',
-          'url' =>  new moodle_url('/mod/offlinequiz/participants.php',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
                      ['q' => $offlinequiz->id, 'mode' => 'attendances'])],
      ];
      return $tabs;
@@ -469,7 +469,49 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
         }
     }
 
-    $DB->insert_record('offlinequiz_group_questions', $slot);
+    $slotid = $DB->insert_record('offlinequiz_group_questions', $slot);
+
+    // Update or insert record in question_reference table.
+    $sql = "SELECT DISTINCT qr.id, qr.itemid
+              FROM {question} q
+              JOIN {question_versions} qv ON q.id = qv.questionid
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_references} qr ON qbe.id = qr.questionbankentryid AND qr.version = qv.version
+              JOIN {offlinequiz_group_questions} os ON os.id = qr.itemid
+             WHERE q.id = ?
+               AND os.id = ?
+               AND qr.component = ?
+               AND qr.questionarea = ?";
+    $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slotid, 'mod_offlinequiz', 'slot']);
+
+    if (!$qreferenceitem) {
+        // Create a new reference record for questions created already.
+        $questionreferences = new \StdClass();
+        $questionreferences->usingcontextid = context_module::instance($offlinequiz->cmid)->id;
+        $questionreferences->component = 'mod_offlinequiz';
+        $questionreferences->questionarea = 'slot';
+        $questionreferences->itemid = $slotid;
+        $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
+        $questionreferences->version = null; // Always latest.
+        $DB->insert_record('question_references', $questionreferences);
+
+    } else if ($qreferenceitem->itemid === 0 || $qreferenceitem->itemid === null) {
+        $questionreferences = new \StdClass();
+        $questionreferences->id = $qreferenceitem->id;
+        $questionreferences->itemid = $slotid;
+        $DB->update_record('question_references', $questionreferences);
+    } else {
+        // If the reference record exits for another quiz.
+        $questionreferences = new \StdClass();
+        $questionreferences->usingcontextid = context_module::instance($offlinequiz->cmid)->id;
+        $questionreferences->component = 'mod_offlinequiz';
+        $questionreferences->questionarea = 'slot';
+        $questionreferences->itemid = $slotid;
+        $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
+        $questionreferences->version = null; // Always latest.
+        $DB->insert_record('question_references', $questionreferences);
+    }
+
     $trans->allow_commit();
 }
 

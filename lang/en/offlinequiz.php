@@ -680,6 +680,7 @@ $string['readjust'] = 'Readjust';
 $string['reallydeletepdfs'] = 'Do you really want to delete the form files?';
 $string['reallydeleteupdatepdf'] = 'Do you really want to delete and update the participants list?';
 $string['recreatepdfs'] = 'Recreate PDFs';
+$string['recordupdateanddocscreated'] = 'Questions were updated but as the forms are already created, the former version of the question is still active. To change to the newer version, please delete the forms and change the version manually.';
 $string['recurse'] = 'Include questions from subcategories too';
 $string['refreshpreview'] = 'Refresh preview';
 $string['regrade'] = 'Regrade';

@@ -36,7 +36,7 @@ $q = optional_param('q', 0, PARAM_INT);                 // Or offlinequiz ID.
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Reshuffle questions.
 $forcepdfnew = optional_param('forcepdfnew', false, PARAM_BOOL); // Recreate PDFs.
 $mode = optional_param('mode', 'preview', PARAM_ALPHA);        // Mode.
-$downloadall = optional_param('downloadall' , false, PARAM_BOOL);
+$downloadall = optional_param('downloadall', false, PARAM_BOOL);
 
 $letterstr = 'ABCDEFGHIJKL';
 
@@ -75,8 +75,14 @@ if ($node = $PAGE->settingsnav->find('mod_offlinequiz_createquiz', navigation_no
     $node->make_active();
 }
 
-if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0,
-        $offlinequiz->numgroups)) {
+if (!$groups = $DB->get_records(
+    'offlinequiz_groups',
+    array('offlinequizid' => $offlinequiz->id),
+    'groupnumber',
+    '*',
+    0,
+    $offlinequiz->numgroups
+)) {
     print_error('There are no offlinequiz groups', "edit.php?q=$offlinequiz->id$amp;sesskey=".sesskey());
 }
 
@@ -85,8 +91,15 @@ if ($downloadall && $offlinequiz->docscreated) {
     $fs = get_file_storage();
 
     $date = usergetdate(time());
-    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
-            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+    $timestamp = sprintf(
+        '%04d%02d%02d_%02d%02d%02d',
+        $date['year'],
+        $date['mon'],
+        $date['mday'],
+        $date['hours'],
+        $date['minutes'],
+        $date['seconds']
+    );
 
 
     $shortname = $DB->get_field('course', 'shortname', array('id' => $offlinequiz->course));
@@ -142,7 +155,6 @@ if ($mode == 'preview') {
     echo $OUTPUT->heading(get_string('formspreview', 'offlinequiz'));
     // Print shuffle again buttons.
     if (!$offlinequiz->docscreated && !$hasscannedpages) {
-
         echo $OUTPUT->box_start('generalbox controlbuttonbox');
 
         unset($buttonoptions);
@@ -153,21 +165,24 @@ if ($mode == 'preview') {
 
         echo '<div class="controlbuttons linkbox">';
         if ($offlinequiz->shufflequestions and $offlinequiz->shuffleanswers) {
-            echo $OUTPUT->single_button($buttonurl,  get_string('shufflequestionsanswers', 'offlinequiz').' / ' .
+            echo $OUTPUT->single_button($buttonurl, get_string('shufflequestionsanswers', 'offlinequiz').' / ' .
                     get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else if ($offlinequiz->shufflequestions) {
-            echo $OUTPUT->single_button($buttonurl,  get_string('shufflequestions', 'offlinequiz').' / ' .
+            echo $OUTPUT->single_button($buttonurl, get_string('shufflequestions', 'offlinequiz').' / ' .
                     get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else if ($offlinequiz->shuffleanswers) {
-            echo $OUTPUT->single_button($buttonurl,  get_string('shuffleanswers', 'offlinequiz').' / ' .
+            echo $OUTPUT->single_button($buttonurl, get_string('shuffleanswers', 'offlinequiz').' / ' .
                     get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else {
-            echo $OUTPUT->single_button($buttonurl,  get_string('reloadquestionlist', 'offlinequiz'));
+            echo $OUTPUT->single_button($buttonurl, get_string('reloadquestionlist', 'offlinequiz'));
         }
         $buttonoptions['mode'] = 'createpdfs';
-        echo $OUTPUT->single_button(new moodle_url('/mod/offlinequiz/createquiz.php', $buttonoptions),
-                get_string('createpdfforms', 'offlinequiz'), 'get');
-            
+        echo $OUTPUT->single_button(
+            new moodle_url('/mod/offlinequiz/createquiz.php', $buttonoptions),
+            get_string('createpdfforms', 'offlinequiz'),
+            'get'
+        );
+
         echo '</div>';
 
         echo $OUTPUT->box_end();
@@ -182,8 +197,14 @@ if ($mode == 'preview') {
             echo $OUTPUT->notification(get_string('formsexist', 'offlinequiz'), 'notifyproblem');
         } else {
             $offlinequiz = offlinequiz_delete_template_usages($offlinequiz);
-            $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber',
-                      '*', 0, $offlinequiz->numgroups);
+            $groups = $DB->get_records(
+                'offlinequiz_groups',
+                array('offlinequizid' => $offlinequiz->id),
+                'groupnumber',
+                '*',
+                0,
+                $offlinequiz->numgroups
+            );
         }
     }
 
@@ -204,19 +225,24 @@ if ($mode == 'preview') {
               JOIN {question_versions} qv ON q.id = qv.questionid
               JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
               JOIN {question_categories} c ON qbe.questioncategoryid = c.id
-             WHERE ogq.offlinequizid = :offlinequizid
-               AND ogq.offlinegroupid = :offlinegroupid
-          ORDER BY ogq.slot ASC ";
+              WHERE ogq.offlinequizid = :offlinequizid
+                AND ogq.offlinegroupid = :offlinegroupid
+              ORDER BY ogq.slot ASC ";
         $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
 
         $questions = $DB->get_records_sql($sql, $params);
 
         // Load the questions.
-        if (!$questions = $DB->get_records_sql($sql, $params)) {
-            $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/edit.php',
-                    array('cmid' => $cm->id, 'groupnumber' => $group->groupnumber, 'noquestions' => 1));
-            echo html_writer::link($url,  get_string('noquestionsfound', 'offlinequiz', $groupletter),
-                    array('class' => 'linkbox'));
+        if (!$questions) {
+            $url = new moodle_url(
+                $CFG->wwwroot . '/mod/offlinequiz/edit.php',
+                array('cmid' => $cm->id, 'groupnumber' => $group->groupnumber, 'noquestions' => 1)
+            );
+            echo html_writer::link(
+                $url,
+                get_string('noquestionsfound', 'offlinequiz', $groupletter),
+                array('class' => 'linkbox')
+            );
             echo $OUTPUT->box_end();
             continue;
         }
@@ -284,7 +310,6 @@ if ($mode == 'preview') {
     // O TAB for creating, downloading and deleting PDF forms.
     // O==============================================================.
 } else if ($mode == 'createpdfs') {
-
     offlinequiz_print_tabs($offlinequiz, 'tabdownloadquizforms', $cm);
     // Print the heading.
     echo $OUTPUT->heading(get_string('downloadpdfs', 'offlinequiz'));
@@ -312,7 +337,7 @@ if ($mode == 'preview') {
         $buttonurl = new moodle_url('/mod/offlinequiz/createquiz.php', $buttonoptions);
         if ($forcepdfnew) {
             echo '<div class="linkbox">';
-            echo $OUTPUT->single_button($buttonurl,  get_string('createpdfforms', 'offlinequiz'), 'get');
+            echo $OUTPUT->single_button($buttonurl, get_string('createpdfforms', 'offlinequiz'), 'get');
             echo '</div>';
         } else {
             ?>
@@ -340,8 +365,10 @@ if ($mode == 'preview') {
     // Delete the PDF forms if forcepdfnew and if there are no scanned pages yet.
     if ($forcepdfnew) {
         if ($hasscannedpages) {
-            print_error('Some answer forms have already been analysed',
-                "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey());
+            print_error(
+                'Some answer forms have already been analysed',
+                "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey()
+            );
         } else {
             // Redmine 2750: Always delete templates as well.
             offlinequiz_delete_template_usages($offlinequiz);
@@ -377,10 +404,12 @@ if ($mode == 'preview') {
     // O============================================================.
     if (!$forcepdfnew) {
         // Redmine 2131: Add download all link.
-        $downloadallurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/createquiz.php',
-        array('q' => $offlinequiz->id,
+        $downloadallurl = new moodle_url(
+            $CFG->wwwroot . '/mod/offlinequiz/createquiz.php',
+            array('q' => $offlinequiz->id,
         'mode' => 'createpdfs',
-        'downloadall' => 1));
+        'downloadall' => 1)
+        );
         echo html_writer::start_div('downloadalllink');
         echo html_writer::link($downloadallurl->out(false), get_string('downloadallzip', 'offlinequiz'));
         echo html_writer::end_div();
@@ -392,8 +421,10 @@ if ($mode == 'preview') {
 
             if (!$offlinequiz->docscreated) {
                 if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
-                    print_error("Missing data for group ".$groupletter,
-                        "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey());
+                    print_error(
+                        "Missing data for group ".$groupletter,
+                        "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey()
+                    );
                 }
                 $DB->set_field('offlinequiz', 'id_digits', get_config('offlinequiz', 'ID_digits'), array('id' => $offlinequiz->id));
 
@@ -427,7 +458,8 @@ if ($mode == 'preview') {
                             $questionfile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, $filestring);
                 echo '<br />&nbsp;<br />';
-                @flush();@ob_flush();
+                @flush();
+                @ob_flush();
             } else {
                 echo $OUTPUT->notification(get_string('createpdferror', 'offlinequiz', $groupletter));
             }
@@ -446,13 +478,21 @@ if ($mode == 'preview') {
             $groupletter = $letterstr[$group->groupnumber - 1];
 
             if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
-                print_error("Missing data for group " . $groupletter,
-                    "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey());
+                print_error(
+                    "Missing data for group " . $groupletter,
+                    "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey()
+                );
             }
 
             if (!$offlinequiz->docscreated) {
-                $answerpdffile = offlinequiz_create_pdf_answer(offlinequiz_get_maxanswers($offlinequiz, array($group)),
-                    $templateusage, $offlinequiz, $group, $course->id, $context);
+                $answerpdffile = offlinequiz_create_pdf_answer(
+                    offlinequiz_get_maxanswers($offlinequiz, array($group)),
+                    $templateusage,
+                    $offlinequiz,
+                    $group,
+                    $course->id,
+                    $context
+                );
                 if ($answerpdffile) {
                     $group->answerfilename = $answerpdffile->get_filename();
                     $DB->update_record('offlinequiz_groups', $group);
@@ -468,7 +508,8 @@ if ($mode == 'preview') {
                         $answerpdffile->get_itemid() . '/' . $answerpdffile->get_filename() . '?forcedownload=1';
                 echo $OUTPUT->action_link($url, get_string('answerformforgroup', 'offlinequiz', $groupletter));
                 echo '<br />&nbsp;<br />';
-                @flush();@ob_flush();
+                @flush();
+                @ob_flush();
             } else {
                 echo $OUTPUT->notification(get_string('createpdferror', 'offlinequiz', $groupletter));
             }
@@ -486,13 +527,21 @@ if ($mode == 'preview') {
             $groupletter = $letterstr[$group->groupnumber - 1];
 
             if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
-                print_error("Missing data for group " . $groupletter,
-                    "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey());
+                print_error(
+                    "Missing data for group " . $groupletter,
+                    "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey()
+                );
             }
 
             if (!$offlinequiz->docscreated) {
-                $correctionpdffile = offlinequiz_create_pdf_question($templateusage, $offlinequiz, $group,
-                                     $course->id, $context, true);
+                $correctionpdffile = offlinequiz_create_pdf_question(
+                    $templateusage,
+                    $offlinequiz,
+                    $group,
+                    $course->id,
+                    $context,
+                    true
+                );
                 if ($correctionpdffile) {
                     $group->correctionfilename = $correctionpdffile->get_filename();
                     $DB->update_record('offlinequiz_groups', $group);
@@ -509,8 +558,8 @@ if ($mode == 'preview') {
                 echo $OUTPUT->action_link($url, get_string('formforcorrection', 'offlinequiz', $groupletter));
 
                 echo '<br />&nbsp;<br />';
-                @flush();@ob_flush();
-
+                @flush();
+                @ob_flush();
             } else {
                 echo $OUTPUT->notification(get_string('createpdferror', 'offlinequiz', $groupletter));
             }
