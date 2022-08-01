@@ -1486,7 +1486,7 @@ function offlinequiz_question_preview_button($offlinequiz, $question, $label = f
     $image = $OUTPUT->pix_icon('t/preview', $strpreviewquestion);
 
     $action = new popup_action('click', $url, 'questionpreview',
-            \qbank_previewquestion\previewquestion_helper::question_preview_popup_params());
+            \qbank_previewquestion\helper::question_preview_popup_params());
 
     return $OUTPUT->action_link($url, $image, $action, array('title' => $strpreviewquestion));
 }
@@ -1506,7 +1506,7 @@ function offlinequiz_question_preview_url($offlinequiz, $question) {
     }
 
     // Work out the correct preview URL.
-    return qbank_previewquestion\helper::question_preview_url($question->id, null,
+    return \qbank_previewquestion\helper::question_preview_url($question->id, null,
             $maxmark, $displayoptions);
 }
 
