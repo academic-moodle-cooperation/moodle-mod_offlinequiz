@@ -55,7 +55,7 @@ if ($tab == 'tabofflinequizcontent') {
     $hasresults = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
     $needscorrections = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
     if ($needscorrections) {
-        $newurl = $tabslist['tabofflinequizcorrect']['url'];
+        $newurl = $tabslist['tabofflinequizupload']['url'];
     } else if ($hasresults) {
         $newurl = $tabslist['tabresultsoverview']['url'];
     } else {
@@ -87,7 +87,7 @@ if ($tab == 'tabofflinequizcontent') {
     } else if ($existslistnoparticipants) {
         $newurl = $tabslist['tabeditparticipants']['url'];
     } else if ($needscorrection) {
-        $newurl = $tabslist['tabparticipantscorrect']['url'];
+        $newurl = $tabslist['tabparticipantsupload']['url'];
     } else if ($hasresults) {
         $newurl = $tabslist['tabattendancesoverview']['url'];
     } else {
