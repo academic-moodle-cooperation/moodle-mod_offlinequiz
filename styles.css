@@ -1280,6 +1280,10 @@ input#showviewbutton {
     display: inline;
 }
 
+#page-mod-offlinequiz-view .urlselect {
+    margin-bottom: 1em;
+}
+
 
 @media only screen and (max-width: 62em) {
     #page-mod-offlinequiz-edit .totalpoints {
