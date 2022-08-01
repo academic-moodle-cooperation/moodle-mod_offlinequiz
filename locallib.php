@@ -2291,7 +2291,7 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
 
     list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
 
-    $sql = "SELECT id
+    $sql = "SELECT q.id
               FROM {question} q
               JOIN {question_versions} qv ON qv.questionid = q.id
               JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
