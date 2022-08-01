@@ -1280,7 +1280,7 @@ input#showviewbutton {
     display: inline;
 }
 
-#page-mod-offlinequiz-view .urlselect {
+.path-mod-offlinequiz .urlselect {
     margin-bottom: 1em;
 }
 
