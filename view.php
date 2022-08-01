@@ -426,7 +426,16 @@ if ($edit != -1 and $PAGE->user_allowed_editing()) {
 if (has_capability('mod/offlinequiz:manage', $context)) {
     echo $OUTPUT->render_from_template('mod_offlinequiz/teacher_view', $templatedata);
 } else {
-   //TODO student view
+    if (!empty($offlinequiz->time) and $offlinequiz->time < time()) {
+        echo '<div class="offlinequizinfo">' . get_string('nogradesseelater', 'offlinequiz', fullname($USER)).'</div>';
+    } else if ($offlinequiz->showtutorial) {
+        echo '<br/><div class="offlinequizinfo">';
+        $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial/index.php',
+            array('id' => $cm->id));
+        echo $OUTPUT->single_button($url, get_string('starttutorial', 'offlinequiz'));
+        echo '</div>';
+    }
+    
 }
 
 // Finish the page.
