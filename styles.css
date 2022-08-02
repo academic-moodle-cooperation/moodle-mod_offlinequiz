@@ -1279,11 +1279,23 @@ input#showviewbutton {
 #page-mod-offlinequiz-view .oq-collapsible {
     display: inline;
 }
+#page-mod-offlinequiz-view .offlinequiz-view {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3em;
+}
+
+#page-mod-offlinequiz-view .offlinequiz-view-column {
+    flex-grow: 1;
+    padding-left: 1em;
+}
 
 .path-mod-offlinequiz .urlselect {
     margin-bottom: 1em;
 }
-
 
 @media only screen and (max-width: 62em) {
     #page-mod-offlinequiz-edit .totalpoints {
