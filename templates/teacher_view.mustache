@@ -15,97 +15,103 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 <div class="offlinequiz-view">
-  <h3>{{#str}} preparation, mod_offlinequiz {{/str}}</h3>
-  <ul>
-    {{#preparationsteps}}
-      <li class="{{status}}">
-        <a href="{{link}}">
-          {{text}}
-        </a>
-      {{#collapsible}}
-        <button type="button" class="oq-collapsible btn btn-secondary" id="{{unique}}-oq-collapsible-button">{{^expanded}}+{{/expanded}}{{#expanded}}-{{/expanded}}</button>
-          <div class="collapsible-content{{^expanded}} inactive{{/expanded}}{{#expanded}} active{{/expanded}}" id="{{unique}}-oq-collapsible-content">
-            {{{expandedcontent}}}
-          </div>
-            {{#js}}
-            var button = document.getElementById('{{unique}}-oq-collapsible-button');
-                button.addEventListener("click", function() {
-                var content = this.nextElementSibling;
-                if (content.classList.contains("inactive")) {
-                  content.classList.remove('inactive');
-                  content.classList.add('active');
-                  this.innerText = '-';
-                } else {
-                  content.classList.remove('active');
-                  content.classList.add('inactive');
-                  this.innerText = '+';
-                }
-              });
-            {{/js}}
-      {{/collapsible}}
-      </li>
-    {{/preparationsteps}}
-  </ul>
-  <h3>{{#str}} evaluation, mod_offlinequiz {{/str}}</h3>
-  <ul class="oq-expandable {{evaluation-expanded}}">
-    {{#evaluationsteps}}
-      <li class="{{status}}">
-        <a href="{{link}}">
-          {{text}}
-        </a>
-      {{#collapsible}}
-        <button type="button" class="oq-collapsible btn btn-secondary" id="{{unique}}-oq-collapsible-button">{{^expanded}}+{{/expanded}}{{#expanded}}-{{/expanded}}</button>
-          <div class="collapsible-content{{^expanded}} inactive{{/expanded}}{{#expanded}} active{{/expanded}}" id="{{unique}}-oq-collapsible-content">
-            {{{expandedcontent}}}
-          </div>
-            {{#js}}
-            var button = document.getElementById('{{unique}}-oq-collapsible-button');
-                button.addEventListener("click", function() {
-                var content = this.nextElementSibling;
-                if (content.classList.contains("inactive")) {
-                  content.classList.remove('inactive');
-                  content.classList.add('active');
-                  this.innerText = '-';
-                } else {
-                  content.classList.remove('active');
-                  content.classList.add('inactive');
-                  this.innerText = '+';
-                }
-              });
-            {{/js}}
-      {{/collapsible}}
-      </li>
-    {{/evaluationsteps}}
-  </ul>
-  <h3>{{#str}} attendances, mod_offlinequiz {{/str}}</h3>
-  <ul class="oq-expandable {{participantslist-expanded}}">
-    {{#participantsliststeps}}
-      <li class="{{status}}">
-        <a href="{{link}}">
-          {{text}}
-        </a>
-      {{#collapsible}}
-        <button type="button" class="oq-collapsible btn btn-secondary" id="{{unique}}-oq-collapsible-button">{{^expanded}}+{{/expanded}}{{#expanded}}-{{/expanded}}</button>
-          <div class="collapsible-content{{^expanded}} inactive{{/expanded}}{{#expanded}} active{{/expanded}}" id="{{unique}}-oq-collapsible-content">
-            {{{expandedcontent}}}
-          </div>
-            {{#js}}
-            var button = document.getElementById('{{unique}}-oq-collapsible-button');
-                button.addEventListener("click", function() {
-                var content = this.nextElementSibling;
-                if (content.classList.contains("inactive")) {
-                  content.classList.remove('inactive');
-                  content.classList.add('active');
-                  this.innerText = '-';
-                } else {
-                  content.classList.remove('active');
-                  content.classList.add('inactive');
-                  this.innerText = '+';
-                }
-              });
-            {{/js}}
-      {{/collapsible}}
-      </li>
-    {{/participantsliststeps}}
-  </ul>
+  <div class="offlinequiz-view-column">
+    <h3>{{#str}} preparation, mod_offlinequiz {{/str}}</h3>
+    <ul>
+      {{#preparationsteps}}
+        <li class="{{status}}">
+          <a href="{{link}}">
+            {{text}}
+          </a>
+        {{#collapsible}}
+          <button type="button" class="oq-collapsible btn btn-secondary" id="{{unique}}-oq-collapsible-button">{{^expanded}}+{{/expanded}}{{#expanded}}-{{/expanded}}</button>
+            <div class="collapsible-content{{^expanded}} inactive{{/expanded}}{{#expanded}} active{{/expanded}}" id="{{unique}}-oq-collapsible-content">
+              {{{expandedcontent}}}
+            </div>
+              {{#js}}
+              var button = document.getElementById('{{unique}}-oq-collapsible-button');
+                  button.addEventListener("click", function() {
+                  var content = this.nextElementSibling;
+                  if (content.classList.contains("inactive")) {
+                    content.classList.remove('inactive');
+                    content.classList.add('active');
+                    this.innerText = '-';
+                  } else {
+                    content.classList.remove('active');
+                    content.classList.add('inactive');
+                    this.innerText = '+';
+                  }
+                });
+              {{/js}}
+        {{/collapsible}}
+        </li>
+      {{/preparationsteps}}
+    </ul>
+  </div>
+  <div class="offlinequiz-view-column">
+    <h3>{{#str}} evaluation, mod_offlinequiz {{/str}}</h3>
+    <ul class="oq-expandable {{evaluation-expanded}}">
+      {{#evaluationsteps}}
+        <li class="{{status}}">
+          <a href="{{link}}">
+            {{text}}
+          </a>
+        {{#collapsible}}
+          <button type="button" class="oq-collapsible btn btn-secondary" id="{{unique}}-oq-collapsible-button">{{^expanded}}+{{/expanded}}{{#expanded}}-{{/expanded}}</button>
+            <div class="collapsible-content{{^expanded}} inactive{{/expanded}}{{#expanded}} active{{/expanded}}" id="{{unique}}-oq-collapsible-content">
+              {{{expandedcontent}}}
+            </div>
+              {{#js}}
+              var button = document.getElementById('{{unique}}-oq-collapsible-button');
+                  button.addEventListener("click", function() {
+                  var content = this.nextElementSibling;
+                  if (content.classList.contains("inactive")) {
+                    content.classList.remove('inactive');
+                    content.classList.add('active');
+                    this.innerText = '-';
+                  } else {
+                    content.classList.remove('active');
+                    content.classList.add('inactive');
+                    this.innerText = '+';
+                  }
+                });
+              {{/js}}
+        {{/collapsible}}
+        </li>
+      {{/evaluationsteps}}
+    </ul>
+  </div>
+  <div class="offlinequiz-view-column">
+    <h3>{{#str}} attendances, mod_offlinequiz {{/str}}</h3>
+    <ul class="oq-expandable {{participantslist-expanded}}">
+      {{#participantsliststeps}}
+        <li class="{{status}}">
+          <a href="{{link}}">
+            {{text}}
+          </a>
+        {{#collapsible}}
+          <button type="button" class="oq-collapsible btn btn-secondary" id="{{unique}}-oq-collapsible-button">{{^expanded}}+{{/expanded}}{{#expanded}}-{{/expanded}}</button>
+            <div class="collapsible-content{{^expanded}} inactive{{/expanded}}{{#expanded}} active{{/expanded}}" id="{{unique}}-oq-collapsible-content">
+              {{{expandedcontent}}}
+            </div>
+              {{#js}}
+              var button = document.getElementById('{{unique}}-oq-collapsible-button');
+                  button.addEventListener("click", function() {
+                  var content = this.nextElementSibling;
+                  if (content.classList.contains("inactive")) {
+                    content.classList.remove('inactive');
+                    content.classList.add('active');
+                    this.innerText = '-';
+                  } else {
+                    content.classList.remove('active');
+                    content.classList.add('inactive');
+                    this.innerText = '+';
+                  }
+                });
+              {{/js}}
+        {{/collapsible}}
+        </li>
+      {{/participantsliststeps}}
+    </ul>
+  </div>
 </div>
