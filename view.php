@@ -276,7 +276,7 @@ if($status['resultsexist']) {
 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'overview', 'q' => $offlinequiz->id]);
 
 $overview['link'] = $url->out(false);
-$overview['text'] = get_string('overview', 'offlinequiz');
+$overview['text'] = get_string('reportoverview', 'offlinequiz');
 
 $regrade = [];
 $regrade['collapsible'] = false;
@@ -398,10 +398,10 @@ if($status['attendanceuploads']) {
 } else {
   $attendanceoverview['status'] = 'open';
 }
-$url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'createpdfs', 'q' => $offlinequiz->id]);
+$url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'attendances', 'q' => $offlinequiz->id]);
 
 $attendanceoverview['link'] = $url->out(false);
-$attendanceoverview['text'] = get_string('overview', 'offlinequiz');
+$attendanceoverview['text'] = get_string('attendanceoverview', 'offlinequiz');
 
 $participantsliststeps[] = $createlists;
 $participantsliststeps[] = $editlists;
