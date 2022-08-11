@@ -60,16 +60,16 @@ class edit_renderer extends \plugin_renderer_base {
         $cm = $offlinequizobj->get_cm();
         $thispageurl = $pageurl;
 
-        // Page title.
-        echo $this->heading_with_help(get_string('editingofflinequizx', 'offlinequiz',
-                format_string($offlinequizobj->get_offlinequiz_name())) .
-                ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
-                'editingofflinequiz', 'offlinequiz', '',
-                get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
+
 
         // Now we echo the tabs.
         offlinequiz_print_tabs($offlinequiz, 'tabeditgrades', $cm);
 
+        // Page title.
+        echo $this->heading_with_help(get_string('editingofflinequizx', 'offlinequiz') .
+            ' ' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber],
+            'editingofflinequiz', 'offlinequiz', '',
+            get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
         $output = '';
         // Information at the top.
         $output .= $this->offlinequiz_group_selector($offlinequiz, $pageurl);
@@ -157,8 +157,8 @@ class edit_renderer extends \plugin_renderer_base {
 
         // First we echo the Page title.
         echo $this->heading_with_help(
-                get_string('gradingofflinequizx', 'offlinequiz', format_string($offlinequizobj->get_offlinequiz_name())) .
-                ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
+                get_string('gradingofflinequizx', 'offlinequiz') .
+                ' ' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ' ',
                 'editingofflinequiz', 'offlinequiz', '',  get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
 
 

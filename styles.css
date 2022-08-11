@@ -1261,12 +1261,12 @@ input#showviewbutton {
     list-style-image: url([[pix:offlinequiz|icon_checked]]);
 }
 
-#page-mod-offlinequiz-view li.nextitem {
-    list-style-image: url([[pix:offlinequiz|icon_unchecked]]);
-}
-#page-mod-offlinequiz-view li.warning {
-    list-style-image: url([[pix:offlinequiz|icon_warning]]);
-}
+/* #page-mod-offlinequiz-view li.nextitem { */
+/*     list-style-image: url([[pix:offlinequiz|icon_unchecked]]); */
+/* } */
+/* #page-mod-offlinequiz-view li.warning { */
+/*     list-style-image: url([[pix:offlinequiz|icon_warning]]); */
+/* } */
 
 #page-mod-offlinequiz-view .collapsible-content.inactive {
     display: none;
