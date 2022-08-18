@@ -145,7 +145,11 @@ if ($options->marks != question_display_options::HIDDEN) {
         $table->data[] = array($strscore . ':', $resultmark . '/' . $maxmark . ' (' . $percentage . '%)');
 
         $a = new stdClass;
-        $a->grade = format_float(preg_replace('/,/i', '.', $grade), $offlinequiz->decimalpoints);
+	if(is_numeric(preg_replace('/,/i', '.', $grade))) {
+            $a->grade = format_float(preg_replace('/,/i', '.', $grade), $offlinequiz->decimalpoints);
+        } else {
+	    $a->grade = $grade;
+        }
         $a->maxgrade = format_float($offlinequiz->grade, $offlinequiz->decimalpoints);
         $table->data[] = array($strgrade . ':', get_string('outof', 'offlinequiz', $a));
     }
