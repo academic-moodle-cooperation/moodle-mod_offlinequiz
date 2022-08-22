@@ -68,7 +68,7 @@ function load_number() {
           } else {
               echo 'border-style: solid; border-width: 1px 1px 1px 0px;';
           }
-          echo '"><font size="+3">'.$usernumber{$i}.'</font></td>';
+          echo '"><font size="+3">'.substr($usernumber, $i, 1).'</font></td>';
       }  
     echo '<td/></tr>';
 
