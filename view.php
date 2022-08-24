@@ -425,13 +425,18 @@ if ($edit != -1 and $PAGE->user_allowed_editing()) {
 
 if (has_capability('mod/offlinequiz:manage', $context)) {
     echo $OUTPUT->render_from_template('mod_offlinequiz/teacher_view', $templatedata);
-} else {
-        if ($result = $DB->get_record_sql($select, array('offlinequizid' => $offlinequiz->id, 'userid' => $USER->id))
-            and offlinequiz_results_open($offlinequiz)) {
+} else if (has_capability('mod/offlinequiz:attempt', $context)) {
+            $select = "SELECT *
+                 FROM {offlinequiz_results} qa
+                WHERE qa.offlinequizid = :offlinequizid
+                  AND qa.userid = :userid
+                  AND qa.status = 'complete'";
+            $result = $DB->get_record_sql($select, array('offlinequizid' => $offlinequiz->id, 'userid' => $USER->id));
+        if ($result && offlinequiz_results_open($offlinequiz)) {
         $options = offlinequiz_get_review_options($offlinequiz, $result, $context);
-        if ($result->timefinish and ($options->attempt == question_display_options::VISIBLE or
-              $options->marks >= question_display_options::MAX_ONLY or
-              $options->sheetfeedback == question_display_options::VISIBLE or
+        if ($result->timefinish && ($options->attempt == question_display_options::VISIBLE ||
+              $options->marks >= question_display_options::MAX_ONLY ||
+              $options->sheetfeedback == question_display_options::VISIBLE ||
               $options->gradedsheetfeedback == question_display_options::VISIBLE
               )) {
 
@@ -440,7 +445,8 @@ if (has_capability('mod/offlinequiz:manage', $context)) {
                     array('q' => $offlinequiz->id, 'resultid' => $result->id));
             echo $OUTPUT->single_button($url, get_string('viewresults', 'offlinequiz'));
             echo '</div>';
-        }
+        
+	}
     } else {
         if (!empty($offlinequiz->time) and $offlinequiz->time < time()) {
             echo '<div class="offlinequizinfo">' . get_string('nogradesseelater', 'offlinequiz', fullname($USER)).'</div>';
