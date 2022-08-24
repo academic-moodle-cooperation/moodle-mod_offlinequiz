@@ -106,13 +106,13 @@ $sql = "SELECT opl.*,
           WHERE opl.offlinequizid = :offlinequizid
           ORDER BY listnumber";
 $status['attendancelists'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id]);
-$sql = "SELECT u.id 
+$sql = "SELECT u.id
           FROM {user} u
           JOIN {role_assignments} ra ON ra.userid = u.id
           JOIN {role} r ON r.id = ra.roleid AND r.archetype = 'student'
           JOIN {context} c ON c.id = ra.contextid AND contextlevel = 50
-          JOIN {offlinequiz_p_lists} opl ON opl.offlinequizid = :offlinequizid
-     LEFT JOIN {offlinequiz_participants} op ON op.userid = u.id AND op.listid = opl.id
+     LEFT JOIN {offlinequiz_p_lists} opl ON opl.offlinequizid = :offlinequizid
+          JOIN {offlinequiz_participants} op ON op.userid = u.id AND op.listid = opl.id
           WHERE c.instanceid = :courseid
           AND op.userid IS null";
 $status['missingonattendancelist'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id, 'courseid' => $offlinequiz->course]);
@@ -426,16 +426,33 @@ if ($edit != -1 and $PAGE->user_allowed_editing()) {
 if (has_capability('mod/offlinequiz:manage', $context)) {
     echo $OUTPUT->render_from_template('mod_offlinequiz/teacher_view', $templatedata);
 } else {
-    if (!empty($offlinequiz->time) and $offlinequiz->time < time()) {
-        echo '<div class="offlinequizinfo">' . get_string('nogradesseelater', 'offlinequiz', fullname($USER)).'</div>';
-    } else if ($offlinequiz->showtutorial) {
-        echo '<br/><div class="offlinequizinfo">';
-        $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial/index.php',
-            array('id' => $cm->id));
-        echo $OUTPUT->single_button($url, get_string('starttutorial', 'offlinequiz'));
-        echo '</div>';
+        if ($result = $DB->get_record_sql($select, array('offlinequizid' => $offlinequiz->id, 'userid' => $USER->id))
+            and offlinequiz_results_open($offlinequiz)) {
+        $options = offlinequiz_get_review_options($offlinequiz, $result, $context);
+        if ($result->timefinish and ($options->attempt == question_display_options::VISIBLE or
+              $options->marks >= question_display_options::MAX_ONLY or
+              $options->sheetfeedback == question_display_options::VISIBLE or
+              $options->gradedsheetfeedback == question_display_options::VISIBLE
+              )) {
+
+            echo '<div class="offlinequizinfo">';
+            $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/review.php',
+                    array('q' => $offlinequiz->id, 'resultid' => $result->id));
+            echo $OUTPUT->single_button($url, get_string('viewresults', 'offlinequiz'));
+            echo '</div>';
+        }
+    } else {
+        if (!empty($offlinequiz->time) and $offlinequiz->time < time()) {
+            echo '<div class="offlinequizinfo">' . get_string('nogradesseelater', 'offlinequiz', fullname($USER)).'</div>';
+        } else if ($offlinequiz->showtutorial) {
+            echo '<br/><div class="offlinequizinfo">';
+            $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial/index.php',
+                array('id' => $cm->id));
+            echo $OUTPUT->single_button($url, get_string('starttutorial', 'offlinequiz'));
+            echo '</div>';
+        }
     }
-    
+
 }
 
 // Finish the page.

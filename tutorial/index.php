@@ -79,8 +79,6 @@ if (!empty($offlinequiz)) {
 }
 if (!empty($course)) {
     $PAGE->set_heading($course->fullname);
-} else {
-    $PAGE->set_heading(get_string("tutorial", "offlinequiz"));
 }
 
 $PAGE->set_pagelayout('report');
