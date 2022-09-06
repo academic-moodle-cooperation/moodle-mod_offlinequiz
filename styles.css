@@ -1257,9 +1257,9 @@ input#showviewbutton {
     list-style: none;
 }
 
-#page-mod-offlinequiz-view li.done {
+/*#page-mod-offlinequiz-view li.done {
     list-style-image: url([[pix:offlinequiz|icon_checked]]);
-}
+}*/
 
 /* #page-mod-offlinequiz-view li.nextitem { */
 /*     list-style-image: url([[pix:offlinequiz|icon_unchecked]]); */
