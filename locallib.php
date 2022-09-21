@@ -1705,11 +1705,10 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
 
         foreach ($choiceorder as $key => $answer) {
             $answertext = $question->options->answers[$answer]->answer;
-
             // Remove all HTML comments (typically from MS Office).
             $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
             // Remove all paragraph tags because they mess up the layout.
-            $answertext = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', $text);
+            $answertext = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', $answertext);
             // Rewrite image URLs.
             $answertext = question_rewrite_question_preview_urls($answertext, $question->id,
             $question->contextid, 'question', 'answer', $question->options->answers[$answer]->id,

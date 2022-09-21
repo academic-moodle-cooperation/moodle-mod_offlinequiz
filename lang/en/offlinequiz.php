@@ -68,6 +68,7 @@ $string['attemptsexist'] = 'You can no longer add or remove questions.';
 $string['attemptsnum'] = 'Results: {$a}';
 $string['attemptsonly'] = 'Show students with results only';
 $string['attendances'] = 'Attendances';
+$string['attendancesheadline'] = 'Attendances';
 $string['attendanceoverview'] = 'Attendance Overview';
 $string['blackwhitethreshold'] = 'Black/white threshold.';
 $string['basicideasofofflinequiz'] = 'The basic ideas of offline quiz-making';
