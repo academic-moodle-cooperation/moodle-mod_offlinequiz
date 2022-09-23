@@ -1105,12 +1105,13 @@ input#showviewbutton {
     margin: 0 0.2em;
 }
 
-#page-mod-quiz-edit #categoryquestions .questionname, #page-mod-quiz-edit ul.slots li.activity div.activityinstance .questionname {
+#page-mod-offlinequiz-edit #categoryquestions .questionname, #page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .questionname {
 	font-weight: 700;
 	color: #555;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+    margin-right: 0.4rem;
 }
 
 #page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .questiontext {
