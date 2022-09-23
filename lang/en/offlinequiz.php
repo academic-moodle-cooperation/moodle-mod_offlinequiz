@@ -1,4 +1,4 @@
- <?PHP
+<?PHP
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -7,7 +7,7 @@
 // (at your option) any later version.
 //
 // Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTYe; without even the implied warranty of
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
@@ -675,6 +675,11 @@ $string['quizdate'] = 'Date of offline quiz';
 $string['quizopenclose'] = 'Open and close dates';
 $string['quizopenclose_help'] = 'Students can only see their attempt(s) after the open time and before the close time.';
 $string['quizquestions'] = 'Quiz Questions';
+$string['qversioncannotupdate'] = 'Question version cannot be updated';
+$string['qversionnumbersdiffer'] = 'The number of answers differ between the old and the new version. This would lead to inconsistencies.';
+$string['qversionupdateerror'] = 'There was an error updating the question version.';
+$string['qversionupdated'] = 'Question version updated';
+$string['qversionupdatedwarning'] = 'Forms are already created with another version of this question. Please check, whether there were any breaking changes.';
 $string['randomfromexistingcategory'] = 'Random question from an existing category';
 $string['randomnumber'] = 'Number of random questions';
 $string['randomquestionusinganewcategory'] = 'Random question using a new category';
@@ -683,6 +688,7 @@ $string['reallydeletepdfs'] = 'Do you really want to delete the form files?';
 $string['reallydeleteupdatepdf'] = 'Do you really want to delete and update the participants list?';
 $string['recreatepdfs'] = 'Recreate PDFs';
 $string['recordupdateanddocscreated'] = 'Questions were updated but as the forms are already created, the former version of the question is still active. To change to the newer version, please delete the forms and change the version manually.';
+$string['recordupdateanddocscreatedversion'] = 'Questions were updated but the forms are already created. Please check, whether the changes did not ontroduce any changes that affect grading.';
 $string['recurse'] = 'Include questions from subcategories too';
 $string['refreshpreview'] = 'Refresh preview';
 $string['regrade'] = 'Regrade';
