@@ -106,13 +106,13 @@ $sql = "SELECT opl.*,
           WHERE opl.offlinequizid = :offlinequizid
           ORDER BY listnumber";
 $status['attendancelists'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id]);
-$sql = "SELECT u.id
+$sql = "SELECT DISTINCT u.id
           FROM {user} u
           JOIN {role_assignments} ra ON ra.userid = u.id
           JOIN {role} r ON r.id = ra.roleid AND r.archetype = 'student'
           JOIN {context} c ON c.id = ra.contextid AND contextlevel = 50
      LEFT JOIN {offlinequiz_p_lists} opl ON opl.offlinequizid = :offlinequizid
-          JOIN {offlinequiz_participants} op ON op.userid = u.id AND op.listid = opl.id
+     LEFT JOIN {offlinequiz_participants} op ON op.userid = u.id AND op.listid = opl.id
           WHERE c.instanceid = :courseid
           AND op.userid IS null";
 $status['missingonattendancelist'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id, 'courseid' => $offlinequiz->course]);
