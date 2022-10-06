@@ -196,7 +196,6 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         global $DB;
 
         $data = (object) $data;
-        $oldid = $data->id;
 
         // Backward compatibility for old field names prior to Moodle 2.8.5.
         if (isset($data->usageslot) && !isset($data->slot)) {
@@ -211,12 +210,12 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         if ($newid = $this->get_mappingid('question', $data->questionid)) {
             $data->questionid = $newid;
         }
+
         $newitemid = $DB->insert_record('offlinequiz_group_questions', $data);
 
         if ($newitemid && !$DB->get_record('question_references',
                                         ['component' => 'mod_offlinequiz', 'questionarea' => 'slot', 'itemid' => $newitemid]
                                 )) {
-            $data = (object) $data;
 
             assert($this->task instanceof restore_offlinequiz_activity_task);
             $data->usingcontextid = $this->task->get_contextid();
@@ -225,8 +224,12 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             $data->component = 'mod_offlinequiz';
             $data->questionarea = 'slot';
             // Fill in the selected version form question_version.
-            if ($entry = $DB->get_field('question_versions', 'questionbankentryid', array('questionid' => $data->questionid))) {
-                $data->questionbankentryid = $entry;
+            if ($entry = $DB->get_record('question_versions',
+                                        array('questionid' => $data->questionid),
+                                        'questionbankentryid,version'
+                                        )) {
+                $data->questionbankentryid = $entry->questionbankentryid;
+                $data->version = $entry->version;
             }
             $DB->insert_record('question_references', $data);
         }
