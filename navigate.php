@@ -46,11 +46,9 @@ if ($tab == 'tabofflinequizcontent') {
     $hasdocumentscreated = $offlinequiz->docscreated;
     if($hasmissinggroupquestions) {
         $newurl = $tabslist['tabeditgroupquestions']['url'];
-    } else if (!$hasdocumentscreated) {
-        $newurl = $tabslist['tabpreview']['url'];
     } else {
-        $newurl = $tabslist['tabdownloadquizforms']['url'];
-    }
+        $newurl = $tabslist['tabpreview']['url'];
+    } 
 } else if ($tab == 'tabresults') {
     $hasresults = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
     $needscorrections = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
