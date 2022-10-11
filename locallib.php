@@ -171,9 +171,6 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm) {
      'tabpreview' =>
          ['tab' => 'tabofflinequizcontent',
           'url' => new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id])],
-     'tabdownloadquizforms' =>
-         ['tab' => 'tabofflinequizcontent',
-          'url' => new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs'])],
      'tabofflinequizupload' =>
          ['tab' => 'tabresults',
           'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport'])],
