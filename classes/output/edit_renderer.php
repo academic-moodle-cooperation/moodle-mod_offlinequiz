@@ -67,7 +67,7 @@ class edit_renderer extends \plugin_renderer_base {
         $thispageurl = $pageurl;
 
         // Now we echo the tabs.
-        offlinequiz_print_tabs($offlinequiz, 'tabeditgrades', $cm);
+        offlinequiz_print_tabs($offlinequiz, 'tabeditgroupquestions', $cm);
 
         // Page title.
         echo $this->heading_with_help(get_string('editingofflinequizx', 'offlinequiz') .
@@ -134,64 +134,6 @@ class edit_renderer extends \plugin_renderer_base {
             // Include the question chooser.
             $output .= $this->question_chooser();
         }
-
-        echo $output;
-    }
-
-
-    /**
-     * Render the edit grade page
-     *
-     * @param \offlinequiz $offlinequizobj object containing all the offlinequiz settings information.
-     * @param structure $structure object containing the structure of the offlinequiz.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
-     * @param \moodle_url $pageurl the canonical URL of this page.
-     * @param array $pagevars the variables from {@link question_edit_setup()}.
-     * @return string HTML to output.
-     */
-    public function edit_grades_page(\offlinequiz $offlinequizobj, structure $structure,
-        \core_question\local\bank\question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
-
-        global $CFG;
-        $offlinequiz = $offlinequizobj->get_offlinequiz();
-        $cm = $offlinequizobj->get_cm();
-
-        $offlinequiz = $offlinequizobj->get_offlinequiz();
-        offlinequiz_print_tabs($offlinequiz, 'tabeditgroupquestions', $cm);
-
-        // First we echo the Page title.
-        echo $this->heading_with_help(
-                get_string('gradingofflinequizx', 'offlinequiz') .
-                ' ' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ' ',
-                'editingofflinequiz', 'offlinequiz', '',  get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
-
-        // Information at the top.
-        $output = '';
-        $output .= $this->offlinequiz_group_selector($offlinequiz, $pageurl);
-        $output .= $this->offlinequiz_information($structure);
-        $output .= html_writer::div('<br/>', 'clear');
-        $output .= $this->maximum_grade_input($offlinequiz, $this->page->url);
-        $output .= $this->offlinequiz_state_warnings($structure);
-        $output .= $this->total_marks($offlinequiz);
-
-        $output .= $this->start_grading_form($offlinequiz, $pageurl);
-        // Show the questions organised into sections and pages.
-        $output .= $this->start_section_list();
-        // Show the questions in one form for single submit.
-        $sections = $structure->get_offlinequiz_sections();
-        foreach ($sections as $section) {
-            $output .= $this->start_section($section);
-            $questionhtml = '';
-            foreach ($structure->get_questions_in_section($section->id) as $question) {
-                if ($question->qtype != 'description') {
-                    $questionhtml .= $this->question_row_for_grading($structure, $question, $contexts, $pagevars, $pageurl);
-                }
-            }
-            $output .= html_writer::tag('ul', $questionhtml, array('class' => 'section img-text'));
-            $output .= $this->end_section();
-        }
-        $output .= $this->end_section_list();
-        $output .= $this->end_grading_form();
 
         echo $output;
     }

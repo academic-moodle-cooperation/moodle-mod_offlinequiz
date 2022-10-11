@@ -167,46 +167,10 @@ $url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'edit', 'cmid' => 
 $editquestion['link'] = $url->out(false);
 $editquestion['text'] = get_string('editquestions', 'offlinequiz');
 
-//Begin edit grades
-$editgrades = [];
-$editgrades['collapsible'] = true;
-$editgrades['unique'] = 'editgrades';
-$editgradesdata = [];
-$editgradesdata['groups'] = [];
-foreach($status['groups'] as $group) {
-    $groupobject = [];
-    $url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'edit', 'cmid' => $id, 'groupnumber' => $group->groupnumber]);
-    $groupobject['link'] = $url->out(false);
-    $groupobject['groupnumber'] = $groupnames[$group->groupnumber];
-    $groupobject['maxmark'] = $group->sumgrades;
-    if($groupobject['maxmark'] == (int) $groupobject['maxmark']) {
-        $groupobject['maxmark'] = (int) $groupobject['maxmark'];
-    }
-    $editgradesdata['groups'][] = $groupobject;
-}
-$editgrades['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_editgrades', $editgradesdata);
-if($status['docscreated']) {
-    $editgrades['status'] = 'done';
-} else if ($status['groupswithoutquestions']) {
-  $editgrades['status'] = 'open';
-} else {
-  $editgrades['status'] = 'nextitem';
-}
-
-if($editgrades['status'] == 'done') {
-    $editgrades['collapsestatus'] = 'collapsed';
-} else {
-    $editgrades['collapsestatus'] = 'open';
-}
-$url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'edit', 'cmid' => $id, 'gradetool' => 1]);
-
-$editgrades['link'] = $url->out(false);
-$editgrades['text'] = get_string('editgrades', 'offlinequiz');
-
 $preview = [];
 $preview['collapsible'] = false;
 
-$preview['status'] = $editgrades['status'];
+$preview['status'] = $editquestion['status'];
 $url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id]);
 
 $preview['link'] = $url->out(false);
@@ -215,7 +179,6 @@ $preview['text'] = get_string('preview', 'offlinequiz');
 
 
 $preparationsteps[] = $editquestion;
-$preparationsteps[] = $editgrades;
 $preparationsteps[] = $preview;
 $templatedata['preparationsteps'] = $preparationsteps;
 
