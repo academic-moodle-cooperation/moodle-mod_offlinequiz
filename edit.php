@@ -113,13 +113,19 @@ $PAGE->set_url($thispageurl);
 
 // Update version references before get_structure().
 if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
-    $questionupdate = $DB->get_record_sql('SELECT qv.version, qr.id, qr.itemid
-                                        FROM {question_versions} qv
-                                        JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid
-                                        WHERE qv.questionid = ?', [$newquestionid]);
+    $sql = "SELECT qr.id, qv.version, qr.itemid
+            FROM {question_versions} qv
+            JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid
+            WHERE qv.questionid = ?
+            AND qr.component = 'mod_offlinequiz'
+            AND qr.questionarea = 'slot'";
+    $questionupdate = $DB->get_record_sql($sql, [$newquestionid]);
 
     if ($questionupdate) {
-        if (!$docscreated) {
+        $oldquestionid = $DB->get_field('offlinequiz_group_questions', 'questionid', ['id' => $questionupdate->itemid]);
+        $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
+        $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
+        if (!$docscreated || $oldquestioncountanswers == $newquestioncountanswers) {
             $updategroupquestion = new stdClass();
             $updategroupquestion->id = $questionupdate->itemid;
             $updategroupquestion->questionid = $newquestionid;
@@ -131,14 +137,20 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
             $updatereference->version = $questionupdate->version;
 
             $DB->update_record('question_references', $updatereference);
-        } else {
-            $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
 
+            $recordupdateanddocscreated = get_string('recordupdateanddocscreatedversion', 'offlinequiz');
+        } else {
             $updatereference = new stdClass();
             $updatereference->id = $questionupdate->id;
-            $updatereference->version = $questionupdate->version - 1;
+            $sql = "SELECT qv.version
+                    FROM {question_versions} qv
+                    JOIN {offlinequiz_group_questions} ogq ON qv.questionid = ogq.questionid
+                    WHERE ogq.id = ?";
+            $updatereference->version = $DB->get_field_sql($sql, [$questionupdate->itemid]);
 
             $DB->update_record('question_references', $updatereference);
+
+            $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
         }
     }
 }
