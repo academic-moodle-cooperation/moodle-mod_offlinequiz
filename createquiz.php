@@ -313,7 +313,7 @@ if ($mode == 'preview') {
     // Print the heading.
     echo $OUTPUT->heading(get_string('downloadpdfs', 'offlinequiz'));
     $url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id]);
-    echo '<button href="' . $url->out() .'"> ' . get_string('backtopreview','offlinequiz') . '</button>';
+    echo $OUTPUT->single_button($url, get_string('backtopreview', 'offlinequiz'), 'get');
     $emptygroups = offlinequiz_get_empty_groups($offlinequiz);
     if (!empty($emptygroups)) {
         echo $OUTPUT->box_start('linkbox');
