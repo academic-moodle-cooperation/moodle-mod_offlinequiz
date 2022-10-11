@@ -212,27 +212,11 @@ $url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->i
 $preview['link'] = $url->out(false);
 $preview['text'] = get_string('preview', 'offlinequiz');
 
-//Begin download documents.
-$downloaddocuments = [];
-$downloaddocuments['collapsible'] = false;
-if($status['docsuploaded']) {
-  $downloaddocuments['status'] = 'done';
-} else if($status['docscreated']) {
-    $downloaddocuments['status'] = 'nextitem';
-} else {
-    $downloaddocuments['status'] = $preview['status'];
-} 
-
-$url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs']);
-
-$downloaddocuments['link'] = $url->out(false);
-$downloaddocuments['text'] = get_string('createpdfs', 'offlinequiz');
 
 
 $preparationsteps[] = $editquestion;
 $preparationsteps[] = $editgrades;
 $preparationsteps[] = $preview;
-$preparationsteps[] = $downloaddocuments;
 $templatedata['preparationsteps'] = $preparationsteps;
 
 
