@@ -58,6 +58,7 @@ if ($id) {
 
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
+$coursecontext = context_course::instance($course->id);
 // Log this request.
 $params = array(
     'objectid' => $cm->id,
@@ -93,17 +94,10 @@ $sql = "SELECT u.id
      LEFT JOIN {offlinequiz_results} oqr ON oqr.userid = u.id AND status = 'OK' AND oqr.offlinequizid = :offlinequizid
           WHERE c.instanceid = :courseid
           AND oqr.status is null";
-$queues = $DB->get_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id]);
-$status['pagesinprocessing'] = 0;
-foreach($queues as $queue) {
-    if($queue->status == 'new') {
-        $status['pagesinprocessing'] += $DB->count_records('offlinequiz_queue_data', ['queueid' => $queue->id]);
-    }
-}
+$status['missingresults'] = $DB->get_records_sql_menu($sql, ['courseid' => $offlinequiz->course, 'offlinequizid' => $offlinequiz->id]);
 $status['docsuploaded'] = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id]);
 $status['correctionerrors'] = $DB->get_records('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
-$status['resultscount'] = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
-
+$status['resultsexist'] = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
 $sql = "SELECT opl.*,
                     (SELECT count(*)
                     FROM {offlinequiz_participants} op
@@ -121,7 +115,6 @@ $sql = "SELECT DISTINCT u.id
      LEFT JOIN {offlinequiz_participants} op ON op.userid = u.id AND op.listid = opl.id
           WHERE c.instanceid = :courseid
           AND op.userid IS null";
-$status['missingresults'] = $DB->get_records_sql_menu($sql, ['courseid' => $offlinequiz->course, 'offlinequizid' => $offlinequiz->id]);
 $status['missingonattendancelist'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id, 'courseid' => $offlinequiz->course]);
 $sql = "SELECT op.userid
           FROM {offlinequiz_p_lists} opl
@@ -160,12 +153,11 @@ foreach($status['groups'] as $group) {
     $editquestiondata['groups'][] = $groupobject;
 }
 $editquestion['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_editquestion', $editquestiondata);
-if(!sizeof($status['groupswithoutquestions'])) {
+if($status['docscreated']) {
   $editquestion['status'] = 'done';
 } else {
   $editquestion['status'] = 'nextitem';
 }
-$editquestion[$editquestion['status']] = true;
 if($editquestion['status'] == 'done') {
     $editquestion['collapsestatus'] = 'collapsed';
 } else {
@@ -175,26 +167,72 @@ $url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'edit', 'cmid' => 
 $editquestion['link'] = $url->out(false);
 $editquestion['text'] = get_string('editquestions', 'offlinequiz');
 
+//Begin edit grades
+$editgrades = [];
+$editgrades['collapsible'] = true;
+$editgrades['unique'] = 'editgrades';
+$editgradesdata = [];
+$editgradesdata['groups'] = [];
+foreach($status['groups'] as $group) {
+    $groupobject = [];
+    $url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'edit', 'cmid' => $id, 'groupnumber' => $group->groupnumber]);
+    $groupobject['link'] = $url->out(false);
+    $groupobject['groupnumber'] = $groupnames[$group->groupnumber];
+    $groupobject['maxmark'] = $group->sumgrades;
+    if($groupobject['maxmark'] == (int) $groupobject['maxmark']) {
+        $groupobject['maxmark'] = (int) $groupobject['maxmark'];
+    }
+    $editgradesdata['groups'][] = $groupobject;
+}
+$editgrades['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_editgrades', $editgradesdata);
+if($status['docscreated']) {
+    $editgrades['status'] = 'done';
+} else if ($status['groupswithoutquestions']) {
+  $editgrades['status'] = 'open';
+} else {
+  $editgrades['status'] = 'nextitem';
+}
+
+if($editgrades['status'] == 'done') {
+    $editgrades['collapsestatus'] = 'collapsed';
+} else {
+    $editgrades['collapsestatus'] = 'open';
+}
+$url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'edit', 'cmid' => $id, 'gradetool' => 1]);
+
+$editgrades['link'] = $url->out(false);
+$editgrades['text'] = get_string('editgrades', 'offlinequiz');
+
 $preview = [];
 $preview['collapsible'] = false;
-if($status['docscreated']) {
-    $preview['status'] = 'done';
-} else if(!sizeof($status['groupswithoutquestions'])) {
-    $preview['status'] = 'nextitem';
-} else {
-    $preview['status'] = 'open';
-}
-$preview[$preview['status']] = true;
 
-$url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $id, 'tab' => 'tabforms']);
+$preview['status'] = $editgrades['status'];
+$url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id]);
 
 $preview['link'] = $url->out(false);
-$preview['text'] = get_string('forms', 'offlinequiz');
+$preview['text'] = get_string('preview', 'offlinequiz');
 
+//Begin download documents.
+$downloaddocuments = [];
+$downloaddocuments['collapsible'] = false;
+if($status['docsuploaded']) {
+  $downloaddocuments['status'] = 'done';
+} else if($status['docscreated']) {
+    $downloaddocuments['status'] = 'nextitem';
+} else {
+    $downloaddocuments['status'] = $preview['status'];
+} 
+
+$url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs']);
+
+$downloaddocuments['link'] = $url->out(false);
+$downloaddocuments['text'] = get_string('createpdfs', 'offlinequiz');
 
 
 $preparationsteps[] = $editquestion;
+$preparationsteps[] = $editgrades;
 $preparationsteps[] = $preview;
+$preparationsteps[] = $downloaddocuments;
 $templatedata['preparationsteps'] = $preparationsteps;
 
 
@@ -205,34 +243,22 @@ $upload = [];
 $upload['collapsible'] = true;
 $upload['unique'] = 'upload';
 $uploaddata = [];
-$uploaddata['pagesinprocessing'] = $status['pagesinprocessing'];
-$uploaddata['resultsavailable'] = $status['resultscount'];
-$url = new moodle_url('/mod/offlinequiz/report.php',['mode' => 'correct', 'q' => $offlinequiz->id]);
-$uploaddata['correcturl'] = $url->out(false);
+$uploaddata['userswithoutresult'] = count($status['missingresults']);
+$uploaddata['correctionerrors'] = count($status['correctionerrors']);
 $upload['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_upload', $uploaddata);
-
 
 if(!$status['docscreated']) {
   $upload['status'] = 'open';
-} else if(!$status['resultscount'] && !$status['docsuploaded']) {
-    $upload['status'] = 'nextitem';
-} else {
+} else if(!$status['missingresults']) {
     $upload['status'] = 'done';
+} else {
+    $upload['status'] = 'nextitem';
 }
 if($upload['status'] == 'done') {
     $upload['collapsestatus'] = 'collapsed';
 } else {
     $upload['collapsestatus'] = 'open';
 }
-if($upload['status'] == 'done') {
-    $upload['collapsestatus'] = 'collapsed';
-} else {
-    $upload['collapsestatus'] = 'open';
-}
-$url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'rimport', 'q' => $offlinequiz->id]);
-
-$upload[$upload['status']] = true;
-
 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'rimport', 'q' => $offlinequiz->id]);
 
 $upload['link'] = $url->out(false);
@@ -240,54 +266,65 @@ $upload['text'] = get_string('upload', 'offlinequiz');
 
 
 $overview = [];
-$resultsublistcontext = [];
-$resultsublistcontext['resultentry'] = [];
-$url = new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct']);
-$resultsublistcontext['resultentry'][] = ['langstring' => get_string('correctheader', 'offlinequiz'),
-                           'number'     => sizeof($status['correctionerrors']),
-                           'link'       => $url->out(false)
-];
-$url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'overview', 'q' => $offlinequiz->id]);
-$resultsublistcontext['resultentry'][] = ['langstring' => get_string('evaluated', 'offlinequiz'),
-    'number'     => $status['resultscount'],
-    'link'       => $url->out(false)
-];
-$overview['collapsible'] = true;
-$overview['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_resultsublist', $resultsublistcontext);
-if($status['correctionerrors']) {
+$overview['collapsible'] = false;
+if($status['resultsexist']) {
   $overview['status'] = 'nextitem';
 } else {
-  $overview['status'] = $status['resultscount'] ? 'done' : 'open';
+  $overview['status'] = 'open';
 }
-
-$overview[$overview['status']] = true;
 
 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'overview', 'q' => $offlinequiz->id]);
 
 $overview['link'] = $url->out(false);
-$overview['text'] = get_string('results', 'offlinequiz');
+$overview['text'] = get_string('reportoverview', 'offlinequiz');
 
-$evaluationsteps[] = $upload;
-$evaluationsteps[] = $overview;
-$templatedata['evaluationsteps'] = $evaluationsteps;
+$regrade = [];
+$regrade['collapsible'] = false;
+$regrade['status'] = $overview['status'];
 
+$url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'regrade', 'q' => $offlinequiz->id]);
+
+$regrade['link'] = $url->out(false);
+$regrade['text'] = get_string('regrade', 'offlinequiz');
+
+$statistics = [];
+$statistics['collapsible'] = true;
+
+$statistics['status'] = $overview['status'];
+if($statistics['status'] == 'done') {
+    $statistics['collapsestatus'] = 'collapsed';
+} else {
+    $statistics['collapsestatus'] = 'open';
+}
+$url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'statistics', 'id' => $id]);
+$statistics['link'] = $url->out(false);
+$statistics['unique'] = 'statistics';
 $statisticsdata = [];
-$url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'statistics', 'q' => $offlinequiz->id]);
 $statisticsdata['overviewlink'] = $url->out(false);
 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'statistics', 'id' => $id, 'statmode' => 'questionstats']);
 $statisticsdata['questionanalysislink'] = $url->out(false);
 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'statistics', 'id' => $id, 'statmode' => 'questionandanswerstats']);
 $statisticsdata['questionandansweranalysislink'] = $url->out(false);
-$templatedata['statistics'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_statistics', $statisticsdata);
+$statistics['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_statistics', $statisticsdata);
+
+$statistics['text'] = get_string('statistics', 'offlinequiz');
+
+$evaluationsteps[] = $upload;
+$evaluationsteps[] = $overview;
+$evaluationsteps[] = $regrade;
+$evaluationsteps[] = $statistics;
+$templatedata['evaluationsteps'] = $evaluationsteps;
+
 
 $participantsliststeps = [];
 
 $createlists = [];
 $createlists['collapsible'] = false;
-$createlists['status'] = 'noaction';
-
-$createlists[$createlists['status']] = true;
-
+if(!$status['attendancelists']) {
+    $createlists['status'] = 'nextitem';
+} else {
+    $createlists['status'] = 'done';
+}
 $url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'editlists', 'q' => $offlinequiz->id]);
 
 $createlists['link'] = $url->out(false);
@@ -308,12 +345,18 @@ foreach($status['attendancelists'] as $list) {
 $editlistsdata['notonattendancelist'] = count($status['missingonattendancelist']);
 $editlists['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_attendancelists', $editlistsdata);
 
-
-$editlists['status'] = 'noaction';
-$editlists['collapsestatus'] = 'open';
-
-$editlists[$editlists['status']] = true;
-
+if($createlists['status'] != 'done') {
+    $editlists['status'] = 'open';
+} else if($createlists['status'] == 'done' && $status['missingonattendancelist']) {
+    $editlists['status'] = 'nextitem';
+} else {
+    $editlists['status'] = 'done';
+}
+if($editlists['status'] == 'done') {
+    $editlists['collapsestatus'] = 'collapsed';
+} else {
+    $editlists['collapsestatus'] = 'open';
+}
 $url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'editparticipants', 'q' => $offlinequiz->id]);
 
 $editlists['link'] = $url->out(false);
@@ -322,10 +365,13 @@ $editlists['text'] = get_string('tabeditparticipants', 'offlinequiz');
 
 $downloadattendance = [];
 $downloadattendance['collapsible'] = false;
-$downloadattendance['status'] = 'noaction';
-
-$downloadattendance[$downloadattendance['status']] = true;
-
+if(!$status['studentsonalist']) {
+    $downloadattendance['status'] = 'open';
+} else if ($status['attendanceuploads']) {
+    $downloadattendance['status'] = 'done';
+} else {
+    $downloadattendance['status'] = 'nextitem';
+}
 $url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'createpdfs', 'q' => $offlinequiz->id]);
 
 $downloadattendance['link'] = $url->out(false);
@@ -333,9 +379,13 @@ $downloadattendance['text'] = get_string('tabdownloadparticipantsforms', 'offlin
 
 $uploadattendance = [];
 $uploadattendance['collapsible'] = false;
-$uploadattendance['status'] = 'noaction';
-$uploadattendance[$uploadattendance['status']] = true;
-
+if($status['attendanceuploads']) {
+  $uploadattendance['status'] = 'done';
+} else if($downloadattendance['status'] == 'done' || $downloadattendance['status'] == 'nextitem') {
+  $uploadattendance['status'] = 'nextitem';
+} else {
+  $uploadattendance['status'] = 'open';
+}
 $url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'createpdfs', 'q' => $offlinequiz->id]);
 
 $uploadattendance['link'] = $url->out(false);
@@ -343,10 +393,11 @@ $uploadattendance['text'] = get_string('upload', 'offlinequiz');
 
 $attendanceoverview = [];
 $attendanceoverview['collapsible'] = false;
-$attendanceoverview['status'] = 'noaction';
-
-$attendanceoverview[$attendanceoverview['status']] = true;
-
+if($status['attendanceuploads']) {
+    $attendanceoverview['status'] = 'nextitem';
+} else {
+  $attendanceoverview['status'] = 'open';
+}
 $url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'attendances', 'q' => $offlinequiz->id]);
 
 $attendanceoverview['link'] = $url->out(false);
@@ -358,13 +409,11 @@ $participantsliststeps[] = $downloadattendance;
 $participantsliststeps[] = $uploadattendance;
 $participantsliststeps[] = $attendanceoverview;
 $templatedata['participantsliststeps'] = $participantsliststeps;
-$templatedata['displayparticipantssteps'] = $offlinequiz->participantsusage;
 
 // Print the page header.
 $PAGE->set_url('/mod/offlinequiz/view.php', array('id' => $cm->id));
 $PAGE->set_title($offlinequiz->name);
 $PAGE->set_heading($course->shortname);
-$PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagelayout('report');
 // Output starts here.
 echo $OUTPUT->header();
@@ -373,7 +422,6 @@ echo $OUTPUT->header();
 if ($edit != -1 and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
 }
-
 
 if (has_capability('mod/offlinequiz:manage', $context)) {
     echo $OUTPUT->render_from_template('mod_offlinequiz/teacher_view', $templatedata);
@@ -397,7 +445,8 @@ if (has_capability('mod/offlinequiz:manage', $context)) {
                     array('q' => $offlinequiz->id, 'resultid' => $result->id));
             echo $OUTPUT->single_button($url, get_string('viewresults', 'offlinequiz'));
             echo '</div>';
-        }
+        
+	}
     } else {
         if (!empty($offlinequiz->time) and $offlinequiz->time < time()) {
             echo '<div class="offlinequizinfo">' . get_string('nogradesseelater', 'offlinequiz', fullname($USER)).'</div>';
