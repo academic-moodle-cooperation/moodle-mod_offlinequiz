@@ -310,9 +310,10 @@ if ($mode == 'preview') {
     // O TAB for creating, downloading and deleting PDF forms.
     // O==============================================================.
 } else if ($mode == 'createpdfs') {
-    offlinequiz_print_tabs($offlinequiz, 'tabdownloadquizforms', $cm);
     // Print the heading.
     echo $OUTPUT->heading(get_string('downloadpdfs', 'offlinequiz'));
+    $url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' = $offlinequiz->id]);
+    echo '<button href="' . $url->out() .'"> ' . get_string('backtopreview','offlinequiz') . '</button>';
     $emptygroups = offlinequiz_get_empty_groups($offlinequiz);
     if (!empty($emptygroups)) {
         echo $OUTPUT->box_start('linkbox');
