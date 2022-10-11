@@ -71,6 +71,7 @@ $string['attendances'] = 'Attendances';
 $string['attendancesheadline'] = 'Attendances';
 $string['attendanceoverview'] = 'Attendance Overview';
 $string['blackwhitethreshold'] = 'Black/white threshold.';
+$string['backtopreview'] = 'Back to preview';
 $string['basicideasofofflinequiz'] = 'The basic ideas of offline quiz-making';
 $string['bulksavegrades'] = 'Save Grades';
 $string['calibratescanner'] = 'Calibrate scanner';
