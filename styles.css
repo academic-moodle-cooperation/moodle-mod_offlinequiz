@@ -1312,3 +1312,12 @@ input#showviewbutton {
         margin-top: -0.5em;
     }
 }
+
+.offlinequiz-nextitem {
+    color: #b62d21;
+}
+
+.offlinequiz-locked {
+    pointer-events:none;
+    opacity:0.8;
+}

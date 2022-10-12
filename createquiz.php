@@ -312,8 +312,7 @@ if ($mode == 'preview') {
 } else if ($mode == 'createpdfs') {
     // Print the heading.
     echo $OUTPUT->heading(get_string('downloadpdfs', 'offlinequiz'));
-    $url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id]);
-    echo $OUTPUT->single_button($url, get_string('backtopreview', 'offlinequiz'), 'get');
+
     $emptygroups = offlinequiz_get_empty_groups($offlinequiz);
     if (!empty($emptygroups)) {
         echo $OUTPUT->box_start('linkbox');
@@ -328,29 +327,32 @@ if ($mode == 'preview') {
         return true;
     }
 
+    echo $OUTPUT->box_start('controlbuttons linkbox');
+
+    $url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id]);
+    echo $OUTPUT->single_button($url, get_string('backtopreview', 'offlinequiz'), 'get');
+
     // Print buttons for delete/recreate iff there are no scanned pages yet.
     if (!$hasscannedpages) {
-        echo $OUTPUT->box_start('generalbox linkbox');
 
         unset($buttonoptions);
         $buttonoptions['q'] = $offlinequiz->id;
         $buttonoptions['mode'] = 'createpdfs';
         $buttonurl = new moodle_url('/mod/offlinequiz/createquiz.php', $buttonoptions);
         if ($forcepdfnew) {
-            echo '<div class="linkbox">';
+            echo '<div class="singlebutton">';
             echo $OUTPUT->single_button($buttonurl, get_string('createpdfforms', 'offlinequiz'), 'get');
             echo '</div>';
         } else {
             ?>
-            <div class="singlebutton linkbox btn-secondary">
+            <div class="singlebutton">
                <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=" . $offlinequiz->id .
                       "&mode=createpdfs" ?>" method="POST">
                     <div>
                         <input type="hidden" name="forcepdfnew" value="1" />
                         <button type="submit"
                                 onClick='return confirm("<?php echo get_string('reallydeletepdfs', 'offlinequiz') ?>")'
-                                class="btn btn-secondary singlebutton"
-                                 >
+                                class="btn btn-secondary">
                             <?php echo get_string('deletepdfs', 'offlinequiz') ?>
                         </button>
                    </div>
@@ -358,8 +360,8 @@ if ($mode == 'preview') {
             </div>
             <?php
         }
-        echo $OUTPUT->box_end();
     }
+    echo $OUTPUT->box_end();
 
     $fs = get_file_storage();
 
