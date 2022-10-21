@@ -408,14 +408,14 @@ $string['otherresultexists'] = 'Different result for {$a} already exists, evalua
 $string['outof'] = '{$a->grade} out of a maximum of {$a->maxgrade}';
 $string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
 $string['overallfeedback'] = 'Overall feedback';
-$string['overview'] = 'Overview';
+$string['overview'] = 'Quiz information';
 $string['overviewdownload_help'] = 'Download Overview';
-$string['pagecorrected'] = 'Corrected sheet of participants list imported';
+$string['pagecorrected'] = 'Corrected sheet of participants list evaluated';
 $string['pageevaluationtask'] = 'Answer sheet evaluation for the offlinequiz-plugin';
-$string['pageimported'] = 'Sheet of participants list imported';
+$string['pageimported'] = 'Sheet of attendance list evaluated';
 $string['page-mod-offlinequiz-x'] = 'Any offline quiz page';
 $string['page-mod-offlinequiz-edit'] = 'Edit offline quiz page';
-$string['pagenumberimported'] = 'Sheet {$a} of participants list imported';
+$string['pagenumberimported'] = 'Sheet {$a} of attendance list evaluated';
 $string['pagenumberupdate'] = 'Page number update';
 $string['pagenotdetected'] = 'Could not detect barcode for page!';
 $string['pagesizeparts'] = 'Participants shown per page:';
@@ -426,7 +426,7 @@ $string['partcheckedwithoutresult'] = '<a href="{$a->url}">{$a->count} checked p
 $string['partuncheckedwithresult'] = '<a href="{$a->url}">{$a->count} unchecked participants with result</a>';
 $string['partuncheckedwithoutresult'] = '{$a} unchecked participants without result';
 $string['partial'] = 'partial';
-$string['participantslist'] = 'List of participants';
+$string['participantslist'] = 'List of attendances';
 $string['participantslists'] = 'Participants';
 $string['participants'] = 'Participants';
 $string['participantsinlists'] = 'Participants in lists';
@@ -434,11 +434,10 @@ $string['participants_help'] = '<p>Lists of participants are designed for large 
 You can add users to different lists. Each list could, for instance, contain the participants in a particular room. The participants can be members of a special group. A group registration tool can be used for creating those groups.
 Lists of participants can be downloaded as PDF documents, printed and marked with crosses just like the answer forms of offline quizzes. Afterwards they can be uploaded and the marked students will be marked as present in the database.
 Please avoid spots on the barcodes as they are used to identify the students.</p>';
-$string['partimportnew'] = 'Uploading lists of participants';
+$string['partimportnew'] = 'Uploading lists of attendances';
 $string['partimportnew_help'] = '<p>
-In this tab you can upload the filled-in lists of participants. You can upload single scanned image files or several scanned image files in a ZIP-archive. The offline quiz module will process the image files in the background.
-File names are not relevant but should not contain special characters such as umlauts. Images should be GIFs, PNGs
-or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
+In this tab you can upload and evaluate the filled-in lists of attendances. You can upload single scanned image files or several scanned image files in a ZIP-archive. The offline quiz module will process the image files in the background.
+File names are not relevant but should not contain special characters such as umlauts. Images should be GIFs, PNGs or TIFs. A resolution between 200 and 300dpi is recommended.</p>';
 $string['pdfdeletedforgroup'] = 'Form for group {$a} deleted';
 $string['pdfscreated'] = 'PDF forms have been created';
 $string['pdfsdeletedforgroup'] = 'Forms for group {$a} deleted';
@@ -449,10 +448,10 @@ $string['pdfintrotoolarge'] = 'The introduction is too long (max. 2000 character
 $string['pearlywhite'] = 'Pearly white';
 $string['pluginadministration'] = 'Offline quiz administration';
 $string['point'] = 'point';
-$string['preparation'] = 'Preparation for test';
+$string['preparation'] = 'Preparation';
 $string['present'] = 'present';
 $string['preventsamequestion'] = 'Prevent multiple usage of the same question in different groups';
-$string['previewforgroup'] = 'Preview for group {$a}';
+$string['previewforgroup'] = 'Group {$a}';
 $string['preview'] = 'Preview';
 $string['previewquestion'] = 'Preview question';
 $string['printstudycodefield'] = 'Print study code field on question sheet';
@@ -535,8 +534,8 @@ $string['privacy:metadata:offlinequiz_p_lists:filename'] = 'The name of the file
 $string['privacy:metadata:offlinequiz_p_lists'] = 'This table saves information about participants lists where the teachers can cross out, if a student was there or not.';
 $string['privacy:metadata:offlinequiz_queue'] = 'This table saves a queue of an upload. For every upload there is an own object in this table.';
 $string['privacy:metadata:offlinequiz_queue:offlinequizid'] = 'The offlinequiz id of the queue.';
-$string['privacy:metadata:offlinequiz_queue:importuserid'] = 'The userid of the teacher who imported the files.';
-$string['privacy:metadata:offlinequiz_queue:timecreated'] = 'The time this offlinequiz sheets were imported.';
+$string['privacy:metadata:offlinequiz_queue:importuserid'] = 'The userid of the teacher who uploaded the files.';
+$string['privacy:metadata:offlinequiz_queue:timecreated'] = 'The time this offlinequiz sheets were evaluated.';
 $string['privacy:metadata:offlinequiz_queue:timestart'] = 'The time the evaluation of the queue was started.';
 $string['privacy:metadata:offlinequiz_queue:timefinish'] = 'The time the evaluation of the queue was finished.';
 $string['privacy:metadata:offlinequiz_queue:status'] = 'The status of the queue which is needed.';
@@ -574,9 +573,9 @@ $string['privacy:metadata:offlinequiz_scanned_p_pages:time'] = 'The time this pa
 $string['privacy:metadata:offlinequiz_scanned_p_pages:status'] = 'The status of this scanned page.';
 $string['privacy:metadata:offlinequiz_scanned_p_pages:error'] = 'The error (if exists) that this page triggered while processing.';
 $string['privacy:metadata:offlinequiz_scanned_p_pages'] = 'This table saves participant pages and their general information.';
-$string['questionanalysis'] = 'Difficulty analysis';
-$string['questionanalysistitle'] = 'Difficulty Analysis Table';
-$string['questionandansweranalysis'] = 'Question and Answer Analysis';
+$string['questionanalysis'] = 'Question analysis';
+$string['questionanalysistitle'] = 'Question analysis table';
+$string['questionandansweranalysis'] = 'Question and answer analysis';
 $string['questionbankcontents'] = 'Question bank contents';
 $string['questionforms'] = 'Question forms';
 $string['questioninfoanswers'] = 'Number of correct answers';
@@ -668,17 +667,17 @@ ID number: & $\underline{\hspace*{8cm}}$\\\\[5mm]
 
 \end{document}';
 $string['questionsin'] = 'Questions in';
-$string['questionsingroup'] = 'Questions in group';
+$string['questionsingroup'] = 'Group';
 $string['questionsinthisofflinequiz'] = 'Questions in this offline quiz';
 $string['questiontextisempty'] = '[Empty question text]';
 $string['quizdate'] = 'Date of offline quiz';
 $string['quizopenclose'] = 'Open and close dates';
 $string['quizopenclose_help'] = 'Students can only see their attempt(s) after the open time and before the close time.';
-$string['quizquestions'] = 'Quiz Questions';
-$string['qversioncannotupdate'] = 'Question version cannot be updated';
+$string['quizquestions'] = 'Quiz questions';
+$string['qversioncannotupdate'] = 'Question cannot be updated. The version of the question has not changed.';
 $string['qversionnumbersdiffer'] = 'The number of answers differ between the old and the new version. This would lead to inconsistencies.';
 $string['qversionupdateerror'] = 'There was an error updating the question version.';
-$string['qversionupdated'] = 'Question version updated';
+$string['qversionupdated'] = 'Question updated. The version of the question has changed.';
 $string['qversionupdatedwarning'] = 'Forms are already created with another version of this question. Please check, whether there were any breaking changes.';
 $string['randomfromexistingcategory'] = 'Random question from an existing category';
 $string['randomnumber'] = 'Number of random questions';
@@ -691,7 +690,7 @@ $string['recordupdateanddocscreated'] = 'Questions were updated but as the forms
 $string['recordupdateanddocscreatedversion'] = 'Questions were updated but the forms are already created. Please check, whether the changes did not ontroduce any changes that affect grading.';
 $string['recurse'] = 'Include questions from subcategories too';
 $string['refreshpreview'] = 'Refresh preview';
-$string['regrade'] = 'Regrade';
+$string['regrade'] = 'Regrading';
 $string['regradedisplayexplanation'] = '<b>Attention:</b> Regrading will not change marks that have been overwritten manually!';
 $string['regradinginfo'] = 'If you change the score for a question, you must regrade the offlinequiz to update the participants results.';
 $string['regradingquiz'] = 'Regrading';
@@ -712,9 +711,9 @@ $string['reportends'] = 'Review of results ends';
 $string['reportoverview'] = 'Overview';
 $string['reportstarts'] = 'Review of results starts';
 $string['resetofflinequizzes'] = 'Reset Offline Quiz data';
-$string['results'] = 'Results';
-$string['resultexists'] = 'Same result for {$a} already exists, import ignored';
-$string['resultimport'] = 'Import results';
+$string['results'] = 'Overview';
+$string['resultexists'] = 'Same result for {$a} already exists, evaluation ignored';
+$string['resultimport'] = 'Upload & Correct';
 $string['reviewcloses'] = 'Review closes';
 $string['reviewbefore'] = 'Allow review while offline quiz is open';
 $string['reviewclosed'] = 'After the offline quiz is closed';
@@ -724,7 +723,7 @@ $string['reviewofresult'] = 'Review of result';
 $string['reviewopens'] = 'Review opens';
 $string['reviewoptions'] = 'Students may view';
 $string['reviewoptionsheading'] = 'Review options';
-$string['reviewoptions_help'] = 'With these options you can control what the students may see after the results were imported.
+$string['reviewoptions_help'] = 'With these options you can control what the students may see after the results were evaluated.
 You can also define start and end time for the results report. The checkboxes mean:
 <table>
 <tr><td style="vertical-align: top;"><b>The attempt</b></td><td>
@@ -741,7 +740,7 @@ Additionally, if "The attempt" is selected, the achieved score and the maximum s
 Feedback that depens on what response the student gave.
 </td></tr>
 <tr><td style="vertical-align: top;"><b>General feedback</b></td><td>
-<p>General feedback is shown to the student after the results were imported.
+<p>General feedback is shown to the student after the results were evaluated.
 Unlike specific feedback, which depends on the question type and what response the student gave, the same general feedback text is shown to all students.</p>
 <p></p><p>You can use the general feedback to give students a fully worked answer and perhaps a link to more information they can use if they did not understand the questions.</p>
 </td></tr>
@@ -824,25 +823,25 @@ $string['statsoverview'] = 'Statistics Overview';
 $string['studycode'] = 'Study code';
 $string['tabattendances'] = 'Attendances';
 $string['tabattendancesoverview'] = 'Overview';
-$string['tabdownloadquizforms'] = 'Download forms';
-$string['tabdownloadparticipantsforms'] = 'Download attendance forms';
-$string['tabeditgrades'] = 'Edit Grades';
-$string['tabeditgroupquestions'] = 'Edit Offlinequiz Content';
-$string['tabeditparticipants'] = 'Edit attendance lists';
-$string['tabofflinequizcontent'] = 'Offlinequiz Content';
+$string['tabdownloadquizforms'] = 'Forms';
+$string['tabdownloadparticipantsforms'] = 'Forms';
+$string['tabeditgrades'] = 'Grades';
+$string['tabeditgroupquestions'] = 'Questions';
+$string['tabeditparticipants'] = 'Participants';
+$string['tabofflinequizcontent'] = 'Preparation';
 $string['tabofflinequizcorrect'] = 'Correct';
-$string['tabofflinequizupload'] = 'Upload/Correct Forms';
+$string['tabofflinequizupload'] = 'Upload & Correct';
 $string['tabparticipantscorrect'] = 'Correct';
 $string['tabparticipantlists'] = 'Attendance lists';
-$string['tabparticipantsupload'] = 'Upload';
+$string['tabparticipantsupload'] = 'Upload & Correct';
 $string['tabpreview'] = 'Preview';
 $string['tabquestionandanswerstats'] = 'Question and answer analysis';
 $string['tabquestionstats'] = 'Question analysis';
-$string['tabregrade'] = 'Regrade';
+$string['tabregrade'] = 'Regrading';
 $string['tabresults'] = 'Results';
 $string['tabresultsoverview'] = 'Overview';
 $string['tabstatistics'] = 'Statistics';
-$string['tabstatsoverview'] = 'Overview';
+$string['tabstatsoverview'] = 'Quiz information';
 $string['temporaryfiledeletiontask'] = 'Delete temporary files';
 $string['theattempt'] = 'The attempt';
 $string['timesup'] = 'Time is up!';
@@ -857,8 +856,8 @@ $string['updatedsumgrades'] = 'The sum of all grades of group {$a->letter} was r
 $string['upgradingfilenames'] = 'Upgrading filenames of documents: offline quiz {$a->done}/{$a->outof} (Offline Quiz ID {$a->info})';
 $string['upgradingofflinequizattempts'] = 'Upgrading offline quiz attempts: offline quiz {$a->done}/{$a->outof} <br/>(Offline Quiz ID {$a->info})';
 $string['upgradingilogs'] = 'Upgrading scanned pages: scanned page {$a->done}/{$a->outof} <br/>(Offline Quiz ID {$a->info})';
-$string['uploadpart'] = 'Upload/Correct lists of participants';
-$string['upload'] = 'Upload/Correct';
+$string['uploadpart'] = 'Upload & Correct';
+$string['upload'] = 'Upload & Correct';
 $string['uppertrigger'] = 'Higher second boundary';
 $string['uppertriggerzero'] = 'Higher second boundary is zero';
 $string['upperwarning'] = 'Higher first boundary';
@@ -867,9 +866,9 @@ $string['useradded'] = 'User {$a} added';
 $string['userdoesnotexist'] = 'User {$a} does not exist in system';
 $string['useridentification'] = 'User identification';
 $string['useridviolation'] = 'Multiple users found';
-$string['userimported'] = 'User {$a} imported and graded';
+$string['userimported'] = 'User {$a} evaluated and graded';
 $string['usernotincourse'] = 'User {$a} not in course.';
-$string['userpageimported'] = 'Single page imported for user {$a}';
+$string['userpageimported'] = 'Single page evaluated for user {$a}';
 $string['usernotinlist'] = 'User not registered in list!';
 $string['usernotregistered'] = 'User {$a} not registered in course';
 $string['userswithoutresult'] = 'Amount of users without result: ';
@@ -878,5 +877,5 @@ $string['viewresults'] = 'View results';
 $string['white'] = 'White';
 $string['withselected'] = 'With selected...';
 $string['zipfile'] = 'ZIP file';
-$string['zipok'] = 'ZIP file imported';
+$string['zipok'] = 'ZIP file uploaded';
 $string['zerogradewarning'] = 'Warning: Your offline quiz grade is 0.0!';
