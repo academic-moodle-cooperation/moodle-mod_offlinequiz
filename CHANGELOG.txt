@@ -1,5 +1,11 @@
 CHANGELOG
 =========
+3.11.4
+-----------------
+[Bug] Fix PHP 8.0 incompabilities
+[Bug] Date of test used instead of review start used for calendar
+[Bug] Wrong language string for "group" was used in all questionsheets (pdf, LaTeX and docx)
+
 3.11.3
 -----------------
 [Bug] Fixed a bug that special html characters would break docx documents

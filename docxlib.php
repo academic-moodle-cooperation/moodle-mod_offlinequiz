@@ -527,7 +527,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $title = substr($title, 0, 37) . ' ...';
         }
     }
-    $title .= ",  " . offlinequiz_str_html_docx(get_string('group') . " $groupletter");
+    $title .= ",  " . offlinequiz_str_html_docx(get_string('group', 'offlinequiz') . " $groupletter");
 
     // Add a header.
     $header = $section->addHeader();
@@ -541,7 +541,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Print title page.
     if (!$correction) {
-        $section->addText(offlinequiz_str_html_docx(get_string('questionsheet', 'offlinequiz') . ' - ' . get_string('group') .
+        $section->addText(offlinequiz_str_html_docx(get_string('questionsheet', 'offlinequiz') . ' - ' . get_string('group', 'offlinequiz') .
                                                     " $groupletter"), 'hStyle', 'cStyle');
         $section->addTextBreak(2);
 

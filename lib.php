@@ -969,10 +969,6 @@ function offlinequiz_update_events($offlinequiz) {
     $timeopen  = $offlinequiz->timeopen;
     $timeclose = $offlinequiz->timeclose;
 
-    if ($offlinequiz->time) {
-        $timeopen = $offlinequiz->time;
-    }
-
     // Only add open/close events if they differ from the offlinequiz default.
     if (!empty($offlinequiz->coursemodule)) {
         $cmid = $offlinequiz->coursemodule;
