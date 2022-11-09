@@ -248,7 +248,6 @@ if ($options->attempt == question_display_options::VISIBLE || $isteacher) {
     if (!$quba = question_engine::load_questions_usage_by_activity($result->usageid)) {
         print_error('Could not load question usage');
     }
-
     $slots = $quba->get_slots();
 
     foreach ($slots as $id => $slot) {
