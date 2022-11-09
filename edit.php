@@ -112,47 +112,26 @@ $recordupdateanddocscreated = null;
 $PAGE->set_url($thispageurl);
 
 // Update version references before get_structure().
-if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
-    $sql = "SELECT qr.id, qv.version, qr.itemid
-            FROM {question_versions} qv
-            JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid
-            WHERE qv.questionid = ?
-            AND qr.component = 'mod_offlinequiz'
-            AND qr.questionarea = 'slot'";
-    $questionupdate = $DB->get_record_sql($sql, [$newquestionid]);
+if ($newquestionid = optional_param('lastchanged', 0, PARAM_INT)) {
+    $sql = "SELECT DISTINCT ogq.questionid AS oldquestionid,
+                   ogq.maxmark AS maxmark,
+                   (SELECT COUNT(*)
+                      FROM {question_answers} qa 
+                     WHERE qa.question = ogq.questionid) AS answercount
+              FROM {offlinequiz_group_questions} ogq
+              JOIN {question_versions} qv1 ON qv1.questionid = ogq.questionid
+              JOIN {question_versions} qv2 ON qv1.questionbankentryid = qv2.questionbankentryid AND qv1.version <> qv2.version
+             WHERE ogq.offlinequizid = :offlinequizid
+               AND qv2.questionid = :newquestionid";
 
-    if ($questionupdate) {
-        $oldquestionid = $DB->get_field('offlinequiz_group_questions', 'questionid', ['id' => $questionupdate->itemid]);
-        $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
-        $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
-        if (!$docscreated || $oldquestioncountanswers == $newquestioncountanswers) {
-            $updategroupquestion = new stdClass();
-            $updategroupquestion->id = $questionupdate->itemid;
-            $updategroupquestion->questionid = $newquestionid;
-
-            $DB->update_record('offlinequiz_group_questions', $updategroupquestion);
-
-            $updatereference = new stdClass();
-            $updatereference->id = $questionupdate->id;
-            $updatereference->version = $questionupdate->version;
-
-            $DB->update_record('question_references', $updatereference);
-
-            $recordupdateanddocscreated = get_string('recordupdateanddocscreatedversion', 'offlinequiz');
-        } else {
-            $updatereference = new stdClass();
-            $updatereference->id = $questionupdate->id;
-            $sql = "SELECT qv.version
-                    FROM {question_versions} qv
-                    JOIN {offlinequiz_group_questions} ogq ON qv.questionid = ogq.questionid
-                    WHERE ogq.id = ?";
-            $updatereference->version = $DB->get_field_sql($sql, [$questionupdate->itemid]);
-
-            $DB->update_record('question_references', $updatereference);
-
-            $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
+    $questionupdates = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id, 'newquestionid' => $newquestionid]);
+    $newanswercount = $DB->count_records('question_answers', ['question' => $newquestionid]);
+    foreach ($questionupdates as $questionupdate) {
+        if (!$docscreated || $questionupdate->answercount == $newanswercount) {
+            offlinequiz_update_question_instance($offlinequiz, $questionupdate->oldquestionid, $questionupdate->maxmark, $newquestionid);
         }
     }
+    offlinequiz_update_grades($offlinequiz);
 }
 
 // Get the course object and related bits.

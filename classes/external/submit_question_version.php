@@ -22,6 +22,7 @@ require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/engine/datalib.php');
 require_once($CFG->libdir . '/questionlib.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
 use external_api;
 use external_description;
@@ -110,22 +111,9 @@ class submit_question_version extends external_api {
 
         // The forms are either still not created or the number of answers matches, so a question can be updated ex-post.
         if ($canbeedited || $oldquestioncountanswers == $newquestioncountanswers) {
-
-            $newdata = new stdClass();
-            $newdata->id = $slotdata->id;
-            $newdata->questionid = $newquestionid;
-            $response['result'] = $DB->update_record('offlinequiz_group_questions', $newdata);
-
-            $reference = new stdClass();
-            $reference->id = $referencedata->id;
-            if ($params['newversion'] === 0) {
-                $reference->version = null;
-            } else {
-                $reference->version = $params['newversion'];
-            }
-            if ($response['result']) {
-                $response['result'] = $DB->update_record('question_references', $reference);
-            }
+            $offlinequiz = $DB->get_record('offlinequiz', ['id' => $slotdata->offlinequizid]);
+            offlinequiz_update_question_instance($offlinequiz, $oldquestionid, $slotdata->maxmark, $newquestionid);
+            offlinequiz_update_grades($offlinequiz);
         }
 
         return $response;
