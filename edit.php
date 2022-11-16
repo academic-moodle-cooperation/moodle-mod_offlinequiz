@@ -112,11 +112,11 @@ $recordupdateanddocscreated = null;
 $PAGE->set_url($thispageurl);
 
 // Update version references before get_structure().
-if ($newquestionid = optional_param('lastchanged', 0, PARAM_INT)) {
+if ($newquestionid = optional_param('lastchanged', null, PARAM_INT)) {
     $sql = "SELECT DISTINCT ogq.questionid AS oldquestionid,
                    ogq.maxmark AS maxmark,
                    (SELECT COUNT(*)
-                      FROM {question_answers} qa 
+                      FROM {question_answers} qa
                      WHERE qa.question = ogq.questionid) AS answercount
               FROM {offlinequiz_group_questions} ogq
               JOIN {question_versions} qv1 ON qv1.questionid = ogq.questionid
@@ -128,10 +128,12 @@ if ($newquestionid = optional_param('lastchanged', 0, PARAM_INT)) {
     $newanswercount = $DB->count_records('question_answers', ['question' => $newquestionid]);
     foreach ($questionupdates as $questionupdate) {
         if (!$docscreated || $questionupdate->answercount == $newanswercount) {
-            offlinequiz_update_question_instance($offlinequiz, $questionupdate->oldquestionid, $questionupdate->maxmark, $newquestionid);
+            offlinequiz_update_question_instance($offlinequiz,
+                                                $questionupdate->oldquestionid,
+                                                $questionupdate->maxmark,
+                                                $newquestionid);
         }
     }
-    offlinequiz_update_grades($offlinequiz);
 }
 
 // Get the course object and related bits.
