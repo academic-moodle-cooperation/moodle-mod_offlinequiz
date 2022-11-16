@@ -24,6 +24,9 @@
 
 import {call as fetchMany} from 'core/ajax';
 import Notification from 'core/notification';
+import ModalFactory from 'core/modal_factory';
+import ModalEvents from 'core/modal_events';
+import * as str from 'core/str';
 
 /**
  * Set the question version for the slot.
@@ -36,14 +39,16 @@ const setQuestionVersion = (slotId, newVersion) => fetchMany([{
     methodname: 'mod_offlinequiz_set_question_version',
     args: {
         slotid: slotId,
-        newversion: newVersion,
+        newversion: newVersion
     }
 }])[0];
 
 /**
  * Replace the container with a new version.
+ *
+ * @param {number} elementslotid the id of the slot
  */
-const registerEventListeners = () => {
+const registerEventListeners = (elementslotid) => {
     document.addEventListener('change', e => {
         if (!e.target.matches('[data-action="mod_offlinequiz-select_slot"][data-slot-id]')) {
             return;
@@ -52,12 +57,66 @@ const registerEventListeners = () => {
         const slotId = e.target.dataset.slotId;
         const newVersion = parseInt(e.target.value);
 
-        setQuestionVersion(slotId, newVersion)
-            .then(() => {
-                location.reload();
+        if (elementslotid == slotId) {
+            setQuestionVersion(slotId, newVersion)
+                .then((response) => {
+                    let message = new Object();
+                    var langstrings = [
+                        {key: 'qversioncannotupdate', component: 'mod_offlinequiz'},
+                        {key: 'qversionupdated', component: 'mod_offlinequiz'},
+                        {key: 'qversionnumbersdiffer', component: 'mod_offlinequiz'},
+                        {key: 'qversionupdatedwarning', component: 'mod_offlinequiz'},
+                        {key: 'qversionupdateerror', component: 'mod_offlinequiz'},
+                    ];
+                    str.get_strings(langstrings).done(function(strings) {
+                        if (response.result) { // If the question was updated.
+                            // If the number of answers are the same but the forms are already created, we need a warning.
+                            if (!response.answersdiffer && !response.canbeedited) {
+                                message.title = strings[1];
+                                message.body = strings[3];
+                            } else {
+                                message.title = null;
+                            }
+                        } else {
+                            if (response.answersdiffer && !response.canbeedited) {
+                                // If the version was not updated because the numbers of answers differ and the forms are created.
+                                message.title = strings[0];
+                                message.body = strings[2];
+                            } else {
+                                if (response.samequestion) {
+                                    message.title = null;
+                                } else {
+                                    // If the version was not updated because of some other error.
+                                    message.title = strings[0];
+                                    message.body = strings[4];
+                                }
+                            }
+                        }
+
+                        let url = new URL(location.href);
+                        url.searchParams.delete('lastchanged');
+                        let redirect = url.toString();
+
+                        if (message.title) {
+                            ModalFactory.create({
+                                type: ModalFactory.types.ALERT,
+                                title: message.title,
+                                body: message.body
+                            }).done(function(modal) {
+                                var root = modal.getRoot();
+                                root.on(ModalEvents.cancel, function() {
+                                    location.href = redirect;
+                                });
+                                modal.show();
+                            });
+                        } else {
+                            location.href = redirect;
+                        }
+                    });
                 return;
             })
             .catch(Notification.exception);
+        }
     });
 };
 
@@ -66,11 +125,13 @@ let eventsRegistered = false;
 
 /**
  * Entrypoint of the js.
+ *
+ * @param {number} slotid the id of the slot
  */
-export const init = () => {
+export const init = (slotid) => {
     if (eventsRegistered) {
         return;
     }
 
-    registerEventListeners();
+    registerEventListeners(slotid);
 };
