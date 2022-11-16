@@ -112,7 +112,7 @@ class edit_renderer extends \plugin_renderer_base {
 
         $output .= $this->end_add_to_group_form();
 
-        // Inialise the JavaScript.
+        // Initialise the JavaScript.
         $this->initialise_editing_javascript($offlinequizobj->get_course(), $offlinequizobj->get_offlinequiz(),
                 $structure, $contexts, $pagevars, $pageurl);
 
@@ -144,7 +144,7 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param \offlinequiz $offlinequizobj object containing all the offlinequiz settings information.
      * @param structure $structure object containing the structure of the offlinequiz.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @param array $pagevars the variables from {@link question_edit_setup()}.
      * @return string HTML to output.
@@ -192,6 +192,10 @@ class edit_renderer extends \plugin_renderer_base {
         }
         $output .= $this->end_section_list();
         $output .= $this->end_grading_form();
+
+        // Initialise the JavaScript.
+        $this->initialise_editing_javascript($offlinequizobj->get_course(), $offlinequizobj->get_offlinequiz(),
+                $structure, $contexts, $pagevars, $pageurl);
 
         echo $output;
     }
@@ -888,7 +892,7 @@ class edit_renderer extends \plugin_renderer_base {
         if ($structure->get_question_in_slot($slot)->qtype !== 'random') {
             $data['versionselection'] = true;
             $data['versionoption'] = $structure->get_version_choices_for_slot($slot);
-            $this->page->requires->js_call_amd('mod_offlinequiz/question_slot', 'init', [$slotid, $structure->can_be_edited()]);
+            $this->page->requires->js_call_amd('mod_offlinequiz/question_slot', 'init', [$slotid]);
         }
 
         // Render the question slot template.
