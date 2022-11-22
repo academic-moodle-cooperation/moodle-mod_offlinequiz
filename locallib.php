@@ -308,7 +308,7 @@ function offlinequiz_load_questions_usage_by_activity($qubaid) {
 
 /**
  *
- * @param int $offlinequiz
+ * @param object $offlinequiz
  * @param int $groupid
  * @return string
  */
@@ -810,19 +810,13 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade,
         ['offlinequizid' => $offlinequiz->id, 'questionid' => $questionid]);
     if ($newquestionid) {
         $newquestionversion = $DB->get_field('question_versions', 'version', ['questionid' => $newquestionid]);
-        $sql = "SELECT qr.id
-                  FROM {question_references} qr
-                  JOIN {offlinequiz_group_questions} ogq ON qr.itemid = ogq.id
-                 WHERE component = 'mod_offlinequiz'
-                   AND questionarea = 'slot'
-                   AND ogq.questionid = :questionid
-                   AND ogq.offlinequizid = :offlinequizid";
-        $referenceids = $DB->get_records_sql($sql, ['questionid' => $questionid, 'offlinequizid' => $offlinequiz->id]);
+
+        $referenceids = $DB->get_records('offlinequiz_group_questions', ['questionid' => $questionid, 'offlinequizid' => $offlinequiz->id], 'id');
         $DB->set_field('offlinequiz_group_questions', 'questionid', $newquestionid,
             ['offlinequizid' => $offlinequiz->id, 'questionid' => $questionid]);
         if ($referenceids && $newquestionversion) {
             foreach ($referenceids as $referenceid) {
-                $DB->set_field('question_references', 'version', $newquestionversion, ['id' => $referenceid->id]);
+                $DB->set_field('question_references', 'version', $newquestionversion, ['itemid' => $referenceid->id]);
             }
         }
     }
@@ -2292,7 +2286,18 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
                 $slot->page = $maxpage;
             }
         }
-        $DB->insert_record('offlinequiz_group_questions', $slot);
+        $ogq = $DB->insert_record('offlinequiz_group_questions', $slot);
+
+        $data = new stdClass();
+        list($course, $cm) = get_course_and_cm_from_instance($offlinequiz->id, 'offlinequiz');
+        $data->usingcontextid = context_module::instance($cm->id)->id;
+        $data->component = 'mod_offlinequiz';
+        $data->questionarea = 'slot';
+        $data->itemid = $ogq;
+        $qbe = $DB->get_record('question_versions', ['questionid' => $questionid], 'questionbankentryid,version');
+        $data->questionbankentryid = $qbe->questionbankentryid;
+        $data->version = $qbe->version;
+        $DB->insert_record('question_references', $data);
         $trans->allow_commit();
     }
 }
