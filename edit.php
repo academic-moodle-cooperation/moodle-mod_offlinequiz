@@ -132,6 +132,9 @@ if ($newquestionid = optional_param('lastchanged', null, PARAM_INT)) {
                                                 $questionupdate->oldquestionid,
                                                 $questionupdate->maxmark,
                                                 $newquestionid);
+            offlinequiz_update_all_attempt_sumgrades($offlinequiz);
+            offlinequiz_update_grades($offlinequiz, 0, true);
+
         }
     }
 }

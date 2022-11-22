@@ -127,7 +127,9 @@ class submit_question_version extends external_api {
         if ($canbeedited || $oldquestioncountanswers == $newquestioncountanswers) {
             $offlinequiz = $DB->get_record('offlinequiz', ['id' => $slotdata->offlinequizid]);
             offlinequiz_update_question_instance($offlinequiz, $oldquestionid, $slotdata->maxmark, $newquestionid);
+            offlinequiz_update_all_attempt_sumgrades($offlinequiz);
             offlinequiz_update_grades($offlinequiz);
+
             $response['result'] = true;
         }
 
