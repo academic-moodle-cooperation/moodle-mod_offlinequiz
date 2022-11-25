@@ -24,6 +24,7 @@ require_once($CFG->dirroot . '/question/engine/datalib.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/lib.php');
 
 use external_api;
 use external_description;
@@ -129,6 +130,7 @@ class submit_question_version extends external_api {
             offlinequiz_update_question_instance($offlinequiz, $oldquestionid, $slotdata->maxmark, $newquestionid);
             offlinequiz_update_all_attempt_sumgrades($offlinequiz);
             offlinequiz_update_grades($offlinequiz);
+            offlinequiz_delete_statistics_caches($offlinequiz->id);
 
             $response['result'] = true;
         }
