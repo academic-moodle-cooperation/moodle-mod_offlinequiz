@@ -47,6 +47,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/addrandomform.php');
 require_once($CFG->dirroot . '/question/category_class.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/lib.php');
 
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
@@ -134,7 +135,7 @@ if ($newquestionid = optional_param('lastchanged', null, PARAM_INT)) {
                                                 $newquestionid);
             offlinequiz_update_all_attempt_sumgrades($offlinequiz);
             offlinequiz_update_grades($offlinequiz, 0, true);
-
+            offlinequiz_delete_statistics_caches($offlinequiz->id);
         }
     }
 }
