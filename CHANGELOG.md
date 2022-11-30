@@ -1,5 +1,14 @@
 CHANGELOG
 =========
+
+4.0.0
+-----------------
+[Feature] Compatible Version for Moodle 4.0
+[Feature] It is now possible to change the question version, even after the documents are created
+[Feature] New activity overview page when coming in to offlinequiz
+[Feature] changing a question directly in offlinequiz results in a recalculation of all the grades in that group
+[Feature] sub-navigation changed so it fits to the new moodle standard
+
 3.11.4
 -----------------
 [Bug] Fix PHP 8.0 incompabilities
