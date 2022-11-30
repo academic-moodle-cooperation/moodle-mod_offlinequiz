@@ -3,86 +3,86 @@ CHANGELOG
 
 4.0.0
 -----------------
-[Feature] Compatible Version for Moodle 4.0
-[Feature] It is now possible to change the question version, even after the documents are created
-[Feature] New activity overview page when coming in to offlinequiz
-[Feature] changing a question directly in offlinequiz results in a recalculation of all the grades in that group
-[Feature] sub-navigation changed so it fits to the new moodle standard
+* [Feature] Compatible Version for Moodle 4.0
+* [Feature] It is now possible to change the question version, even after the documents are created
+* [Feature] New activity overview page when coming in to offlinequiz
+* [Feature] changing a question directly in offlinequiz results in a recalculation of all the grades in that group
+* [Feature] sub-navigation changed so it fits to the new moodle standard
 
 3.11.4
 -----------------
-[Bug] Fix PHP 8.0 incompabilities
-[Bug] Date of test used instead of review start used for calendar
-[Bug] Wrong language string for "group" was used in all questionsheets (pdf, LaTeX and docx)
+* [Bug] Fix PHP 8.0 incompabilities
+* [Bug] Date of test used instead of review start used for calendar
+* [Bug] Wrong language string for "group" was used in all questionsheets (pdf, LaTeX and docx)
 
 3.11.3
 -----------------
-[Bug] Fixed a bug that special html characters would break docx documents
+* [Bug] Fixed a bug that special html characters would break docx documents
 
 3.11.2
 -----------------
-[Feature] Autocompletion rules from quiz: grade and passing grade as well as view have been added.
-[Bug] Fix privacy provider if there are multiple users in an offlinequiz context. [github pull #157 @micaherne]
-[Bug] Heading consistency: Every page has a heading before the tabs.
-[Feature] Question sheet: Latex question sheet now shows activityname instead of coursename, both variables are still possible.
-[Bug] CLI execution on another server than the cron server is now possible again.
-[Bug] Non-breaking spaces are now possible to use in docx documents.
-[Bug] Removed deprecation message on the statistics page.
-[Bug] The edit page for the questions looks much nicer and without any strange artifacts.
+* [Feature] Autocompletion rules from quiz: grade and passing grade as well as view have been added.
+* [Bug] Fix privacy provider if there are multiple users in an offlinequiz context. [github pull #157 @micaherne]
+* [Bug] Heading consistency: Every page has a heading before the tabs.
+* [Feature] Question sheet: Latex question sheet now shows activityname instead of coursename, both variables are still possible.
+* [Bug] CLI execution on another server than the cron server is now possible again.
+* [Bug] Non-breaking spaces are now possible to use in docx documents.
+* [Bug] Removed deprecation message on the statistics page.
+* [Bug] The edit page for the questions looks much nicer and without any strange artifacts.
 
 3.11.1
 -----------------
-[Feature] Solve version confusion with 3.11.0 and 3.10.1
+* [Feature] Solve version confusion with 3.11.0 and 3.10.1
 
 3.11.0
 -----------------
-[Feature] Compatible Version for Moodle 3.11
+* [Feature] Compatible Version for Moodle 3.11
 
 3.10.1
 -----------------
-[Bug] Fix privacy bug for people using integer-idnumber
+* [Bug] Fix privacy bug for people using integer-idnumber
 
 3.10.0
 -----------------
-[Feature] Compatible Version for Moodle 3.10
+* [Feature] Compatible Version for Moodle 3.10
 
 3.9.0
 -----------------
-[Feature] Support for all kinds of special characters in pdf/docx/LaTeX documents.
-[Feature] Deleted table offlinequiz_attempts, which wasn't used since moodle/offlinequiz 2.0.
-[Feature] Support of superscript and subscript in docx documents.
-[Feature] Support of "<" and ">" in LaTeX documents.
-[Bug] Changed css so it doesn't interfere with quiz anymore.
-[Feature] Offlinequiz now recognizes, if there are multiple users with a given idnumber.
+* [Feature] Support for all kinds of special characters in pdf/docx/LaTeX documents.
+* [Feature] Deleted table offlinequiz_attempts, which wasn't used since moodle/offlinequiz 2.0.
+* [Feature] Support of superscript and subscript in docx documents.
+* [Feature] Support of "<" and ">" in LaTeX documents.
+* [Bug] Changed css so it doesn't interfere with quiz anymore.
+* [Feature] Offlinequiz now recognizes, if there are multiple users with a given idnumber.
           It will choose the one in the course. Otherwise it will throw an error.
-[Feature] Rewrote some of the privacy lang strings to make them more clear.
+* [Feature] Rewrote some of the privacy lang strings to make them more clear.
 
 
 3.8.2
 -----------------
-[Bug] Fixed a long existing bug with offlinequiz not using the right temp folder which leads to errors when setting localcache-directory in config.php.
+* [Bug] Fixed a long existing bug with offlinequiz not using the right temp folder which leads to errors when setting localcache-directory in config.php.
 
 3.8.1
 -----------------
-[Bug] Fixed a bug that not all questions were shown in question statistics
+* [Bug] Fixed a bug that not all questions were shown in question statistics
 
 3.8.0
 -----------------
-[Feature] Moodle 3.8 compatible Version
-[Feature] Updated PDFWord version to 0.17.0
+* [Feature] Moodle 3.8 compatible Version
+* [Feature] Updated PDFWord version to 0.17.0
 
 
 3.7.0
 -----------------
-[Feature] Moodle 3.7 compatible Version
-[Feature] #6046 changed the place of reviewoptions to be more accurate
-[Bug] #6166 deletion of hotspots and old temp-files has not been done, now done by an own task
-[Feature] #6038 export results as printable html for face to face review
-[Feature] #6125 support of the plugin editdates
-[Bug] #6047 question tagging now works properly as in quiz
-[Feature] #4375 extended information about review options in offlinequiz
-[Bug] #6054, github issue #79: fixed that only students could be enroled into courses
-[Bug] #6115, github issue #81: fixed a couple of problems with oracle databases.
+* [Feature] Moodle 3.7 compatible Version
+* [Feature] #6046 changed the place of reviewoptions to be more accurate
+* [Bug] #6166 deletion of hotspots and old temp-files has not been done, now done by an own task
+* [Feature] #6038 export results as printable html for face to face review
+* [Feature] #6125 support of the plugin editdates
+* [Bug] #6047 question tagging now works properly as in quiz
+* [Feature] #4375 extended information about review options in offlinequiz
+* [Bug] #6054, github issue #79: fixed that only students could be enroled into courses
+* [Bug] #6115, github issue #81: fixed a couple of problems with oracle databases.
 
 
 3.6.2 (2019-02-28)
