@@ -72,21 +72,31 @@ function offlinequiz_statistics_cron() {
     if (offlinequiz_delete_staticstics_records($todelete)) {
         return true;
     }
-    
+
 }
 
+
+/**
+ * @param int $offlinequizid ID ofthe offlinequiz
+ * @return bool whether statistics were actually deleted
+ */
 function offlinequiz_delete_statistics_caches($offlinequizid) {
-        global $DB;
+    global $DB;
 
-        $todelete = $DB->get_records('offlinequiz_statistics', ['offlinequizid' => $offlinequizid], '', 'id');
+    $todelete = $DB->get_records('offlinequiz_statistics', ['offlinequizid' => $offlinequizid], '', 'id');
 
+    if ($todelete) {
         if (offlinequiz_delete_staticstics_records($todelete)) {
-                return true;
+            return true;
         }
+    } else {
+        return false;
+    }
 }
 
 /**
  * @param array $todelete Array of {offlinequiz_statistics}-ids
+ * @return bool returns true
  */
 function offlinequiz_delete_staticstics_records($todelete) {
         global $DB;
@@ -94,10 +104,10 @@ function offlinequiz_delete_staticstics_records($todelete) {
 
         $DB->delete_records_select('offlinequiz_q_statistics',
                 'offlinequizstatisticsid ' . $todeletesql, $todeleteparams);
-    
+
         $DB->delete_records_select('offlinequiz_q_response_stats',
                 'offlinequizstatisticsid ' . $todeletesql, $todeleteparams);
-    
+
         $DB->delete_records_select('offlinequiz_statistics',
                 'id ' . $todeletesql, $todeleteparams);
 
