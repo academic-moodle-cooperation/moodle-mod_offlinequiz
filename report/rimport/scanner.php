@@ -151,8 +151,8 @@ class offlinequiz_page_scanner {
      * @param unknown_type $maxanswers
      */
     public function __construct($offlinequiz, $contextid, $maxquestions, $maxanswers) {
-        if ($maxanswers > 26) {
-            $maxanswers = 26; // There won't be more than 26 answers or 96 questions on the sheet.
+        if ($maxanswers > 23) {
+            $maxanswers = 23; // There won't be more than 26 answers or 96 questions on the sheet.
         }
         $this->maxanswers = $maxanswers;
         $this->maxquestions = $maxquestions;
@@ -172,7 +172,7 @@ class offlinequiz_page_scanner {
         if ($maxanswers > 12) {
             $this->formtype = 1;
         }
-        $this->numpages = ceil($maxquestions / ($this->formtype * 24));
+        $this->numpages = ceil($maxquestions / ($this->formtype * 23));
 
         $this->iddigits = $offlinequiz->id_digits;
     }
@@ -226,22 +226,32 @@ class offlinequiz_page_scanner {
 
         $col = 0;
         $y = 926;
+        // for independant row counting (duh!)
+        $row = 0;
 
-        for ($number = 0; $number < $this->formtype * 24; $number++) {
-
-            if ($number % 8 == 0) {
-                $y += 44;
-            }
-
+        /**
+         * even tho there is a max of 23 questions per column
+         * we scan 27 rows to then have an easier time making them match
+         * with the PDF generated
+         */
+        for ($number = 0; $number < $this->formtype * 27; $number++) {
             for ($i = 0; $i < $this->maxanswers; $i++) {
                 $point = new oq_point(($i * 65) + ($colwidth * $col) + 84, $y);
                 $this->hotspots["a-$number-$i"] = $point;
             }
             $y += 65;
+            $row++;
 
-            if (($number + 1) % 24 == 0) {
+            /**
+             * Same here, we change column after 27 rows instead of 23
+             * We use $row instead of $number to have an easier time knowing
+             * where we are in the scanning process since it's independant of the
+             * numbers of questions
+             */
+            if (($row + 1) % 27 == 0) {
                 $y = 926;
                 $col++;
+                $row = 0;
             }
         }
 
@@ -624,6 +634,30 @@ class offlinequiz_page_scanner {
         return $export;
     }
 
+    /**
+     * Returns absolute positions for answer hotspots of a specific row.
+     * pretty much the same as "export_hotspots_answer()" but allows us to be more
+     * granular with the data we ask for
+     *
+     * @param unknown_type $width
+     * @param int $answerindex
+     * @return multitype:oq_point
+     */
+    public function export_hotspots_answer_row($width, $answerindex) {
+        global $CFG;
+
+        $export = array();
+        $factor = $width / imagesx($this->image);
+
+        for ($i = 0; $i < $this->maxanswers; $i++) {
+            $point = new oq_point(
+                    ($this->hotspots["a-$answerindex-$i"]->x + $this->offset->x) * $factor - 2 * $this->zoomx,
+                    ($this->hotspots["a-$answerindex-$i"]->y + $this->offset->y) * $factor - 2 * $this->zoomy
+            );
+            $export["a-$answerindex-$i"] = $point;
+        }
+        return $export;
+    }
 
     /**
      * Goes through all the pixels of a hotspot (box) and counts the black pixels
@@ -706,10 +740,10 @@ class offlinequiz_page_scanner {
             return 0;
         }
 
-        if ($this->page * $this->formtype * 24 < $this->maxquestions) {
-            $this->questionsonpage = $this->formtype * 24;
+        if ($this->page * $this->formtype * 23 < $this->maxquestions) {
+            $this->questionsonpage = $this->formtype * 23;
         } else {
-            $this->questionsonpage = $this->maxquestions - ($this->formtype * 24 * ($this->page - 1));
+            $this->questionsonpage = $this->maxquestions - ($this->formtype * 23 * ($this->page - 1));
         }
 
         return $this->page;
@@ -728,10 +762,10 @@ class offlinequiz_page_scanner {
             return 0;
         }
 
-        if ($this->page * $this->formtype * 24 < $this->maxquestions) {
-            $this->questionsonpage = $this->formtype * 24;
+        if ($this->page * $this->formtype * 23 < $this->maxquestions) {
+            $this->questionsonpage = $this->formtype * 23;
         } else {
-            $this->questionsonpage = $this->maxquestions - ($this->formtype * 24 * ($this->page - 1));
+            $this->questionsonpage = $this->maxquestions - ($this->formtype * 23 * ($this->page - 1));
         }
 
         return $this->page;
@@ -1655,7 +1689,7 @@ class offlinequiz_page_scanner {
             $this->formtype = 1;
         }
 
-        $this->numpages = ceil($this->maxquestions / ($this->formtype * 24));
+        $this->numpages = ceil($this->maxquestions / ($this->formtype * 23));
 
         $this->init_hotspots();
 
@@ -1742,6 +1776,36 @@ class offlinequiz_page_scanner {
             $answers[] = $row;
         }
         return $answers;
+    }
+
+        
+    /**
+     * Return a single answer as recognised on the answer form.
+     *
+     * @param  mixed $answerindex
+     * @return void
+     */
+    public function get_answer_row($answerindex)
+    {
+        $answer = array();
+        $row = array();
+
+        for ($i=0; $i < $this->maxanswers; $i++) { 
+
+            $spotvalue = $this->hotspot_value($this->hotspots["a-$answerindex-$i"], false, "a-$answerindex-$i");
+            if ($spotvalue == 1) {
+                $row[] = 'marked';
+            } else if ($spotvalue == 3) {
+                $row[] = 'unknown';
+                $this->insecure = true;
+            } else {
+                $row[] = 'empty';
+            }            
+        }
+
+        $answer = $row;
+
+        return $answer;
     }
 
     /**

@@ -38,6 +38,8 @@
         <FIELD NAME="algorithmversion" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="version of the evaluation algorithm"/>
         <FIELD NAME="experimentalevaluation" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="completionpass" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Completion pass enabled in settings or not"/>
+        <FIELD NAME="kprimetruesymbol" TYPE="char" LENGTH="1" NOTNULL="true" DEFAULT="+" SEQUENCE="false" COMMENT="Symbol used for the Kprime positive statement"/>
+        <FIELD NAME="kprimefalsesymbol" TYPE="char" LENGTH="1" NOTNULL="true" DEFAULT="-" SEQUENCE="false" COMMENT="Symbol used for the Kprime negative statement"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for offlinequiz"/>

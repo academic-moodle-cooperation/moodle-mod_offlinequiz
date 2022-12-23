@@ -81,6 +81,13 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= $this->maximum_grade_input($offlinequiz, $this->page->url);
         $output .= $this->offlinequiz_state_warnings($structure);
 
+        // add Kprime type warning
+        // add a space before warning if box exist for clarity
+        if(($this->offlinequiz_state_warnings($structure)) !== $this->box('', 'emptystatusdisplay')){
+            $output .= '<br/>';
+        }
+        $output .= get_string('warningkprimeassumptions', 'offlinequiz');
+
         $output .= $this->repaginate_button($structure, $pageurl, $offlinequiz);
         $output .= $this->total_marks($offlinequiz);
 

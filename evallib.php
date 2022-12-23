@@ -31,6 +31,7 @@ require_once(__DIR__. '/locallib.php');
 require_once(__DIR__ . '/report/rimport/scanner.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->dirroot. '/question/type/kprime/lib.php');
 
 /**
  * Checks  groupnumber, userkey, and pagenumber of a scanned answer form
@@ -317,6 +318,111 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
     }
 }
 
+/**
+ * return the form type (number of columns)
+ *
+ * @param  mixed $maxanswers
+ * @return int
+ */
+function offlinequiz_get_formtype($maxanswers)
+{
+    // Determine the form type (number of columns).
+    $formtype = 4;
+    if ($maxanswers > 5) {
+        $formtype = 3;
+    }
+    if ($maxanswers > 7) {
+        $formtype = 2;
+    }
+    if ($maxanswers > 12) {
+        $formtype = 1;
+    }
+
+    return $formtype;
+}
+
+/**
+ * Loop through the questions to calculate the correct
+ * startindex of a given page
+ * We need this as a workaround the hardcoded number of questions per page
+ *
+ * @param  mixed $quba
+ * @param  mixed $currentpage
+ * @param  mixed $maxanswers
+ * @return array
+ */
+function offlinequiz_calculate_indexes_page($quba, $currentpage, $maxanswers)
+{
+    $col = 1;
+    $answerrow = 0;
+    $answerindex = 0;
+    $page = 1;
+
+    $startindex = null;
+    $endindex = null;
+
+    // Counting the total number of multichoice questions in the question usage.
+    $totalnumber = offlinequiz_count_multichoice_questions($quba);
+
+    $formtype = offlinequiz_get_formtype($maxanswers);
+
+    $slots = $quba->get_slots();
+
+    foreach ($slots as $key => $slot) {
+        $slotquestion = $quba->get_question($slot);
+
+        // get next question to predict column change
+        $nextslot = next($slots);
+        $nextslotquestion = ($nextslot) ? $quba->get_question($nextslot) : null;
+
+        // Only look at multichoice questions.
+        if (!$slotquestion instanceof qtype_multichoice_base &&
+            !$slotquestion instanceof qtype_multichoice_single_question &&
+            !$slotquestion instanceof qtype_multichoice_multi_question &&
+            !$slotquestion instanceof qtype_multichoiceset_question &&
+            !$slotquestion instanceof qtype_kprime_question ) {
+            continue;
+        }
+
+        // Use this counter to know if a column or page break is nessary
+        $answerrow = ($slotquestion instanceof qtype_kprime_question) ? $answerrow + 2 : $answerrow + 1;
+        
+        // Special case if we arrive near the end of a column and the next question is a kprime
+        // we preamptivly increment the row count to force a column change
+        if ($nextslotquestion instanceof qtype_kprime_question && $answerrow == 22) {
+            $answerrow += 1;
+        }
+        // Switch to next column if necessary.
+        if (($answerrow + 1 ) % 24 == 0 || ($slotquestion instanceof qtype_kprime_question && $answerrow % 24 == 0)) {
+            $col++;
+            $answerrow = 0;
+            if ($col > $formtype and ($answerrow) < $totalnumber) {
+                $col = 1;
+                $page++;
+            }
+        }
+        
+        $answerindex += 1;
+        if ($page == $currentpage && $startindex === null) {
+            $startindex = $answerindex;
+        }
+        if ($page == $currentpage + 1 && $endindex === null) {
+            $endindex = $answerindex;
+        }
+
+    }
+
+    if ($currentpage == 1) {
+        $startindex = 0;
+    }
+    if ($endindex === null) {
+        $endindex = count($slots);
+    }
+
+    return [$startindex, $endindex];
+
+}
+
 
 /**
  * Stores the choices made on a scanned page in the table offlinequiz_choices. If there are no insecure markings
@@ -341,7 +447,11 @@ function offlinequiz_process_scanned_page($offlinequiz, offlinequiz_page_scanner
         $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid));
         $quba = offlinequiz_load_questions_usage_by_activity($result->usageid);
         // Retrieve the answers. This initialises the answer hotspots.
-        $answers = $scanner->get_answers();
+        // workaround for 2+ pages quiz
+        // since the number of question per page is hardcoded
+        // $questionsonpage in class::offlinequiz_page_scanner
+        // can go negative due to kprime questions
+        $answers = $scanner->get_answer_row(0);
 
         if (empty($answers)) {
             $scannedpage->status = 'error';
@@ -350,15 +460,20 @@ function offlinequiz_process_scanned_page($offlinequiz, offlinequiz_page_scanner
         }
         $slots = $quba->get_slots();
 
-        // We start at the top of the page (e.g. 0, 96, etc).
-        $startindex = ($scannedpage->pagenumber - 1) * $questionsperpage;
-        // We end on the bottom of the page or when the questions are gone (e.g., 95, 105).
-        $endindex = min( $scannedpage->pagenumber * $questionsperpage, count($slots) );
+        $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($group));
+        $formtype = offlinequiz_get_formtype($maxanswers);
+        $newindexes = offlinequiz_calculate_indexes_page($quba, $scannedpage->pagenumber, $maxanswers);
+
+        // Retrieve the indexes
+        list($startindex, $endindex) = $newindexes;
 
         $answerindex = 0;
 
         $insecuremarkings = false;
         $choicesdata = array();
+
+        $col = 1;
+        $answerrow = 0;
 
         for ($slotindex = $startindex; $slotindex < $endindex; $slotindex++) {
 
@@ -367,42 +482,68 @@ function offlinequiz_process_scanned_page($offlinequiz, offlinequiz_page_scanner
             $attempt = $quba->get_question_attempt($slot);
             $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
+
+            // get next question to predict column change
+            $nextslot = next($slots);
+            $nextslotquestion = ($nextslot) ? $quba->get_question($nextslot) : null;
+
+            // Skip every 8 row, or on the 7th depending of the kprime placement.
+            // It's the repeated header row (see pdflib.php @L:914)
+            if ($answerrow % 8 == 0 || ($slotquestion instanceof qtype_kprime_question && (($answerrow + 1) % 8 == 0))) {
+                $answerindex++;
+            }
+
             // Note: The array length of a row is $maxanswers, so probably bigger than the number of answers in the slot.
-            $row = $answers[$answerindex++];
+            // We get every row indivitually
+            $row = $scanner->get_answer_row($answerindex++);
+
+            // If it's a kprime question we also get the next row
+            if ($slotquestion instanceof qtype_kprime_question) {
+                $row2 = $scanner->get_answer_row($answerindex++);
+            }
 
             $count = 0;
             $response = array();
+            // Getting the length of the row (amount of checkboxes in said row)
+            // so we don't have to hardcode it, just incase ;)
+            $rowlength = count($order);
             if (!isset($choicesdata[$slot]) || !is_array($choicesdata[$slot])) {
                 $choicesdata[$slot] = array();
             }
 
             // Go through all answers of the slot question.
             foreach ($order as $key => $notused) {
-                // Create the data structure for the offlinequiz_choices table.
-                $choice = new stdClass();
-                $choice->scannedpageid = $scannedpage->id;
-                $choice->slotnumber = $slot;
-                $choice->choicenumber = $key;
-
-                // Check what the scanner recognised.
-                if ($row[$key] == 'marked') {
-                    $choice->value = 1;
-                } else if ($row[$key] == 'empty') {
-                    $choice->value = 0;
-                } else {
-                    $choice->value = -1;
-                    $insecuremarkings = true;
-                }
-                $oldchoice = $DB->get_record('offlinequiz_choices', ['slotnumber' => $choice->slotnumber,
-                    'choicenumber' => $choice->choicenumber, 'scannedpageid' => $choice->scannedpageid]);
-                if (isset($oldchoice->id)) {
-                    $choice->id = $oldchoice->id;
-                    $DB->update_record('offlinequiz_choices', $choice);
-                } else {
-                    // We really want to save every single cross  in the database.
-                    $choice->id = $DB->insert_record('offlinequiz_choices', $choice);
-                }
+                // Assigning choice to slots (is a box checked or not)
+                // all that logic is now handled by offlinequiz_assign_choice() to make it easier
+                list($choice, $insecuremarkings) = offlinequiz_assign_choice($row[$key], $slot, $key, $scannedpage->id, $insecuremarkings);
                 $choicesdata[$slot][$key] = $choice;
+                
+                // If it's a kprime question we push the choices into the array with keys equals to
+                // current key + length of question
+                if ($slotquestion instanceof qtype_kprime_question) {
+                    $choicenumber = $key + $rowlength;
+                    list($choice_row2, $insecuremarkings) = offlinequiz_assign_choice($row2[$key], $slot, $choicenumber, $scannedpage->id, $insecuremarkings);
+                    $choicesdata[$slot][$choicenumber] = $choice_row2;
+                }
+            }
+
+            // Use this counter to know if a column or page break is nessary
+            $answerrow = ($slotquestion instanceof qtype_kprime_question) ? $answerrow + 2 : $answerrow + 1;
+
+            // Special case if we arrive near the end of a column and the next question is a kprime
+            // we preamptivly increment the row count to force a column change
+            if ($nextslotquestion instanceof qtype_kprime_question && $answerrow == 22) {
+                $answerrow += 1;
+                $answerindex += 1;
+            }
+            // Switch to next column if necessary.
+            if (($answerrow + 1 ) % 24 == 0 || ($slotquestion instanceof qtype_kprime_question && $answerrow % 24 == 0)) {
+                $col++;
+                $answerrow = 0;
+            }
+            // exit loop if we reache the last question on the page
+            if ($col > $formtype) {
+                break;
             }
         } // End for (slot...
 
@@ -425,6 +566,47 @@ function offlinequiz_process_scanned_page($offlinequiz, offlinequiz_page_scanner
     return $scannedpage;
 }
 
+/**
+ * Assign and store the choice for each checkbox/slot 
+ *
+ * @param  mixed $checkbox
+ * @param  mixed $slot
+ * @param  mixed $choicenumber
+ * @param  mixed $scannedpageid
+ * @param  mixed $insecuremarkings
+ * @return array $choice, $insecuremarkings
+ */
+function offlinequiz_assign_choice($checkbox, $slot, $choicenumber, $scannedpageid, $insecuremarkings)
+{
+    global $DB;
+
+    // Create the data structure for the offlinequiz_choices table.
+    $choice = new stdClass();
+    $choice->scannedpageid = $scannedpageid;
+    $choice->slotnumber = $slot;
+    $choice->choicenumber = $choicenumber;
+
+    // Check what the scanner recognised.
+    if ($checkbox == 'marked') {
+        $choice->value = 1;
+    } else if ($checkbox == 'empty') {
+        $choice->value = 0;
+    } else {
+        $choice->value = -1;
+        $insecuremarkings = true;
+    }
+    $oldchoice = $DB->get_record('offlinequiz_choices', ['slotnumber' => $choice->slotnumber,
+        'choicenumber' => $choice->choicenumber, 'scannedpageid' => $choice->scannedpageid]);
+    if (isset($oldchoice->id)) {
+        $choice->id = $oldchoice->id;
+        $DB->update_record('offlinequiz_choices', $choice);
+    } else {
+        // We really want to save every single cross  in the database.
+        $choice->id = $DB->insert_record('offlinequiz_choices', $choice);
+    }
+
+    return [$choice, $insecuremarkings];
+}
 
 /**
  *
@@ -453,25 +635,38 @@ function offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdat
         $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
         $count = 0;
+        $rowlength = count($order);
         $unknown = false;
         $response = array();
 
         // Go through all answers of the slot question.
         foreach ($order as $key => $notused) {
-            // Check what the scanner recognised.
-            if ($choicesdata[$slot][$key]->value == 1) {
-                // Also fill the response array s.t. we can grade later if possible.
-                if ($slotquestion instanceof qtype_multichoice_single_question) {
-                    $response['answer'] = $key;
-                    // In case of singlechoice we count the crosses.
-                    // If more than 1 cross have been made, we don't submit the response.
-                    $count++;
-                } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
-                    $response['choice' . $key] = 1;
+            // If it's a kprime question we check the state of the true and false checkbox
+            // to avoid inserting an answer if both checkboxes where to be marked
+            if ($slotquestion instanceof qtype_kprime_question) {
+                if ($choicesdata[$slot][$key]->value == 1  && $choicesdata[$slot][$key + $rowlength]->value == 0) {
+                    $response['option' . $key] = 1;
+                } else if ($choicesdata[$slot][$key]->value == 0  && $choicesdata[$slot][$key + $rowlength]->value == 1) {
+                    $response['option' . $key] = 2;
                 }
-            } else if ($choicesdata[$slot][$key]->value == 0) {
-                if ($slotquestion instanceof qtype_multichoice_multi_question) {
-                    $response['choice' . $key] = 0;
+            } else {
+                // Check what the scanner recognised.
+                //CASE : box  is checked
+                if ($choicesdata[$slot][$key]->value == 1) {
+                    // Also fill the response array s.t. we can grade later if possible.
+                    if ($slotquestion instanceof qtype_multichoice_single_question) {
+                        $response['answer'] = $key;
+                        // In case of singlechoice we count the crosses.
+                        // If more than 1 cross have been made, we don't submit the response.
+                        $count++;
+                    } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
+                        $response['choice' . $key] = 1;
+                    }
+                //CASE : box  is NOT checked
+                } else if ($choicesdata[$slot][$key]->value == 0) {
+                    if ($slotquestion instanceof qtype_multichoice_multi_question) {
+                        $response['choice' . $key] = 0;
+                    }
                 }
             }
         }
@@ -484,6 +679,9 @@ function offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdat
                 $quba->finish_question($slot, time());
             }
         } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
+            $quba->process_action($slot, $response);
+            $quba->finish_question($slot, time());
+        } else if ($slotquestion instanceof qtype_kprime_question) {
             $quba->process_action($slot, $response);
             $quba->finish_question($slot, time());
         }
@@ -767,15 +965,15 @@ function offlinequiz_get_question_numbers($offlinequiz, $groups) {
     }
 
     // Determine how many questions are on a full page.
-    $questionsperpage = 96;
+    $questionsperpage = 92;
     if ($maxanswers > 5) {
-        $questionsperpage = 72;
+        $questionsperpage = 69;
     }
     if ($maxanswers > 7) {
-        $questionsperpage = 48;
+        $questionsperpage = 46;
     }
     if ($maxanswers > 12) {
-        $questionsperpage = 24;
+        $questionsperpage = 23;
     }
 
     return array($maxquestions, $maxanswers, $formtype, $questionsperpage);

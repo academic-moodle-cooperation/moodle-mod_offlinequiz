@@ -40,13 +40,14 @@ class offlinequiz_html_translator
      *
      * @param string $input The input string (Moodle HTML)
      * @param int $contextid The context ID.
+     * @param string $component component
      * @param string $filearea The filearea used to locate the image files.
      * @param int $itemid The itemid used to locate the image files.
      * @param float $kfactor A magnification factor.
      * @param int $maxwidth The maximum width in pixels for images.
      * @return string The result string
      */
-    public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor,
+    public function fix_image_paths($input, $contextid, $component, $filearea, $itemid, $kfactor,
             $maxwidth, $disableimgnewlines, $format = 'pdf') {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/filter/tex/lib.php');
@@ -97,7 +98,8 @@ class offlinequiz_html_translator
                     } else {
                         $filepath = '/';
                     }
-                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath,
+                    // passing @param string $component component as a var instead of hardcoded
+                    if ($imagefile = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath,
                             rawurldecode($pathparts['basename']))) {
                         $imagefilename = $imagefile->get_filename();
                         // Copy image content to temporary file.

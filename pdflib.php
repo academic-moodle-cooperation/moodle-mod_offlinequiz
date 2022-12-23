@@ -407,7 +407,25 @@ function number_in_style($num, $style) {
 function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz) {
     $pdf->checkpoint();
 
-    $questiontext = $question->questiontext;
+    $pre_text="";
+    if ($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_QTYPE) {
+        if ($question->qtype == 'kprime') {
+            $a = new StdClass();
+            $a->kprimetruesymbol = htmlspecialchars($offlinequiz->kprimetruesymbol);
+            $a->positive = $question->options->columns[array_key_first($question->options->columns)]->responsetext;
+            $a->kprimefalsesymbol = htmlspecialchars($offlinequiz->kprimefalsesymbol);
+            $a->negative = $question->options->columns[array_key_last($question->options->columns)]->responsetext;
+            $pre_text = get_string('prequestionwarningqtype_kprime', 'offlinequiz', $a);
+        } else {
+            if ($question->options->single == 1) {
+                $pre_text = get_string('prequestionwarningqtype_single', 'offlinequiz');
+            }
+            if ($question->options->single == 0) {
+                $pre_text = get_string('prequestionwarningqtype_multi', 'offlinequiz');
+            }
+        }
+    }
+    $questiontext = $pre_text.$question->questiontext;
 
     // Filter only for tex formulas.
     if (!empty($texfilter)) {
@@ -426,7 +444,7 @@ function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $o
     // Remove all class info from paragraphs because TCPDF won't use CSS.
     $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-    $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
+    $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'question', 'questiontext', $question->id,
         1, 300, $offlinequiz->disableimgnewlines);
 
     $html = '';
@@ -444,7 +462,17 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
     $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
     foreach ($order as $key => $answer) {
-        $answertext = $question->options->answers[$answer]->answer;
+        // Dealing with kprime exception (object is not structured as the multichoice)
+        // Setting the component and filearea here so the PDF knows where to get the images
+        if ($question->qtype == 'kprime') {
+            $answertext = $question->options->rows[$answer]->optiontext;
+            $component = 'qtype_kprime';
+            $filearea = 'optiontext';
+        } else {
+            $answertext = $question->options->answers[$answer]->answer;
+            $component = 'question';
+            $filearea = 'answer';
+        }
         // Filter only for tex formulas.
         if (!empty($texfilter)) {
             $answertext = $texfilter->filter($answertext);
@@ -457,22 +485,37 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
-        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer,
+        $answertext = $trans->fix_image_paths($answertext, $question->contextid, $component, $filearea, $answer,
             1, 300, $offlinequiz->disableimgnewlines);
 
+        //Dealing with kprime exception (object is not structured as the multichoice)
+        if ($question->qtype == 'kprime') {
+            // Kprime -> we suppose that every kprime question is set up so the first column is true and the second is false.
+            //the weight object is ordered with the question original number 1->4, then for each number 2 column 1, 2 (1 is true, 2 is false)
+            $kprimeanswerid = $question->options->rows[$answer]->number;
+            $fraction = $question->options->weights[$kprimeanswerid][1]->weight;
+        } else {
+            $fraction = $question->options->answers[$answer]->fraction;
+        }
+
         if ($correction) {
-            if ($question->options->answers[$answer]->fraction > 0) {
+            if ($fraction > 0) {
                 $html .= '<b>';
             }
 
-            $answertext .= " (".round($question->options->answers[$answer]->fraction * 100)."%)";
+            $answertext .= " (" . round($fraction * 100) . "%)";
         }
 
-        $html .= number_in_style($key, $question->options->answernumbering) . ') &nbsp; ';
+        $answernumbering = "abc";
+        if($question->qtype != 'kprime'){
+            $answernumbering = $question->options->answernumbering;
+        }
+
+        $html .= number_in_style($key, $answernumbering) . ') &nbsp; ';
         $html .= $answertext;
 
         if ($correction) {
-            if ($question->options->answers[$answer]->fraction > 0) {
+            if ($fraction > 0) {
                 $html .= '</b>';
             }
         }
@@ -498,7 +541,7 @@ function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html
         $pdf->Ln(14);
 
         // Print the question number and the HTML string again on the new page.
-        if ($questiontype == 'multichoice' || $questiontype == 'multichoiceset') {
+        if ($questiontype == 'multichoice' || $questiontype == 'multichoiceset' || $questiontype == 'kprime' ) {
             $pdf->SetFont('FreeSans', 'B', $fontsize);
             $pdf->Cell(4, round($fontsize / 2), "$number)  ", 0, 0, 'R');
             $pdf->SetFont('FreeSans', '', $fontsize);
@@ -667,7 +710,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
             $html = offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
 
-            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset' || $question->qtype == 'kprime') {
 
                 $html = $html . offlinequiz_get_answers_html($offlinequiz, $templateusage,
                     $slot, $question, $texfilter, $trans, $correction);
@@ -680,7 +723,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                 $html = preg_replace("/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/ms", "", $html);
             }
             // Finally print the question number and the HTML string.
-            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset' || $question->qtype == 'kprime') {
                 $pdf->SetFont('FreeSans', 'B', $offlinequiz->fontsize);
                 $pdf->Cell(4, round($offlinequiz->fontsize / 2), "$number)  ", 0, 0, 'R');
                 $pdf->SetFont('FreeSans', '', $offlinequiz->fontsize);
@@ -718,7 +761,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             // Either we print the question HTML.
             $html = offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
 
-            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset' || $question->qtype == 'kprime') {
 
                 $slot = $questionslots[$currentquestionid];
 
@@ -727,7 +770,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             }
 
             // Finally print the question number and the HTML string.
-            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset' || $question->qtype == 'kprime') {
                 $pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
                 $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
                 $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
@@ -865,6 +908,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
 
     $number = 0;
     $col = 1;
+    $row = 0;
     $offsety = 105.5;
     $offsetx = 17.3;
     $page = 1;
@@ -879,23 +923,46 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
         $attempt = $templateusage->get_question_attempt($slot);
         $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
+        // get next question to predict column change
+        $nextslot = next($slots);
+        if ($nextslot) {
+            $nextslotquestion = $templateusage->get_question($nextslot);
+            $nextquestionid = $nextslotquestion->id;
+            $nextquestion = $questions[$nextquestionid];
+        } else {
+            $nextquestion = null;
+        }
+
         // Get the question data.
         $question = $questions[$currentquestionid];
 
         // Only look at multichoice questions.
-        if ($question->qtype != 'multichoice' && $question->qtype != 'multichoiceset') {
+        if ($question->qtype != 'multichoice' && $question->qtype != 'multichoiceset' && $question->qtype != 'kprime' ) {
             continue;
         }
 
-        // Print the answer letters every 8 questions.
-        if ($number % 8 == 0) {
+        /**
+         * Print the header row every 8 row, or on the 7th depending of the kprime placement.
+         */
+        if ($row % 8 == 0 || ($question->qtype == 'kprime' && (($row + 1) % 8 == 0))) {
+            //set default answer numbering to abc for questions
+            $answernumbering = 'abc';
+            if(isset($question->options->answernumbering)){
+                $answernumbering = $question->options->answernumbering;
+            }
+
             $pdf->SetFont('FreeSans', '', 8);
             $pdf->SetX(($col - 1) * ($pdf->colwidth) + $offsetx + 5);
             for ($i = 0; $i < $maxanswers; $i++) {
-                $pdf->Cell(3.5, 3.5, number_in_style($i, $question->options->answernumbering), 0, 0, 'C');
+                $pdf->Cell(3.5, 3.5, number_in_style($i, $answernumbering), 0, 0, 'C');
                 $pdf->Cell(3, 3.5, '', 0, 0, 'C');
             }
-            $pdf->Ln(4.5);
+
+            
+            // Headers rows have now the same height as answer rows
+            // It makes it easier to know where we are during the scanning and prossessing
+            $pdf->Ln(6.5);
+
             $pdf->SetFont('FreeSans', 'B', 10);
         }
 
@@ -904,7 +971,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
         $pdf->Cell(5, 1, ($number + 1).")  ", 0, 0, 'R');
 
         // Print one empty box for each answer.
-        $x = $pdf->GetX();
+        $x = $baseX = $pdf->GetX();
         $y = $pdf->GetY();
 
         for ($i = 1; $i <= count($order); $i++) {
@@ -912,17 +979,46 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
             $pdf->Rect($x, $y + 0.6, 3.5, 3.5, '', array('all' => array('width' => 0.2)));
             $x += 6.5;
         }
+        // Kprime Second line and line legend
+        if ($question->qtype == 'kprime') {
+            // 'True' line legend (+)
+            $pdf->SetX($x);
+            $pdf->Cell(3.5, 3.5, $offlinequiz->kprimetruesymbol, $calign = 'C');
+            
+            $x = $baseX;
+            for ($i = 1; $i <= count($order); $i++) {
+                // Move the boxes slightly down to align with question number.
+                $pdf->Rect($x,$y + 0.6 + 6.5, 3.5, 3.5, '', array('all' => array('width' => 0.2)));
+                $x += 6.5;
+            }
+            // Set X and Y to align the legend correctly
+            $pdf->SetXY($x, $y + 6.5);
+            // 'False' line legend
+            $pdf->Cell(3.5, 3.5, $offlinequiz->kprimefalsesymbol, $calign = 'C');
+        }
 
         $pdf->SetX($x);
 
         $pdf->Ln(6.5);
 
+        // Use this counter to know if a column or page break is nessary
+        $row = ($question->qtype == 'kprime') ? $row + 2 : $row + 1;
+
+        // Special case if we arrive near the end of a column and the next question is a kprime
+        // we preamptivly increment the row count to force a column change
+        if ($nextquestion !== null) {
+            if ($nextquestion->qtype == 'kprime' && $row == 22) {
+                $row += 1;
+            }
+        }
+
         // Switch to next column if necessary.
-        if (($number + 1) % 24 == 0) {
+        if (($row + 1 ) % 24 == 0 || ($question->qtype == 'kprime' && $row % 24 == 0)) {
             $pdf->SetY($offsety);
             $col++;
+            $row = 0;
             // Do a pagebreak if necessary.
-            if ($col > $pdf->formtype and ($number + 1) < $totalnumber) {
+            if ($col > $pdf->formtype and ($row) < $totalnumber) {
                 $col = 1;
                 $pdf->AddPage();
                 $page++;

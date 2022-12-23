@@ -677,6 +677,9 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
     $startindex = min(($pagenumber - 1) * $questionsperpage, count($slots));
     // We end on the bottom of the page or when the questions are gone (e.g., 95, 105).
     $endindex = min( $pagenumber * $questionsperpage, count($slots) );
+    // Retrieve the indexes
+    $newindexes = offlinequiz_calculate_indexes_page($quba, $scannedpage->pagenumber, $maxanswers);
+    list($startindex, $endindex) = $newindexes;
 
     if ($action == 'update') {
         echo $OUTPUT->heading(get_string('resultimport', 'offlinequiz'));
@@ -691,6 +694,7 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
                 $slotquestion = $quba->get_question($slot);
                 $attempt = $quba->get_question_attempt($slot);
                 $order = $slotquestion->get_order($attempt);  // Order of the answers.
+                $rowlength = count($order);  // getting the row lenght for kprime calculation
                 foreach ($order as $key => $notused) {
                     if ($rawitemdata[$slot . '-' . $key] == -1) {
                         $unknown = true;
@@ -716,6 +720,36 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
                             $choicesdata[$choice->slotnumber] = array();
                         }
                         $choicesdata[$slot][$key] = $choice;
+                    }
+                    // we repeat the same tests as above but for the "negative" row of kprime questions
+                    // (would be cleaner in a function but this part of the code is all sequential, it would make a bigger mess)
+                    if ($slotquestion instanceof qtype_kprime_question) {
+                        $choicenumber = $key + $rowlength;
+                        if ($rawitemdata[$slot . '-' . $choicenumber] == -1) {
+                            $unknown = true;
+                        }
+                        if ($choicesdata[$slot][$choicenumber]->value != $rawitemdata[$slot . '-' . $choicenumber]) {
+                            $changed[] = array('question' => $questioncounter,
+                                    'answer' => $choicenumber);
+                        }
+                        if (is_array($choicesdata[$slot]) && is_object($choicesdata[$slot][$choicenumber])) {
+                            // Remember the changed fields in case we want to display them to the user.
+                            $choicesdata[$slot][$choicenumber]->value = $rawitemdata[$slot . '-' . $choicenumber];
+                            $DB->set_field('offlinequiz_choices', 'value', $choicesdata[$slot][$choicenumber]->value,
+                                    array('id' => $choicesdata[$slot][$choicenumber]->id));
+                        } else {
+                            $choice = new stdClass();
+                            $choice->scannedpageid = $scannedpage->id;
+                            $choice->slotnumber = $slot;
+                            $choice->choicenumber = $choicenumber;
+                            $choice->value = $rawitemdata[$slot . '-' . $choicenumber];
+                            $choice->id = $DB->insert_record('offlinequiz_choices', $choice);
+    
+                            if (!isset($choicesdata[$choice->slotnumber]) || !is_array($choicesdata[$choice->slotnumber])) {
+                                $choicesdata[$choice->slotnumber] = array();
+                            }
+                            $choicesdata[$slot][$choicenumber] = $choice;
+                        }
                     }
                 }
                 $questioncounter++;
@@ -803,6 +837,9 @@ if (!empty($slots)) {
     $startindex = min( ($pagenumber - 1) * $questionsperpage, count($slots));
     // We end on the bottom of the page or when the questions are gone (e.g., 95, 105).
     $endindex = min( $pagenumber * $questionsperpage, count($slots) );
+    // Retrieve the indexes
+    $newindexes = offlinequiz_calculate_indexes_page($quba, $scannedpage->pagenumber, $maxanswers);
+    list($startindex, $endindex) = $newindexes;
     for ($slotindex = $startindex; $slotindex < $endindex; $slotindex++) {
         $slot = $slots[$slotindex];
         if (!isset($itemdata[$slot]) || !is_array($itemdata[$slot])) {
@@ -811,13 +848,27 @@ if (!empty($slots)) {
         $slotquestion = $quba->get_question($slot);
         $attempt = $quba->get_question_attempt($slot);
         $order = $slotquestion->get_order($attempt);  // Order of the answers.
+        $rowlength = count($order);  // getting the row lenght for kprime calculation
         foreach ($order as $key => $notused) {
             if (isset($choicesdata[$slot]) and is_object($choicesdata[$slot][$key])) {
                 // If we have choices in the DB, take them.
                 $itemdata[$slot][$key] = $choicesdata[$slot][$key]->value;
+
+                // if it's a kprime question we check the choices for the 2nd row
+                if ($slotquestion instanceof qtype_kprime_question) {
+                    $choicenumber = $key + $rowlength;
+                    $itemdata[$slot][$choicenumber] = $choicesdata[$slot][$choicenumber]->value;
+                }
+
             } else {
                 // Otherwise the choice is undetermined.
                 $itemdata[$slot][$key] = 0;
+
+                // if it's a kprime question we check the choices for the 2nd row
+                if ($slotquestion instanceof qtype_kprime_question) {
+                    $choicenumber = $key + $rowlength;
+                    $itemdata[$slot][$choicenumber] = 0;
+                }
             }
         }
     }
@@ -1172,16 +1223,42 @@ if ($sheetloaded) {
         // We end on the bottom of the page or when the questions are gone (e.g., 95, 105).
         $endindex = min( $pagenumber * $questionsperpage, count($slots) );
 
+        // Retrieve the indexes
+        $newindexes = offlinequiz_calculate_indexes_page($quba, $scannedpage->pagenumber, $maxanswers);
+        list($startindex, $endindex) = $newindexes;
+
         $answerspots = $scanner->export_hotspots_answer(OQ_IMAGE_WIDTH);
 
         // Print hotspots for answers.
         $questioncounter = 0;
+        $answerrow = 0;
         for ($slotindex = $startindex; $slotindex < $endindex; $slotindex++) {
 
             $slot = $slots[$slotindex];
             $slotquestion = $quba->get_question($slot);
             $attempt = $quba->get_question_attempt($slot);
             $order = $slotquestion->get_order($attempt);  // Order of the answers.
+
+            // get next question to predict column change
+            $nextslot = next($slots);
+            $nextslotquestion = ($nextslot) ? $quba->get_question($nextslot) : null;
+
+            $rowlength = count($order);
+
+            // Skip every 8 row, or on the 7th depending of the kprime placement.
+            // It's the repeated header row (see pdflib.php @L:914)
+            if ($answerrow % 8 == 0 || ($slotquestion instanceof qtype_kprime_question && (($answerrow + 1) % 8 == 0))) {
+                $questioncounter++;
+            }
+
+            $answerspots = $scanner->export_hotspots_answer_row(OQ_IMAGE_WIDTH, $questioncounter);
+
+            // If it's a kprime question we also get the next row
+            // and update the dedicated questioncounter for kprime
+            if ($slotquestion instanceof qtype_kprime_question) {
+                $kprime_questioncounter = $questioncounter + 1;
+                $answerspots_row2 = $scanner->export_hotspots_answer_row(OQ_IMAGE_WIDTH, $kprime_questioncounter);
+            }
 
             // Go through all answers of the slot question.
             foreach ($order as $key => $notused) {
@@ -1203,8 +1280,52 @@ if ($sheetloaded) {
                             " style=\"position:absolute; top:".$hotspot->y."px; left:".
                             $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_item(this, $slot, $key)\">";
                 }
+
+                // If it's a kprime question we do the same as above but with the hotspots
+                // of the 2nd row
+                if ($slotquestion instanceof qtype_kprime_question) {
+                    $kprimekey = $key + $rowlength;
+                    $hotspot_kprime = $answerspots_row2['a-' . $kprime_questioncounter . '-' . $key];
+
+                    if ($itemdata[$slot][$kprimekey] == -1) {
+                        echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/blue.gif\" title=\"" . $slot . ' ' .
+                                $letterstr[$key] . "_kprime\" border=\"0\" id=\"a-$slot-$key\"" .
+                                " style=\"position:absolute; top:".$hotspot_kprime->y."px; left:".
+                                $hotspot_kprime->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_item(this, $slot, $kprimekey)\">";
+                    } else if ($itemdata[$slot][$kprimekey] == 1) {
+                        echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"  title=\"" . $slot . ' ' .
+                                $letterstr[$key] . "_kprime\" border=\"0\" id=\"a-$slot-$key\"" .
+                                " style=\"position:absolute; top:".$hotspot_kprime->y."px; left:".
+                                $hotspot_kprime->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_item(this, $slot, $kprimekey)\">";
+                    } else {
+                        echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/spacer.gif\"  title=\"" . $slot . ' ' .
+                                $letterstr[$key] . "_kprime\" border=\"0\" id=\"a-$slot-$key\"" .
+                                " style=\"position:absolute; top:".$hotspot_kprime->y."px; left:".
+                                $hotspot_kprime->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_item(this, $slot, $kprimekey)\">";
+                    }
+                }
             }
-            $questioncounter++;
+
+            // Update the row and question counter according to the qtype we just did
+            if ($slotquestion instanceof qtype_kprime_question) {
+                $answerrow += 2;
+                $questioncounter += 2;
+            } else {
+                $answerrow++;
+                $questioncounter++;
+            }
+
+            // Special case if we arrive near the end of a column and the next question is a kprime
+            // we preamptivly increment the row count to force a column change
+            if ($nextslotquestion instanceof qtype_kprime_question && $answerrow == 22) {
+                $answerrow += 1;
+                $questioncounter += 1;
+            }
+            
+            // Use this counter to know if a column or page break is nessary
+            if (($answerrow + 1) % 24 == 0 || ($slotquestion instanceof qtype_kprime_question && $answerrow % 24 == 0)) {
+                $answerrow = 0;
+            }
         } // End if.
     }
 }
