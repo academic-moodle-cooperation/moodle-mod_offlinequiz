@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+4.0.1
+-----------------
+* [Bug] Fixed that offlinequiz was not compatible with Moodle 4.0.0 to 4.0.3
 
 4.0.0
 -----------------
