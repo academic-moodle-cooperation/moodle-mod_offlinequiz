@@ -64,10 +64,15 @@ function offlinequiz_get_questioninfo($offlinequiz, $question) {
             }
         } else if ($question->qtype == 'multichoiceset') {
             $questioninfo = get_string('allornothing', 'offlinequiz');
+        } else if ($question->qtype == 'kprime') {
+            $questioninfo = get_string('kprime', 'offlinequiz');
         }
         return $questioninfo;
 
     } else if ($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_ANSWERS) {
+        if ($question->qtype === 'kprime') {
+            return get_string('kprime', 'offlinequiz');
+        }
         $amount = offlinequiz_get_amount_correct_answers($question);
         $questioninfo = $amount . ' ' . get_string('questioninfocorrectanswers', 'offlinequiz');
         if ($amount == 1) {

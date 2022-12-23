@@ -1569,5 +1569,27 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2021070801.03, 'offlinequiz');
     }
 
+    if ($oldversion < 2021070804.01) {
+        $table = new xmldb_table('offlinequiz');
+        // Define field kprimetruesymbol to be added to offlinequiz.
+        $field = new xmldb_field('kprimetruesymbol', XMLDB_TYPE_CHAR, '1', null, XMLDB_NOTNULL, null, '+');
+
+        // Conditionally launch add field kprimetruesymbol.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field kprimefalsesymbol to be added to offlinequiz.
+        $field = new xmldb_field('kprimefalsesymbol', XMLDB_TYPE_CHAR, '1', null, XMLDB_NOTNULL, null, '-');
+
+        // Conditionally launch add field kprimefalsesymbol.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2021070804.01, 'offlinequiz');
+    }
+
     return true;
 }

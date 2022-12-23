@@ -102,7 +102,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
             $latexforquestions .= '\item ' .  $questiontext . "\n";
 
-            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset' || $question->qtype == 'kprime') {
 
                 // There is only a slot for multichoice questions.
                 $attempt = $templateusage->get_question_attempt($slot);
@@ -143,7 +143,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
             } else {
                 $latexforquestions .= '\item %' .  $question->name . "\n" . $questiontext . "\n";
             }
-            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset' || $question->qtype == 'kprime') {
 
                 $slot = $questionslots[$currentquestionid];
 

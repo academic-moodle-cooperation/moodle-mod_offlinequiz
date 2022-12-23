@@ -195,6 +195,14 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'disableimgnewlines', get_string("disableimgnewlines", "offlinequiz"), $attribs);
         $mform->addHelpButton('disableimgnewlines', 'disableimgnewlines', 'offlinequiz');
         $mform->setDefault('disableimgnewlines', $offlinequizconfig->disableimgnewlines);
+        
+        $mform->addElement('text', 'kprimetruesymbol', get_string("kprimetruesymbol", "offlinequiz"), array('size' => '1', 'maxlength' => '1'));
+        $mform->addHelpButton('kprimetruesymbol', 'kprimetruesymbol', 'offlinequiz');
+        $mform->setDefault('kprimetruesymbol', $offlinequizconfig->kprimetruesymbol);
+
+        $mform->addElement('text', 'kprimefalsesymbol', get_string("kprimefalsesymbol", "offlinequiz"), array('size' => '1', 'maxlength' => '1'));
+        $mform->addHelpButton('kprimefalsesymbol', 'kprimefalsesymbol', 'offlinequiz');
+        $mform->setDefault('kprimefalsesymbol', $offlinequizconfig->kprimefalsesymbol);
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'reviewoptionshdr', get_string("reviewoptions", "offlinequiz"));

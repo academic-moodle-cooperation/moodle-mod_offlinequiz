@@ -69,6 +69,16 @@ if ($ADMIN->fulltree) {
             get_string('disableimgnewlines', 'offlinequiz'), get_string('configdisableimgnewlines', 'offlinequiz'),
             0));
 
+    // Kprime "true" symbol.
+    $settings->add(new admin_setting_configtext('offlinequiz/kprimetruesymbol',
+            get_string('kprimetruesymbol', 'offlinequiz'), get_string('configkprimetruesymbol', 'offlinequiz'),
+            '+' , PARAM_TEXT, 1));
+
+    // Kprime "false" symbol.
+    $settings->add(new admin_setting_configtext('offlinequiz/kprimefalsesymbol',
+            get_string('kprimefalsesymbol', 'offlinequiz'), get_string('configkprimefalsesymbol', 'offlinequiz'),
+            '-' , PARAM_TEXT, 1));
+
     // Review options.
     $settings->add(new admin_setting_heading('reviewheading',
             get_string('reviewoptionsheading', 'offlinequiz'), ''));

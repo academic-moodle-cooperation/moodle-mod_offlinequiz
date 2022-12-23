@@ -87,7 +87,7 @@ class offlinequiz_question_usage_by_activity extends question_usage_by_activity 
 
             // We have to check for the type because we might have old migrated templates
             // that could contain description questions.
-            if ($slotquestion->get_type_name() == 'multichoice' || $slotquestion->get_type_name() == 'multichoiceset') {
+            if ($slotquestion->get_type_name() == 'multichoice' || $slotquestion->get_type_name() == 'multichoiceset' || $slotquestion->get_type_name() == 'kprime') {
                 $order = $slotquestion->get_order($attempt);  // Order of the answers.
                 $order = implode(',', $order);
                 $newslot = $newquba->add_question($slotquestion, $qinstances[$slotquestion->id]->maxmark);
@@ -599,14 +599,22 @@ function offlinequiz_get_maxanswers($offlinequiz, $groups = array()) {
 
     $counts = array();
     if (!empty($questionlist)) {
+        //cannot get type here to filter must do all queries
         foreach ($questionlist as $questionid) {
-            $sql = "SELECT COUNT(id)
-                      FROM {question_answers} qa
-                     WHERE qa.question = :questionid
-                    ";
+            $sql_kprime = "SELECT COUNT(id)
+                  FROM {qtype_kprime_weights} qkw
+                WHERE qkw.questionid = :questionid
+                AND qkw.weight > 0
+                ";
+            $sql_general = "SELECT COUNT(id)
+                  FROM {question_answers} qa
+                 WHERE qa.question = :questionid
+                ";
             $params = array('questionid' => $questionid);
-            $counts[] = $DB->count_records_sql($sql, $params);
+            $counts_general[] = $DB->count_records_sql($sql_general, $params);
+            $counts_kprime[] = $DB->count_records_sql($sql_kprime, $params);
         }
+        $counts = array_merge($counts_general, $counts_kprime);
         return max($counts);
     } else {
         return 0;
@@ -1114,7 +1122,7 @@ function offlinequiz_count_multichoice_questions(question_usage_by_activity $que
     $slots = $questionusage->get_slots();
     foreach ($slots as $slot) {
         $question = $questionusage->get_question($slot);
-        if ($question->qtype->name() == 'multichoice' || $question->qtype->name() == 'multichoiceset') {
+        if ($question->qtype->name() == 'multichoice' || $question->qtype->name() == 'multichoiceset' || $question->qtype->name() == 'kprime') {
             $count++;
         }
     }
@@ -1587,7 +1595,7 @@ function offlinequiz_get_group_template_usage($offlinequiz, $group, $context) {
                 $question = question_bank::make_question($questiondata[$questionid]);
 
                 // We only add multichoice questions which are needed for grading.
-                if ($question->get_type_name() == 'multichoice' || $question->get_type_name() == 'multichoiceset') {
+                if ($question->get_type_name() == 'multichoice' || $question->get_type_name() == 'multichoiceset' || $question->get_type_name() == 'kprime') {
                     $templateusage->add_question($question, $groupquestions[$question->id]->maxmark);
                 }
             }
@@ -1713,14 +1721,24 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
         $text = $mathjaxfilter->filter($text);
         if ($question->qtype != 'description') {
             foreach ($choiceorder as $key => $answer) {
-                $question->options->answers[$answer]->answer = $mathjaxfilter->filter($question->options->answers[$answer]->answer);
+                //Dealing with kprime exception (object is not structured as the multichoice)
+                if($question->qtype == 'kprime'){
+                    $question->options->rows[$answer]->optiontext = $mathjaxfilter->filter($question->options->rows[$answer]->optiontext);
+                }else{
+                    $question->options->answers[$answer]->answer = $mathjaxfilter->filter($question->options->answers[$answer]->answer);
+                }
             }
         }
     } else if ($texfilter) {
         $text = $texfilter->filter($text);
         if ($question->qtype != 'description') {
             foreach ($choiceorder as $key => $answer) {
-                $question->options->answers[$answer]->answer = $texfilter->filter($question->options->answers[$answer]->answer);
+                //Dealing with kprime exception (object is not structured as the multichoice)
+                if($question->qtype == 'kprime'){
+                    $question->options->rows[$answer]->optiontext = $texfilter->filter($question->options->rows[$answer]->optiontext);
+                }else{
+                    $question->options->answers[$answer]->answer = $texfilter->filter($question->options->answers[$answer]->answer);
+                }
             }
         }
     }
@@ -1734,14 +1752,34 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
         echo '  </div>';
 
         foreach ($choiceorder as $key => $answer) {
-            $answertext = $question->options->answers[$answer]->answer;
+            // Dealing with kprime exception (object is not structured as the multichoice)
+            // Setting the component and filearea here so the PDF knows where to get the images
+            if($question->qtype == 'kprime'){
+                $answertext = $question->options->rows[$answer]->optiontext;
+                $component = 'qtype_kprime';
+                $filearea = 'optiontext';
+            }else {
+                $answertext = $question->options->answers[$answer]->answer;
+                $component = 'question';
+                $filearea = 'answer';
+            }
+
             // Remove all HTML comments (typically from MS Office).
             $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
             // Remove all paragraph tags because they mess up the layout.
             $answertext = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', $answertext);
             // Rewrite image URLs.
+
+            //Dealing with kprime exception (object is not structured as the multichoice)
+            if($question->qtype == 'kprime'){
+                $answerid = $question->options->rows[$answer]->id;
+            }else {
+                $answerid = $question->options->answers[$answer]->id;
+            }
+
+            //removing hard coded params for $component and $filearea
             $answertext = question_rewrite_question_preview_urls($answertext, $question->id,
-            $question->contextid, 'question', 'answer', $question->options->answers[$answer]->id,
+            $question->contextid, $component, $filearea, $answerid,
             $context->id, 'offlinequiz');
 
             echo "<div class=\"answer\">$letterstr[$key])&nbsp;&nbsp;";
@@ -2338,7 +2376,7 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
              WHERE qbe.questioncategoryid $qcsql
                AND q.parent = 0
                AND qv.status = 'ready'
-               AND q.qtype IN ('multichoice', 'multichoiceset') 
+               AND q.qtype IN ('multichoice', 'multichoiceset', 'kprime') 
                AND NOT EXISTS (SELECT 1
                                  FROM {question_versions} qv2
                                  WHERE qv2.questionbankentryid = qv.questionbankentryid

@@ -290,7 +290,7 @@ if ($mode == 'preview') {
                     $currentpage++;
                 }
                 $order = array();
-                if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+                if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset' || $question->qtype == 'kprime') {
                     $slot = $questionslots[$question->id];
                     $slotquestion = $templateusage->get_question($slot);
                     $attempt = $templateusage->get_question_attempt($slot);
