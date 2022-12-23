@@ -68,7 +68,9 @@ class provider implements
          'showgrades' => 'privacy:metadata:offlinequiz:showgrades',
          'showtutorial' => 'privacy:metadata:offlinequiz:showtutorial',
          'id_digits' => 'privacy:metadata:offlinequiz:id_digits',
-         'disableimgnewlines' => 'privacy:metadata:offlinequiz:disableimgnewlines'
+         'disableimgnewlines' => 'privacy:metadata:offlinequiz:disableimgnewlines',
+         'kprimetruesymbol' => 'privacy:metadata:offlinequiz:kprimetruesymbol',
+         'kprimefalsesymbol' => 'privacy:metadata:offlinequiz:kprimefalsesymbol',
           ],
           'privacy:metadata:offlinequiz'
           );

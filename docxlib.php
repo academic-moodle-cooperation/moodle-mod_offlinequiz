@@ -405,7 +405,17 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
     $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
     foreach ($order as $key => $answer) {
-        $answertext = $question->options->answers[$answer]->answer;
+        // Dealing with kprime exception (object is not structured as the multichoice)
+        // Setting the component and filearea here so the PDF knows where to get the images
+        if ($question->qtype == 'kprime') {
+            $answertext = $question->options->rows[$answer]->optiontext;
+            $component = 'qtype_kprime';
+            $filearea = 'optiontext';
+        } else {
+            $answertext = $question->options->answers[$answer]->answer;
+            $component = 'question';
+            $filearea = 'answer';
+        }
         // Filter only for tex formulas.
         if (!empty($texfilter)) {
             $answertext = $texfilter->filter($answertext);
@@ -418,7 +428,7 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
         $answertext = $trans->fix_image_paths($answertext, $question->contextid,
-            'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
+            $component, $filearea, $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
 
         $blocks = offlinequiz_convert_image_docx($answertext);
         offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
@@ -645,13 +655,13 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'question', 'questiontext', $question->id,
                                                     0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
             offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
 
-            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset' || $question->qtype == 'kprime') {
 
                 // There is only a slot for multichoice questions.
                 offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
@@ -701,7 +711,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
             $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
+            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'question', 'questiontext', $question->id,
                                                     0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
@@ -713,7 +723,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
             }
 
-            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
+            if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset' || $question->qtype == 'kprime') {
 
                 $slot = $questionslots[$question->id];
 

@@ -204,10 +204,14 @@ private function submit_scanned_page_to_result($quba, $scannedpage) {
                     $count++;
                 } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
                     $response['choice' . $key] = 1;
+                } else if ($slotquestion instanceof qtype_kprime_question) {
+                    $response['option' . $key] = 1;
                 }
             } else if ($choicesdata[$slot][$key]->value == 0) {
                 if ($slotquestion instanceof qtype_multichoice_multi_question) {
                     $response['choice' . $key] = 0;
+                } else if ($slotquestion instanceof qtype_kprime_question) {
+                    $response['option' . $key] = 2;
                 }
             }
         }
@@ -219,7 +223,7 @@ private function submit_scanned_page_to_result($quba, $scannedpage) {
                 $quba->process_action($slot, $response);
                 $quba->finish_question($slot, time());
             }
-        } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
+        } else if ($slotquestion instanceof qtype_multichoice_multi_question || qtype_kprime_question) {
             $quba->process_action($slot, $response);
             $quba->finish_question($slot, time());
         }

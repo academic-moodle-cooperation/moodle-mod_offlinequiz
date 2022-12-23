@@ -870,3 +870,17 @@ $string['withselected'] = 'With selected...';
 $string['zipfile'] = 'ZIP file';
 $string['zipok'] = 'ZIP file uploaded';
 $string['zerogradewarning'] = 'Warning: Your offline quiz grade is 0.0!';
+
+$string['prequestionwarningqtype_single'] = '<i>This is a single choice question.</i>';
+$string['prequestionwarningqtype_multi'] = '<i>This is a multichoice question.</i>';
+
+// kprime addon related strings
+$string['kprime'] = 'Kprime';
+$string['prequestionwarningqtype_kprime'] = '<i>This is a Kprime question. use the "{$a->kprimetruesymbol}" line for {$a->positive} and the "{$a->kprimefalsesymbol}" line for {$a->negative}</i><br/><br/>';
+$string['warningkprimeassumptions'] = '<p><b>Kprime (ETHZ) question type specificities:</b> To make sure the kprime (ETHZ) questions are handled properly, the first column must be "true" and the second "false". Any other way won\'t be working.</p>';
+$string['kprimetruesymbol'] = 'Symbol for the "true" row of Kprime questions';
+$string['kprimetruesymbol_help'] = 'The symbol that will be displayed at the end of the positive row in a kprime question. Limited to 1 character';
+$string['configkprimetruesymbol'] = 'The symbol that will be displayed at the end of the positive row in a kprime question. Limited to 1 character';
+$string['kprimefalsesymbol'] = 'Symbol for the "false" row of Kprime questions';
+$string['kprimefalsesymbol_help'] = 'The symbol that will be displayed at the end of the negative row in a kprime question. Limited to 1 character';
+$string['configkprimefalsesymbol'] = 'The symbol that will be displayed at the end of the negative row in a kprime question. Limited to 1 character';

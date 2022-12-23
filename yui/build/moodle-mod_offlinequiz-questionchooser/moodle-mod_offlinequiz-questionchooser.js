@@ -52,6 +52,7 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
         for(i = 0; i < nodes.length; i++) {
             if (nodes[i].id != 'item_qtype_multichoiceset' &&
                 nodes[i].id != 'item_qtype_multichoice' &&
+                nodes[i].id != 'item_qtype_kprime' &&
                 nodes[i].id != 'item_qtype_description' ) {
                 nodes[i].disabled = true;
             }

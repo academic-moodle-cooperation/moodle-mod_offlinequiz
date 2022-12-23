@@ -122,6 +122,9 @@ $slots = $quba->get_slots();
 $startindex = min(($pagenumber - 1) * $questionsperpage, count($slots));
 // We end on the bottom of the page or when the questions are gone (e.g., 95, 105).
 $endindex = min( $pagenumber * $questionsperpage, count($slots) );
+// Retrieve the indexes
+$newindexes = offlinequiz_calculate_indexes_page($quba, $scannedpage->pagenumber, $maxanswers);
+list($startindex, $endindex) = $newindexes;
 
 // Load the choices made before from the database. There might not be any.
 $choices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id), 'slotnumber, choicenumber');
@@ -146,8 +149,6 @@ if ($sheetloaded) {
     echo '<img name="formimage" src="' . $CFG->wwwroot . "/pluginfile.php/$context->id/mod_offlinequiz/imagefiles/0/" .
     $imagefile->get_filename() .'" border="1" width="' . OQ_IMAGE_WIDTH .
         '" style="position:absolute; top:0px; left:0px; display: block;">';
-
-    $answerspots = $scanner->export_hotspots_answer(OQ_IMAGE_WIDTH);
 
     if ($options->gradedsheetfeedback) {
 
@@ -177,6 +178,7 @@ if ($sheetloaded) {
         }
 
         $questioncounter = 0;
+        $answerrow = 0;
         for ($slotindex = $startindex; $slotindex < $endindex; $slotindex++) {
 
             $slot = $slots[$slotindex];
@@ -185,27 +187,59 @@ if ($sheetloaded) {
             $order = $slotquestion->get_order($attempt);  // Order of the answers.
             $answers = $slotquestion->answers;
 
+            // get next question to predict column change
+            $nextslot = next($slots);
+            $nextslotquestion = ($nextslot) ? $quba->get_question($nextslot) : null;
+
+            $rowlength = count($order);
+
+            // Skip every 8 row, or on the 7th depending of the kprime placement.
+            // It's the repeated header row (see pdflib.php @L:914)
+            if ($answerrow % 8 == 0 || ($slotquestion instanceof qtype_kprime_question && (($answerrow + 1) % 8 == 0))) {
+                $questioncounter++;
+            }
+
+            $answerspots = $scanner->export_hotspots_answer_row(OQ_IMAGE_WIDTH, $questioncounter);
+
+            // If it's a kprime question we also get the next row
+            // and update the dedicated questioncounter for kprime
+            if ($slotquestion instanceof qtype_kprime_question) {
+                $kprime_questioncounter = $questioncounter + 1;
+                $answerspots_row2 = $scanner->export_hotspots_answer_row(OQ_IMAGE_WIDTH, $kprime_questioncounter);
+            }
+
             // Go through all answers of the slot question.
             foreach ($order as $key => $answerid) {
                 $hotspot = $answerspots['a-' . $questioncounter . '-' . $key];
                 $index = explode('-', $key);
                 $questionid = $slotquestion->id;
 
-                if ($answers[$answerid]->fraction > 0 and $choicesdata[$slot][$key]->value == 1) {
+                //Dealing with kprime exception (object is not structured as the multichoice)
+                if ($slotquestion instanceof qtype_kprime_question) {
+                    // Kprime -> we suppose that every kprime question is set up so the first column is true and the second is false.
+                    //the weight object is ordered with the question original number 1->4, then for each number 2 column 1, 2 (1 is true, 2 is false)
+                    $kprimeanswerid = $slotquestion->rows[$answerid]->number;
+                    $fraction = $slotquestion->weights[$kprimeanswerid][1]->weight;
+                    $fraction_2nd_row = $slotquestion->weights[$kprimeanswerid][2]->weight;
+                } else {
+                    $fraction = $answers[$answerid]->fraction;
+                }
+
+                if ($fraction > 0 and $choicesdata[$slot][$key]->value == 1) {
                     // The student crossed a correct answer.
                     echo "<img title=\"".get_string('question') . ' ' .
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
                             "\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\" border=\"0\"" .
                             " id=\"a-$slotindex-$key\" style=\"position:absolute; top:" .
                             $hotspot->y."px; left:".$hotspot->x."px;\">";
-                } else if ($answers[$answerid]->fraction > 0 and $choicesdata[$slot][$key]->value == 0) {
+                } else if ($fraction > 0 and $choicesdata[$slot][$key]->value == 0) {
                     // The student did not cross a correct answer.
                     echo "<img title=\"".get_string('question') . ' ' .
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
                             "\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/missing.png\" border=\"0\"" .
                             " id=\"a-$slotindex-$key\" style=\"position:absolute; top:".
                             ($hotspot->y - 2) . "px; left:".($hotspot->x - 2)."px;\">";
-                } else if ($answers[$answerid]->fraction <= 0 and $choicesdata[$slot][$key]->value == 1) {
+                } else if ($fraction <= 0 and $choicesdata[$slot][$key]->value == 1) {
                     // The student crossed an answer that is wrong.
                     echo "<img title=\"".get_string('question') . ' ' .
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
@@ -213,8 +247,58 @@ if ($sheetloaded) {
                             " id=\"a-$slotindex-$key\" style=\"position:absolute; top:" .
                             ($hotspot->y - 2)."px; left:".($hotspot->x - 2)."px;\">";
                 }
+
+                // If it's a kprime question we do the same as above but with the hotspots
+                // of the 2nd row
+                if ($slotquestion instanceof qtype_kprime_question) {
+                    $kprimekey = $key + $rowlength;
+                    $hotspot_kprime = $answerspots_row2['a-' . $kprime_questioncounter . '-' . $key];
+
+                    if ($fraction_2nd_row > 0 and $choicesdata[$slot][$kprimekey]->value == 1) {
+                        // The student crossed a correct answer.
+                        echo "<img title=\"".get_string('question') . ' ' .
+                                ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
+                                " kprime\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\" border=\"0\"" .
+                                " id=\"a-$slotindex-$key\" style=\"position:absolute; top:" .
+                                $hotspot_kprime->y."px; left:".$hotspot_kprime->x."px;\">";
+                    } else if ($fraction_2nd_row > 0 and $choicesdata[$slot][$kprimekey]->value == 0) {
+                        // The student did not cross a correct answer.
+                        echo "<img title=\"".get_string('question') . ' ' .
+                                ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
+                                " kprime\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/missing.png\" border=\"0\"" .
+                                " id=\"a-$slotindex-$key\" style=\"position:absolute; top:".
+                                ($hotspot_kprime->y - 2) . "px; left:".($hotspot_kprime->x - 2)."px;\">";
+                    } else if ($fraction_2nd_row <= 0 and $choicesdata[$slot][$kprimekey]->value == 1) {
+                        // The student crossed an answer that is wrong.
+                        echo "<img title=\"".get_string('question') . ' ' .
+                                ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
+                                " kprime\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/wrong.png\" border=\"0\"" .
+                                " id=\"a-$slotindex-$key\" style=\"position:absolute; top:" .
+                                ($hotspot_kprime->y - 2)."px; left:".($hotspot_kprime->x - 2)."px;\">";
+                    }
+                }
             }
-            $questioncounter++;
+
+            // Update the row and question counter according to the qtype we just did
+            if ($slotquestion instanceof qtype_kprime_question) {
+                $answerrow += 2;
+                $questioncounter += 2;
+            } else {
+                $answerrow++;
+                $questioncounter++;
+            }
+
+            // Special case if we arrive near the end of a column and the next question is a kprime
+            // we preamptivly increment the row count to force a column change
+            if ($nextslotquestion instanceof qtype_kprime_question && $answerrow == 22) {
+                $answerrow += 1;
+                $questioncounter += 1;
+            }
+            
+            // Use this counter to know if a column or page break is nessary
+            if (($answerrow + 1) % 24 == 0 || ($slotquestion instanceof qtype_kprime_question && $answerrow % 24 == 0)) {
+                $answerrow = 0;
+            }
         }
 
         // Print info about markings.
