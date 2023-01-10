@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/errorpages_table.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/report/correct/errorpages_table.php');
 
 class participants_report {
     /**

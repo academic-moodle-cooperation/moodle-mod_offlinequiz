@@ -60,6 +60,10 @@ abstract class offlinequiz_default_report {
     public function print_header_and_tabs($cm, $course, $offlinequiz, $reportmode = 'overview') {
         global $CFG, $PAGE, $OUTPUT;
         switch ($reportmode) {
+            case 'correct':
+                $reporttitle = get_string('correct', 'offlinequiz');
+                $currenttab = 'tabresultsoverview';
+                break;
             case 'overview':
                 $reporttitle = get_string('results', 'offlinequiz');
                 $currenttab = 'tabresultsoverview';

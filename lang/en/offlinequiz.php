@@ -106,6 +106,7 @@ $string['confirmremovequestion'] = 'Are you sure you want to remove this {$a} qu
 $string['copyright'] = '<strong>Warning: The texts on this page are just for your personal information. Like any other texts these questions are under copyright restrictions. You are not allowed to copy them or to show them to other people!</strong>';
 $string['copy'] = 'Copy';
 $string['correct'] = 'correct';
+$string['correctheader'] = 'Correct Evaluation Errors';
 $string['correcterror'] = 'solve';
 $string['correctforgroup'] = 'Correct answers for Group {$a}';
 $string['correctionerrors'] = 'Forms with correction errors: ';
@@ -759,7 +760,7 @@ Additionally, a table shows the maximum grade and the achieved grade for every q
 </table>';
 
 $string['review'] = 'Review';
-$string['rimport'] = 'Upload/Correct';
+$string['rimport'] = 'Upload';
 $string['rotate'] = 'Rotate';
 $string['rotatingsheet'] = 'Sheet is rotated...';
 $string['saveandshow'] = 'Save and show changes to student';
@@ -832,7 +833,7 @@ $string['tabeditgroupquestions'] = 'Edit Offlinequiz Content';
 $string['tabeditparticipants'] = 'Edit attendance lists';
 $string['tabofflinequizcontent'] = 'Offlinequiz Content';
 $string['tabofflinequizcorrect'] = 'Correct';
-$string['tabofflinequizupload'] = 'Upload/Correct Forms';
+$string['tabofflinequizupload'] = 'Upload Forms';
 $string['tabparticipantscorrect'] = 'Correct';
 $string['tabparticipantlists'] = 'Attendance lists';
 $string['tabparticipantsupload'] = 'Upload';
@@ -858,8 +859,8 @@ $string['updatedsumgrades'] = 'The sum of all grades of group {$a->letter} was r
 $string['upgradingfilenames'] = 'Upgrading filenames of documents: offline quiz {$a->done}/{$a->outof} (Offline Quiz ID {$a->info})';
 $string['upgradingofflinequizattempts'] = 'Upgrading offline quiz attempts: offline quiz {$a->done}/{$a->outof} <br/>(Offline Quiz ID {$a->info})';
 $string['upgradingilogs'] = 'Upgrading scanned pages: scanned page {$a->done}/{$a->outof} <br/>(Offline Quiz ID {$a->info})';
-$string['uploadpart'] = 'Upload/Correct lists of participants';
-$string['upload'] = 'Upload/Correct';
+$string['uploadpart'] = 'Upload lists of participants';
+$string['upload'] = 'Upload';
 $string['uppertrigger'] = 'Higher second boundary';
 $string['uppertriggerzero'] = 'Higher second boundary is zero';
 $string['upperwarning'] = 'Higher first boundary';

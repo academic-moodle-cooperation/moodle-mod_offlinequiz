@@ -202,6 +202,8 @@ $upload['unique'] = 'upload';
 $uploaddata = [];
 $uploaddata['userswithoutresult'] = count($status['missingresults']);
 $uploaddata['correctionerrors'] = count($status['correctionerrors']);
+$url = new moodle_url('/mod/offlinequiz/report.php',['mode' => 'correct', 'q' => $offlinequiz->id]);
+$uploaddata['correcturl'] = $url->out(false);
 $upload['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_upload', $uploaddata);
 
 if(!$status['docscreated']) {
