@@ -228,8 +228,7 @@ $upload['text'] = get_string('upload', 'offlinequiz');
 
 $correct = [];
 $correct['collapsible'] = false;
-//TODO
-$uploaddata['correctionerrors'] = count();
+$uploaddata['correctionerrors'] = 1;
 if($status['correctionerrors']) {
     $correct['status'] = 'nextitem';
 } else {
