@@ -64,6 +64,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('offlinequiz/showcopyright', get_string('showcopyright', 'offlinequiz'),
             get_string('showcopyrightdesc', 'offlinequiz'), 1));
 
+    // Admin setting to set if participant usage is possible.
+    $settings->add(new admin_setting_configcheckbox('offlinequiz/defaultparticipantsusage', get_string('detaultparticipantsusage', 'offlinequiz'),
+            get_string('defaultparticipantsusagedesc', 'offlinequiz'), 1));
+
     // Disable newlines around images.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/disableimgnewlines',
             get_string('disableimgnewlines', 'offlinequiz'), get_string('configdisableimgnewlines', 'offlinequiz'),

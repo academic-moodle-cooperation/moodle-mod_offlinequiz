@@ -66,6 +66,7 @@ $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 $PAGE->set_url('/mod/offlinequiz/createquiz.php?id=' . $cm->id);
 $PAGE->set_title($strpreview);
+$PAGE->activityheader->disable();
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('report'); // Or 'admin'.
 $PAGE->set_cacheable(true);
@@ -137,9 +138,6 @@ if ($downloadall && $offlinequiz->docscreated) {
 
 // Print the page header.
 echo $OUTPUT->header();
-
-// Print the offlinequiz name heading and tabs for teacher.
-$currenttab = 'editq';
 
 $hasscannedpages = offlinequiz_has_scanned_pages($offlinequiz->id);
 

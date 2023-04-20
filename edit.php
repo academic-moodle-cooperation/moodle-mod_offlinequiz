@@ -355,6 +355,7 @@ $questionbank->set_offlinequiz_has_scanned_pages($docscreated);
 
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_pagetype('mod-offlinequiz-edit');
+$PAGE->activityheader->disable();
 $PAGE->force_settings_menu(true);
 $output = $PAGE->get_renderer('mod_offlinequiz', 'edit');
 

@@ -74,7 +74,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), array('optional' => true));
-
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             for ($i = 1; $i <= 6; $i++) {
                 $groupmenu[$i] = "$i";
@@ -84,7 +83,9 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         } else {
             $mform->addElement('static', 'numgroups', get_string('numbergroups', 'offlinequiz'));
         }
-
+        $mform->addElement('selectyesno', 'participantsusage', get_string('participantsusage', 'offlinequiz'));
+        $mform->addHelpButton('participantsusage', 'participantsusage', 'offlinequiz');
+        
         // Only allow certain options if the PDF documents have not been created.
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             $attribs = '';

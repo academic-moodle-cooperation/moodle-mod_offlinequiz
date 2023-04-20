@@ -181,10 +181,10 @@ if ($editquestion['status'] == 'TODO ES GIBT NOCH KEINE FRAGEN') {
 }
 $editquestion[$editquestion['status']] = true;
 
-$url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id]);
+$url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $id, 'tab' => 'tabforms']);
 
 $preview['link'] = $url->out(false);
-$preview['text'] = get_string('preview', 'offlinequiz');
+$preview['text'] = get_string('forms', 'offlinequiz');
 
 
 
@@ -201,10 +201,10 @@ $upload['collapsible'] = true;
 $upload['unique'] = 'upload';
 $uploaddata = [];
 $uploaddata['userswithoutresult'] = count($status['missingresults']);
-$uploaddata['correctionerrors'] = count($status['correctionerrors']);
 $url = new moodle_url('/mod/offlinequiz/report.php',['mode' => 'correct', 'q' => $offlinequiz->id]);
 $uploaddata['correcturl'] = $url->out(false);
 $upload['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_upload', $uploaddata);
+
 
 if(!$status['docscreated']) {
   $upload['status'] = 'open';
@@ -226,6 +226,21 @@ $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'rimport', 'q' =
 $upload['link'] = $url->out(false);
 $upload['text'] = get_string('upload', 'offlinequiz');
 
+$correct = [];
+$correct['collapsible'] = false;
+//TODO
+$uploaddata['correctionerrors'] = count();
+if($status['correctionerrors']) {
+    $correct['status'] = 'nextitem';
+} else {
+    $correct['status'] = 'open';
+}
+$correct[$correct['status']] = true;
+
+$url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'correct', 'q' => $offlinequiz->id]);
+
+$correct['link'] = $url->out(false);
+$correct['text'] = get_string('correct', 'offlinequiz');
 
 $overview = [];
 $overview['collapsible'] = false;
@@ -251,6 +266,12 @@ $url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'regrade', 'q' => 
 $regrade['link'] = $url->out(false);
 $regrade['text'] = get_string('regrade', 'offlinequiz');
 
+$evaluationsteps[] = $upload;
+$evaluationsteps[] = $correct;
+$evaluationsteps[] = $overview;
+$evaluationsteps[] = $regrade;
+$templatedata['evaluationsteps'] = $evaluationsteps;
+
 $statistics = [];
 $statistics['collapsible'] = true;
 
@@ -272,16 +293,7 @@ $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'statistics', 'i
 $statisticsdata['questionanalysislink'] = $url->out(false);
 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'statistics', 'id' => $id, 'statmode' => 'questionandanswerstats']);
 $statisticsdata['questionandansweranalysislink'] = $url->out(false);
-$statistics['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_statistics', $statisticsdata);
-
-$statistics['text'] = get_string('statistics', 'offlinequiz');
-
-$evaluationsteps[] = $upload;
-$evaluationsteps[] = $overview;
-$evaluationsteps[] = $regrade;
-$evaluationsteps[] = $statistics;
-$templatedata['evaluationsteps'] = $evaluationsteps;
-
+$templatedata['statistics'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_statistics', $statisticsdata);
 
 $participantsliststeps = [];
 
@@ -390,6 +402,7 @@ $participantsliststeps[] = $downloadattendance;
 $participantsliststeps[] = $uploadattendance;
 $participantsliststeps[] = $attendanceoverview;
 $templatedata['participantsliststeps'] = $participantsliststeps;
+$templatedata['displayparticipantssteps'] = $offlinequiz->participantsusage;
 
 // Print the page header.
 $PAGE->set_url('/mod/offlinequiz/view.php', array('id' => $cm->id));

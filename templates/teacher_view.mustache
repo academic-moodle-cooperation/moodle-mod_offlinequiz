@@ -15,6 +15,14 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 <div class="offlinequiz-view">
+  <div class="offlinequiz-view-header">
+    <h3>{{#str}} legend, mod_offlinequiz {{/str}}</h3>
+    <ul class="fa-ul">
+      <li class="done"> {{#str}} legenddone, mod_offlinequiz {{/str}}
+      <li class="nextitem"> {{#str}} legendnextitem, mod_offlinequiz {{/str}}
+      <li class="warning"> {{#str}} legendwarning, mod_offlinequiz {{/str}}
+    </ul>
+  </div>
   <div class="offlinequiz-view-column">
     <h3>{{#str}} preparation, mod_offlinequiz {{/str}}</h3>
     <ul class="fa-ul">
@@ -31,12 +39,18 @@
       {{/evaluationsteps}}
     </ul>
   </div>
-  <div class="offlinequiz-view-column">
-    <h3>{{#str}} attendancesheadline, mod_offlinequiz {{/str}}</h3>
-    <ul class="oq-expandable {{participantslist-expanded}} fa-ul">
-      {{#participantsliststeps}}
-          {{> mod_offlinequiz/teacher_view_step }}
-      {{/participantsliststeps}}
-    </ul>
+    <div class="offlinequiz-view-column">
+    <h3>{{#str}} statistics, mod_offlinequiz {{/str}}</h3>
+    {{{statistics}}}
   </div>
+  {{#displayparticipantssteps}}
+    <div class="offlinequiz-view-column">
+      <h3>{{#str}} attendancesheadline, mod_offlinequiz {{/str}}</h3>
+      <ul class="oq-expandable {{participantslist-expanded}} fa-ul">
+        {{#participantsliststeps}}
+            {{> mod_offlinequiz/teacher_view_step }}
+        {{/participantsliststeps}}
+      </ul>
+    </div>
+  {{/displayparticipantssteps}}
 </div>

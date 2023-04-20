@@ -221,6 +221,7 @@ $string['formforcorrection'] = 'Correction form for group {$a}';
 $string['formforgroup'] = 'Question form for group {$a}';
 $string['formforgroupdocx'] = 'Question form for group {$a} (DOCX)';
 $string['formforgrouplatex'] = 'Question form for group {$a} (LATEX)';
+$string['forms'] = 'Forms';
 $string['formsexist'] = 'Forms already created.';
 $string['formsexistx'] = 'Forms already created (<a href="{$a}">Download forms</a>)';
 $string['formsheetsettings'] = 'Form Settings';
