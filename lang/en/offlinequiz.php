@@ -684,8 +684,11 @@ $string['questionsinthisofflinequiz'] = 'Questions in this offline quiz';
 $string['questiontextisempty'] = '[Empty question text]';
 $string['quizdate'] = 'Date of offline quiz';
 $string['quizopenclose'] = 'Open and close dates';
-$string['quizopenclose_help'] = 'Students can only see their attempt(s) after the open time and before the close time.';
-$string['quizquestions'] = 'Quiz Questions';
+$string['quizopenclose_help'] = 'The online review can be restricted to a specific time period. Click on "Show" to change the date and time settings. 
+
+**Caution:** If no time period is activated for the online review, the review is unrestricted as long as the offline quiz is visible to the participants. 
+
+In all cases, only the options ticked under "Review includes" are displayed.';
 $string['qversioncannotupdate'] = 'Question version cannot be updated';
 $string['qversionnumbersdiffer'] = 'The number of answers differ between the old and the new version. This would lead to inconsistencies.';
 $string['qversionupdateerror'] = 'There was an error updating the question version.';
@@ -735,38 +738,24 @@ $string['reviewofresult'] = 'Review of result';
 $string['reviewopens'] = 'Review opens';
 $string['reviewoptions'] = 'Students may view';
 $string['reviewoptionsheading'] = 'Review options';
-$string['reviewoptions_help'] = 'With these options you can control what the students may see after the results were imported.
-You can also define start and end time for the results report. The checkboxes mean:
-<table>
-<tr><td style="vertical-align: top;"><b>The attempt</b></td><td>
-The text of the questions and answers will be shown to the students. They will see which answers they chose, but the correct answers will not be indicated.</td>
-</td></tr>
-<tr><td style="vertical-align: top;"><b>Whether correct</b></td><td>
-This option can only be activated if the option "The attempt" is activated. If activated, the students can see which of the chosen answers are correct (green background) or incorrect (red background).
-</td></tr>
-<tr><td style="vertical-align: top;"><b>Marks</b></td><td>
-The group (e.g. B), scores (achieved grade, total grade for questions, achieved in percent, e.g. 40/80 (50)) and the grade (e.g. 50 out of a maximum of 100) are displayed.
-Additionally, if "The attempt" is selected, the achieved score and the maximum score are shown for every question.
-</td></tr>
-<tr><td style="vertical-align: top;"><b>Specific feedback</b></td><td>
-Feedback that depens on what response the student gave.
-</td></tr>
-<tr><td style="vertical-align: top;"><b>General feedback</b></td><td>
-<p>General feedback is shown to the student after the results were imported.
-Unlike specific feedback, which depends on the question type and what response the student gave, the same general feedback text is shown to all students.</p>
-<p></p><p>You can use the general feedback to give students a fully worked answer and perhaps a link to more information they can use if they did not understand the questions.</p>
-</td></tr>
-<tr><td style="vertical-align: top;"><b>Right Answers</b></td><td>
-It is shown which answers are correct or wrong. This option is only available if "The attempt" is set.
-</td></tr>
-<tr><td style="vertical-align: top;"><b>Scanned form</b></td><td>
-The scanned answer forms are shown. Checked boxes are marked with green squares.
-</td></tr>
-<tr><td style="vertical-align: top;"><b>Scanned form with grades</b></td><td>
-The scanned answer forms are shown. Checked boxes are marked with green squares. Wrong marks and missing marks are highlighted.
-Additionally, a table shows the maximum grade and the achieved grade for every question.
-</td></tr>
-</table>';
+$string['reviewoptions_help'] = 'With these options you can control what the students may see after the results were imported. You can also define start and end time for the results report. 
+The checkboxes mean: 
+
+**The attempt** - The text of the questions and answers will be shown to the students. They will see which answers they chose, but the correct answers will not be indicated.
+
+**Whether correct** - This option can only be activated if the option "The attempt" is activated. If activated, the students can see which of the  chosen answers are correct (green background) or incorrect (red background). 
+
+**Marks** - The group (e.g. B), scores (achieved grade, total grade for questions, achieved in percent, e.g. 40/80 (50)) and the grade (e.g. 50 out of a maximum of 100) are displayed. Additionally, if "The attempt" is selected, the achieved score and the maximum score are shown for every question. 
+
+**Specific feedback** - Feedback that depens on what response the student gave. 
+
+**General feedback** - General feedback is shown to the student after the results were imported. Unlike specific feedback, which depends on the question type and what response the student gave, the same general feedback text is shown to all students. You can use the general feedback to give students a fully worked answer and perhaps a link to more information they can use if they did not understand the questions.
+
+**Right Answers** - It is shown which answers are correct or wrong. This option is only available if "The attempt" is set. 
+
+**Scanned form** - The scanned answer forms are shown. Checked boxes are marked with green squares. 
+
+**Scanned form with grades** - The scanned answer forms are shown. Checked boxes are marked with green squares. Wrong marks and missing marks are highlighted. Additionally, a table shows the maximum grade and the achieved grade for every question.';
 
 $string['review'] = 'Review';
 $string['rimport'] = 'Upload';
