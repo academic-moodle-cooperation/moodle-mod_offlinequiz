@@ -239,7 +239,7 @@ $correct[$correct['status']] = true;
 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'correct', 'q' => $offlinequiz->id]);
 
 $correct['link'] = $url->out(false);
-$correct['text'] = get_string('correct', 'offlinequiz');
+$correct['text'] = get_string('correctheader', 'offlinequiz');
 
 $overview = [];
 $overview['collapsible'] = false;
