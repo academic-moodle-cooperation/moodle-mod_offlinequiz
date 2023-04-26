@@ -137,7 +137,7 @@ $string['datanotsaved'] = 'Could not save settings';
 $string['configdecimalplaces'] = 'Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
 $string['decimalplaces'] = 'Decimal places';
 $string['decimalplaces_help'] = 'Number of digits that should be shown after the decimal point when displaying grades for the offline quiz.';
-$string['detaultparticipantsusage'] = 'Default participants feature enabled';
+$string['defaultparticipantsusage'] = 'Default participants feature enabled';
 $string['defaultparticipantsusagedesc'] = 'Default participants feature enabled';
 $string['deletelistcheck'] = 'Do you really want to delete the selected list and all it\'s participants?';
 $string['deleteresultcheck'] = 'Do you really want to delete the selected results?';
@@ -439,6 +439,8 @@ $string['participantslist'] = 'List of participants';
 $string['participantslists'] = 'Participants';
 $string['participants'] = 'Participants';
 $string['participantsinlists'] = 'Participants in lists';
+$string['participantsusage'] = 'Participants feature enabled';
+$string['participantsusage_help'] = 'Participants feature lets you track on site which students went to the offline test';
 $string['participants_help'] = '<p>Lists of participants are designed for large offline quizzes with many participants. They help the teacher to check which students participated in the quiz and whether all the results were imported correctly.
 You can add users to different lists. Each list could, for instance, contain the participants in a particular room. The participants can be members of a special group. A group registration tool can be used for creating those groups.
 Lists of participants can be downloaded as PDF documents, printed and marked with crosses just like the answer forms of offline quizzes. Afterwards they can be uploaded and the marked students will be marked as present in the database.
