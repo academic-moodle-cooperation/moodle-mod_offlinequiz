@@ -1294,6 +1294,12 @@ input#showviewbutton {
     padding-left: 1em;
 }
 
+#page-mod-offlinequiz-view .offlinequiz-view-statistics-column {
+  width: 100%;
+  border-top: 1px dashed gray;
+  padding-top: 2em;
+}
+
 .path-mod-offlinequiz .urlselect {
     margin-bottom: 1em;
 }
