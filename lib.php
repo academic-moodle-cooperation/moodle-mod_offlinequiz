@@ -721,7 +721,7 @@ function offlinequiz_user_outline($course, $user, $mod, $offlinequiz) {
 
     if ($grade = $DB->get_record('offlinequiz_results', array('userid' => $user->id, 'offlinequizid' => $offlinequiz->id))) {
         if ((float) $grade->sumgrades) {
-            $return->info = get_string('grade') . ':&nbsp;' . round($grade->sumgrades, $offlinequiz->decimalpoints);
+            $return->info = get_string('grade', 'offlinequiz') . ':&nbsp;' . round($grade->sumgrades, $offlinequiz->decimalpoints);
         }
         $return->time = $grade->timemodified;
         return $return;
@@ -745,7 +745,7 @@ function offlinequiz_user_complete($course, $user, $mod, $offlinequiz) {
     if ($results = $DB->get_records('offlinequiz_results', array('userid' => $user->id, 'offlinequiz' => $offlinequiz->id))) {
         if ($offlinequiz->grade && $offlinequiz->sumgrades &&
                 $grade = $DB->get_record('offlinequiz_results', array('userid' => $user->id, 'offlinequiz' => $offlinequiz->id))) {
-            echo get_string('grade') . ': ' . round($grade->grade, $offlinequiz->decimalpoints) .
+            echo get_string('grade', 'offlinequiz') . ': ' . round($grade->grade, $offlinequiz->decimalpoints) .
                 '/' . $offlinequiz->grade . '<br />';
         }
         foreach ($results as $result) {
