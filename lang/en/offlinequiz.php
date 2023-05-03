@@ -738,25 +738,25 @@ $string['reviewofresult'] = 'Review of result';
 $string['reviewopens'] = 'Review opens';
 $string['reviewoptions'] = 'Students may view';
 $string['reviewoptionsheading'] = 'Review options';
-$string['reviewoptions_help'] = 'With these options you can control what the students may see after the results were imported. You can also define start and end time for the results report. 
-The checkboxes mean: 
+$string['reviewoptions_help'] = 'With these options you can control what the students may see after the results were imported. You can also define start and end time for the results report.
+
+The checkboxes mean:
 
 **The attempt** - The text of the questions and answers will be shown to the students. They will see which answers they chose, but the correct answers will not be indicated.
 
-**Whether correct** - This option can only be activated if the option "The attempt" is activated. If activated, the students can see which of the  chosen answers are correct (green background) or incorrect (red background). 
+**Whether correct** - This option can only be activated if the option "The attempt" is activated. If activated, the students can see which of the  chosen answers are correct (green background) or incorrect (red background).
 
-**Marks** - The group (e.g. B), scores (achieved grade, total grade for questions, achieved in percent, e.g. 40/80 (50)) and the grade (e.g. 50 out of a maximum of 100) are displayed. Additionally, if "The attempt" is selected, the achieved score and the maximum score are shown for every question. 
+**Marks** - The group (e.g. B), scores (achieved grade, total grade for questions, achieved in percent, e.g. 40/80 (50)) and the grade (e.g. 50 out of a maximum of 100) are displayed. Additionally, if "The attempt" is selected, the achieved score and the maximum score are shown for every question.
 
-**Specific feedback** - Feedback that depens on what response the student gave. 
+**Specific feedback** - Feedback that depens on what response the student gave.
 
 **General feedback** - General feedback is shown to the student after the results were imported. Unlike specific feedback, which depends on the question type and what response the student gave, the same general feedback text is shown to all students. You can use the general feedback to give students a fully worked answer and perhaps a link to more information they can use if they did not understand the questions.
 
-**Right Answers** - It is shown which answers are correct or wrong. This option is only available if "The attempt" is set. 
+**Right Answers** - It is shown which answers are correct or wrong. This option is only available if "The attempt" is set.
 
-**Scanned form** - The scanned answer forms are shown. Checked boxes are marked with green squares. 
+**Scanned form** - The scanned answer forms are shown. Checked boxes are marked with green squares.
 
 **Scanned form with grades** - The scanned answer forms are shown. Checked boxes are marked with green squares. Wrong marks and missing marks are highlighted. Additionally, a table shows the maximum grade and the achieved grade for every question.';
-
 $string['review'] = 'Review';
 $string['rimport'] = 'Upload';
 $string['rotate'] = 'Rotate';

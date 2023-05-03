@@ -260,7 +260,7 @@ $regrade = [];
 $regrade['collapsible'] = false;
 $regrade['status'] = $overview['status'];
 $regrade[$regrade['status']] = true;
-$url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'regrade', 'q' => $offlinequiz->id]);
+$url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'regrade', 'cmid' => $id]);
 
 $regrade['link'] = $url->out(false);
 $regrade['text'] = get_string('regrade', 'offlinequiz');
