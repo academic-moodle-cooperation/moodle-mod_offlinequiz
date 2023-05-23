@@ -1370,6 +1370,7 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
             $url,
             navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_statistics',
             new pix_icon('i/report', ''));
+        $node->set_force_into_more_menu(true);
         $offlinequiznode->add_node($node, $beforekey);
         //Tab attendances
         $participantsusage = $DB->get_field('offlinequiz', 'participantsusage', ['id' => $PAGE->cm->instance]);

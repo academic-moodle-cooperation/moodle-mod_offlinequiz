@@ -97,7 +97,8 @@ $sql = "SELECT u.id
 $status['missingresults'] = $DB->get_records_sql_menu($sql, ['courseid' => $offlinequiz->course, 'offlinequizid' => $offlinequiz->id]);
 $status['docsuploaded'] = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id]);
 $status['correctionerrors'] = $DB->get_records('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
-$status['resultsexist'] = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
+$status['resultscount'] = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
+
 $sql = "SELECT opl.*,
                     (SELECT count(*)
                     FROM {offlinequiz_participants} op
@@ -201,6 +202,7 @@ $upload['collapsible'] = true;
 $upload['unique'] = 'upload';
 $uploaddata = [];
 $uploaddata['userswithoutresult'] = count($status['missingresults']);
+$uploaddata['resultsavailable'] = $status['resultscount'];
 $url = new moodle_url('/mod/offlinequiz/report.php',['mode' => 'correct', 'q' => $offlinequiz->id]);
 $uploaddata['correcturl'] = $url->out(false);
 $upload['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_upload', $uploaddata);
@@ -228,22 +230,19 @@ $upload['text'] = get_string('upload', 'offlinequiz');
 
 $correct = [];
 $correct['collapsible'] = false;
-$uploaddata['correctionerrors'] = 1;
 if($status['correctionerrors']) {
     $correct['status'] = 'nextitem';
 } else {
     $correct['status'] = 'open';
 }
 $correct[$correct['status']] = true;
-
 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'correct', 'q' => $offlinequiz->id]);
-
 $correct['link'] = $url->out(false);
-$correct['text'] = get_string('correctheader', 'offlinequiz');
+$correct['text'] = get_string('correctheader', 'offlinequiz', sizeof($status['correctionerrors']));
 
 $overview = [];
 $overview['collapsible'] = false;
-if($status['resultsexist']) {
+if($status['resultscount']) {
   $overview['status'] = 'nextitem';
 } else {
   $overview['status'] = 'open';

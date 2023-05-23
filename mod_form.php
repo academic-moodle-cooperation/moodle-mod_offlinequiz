@@ -83,9 +83,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         } else {
             $mform->addElement('static', 'numgroups', get_string('numbergroups', 'offlinequiz'));
         }
-        $mform->addElement('selectyesno', 'participantsusage', get_string('participantsusage', 'offlinequiz'));
-        $mform->addHelpButton('participantsusage', 'participantsusage', 'offlinequiz');
-        
+
         // Only allow certain options if the PDF documents have not been created.
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             $attribs = '';
@@ -99,6 +97,10 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'shuffleanswers', get_string("shufflewithin", "offlinequiz"), $attribs);
         $mform->addHelpButton('shuffleanswers', 'shufflewithin', 'offlinequiz');
         $mform->setDefault('shuffleanswers', $offlinequizconfig->shuffleanswers);
+
+        $mform->addElement('selectyesno', 'participantsusage', get_string('participantsusage', 'offlinequiz'));
+        $mform->addHelpButton('participantsusage', 'participantsusage', 'offlinequiz');
+        $mform->setDefault('participantsusage', $offlinequizconfig->defaultparticipantsusage);
 
         // Option for show tutorial.
         $mform->addElement('selectyesno', 'showtutorial', get_string("showtutorial", "offlinequiz"));
