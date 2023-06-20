@@ -654,7 +654,7 @@ function offlinequiz_repaginate_questions($offlinequizid, $offlinegroupid, $slot
  * @param boolean $shuffle Should the questions be reordered randomly?
  */
 function offlinequiz_shuffle_questions($questionids) {
-    srand((float)microtime() * 1000000); // For php < 4.2.
+    srand((int)microtime() * 1000000); // For php < 4.2.
     shuffle($questionids);
     return $questionids;
 }

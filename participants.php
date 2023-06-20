@@ -95,7 +95,6 @@ function find_pdf_file($contextid, $listfilename) {
         return $fs->get_file($contextid, 'mod_offlinequiz', 'pdfs', 0, '/', $listfilename);
     }
 }
-
 switch($mode) {
     case 'editlists':
         // Only print headers and tabs if not asked to download data.
@@ -495,6 +494,7 @@ switch($mode) {
         echo $OUTPUT->box_end();
         break;
     case 'upload':
+    case 'correct':
         // We redirect if no list created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
             redirect('participants.php?q='.$offlinequiz->id, get_string('createlistfirst', 'offlinequiz'));

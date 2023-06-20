@@ -270,9 +270,9 @@ class offlinequiz_page_scanner {
             for ($j = 0; $j <= $length; $j++) {                 // XXXXXXX.
                 if ($start + $j >= 0 and $start + $j <= $a) {   // XXXXXXXX  length=8.
                     // This creates the line from upper left to lower right corner.
-                    $this->pattern[($start + $j)][$i] = 1;
+                    $this->pattern[round($start + $j)][$i] = 1;
                     // This creates the line from upper right to lower left corner.
-                    $this->pattern[($start + $j)][($a - $i)] = 1;
+                    $this->pattern[round($start + $j)][($a - $i)] = 1;
                 }
             }
         }

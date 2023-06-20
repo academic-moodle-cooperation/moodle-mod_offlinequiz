@@ -238,7 +238,7 @@ if($status['correctionerrors']) {
 $correct[$correct['status']] = true;
 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'correct', 'q' => $offlinequiz->id]);
 $correct['link'] = $url->out(false);
-$correct['text'] = get_string('correctheader', 'offlinequiz', sizeof($status['correctionerrors']));
+$correct['text'] = get_string('correctheaderwitherrors', 'offlinequiz', sizeof($status['correctionerrors']));
 
 $overview = [];
 $overview['collapsible'] = false;
