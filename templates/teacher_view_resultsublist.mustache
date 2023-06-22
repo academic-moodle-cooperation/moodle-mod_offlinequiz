@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 <div>
-  <ol class="grouplist">
-    {{#groups}}
-      <li><a href="{{link}}"> {{#str}} group, mod_offlinequiz {{/str}} {{groupnumber}}: {{#str}} editgradeslistitem, mod_offlinequiz, {{maxmark}} {{/str}} </a>
-    {{/groups}}
-  </ol>
+  <ul class="grouplist">
+    {{#resultentry}}
+      <li><a href="{{link}}"> {{langstring}}{{number}}</a>
+    {{/resultentry}}
+  </ul>
 </div>

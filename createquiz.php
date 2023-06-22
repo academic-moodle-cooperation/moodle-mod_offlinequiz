@@ -135,11 +135,42 @@ if ($downloadall && $offlinequiz->docscreated) {
         send_temp_file($tempzip, $zipfilename);
     }
 }
+$hasscannedpages = offlinequiz_has_scanned_pages($offlinequiz->id);
+// Delete the PDF forms if forcepdfnew and if there are no scanned pages yet.
+if ($forcepdfnew) {
+    if ($hasscannedpages) {
+        print_error(
+            'Some answer forms have already been analysed',
+            "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey()
+            );
+    } else {
+        // Redmine 2750: Always delete templates as well.
+        offlinequiz_delete_template_usages($offlinequiz);
+        $offlinequiz = offlinequiz_delete_pdf_forms($offlinequiz);
+        
+        $doctype = 'PDF';
+        if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
+            $doctype = 'DOCX';
+        } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+            $doctype = 'LATEX';
+        }
+        $params = array(
+            'context' => $context,
+            'other' => array(
+                'offlinequizid' => $offlinequiz->id,
+                'reportname' => $mode,
+                'doctype' => $doctype
+            )
+        );
+        $event = \mod_offlinequiz\event\docs_deleted::create($params);
+        $event->trigger();
+        redirect(new moodle_url('createquiz.php',['q' => $offlinequiz->id, 'mode' => 'preview']));
+        die();
+    }
+}
 
 // Print the page header.
 echo $OUTPUT->header();
-
-$hasscannedpages = offlinequiz_has_scanned_pages($offlinequiz->id);
 
 if ($offlinequiz->grade == 0) {
     echo '<div class="linkbox"><strong>';
@@ -150,7 +181,6 @@ if ($offlinequiz->grade == 0) {
 // Preview.
 if ($mode == 'preview') {
     offlinequiz_print_tabs($offlinequiz, 'tabpreview', $cm);
-    echo $OUTPUT->heading(get_string('formspreview', 'offlinequiz'));
     // Print shuffle again buttons.
     if (!$offlinequiz->docscreated && !$hasscannedpages) {
         echo $OUTPUT->box_start('generalbox controlbuttonbox');
@@ -178,7 +208,7 @@ if ($mode == 'preview') {
         echo $OUTPUT->single_button(
             new moodle_url('/mod/offlinequiz/createquiz.php', $buttonoptions),
             get_string('createpdfforms', 'offlinequiz'),
-            'get'
+            'get', ['primary' => true]
         );
 
         echo '</div>';
@@ -186,8 +216,14 @@ if ($mode == 'preview') {
         echo $OUTPUT->box_end();
     } else {
         $createformsurl = new moodle_url('/mod/offlinequiz/createquiz.php', ['mode' => 'createpdfs', 'q' => $offlinequiz->id]);
-        $text = get_string('formsexistx', 'offlinequiz', $createformsurl->out(false));
-        echo "<p>$text</p>";
+        $text = get_string('formsexist', 'offlinequiz', $createformsurl->out(false));
+        echo "<p>$text";
+        echo $OUTPUT->single_button(
+            $createformsurl,
+            get_string('createpdfs', 'offlinequiz'),
+            'get'
+            );
+        echo "</p>";
     }
     // Shuffle again if no scanned pages.
     if ($forcenew) {
@@ -206,6 +242,7 @@ if ($mode == 'preview') {
         }
     }
 
+    echo $OUTPUT->heading(get_string('formspreview', 'offlinequiz'));
     $done = 0;
     // Process group data.
     foreach ($groups as $group) {
@@ -308,6 +345,7 @@ if ($mode == 'preview') {
     // O TAB for creating, downloading and deleting PDF forms.
     // O==============================================================.
 } else if ($mode == 'createpdfs') {
+    offlinequiz_print_tabs($offlinequiz, 'tabpreview', $cm);
     // Print the heading.
     echo $OUTPUT->heading(get_string('downloadpdfs', 'offlinequiz'));
 
@@ -362,38 +400,6 @@ if ($mode == 'preview') {
     echo $OUTPUT->box_end();
 
     $fs = get_file_storage();
-
-    // Delete the PDF forms if forcepdfnew and if there are no scanned pages yet.
-    if ($forcepdfnew) {
-        if ($hasscannedpages) {
-            print_error(
-                'Some answer forms have already been analysed',
-                "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey()
-            );
-        } else {
-            // Redmine 2750: Always delete templates as well.
-            offlinequiz_delete_template_usages($offlinequiz);
-            $offlinequiz = offlinequiz_delete_pdf_forms($offlinequiz);
-
-            $doctype = 'PDF';
-            if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
-                $doctype = 'DOCX';
-            } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
-                $doctype = 'LATEX';
-            }
-            $params = array(
-                'context' => $context,
-                'other' => array(
-                        'offlinequizid' => $offlinequiz->id,
-                        'reportname' => $mode,
-                        'doctype' => $doctype
-                )
-            );
-            $event = \mod_offlinequiz\event\docs_deleted::create($params);
-            $event->trigger();
-        }
-    }
-
 
     // Options for the popup_action.
     $options = array();
