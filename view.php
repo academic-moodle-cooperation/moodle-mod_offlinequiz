@@ -85,15 +85,7 @@ foreach($status['groups'] as $group) {
         $status['groupswithoutquestions'][$group->groupnumber] = true ;
     }
 }
-$sql = "SELECT u.id
-          FROM {user} u
-          JOIN {role_assignments} ra ON ra.userid = u.id
-          JOIN {role} r ON r.id = ra.roleid AND r.archetype = 'student'
-          JOIN {context} c ON c.id = ra.contextid AND contextlevel = 50
-     LEFT JOIN {offlinequiz_results} oqr ON oqr.userid = u.id AND status = 'OK' AND oqr.offlinequizid = :offlinequizid
-          WHERE c.instanceid = :courseid
-          AND oqr.status is null";
-$status['pagesinprocessing'] = $DB->count_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id, 'status' => 'new']);
+$status['pagesinprocessing'] = 0;//$DB->count_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id, 'status' => 'new']);
 $status['docsuploaded'] = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id]);
 $status['correctionerrors'] = $DB->get_records('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
 $status['resultscount'] = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
