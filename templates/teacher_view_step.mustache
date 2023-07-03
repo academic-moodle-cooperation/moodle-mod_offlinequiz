@@ -14,11 +14,11 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
-<li {{#locked}}class="offlinequiz-locked"{{/locked}}>
+<li>
     {{#done}}<i class="fa fa-li fa-lg fa-solid fa-check-circle notifysuccess"></i>{{/done}}
     {{#nextitem}}<i class="fa fa-li fa-lg fa-regular fa-exclamation-circle offlinequiz-nextitem"></i>{{/nextitem}}
     {{#open}}<i class="fa fa-li fa-lg fa-solid fa-circle-o notifyproblem"></i>{{/open}}
-    {{#locked}}<i class="fa fa-li fa-lg fa-regular fa-lock notifyproblem"></i>{{/locked}}
+    {{#noaction}}<i class="fa fa-li fa-lg fa-solid fa-circle offlinequiz-noaction"></i>{{/noaction}}
 
     <div class="courseindex-section dropready" aria-owns="prepcollapse{{unique}}" tabindex="-1">
         <div class="courseindex-item d-flex courseindex-section-title dropready" id="courseindexsection0" data-for="section_item" tabindex="-1">

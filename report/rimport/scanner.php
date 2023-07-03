@@ -272,7 +272,7 @@ class offlinequiz_page_scanner {
                     // This creates the line from upper left to lower right corner.
                     $this->pattern[round($start + $j)][$i] = 1;
                     // This creates the line from upper right to lower left corner.
-                    $this->pattern[round($start + $j)][($a - $i)] = 1;
+                    $this->pattern[round($start + $j)][round($a - $i)] = 1;
                 }
             }
         }
@@ -281,10 +281,10 @@ class offlinequiz_page_scanner {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
                 if ($i + $j + $halfwidth <= $a and $i + $j + $halfwidth >= 0) {
-                    $this->pattern1[($i + $j + $halfwidth)][$i] = 1;
+                    $this->pattern1[round($i + $j + $halfwidth)][$i] = 1;
                 }
                 if ($start + $j <= $a and $start + $j >= 0) {
-                    $this->pattern1[($start + $j)][($a - $i)] = 1;
+                    $this->pattern1[round($start + $j)][round($a - $i)] = 1;
                 }
             }
         }
@@ -293,10 +293,10 @@ class offlinequiz_page_scanner {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
                 if ($j + $start - $width <= $a and $j + $start - $width >= 0) {
-                    $this->pattern2[($j + $start - $width)][$i] = 1;
+                    $this->pattern2[round($j + $start - $width)][$i] = 1;
                 }
                 if ($start + $j <= $a and $start + $j >= 0) {
-                    $this->pattern2[($start + $j)][($a - $i)] = 1;
+                    $this->pattern2[round($start + $j)][round($a - $i)] = 1;
                 }
             }
         }
@@ -305,10 +305,10 @@ class offlinequiz_page_scanner {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
                 if ($start + $j <= $a and $start + $j >= 0) {
-                    $this->pattern3[($start + $j)][$i] = 1;
+                    $this->pattern3[round($start + $j)][$i] = 1;
                 }
                 if ($i + $j + $halfwidth <= $a and $i + $j + $halfwidth >= 0) {
-                    $this->pattern3[($i + $j + $halfwidth)][($a - $i)] = 1;
+                    $this->pattern3[round($i + $j + $halfwidth)][round($a - $i)] = 1;
                 }
             }
         }
@@ -317,10 +317,10 @@ class offlinequiz_page_scanner {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
                 if ($start + $j <= $a and $start + $j >= 0) {
-                    $this->pattern4[($start + $j)][$i] = 1;
+                    $this->pattern4[round($start + $j)][$i] = 1;
                 }
                 if ($j + $start - $width <= $a and $j + $start - $width >= 0) {
-                    $this->pattern4[($j + $start - $width)][($a - $i)] = 1;
+                    $this->pattern4[round($j + $start - $width)][round($a - $i)] = 1;
                 }
             }
         }
@@ -1091,7 +1091,7 @@ class offlinequiz_page_scanner {
         if ($x >= imagesx($this->image) or $x >= imagesy($this->image)) { // Point is out of range.
             return false;
         }
-        $rgb = imagecolorsforindex($this->image, imagecolorat($this->image, $x, $y));
+        $rgb = imagecolorsforindex($this->image, imagecolorat($this->image, round($x), round($y)));
         $gray = $rgb['red'] + $rgb['green'] + $rgb['blue'];
 
         if ($gray > $this->papergray) {

@@ -1323,6 +1323,10 @@ input#showviewbutton {
     color: #b62d21;
 }
 
+.offlinequiz-noaction {
+    color: #2774b9;
+}
+
 .offlinequiz-locked {
     pointer-events:none;
     opacity:0.8;
