@@ -93,7 +93,13 @@ $sql = "SELECT u.id
      LEFT JOIN {offlinequiz_results} oqr ON oqr.userid = u.id AND status = 'OK' AND oqr.offlinequizid = :offlinequizid
           WHERE c.instanceid = :courseid
           AND oqr.status is null";
-$status['pagesinprocessing'] = $DB->count_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id, 'status' => 'new']);
+$queues = $DB->get_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id]);
+$status['pagesinprocessing'] = 0;
+foreach($queues as $queue) {
+    if($queue->status == 'new') {
+        $status['pagesinprocessing'] += $DB->count_records('offlinequiz_queue_data', ['queueid' => $queue->id]);
+    }
+}
 $status['docsuploaded'] = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id]);
 $status['correctionerrors'] = $DB->get_records('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
 $status['resultscount'] = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
