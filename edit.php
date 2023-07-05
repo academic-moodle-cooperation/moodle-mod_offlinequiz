@@ -104,12 +104,12 @@ $PAGE->set_url($thispageurl);
 
 // Update version references before get_structure().
 if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
-    $sql = 'SELECT qr.id, qv.version, qr.itemid
+    $sql = "SELECT qr.id, qv.version, qr.itemid
             FROM {question_versions} qv
             JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid
             WHERE qv.questionid = ?
-            AND qr.component = "mod_offlinequiz"
-            AND qr.questionarea = "slot"';
+            AND qr.component = 'mod_offlinequiz'
+            AND qr.questionarea = 'slot'";
     $questionupdate = $DB->get_record_sql($sql, [$newquestionid]);
 
     if ($questionupdate) {
