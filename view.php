@@ -180,7 +180,7 @@ $preview['collapsible'] = false;
 if($status['docscreated']) {
     $preview['status'] = 'done';
 } else if(!sizeof($status['groupswithoutquestions'])) {
-    $preview['status'] = 'next';
+    $preview['status'] = 'nextitem';
 } else {
     $preview['status'] = 'open';
 }
@@ -214,7 +214,7 @@ $upload['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teac
 
 if(!$status['docscreated']) {
   $upload['status'] = 'open';
-} else if(!$status['missingresults']) {
+} else if(!$status['resultscount'] || $status['docsuploaded']) {
     $upload['status'] = 'done';
 } else {
     $upload['status'] = 'nextitem';
@@ -248,7 +248,7 @@ $resultsublistcontext['resultentry'][] = ['langstring' => get_string('evaluated'
 ];
 $overview['collapsible'] = true;
 $overview['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_resultsublist', $resultsublistcontext);
-if($status['resultscount']) {
+if($status['correctionerrors']) {
   $overview['status'] = 'nextitem';
 } else {
   $overview['status'] = 'open';
