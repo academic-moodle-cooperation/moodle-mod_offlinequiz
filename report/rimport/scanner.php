@@ -929,8 +929,8 @@ class offlinequiz_page_scanner {
     public function mark_hotspot($point) {
         global $CFG;
 
-        $positionx = $point->x + $this->offset->x;
-        $positiony = $point->y + $this->offset->y;
+        $positionx = round($point->x + $this->offset->x);
+        $positiony = round($point->y + $this->offset->y);
         $lastx = BOX_INNER_WIDTH * $this->zoomx + $positionx;
         $lasty = BOX_INNER_WIDTH * $this->zoomy + $positiony;
         $color = imagecolorallocate($this->image, 255, 0, 0);
@@ -1088,7 +1088,7 @@ class offlinequiz_page_scanner {
     public function pixel_is_black($x, $y) {
         global $CFG;
 
-        if ($x >= imagesx($this->image) or $x >= imagesy($this->image)) { // Point is out of range.
+        if ($x >= imagesx($this->image) or $y >= imagesy($this->image)) { // Point is out of range.
             return false;
         }
         $rgb = imagecolorsforindex($this->image, imagecolorat($this->image, round($x), round($y)));

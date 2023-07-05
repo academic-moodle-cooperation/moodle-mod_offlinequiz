@@ -64,8 +64,8 @@ class html_download {
                        AND r.userid = u.id';
             $DB->get_fieldset_sql($sql, ['offlinequizid' => $this->offlinequiz->id]);
         }
-        $strscore  = get_string("marks", "offlinequiz");
-        $strgrade  = get_string("grade");
+        $strscore  = get_string('marks', 'offlinequiz');
+        $strgrade  = get_string('grade', 'offlinequiz');
         require_login($this->course->id, false, $this->cm);
 
         $isteacher = has_capability('mod/offlinequiz:viewreports', $this->context);

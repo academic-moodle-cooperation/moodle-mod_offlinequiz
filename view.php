@@ -121,6 +121,7 @@ $sql = "SELECT DISTINCT u.id
      LEFT JOIN {offlinequiz_participants} op ON op.userid = u.id AND op.listid = opl.id
           WHERE c.instanceid = :courseid
           AND op.userid IS null";
+$status['missingresults'] = $DB->get_records_sql_menu($sql, ['courseid' => $offlinequiz->course, 'offlinequizid' => $offlinequiz->id]);
 $status['missingonattendancelist'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id, 'courseid' => $offlinequiz->course]);
 $sql = "SELECT op.userid
           FROM {offlinequiz_p_lists} opl
@@ -356,6 +357,7 @@ $templatedata['displayparticipantssteps'] = $offlinequiz->participantsusage;
 $PAGE->set_url('/mod/offlinequiz/view.php', array('id' => $cm->id));
 $PAGE->set_title($offlinequiz->name);
 $PAGE->set_heading($course->shortname);
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagelayout('report');
 // Output starts here.
 echo $OUTPUT->header();
