@@ -854,27 +854,27 @@ class offlinequiz_page_scanner {
                 $numpoints++;
                 if ($this->pixel_is_black($x, $y)) {
                     $numblacks++;
-                    if (!empty($this->pattern[($x - $positionx)][($y - $positiony)])) {
+                    if (!empty($this->pattern[round($x - $positionx)][round($y - $positiony)])) {
                         $patternin[0]++;
                     } else {
                         $patternout[0]++;
                     }
-                    if (!empty($this->pattern1[($x - $positionx)][($y - $positiony)])) {
+                    if (!empty($this->pattern1[round($x - $positionx)][round($y - $positiony)])) {
                         $patternin[1]++;
                     } else {
                         $patternout[1]++;
                     }
-                    if (!empty($this->pattern2[($x - $positionx)][($y - $positiony)])) {
+                    if (!empty($this->pattern2[round($x - $positionx)][round($y - $positiony)])) {
                         $patternin[2]++;
                     } else {
                         $patternout[2]++;
                     }
-                    if (!empty($this->pattern3[($x - $positionx)][($y - $positiony)])) {
+                    if (!empty($this->pattern3[round($x - $positionx)][round($y - $positiony)])) {
                         $patternin[3]++;
                     } else {
                         $patternout[3]++;
                     }
-                    if (!empty($this->pattern4[($x - $positionx)][($y - $positiony)])) {
+                    if (!empty($this->pattern4[round($x - $positionx)][round($y - $positiony)])) {
                         $patternin[4]++;
                     } else {
                         $patternout[4]++;
@@ -931,8 +931,8 @@ class offlinequiz_page_scanner {
 
         $positionx = round($point->x + $this->offset->x);
         $positiony = round($point->y + $this->offset->y);
-        $lastx = BOX_INNER_WIDTH * $this->zoomx + $positionx;
-        $lasty = BOX_INNER_WIDTH * $this->zoomy + $positiony;
+        $lastx = round(BOX_INNER_WIDTH * $this->zoomx + $positionx);
+        $lasty = round(BOX_INNER_WIDTH * $this->zoomy + $positiony);
         $color = imagecolorallocate($this->image, 255, 0, 0);
         imagerectangle($this->image, $positionx - 2, $positiony - 2, $lastx + 2, $lasty + 2, $color);
         imagerectangle($this->image, $positionx - 3, $positiony - 3, $lastx + 3, $lasty + 3, $color);
