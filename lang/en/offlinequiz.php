@@ -305,6 +305,7 @@ $string['keepfilesfordays'] = 'Keep files for days';
 $string['legend'] = 'Legend';
 $string['legenddone'] = 'Element done, nothing to do anymore';
 $string['legendnextitem'] = 'Element usable';
+$string['legendnoaction'] = 'No action necessary for completing this offline quiz.';
 $string['legendwarning'] = 'Warning, the process needs your attention.';
 $string['letter'] = 'Letter';
 $string['lightgray'] = 'Light grey';

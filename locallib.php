@@ -1516,7 +1516,6 @@ function offlinequiz_question_preview_url($offlinequiz, $question) {
  */
 function offlinequiz_get_group_template_usage($offlinequiz, $group, $context) {
     global $CFG, $DB;
-
     if (!empty($group->templateusageid) && $group->templateusageid > 0) {
         $templateusage = question_engine::load_questions_usage_by_activity($group->templateusageid);
     } else {
