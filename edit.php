@@ -107,11 +107,12 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
     $sql = "SELECT qr.id, qv.version, qr.itemid
             FROM {question_versions} qv
             JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid
+            JOIN {context} c ON contextlevel = '70' AND qr.usingcontextid = c.id
             WHERE qv.questionid = ?
             AND qr.component = 'mod_offlinequiz'
-            AND qr.questionarea = 'slot'";
-    $questionupdate = $DB->get_record_sql($sql, [$newquestionid]);
-
+            AND qr.questionarea = 'slot'
+            AND c.instanceid = ?";
+    $questionupdate = $DB->get_record_sql($sql, [$newquestionid, $cmid]);
     if ($questionupdate) {
         $oldquestionid = $DB->get_field('offlinequiz_group_questions', 'questionid', ['id' => $questionupdate->itemid]);
         $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
