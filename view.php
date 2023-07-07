@@ -214,7 +214,7 @@ $upload['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teac
 
 if(!$status['docscreated']) {
   $upload['status'] = 'open';
-} else if(!$status['resultscount'] || $status['docsuploaded']) {
+} else if(!$status['resultscount'] && !$status['docsuploaded']) {
     $upload['status'] = 'nextitem';
 } else {
     $upload['status'] = 'done';
