@@ -140,6 +140,86 @@ class offlinequiz_question_usage_by_activity extends question_usage_by_activity 
     }
 }
 
+function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
+    global $CFG, $OUTPUT;
+    if (empty($offlinequiz) || empty($currenttab) || empty($cm) ) {
+        return;
+    }
+    $tabs = offlinequiz_get_tabs_object($offlinequiz, $cm);
+    $ct = $tabs[$currenttab];
+    $options = [];
+    foreach ($tabs as $tabname => $tabobject) {
+        if ($tabobject['tab'] == $ct['tab']) {
+            $options[$tabobject['url']->out()] = get_string($tabname, 'offlinequiz');
+        }
+    }
+    $selectobject = new \url_select($options);
+    echo $OUTPUT->render($selectobject);
+}
+
+function offlinequiz_get_tabs_object($offlinequiz, $cm) {
+    global $CFG;
+    if (empty($offlinequiz) || empty($cm) ) {
+        return [];
+    }
+    $tabs = ['tabeditgroupquestions' =>
+         ['tab' => 'tabofflinequizcontent',
+          'url'  => new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0])],
+     'tabpreview' =>
+         ['tab' => 'tabofflinequizcontent',
+          'url' => new moodle_url('/mod/offlinequiz/navigate.php', ['tab' => 'tabforms', 'id' => $cm->id])],
+      'tabofflinequizupload' =>
+        ['tab' => 'tabresults',
+            'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport'])],
+        'tabofflinequizcorrect' =>
+        ['tab' => 'tabresults',
+            'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct'])],
+        'tabresultsoverview' =>
+         ['tab' => 'tabresults',
+          'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview'])],
+     'tabregrade' =>
+         ['tab' => 'tabresults',
+          'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'regrade'])],
+     'tabstatsoverview' =>
+         ['tab' => 'tabstatistics',
+          'url' => new moodle_url('/mod/offlinequiz/report.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'statistics'])],
+     'tabquestionstats' =>
+         ['tab' => 'tabstatistics',
+          'url' => new moodle_url('/mod/offlinequiz/report.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionstats'])],
+     'tabquestionandanswerstats' =>
+         ['tab' => 'tabstatistics',
+          'url' => new moodle_url('/mod/offlinequiz/report.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionandanswerstats'])],
+     'tabparticipantlists' =>
+         ['tab' => 'tabattendances',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'editlists'])],
+     'tabeditparticipants' =>
+         ['tab' => 'tabattendances',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'editparticipants'])],
+     'tabdownloadparticipantsforms' =>
+         ['tab' => 'tabattendances',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'createpdfs'])],
+     'tabparticipantsupload' =>
+         ['tab' => 'tabattendances',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'upload'])],
+     'tabparticipantscorrect' =>
+         ['tab' => 'tabattendances',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'correct'])],
+     'tabattendancesoverview' =>
+         ['tab' => 'tabattendances',
+          'url' => new moodle_url('/mod/offlinequiz/participants.php',
+                     ['q' => $offlinequiz->id, 'mode' => 'attendances'])],
+     ];
+     return $tabs;
+}
+
 function offlinequiz_make_questions_usage_by_activity($component, $context) {
     return new offlinequiz_question_usage_by_activity($component, $context);
 }
@@ -390,7 +470,49 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
         }
     }
 
-    $DB->insert_record('offlinequiz_group_questions', $slot);
+    $slotid = $DB->insert_record('offlinequiz_group_questions', $slot);
+
+    // Update or insert record in question_reference table.
+    $sql = "SELECT DISTINCT qr.id, qr.itemid
+              FROM {question} q
+              JOIN {question_versions} qv ON q.id = qv.questionid
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_references} qr ON qbe.id = qr.questionbankentryid AND qr.version = qv.version
+              JOIN {offlinequiz_group_questions} os ON os.id = qr.itemid
+             WHERE q.id = ?
+               AND os.id = ?
+               AND qr.component = ?
+               AND qr.questionarea = ?";
+    $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slotid, 'mod_offlinequiz', 'slot']);
+
+    if (!$qreferenceitem) {
+        // Create a new reference record for questions created already.
+        $questionreferences = new \StdClass();
+        $questionreferences->usingcontextid = context_module::instance($offlinequiz->cmid)->id;
+        $questionreferences->component = 'mod_offlinequiz';
+        $questionreferences->questionarea = 'slot';
+        $questionreferences->itemid = $slotid;
+        $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
+        $questionreferences->version = null; // Always latest.
+        $DB->insert_record('question_references', $questionreferences);
+
+    } else if ($qreferenceitem->itemid === 0 || $qreferenceitem->itemid === null) {
+        $questionreferences = new \StdClass();
+        $questionreferences->id = $qreferenceitem->id;
+        $questionreferences->itemid = $slotid;
+        $DB->update_record('question_references', $questionreferences);
+    } else {
+        // If the reference record exits for another quiz.
+        $questionreferences = new \StdClass();
+        $questionreferences->usingcontextid = context_module::instance($offlinequiz->cmid)->id;
+        $questionreferences->component = 'mod_offlinequiz';
+        $questionreferences->questionarea = 'slot';
+        $questionreferences->itemid = $slotid;
+        $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
+        $questionreferences->version = null; // Always latest.
+        $DB->insert_record('question_references', $questionreferences);
+    }
+
     $trans->allow_commit();
 }
 
@@ -532,7 +654,7 @@ function offlinequiz_repaginate_questions($offlinequizid, $offlinegroupid, $slot
  * @param boolean $shuffle Should the questions be reordered randomly?
  */
 function offlinequiz_shuffle_questions($questionids) {
-    srand((float)microtime() * 1000000); // For php < 4.2.
+    srand((int)microtime() * 1000000); // For php < 4.2.
     shuffle($questionids);
     return $questionids;
 }
@@ -1358,7 +1480,7 @@ function offlinequiz_question_preview_button($offlinequiz, $question, $label = f
     $image = $OUTPUT->pix_icon('t/preview', $strpreviewquestion);
 
     $action = new popup_action('click', $url, 'questionpreview',
-            question_preview_popup_params());
+            \qbank_previewquestion\helper::question_preview_popup_params());
 
     return $OUTPUT->action_link($url, $image, $action, array('title' => $strpreviewquestion));
 }
@@ -1378,7 +1500,7 @@ function offlinequiz_question_preview_url($offlinequiz, $question) {
     }
 
     // Work out the correct preview URL.
-    return question_preview_url($question->id, null,
+    return \qbank_previewquestion\helper::question_preview_url($question->id, null,
             $maxmark, $displayoptions);
 }
 
@@ -1394,7 +1516,6 @@ function offlinequiz_question_preview_url($offlinequiz, $question) {
  */
 function offlinequiz_get_group_template_usage($offlinequiz, $group, $context) {
     global $CFG, $DB;
-
     if (!empty($group->templateusageid) && $group->templateusageid > 0) {
         $templateusage = question_engine::load_questions_usage_by_activity($group->templateusageid);
     } else {
@@ -1544,7 +1665,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
             $context->id, 'offlinequiz');
 
     // Remove leading paragraph tags because the cause a line break after the question number.
-    $text = preg_replace('!^<p>!i', '', $text);
+    $text = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', $text);
 
     // Filter only for tex formulas.
     $texfilter = null;
@@ -1584,11 +1705,10 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
 
         foreach ($choiceorder as $key => $answer) {
             $answertext = $question->options->answers[$answer]->answer;
-
             // Remove all HTML comments (typically from MS Office).
             $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
             // Remove all paragraph tags because they mess up the layout.
-            $answertext = preg_replace( '/&lt;p&gt;(.+)<\/p>/Uuis', '$1', $answertext );
+            $answertext = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', $answertext);
             // Rewrite image URLs.
             $answertext = question_rewrite_question_preview_urls($answertext, $question->id,
             $question->contextid, 'question', 'answer', $question->options->answers[$answer]->id,
@@ -2170,24 +2290,32 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
 
     list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
 
-    $sql = "SELECT id
+    $sql = "SELECT q.id
               FROM {question} q
-             WHERE q.category $qcsql
+              JOIN {question_versions} qv ON qv.questionid = q.id
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+             WHERE qbe.questioncategoryid $qcsql
                AND q.parent = 0
-               AND q.hidden = 0
-               AND q.qtype IN ('multichoice', 'multichoiceset') ";
+               AND qv.status = 'ready'
+               AND q.qtype IN ('multichoice', 'multichoiceset') 
+               AND NOT EXISTS (SELECT 1
+                                 FROM {question_versions} qv2
+                                 WHERE qv2.questionbankentryid = qv.questionbankentryid
+                                   AND qv.version < qv2.version) ";
     if (!$preventsamequestion) {
         // Find all questions in the selected categories that are not in the offline group yet.
         $sql .= "AND NOT EXISTS (SELECT 1
                                    FROM {offlinequiz_group_questions} ogq
-                                  WHERE ogq.questionid = q.id
+                                   JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
+                                  WHERE qv3.questionbankentryid = qv.questionbankentryid
                                     AND ogq.offlinequizid = :offlinequizid
                                     AND ogq.offlinegroupid = :offlinegroupid)";
     } else {
         // Find all questions in the selected categories that are not in the offline test yet.
         $sql .= "AND NOT EXISTS (SELECT 1
                                    FROM {offlinequiz_group_questions} ogq
-                                  WHERE ogq.questionid = q.id
+                                   JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
+                                  WHERE qv3.questionbankentryid = qv.questionbankentryid
                                     AND ogq.offlinequizid = :offlinequizid)";
     }
     $qcparams['offlinequizid'] = $offlinequiz->id;

@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_view extends \core_question\bank\view {
+class custom_view extends \core_question\local\bank\view {
     /** @var bool whether the offlinequiz this is used by has been attemptd. */
     protected $offlinequizhasattempts = false;
     /** @var \stdClass the offlinequiz settings. */
@@ -57,7 +57,7 @@ class custom_view extends \core_question\bank\view {
         $this->offlinequiz = $offlinequiz;
     }
 
-    protected function wanted_columns() {
+    protected function wanted_columns(): array {
         global $CFG;
 
         if (empty($CFG->offlinequizquestionbankcolumns)) {
@@ -76,8 +76,8 @@ class custom_view extends \core_question\bank\view {
             if (!class_exists($fullname)) {
                 if (class_exists('mod_offlinequiz\\question\\bank\\' . $fullname)) {
                     $fullname = 'mod_offlinequiz\\question\\bank\\' . $fullname;
-                } else if (class_exists('core_question\\bank\\' . $fullname)) {
-                    $fullname = 'core_question\\bank\\' . $fullname;
+                } else if (class_exists('qbank_previewquestion\\' . $fullname)) {
+                    $fullname = 'qbank_previewquestion\\' . $fullname;
                 } else if (class_exists('question_bank_' . $fullname)) {
                     debugging('Legacy question bank column class question_bank_' .
                             $fullname . ' should be renamed to mod_offlinequiz\\question\\bank\\' .
@@ -97,11 +97,11 @@ class custom_view extends \core_question\bank\view {
      *
      * @return string Column name for the heading
      */
-    protected function heading_column() {
+    protected function heading_column(): string {
         return 'mod_offlinequiz\\question\\bank\\question_name_text_column';
     }
 
-    protected function default_sort() {
+    protected function default_sort(): array {
         return array(
             'core_question\\bank\\question_type_column' => 1,
             'mod_offlinequiz\\question\\bank\\question_name_text_column' => 1,
@@ -153,7 +153,15 @@ class custom_view extends \core_question\bank\view {
      */
     public function render($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext, $tagids) {
         ob_start();
-        $this->display($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext, $tagids);
+        $pagevars = [];
+        $pagevars['qpage'] = $page;
+        $pagevars['qperpage'] = $perpage;
+        $pagevars['cat'] = $cat;
+        $pagevars['recurse'] = $recurse;
+        $pagevars['showhidden'] = $showhidden;
+        $pagevars['qbshowtext'] = $showquestiontext;
+        $pagevars['qtagids'] = $tagids;
+        $this->display($pagevars, $tabname);
         $out = ob_get_contents();
         ob_end_clean();
         return $out;
@@ -167,7 +175,7 @@ class custom_view extends \core_question\bank\view {
      * @param \context  $catcontext  The context of the category being displayed.
      * @param array     $addcontexts contexts where the user is allowed to add new questions.
      */
-    protected function display_bottom_controls($totalnumber, $recurse, $category, \context $catcontext, array $addcontexts) {
+    protected function display_bottom_controls(\context $catcontext): void {
         $cmoptions = new \stdClass();
         $cmoptions->hasattempts = !empty($this->offlinequizhasattempts);
 
@@ -198,7 +206,7 @@ class custom_view extends \core_question\bank\view {
      * @see \core_question\bank\search\category_condition
      * @todo MDL-41978 This will be deleted in Moodle 2.8
      */
-    protected function print_choose_category_message($categoryandcontext) {
+    protected function print_choose_category_message(): void {
         global $OUTPUT;
         debugging('print_choose_category_message() is deprecated, ' .
                 'please use \core_question\bank\search\category_condition instead.', DEBUG_DEVELOPER);
@@ -212,7 +220,7 @@ class custom_view extends \core_question\bank\view {
     }
 
     protected function display_options_form($showquestiontext, $scriptpath = '/mod/offlinequiz/edit.php',
-            $showtextoption = false) {
+            $showtextoption = false): void {
         // Overridden just to change the default values of the arguments.
         parent::display_options_form($showquestiontext, $scriptpath, $showtextoption);
     }
@@ -247,7 +255,7 @@ class custom_view extends \core_question\bank\view {
         echo '</div></noscript></fieldset></form>';
     }
 
-    protected function create_new_question_form($category, $canadd) {
+    protected function create_new_question_form($category, $canadd): void {
         // Don't display this.
     }
 
@@ -255,34 +263,40 @@ class custom_view extends \core_question\bank\view {
      * Create the SQL query to retrieve the indicated questions, based on
      * \core_question\bank\search\condition filters.
      */
-    protected function build_query() {
-        global $DB;
-
+    protected function build_query(): void {
         // Get the required tables and fields.
-        $joins = array();
-        $fields = array('q.hidden', 'q.category');
-        foreach ($this->requiredcolumns as $column) {
-            $extrajoins = $column->get_extra_joins();
-            foreach ($extrajoins as $prefix => $join) {
-                if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
-                    throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
+        $joins = [];
+        $fields = ['qv.status', 'qc.id as categoryid', 'qv.version', 'qv.id as versionid', 'qbe.id as questionbankentryid'];
+        if (!empty($this->requiredcolumns)) {
+            foreach ($this->requiredcolumns as $column) {
+                $extrajoins = $column->get_extra_joins();
+                foreach ($extrajoins as $prefix => $join) {
+                    if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
+                        throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
+                    }
+                    $joins[$prefix] = $join;
                 }
-                $joins[$prefix] = $join;
+                $fields = array_merge($fields, $column->get_required_fields());
             }
-            $fields = array_merge($fields, $column->get_required_fields());
         }
         $fields = array_unique($fields);
-
+        
         // Build the order by clause.
-        $sorts = array();
+        $sorts = [];
         foreach ($this->sort as $sort => $order) {
             list($colname, $subsort) = $this->parse_subsort($sort);
             $sorts[] = $this->requiredcolumns[$colname]->sort_expression($order < 0, $subsort);
         }
-
+        
         // Build the where clause.
-        $tests = array('q.parent = 0');
-        $this->sqlparams = array();
+        $latestversion = 'qv.version = (SELECT MAX(v.version)
+                                          FROM {question_versions} v
+                                          JOIN {question_bank_entries} be
+                                            ON be.id = v.questionbankentryid
+                                         WHERE be.id = qbe.id)';
+        $readyonly = "qv.status = '" . \core_question\local\bank\question_version_status::QUESTION_STATUS_READY . "' ";
+        $tests = ['q.parent = 0', $latestversion, $readyonly];
+        $this->sqlparams = [];
         foreach ($this->searchconditions as $searchcondition) {
             if ($searchcondition->where()) {
                 $tests[] = '((' . $searchcondition->where() .'))';
@@ -297,6 +311,6 @@ class custom_view extends \core_question\bank\view {
         $sql .= '   AND q.qtype IN (\'multichoice\', \'multichoiceset\', \'description\') ';
         $this->countsql = 'SELECT count(1)' . $sql;
         $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
-    }
+        }
 
 }

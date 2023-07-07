@@ -33,7 +33,8 @@ require_once($CFG->dirroot . '/mod/offlinequiz/classes/output/question_chooser.p
 
 use \mod_offlinequiz\structure;
 use \html_writer;
-use renderable;
+use \core_question\local\bank;
+use \mod_offlinequiz\output\question_chooser;
 
 /**
  * Renderer outputting the offlinequiz editing UI.
@@ -48,30 +49,31 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param \offlinequiz $offlinequizobj object containing all the offlinequiz settings information.
      * @param structure $structure object containing the structure of the offlinequiz.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @param array $pagevars the variables from {@link question_edit_setup()}.
      * @return string HTML to output.
      */
-    public function edit_page(\offlinequiz $offlinequizobj, structure $structure,
-            \question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
+    public function edit_page(\offlinequiz $offlinequizobj,
+                                structure $structure,
+                                \core_question\local\bank\question_edit_contexts $contexts,
+                                \moodle_url $pageurl,
+                                array $pagevars,
+                                array $groupletters
+                            ) {
         global $CFG;
         $offlinequiz = $offlinequizobj->get_offlinequiz();
         $cm = $offlinequizobj->get_cm();
         $thispageurl = $pageurl;
 
-        // Page title.
-        echo $this->heading_with_help(get_string('editingofflinequizx', 'offlinequiz',
-                format_string($offlinequizobj->get_offlinequiz_name())) .
-                ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
-                'editingofflinequiz', 'offlinequiz', '',
-                get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
-
         // Now we echo the tabs.
-        $currenttab = 'editq';
-        $mode = 'edit';
-        require_once('./tabs.php');
+        offlinequiz_print_tabs($offlinequiz, 'tabeditgroupquestions', $cm);
 
+        // Page title.
+        echo $this->heading_with_help(get_string('editingofflinequizx', 'offlinequiz') .
+            ' ' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber],
+            'editingofflinequiz', 'offlinequiz', '',
+            get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
         $output = '';
         // Information at the top.
         $output .= $this->offlinequiz_group_selector($offlinequiz, $pageurl);
@@ -132,67 +134,6 @@ class edit_renderer extends \plugin_renderer_base {
             // Include the question chooser.
             $output .= $this->question_chooser();
         }
-
-        echo $output;
-    }
-
-
-    /**
-     * Render the edit grade page
-     *
-     * @param \offlinequiz $offlinequizobj object containing all the offlinequiz settings information.
-     * @param structure $structure object containing the structure of the offlinequiz.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
-     * @param \moodle_url $pageurl the canonical URL of this page.
-     * @param array $pagevars the variables from {@link question_edit_setup()}.
-     * @return string HTML to output.
-     */
-    public function edit_grades_page(\offlinequiz $offlinequizobj, structure $structure,
-            \question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars, array $groupletters) {
-
-        global $CFG;
-        $offlinequiz = $offlinequizobj->get_offlinequiz();
-        $cm = $offlinequizobj->get_cm();
-        $thispageurl = $pageurl;
-
-        // First we echo the Page title.
-        echo $this->heading_with_help(
-                get_string('gradingofflinequizx', 'offlinequiz', format_string($offlinequizobj->get_offlinequiz_name())) .
-                ' (' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber] . ') ',
-                'editingofflinequiz', 'offlinequiz', '',  get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
-        $offlinequiz = $offlinequizobj->get_offlinequiz();
-        // Now we echo the tabs.
-        $currenttab = 'editq';
-        $mode = 'grade';
-        require_once('./tabs.php');
-
-        // Information at the top.
-        $output = '';
-        $output .= $this->offlinequiz_group_selector($offlinequiz, $pageurl);
-        $output .= $this->offlinequiz_information($structure);
-        $output .= html_writer::div('<br/>', 'clear');
-        $output .= $this->maximum_grade_input($offlinequiz, $this->page->url);
-        $output .= $this->offlinequiz_state_warnings($structure);
-        $output .= $this->total_marks($offlinequiz);
-
-        $output .= $this->start_grading_form($offlinequiz, $pageurl);
-        // Show the questions organised into sections and pages.
-        $output .= $this->start_section_list();
-        // Show the questions in one form for single submit.
-        $sections = $structure->get_offlinequiz_sections();
-        foreach ($sections as $section) {
-            $output .= $this->start_section($section);
-            $questionhtml = '';
-            foreach ($structure->get_questions_in_section($section->id) as $question) {
-                if ($question->qtype != 'description') {
-                    $questionhtml .= $this->question_row_for_grading($structure, $question, $contexts, $pagevars, $pageurl);
-                }
-            }
-            $output .= html_writer::tag('ul', $questionhtml, array('class' => 'section img-text'));
-            $output .= $this->end_section();
-        }
-        $output .= $this->end_section_list();
-        $output .= $this->end_grading_form();
 
         echo $output;
     }
@@ -570,8 +511,8 @@ class edit_renderer extends \plugin_renderer_base {
             $contexts, $pagevars, $pageurl) {
 
         $output = '';
-        foreach ($structure->get_questions_in_section($section->id) as $question) {
-            $output .= $this->question_row($structure, $question, $contexts, $pagevars, $pageurl);
+        foreach ($structure->get_slots_in_section($section->id) as $slot) {
+            $output .= $this->question_row($structure, $slot, $contexts, $pagevars, $pageurl);
         }
 
         return html_writer::tag('ul', $output, array('class' => 'section img-text'));
@@ -581,30 +522,31 @@ class edit_renderer extends \plugin_renderer_base {
      * Displays one question with the surrounding controls.
      *
      * @param structure $structure object containing the structure of the offlinequiz.
-     * @param \stdClass $question data from the question and offlinequiz_slots tables.
+     * @param int $slot data from the question and offlinequiz_slots tables.
      * @param \question_edit_contexts $contexts the relevant question bank contexts.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
-    public function question_row(structure $structure, $question, $contexts, $pagevars, $pageurl) {
+    public function question_row(structure $structure, $slot, $contexts, $pagevars, $pageurl) {
         $output = '';
 
-        $output .= $this->page_row($structure, $question, $contexts, $pagevars, $pageurl);
+        $output .= $this->page_row($structure, $slot, $contexts, $pagevars, $pageurl);
 
         // Page split/join icon.
         $joinhtml = '';
-        if ($structure->can_be_edited() && !$structure->is_last_slot_in_offlinequiz($question->slot)) {
+        if ($structure->can_be_edited() && !$structure->is_last_slot_in_offlinequiz($slot)) {
             $joinhtml = $this->page_split_join_button($structure->get_offlinequiz(),
-                    $question, !$structure->is_last_slot_on_page($question->slot));
+                    $slot, !$structure->is_last_slot_on_page($slot));
         }
 
         // Question HTML.
-        $questionhtml = $this->question($structure, $question, $pageurl);
-        $questionclasses = 'activity ' . $question->qtype . ' qtype_' . $question->qtype . ' slot';
+        $questionhtml = $this->question($structure, $slot, $pageurl);
+        $qtype = $structure->get_question_type_for_slot($slot);
+        $questionclasses = 'activity ' . $qtype . ' qtype_' . $qtype . ' slot';
 
         $output .= html_writer::tag('li', $questionhtml . $joinhtml,
-                array('class' => $questionclasses, 'id' => 'slot-' . $question->slotid));
+                array('class' => $questionclasses, 'id' => 'slot-' .$structure->get_slot_id_for_slot($slot)));
 
         return $output;
     }
@@ -623,7 +565,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output = '';
 
         // Question HTML.
-        $questionhtml = $this->question_for_grading($structure, $question, $pageurl);
+        $questionhtml = $this->question_for_grading($structure, $question->slot, $pageurl);
         $questionclasses = 'activity forgrading ' . $question->qtype . ' qtype_' . $question->qtype . ' slot';
 
         $output .= html_writer::tag('li', $questionhtml ,
@@ -636,16 +578,16 @@ class edit_renderer extends \plugin_renderer_base {
      * Displays one question with the surrounding controls.
      *
      * @param structure $structure object containing the structure of the offlinequiz.
-     * @param \stdClass $question data from the question and offlinequiz_slots tables.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param int $slot data from the question and offlinequiz_slots tables.
+     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
-    public function page_row(structure $structure, $question, $contexts, $pagevars, $pageurl) {
-        $output = '';
+    public function page_row(structure $structure, $slot, $contexts, $pagevars, $pageurl) {
+        $question = $structure->get_question_in_slot($slot);
 
-        $slot = $question->slot;
+        $output = '';
 
         $pagenumber = $structure->get_page_number_for_slot($slot);
 
@@ -673,19 +615,19 @@ class edit_renderer extends \plugin_renderer_base {
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param int $page the page number that this menu will add to.
      * @param \moodle_url $pageurl the canonical URL of this page.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @return string HTML to output.
      */
     public function add_menu_actions(structure $structure, $page, \moodle_url $pageurl,
-            \question_edit_contexts $contexts, array $pagevars) {
+            \core_question\local\bank\question_edit_contexts $contexts, array $pagevars) {
 
         $actions = $this->edit_menu_actions($structure, $page, $pageurl, $pagevars);
         if (empty($actions)) {
             return '';
         }
         $menu = new \action_menu();
-        $menu->set_alignment(\action_menu::TR, \action_menu::BR);
+        $menu->set_menu_left();
         $menu->set_constraint('.mod-offlinequiz-edit-content');
         $trigger = html_writer::tag('span', get_string('add'), array('class' => 'add-menu'));
         $menu->set_menu_trigger($trigger);
@@ -807,103 +749,93 @@ class edit_renderer extends \plugin_renderer_base {
      * Display a question.
      *
      * @param structure $structure object containing the structure of the offlinequiz.
-     * @param \stdClass $question data from the question and offlinequiz_slots tables.
+     * @param int $slot slot number.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
-    public function question(structure $structure, $question, \moodle_url $pageurl) {
+    public function question(structure $structure, $slot, \moodle_url $pageurl) {
+        $slotid = $structure->get_slot_id_for_slot($slot);
+        $question = $structure->get_question_in_slot($slot);
+
         $output = '';
 
         $output .= html_writer::start_tag('div');
 
         if ($structure->can_be_edited()) {
-            $output .= $this->question_checkbox($question);
             $output .= $this->question_move_icon($question);
         }
 
-        $output .= html_writer::start_div('questionblock');
-        // Checkbox for question selection.
-        $output .= $this->question_number($question->displayednumber);
+        $data = [
+            'slotid' => $slotid,
+            'canbeedited' => $structure->can_be_edited(),
+            'checkbox' => $this->question_checkbox($question),
+            'questionnumber' => $this->question_number($question->displayednumber),
+            'questionname' => ($question->qtype == 'random' ?
+                                $this->random_question($structure, $question, $pageurl) :
+                                $this->question_name($structure, $question, $pageurl)
+                            ),
+            'questionpreviewicon' => $this->question_preview_icon($structure->get_offlinequiz(), $question),
+            'questionremoveicon' => ($structure->can_be_edited() ? $this->question_remove_icon($question, $pageurl) : ''),
+            'questionmarkicon' => $this->marked_out_of_field($structure->get_offlinequiz(), $question),
+            'versionselection' => false
+        ];
 
-        // Display the link to the question (or do nothing if question has no url).
-        if ($question->qtype == 'random') {
-            $questionname = $this->random_question($structure, $question, $pageurl);
-        } else {
-            $questionname = $this->question_name($structure, $question, $pageurl);
+        $data['versionoptions'] = [];
+        if ($structure->get_question_in_slot($slot)->qtype !== 'random') {
+            $data['versionselection'] = true;
+            $data['versionoption'] = $structure->get_version_choices_for_slot($slot);
+            $this->page->requires->js_call_amd('mod_offlinequiz/question_slot', 'init', [$slotid, $structure->can_be_edited()]);
         }
 
-        // Start the div for the activity title, excluding the edit icons.
-        $output .= html_writer::start_div('activityinstance');
-        $output .= $questionname;
+        // Render the question slot template.
+        $output .= $this->render_from_template('mod_offlinequiz/question_slot', $data);
 
-        // Closing the tag which contains everything but edit icons. Content part of the module should not be part of this.
-        $output .= html_writer::end_div(); // .activityinstance.
-
-        // Action icons.
-        $questionicons = '';
-        $questionicons .= $this->question_preview_icon($structure->get_offlinequiz(), $question);
-        if ($structure->can_be_edited()) {
-            $questionicons .= $this->question_remove_icon($question, $pageurl);
-        }
-        $questionicons .= $this->marked_out_of_field($structure->get_offlinequiz(), $question);
-        $output .= html_writer::span($questionicons, 'actions'); // Required to add js spinner icon.
-
-        // End of indentation div.
-        $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div');
 
         return $output;
     }
 
     /**
-     * Display a question for grading tab.
+     * Display a question.
      *
      * @param structure $structure object containing the structure of the offlinequiz.
-     * @param \stdClass $question data from the question and offlinequiz_slots tables.
+     * @param int $slot slot number.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
-    public function question_for_grading(structure $structure, $question, \moodle_url $pageurl) {
+    public function question_for_grading(structure $structure, $slot, \moodle_url $pageurl) {
+        $slotid = $structure->get_slot_id_for_slot($slot);
+        $question = $structure->get_question_in_slot($slot);
+
         $output = '';
 
         $output .= html_writer::start_tag('div');
 
-        $output .= html_writer::start_div('mod-indent-outer');
-        $output .= $this->question_number($question->displayednumber);
+        $data = [
+            'slotid' => $slotid,
+            'canbeedited' => $structure->can_be_edited(),
+            'checkbox' => $this->question_checkbox($question),
+            'questionnumber' => $this->question_number($question->displayednumber),
+            'questionname' => ($question->qtype == 'random' ?
+                                $this->random_question($structure, $question, $pageurl) :
+                                $this->question_name($structure, $question, $pageurl)
+                            ),
+            'questionpreviewicon' => $this->question_preview_icon($structure->get_offlinequiz(), $question),
+            'questionremoveicon' => ($structure->can_be_edited() ? $this->question_remove_icon($question, $pageurl) : ''),
+            'questionmarkicon' => $this->marked_out_of_field($structure->get_offlinequiz(), $question),
+            'versionselection' => false
+        ];
 
-        // This div is used to indent the content.
-        $output .= html_writer::div('', 'mod-indent');
-
-        // Display the link to the question (or do nothing if question has no url).
-        if ($question->qtype == 'random') {
-            $questionname = $this->random_question($structure, $question, $pageurl);
-        } else {
-            $questionname = $this->question_name($structure, $question, $pageurl);
+        $data['versionoptions'] = [];
+        if ($structure->get_question_in_slot($slot)->qtype !== 'random') {
+            $data['versionselection'] = true;
+            $data['versionoption'] = $structure->get_version_choices_for_slot($slot);
+            $this->page->requires->js_call_amd('mod_offlinequiz/question_slot', 'init', [$slotid, $structure->can_be_edited()]);
         }
 
-        // Start the div for the activity title, excluding the edit icons.
-        $output .= html_writer::start_div('activityinstance');
-        $output .= $questionname;
+        // Render the question slot template.
+        $output .= $this->render_from_template('mod_offlinequiz/question_slot_grading', $data);
 
-        // Closing the tag which contains everything but edit icons. Content part of the module should not be part of this.
-        $output .= html_writer::end_div(); // .activityinstance.
-
-        // Action icons.
-        $questionicons = '';
-        if ($question->qtype == 'description') {
-            $input = '';
-        } else {
-            $input = '<input class="gradeinput" id="inputq' . $question->id .
-            '" type="text" value="' . offlinequiz_format_grade($structure->get_offlinequiz(), $question->maxmark) .
-            '" size="4" tabindex="' . $question->slot . '" name="g' . $question->id . '"/>';
-        }
-        $questionicons .= html_writer::span($input,
-                'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($structure->get_offlinequiz()));
-
-        $output .= html_writer::span($questionicons, 'actions'); // Required to add js spinner icon.
-
-        // End of indentation div.
-        $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div');
 
         return $output;
@@ -964,7 +896,7 @@ class edit_renderer extends \plugin_renderer_base {
         $image = $this->pix_icon('t/preview', $strpreviewquestion);
 
         $action = new \popup_action('click', $url, 'questionpreview',
-                                        question_preview_popup_params());
+                                        \qbank_previewquestion\helper::question_preview_popup_params());
 
         return $this->action_link($url, $image . $strpreviewlabel, $action,
                 array('title' => $strpreviewquestion, 'class' => 'preview'));
@@ -991,17 +923,17 @@ class edit_renderer extends \plugin_renderer_base {
      * Display an icon to split or join two pages of the offlinequiz.
      *
      * @param \stdClass $offlinequiz the offlinequiz settings from the database.
-     * @param \stdClass $question data from the question and offlinequiz_slots tables.
+     * @param int $slot slot number.
      * @param bool $insertpagebreak if true, show an insert page break icon.
      *      else show a join pages icon.
      * @return string HTML to output.
      */
-    public function page_split_join_button($offlinequiz, $question, $insertpagebreak) {
+    public function page_split_join_button($offlinequiz, $slot, $insertpagebreak) {
         $url = new \moodle_url('repaginate.php',
                 array('cmid' => $offlinequiz->cmid,
                       'offlinequizid' => $offlinequiz->id,
                       'offlinegroupid' => $offlinequiz->groupid,
-                      'slot' => $question->slot,
+                      'slot' => $slot,
                       'repag' => $insertpagebreak ? 2 : 1,
                       'sesskey' => sesskey()));
 
@@ -1039,7 +971,7 @@ class edit_renderer extends \plugin_renderer_base {
     public function question_name(structure $structure, $question, $pageurl) {
         $output = '';
 
-        $editurl = new \moodle_url('/question/question.php', array(
+        $editurl = new \moodle_url('/question/bank/editquestion/question.php', array(
                 'returnurl' => $pageurl->out_as_local_url(),
                 'cmid' => $structure->get_cmid(), 'id' => $question->id));
 
@@ -1075,7 +1007,7 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function random_question(structure $structure, $question, $pageurl) {
 
-        $editurl = new \moodle_url('/question/question.php', array(
+        $editurl = new \moodle_url('/question/bank/editquestion/question.php', array(
                 'returnurl' => $pageurl->out_as_local_url(),
                 'cmid' => $structure->get_cmid(), 'id' => $question->id));
 
@@ -1143,10 +1075,10 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      * Renders the question chooser.
      *
-     * @param renderable
+     * @param mod_offlinequiz\output\question_chooser Chooser
      * @return string
      */
-    public function render_question_chooser(renderable $chooser) {
+    public function render_question_chooser(question_chooser $chooser) {
         return $this->render_from_template('mod_offlinequiz/question_chooser', $chooser->export_for_template($this));
     }
 
@@ -1178,7 +1110,10 @@ class edit_renderer extends \plugin_renderer_base {
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @return string HTML to output.
      */
-    protected function random_question_form(\moodle_url $thispageurl, \question_edit_contexts $contexts, array $pagevars) {
+    protected function random_question_form(\moodle_url $thispageurl,
+                                                \core_question\local\bank\question_edit_contexts $contexts,
+                                                array $pagevars
+                                            ) {
 
         if (!$contexts->have_cap('moodle/question:useall')) {
             return '';
@@ -1204,13 +1139,13 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \stdClass $course the course settings from the database.
      * @param \stdClass $offlinequiz the offlinequiz settings from the database.
      * @param structure $structure object containing the structure of the offlinequiz.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return bool Always returns true
      */
     protected function initialise_editing_javascript($course, $offlinequiz, structure $structure,
-            \question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
+            \core_question\local\bank\question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
 
         $config = new \stdClass();
         $config->resourceurl = '/mod/offlinequiz/edit_rest.php';
@@ -1313,13 +1248,13 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML for a new page.
      */
     protected function new_page_template(structure $structure,
-            \question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
+            \core_question\local\bank\question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
         if (!$structure->has_questions()) {
             return '';
         }
 
         $question = $structure->get_question_in_slot(1);
-        $pagehtml = $this->page_row($structure, $question, $contexts, $pagevars, $pageurl);
+        $pagehtml = $this->page_row($structure, 1, $contexts, $pagevars, $pageurl);
 
         // Normalise the page number.
         $pagenumber = $question->page;
@@ -1354,7 +1289,7 @@ class edit_renderer extends \plugin_renderer_base {
         }
 
         $question = $structure->get_question_in_slot(1);
-        $html = $this->page_split_join_button($offlinequiz, $question, true);
+        $html = $this->page_split_join_button($offlinequiz, $question->slot, true);
         return str_replace('&amp;slot=1&amp;', '&amp;slot=%%SLOT%%&amp;', $html);
     }
 

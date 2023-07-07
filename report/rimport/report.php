@@ -33,147 +33,6 @@ require_once($CFG->libdir . '/filelib.php');
 
 class offlinequiz_rimport_report extends offlinequiz_default_report {
 
-    private function print_error_report($offlinequiz) {
-        global $CFG, $DB, $OUTPUT;
-
-        offlinequiz_load_useridentification();
-        $offlinequizconfig = get_config('offlinequiz');
-
-        $nologs = optional_param('nologs', 0, PARAM_INT);
-        $pagesize = optional_param('pagesize', 10, PARAM_INT);
-
-        $letterstr = 'ABCDEFGHIJKL';
-
-        require_once('errorpages_table.php');
-
-        $tableparams = array('q' => $offlinequiz->id, 'mode' => 'rimport', 'action' => 'delete',
-                'strreallydel'  => addslashes(get_string('deletepagecheck', 'offlinequiz')));
-
-        $table = new offlinequiz_selectall_table('mod_offlinequiz_import_report', 'report.php', $tableparams);
-
-        $tablecolumns = array('checkbox', 'counter', 'userkey', 'groupnumber', 'pagenumber', 'time', 'error', 'info', 'link');
-        $tableheaders = array('', '#', get_string($offlinequizconfig->ID_field, 'offlinequiz_rimport'),
-                get_string('group'), get_string('page'), get_string('importedon', 'offlinequiz_rimport'),
-                get_string('error'), get_string('info'), '');
-
-        $table->initialbars(true);
-        $table->define_columns($tablecolumns);
-        $table->define_headers($tableheaders);
-        $table->define_baseurl($CFG->wwwroot . '/mod/offlinequiz/report.php?mode=rimport&amp;q=' .
-                $offlinequiz->id . '&amp;nologs=' . $nologs .
-                '&amp;pagesize=' . $pagesize);
-
-        $table->sortable(true, 'time'); // Sorted by lastname by default.
-        $table->initialbars(true);
-
-        $table->column_class('checkbox', 'checkbox');
-        $table->column_class('counter', 'counter');
-        $table->column_class('username', 'username');
-        $table->column_class('group', 'group');
-        $table->column_class('page', 'page');
-        $table->column_class('time', 'time');
-        $table->column_class('error', 'error');
-        $table->column_class('link', 'link');
-
-        $table->set_attribute('cellspacing', '0');
-        $table->set_attribute('cellpadding', '4');
-        $table->set_attribute('id', 'errorpages');
-        $table->set_attribute('class', 'errorpages');
-        $table->set_attribute('align', 'center');
-        $table->set_attribute('border', '1');
-
-        $table->no_sorting('checkbox');
-        $table->no_sorting('counter');
-        $table->no_sorting('info');
-        $table->no_sorting('link');
-
-        // Start working -- this is necessary as soon as the niceties are over.
-        $table->setup();
-
-        // Construct the SQL.
-
-        $sql = "SELECT *
-                  FROM {offlinequiz_scanned_pages}
-                 WHERE offlinequizid = :offlinequizid
-                   AND (status = 'error'
-                        OR status = 'suspended'
-                        OR error = 'missingpages')";
-
-        $params = array('offlinequizid' => $offlinequiz->id);
-
-        // Add extra limits due to sorting by question grade.
-        if ($sort = $table->get_sql_sort()) {
-            if (strpos($sort, 'checkbox') === false && strpos($sort, 'counter') === false &&
-                    strpos($sort, 'info') === false && strpos($sort, 'link') === false) {
-                $sql .= ' ORDER BY ' . $sort;
-            }
-        }
-
-        $errorpages = $DB->get_records_sql($sql, $params);
-
-        $strtimeformat = get_string('strftimedatetime');
-
-        // Options for the popup_action.
-        $options = array();
-        $options['height'] = 1200; // Optional.
-        $options['width'] = 1170; // Optional.
-        $options['resizable'] = false;
-
-        $counter = 1;
-
-        foreach ($errorpages as $page) {
-
-            if ($page->error == 'filenotfound') {
-                $actionlink = '';
-            } else {
-                if ($page->error == 'missingpages') {
-                    $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/image.php?pageid=' . $page->id .
-                            '&resultid=' . $page->resultid);
-                    $title = get_string('showpage', 'offlinequiz_rimport');
-                } else {
-                    $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/correct.php?pageid=' . $page->id);
-                    $title = get_string('correcterror', 'offlinequiz_rimport');
-                }
-
-                $actionlink = $OUTPUT->action_link($url, $title, new popup_action('click', $url, 'correct' .
-                        $page->id, $options));
-            }
-
-            $groupstr = '?';
-            $groupnumber = $page->groupnumber;
-            if ($groupnumber > 0 and $groupnumber <= $offlinequiz->numgroups) {
-                $groupstr = $letterstr[$page->groupnumber - 1];
-            }
-
-            $errorstr = '';
-            if (!empty($page->error)) {
-                $errorstr = get_string('error' . $page->error, 'offlinequiz_rimport');
-            }
-            if ($page->status == 'suspended') {
-                $errorstr = get_string('waitingforanalysis', 'offlinequiz_rimport');
-            }
-            $row = array(
-                    '<input type="checkbox" name="p' . $page->id . '" value="'.$page->id.'"  class="select-multiple-checkbox" />',
-                    $counter.'&nbsp;',
-                    $page->userkey,
-                    $groupstr,
-                    empty($page->pagenumber) ? '?' : $page->pagenumber,
-                    userdate($page->time, $strtimeformat),
-                    $errorstr,
-                    $page->info,
-                    $actionlink
-            );
-            $table->add_data($row);
-            $counter++;
-        }
-
-        if (!$table->print_nothing_to_display()) {
-            // Print the table.
-            $table->print_html();
-        }
-    }
-
-
     /**
      * (non-PHPdoc)
      * @see offlinequiz_default_report::display()
@@ -198,7 +57,6 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             }
 
             echo $OUTPUT->box_start('linkbox');
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading_with_help(get_string('resultimport', 'offlinequiz'), 'importnew', 'offlinequiz');
             echo $OUTPUT->box_end();
         }
@@ -348,8 +206,6 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     }
                     break;
                 default:
-                    // Print the table with answer forms that need correction.
-                    $this->print_error_report($offlinequiz);
                     // Display the upload form.
                     $importform->display();
             }

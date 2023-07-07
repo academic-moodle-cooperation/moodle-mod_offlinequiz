@@ -27,10 +27,10 @@ defined('MOODLE_INTERNAL') || die();
  * @since         Moodle 2.8+
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class checkbox_column extends \core_question\bank\checkbox_column {
+class checkbox_column extends \core_question\local\bank\checkbox_column {
     protected $strselect;
 
-    protected function display_content($question, $rowclasses) {
+    protected function display_content($question, $rowclasses): void {
         global $PAGE;
         $disabled = '';
         if ($this->qbank->offlinequiz_contains($question->id)) {

@@ -39,7 +39,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         // Define each element separately.
         $offlinequiz = new backup_nested_element('offlinequiz', array('id'), array(
                 'name', 'intro', 'pdfintro', 'timeopen',
-                'timeclose', 'time', 'grade', 'numgroups', 'decimalpoints',
+                'timeclose', 'time', 'grade', 'participantsusage', 'numgroups', 'decimalpoints',
                 'review', 'questionsperpage', 'docscreated', 'shufflequestions', 'shuffleanswers',
                 'questions', 'sumgrades', 'papergray', 'fontsize', 'timecreated',
                 'timemodified', 'fileformat', 'showgrades', 'showquestioninfo', 'disableimgnewlines', 'showtutorial',
@@ -49,6 +49,8 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
 
         $qinstance = new backup_nested_element('question_instance', array('id'), array(
                 'questionid', 'grade'));
+
+        $this->add_question_references($qinstance, 'mod_offlinequiz', 'slot');
 
         $groups = new backup_nested_element('groups');
         $group = new backup_nested_element('group', array('id'), array(

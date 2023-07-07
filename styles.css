@@ -97,7 +97,6 @@ body.jsenabled .questionflagcheckbox {
     border: 1px solid #bbb;
     background: #ddd;
     text-align: center;
-    vertical-align: middle;
     line-height: 1.5em !important;
     font-weight: bold;
     text-decoration: none;
@@ -821,7 +820,7 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit .slotnumber {
     background-color: #d3d3d3;
     text-align: center;
-    margin: 0.1em 0.2em;
+    margin: 0.1em 0.5em;
     min-width: 2em;
     display: inline-block;
 }
@@ -926,6 +925,11 @@ input#showviewbutton {
     right: -20px;
 }
 
+#page-mod-offlinequiz-edit ul.slots li.section li.activity .mod-indent-outer {
+	display: flex;
+	padding-left: 22px;
+}
+
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_0 {
     min-width: 1.3em;
 }
@@ -965,15 +969,14 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .question_checkbox {
     padding-left: 0.3em;
     padding-top: 0.2em;
+    display: block;
 }
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .activityinstance {
-    display: inline-block;
-    width: 70%;
-    white-space: nowrap;
-    overflow: hidden;
-    vertical-align: middle;
-    min-height: 1.5em;
+	display: flex;
+	flex: 1 1 auto;
+	min-height: 1.7em;
+	padding-right: 2px;
 }
 
 #page-mod-offlinequiz-edit .questionblock {
@@ -1039,8 +1042,9 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit .editing_move {
-    position: unset;
-    margin-left: 0.2em;
+	position: absolute;
+	left: 0;
+	top: 0;
 }
 
 #page-mod-offlinequiz-edit .maxgrade label {
@@ -1080,7 +1084,6 @@ input#showviewbutton {
 }
 #page-mod-offlinequiz-edit div.removeselected {
     display: inline-block;
-    float: right;
 }
 #page-mod-offlinequiz-edit div.removeselected input {
     margin-left: 0;
@@ -1091,29 +1094,28 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit ul.slots .activityinstance span.instancename {
-    overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    word-break: break-word;
-    width: 90%;
     height: 20px;
+    display: inline-block;
 }
 
 #page-mod-offlinequiz-edit ul.slots .activityinstance span.instancename img {
     margin: 0 0.2em;
 }
-#page-mod-offlinequiz-edit #categoryquestions .questionname,
-#page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .questionname {
-    font-weight: bold;
-    color: #555;
-    margin-right: 0.5em;
-    vertical-align: middle;
+
+#page-mod-offlinequiz-edit #categoryquestions .questionname, #page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .questionname {
+	font-weight: 700;
+	color: #555;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+    margin-right: 0.4rem;
 }
 
 #page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .questiontext {
     color: #555;
-    vertical-align: middle;
 }
 #page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .mod_offlinequiz_random_qbank_link {
     font-size: 0.8em;
@@ -1129,11 +1131,15 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit .section .activity .actions {
-    white-space: nowrap;
-    background: #e6e6e6;
-    padding: 0.1em 0;
-    margin-left: 0.2em;
-    display:inline
+	position: inherit;
+	white-space: nowrap;
+	background: #e6e6e6;
+	padding: .1em 0;
+}
+
+#page-mod-offlinequiz-edit .section .activity .actions .version-selection {
+	width: 8em;
+	padding: 0;
 }
 
 #page-mod-offlinequiz-edit .section .activity.forgrading .actions input.gradeinput {
@@ -1147,19 +1153,17 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit .section .activity .activityinstance > a {
-    text-indent: 0;
-    padding-left: 0;
+	text-indent: 0;
+	padding-left: 0;
+	display: flex;
+	max-width: 100%;
+	align-items: center;
 }
-
 
 #page-mod-offlinequiz-edit .mod_offlinequiz_edit_forms {
     display: none;
 }
 
-#page-mod-offlinequiz-edit .section .activity .activityinstance > a {
-    text-indent: 0;
-    padding-left: 0;
-}
 #page-mod-offlinequiz-edit #categoryquestions .questionnametext .greyed,
 #page-mod-offlinequiz-edit #categoryquestions .addtoofflinequizaction .greyed,
 #page-mod-offlinequiz-edit #categoryquestions .qtype .greyed {
@@ -1254,6 +1258,52 @@ input#showviewbutton {
     list-style: none;
 }
 
+#page-mod-offlinequiz-view li.done {
+    list-style-image: url([[pix:offlinequiz|icon_checked]]);
+}
+
+#page-mod-offlinequiz-view li.nextitem {
+   list-style-image: url([[pix:offlinequiz|icon_unchecked]]);
+}
+#page-mod-offlinequiz-view li.warning {
+     list-style-image: url([[pix:offlinequiz|icon_warning]]);
+}
+
+#page-mod-offlinequiz-view .collapsible-content.inactive {
+    display: none;
+}
+
+#page-mod-offlinequiz-view .collapsible-content.active {
+    display: block;
+}
+
+#page-mod-offlinequiz-view .oq-collapsible {
+    display: inline;
+}
+#page-mod-offlinequiz-view .offlinequiz-view {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3em;
+}
+
+#page-mod-offlinequiz-view .offlinequiz-view-column {
+    flex-grow: 1;
+    padding-left: 1em;
+}
+
+#page-mod-offlinequiz-view .offlinequiz-view-statistics-column {
+  width: 100%;
+  border-top: 1px dashed gray;
+  padding-top: 2em;
+}
+
+.path-mod-offlinequiz .urlselect {
+    margin-bottom: 1em;
+}
+
 @media only screen and (max-width: 62em) {
     #page-mod-offlinequiz-edit .totalpoints {
         margin: -2em 1em 0 1em;
@@ -1267,4 +1317,22 @@ input#showviewbutton {
     #page-mod-offlinequiz-edit div.removeselected {
         margin-top: -0.5em;
     }
+}
+
+.offlinequiz-nextitem {
+    color: #b62d21;
+}
+
+.offlinequiz-noaction {
+    color: #2774b9;
+}
+
+.offlinequiz-locked {
+    pointer-events:none;
+    opacity:0.8;
+}
+.offlinequiz-view-header {
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 1em;
 }

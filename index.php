@@ -51,7 +51,7 @@ $event->trigger();
 // Print the header.
 $strofflinequizzes = get_string("modulenameplural", "offlinequiz");
 $streditquestions = '';
-$editqcontexts = new question_edit_contexts($coursecontext);
+$editqcontexts = new core_question\local\bank\question_edit_contexts($coursecontext);
 if ($editqcontexts->have_one_edit_tab_cap('questions')) {
     $streditquestions = "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/question/edit.php\">
                <div>

@@ -26,6 +26,7 @@
  */
 
 namespace mod_offlinequiz;
+use mod_offlinequiz\question\bank\qbank_helper;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
@@ -407,10 +408,14 @@ class structure {
 
         $slots = $DB->get_records_sql("
                 SELECT slot.id AS slotid, slot.slot, slot.questionid, slot.page, slot.maxmark,
-                       q.*, qc.contextid
+                       q.*, qc.contextid, qr.version AS requestedversion
                   FROM {offlinequiz_group_questions} slot
                   LEFT JOIN {question} q ON q.id = slot.questionid
-                  LEFT JOIN {question_categories} qc ON qc.id = q.category
+                  LEFT JOIN {question_versions} qv ON q.id = qv.questionid
+                  LEFT JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                  LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                  LEFT JOIN {question_references} qr ON qr.questionbankentryid = qbe.id AND qr.component = 'mod_offlinequiz'
+                    AND qr.questionarea = 'slot' AND qr.itemid = slot.id
                  WHERE slot.offlinequizid = ?
                    AND slot.offlinegroupid = ?
               ORDER BY slot.slot", array($offlinequiz->id, $offlinequiz->groupid));
@@ -431,6 +436,7 @@ class structure {
             $slot->page = $slotdata->page;
             $slot->questionid = $slotdata->questionid;
             $slot->maxmark = $slotdata->maxmark;
+            $slot->requestedversion = $slotdata->requestedversion;
 
             $this->slots[$slot->id] = $slot;
             $this->slotsinorder[$slot->slot] = $slot;
@@ -531,7 +537,7 @@ class structure {
 
         $movingslot = $this->slots[$idmove];
         if (empty($movingslot)) {
-            throw new moodle_exception('Bad slot ID ' . $idmove);
+            throw new \moodle_exception('Bad slot ID ' . $idmove);
         }
         $movingslotnumber = (int) $movingslot->slot;
 
@@ -674,6 +680,14 @@ class structure {
         }
 
         $trans = $DB->start_delegated_transaction();
+
+        // Delete the reference if its a question.
+        $questionreference = $DB->get_record('question_references',
+                ['component' => 'mod_offlinequiz', 'questionarea' => 'slot', 'itemid' => $slot->id]);
+        if ($questionreference) {
+            $DB->delete_records('question_references', ['id' => $questionreference->id]);
+        }
+
         $DB->delete_records('offlinequiz_group_questions', array('id' => $slot->id));
         for ($i = $slot->slot + 1; $i <= $maxslot; $i++) {
             $DB->set_field('offlinequiz_group_questions', 'slot', $i - 1,
@@ -781,5 +795,87 @@ class structure {
 
     public function add_warning($string) {
         $this->warnings[] = $string;
+    }
+
+    /**
+     * Get the slot id of a given slot slot.
+     * @param int $slotnumber the index of the slot in question.
+     * @return int the page number of the page that slot is on.
+     */
+    public function get_slot_id_for_slot($slotnumber) {
+        return $this->slotsinorder[$slotnumber]->id;
+    }
+
+    /**
+     * Get all the slots in a section of the quiz.
+     * @param int $sectionid the section id.
+     * @return int[] slot numbers.
+     */
+    public function get_slots_in_section($sectionid) {
+        $slots = array();
+        foreach ($this->slotsinorder as $slot) {
+            if ($slot->sectionid == $sectionid) {
+                $slots[] = $slot->slot;
+            }
+        }
+        return $slots;
+    }
+
+    /**
+     * Get the question type in a given slot.
+     * @param int $slotnumber the index of the slot in question.
+     * @return string the question type (e.g. multichoice).
+     */
+    public function get_question_type_for_slot($slotnumber) {
+        return $this->questions[$this->slotsinorder[$slotnumber]->questionid]->qtype;
+    }
+
+    /**
+     * Get a slot by it's slot number. Throws an exception if it is missing.
+     *
+     * @param int $slotnumber The slot number
+     * @return \stdClass
+     * @throws \coding_exception
+     */
+    public function get_slot_by_number($slotnumber) {
+        if (!array_key_exists($slotnumber, $this->slotsinorder)) {
+            throw new \coding_exception('The \'slotnumber\' could not be found.');
+        }
+        return $this->slotsinorder[$slotnumber];
+    }
+
+    /**
+     * Get the version options to show on the Questions page for a particular question.
+     *
+     * @param int $slotnumber which slot to get the choices for.
+     * @return \stdClass[] other versions of this question. Each object has fields versionid,
+     *       version and selected. Array is returned most recent version first.
+     */
+    public function get_version_choices_for_slot(int $slotnumber): array {
+        $slot = $this->get_slot_by_number($slotnumber);
+
+        // Get all the versions which exist.
+        $versions = qbank_helper::get_version_options($slot->questionid);
+        $latestversion = reset($versions);
+
+        if ($slot->requestedversion === null) {
+            $slot->requestedversion = $latestversion->version;
+        }
+
+        // Format the choices for display.
+        $versionoptions = [];
+        foreach ($versions as $version) {
+            $version->selected = $version->version === $slot->requestedversion;
+
+            if ($version->version === $latestversion->version) {
+                $version->versionvalue = get_string('questionversionlatest', 'quiz', $version->version);
+            } else {
+                $version->versionvalue = get_string('questionversion', 'quiz', $version->version);
+            }
+
+            $versionoptions[] = $version;
+        }
+
+        return $versionoptions;
     }
 }

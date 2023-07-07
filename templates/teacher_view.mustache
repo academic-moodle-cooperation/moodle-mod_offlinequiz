@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+<div class="offlinequiz-view">
+  <div class="offlinequiz-view-column">
+    <h3>{{#str}} preparation, mod_offlinequiz {{/str}}</h3>
+    <ul class="fa-ul">
+      {{#preparationsteps}}
+         {{> mod_offlinequiz/teacher_view_step }}
+      {{/preparationsteps}}
+    </ul>
+  </div>
+  <div class="offlinequiz-view-column">
+    <h3>{{#str}} evaluation, mod_offlinequiz {{/str}}</h3>
+    <ul class="oq-expandable {{evaluation-expanded}} fa-ul">
+      {{#evaluationsteps}}
+          {{> mod_offlinequiz/teacher_view_step }}
+      {{/evaluationsteps}}
+    </ul>
+  </div>
+    <div class="offlinequiz-view-column">
+    <h3>{{#str}} statisticsviewheader, mod_offlinequiz {{/str}}</h3>
+    {{{statistics}}}
+  </div>
+  {{#displayparticipantssteps}}
+    <div class="offlinequiz-view-column offlinequiz-view-statistics-column">
+      <h3>{{#str}} attendancesheadline, mod_offlinequiz {{/str}}</h3>
+      <ul class="oq-expandable {{participantslist-expanded}} fa-ul">
+        {{#participantsliststeps}}
+            {{> mod_offlinequiz/teacher_view_step }}
+        {{/participantsliststeps}}
+      </ul>
+    </div>
+  {{/displayparticipantssteps}}
+  <div class="offlinequiz-view-header" >
+    <h3>{{#str}} legend, mod_offlinequiz {{/str}}</h3>
+    <ul class="fa-ul">
+      <li><i class="fa fa-li fa-lg fa-solid fa-circle offlinequiz-noaction"></i> {{#str}} legendnoaction, mod_offlinequiz {{/str}}
+      <li><i class="fa fa-li fa-lg fa-solid fa-check-circle notifysuccess"></i> {{#str}} legenddone, mod_offlinequiz {{/str}}
+      <li><i class="fa fa-li fa-lg fa-solid fa-circle-o notifyproblem"></i> {{#str}} legendnextitem, mod_offlinequiz {{/str}}
+      <li><i class="fa fa-li fa-lg fa-regular fa-exclamation-circle offlinequiz-nextitem"></i> {{#str}} legendwarning, mod_offlinequiz {{/str}}
+    </ul>
+  </div>
+</div>

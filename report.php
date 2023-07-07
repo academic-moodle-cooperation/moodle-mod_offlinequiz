@@ -34,7 +34,6 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/default.php');
 $id = optional_param('id', 0, PARAM_INT);
 $q = optional_param('q', 0, PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA);
-
 if ($id) {
     if (!$cm = get_coursemodule_from_id('offlinequiz', $id)) {
         print_error('invalidcoursemodule');
@@ -76,7 +75,7 @@ $PAGE->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/offlinequiz:viewreports', $context);
-
+$PAGE->activityheader->disable();
 $node = $PAGE->settingsnav->find('mod_offlinequiz_results', navigation_node::TYPE_SETTING);
 if ($node) {
     $node->make_active();

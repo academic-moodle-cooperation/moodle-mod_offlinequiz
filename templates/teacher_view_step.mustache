@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+<li>
+    {{#done}}<i class="fa fa-li fa-lg fa-solid fa-check-circle notifysuccess"></i>{{/done}}
+    {{#nextitem}}<i class="fa fa-li fa-lg fa-regular fa-exclamation-circle offlinequiz-nextitem"></i>{{/nextitem}}
+    {{#open}}<i class="fa fa-li fa-lg fa-solid fa-circle-o notifyproblem"></i>{{/open}}
+    {{#noaction}}<i class="fa fa-li fa-lg fa-solid fa-circle offlinequiz-noaction"></i>{{/noaction}}
+
+    <div class="courseindex-section dropready" aria-owns="prepcollapse{{unique}}" tabindex="-1">
+        <div class="courseindex-item d-flex courseindex-section-title dropready" id="courseindexsection0" data-for="section_item" tabindex="-1">
+            <a data-toggle="collapse" href="#prepcollapse{{unique}}" class="courseindex-chevron icons-collapse-expand " aria-controls="prepcollapse{{unique}}" {{^collapsible}}tabindex="-1"{{/collapsible}}{{#collapsible}}tabindex="0"{{/collapsible}}>
+                {{#collapsible}}
+                    <span class="collapsed-icon icon-no-margin mr-1" title="{{#str}} expand, core {{/str}}" tabindex="-1">
+                    <span class="dir-rtl-hide" tabindex="-1"><i class="icon fa fa-chevron-right fa-fw " tabindex="-1"></i></span>
+                    <span class="dir-ltr-hide" tabindex="-1"><i class="icon fa fa-chevron-left fa-fw " tabindex="-1"></i></span>
+                    <span class="sr-only" tabindex="-1">Expand</span>
+                </span>
+                    <span class="expanded-icon icon-no-margin mr-1" title="{{#str}} collapse, core {{/str}}" tabindex="-1">
+                    <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true" tabindex="-1"></i>
+                    <span class="sr-only" tabindex="-1">Collapse</span>
+                </span>
+                {{/collapsible}}
+
+            </a>
+            <a href="{{link}}" class="courseindex-link text-truncate" data-action="togglecourseindexsection" data-for="section_title" tabindex="0">
+                {{text}}
+            </a>
+        </div>
+        {{#collapsible}}
+
+            <div id="prepcollapse{{unique}}" class="courseindex-item-content collapse show" aria-labelledby="courseindexsection{{unique}}" role="group" tabindex="-1">
+                {{{expandedcontent}}}
+            </div>
+        {{/collapsible}}
+
+    </div>
+</li>

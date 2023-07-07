@@ -74,6 +74,7 @@ if ($node) {
 $pagetitle = get_string('editparticipants', 'offlinequiz');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
+$PAGE->activityheader->disable();
 $PAGE->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
         'M.mod_offlinequiz.init_resource_toolbox',
         array(array(
@@ -94,16 +95,14 @@ function find_pdf_file($contextid, $listfilename) {
         return $fs->get_file($contextid, 'mod_offlinequiz', 'pdfs', 0, '/', $listfilename);
     }
 }
-
 switch($mode) {
     case 'editlists':
         // Only print headers and tabs if not asked to download data.
         if (!$download && $action != 'savelist') {
             echo $OUTPUT->header();
             $currenttab = 'participants';
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
             // Print the tabs.
-            include('tabs.php');
+            offlinequiz_print_tabs($offlinequiz, 'tabeditparticipants', $cm);
         }
 
         switch ($action) {
@@ -216,10 +215,8 @@ switch($mode) {
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
             echo $OUTPUT->header();
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
             // Print the tabs.
-            $currenttab = 'participants';
-            include('tabs.php');
+            offlinequiz_print_tabs($offlinequiz, 'tabeditparticipants', $cm);
         }
 
         echo $OUTPUT->heading_with_help(get_string('participantsinlists', 'offlinequiz'), 'participants', 'offlinequiz');
@@ -347,11 +344,9 @@ switch($mode) {
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
             echo $OUTPUT->header();
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
-            echo $OUTPUT->heading_with_help(get_string('attendances', 'offlinequiz'), 'participants', 'offlinequiz');
             // Print the tabs.
-            $currenttab = 'participants';
-            include('tabs.php');
+            offlinequiz_print_tabs($offlinequiz, 'tabattendancesoverview', $cm);
+            echo $OUTPUT->heading_with_help(get_string('attendances', 'offlinequiz'), 'participants', 'offlinequiz');
             if (!$lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), 'name ASC')) {
                 error('No list created for offlinequiz');
             }
@@ -427,11 +422,10 @@ switch($mode) {
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
             echo $OUTPUT->header();
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
-            echo $OUTPUT->heading_with_help(get_string('createpdfsparticipants', 'offlinequiz'), 'participants', 'offlinequiz');
             // Print the tabs.
-            $currenttab = 'participants';
-            include('tabs.php');
+            offlinequiz_print_tabs($offlinequiz,'tabdownloadparticipantsforms', $cm);
+            echo $OUTPUT->heading_with_help(get_string('createpdfsparticipants', 'offlinequiz'), 'participants', 'offlinequiz');
+            
         }
         // Show update button.
         ?>
@@ -500,6 +494,7 @@ switch($mode) {
         echo $OUTPUT->box_end();
         break;
     case 'upload':
+    case 'correct':
         // We redirect if no list created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
             redirect('participants.php?q='.$offlinequiz->id, get_string('createlistfirst', 'offlinequiz'));
@@ -529,11 +524,9 @@ switch($mode) {
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
             echo $OUTPUT->header();
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
-            echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimportnew', 'offlinequiz');
             // Print the tabs.
-            $currenttab = 'participants';
-            include('tabs.php');
+            offlinequiz_print_tabs($offlinequiz, 'tabparticipantsupload', $cm);
+            echo $OUTPUT->heading_with_help(get_string('uploadpart', 'offlinequiz'), 'partimportnew', 'offlinequiz');
         }
         $report = new participants_report();
         $importform = new offlinequiz_participants_upload_form($thispageurl);

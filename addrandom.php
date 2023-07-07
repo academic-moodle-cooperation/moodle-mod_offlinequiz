@@ -97,7 +97,7 @@ $PAGE->set_url($thispageurl);
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
-$qcobject = new question_category_object(
+$qcobject = new \qbank_managecategories\question_category_object(
     $pagevars['cpage'],
     $thispageurl,
     $contexts->having_one_edit_tab_cap('categories'),

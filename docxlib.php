@@ -62,8 +62,8 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
             array_shift($blocks);
         }
 
-        $section->addListItem(htmlspecialchars(html_entity_decode($itemstring)), $depth, $style, 'questionnumbering');
-
+        $listItemRun = $section->addListItemRun($depth, 'questionnumbering');
+        $listItemRun->addText(htmlspecialchars(html_entity_decode($itemstring)), $style);
         // We also skip the first sequential newline because we got a newline with addListItem.
         if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
             array_shift($blocks);
@@ -75,8 +75,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
         if (empty($numbering)) {
             $textrun = $section->createTextRun();
         } else {
-            $textrun = $section->createTextRun('questionTab');
-            $textrun->addText("\t", 'nStyle');
+            $textrun = $listItemRun;
         }
         $counter = count($blocks);
         foreach ($blocks as $block) {
@@ -143,7 +142,8 @@ function offlinequiz_convert_underline_text_docx($text) {
     $replace = array('"', '&', '>', '<');
 
     // Now add the remaining text after the image tag.
-    $parts = preg_split('/<span style="text-decoration: underline;">/i', $text);
+    $parts = preg_split('/<span style="text-decoration: underline;">|<u>/i', $text);
+    $span_u = preg_match('<span style="text-decoration: underline;">', $text); // Is it the span-underline?
     $result = array();
 
     $firstpart = array_shift($parts);
@@ -153,14 +153,19 @@ function offlinequiz_convert_underline_text_docx($text) {
     }
 
     foreach ($parts as $part) {
-        $closetagpos = strpos($part, '</span>');
-
+        if ($span_u && $closetagpos = strpos($part, '</span>')) {
+            $underlineremain = substr($part, $closetagpos + 7);
+        } else if ($closetagpos = strpos($part, '</u>')) {
+            $underlineremain = substr($part, $closetagpos + 4);
+        } else {
+            $closetagpos = strlen($part) - 1;
+            $underlineremain = '';
+        }
         $underlinetext = strip_tags(substr($part, 0, $closetagpos));
-        $underlineremain = strip_tags(substr($part, $closetagpos + 7));
 
         $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $underlinetext), 'style' => 'uStyle');
         if (!empty($underlineremain)) {
-            $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $underlineremain));
+            $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, strip_tags($underlineremain)));
         }
     }
     return $result;
@@ -229,7 +234,7 @@ function offlinequiz_convert_sub_text_docx($text) {
 }
 
 /**
- * Function to convert bold characters (HTML <b> tags) into string blocks with bold style.
+ * Function to convert italic characters (HTML <b> tags) into string blocks with italic style.
  *
  * @param string $text
  */
@@ -238,7 +243,7 @@ function offlinequiz_convert_italic_text_docx($text) {
     $replace = array('"', '&', '>', '<');
 
     // Now add the remaining text after the image tag.
-    $parts = preg_split("/<b>|<em>/i", $text);
+    $parts = preg_split("/<i>|<em>/i", $text);
     $result = array();
 
     $firstpart = array_shift($parts);
@@ -249,6 +254,8 @@ function offlinequiz_convert_italic_text_docx($text) {
     foreach ($parts as $part) {
         if ($closetagpos = strpos($part, '</em>')) {
             $italicremain = substr($part, $closetagpos + 5);
+        } else if ($closetagpos = strpos($part, '</i>')) {
+            $italicremain = substr($part, $closetagpos + 4);
         } else {
             $closetagpos = strlen($part) - 1;
             $italicremain = '';
@@ -331,7 +338,6 @@ function offlinequiz_convert_newline_docx($text) {
     }
     return $result;
 }
-
 
 /**
  * Function to transform Moodle HTML code of a question into proprietary markup that only supports italic, underline and bold.
@@ -424,6 +430,7 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
         $textrun->addText($infostr, 'nStyle');
     }
 }
+
 /**
  * Generates the DOCX question/correction form for an offlinequiz group.
  *
@@ -568,13 +575,13 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Load all the questions needed for this offline quiz group.
     $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
-              FROM {offlinequiz_group_questions} ogq,
-                   {question} q,
-                   {question_categories} c
+              FROM {offlinequiz_group_questions} ogq
+              JOIN {question} q ON ogq.questionid = q.id
+              JOIN {question_versions} qv ON qv.questionid = q.id
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_categories} c ON qbe.questioncategoryid = c.id
              WHERE ogq.offlinequizid = :offlinequizid
                AND ogq.offlinegroupid = :offlinegroupid
-               AND q.id = ogq.questionid
-               AND q.category = c.id
           ORDER BY ogq.slot ASC ";
     $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
 
@@ -770,8 +777,6 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     return $file;
 }
-
-
 
 /**
  * Function to transform Moodle HTML code of a question into proprietary markup that only supports italic, underline, bold, super and subtext.

@@ -98,17 +98,13 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('report');
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading(format_string($offlinequiz->name));
-
 // Print heading and tabs if this is part of a preview.
 if ($isteacher) {
     if ($result->userid == $USER->id) { // This is the report on a preview.
-        $currenttab = 'preview';
     } else {
-        $currenttab = 'reports';
-        $mode = 'review';
+        $currenttab = 'tabresultsoverview';
+        offlinequiz_print_tabs($offlinequiz, $currenttab, $cm);
     }
-    include('tabs.php');
 }
 
 echo $OUTPUT->heading(format_string($offlinequiz->name));
@@ -149,7 +145,11 @@ if ($options->marks != question_display_options::HIDDEN) {
         $table->data[] = array($strscore . ':', $resultmark . '/' . $maxmark . ' (' . $percentage . '%)');
 
         $a = new stdClass;
-        $a->grade = format_float(preg_replace('/,/i', '.', $grade), $offlinequiz->decimalpoints);
+	if(is_numeric(preg_replace('/,/i', '.', $grade))) {
+            $a->grade = format_float(preg_replace('/,/i', '.', $grade), $offlinequiz->decimalpoints);
+        } else {
+	    $a->grade = $grade;
+        }
         $a->maxgrade = format_float($offlinequiz->grade, $offlinequiz->decimalpoints);
         $table->data[] = array($strgrade . ':', get_string('outof', 'offlinequiz', $a));
     }

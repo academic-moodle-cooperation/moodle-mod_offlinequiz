@@ -130,7 +130,8 @@ Y.extend(TOOLBOX, Y.Base, {
                         Y.one(SELECTOR.SUMMARKS).setHTML(responsetext.newsummarks);
                     }
                     if (responsetext.hasOwnProperty('newnumquestions')) {
-                        Y.one(SELECTOR.NUMQUESTIONS).setHTML(M.util.get_string('numquestionsx', 'offlinequiz', responsetext.newnumquestions));
+                        Y.one(SELECTOR.NUMQUESTIONS).setHTML(
+                                M.util.get_string('numquestionsx', 'offlinequiz', responsetext.newnumquestions));
                     }
                     if (success_callback) {
                         Y.bind(success_callback, this, responsetext)();
@@ -769,7 +770,8 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         var data = {
             'class' : 'section',
             'field' : 'visible',
-            'id'    : Y.Moodle.core_course.util.section.getId(section.ancestor(M.mod_offlinequiz.edit.get_section_wrapper(Y), true)),
+            'id'    : Y.Moodle.core_course.util.section.getId(
+                        section.ancestor(M.mod_offlinequiz.edit.get_section_wrapper(Y), true)),
             'value' : value
         };
         var lightbox = M.util.add_lightbox(Y, section);

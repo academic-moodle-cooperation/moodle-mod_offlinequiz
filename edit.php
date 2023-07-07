@@ -63,17 +63,14 @@ if (array_key_exists('offlinequizdeleteselected', $_POST) && $_POST['offlinequiz
 list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
    question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
 
+$course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);
+
+require_login($course, false, $cm);
+// You need mod/offlinequiz:manage in addition to question capabilities to access this page.
+require_capability('mod/offlinequiz:manage', $contexts->lowest());
+
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
-
-// See if we do bulk grade editing.
-$offlinequizgradetool = optional_param('gradetool', -1, PARAM_BOOL);
-if ($offlinequizgradetool > -1) {
-    $thispageurl->param('gradetool', $offlinequizgradetool);
-    set_user_preference('offlinequiz_gradetab', $offlinequizgradetool);
-} else {
-    $offlinequizgradetool = get_user_preferences('offlinequiz_gradetab', 0);
-}
 
 // Determine groupid.
 $groupnumber    = optional_param('groupnumber', 1, PARAM_INT);
@@ -101,20 +98,67 @@ $offlinequiz->sumgrades = $offlinequizgroup->sumgrades;
 
 $offlinequizhasattempts = offlinequiz_has_scanned_pages($offlinequiz->id);
 $docscreated = $offlinequiz->docscreated;
+$recordupdateanddocscreated = null;
 
 $PAGE->set_url($thispageurl);
 
+// Update version references before get_structure().
+if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
+    $sql = "SELECT qr.id, qv.version, qr.itemid
+            FROM {question_versions} qv
+            JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid
+            JOIN {context} c ON contextlevel = '70' AND qr.usingcontextid = c.id
+            WHERE qv.questionid = ?
+            AND qr.component = 'mod_offlinequiz'
+            AND qr.questionarea = 'slot'
+            AND c.instanceid = ?";
+    $questionupdate = $DB->get_record_sql($sql, [$newquestionid, $cmid]);
+    if ($questionupdate) {
+        $oldquestionid = $DB->get_field('offlinequiz_group_questions', 'questionid', ['id' => $questionupdate->itemid]);
+        $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
+        $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
+        if (!$docscreated || $oldquestioncountanswers == $newquestioncountanswers) {
+            $updategroupquestion = new stdClass();
+            $updategroupquestion->id = $questionupdate->itemid;
+            $updategroupquestion->questionid = $newquestionid;
+
+            $DB->update_record('offlinequiz_group_questions', $updategroupquestion);
+
+            $updatereference = new stdClass();
+            $updatereference->id = $questionupdate->id;
+            $updatereference->version = $questionupdate->version;
+
+            $DB->update_record('question_references', $updatereference);
+
+            $recordupdateanddocscreated = get_string('recordupdateanddocscreatedversion', 'offlinequiz');
+        } else {
+            $updatereference = new stdClass();
+            $updatereference->id = $questionupdate->id;
+            $sql = 'SELECT qv.version
+                    FROM {question_versions} qv
+                    JOIN {offlinequiz_group_questions} ogq ON qv.questionid = ogq.questionid
+                    WHERE ogq.id = ?';
+            $updatereference->version = $DB->get_field_sql($sql, [$questionupdate->itemid]);
+
+            $DB->update_record('question_references', $updatereference);
+
+            $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
+        }
+    }
+}
+
 // Get the course object and related bits.
-$course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);
 $offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
 $structure = $offlinequizobj->get_structure();
 
 if ($warning = optional_param('warning', '', PARAM_TEXT)) {
     $structure->add_warning(urldecode($warning));
 }
-require_login($course, false, $cm);
-// You need mod/offlinequiz:manage in addition to question capabilities to access this page.
-require_capability('mod/offlinequiz:manage', $contexts->lowest());
+
+if ($recordupdateanddocscreated) {
+    $structure->add_warning($recordupdateanddocscreated);
+}
+
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 // Log this visit.
@@ -155,7 +199,6 @@ foreach ($params as $key => $value) {
 
 if (optional_param('offlinequizdeleteselected', false, PARAM_BOOL) &&
         !empty($selectedquestionids) && confirm_sesskey()) {
-
     offlinequiz_remove_questionlist($offlinequiz, $selectedquestionids);
     offlinequiz_delete_template_usages($offlinequiz);
     $offlinequiz->sumgrades = offlinequiz_update_sumgrades($offlinequiz);
@@ -166,7 +209,7 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     // Re-paginate the offlinequiz.
     $structure->check_can_be_edited();
     $questionsperpage = optional_param('questionsperpage', $offlinequiz->questionsperpage, PARAM_INT);
-    offlinequiz_repaginate_questions($offlinequiz->id, $offlinequiz->groupid, $questionsperpage );
+    offlinequiz_repaginate_questions($offlinequiz->id, $offlinequiz->groupid, $questionsperpage);
     offlinequiz_delete_template_usages($offlinequiz);
     redirect($afteractionurl);
 }
@@ -177,9 +220,12 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     offlinequiz_require_question_use($addquestion);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     // If the question is already in another group, take the maxmark of that.
-    if ($maxmarks = $DB->get_fieldset_select('offlinequiz_group_questions', 'maxmark',
-            'offlinequizid = :offlinequizid AND questionid = :questionid',
-            array('offlinequizid' => $offlinequiz->id, 'questionid' => $addquestion))) {
+    if ($maxmarks = $DB->get_fieldset_select(
+        'offlinequiz_group_questions',
+        'maxmark',
+        'offlinequizid = :offlinequizid AND questionid = :questionid',
+        array('offlinequizid' => $offlinequiz->id, 'questionid' => $addquestion)
+    )) {
         offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage, $maxmarks[0]);
     } else {
         offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage);
@@ -200,9 +246,12 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             $key = $matches[1];
             offlinequiz_require_question_use($key);
             // If the question is already in another group, take the maxmark of that.
-            if ($maxmarks = $DB->get_fieldset_select('offlinequiz_group_questions', 'maxmark',
-                    'offlinequizid = :offlinequizid AND questionid = :questionid',
-                    array('offlinequizid' => $offlinequiz->id, 'questionid' => $key))) {
+            if ($maxmarks = $DB->get_fieldset_select(
+                'offlinequiz_group_questions',
+                'maxmark',
+                'offlinequizid = :offlinequizid AND questionid = :questionid',
+                array('offlinequizid' => $offlinequiz->id, 'questionid' => $key)
+            )) {
                 offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage, $maxmarks[0]);
             } else {
                 offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage);
@@ -236,7 +285,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     $copyselectedtogroup = optional_param('copyselectedtogrouptop', 0, PARAM_INT);
 
     if ($copyselectedtogroup) {
-
         if (($selectedquestionids) && ($newgroup = offlinequiz_get_group($offlinequiz, $copyselectedtogroup))) {
             $fromofflinegroup = optional_param('fromofflinegroup', 0, PARAM_INT);
 
@@ -251,7 +299,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     // If rescaling is required save the new maximum.
     $maxgrade = str_replace(',', '.', optional_param('maxgrade', -1, PARAM_RAW));
-    if (!is_numeric( $maxgrade)) {
+    if (!is_numeric($maxgrade)) {
         $afteractionurl->param('warning', urlencode(get_string('maxgradewarning', 'offlinequiz')));
     } else {
         $maxgrade = unformat_float($maxgrade);
@@ -282,8 +330,14 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
     }
 
     // Redmine 983: Upgrade sumgrades for all offlinequiz groups.
-    if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber',
-            '*', 0, $offlinequiz->numgroups)) {
+    if ($groups = $DB->get_records(
+        'offlinequiz_groups',
+        array('offlinequizid' => $offlinequiz->id),
+        'groupnumber',
+        '*',
+        0,
+        $offlinequiz->numgroups
+    )) {
         foreach ($groups as $group) {
             $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
         }
@@ -297,12 +351,12 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
 // Get the question bank view.
 $questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
 $questionbank->set_offlinequiz_has_scanned_pages($docscreated);
-$questionbank->process_actions($thispageurl, $cm);
 
 // End of process commands =====================================================.
 
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_pagetype('mod-offlinequiz-edit');
+$PAGE->activityheader->disable();
 $PAGE->force_settings_menu(true);
 $output = $PAGE->get_renderer('mod_offlinequiz', 'edit');
 
@@ -331,13 +385,7 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
 $PAGE->requires->data_for_js('offlinequiz_edit_config', $offlinequizeditconfig);
 $PAGE->requires->js('/question/qengine.js');
 
-
-// Questions wrapper start.
-if ($offlinequizgradetool) {
-    echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content edit_grades'));
-} else {
-    echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content'));
-}
+echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content'));
 
 $letterstr = 'ABCDEFGHIJKL';
 $groupletters = array();
@@ -346,11 +394,8 @@ for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
     $groupletters[$i] = $letterstr[$i - 1];
 }
 
-if ($offlinequizgradetool) {
-    $output->edit_grades_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars, $groupletters);
-} else {
-    $output->edit_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars, $groupletters);
-}
+$output->edit_page($offlinequizobj, $structure, $contexts, $thispageurl, $pagevars, $groupletters);
+
 
 // Questions wrapper end.
 echo html_writer::end_tag('div');
