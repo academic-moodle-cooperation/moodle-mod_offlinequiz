@@ -367,8 +367,6 @@ if ($edit != -1 and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
 }
 
-//print_object($templatedata);
-//die();
 
 if (has_capability('mod/offlinequiz:manage', $context)) {
     echo $OUTPUT->render_from_template('mod_offlinequiz/teacher_view', $templatedata);
