@@ -251,7 +251,7 @@ $overview['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/te
 if($status['correctionerrors']) {
   $overview['status'] = 'nextitem';
 } else {
-  $overview['status'] = 'open';
+  $overview['status'] = $status['resultscount'] ? 'done' : 'open';
 }
 
 $overview[$overview['status']] = true;
@@ -266,6 +266,7 @@ $evaluationsteps[] = $overview;
 $templatedata['evaluationsteps'] = $evaluationsteps;
 
 $statisticsdata = [];
+$url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'statistics', 'q' => $offlinequiz->id]);
 $statisticsdata['overviewlink'] = $url->out(false);
 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'statistics', 'id' => $id, 'statmode' => 'questionstats']);
 $statisticsdata['questionanalysislink'] = $url->out(false);
