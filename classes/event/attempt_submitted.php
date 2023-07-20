@@ -72,43 +72,12 @@ class attempt_submitted extends \core\event\base {
     }
 
     /**
-     * Does this event replace a legacy event?
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'offlinequiz_attempt_submitted';
-    }
-
-    /**
      * Returns relevant URL.
      *
      * @return \moodle_url
      */
     public function get_url() {
         return new \moodle_url('/mod/offlinequiz/review.php', array('attempt' => $this->objectid));
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $attempt = $this->get_record_snapshot('offlinequiz_attempts', $this->objectid);
-
-        $legacyeventdata = new \stdClass();
-        $legacyeventdata->component = 'mod_offlinequiz';
-        $legacyeventdata->attemptid = $this->objectid;
-        $legacyeventdata->timestamp = $attempt->timefinish;
-        $legacyeventdata->userid = $this->relateduserid;
-        $legacyeventdata->offlinequizid = $attempt->offlinequiz;
-        $legacyeventdata->cmid = $this->contextinstanceid;
-        $legacyeventdata->courseid = $this->courseid;
-        $legacyeventdata->submitterid = $this->other['submitterid'];
-        $legacyeventdata->timefinish = $attempt->timefinish;
-
-        return $legacyeventdata;
     }
 
     /**

@@ -76,16 +76,6 @@ class attempt_deleted extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'offlinequiz', 'delete result', 'report.php?id=' . $this->contextinstanceid,
-            $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception
