@@ -107,8 +107,6 @@ if ($isteacher) {
     }
 }
 
-echo $OUTPUT->heading(format_string($offlinequiz->name));
-
 // Load the module's global config.
 offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
