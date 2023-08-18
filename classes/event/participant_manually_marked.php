@@ -82,16 +82,6 @@ class participant_manually_marked extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'offlinequiz', 'manual participant', 'participant.php?mode=attendances',
-                $this->other['offlinequizid'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

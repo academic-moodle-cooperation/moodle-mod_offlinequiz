@@ -81,16 +81,6 @@ class edit_page_viewed extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'offlinequiz', 'editquestions', 'view.php?id=' . $this->contextinstanceid,
-            $this->other['offlinequizid'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

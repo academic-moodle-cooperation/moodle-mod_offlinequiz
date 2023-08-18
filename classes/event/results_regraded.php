@@ -81,16 +81,6 @@ class results_regraded extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'offlinequiz', 'regrade', 'report.php?mode=regrade&id=' . $this->objectid,
-            $this->other['offlinequizid'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception
