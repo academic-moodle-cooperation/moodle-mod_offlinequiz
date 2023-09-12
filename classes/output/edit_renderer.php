@@ -64,7 +64,6 @@ class edit_renderer extends \plugin_renderer_base {
         global $CFG;
         $offlinequiz = $offlinequizobj->get_offlinequiz();
         $cm = $offlinequizobj->get_cm();
-        $thispageurl = $pageurl;
 
         // Now we echo the tabs.
         offlinequiz_print_tabs($offlinequiz, 'tabeditgroupquestions', $cm);
