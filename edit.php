@@ -51,6 +51,7 @@ require_once($CFG->dirroot . '/question/category_class.php');
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
 $scrollpos = optional_param('scrollpos', '', PARAM_INT);
+$versionschangedmessage = optional_param('versionschangedmessage',0, PARAM_INT);
 
 // Patch problem with nested forms and category parameter, otherwise question_edit_setup has problems.
 if (array_key_exists('savechanges', $_POST) && $_POST['savechanges']) {
@@ -95,10 +96,7 @@ if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
 }
 
 $offlinequiz->sumgrades = $offlinequizgroup->sumgrades;
-
-$offlinequizhasattempts = offlinequiz_has_scanned_pages($offlinequiz->id);
 $docscreated = $offlinequiz->docscreated;
-$recordupdateanddocscreated = null;
 
 $PAGE->set_url($thispageurl);
 
@@ -127,10 +125,12 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
             $updatereference = new stdClass();
             $updatereference->id = $questionupdate->id;
             $updatereference->version = $questionupdate->version;
-
             $DB->update_record('question_references', $updatereference);
 
-            $recordupdateanddocscreated = get_string('recordupdateanddocscreatedversion', 'offlinequiz');
+            $thispageurl->remove_params('lastchanged');
+            $thispageurl->params(['versionschanged' => 1]);
+            redirect($thispageurl);
+            
         } else {
             $updatereference = new stdClass();
             $updatereference->id = $questionupdate->id;
@@ -142,20 +142,25 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
 
             $DB->update_record('question_references', $updatereference);
 
-            $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
+            $thispageurl->remove_params('lastchanged');
+            $thispageurl->params(['versionschanged' => 2]);
+            redirect($thispageurl);
         }
     }
 }
 
+
 // Get the course object and related bits.
 $offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
 $structure = $offlinequizobj->get_structure();
-
 if ($warning = optional_param('warning', '', PARAM_TEXT)) {
     $structure->add_warning(urldecode($warning));
 }
-
-if ($recordupdateanddocscreated) {
+if($versionschangedmessage == 1) {
+    $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
+    $structure->add_warning($recordupdateanddocscreated);
+} else if($versionschangedmessage == 2) {
+    $recordupdateanddocscreated = get_string('recordupdateanddocscreatedversion', 'offlinequiz');
     $structure->add_warning($recordupdateanddocscreated);
 }
 
