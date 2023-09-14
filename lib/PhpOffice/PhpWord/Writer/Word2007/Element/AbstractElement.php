@@ -11,55 +11,53 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Element;
 
-use PhpOffice\Common\Text as CommonText;
-use PhpOffice\Common\XMLWriter;
 use PhpOffice\PhpWord\Element\AbstractElement as Element;
 use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\Shared\Text as SharedText;
+use PhpOffice\PhpWord\Shared\XMLWriter;
 
 /**
- * Abstract element writer
+ * Abstract element writer.
  *
  * @since 0.11.0
  */
 abstract class AbstractElement
 {
     /**
-     * XML writer
+     * XML writer.
      *
-     * @var \PhpOffice\Common\XMLWriter
+     * @var \PhpOffice\PhpWord\Shared\XMLWriter
      */
     private $xmlWriter;
 
     /**
-     * Element
+     * Element.
      *
      * @var \PhpOffice\PhpWord\Element\AbstractElement
      */
     private $element;
 
     /**
-     * Without paragraph
+     * Without paragraph.
      *
      * @var bool
      */
     protected $withoutP = false;
 
     /**
-     * Write element
+     * Write element.
      */
     abstract public function write();
 
     /**
-     * Create new instance
+     * Create new instance.
      *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
-     * @param \PhpOffice\PhpWord\Element\AbstractElement $element
      * @param bool $withoutP
      */
     public function __construct(XMLWriter $xmlWriter, Element $element, $withoutP = false)
@@ -70,9 +68,9 @@ abstract class AbstractElement
     }
 
     /**
-     * Get XML Writer
+     * Get XML Writer.
      *
-     * @return \PhpOffice\Common\XMLWriter
+     * @return \PhpOffice\PhpWord\Shared\XMLWriter
      */
     protected function getXmlWriter()
     {
@@ -80,7 +78,7 @@ abstract class AbstractElement
     }
 
     /**
-     * Get element
+     * Get element.
      *
      * @return \PhpOffice\PhpWord\Element\AbstractElement
      */
@@ -94,7 +92,7 @@ abstract class AbstractElement
      *
      * @uses \PhpOffice\PhpWord\Writer\Word2007\Element\PageBreak::write()
      */
-    protected function startElementP()
+    protected function startElementP(): void
     {
         if (!$this->withoutP) {
             $this->xmlWriter->startElement('w:p');
@@ -109,7 +107,7 @@ abstract class AbstractElement
     /**
      * End w:p DOM element.
      */
-    protected function endElementP()
+    protected function endElementP(): void
     {
         $this->writeCommentRangeEnd();
         if (!$this->withoutP) {
@@ -118,9 +116,9 @@ abstract class AbstractElement
     }
 
     /**
-     * Writes the w:commentRangeStart DOM element
+     * Writes the w:commentRangeStart DOM element.
      */
-    protected function writeCommentRangeStart()
+    protected function writeCommentRangeStart(): void
     {
         if ($this->element->getCommentRangeStart() != null) {
             $comment = $this->element->getCommentRangeStart();
@@ -129,14 +127,14 @@ abstract class AbstractElement
                 $comment->setElementId();
             }
 
-            $this->xmlWriter->writeElementBlock('w:commentRangeStart', array('w:id' => $comment->getElementId()));
+            $this->xmlWriter->writeElementBlock('w:commentRangeStart', ['w:id' => $comment->getElementId()]);
         }
     }
 
     /**
-     * Writes the w:commentRangeEnd DOM element
+     * Writes the w:commentRangeEnd DOM element.
      */
-    protected function writeCommentRangeEnd()
+    protected function writeCommentRangeEnd(): void
     {
         if ($this->element->getCommentRangeEnd() != null) {
             $comment = $this->element->getCommentRangeEnd();
@@ -145,9 +143,9 @@ abstract class AbstractElement
                 $comment->setElementId(); // @codeCoverageIgnore
             } // @codeCoverageIgnore
 
-            $this->xmlWriter->writeElementBlock('w:commentRangeEnd', array('w:id' => $comment->getElementId()));
+            $this->xmlWriter->writeElementBlock('w:commentRangeEnd', ['w:id' => $comment->getElementId()]);
             $this->xmlWriter->startElement('w:r');
-            $this->xmlWriter->writeElementBlock('w:commentReference', array('w:id' => $comment->getElementId()));
+            $this->xmlWriter->writeElementBlock('w:commentReference', ['w:id' => $comment->getElementId()]);
             $this->xmlWriter->endElement();
         } elseif ($this->element->getCommentRangeStart() != null && $this->element->getCommentRangeStart()->getEndElement() == null) {
             $comment = $this->element->getCommentRangeStart();
@@ -156,9 +154,9 @@ abstract class AbstractElement
                 $comment->setElementId(); // @codeCoverageIgnore
             } // @codeCoverageIgnore
 
-            $this->xmlWriter->writeElementBlock('w:commentRangeEnd', array('w:id' => $comment->getElementId()));
+            $this->xmlWriter->writeElementBlock('w:commentRangeEnd', ['w:id' => $comment->getElementId()]);
             $this->xmlWriter->startElement('w:r');
-            $this->xmlWriter->writeElementBlock('w:commentReference', array('w:id' => $comment->getElementId()));
+            $this->xmlWriter->writeElementBlock('w:commentReference', ['w:id' => $comment->getElementId()]);
             $this->xmlWriter->endElement();
         }
     }
@@ -166,7 +164,7 @@ abstract class AbstractElement
     /**
      * Write ending.
      */
-    protected function writeParagraphStyle()
+    protected function writeParagraphStyle(): void
     {
         $this->writeTextStyle('Paragraph');
     }
@@ -174,7 +172,7 @@ abstract class AbstractElement
     /**
      * Write ending.
      */
-    protected function writeFontStyle()
+    protected function writeFontStyle(): void
     {
         $this->writeTextStyle('Font');
     }
@@ -184,7 +182,7 @@ abstract class AbstractElement
      *
      * @param string $styleType Font|Paragraph
      */
-    private function writeTextStyle($styleType)
+    private function writeTextStyle($styleType): void
     {
         $method = "get{$styleType}Style";
         $class = "PhpOffice\\PhpWord\\Writer\\Word2007\\Style\\{$styleType}";
@@ -200,20 +198,22 @@ abstract class AbstractElement
     }
 
     /**
-     * Convert text to valid format
+     * Convert text to valid format.
      *
      * @param string $text
+     *
      * @return string
      */
     protected function getText($text)
     {
-        return CommonText::controlCharacterPHP2OOXML($text);
+        return SharedText::controlCharacterPHP2OOXML($text);
     }
 
     /**
-     * Write an XML text, this will call text() or writeRaw() depending on the value of Settings::isOutputEscapingEnabled()
+     * Write an XML text, this will call text() or writeRaw() depending on the value of Settings::isOutputEscapingEnabled().
      *
      * @param string $content The text string to write
+     *
      * @return bool Returns true on success or false on failure
      */
     protected function writeText($content)

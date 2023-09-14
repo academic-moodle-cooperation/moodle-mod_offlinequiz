@@ -11,26 +11,26 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\ODText\Element;
 
 /**
- * PageBreak element writer
+ * PageBreak element writer.
  */
 class PageBreak extends AbstractElement
 {
     /**
-     * Write element
+     * Write element.
      */
-    public function write()
+    public function write(): void
     {
         $xmlWriter = $this->getXmlWriter();
 
         $xmlWriter->startElement('text:p');
-        $xmlWriter->writeAttribute('text:style-name', 'P1');
+        $xmlWriter->writeAttribute('text:style-name', 'PB');
         $xmlWriter->endElement();
     }
 }

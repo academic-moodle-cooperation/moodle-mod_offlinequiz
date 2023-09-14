@@ -11,20 +11,21 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\ODText\Part;
 
-use PhpOffice\Common\XMLWriter;
 use PhpOffice\PhpWord\Element\AbstractContainer;
+use PhpOffice\PhpWord\Element\Field;
 use PhpOffice\PhpWord\Element\Image;
 use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\Element\Text;
 use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\Element\TrackChange;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Shared\XMLWriter;
 use PhpOffice\PhpWord\Style;
 use PhpOffice\PhpWord\Style\Font;
 use PhpOffice\PhpWord\Style\Paragraph;
@@ -33,22 +34,25 @@ use PhpOffice\PhpWord\Writer\ODText\Element\Container;
 use PhpOffice\PhpWord\Writer\ODText\Style\Paragraph as ParagraphStyleWriter;
 
 /**
- * ODText content part writer: content.xml
+ * ODText content part writer: content.xml.
  */
 class Content extends AbstractPart
 {
     /**
-     * Auto style collection
+     * Auto style collection.
      *
      * Collect inline style information from section, image, and table elements
      *
      * @todo Merge font and paragraph styles
+     *
      * @var array
      */
-    private $autoStyles = array('Section' => array(), 'Image' => array(), 'Table' => array());
+    private $autoStyles = ['Section' => [], 'Image' => [], 'Table' => []];
+
+    private $imageParagraphStyles = [];
 
     /**
-     * Write part
+     * Write part.
      *
      * @return string
      */
@@ -77,7 +81,7 @@ class Content extends AbstractPart
         $xmlWriter->startElement('office:text');
 
         // Tracked changes declarations
-        $trackedChanges = array();
+        $trackedChanges = [];
         $sections = $phpWord->getSections();
         foreach ($sections as $section) {
             $this->collectTrackedChanges($section, $trackedChanges);
@@ -111,7 +115,7 @@ class Content extends AbstractPart
         $xmlWriter->endElement(); // text:tracked-changes
 
         // Sequence declarations
-        $sequences = array('Illustration', 'Table', 'Text', 'Drawing');
+        $sequences = ['Illustration', 'Table', 'Text', 'Drawing'];
         $xmlWriter->startElement('text:sequence-decls');
         foreach ($sequences as $sequence) {
             $xmlWriter->startElement('text:sequence-decl');
@@ -128,6 +132,9 @@ class Content extends AbstractPart
             $xmlWriter->startElement('text:section');
             $xmlWriter->writeAttribute('text:name', $name);
             $xmlWriter->writeAttribute('text:style-name', $name);
+            $xmlWriter->startElement('text:p');
+            $xmlWriter->writeAttribute('text:style-name', 'SB' . $section->getSectionId());
+            $xmlWriter->endElement();
             $containerWriter = new Container($xmlWriter, $section);
             $containerWriter->write();
             $xmlWriter->endElement(); // text:section
@@ -145,10 +152,8 @@ class Content extends AbstractPart
      * Write automatic styles other than fonts and paragraphs.
      *
      * @since 0.11.0
-     *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
      */
-    private function writeAutoStyles(XMLWriter $xmlWriter)
+    private function writeAutoStyles(XMLWriter $xmlWriter): void
     {
         $xmlWriter->startElement('office:automatic-styles');
 
@@ -167,43 +172,70 @@ class Content extends AbstractPart
 
     /**
      * Write automatic styles.
-     *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
      */
-    private function writeTextStyles(XMLWriter $xmlWriter)
+    private function writeTextStyles(XMLWriter $xmlWriter): void
     {
         $styles = Style::getStyles();
         $paragraphStyleCount = 0;
-        if (count($styles) > 0) {
-            foreach ($styles as $style) {
-                if ($style->isAuto() === true) {
-                    $styleClass = str_replace('\\Style\\', '\\Writer\\ODText\\Style\\', get_class($style));
-                    if (class_exists($styleClass)) {
-                        /** @var \PhpOffice\PhpWord\Writer\ODText\Style\AbstractStyle $styleWriter Type hint */
-                        $styleWriter = new $styleClass($xmlWriter, $style);
-                        $styleWriter->write();
-                    }
-                    if ($style instanceof Paragraph) {
-                        $paragraphStyleCount++;
-                    }
-                }
-            }
-            if ($paragraphStyleCount == 0) {
+
+        $style = new Paragraph();
+        $style->setStyleName('PB');
+        $style->setAuto();
+        $styleWriter = new ParagraphStyleWriter($xmlWriter, $style);
+        $styleWriter->write();
+
+        $sects = $this->getParentWriter()->getPhpWord()->getSections();
+        $countsects = count($sects);
+        for ($i = 0; $i < $countsects; ++$i) {
+            $iplus1 = $i + 1;
+            $style = new Paragraph();
+            $style->setStyleName("SB$iplus1");
+            $style->setAuto();
+            $pnstart = $sects[$i]->getStyle()->getPageNumberingStart();
+            $style->setNumLevel($pnstart);
+            $styleWriter = new ParagraphStyleWriter($xmlWriter, $style);
+            $styleWriter->write();
+        }
+
+        foreach ($styles as $style) {
+            $sty = $style->getStyleName();
+            if (substr($sty, 0, 8) === 'Heading_') {
                 $style = new Paragraph();
-                $style->setStyleName('P1');
+                $style->setStyleName('HD' . substr($sty, 8));
+                $style->setAuto();
+                $styleWriter = new ParagraphStyleWriter($xmlWriter, $style);
+                $styleWriter->write();
+                $style = new Paragraph();
+                $style->setStyleName('HE' . substr($sty, 8));
                 $style->setAuto();
                 $styleWriter = new ParagraphStyleWriter($xmlWriter, $style);
                 $styleWriter->write();
             }
         }
+
+        foreach ($styles as $style) {
+            if ($style->isAuto() === true) {
+                $styleClass = str_replace('\\Style\\', '\\Writer\\ODText\\Style\\', get_class($style));
+                if (class_exists($styleClass)) {
+                    /** @var \PhpOffice\PhpWord\Writer\ODText\Style\AbstractStyle $styleWriter Type hint */
+                    $styleWriter = new $styleClass($xmlWriter, $style);
+                    $styleWriter->write();
+                }
+                if ($style instanceof Paragraph) {
+                    ++$paragraphStyleCount;
+                }
+            }
+        }
+        foreach ($this->imageParagraphStyles as $style) {
+            $styleWriter = new \PhpOffice\PhpWord\Writer\ODText\Style\Paragraph($xmlWriter, $style);
+            $styleWriter->write();
+        }
     }
 
     /**
      * Get automatic styles.
-     *
-     * @param \PhpOffice\PhpWord\PhpWord $phpWord
      */
-    private function getAutoStyles(PhpWord $phpWord)
+    private function getAutoStyles(PhpWord $phpWord): void
     {
         $sections = $phpWord->getSections();
         $paragraphStyleCount = 0;
@@ -217,34 +249,44 @@ class Content extends AbstractPart
     }
 
     /**
-     * Get all styles of each elements in container recursively
+     * Get all styles of each elements in container recursively.
      *
      * Table style can be null or string of the style name
      *
      * @param \PhpOffice\PhpWord\Element\AbstractContainer $container
      * @param int $paragraphStyleCount
      * @param int $fontStyleCount
+     *
      * @todo Simplify the logic
      */
-    private function getContainerStyle($container, &$paragraphStyleCount, &$fontStyleCount)
+    private function getContainerStyle($container, &$paragraphStyleCount, &$fontStyleCount): void
     {
         $elements = $container->getElements();
         foreach ($elements as $element) {
             if ($element instanceof TextRun) {
+                $this->getElementStyleTextRun($element, $paragraphStyleCount);
                 $this->getContainerStyle($element, $paragraphStyleCount, $fontStyleCount);
             } elseif ($element instanceof Text) {
                 $this->getElementStyle($element, $paragraphStyleCount, $fontStyleCount);
+            } elseif ($element instanceof Field) {
+                $this->getElementStyleField($element, $fontStyleCount);
             } elseif ($element instanceof Image) {
                 $style = $element->getStyle();
                 $style->setStyleName('fr' . $element->getMediaIndex());
                 $this->autoStyles['Image'][] = $style;
+                $sty = new \PhpOffice\PhpWord\Style\Paragraph();
+                $sty->setStyleName('IM' . $element->getMediaIndex());
+                $sty->setAuto();
+                $sty->setAlignment($style->getAlignment());
+                $this->imageParagraphStyles[] = $sty;
             } elseif ($element instanceof Table) {
                 /** @var \PhpOffice\PhpWord\Style\Table $style */
                 $style = $element->getStyle();
+                if (is_string($style)) {
+                    $style = Style::getStyle($style);
+                }
                 if ($style === null) {
                     $style = new TableStyle();
-                } elseif (is_string($style)) {
-                    $style = Style::getStyle($style);
                 }
                 $style->setStyleName($element->getElementId());
                 $style->setColumnWidths($element->findFirstDefinedCellWidths());
@@ -254,13 +296,13 @@ class Content extends AbstractPart
     }
 
     /**
-     * Get style of individual element
+     * Get style of individual element.
      *
      * @param \PhpOffice\PhpWord\Element\Text $element
      * @param int $paragraphStyleCount
      * @param int $fontStyleCount
      */
-    private function getElementStyle(&$element, &$paragraphStyleCount, &$fontStyleCount)
+    private function getElementStyle($element, &$paragraphStyleCount, &$fontStyleCount): void
     {
         $fontStyle = $element->getFontStyle();
         $paragraphStyle = $element->getParagraphStyle();
@@ -268,33 +310,106 @@ class Content extends AbstractPart
 
         if ($fontStyle instanceof Font) {
             // Font
-            $fontStyleCount++;
-            $style = $phpWord->addFontStyle("T{$fontStyleCount}", $fontStyle);
-            $style->setAuto();
-            $element->setFontStyle("T{$fontStyleCount}");
-        } elseif ($paragraphStyle instanceof Paragraph) {
+            $name = $fontStyle->getStyleName();
+            if (!$name) {
+                ++$fontStyleCount;
+                $style = $phpWord->addFontStyle("T{$fontStyleCount}", $fontStyle, null);
+                $style->setAuto();
+                $style->setParagraph(null);
+                $element->setFontStyle("T{$fontStyleCount}");
+            } else {
+                $element->setFontStyle($name);
+            }
+        }
+        if ($paragraphStyle instanceof Paragraph) {
             // Paragraph
-            $paragraphStyleCount++;
-            $style = $phpWord->addParagraphStyle("P{$paragraphStyleCount}", array());
+            $name = $paragraphStyle->getStyleName();
+            if (!$name) {
+                ++$paragraphStyleCount;
+                $style = $phpWord->addParagraphStyle("P{$paragraphStyleCount}", $paragraphStyle);
+                $style->setAuto();
+                $element->setParagraphStyle("P{$paragraphStyleCount}");
+            } else {
+                $element->setParagraphStyle($name);
+            }
+        } elseif ($paragraphStyle) {
+            ++$paragraphStyleCount;
+            $parstylename = "P$paragraphStyleCount" . "_$paragraphStyle";
+            $style = $phpWord->addParagraphStyle($parstylename, $paragraphStyle);
             $style->setAuto();
-            $element->setParagraphStyle("P{$paragraphStyleCount}");
+            $element->setParagraphStyle($parstylename);
         }
     }
 
     /**
-     * Finds all tracked changes
+     * Get font style of individual field element.
      *
-     * @param AbstractContainer $container
+     * @param \PhpOffice\PhpWord\Element\Field $element
+     * @param int $fontStyleCount
+     */
+    private function getElementStyleField($element, &$fontStyleCount): void
+    {
+        $fontStyle = $element->getFontStyle();
+        $phpWord = $this->getParentWriter()->getPhpWord();
+
+        if ($fontStyle instanceof Font) {
+            $name = $fontStyle->getStyleName();
+            if (!$name) {
+                ++$fontStyleCount;
+                $style = $phpWord->addFontStyle("T{$fontStyleCount}", $fontStyle, null);
+                $style->setAuto();
+                $style->setParagraph(null);
+                $element->setFontStyle("T{$fontStyleCount}");
+            } else {
+                $element->setFontStyle($name);
+            }
+        }
+    }
+
+    /**
+     * Get style of individual element.
+     *
+     * @param \PhpOffice\PhpWord\Element\TextRun $element
+     * @param int $paragraphStyleCount
+     */
+    private function getElementStyleTextRun($element, &$paragraphStyleCount): void
+    {
+        $paragraphStyle = $element->getParagraphStyle();
+        $phpWord = $this->getParentWriter()->getPhpWord();
+
+        if ($paragraphStyle instanceof Paragraph) {
+            // Paragraph
+            $name = $paragraphStyle->getStyleName();
+            if (!$name) {
+                ++$paragraphStyleCount;
+                $style = $phpWord->addParagraphStyle("P{$paragraphStyleCount}", $paragraphStyle);
+                $style->setAuto();
+                $element->setParagraphStyle("P{$paragraphStyleCount}");
+            } else {
+                $element->setParagraphStyle($name);
+            }
+        } elseif ($paragraphStyle) {
+            ++$paragraphStyleCount;
+            $parstylename = "P$paragraphStyleCount" . "_$paragraphStyle";
+            $style = $phpWord->addParagraphStyle($parstylename, $paragraphStyle);
+            $style->setAuto();
+            $element->setParagraphStyle($parstylename);
+        }
+    }
+
+    /**
+     * Finds all tracked changes.
+     *
      * @param \PhpOffice\PhpWord\Element\AbstractElement[] $trackedChanges
      */
-    private function collectTrackedChanges(AbstractContainer $container, &$trackedChanges = array())
+    private function collectTrackedChanges(AbstractContainer $container, &$trackedChanges = []): void
     {
         $elements = $container->getElements();
         foreach ($elements as $element) {
             if ($element->getTrackChange() != null) {
                 $trackedChanges[] = $element;
             }
-            if (is_callable(array($element, 'getElements'))) {
+            if (is_callable([$element, 'getElements'])) {
                 $this->collectTrackedChanges($element, $trackedChanges);
             }
         }
