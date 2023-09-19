@@ -73,7 +73,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
     // Now we go through the rest of the blocks (if there are any) and print them to a textrun.
     if (!empty($blocks)) {
         if (empty($numbering)) {
-            $textrun = $section->createTextRun();
+            $textrun = $section->addTextRun();
         } else {
             $textrun = $listItemRun;
         }
@@ -92,9 +92,9 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
                 }
             } else if ($block['type'] == 'newline') {
                 if (empty($numbering)) {
-                    $textrun = $section->createTextRun();
+                    $textrun = $section->addTextRun();
                 } else {
-                    $textrun = $section->createTextRun('questionTab');
+                    $textrun = $section->addTextRun('questionTab');
                     $textrun->addText("\t", 'nStyle');
                 }
             } else if ($block['type'] == 'image') {
@@ -121,9 +121,9 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
                 $section->addImage($block['value'], $style);
                 if ($counter > 0) {
                     if (empty($numbering)) {
-                        $textrun = $section->createTextRun();
+                        $textrun = $section->addTextRun();
                     } else {
-                        $textrun = $section->createTextRun('questionTab');
+                        $textrun = $section->addTextRun('questionTab');
                         $textrun->addText("\t", 'nStyle');
                     }
                 }
@@ -426,7 +426,7 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
     $infostr = offlinequiz_get_question_infostring($offlinequiz, $question);
     if ($infostr) {
         // Indent the question grade like the answers.
-        $textrun = $section->createTextRun($level2);
+        $textrun = $section->addTextRun($level2);
         $textrun->addText($infostr, 'nStyle');
     }
 }
