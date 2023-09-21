@@ -117,7 +117,6 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
         $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
         $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
         if (!$docscreated || $oldquestioncountanswers == $newquestioncountanswers) {
-            print_object($offlinequiz);
             offlinequiz_update_question_instance($offlinequiz, $oldquestionid, $maxmark, $newquestionid);
             
         } else {
