@@ -113,23 +113,12 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
     $questionupdate = $DB->get_record_sql($sql, [$newquestionid, $cmid]);
     if ($questionupdate) {
         $oldquestionid = $DB->get_field('offlinequiz_group_questions', 'questionid', ['id' => $questionupdate->itemid]);
+        $maxmark = $DB->get_field('offlinequiz_group_questions', 'maxmark', ['id' => $questionupdate->itemid]);
         $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
         $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
         if (!$docscreated || $oldquestioncountanswers == $newquestioncountanswers) {
-            $updategroupquestion = new stdClass();
-            $updategroupquestion->id = $questionupdate->itemid;
-            $updategroupquestion->questionid = $newquestionid;
-
-            $DB->update_record('offlinequiz_group_questions', $updategroupquestion);
-
-            $updatereference = new stdClass();
-            $updatereference->id = $questionupdate->id;
-            $updatereference->version = $questionupdate->version;
-            $DB->update_record('question_references', $updatereference);
-
-            $thispageurl->remove_params('lastchanged');
-            $thispageurl->params(['versionschanged' => 1]);
-            redirect($thispageurl);
+            print_object($offlinequiz);
+            offlinequiz_update_question_instance($offlinequiz, $oldquestionid, $maxmark, $newquestionid);
             
         } else {
             $updatereference = new stdClass();
