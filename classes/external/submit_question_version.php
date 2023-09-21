@@ -19,6 +19,7 @@ namespace mod_offlinequiz\external;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/engine/datalib.php');
 require_once($CFG->libdir . '/questionlib.php');
@@ -114,7 +115,8 @@ class submit_question_version extends external_api {
             $newdata = new stdClass();
             $newdata->id = $slotdata->id;
             $newdata->questionid = $newquestionid;
-            $response['result'] = $DB->update_record('offlinequiz_group_questions', $newdata);
+            $offlinequiz = $DB->get_record('offlinequiz',['id' => $slotdata->offlinequizid]);
+            
 
             $reference = new stdClass();
             $reference->id = $referencedata->id;
@@ -126,8 +128,9 @@ class submit_question_version extends external_api {
             if ($response['result']) {
                 $response['result'] = $DB->update_record('question_references', $reference);
             }
+            \offlinequiz_update_question_instance($offlinequiz, $oldquestionid, $slotdata->maxmark, $newquestionid);
+            $response['result'] = true;
         }
-
         return $response;
     }
 
