@@ -1582,6 +1582,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2023022000, 'offlinequiz');
     }
+    if ($oldversion < 2023092600) {
+
+        // Define field documentquestionid to be added to offlinequiz_group_questions.
+        $table = new xmldb_table('offlinequiz_group_questions');
+        $field = new xmldb_field('documentquestionid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'maxmark');
+
+        // Conditionally launch add field documentquestionid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2023092600, 'offlinequiz');
+    }
 
 
     return true;
