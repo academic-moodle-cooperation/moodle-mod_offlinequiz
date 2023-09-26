@@ -817,6 +817,9 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade,
         if ($referenceids && $newquestionversion) {
             foreach ($referenceids as $referenceid) {
                 $DB->set_field('question_references', 'version', $newquestionversion, ['itemid' => $referenceid->id]);
+                if(!$referenceid->documentquestionid && $offlinequiz->docscreated) {
+                    $DB->set_field('offlinequiz_group_questions', 'documentquestionid', $questionid,['questionid' => $referenceid->questionid, 'offlinequizid' => $offlinequiz->id]);
+                }
             }
         }
     }
@@ -1630,6 +1633,9 @@ function offlinequiz_delete_pdf_forms($offlinequiz) {
     $DB->set_field('offlinequiz_groups', 'questionfilename', null, array('offlinequizid' => $offlinequiz->id));
     $DB->set_field('offlinequiz_groups', 'answerfilename', null, array('offlinequizid' => $offlinequiz->id));
     $DB->set_field('offlinequiz_groups', 'correctionfilename', null, array('offlinequizid' => $offlinequiz->id));
+    // Delete changed documentquestionids
+    $DB->set_field('offlinequiz_group_questions', 'documentquestionid', null, array('offlinequizid' => $offlinequiz->id));
+
 
     // Set offlinequiz->docscreated to 0.
     $offlinequiz->docscreated = 0;

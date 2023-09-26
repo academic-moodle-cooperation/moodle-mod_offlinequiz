@@ -51,7 +51,6 @@ require_once($CFG->dirroot . '/question/category_class.php');
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
 $scrollpos = optional_param('scrollpos', '', PARAM_INT);
-$versionschangedmessage = optional_param('versionschangedmessage',0, PARAM_INT);
 
 // Patch problem with nested forms and category parameter, otherwise question_edit_setup has problems.
 if (array_key_exists('savechanges', $_POST) && $_POST['savechanges']) {
@@ -144,11 +143,13 @@ $structure = $offlinequizobj->get_structure();
 if ($warning = optional_param('warning', '', PARAM_TEXT)) {
     $structure->add_warning(urldecode($warning));
 }
-if($versionschangedmessage == 1) {
-    $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
-    $structure->add_warning($recordupdateanddocscreated);
-} else if($versionschangedmessage == 2) {
-    $recordupdateanddocscreated = get_string('recordupdateanddocscreatedversion', 'offlinequiz');
+$changedversionsexist = $DB->count_records_select('offlinequiz_group_questions', 'documentquestionid IS NOT NULL AND offlinequizid = $1', [$offlinequiz->id]);
+$hasresults = $DB->count_records('offlinequiz_results',['offlinequizid' => $offlinequiz->id]);
+if($changedversionsexist && $hasresults) {
+    $recordupdateanddocscreated = 
+    $structure->add_warning(get_string('documentschangedwithresults', 'offlinequiz'));
+} else if($changedversionsexist && !$hasresults) {
+    $recordupdateanddocscreated = get_string('documentschanged', 'offlinequiz');
     $structure->add_warning($recordupdateanddocscreated);
 }
 
