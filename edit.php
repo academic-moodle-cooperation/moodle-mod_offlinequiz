@@ -109,29 +109,30 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
             AND qr.component = 'mod_offlinequiz'
             AND qr.questionarea = 'slot'
             AND c.instanceid = ?";
-    $questionupdate = $DB->get_record_sql($sql, [$newquestionid, $cmid]);
-    if ($questionupdate) {
-        $oldquestionid = $DB->get_field('offlinequiz_group_questions', 'questionid', ['id' => $questionupdate->itemid]);
-        $maxmark = $DB->get_field('offlinequiz_group_questions', 'maxmark', ['id' => $questionupdate->itemid]);
-        $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
-        $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
-        if (!$docscreated || $oldquestioncountanswers == $newquestioncountanswers) {
-            offlinequiz_update_question_instance($offlinequiz, $oldquestionid, $maxmark, $newquestionid);
-            
-        } else {
-            $updatereference = new stdClass();
-            $updatereference->id = $questionupdate->id;
-            $sql = 'SELECT qv.version
-                    FROM {question_versions} qv
-                    JOIN {offlinequiz_group_questions} ogq ON qv.questionid = ogq.questionid
-                    WHERE ogq.id = ?';
-            $updatereference->version = $DB->get_field_sql($sql, [$questionupdate->itemid]);
+    $questionupdates = $DB->get_records_sql($sql, [$newquestionid, $cmid]);
+    if ($questionupdates) {
+        foreach ($questionupdates as $questionupdate) {
+            $oldquestionid = $DB->get_field('offlinequiz_group_questions', 'questionid', ['id' => $questionupdate->itemid]);
+            $maxmark = $DB->get_field('offlinequiz_group_questions', 'maxmark', ['id' => $questionupdate->itemid]);
+            $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
+            $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
+            if (!$docscreated || $oldquestioncountanswers == $newquestioncountanswers) {
+                offlinequiz_update_question_instance($offlinequiz, $oldquestionid, $maxmark, $newquestionid);
+            } else {
+                $updatereference = new stdClass();
+                $updatereference->id = $questionupdate->id;
+                $sql = 'SELECT qv.version
+                        FROM {question_versions} qv
+                        JOIN {offlinequiz_group_questions} ogq ON qv.questionid = ogq.questionid
+                        WHERE ogq.id = ?';
+                $updatereference->version = $DB->get_field_sql($sql, [$questionupdate->itemid]);
 
-            $DB->update_record('question_references', $updatereference);
+                $DB->update_record('question_references', $updatereference);
 
-            $thispageurl->remove_params('lastchanged');
-            $thispageurl->params(['versionschanged' => 2]);
-            redirect($thispageurl);
+                $thispageurl->remove_params('lastchanged');
+                $thispageurl->params(['versionschanged' => 2]);
+                redirect($thispageurl);
+            }
         }
     }
 }
