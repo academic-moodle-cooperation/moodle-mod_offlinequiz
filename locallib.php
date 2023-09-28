@@ -2291,7 +2291,32 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
                 $slot->page = $maxpage;
             }
         }
-        $DB->insert_record('offlinequiz_group_questions', $slot);
+        $newid = $DB->insert_record('offlinequiz_group_questions', $slot);
+
+        $sql = "SELECT DISTINCT qr.id, qr.itemid
+              FROM {question} q
+              JOIN {question_versions} qv ON q.id = qv.questionid
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_references} qr ON qbe.id = qr.questionbankentryid AND qr.version = qv.version
+              JOIN {offlinequiz_group_questions} os ON os.id = qr.itemid
+             WHERE q.id = ?
+               AND os.id = ?
+               AND qr.component = ?
+               AND qr.questionarea = ?";
+        $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slot->slot, 'mod_offlinequiz', 'slot']);
+        
+        if (!$qreferenceitem) {
+            // Create a new reference record for questions created already.
+            $questionreferences = new \StdClass();
+            $questionreferences->usingcontextid = \context_module::instance($offlinequiz->cmid)->id;
+            $questionreferences->component = 'mod_offlinequiz';
+            $questionreferences->questionarea = 'slot';
+            $questionreferences->itemid = $newid;
+            $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
+            $questionreferences->version = null; // Always latest.
+            $DB->insert_record('question_references', $questionreferences);
+        }
+        
         $trans->allow_commit();
     }
 }
