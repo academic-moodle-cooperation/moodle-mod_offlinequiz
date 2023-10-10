@@ -188,6 +188,7 @@ $string['emptygroups'] = 'Some offline quiz groups are empty. Please add some qu
 $string['enroluser'] = 'Enrol user';
 $string['erroraccessingreport'] = 'You are not allowed to view this report.';
 $string['errorreport'] = 'Report of import errors';
+$string['errormultiuserinlist'] = 'User is more than once listed in attendance lists!';
 $string['evaluation'] = '2. Evaluation';
 $string['evaluated'] = 'Evaluated: ';
 $string['eventattemptdeleted'] = 'Offline quiz attempt deleted';
