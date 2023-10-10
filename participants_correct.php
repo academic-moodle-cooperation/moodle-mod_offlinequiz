@@ -605,18 +605,18 @@ if ($sheetloaded) {
                        {offlinequiz_participants} p,
                        {offlinequiz_p_lists} pl
                  WHERE p.userid = u.id
-                   AND p.listid = :listid
-                   AND p.listid = pl.id
+
                    AND pl.offlinequizid = :offlinequizid
               ORDER BY u.lastname, u.firstname";
 
         $params['offlinequizid'] = $offlinequiz->id;
-        $params['listid'] = $list->id;
-
+       // $params['listid'] = $list->id;
+       //                    AND p.listid = :listid
+       //                    AND p.listid = pl.id
         $users = $DB->get_records_sql($sql, $params);
         foreach ($scanner->export_hotspots_barcodes(860) as $key => $hotspot) {
             $x = substr($key, 1);
-            echo "<select name=\"userids[$x]\" class=\"barcodeselect";
+            echo "<select name=\"userids[$x]\"  autocomplete='on'     class=\"barcodeselect";
             if (!isset($participants[$x]) or $participants[$x]->userid == 0) {
                 echo " barcodeerror";
             }
