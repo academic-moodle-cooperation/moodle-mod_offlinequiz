@@ -134,7 +134,6 @@ class offlinequiz_html_translator
                             $latexpath = $latex->render($texexp, $md5, 12, $density, $background);
                             if ($latexpath) {
                                 copy($latexpath, $teximagefile);
-                                $latex->clean_up($md5);
                             } else {
                                 // Failing that, use mimetex.
                                 $texexp = $texcache->rawtext;
