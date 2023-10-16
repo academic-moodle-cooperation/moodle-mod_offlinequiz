@@ -59,6 +59,7 @@ define("OFFLINEQUIZ_PART_USER_ERROR", "23");
 define("OFFLINEQUIZ_PART_LIST_ERROR", "24");
 define("OFFLINEQUIZ_IMPORT_NUMUSERS", "50");
 
+// Added support for a digit after the field name so "phone2" is supported.
 define('OFFLINEQUIZ_USER_FORMULA_REGEXP', "/^([^\[]*)\[([\-]?[0-9]+)\]([^\=]*)=([a-z]+[0-9]?)$/");
 
 define('OFFLINEQUIZ_GROUP_LETTERS', "ABCDEFGHIJKL");  // Letters for naming offlinequiz groups.
