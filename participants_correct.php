@@ -600,19 +600,14 @@ if ($sheetloaded) {
     }
     // Get userid select items.
     if ($list) {
-        $sql = "SELECT DISTINCT p.id, p.userid, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
-                  FROM {user} u,
-                       {offlinequiz_participants} p,
-                       {offlinequiz_p_lists} pl
-                 WHERE p.userid = u.id
-
-                   AND pl.offlinequizid = :offlinequizid
+        $sql = "SELECT p.id, p.userid, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
+                  FROM {offlinequiz_participants} p
+                  JOIN {user} u ON p.userid = u.id
+                  JOIN {offlinequiz_p_lists} pl ON p.listid = pl.id
+                 WHERE pl.offlinequizid = :offlinequizid
               ORDER BY u.lastname, u.firstname";
 
         $params['offlinequizid'] = $offlinequiz->id;
-       // $params['listid'] = $list->id;
-       //                    AND p.listid = :listid
-       //                    AND p.listid = pl.id
         $users = $DB->get_records_sql($sql, $params);
         foreach ($scanner->export_hotspots_barcodes(860) as $key => $hotspot) {
             $x = substr($key, 1);
@@ -637,6 +632,7 @@ lass', 'barcodeselect');}; checkinput(false);\">\n>";
             echo "</select>\n";
         }
     }
+
     echo "<form name=\"cornersform\" action=\"participants_correct.php\">\n";
     echo "<input type=\"hidden\" name=\"action\" value=\"readjust\">\n";
     echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\">\n";
