@@ -2313,7 +2313,8 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
             $questionreferences->questionarea = 'slot';
             $questionreferences->itemid = $newid;
             $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
-            $questionreferences->version = null; // Always latest.
+            $version = $DB->get_record('question_versions', ['questionid' => $questionid]);
+            $questionreferences->version = $version->version;
             $DB->insert_record('question_references', $questionreferences);
         }
         
