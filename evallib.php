@@ -800,7 +800,7 @@ function offlinequiz_get_question_numbers($offlinequiz, $groups) {
  */
 function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_participants_scanner $scanner,
                                                      $scannedpage, $teacherid, $coursecontext, $autorotate = false) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     // Check the list number.
     if (!property_exists($scannedpage, 'listnumber') || $scannedpage->listnumber == 0) {
@@ -826,6 +826,11 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
                 $scannedpage->listnumber > $maxlistnumber) {
             $scannedpage->status = 'error';
             $scannedpage->error = 'invalidlistnumber';
+            # for the unlikely case that the listnumber is out of range, due to scanning errors
+            if ($scannedpage->listnumber > 50000) {
+                $scannedpage->listnumber = 9999;
+                echo $OUTPUT->notification(get_string('scanerrorlistnumber', 'offlinequiz_rimport'), 'error');
+            }
         }
     }
 
@@ -879,6 +884,11 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
 
                     $scannedpage->status = 'error';
                     $scannedpage->error = 'invalidlistnumber';
+                    # for the unlikely case that the listnumber is out of range, due to scanning errors
+                    if ($scannedpage->listnumber > 50000) {
+                        $scannedpage->listnumber = 9999;
+                        echo $OUTPUT->notification(get_string('scanerrorlistnumber', 'offlinequiz_rimport'), 'error');
+                    }
                 }
             }
         }
