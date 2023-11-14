@@ -129,9 +129,6 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
 
                 $DB->update_record('question_references', $updatereference);
 
-                $thispageurl->remove_params('lastchanged');
-                $thispageurl->params(['versionschanged' => 2]);
-                redirect($thispageurl);
             }
         }
     }
@@ -337,7 +334,6 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
             $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
         }
     }
-
     offlinequiz_update_all_attempt_sumgrades($offlinequiz);
     offlinequiz_update_grades($offlinequiz, 0, true);
     redirect($afteractionurl);
@@ -346,7 +342,11 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
 // Get the question bank view.
 $questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
 $questionbank->set_offlinequiz_has_scanned_pages($docscreated);
-
+if($newquestionid) {
+    $thispageurl->remove_params('lastchanged');
+    $thispageurl->params(['versionschanged' => 2]);
+    redirect($thispageurl);
+}
 // End of process commands =====================================================.
 
 $PAGE->set_pagelayout('incourse');

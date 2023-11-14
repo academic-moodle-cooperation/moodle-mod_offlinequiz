@@ -1051,3 +1051,64 @@ function offlinequiz_get_number_of_columns($maxanswers) {
 function offlinequiz_get_number_of_pages($questions, $columns) {
     return ceil($questions / $columns / 24);
 }
+
+function offlinequiz_fix_question_versions() {
+    global $DB;
+    //first set all 
+    $sql = "SELECT DISTINCT gq1.id,gq1.offlinegroupid,  gq2.questionid
+                       FROM {offlinequiz_group_questions} gq1
+                       JOIN {question_versions} qv1 on qv1.questionid = gq1.questionid
+                       JOIN {question_versions} qv2 on qv2.questionbankentryid = qv1.questionbankentryid and qv1.version < qv2.version
+                       JOIN {offlinequiz_group_questions} gq2 on gq2.questionid = qv2.questionid and gq2.offlinequizid = gq1.offlinequizid";
+    $records = $DB->get_records_sql($sql);
+    foreach ($records as $record) {
+        $DB->set_field('offlinequiz_group_questions', 'questionid', $record->questionid,['id' => $record->id]);
+    }
+    $sql = "SELECT qr.id,qv.version from {question_references} qr 
+              JOIN {offlinequiz_group_questions} ogq on ogq.id = qr.itemid
+              JOIN {question_versions} qv on qv.questionid = ogq.questionid 
+              JOIN {question_bank_entries} mbe on mbe.id = qv.questionbankentryid 
+             WHERE component = 'mod_offlinequiz' and questionarea = 'slot'
+               AND qr.version is null or qr.version <> qv.version";
+    $records = $DB->get_records_sql($sql);
+    foreach ($records as $record) {
+        $DB->set_field('question_references', 'version', $record->version,['id' => $record->id]);
+    }
+
+
+    $sql = "SELECT og.templateusageid templateusageid, qa.id questionattemtid, qa.questionid oldquestionid, ogq.questionid newquestionid 
+              FROM {offlinequiz_groups} og
+              JOIN {question_usages} qu on qu.id = og.templateusageid
+              JOIN {offlinequiz_group_questions} ogq on og.id = ogq.offlinegroupid
+              JOIN {question_versions} oqv on ogq.questionid = oqv.questionid
+              JOIN {question_attempts} qa on qa.questionusageid = qu.id
+              JOIN {question_versions} tqv on tqv.questionid = qa.questionid and tqv.questionbankentryid = oqv.questionbankentryid
+             WHERE qa.questionid <> ogq.questionid";
+    $records = $DB->get_records_sql($sql);
+    foreach ($records as $record) {
+        $templateusage = question_engine::load_questions_usage_by_activity($record->templateusageid);
+        $oldquestionanswers = $DB->get_records('question_answers', ['question' => $record->oldquestionid]);
+        $newquestionanswers = array_values($DB->get_records('question_answers', ['question' => $record->newquestionid]));
+        $sql = "SELECT qasd.id AS id, qasd.value AS value
+                FROM {question_attempt_step_data} qasd
+                JOIN {question_attempt_steps} qas ON qas.id = qasd.attemptstepid
+                JOIN {question_attempts} qa ON qa.id = qas.questionattemptid
+               WHERE qa.questionusageid = :qubaid
+                 AND qa.questionid = :questionid
+                 AND qasd.name = '_order'";
+        $value = $DB->get_record_sql($sql, ['qubaid' => $templateusage->get_id(), 'questionid' => $record->oldquestionid]);
+        $values = explode(',', $value->value);
+        $replace = [];
+        $i = 0;
+        foreach ($oldquestionanswers as $oldquestionanswer) {
+            $replace[$oldquestionanswer->id] = $newquestionanswers[$i]->id;
+            $i++;
+        }
+        for ($i = 0; $i < count($values); $i++) {
+            $values[$i] = $replace[$values[$i]];
+        }
+        $values = implode(',', $values);
+        $DB->set_field('question_attempt_step_data', 'value', $values, ['id' => $value->id]);
+        $DB->set_field('question_attempts', 'questionid', $record->newquestionid, ['questionid' => $record->oldquestionid, 'questionusageid' => $templateusage->get_id()]);
+    }
+}
