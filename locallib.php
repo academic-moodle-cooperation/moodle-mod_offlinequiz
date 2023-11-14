@@ -484,6 +484,7 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
                AND qr.component = ?
                AND qr.questionarea = ?";
     $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slotid, 'mod_offlinequiz', 'slot']);
+    $version = $DB->get_field('question_versions','version',['questionid' => $questionid]);
 
     if (!$qreferenceitem) {
         // Create a new reference record for questions created already.
@@ -493,13 +494,14 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
         $questionreferences->questionarea = 'slot';
         $questionreferences->itemid = $slotid;
         $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
-        $questionreferences->version = null; // Always latest.
+        $questionreferences->version = $version;
         $DB->insert_record('question_references', $questionreferences);
 
     } else if ($qreferenceitem->itemid === 0 || $qreferenceitem->itemid === null) {
         $questionreferences = new \StdClass();
         $questionreferences->id = $qreferenceitem->id;
         $questionreferences->itemid = $slotid;
+        $questionreferences->version = $version;
         $DB->update_record('question_references', $questionreferences);
     } else {
         // If the reference record exits for another quiz.
@@ -509,7 +511,7 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
         $questionreferences->questionarea = 'slot';
         $questionreferences->itemid = $slotid;
         $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
-        $questionreferences->version = null; // Always latest.
+        $questionreferences->version = $version;
         $DB->insert_record('question_references', $questionreferences);
     }
 
