@@ -1076,7 +1076,7 @@ function offlinequiz_fix_question_versions() {
     }
 
 
-    $sql = "SELECT og.templateusageid templateusageid, qa.id questionattemtid, qa.questionid oldquestionid, ogq.questionid newquestionid 
+    $sql = "SELECT ogq.id groupquestionid, og.templateusageid templateusageid, qa.id questionattemtid, qa.questionid oldquestionid, ogq.questionid newquestionid 
               FROM {offlinequiz_groups} og
               JOIN {question_usages} qu on qu.id = og.templateusageid
               JOIN {offlinequiz_group_questions} ogq on og.id = ogq.offlinegroupid
