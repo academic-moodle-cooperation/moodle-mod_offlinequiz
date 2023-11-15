@@ -1119,7 +1119,7 @@ function offlinequiz_fix_question_versions() {
               JOIN {question_versions} qv ON qv.questionid = ogq.questionid 
               WHERE NOT EXISTS (
                    SELECT 1
-                     FROM {question_references mqr
+                     FROM {question_references} mqr
                     WHERE component = 'mod_offlinequiz'
                       AND questionarea = 'slot'
                       AND itemid = ogq.id
