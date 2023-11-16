@@ -1111,6 +1111,7 @@ function offlinequiz_fix_question_versions() {
         $DB->set_field('question_attempt_step_data', 'value', $values, ['id' => $value->id]);
         $DB->set_field('question_attempts', 'questionid', $record->newquestionid, ['questionid' => $record->oldquestionid, 'questionusageid' => $templateusage->get_id()]);
     }
+    
     $sql = "SELECT ogq.id itemid, c.id usingcontextid, 'mod_offlinequiz' component, 'slot' questionarea,  qv.questionbankentryid questionbankentryid, qv.version version
               FROM {offlinequiz_group_questions} ogq
               JOIN {modules} m ON m.name ='offlinequiz' 
@@ -1124,6 +1125,8 @@ function offlinequiz_fix_question_versions() {
                       AND questionarea = 'slot'
                       AND itemid = ogq.id
                     )";
-    $records = $DB->get_records_sql($sql);
-    $DB->insert_records('question_references', $records);
+    while($records = $DB->get_records_sql($sql,[],0,1000)) {
+        $records = $DB->get_records_sql($sql);
+        $DB->insert_records('question_references', $records);
+    }
 }
