@@ -1126,7 +1126,6 @@ function offlinequiz_fix_question_versions() {
                       AND itemid = ogq.id
                     )";
     while($records = $DB->get_records_sql($sql,[],0,1000)) {
-        $records = $DB->get_records_sql($sql);
         $DB->insert_records('question_references', $records);
     }
 }
