@@ -1125,7 +1125,7 @@ function offlinequiz_fix_question_versions() {
                       AND questionarea = 'slot'
                       AND itemid = ogq.id
                     )";
-    while($records = $DB->get_records_sql($sql,[],0,1000)) {
+    while($records = $DB->get_records_sql($sql,[],0,10000)) {
         $DB->insert_records('question_references', $records);
     }
 }
