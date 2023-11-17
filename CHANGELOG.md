@@ -12,6 +12,7 @@ CHANGELOG
 * [Bug] Fixed a bug that new versions were not added to all groups.
 * [Bug] Fixed a bug, that question versions were displayed wrong.
 * [Bug] Fixed an error in the preview caused changing question versions
+
 4.1.0
 -----------------
 * [Feature] Compatible Version for Moodle 4.01
