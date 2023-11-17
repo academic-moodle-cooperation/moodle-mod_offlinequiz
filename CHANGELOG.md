@@ -1,5 +1,17 @@
 CHANGELOG
 =========
+4.2.0
+-----------------
+* [Feature] Compatible Version for Moodle 4.02
+* [Feature] Regrading now works automatically. It is still possible to regrade on request in case of an error.
+* [Feature] Using newer PDFWord version compatible with PHP 8.2+
+* [Feature] Better feedback on changing question versions.
+* [Bug] Fixed missing question references so you can't delete questions that are still in use.
+* [Bug] Fixed some bugs regarding participants lists with multiple pages and multiple groups
+* [Bug] Fixed that questions were not randomized even if shuffle questions was turned on.
+* [Bug] Fixed a bug that new versions were not added to all groups.
+* [Bug] Fixed a bug, that question versions were displayed wrong.
+* [Bug] Fixed an error in the preview caused changing question versions
 4.1.0
 -----------------
 * [Feature] Compatible Version for Moodle 4.01
