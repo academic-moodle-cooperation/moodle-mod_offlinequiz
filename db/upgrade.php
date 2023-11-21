@@ -1582,7 +1582,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2023022000, 'offlinequiz');
     }
-    if ($oldversion < 2023070700.01) {
+    if ($oldversion < 2023070701.01) {
 
         // Define field documentquestionid to be added to offlinequiz_group_questions.
         $table = new xmldb_table('offlinequiz_group_questions');
@@ -1594,13 +1594,13 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         }
 
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2023070700.01, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2023070701.01, 'offlinequiz');
     }
 
-    if($oldversion < 2023070700.02) {
+    if($oldversion < 2023070701.02) {
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
         offlinequiz_fix_question_versions();
-        upgrade_mod_savepoint(true, 2023070700.02, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2023070701.02, 'offlinequiz');
     }
 
 
