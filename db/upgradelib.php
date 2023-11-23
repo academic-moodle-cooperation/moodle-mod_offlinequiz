@@ -1112,6 +1112,7 @@ function offlinequiz_fix_question_versions() {
         $DB->set_field('question_attempts', 'questionid', $record->newquestionid, ['questionid' => $record->oldquestionid, 'questionusageid' => $templateusage->get_id()]);
     }
     
+
     $sql = "SELECT ogq.id itemid, c.id usingcontextid, 'mod_offlinequiz' component, 'slot' questionarea,  qv.questionbankentryid questionbankentryid, qv.version version
               FROM {offlinequiz_group_questions} ogq
               JOIN {modules} m ON m.name ='offlinequiz' 
@@ -1125,7 +1126,19 @@ function offlinequiz_fix_question_versions() {
                       AND questionarea = 'slot'
                       AND itemid = ogq.id
                     )";
-    while($records = $DB->get_records_sql($sql,[],0,10000)) {
-        $DB->insert_records('question_references', $records);
+    $sql2 = "INSERT INTO {question_references} (itemid, usingcontextid, component, questionarea, questionbankentryid, version) ($sql LIMIT 10000)";
+    $thiscount = $DB->count_records('question_references');
+    $lastcount = -1;
+    try {
+        while ($thiscount > $lastcount) {
+            $DB->execute($sql2);
+            $lastcount = $thiscount;
+            $thiscount = $DB->count_records('question_references');
+        }
+    } catch(Exception $e) {
+        //Database doesn't support this type of insert, we have to get them out of the databse and insert them manually.
+        while ($records = $DB->get_records_sql($sql, [], 0, 10000)) {
+            $DB->insert_records('question_references', $records);
+        }
     }
 }
