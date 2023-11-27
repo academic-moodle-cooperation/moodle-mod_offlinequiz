@@ -61,8 +61,8 @@ if (strlen($usernumber) < $offlinequizconfig->ID_digits || !intval($usernumber))
 }
 
 for ($i = 0; $i < strlen($usernumber); $i++) {
-    if (!is_numeric($usernumber{$i})) {
-        $usernumber{$i} = 0;
+    if (!is_numeric(substr($usernumber, $i, 1))) {
+        $usernumber = substr($usernumber, 0, $i - 1 ) . '0' . substr($usernumber, $i + 1, strlen($usernumber) - $i);
     }
 }
 
@@ -79,8 +79,6 @@ if (!empty($offlinequiz)) {
 }
 if (!empty($course)) {
     $PAGE->set_heading($course->fullname);
-} else {
-    $PAGE->set_heading(get_string("tutorial", "offlinequiz"));
 }
 
 $PAGE->set_pagelayout('report');

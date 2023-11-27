@@ -198,7 +198,6 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             }
 
             echo $OUTPUT->box_start('linkbox');
-            echo $OUTPUT->heading(format_string($offlinequiz->name));
             echo $OUTPUT->heading_with_help(get_string('resultimport', 'offlinequiz'), 'importnew', 'offlinequiz');
             echo $OUTPUT->box_end();
         }

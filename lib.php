@@ -247,6 +247,9 @@ function offlinequiz_delete_instance($id) {
     // Delete template question usages of offlinequiz groups.
     offlinequiz_delete_template_usages($offlinequiz);
 
+    // Delete references.
+    offlinequiz_delete_references($offlinequiz->id);
+
     // All the tables with no dependencies...
     $tablestopurge = array(
             'offlinequiz_groups' => 'offlinequizid',
@@ -966,10 +969,6 @@ function offlinequiz_update_events($offlinequiz) {
     $timeopen  = $offlinequiz->timeopen;
     $timeclose = $offlinequiz->timeclose;
 
-    if ($offlinequiz->time) {
-        $timeopen = $offlinequiz->time;
-    }
-
     // Only add open/close events if they differ from the offlinequiz default.
     if (!empty($offlinequiz->coursemodule)) {
         $cmid = $offlinequiz->coursemodule;
@@ -1484,4 +1483,24 @@ function offlinequiz_get_coursemodule_info($coursemodule) {
         }
     }
     return $result;
+}
+
+/**
+ * Delete question reference data.
+ *
+ * @param int $offlinequizid The id of quiz.
+ */
+function offlinequiz_delete_references($offlinequizid): void {
+    global $DB;
+    $slots = $DB->get_records('offlinequiz_group_questions', ['offlinequizid' => $offlinequizid]);
+    foreach ($slots as $slot) {
+        $params = [
+            'itemid' => $slot->id,
+            'component' => 'mod_offlinequiz',
+            'questionarea' => 'slot'
+        ];
+
+        // Delete any references.
+        $DB->delete_records('question_references', $params);
+    }
 }

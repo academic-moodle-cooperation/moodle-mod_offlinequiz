@@ -54,30 +54,36 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
 
         // Lists of participants and their scanned pages.
         $paths[] = new restore_path_element('offlinequiz_plist',
-                 '/activity/offlinequiz/plists/plist');
+             '/activity/offlinequiz/plists/plist');
         $paths[] = new restore_path_element('offlinequiz_participant',
-                 '/activity/offlinequiz/plists/plist/participants/participant');
+             '/activity/offlinequiz/plists/plist/participants/participant');
         $paths[] = new restore_path_element('offlinequiz_scannedppage',
-                 '/activity/offlinequiz/scannedppages/scannedppage');
+             '/activity/offlinequiz/scannedppages/scannedppage');
         $paths[] = new restore_path_element('offlinequiz_pchoice',
-                 '/activity/offlinequiz/scannedppages/scannedppage/pchoices/pchoice');
+             '/activity/offlinequiz/scannedppages/scannedppage/pchoices/pchoice');
 
         // Handle offlinequiz groups.
         // We need to identify this path to add the question usages.
         $offlinequizgroup = new restore_path_element('offlinequiz_group',
-                '/activity/offlinequiz/groups/group');
+            '/activity/offlinequiz/groups/group');
         $paths[] = $offlinequizgroup;
 
         // Add template question usages for offline groups.
         $this->add_question_usages($offlinequizgroup, $paths, 'group_');
 
-        $paths[] = new restore_path_element('offlinequiz_groupquestion',
-                 '/activity/offlinequiz/groups/group/groupquestions/groupquestion');
+        $groupquestion = new restore_path_element('offlinequiz_groupquestion',
+             '/activity/offlinequiz/groups/group/groupquestions/groupquestion');
+        $paths[] = $groupquestion;
+
+        assert($this->task instanceof restore_offlinequiz_activity_task);
+        if ($this->task->get_old_moduleversion() >= 2022071500) {
+            $this->add_question_references($groupquestion, $paths);
+        }
 
         // We only add the results if userinfo was activated.
         if ($userinfo) {
             $offlinequizresult = new restore_path_element('offlinequiz_result',
-                    '/activity/offlinequiz/results/result');
+                '/activity/offlinequiz/results/result');
             $paths[] = $offlinequizresult;
 
             // Add the results' question usages.
@@ -98,7 +104,32 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
     }
 
     public function process_group_question_attempt_step($data) {
+        global $DB;
+        $groupvariable = $data["group_response"]["group_variable"];
         $this->restore_question_attempt_step_worker($data, 'group_');
+        $oldquestionid = $DB->get_field('question_attempts',
+                                        'questionid',
+                                        array('id' => $this->elementsoldid["group_question_attempt"]));
+        $newquestionid = $DB->get_field('question_attempts',
+                                        'questionid',
+                                        array('id' => $this->elementsnewid["group_question_attempt"]));
+        if ($oldquestionid == $newquestionid) { // Duplicate.
+            $stepid = $DB->get_field('question_attempt_steps',
+                                'id',
+                                array('questionattemptid' => $this->elementsnewid["group_question_attempt"])
+                            );
+            if ($stepid) {
+                $steporder = $DB->get_record('question_attempt_step_data', array('attemptstepid' => $stepid, 'name' => "_order"));
+                if ($steporder && $steporder->value == '') {
+                    foreach ($groupvariable as $key => $variable) {
+                        if ($variable['name'] == '_order') {
+                            $steporder->value = $variable['value'];
+                            $DB->update_record('question_attempt_step_data', $steporder);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public function process_result_question_usage($data) {
@@ -160,13 +191,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         }
     }
 
-
     // Restore method for offlinequiz group questions.
     protected function process_offlinequiz_groupquestion($data) {
         global $DB;
 
         $data = (object) $data;
-        $oldid = $data->id;
 
         // Backward compatibility for old field names prior to Moodle 2.8.5.
         if (isset($data->usageslot) && !isset($data->slot)) {
@@ -181,7 +210,29 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         if ($newid = $this->get_mappingid('question', $data->questionid)) {
             $data->questionid = $newid;
         }
+
         $newitemid = $DB->insert_record('offlinequiz_group_questions', $data);
+
+        if ($newitemid && !$DB->get_record('question_references',
+                                        ['component' => 'mod_offlinequiz', 'questionarea' => 'slot', 'itemid' => $newitemid]
+                                )) {
+
+            assert($this->task instanceof restore_offlinequiz_activity_task);
+            $data->usingcontextid = $this->task->get_contextid();
+            $data->itemid = $newitemid;
+            $this->get_new_parentid('offlinequiz_group_question');
+            $data->component = 'mod_offlinequiz';
+            $data->questionarea = 'slot';
+            // Fill in the selected version form question_version.
+            if ($entry = $DB->get_record('question_versions',
+                                        array('questionid' => $data->questionid),
+                                        'questionbankentryid,version'
+                                        )) {
+                $data->questionbankentryid = $entry->questionbankentryid;
+                $data->version = $entry->version;
+            }
+            $DB->insert_record('question_references', $data);
+        }
     }
 
     // Restore method for scanned pages.
