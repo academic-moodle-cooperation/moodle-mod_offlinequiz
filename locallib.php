@@ -150,7 +150,7 @@ function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
     $options = [];
     foreach ($tabs as $tabname => $tabobject) {
         if ($tabobject['tab'] == $ct['tab']) {
-            $options[$tabobject['url']->out()] = get_string($tabname, 'offlinequiz');
+            $options[$tabobject['url']->out()] = isset($tabobject['title'])?$tabobject['title'] : get_string($tabname, 'offlinequiz');
         }
     }
     $selectobject = new \url_select($options);
@@ -217,7 +217,24 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm) {
           'url' => new moodle_url('/mod/offlinequiz/participants.php',
                      ['q' => $offlinequiz->id, 'mode' => 'attendances'])],
      ];
-     return $tabs;
+    // Add tabs from subplugins.
+    $pluginmanager = core_plugin_manager::instance();
+    $subplugins = $pluginmanager->get_subplugins_of_plugin('mod_offlinequiz');
+    foreach ($subplugins as $subplugin) {
+        // Instantiate the subplugin.
+        $file = $subplugin->rootdir . '/report.php';
+        if (is_readable($file)) {
+            require_once($CFG->dirroot . '/mod/offlinequiz/report/default.php');
+            require_once($file);
+            $class = "offlinequiz_{$subplugin->name}_report";
+            $plugin = new $class();
+            if (method_exists($plugin, 'add_to_tabs')) {
+                $tabs = $plugin->add_to_tabs($tabs, $cm, $offlinequiz);
+            }
+        }
+    }
+    
+    return $tabs;
 }
 
 function offlinequiz_make_questions_usage_by_activity($component, $context) {

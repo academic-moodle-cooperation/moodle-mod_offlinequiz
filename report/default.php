@@ -116,4 +116,12 @@ abstract class offlinequiz_default_report {
 
         return $currentgroup;
     }
+    /**
+     * Add this report to the tabs structure.
+     * Extension point for adding the plugin to the tabs.
+     * TODO: move static structure from offlinequiz_get_tabs_object into this function implementations.
+     */
+    public function add_to_tabs($tabs, $cm, $offlinequiz) {
+        return $tabs;
+    }
 }
