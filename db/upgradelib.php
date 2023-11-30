@@ -1113,7 +1113,7 @@ function offlinequiz_fix_question_versions() {
     }
     
 
-    $sql = "SELECT ogq.id itemid, c.id usingcontextid, 'mod_offlinequiz' component, 'slot' questionarea,  qv.questionbankentryid questionbankentryid, qv.\"version\" \"version\"
+    $sql = "SELECT ogq.id itemid, c.id usingcontextid, 'mod_offlinequiz' component, 'slot' questionarea,  qv.questionbankentryid questionbankentryid, qv.version \"version\"
               FROM {offlinequiz_group_questions} ogq
               JOIN {modules} m ON m.name ='offlinequiz' 
               JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = ogq.offlinequizid 
