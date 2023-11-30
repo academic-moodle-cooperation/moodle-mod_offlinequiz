@@ -1406,7 +1406,7 @@ function offlinequiz_get_active_tab() {
     } else if (strpos($url, '/mod/offlinequiz/report.php')) {
         return 'tabresults';
     } else if (strpos($url, '/mod/offlinequiz/participants.php')) {
-        return 'tabattendance';
+        return 'tabattendances';
     }
 }
 

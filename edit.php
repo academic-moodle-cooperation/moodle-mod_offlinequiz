@@ -95,10 +95,7 @@ if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
 }
 
 $offlinequiz->sumgrades = $offlinequizgroup->sumgrades;
-
-$offlinequizhasattempts = offlinequiz_has_scanned_pages($offlinequiz->id);
 $docscreated = $offlinequiz->docscreated;
-$recordupdateanddocscreated = null;
 
 $PAGE->set_url($thispageurl);
 
@@ -112,50 +109,45 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
             AND qr.component = 'mod_offlinequiz'
             AND qr.questionarea = 'slot'
             AND c.instanceid = ?";
-    $questionupdate = $DB->get_record_sql($sql, [$newquestionid, $cmid]);
-    if ($questionupdate) {
-        $oldquestionid = $DB->get_field('offlinequiz_group_questions', 'questionid', ['id' => $questionupdate->itemid]);
-        $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
-        $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
-        if (!$docscreated || $oldquestioncountanswers == $newquestioncountanswers) {
-            $updategroupquestion = new stdClass();
-            $updategroupquestion->id = $questionupdate->itemid;
-            $updategroupquestion->questionid = $newquestionid;
+    $questionupdates = $DB->get_records_sql($sql, [$newquestionid, $cmid]);
+    if ($questionupdates) {
+        foreach ($questionupdates as $questionupdate) {
+            $oldquestionid = $DB->get_field('offlinequiz_group_questions', 'questionid', ['id' => $questionupdate->itemid]);
+            $maxmark = $DB->get_field('offlinequiz_group_questions', 'maxmark', ['id' => $questionupdate->itemid]);
+            $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
+            $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
+            if (!$docscreated || $oldquestioncountanswers == $newquestioncountanswers) {
+                offlinequiz_update_question_instance($offlinequiz, $oldquestionid, $maxmark, $newquestionid);
+            } else {
+                $updatereference = new stdClass();
+                $updatereference->id = $questionupdate->id;
+                $sql = 'SELECT qv.version
+                        FROM {question_versions} qv
+                        JOIN {offlinequiz_group_questions} ogq ON qv.questionid = ogq.questionid
+                        WHERE ogq.id = ?';
+                $updatereference->version = $DB->get_field_sql($sql, [$questionupdate->itemid]);
 
-            $DB->update_record('offlinequiz_group_questions', $updategroupquestion);
+                $DB->update_record('question_references', $updatereference);
 
-            $updatereference = new stdClass();
-            $updatereference->id = $questionupdate->id;
-            $updatereference->version = $questionupdate->version;
-
-            $DB->update_record('question_references', $updatereference);
-
-            $recordupdateanddocscreated = get_string('recordupdateanddocscreatedversion', 'offlinequiz');
-        } else {
-            $updatereference = new stdClass();
-            $updatereference->id = $questionupdate->id;
-            $sql = 'SELECT qv.version
-                    FROM {question_versions} qv
-                    JOIN {offlinequiz_group_questions} ogq ON qv.questionid = ogq.questionid
-                    WHERE ogq.id = ?';
-            $updatereference->version = $DB->get_field_sql($sql, [$questionupdate->itemid]);
-
-            $DB->update_record('question_references', $updatereference);
-
-            $recordupdateanddocscreated = get_string('recordupdateanddocscreated', 'offlinequiz');
+            }
         }
     }
 }
 
+
 // Get the course object and related bits.
 $offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
 $structure = $offlinequizobj->get_structure();
-
 if ($warning = optional_param('warning', '', PARAM_TEXT)) {
     $structure->add_warning(urldecode($warning));
 }
-
-if ($recordupdateanddocscreated) {
+$changedversionsexist = $DB->count_records_select('offlinequiz_group_questions', 'documentquestionid IS NOT NULL AND offlinequizid = $1', [$offlinequiz->id]);
+$hasresults = $DB->count_records('offlinequiz_results',['offlinequizid' => $offlinequiz->id]);
+if($changedversionsexist && $hasresults) {
+    $recordupdateanddocscreated = 
+    $structure->add_warning(get_string('documentschangedwithresults', 'offlinequiz'));
+} else if($changedversionsexist && !$hasresults) {
+    $recordupdateanddocscreated = get_string('documentschanged', 'offlinequiz');
     $structure->add_warning($recordupdateanddocscreated);
 }
 
@@ -342,7 +334,6 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
             $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
         }
     }
-
     offlinequiz_update_all_attempt_sumgrades($offlinequiz);
     offlinequiz_update_grades($offlinequiz, 0, true);
     redirect($afteractionurl);
@@ -351,7 +342,11 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
 // Get the question bank view.
 $questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
 $questionbank->set_offlinequiz_has_scanned_pages($docscreated);
-
+if($newquestionid) {
+    $thispageurl->remove_params('lastchanged');
+    $thispageurl->params(['versionschanged' => 2]);
+    redirect($thispageurl);
+}
 // End of process commands =====================================================.
 
 $PAGE->set_pagelayout('incourse');

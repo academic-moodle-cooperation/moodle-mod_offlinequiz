@@ -11,18 +11,19 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\RTF\Part;
 
+use PhpOffice\PhpWord\Element\Footer;
 use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Writer\RTF\Element\Container;
 use PhpOffice\PhpWord\Writer\RTF\Style\Section as SectionStyleWriter;
 
 /**
- * RTF document part writer
+ * RTF document part writer.
  *
  * @since 0.11.0
  * @see  http://www.biblioscape.com/rtf15_spec.htm#Heading24
@@ -30,7 +31,7 @@ use PhpOffice\PhpWord\Writer\RTF\Style\Section as SectionStyleWriter;
 class Document extends AbstractPart
 {
     /**
-     * Write part
+     * Write part.
      *
      * @return string
      */
@@ -46,29 +47,29 @@ class Document extends AbstractPart
     }
 
     /**
-     * Write document information
+     * Write document information.
      *
      * @return string
      */
     private function writeInfo()
     {
         $docProps = $this->getParentWriter()->getPhpWord()->getDocInfo();
-        $properties = array('title', 'subject', 'category', 'keywords', 'comment',
-            'author', 'operator', 'creatim', 'revtim', 'company', 'manager', );
-        $mapping = array(
-            'comment'  => 'description',
-            'author'   => 'creator',
+        $properties = ['title', 'subject', 'category', 'keywords', 'comment',
+            'author', 'operator', 'creatim', 'revtim', 'company', 'manager', ];
+        $mapping = [
+            'comment' => 'description',
+            'author' => 'creator',
             'operator' => 'lastModifiedBy',
-            'creatim'  => 'created',
-            'revtim'   => 'modified', );
-        $dateFields = array('creatim', 'revtim');
+            'creatim' => 'created',
+            'revtim' => 'modified', ];
+        $dateFields = ['creatim', 'revtim'];
 
         $content = '';
 
         $content .= '{';
         $content .= '\info';
         foreach ($properties as $property) {
-            $method = 'get' . (isset($mapping[$property]) ? $mapping[$property] : $property);
+            $method = 'get' . ($mapping[$property] ?? $property);
             if (!in_array($property, $dateFields) && Settings::isOutputEscapingEnabled()) {
                 $value = $this->escaper->escape($docProps->$method());
             } else {
@@ -84,7 +85,7 @@ class Document extends AbstractPart
     }
 
     /**
-     * Write document formatting properties
+     * Write document formatting properties.
      *
      * @return string
      */
@@ -105,13 +106,39 @@ class Document extends AbstractPart
         $content .= '\lang' . $langId;
         $content .= '\kerning1'; // Point size (in half-points) above which to kern character pairs
         $content .= '\fs' . (Settings::getDefaultFontSize() * 2); // Set the font size in half-points
+        if ($docSettings->hasEvenAndOddHeaders()) {
+            $content .= '\\facingp';
+        }
         $content .= PHP_EOL;
 
         return $content;
     }
 
     /**
-     * Write sections
+     * Write titlepg directive if any "f" headers or footers.
+     *
+     * @param \PhpOffice\PhpWord\Element\Section $section
+     *
+     * @return string
+     */
+    private static function writeTitlepg($section)
+    {
+        foreach ($section->getHeaders() as $header) {
+            if ($header->getType() === Footer::FIRST) {
+                return '\\titlepg' . PHP_EOL;
+            }
+        }
+        foreach ($section->getFooters() as $header) {
+            if ($header->getType() === Footer::FIRST) {
+                return '\\titlepg' . PHP_EOL;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Write sections.
      *
      * @return string
      */
@@ -120,10 +147,53 @@ class Document extends AbstractPart
         $content = '';
 
         $sections = $this->getParentWriter()->getPhpWord()->getSections();
+        $evenOdd = $this->getParentWriter()->getPhpWord()->getSettings()->hasEvenAndOddHeaders();
         foreach ($sections as $section) {
             $styleWriter = new SectionStyleWriter($section->getStyle());
             $styleWriter->setParentWriter($this->getParentWriter());
             $content .= $styleWriter->write();
+            $content .= self::writeTitlepg($section);
+
+            foreach ($section->getHeaders() as $header) {
+                $type = $header->getType();
+                if ($evenOdd || $type !== FOOTER::EVEN) {
+                    $content .= '{\\header';
+                    if ($type === Footer::FIRST) {
+                        $content .= 'f';
+                    } elseif ($evenOdd) {
+                        $content .= ($type === FOOTER::EVEN) ? 'l' : 'r';
+                    }
+                    foreach ($header->getElements() as $element) {
+                        $cl = get_class($element);
+                        $cl2 = str_replace('Element', 'Writer\\RTF\\Element', $cl);
+                        if (class_exists($cl2)) {
+                            $elementWriter = new $cl2($this->getParentWriter(), $element);
+                            $content .= $elementWriter->write();
+                        }
+                    }
+                    $content .= '}' . PHP_EOL;
+                }
+            }
+            foreach ($section->getFooters() as $footer) {
+                $type = $footer->getType();
+                if ($evenOdd || $type !== FOOTER::EVEN) {
+                    $content .= '{\\footer';
+                    if ($type === Footer::FIRST) {
+                        $content .= 'f';
+                    } elseif ($evenOdd) {
+                        $content .= ($type === FOOTER::EVEN) ? 'l' : 'r';
+                    }
+                    foreach ($footer->getElements() as $element) {
+                        $cl = get_class($element);
+                        $cl2 = str_replace('Element', 'Writer\\RTF\\Element', $cl);
+                        if (class_exists($cl2)) {
+                            $elementWriter = new $cl2($this->getParentWriter(), $element);
+                            $content .= $elementWriter->write();
+                        }
+                    }
+                    $content .= '}' . PHP_EOL;
+                }
+            }
 
             $elementWriter = new Container($this->getParentWriter(), $section);
             $content .= $elementWriter->write();
@@ -135,23 +205,24 @@ class Document extends AbstractPart
     }
 
     /**
-     * Get date value
+     * Get date value.
      *
      * The format of date value is `\yr?\mo?\dy?\hr?\min?\sec?`
      *
      * @param int $value
+     *
      * @return string
      */
     private function getDateValue($value)
     {
-        $dateParts = array(
+        $dateParts = [
             'Y' => 'yr',
             'm' => 'mo',
             'd' => 'dy',
             'H' => 'hr',
             'i' => 'min',
             's' => 'sec',
-        );
+        ];
         $result = '';
         foreach ($dateParts as $dateFormat => $controlWord) {
             $result .= '\\' . $controlWord . date($dateFormat, $value);

@@ -806,15 +806,16 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 $responsesdata = $responesstats->responses[$partid][$responseclassid];
 
                 if (empty($responsesdata)) {
-                    $rowdata->part = $letterstr[$counter++] . ')';
+                    $rowdata->part = $letterstr[$counter] . ')';
                     $rowdata->response = $responseclass->responseclass;
-                    $this->output_response_data($rowdata, $responseclass->responseclass, 0, $letterstr, $counter, $counter2, $partcounter, $question);
+                    $this->output_response_data($rowdata, $responseclass->fraction, 0, $letterstr, $counter, $counter2, $partcounter, $question);
+                    $counter++;
                     $partcounter++;
                     continue;
                 } else {
                     foreach ($responsesdata as $response => $data) {
                         $rowdata->response = $response;
-                        $this->output_response_data($rowdata, $data->fraction, $data->count, $letterstr, $counter, $counter2, $partcounter, $question);
+                        $this->output_response_data($rowdata, $rowdata->fraction, $data->count, $letterstr, $counter, $counter2, $partcounter, $question);
                         $counter++;
                         $partcounter++;
                         break; // We want to display every response only once.
@@ -831,9 +832,9 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $rowdata->count = $count;
         $rowdata->part = $letterstr[$counter] . ')';
         $classname = '';
-        if ($rowdata->fraction > 0) {
+        if ($fraction > 0) {
             $classname = 'greenrow';
-        } else if ($rowdata->fraction < 0) {
+        } else if ($fraction < 0) {
             $classname = 'redrow';
         }
         if ($counter2 == 0 && $partcounter == 0) {

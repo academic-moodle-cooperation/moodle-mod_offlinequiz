@@ -11,7 +11,7 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,14 +20,14 @@ namespace PhpOffice\PhpWord\Writer\RTF\Style;
 use PhpOffice\PhpWord\Style\Section as SectionStyle;
 
 /**
- * RTF section style writer
+ * RTF section style writer.
  *
  * @since 0.12.0
  */
 class Section extends AbstractStyle
 {
     /**
-     * Write style
+     * Write style.
      *
      * @return string
      */
@@ -53,6 +53,7 @@ class Section extends AbstractStyle
         $content .= $this->getValueIf($style->getHeaderHeight() !== null, '\headery' . round($style->getHeaderHeight()));
         $content .= $this->getValueIf($style->getFooterHeight() !== null, '\footery' . round($style->getFooterHeight()));
         $content .= $this->getValueIf($style->getGutter() !== null, '\guttersxn' . round($style->getGutter()));
+        $content .= $this->getValueIf($style->getPageNumberingStart() !== null, '\pgnstarts' . $style->getPageNumberingStart() . '\pgnrestart');
         $content .= ' ';
 
         // Borders

@@ -48,9 +48,10 @@ actually took part in the exam. Lists of participants are pre-filled with studen
 versions of those lists can be created in the module for easy marking during the exam. The marked
 lists can be uploaded and evaluated automatically.
 
-Furthermore you can use the Offline Quiz Cron plugin (report_offlinequizcron), which adds an interface to the Offline Quiz activity (mod_offlinequiz) to inspect and change pending cronjobs for the Offline Quiz.
-https://moodle.org/plugins/report_offlinequizcron
-https://github.com/academic-moodle-cooperation/moodle-report_offlinequizcron
+Furthermore you can use the Offline Quiz Cron plugin (report_offlinequizcron), which adds an interface to the Offline Quiz activity (mod_offlinequiz) to inspect and change pending cronjobs for the Offline Quiz. 
+
+- https://moodle.org/plugins/report_offlinequizcron
+- https://github.com/academic-moodle-cooperation/moodle-report_offlinequizcron
 
 
 Example
@@ -160,7 +161,7 @@ Documentation
 -------------
 
 You can find a cheat sheet for the plugin on the [AMC
-website](http://www.academic-moodle-cooperation.org/en/module/offline-quiz/) and a video tutorial
+website](https://academic-moodle-cooperation.org/mod_offlinequiz/) and a video tutorial
 in German only in the [AMC YouTube Channel](https://www.youtube.com/c/AMCAcademicMoodleCooperation).
 
 

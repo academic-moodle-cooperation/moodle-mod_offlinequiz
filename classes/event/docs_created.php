@@ -87,17 +87,6 @@ class docs_created extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'offlinequiz', 'createpdfs', 'mod/offlinequiz/createquiz.php?id=' .
-                $this->contextinstanceid . '&mode=' .
-                $this->other['reportname'], $this->other['offlinequizid'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception
