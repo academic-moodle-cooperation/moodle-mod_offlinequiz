@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/engine/upgrade/upgradelib.php');
 
 
 /**
- * This class manages upgrading all the question attempts from the old database
+ * This class manages upgrading all the question attempts FROM the old database
  * structure to the new question engine.
  *
  */
@@ -106,7 +106,7 @@ class offlinequiz_ilog_upgrader {
         foreach ($offlinequizzes as $offlinequiz) {
             $this->print_progress($done, $outof, $offlinequiz->id);
             echo ' '. $offlinequiz->id;
-            $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
+            $cm = get_coursemodule_FROM_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
             $context = context_module::instance($cm->id);
 
             $this->contextid = $context->id;
@@ -127,7 +127,7 @@ class offlinequiz_ilog_upgrader {
     public function update_all_files($offlinequiz) {
         global $DB, $CFG;
 
-        // First we migrate the image files from the original moodledata directory.
+        // First we migrate the image files FROM the original moodledata directory.
         $dirname = $CFG->dataroot . '/' . $offlinequiz->course . '/moddata/offlinequiz/' . $offlinequiz->id;
         $filenames = get_directory_list($dirname, 'pdfs', false, false);
         $fs = get_file_storage();
@@ -143,7 +143,7 @@ class offlinequiz_ilog_upgrader {
             $filerecord['filename'] = $filename;
             $pathname = $dirname . '/' . $filename;
             if (!$fs->file_exists($this->contextid, 'mod_offlinequiz', 'imagefiles', 0, '/', $filename)) {
-                if ($newfile = $fs->create_file_from_pathname($filerecord, $pathname)) {
+                if ($newfile = $fs->create_file_FROM_pathname($filerecord, $pathname)) {
                     unlink($pathname);
                 }
             }
@@ -164,7 +164,7 @@ class offlinequiz_ilog_upgrader {
         foreach ($filenames as $filename) {
             $filerecord['filename'] = $filename;
             $pathname = $dirname . '/' . $filename;
-            if ($newfile = $fs->create_file_from_pathname($filerecord, $pathname)) {
+            if ($newfile = $fs->create_file_FROM_pathname($filerecord, $pathname)) {
                 unlink($pathname);
             }
         }
@@ -465,7 +465,7 @@ class offlinequiz_ilog_upgrader {
 
 
     /**
-     * retrieve the image name from the rawdata
+     * retrieve the image name FROM the rawdata
      *
      */
     public function get_pic_name($rawdata) {
@@ -504,7 +504,7 @@ class offlinequiz_ilog_upgrader {
 }
 
 /**
- * This class manages upgrading all the question attempts from the old database
+ * This class manages upgrading all the question attempts FROM the old database
  * structure to the new question engine.
  *
  */
@@ -597,7 +597,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         echo 'finshed at ' . time() . "\n";
     }
 
-    public function get_attempts_extra_where() {
+    public function get_attempts_extra_WHERE() {
         return ' AND needsupgradetonewqe = 1';
     }
 
@@ -610,15 +610,15 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         $params = array('offlinequizid' => $quiz->id);
 
         // Actually we want all the attempts, also the ones with sheet = 1 for the group template usages.
-        $where = 'offlinequiz = :offlinequizid ' . $this->get_attempts_extra_where();
+        $WHERE = 'offlinequiz = :offlinequizid ' . $this->get_attempts_extra_WHERE();
 
-        $quizattemptsrs = $DB->get_recordset_select('offlinequiz_attempts', $where, $params, 'uniqueid');
+        $quizattemptsrs = $DB->get_recordset_SELECT('offlinequiz_attempts', $WHERE, $params, 'uniqueid');
 
         $questionsessionsrs = $DB->get_recordset_sql("
                 SELECT s.*
                 FROM {question_sessions} s
                 JOIN {offlinequiz_attempts} a ON (s.attemptid = a.uniqueid)
-                WHERE $where
+                WHERE $WHERE
                 ORDER BY attemptid, questionid
                 ", $params);
 
@@ -626,7 +626,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
                 SELECT s.*
                 FROM {question_states} s
                 JOIN {offlinequiz_attempts} a ON (s.attempt = a.uniqueid)
-                WHERE $where
+                WHERE $WHERE
                 ORDER BY s.attempt, question, seq_number, s.id
                 ", $params);
 
@@ -667,7 +667,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         $this->logger->set_current_attempt_id(null);
         $questionorder = array();
 
-        // For offlinequizzes we have to take the questionlist from the offline group or the attempt.
+        // For offlinequizzes we have to take the questionlist FROM the offline group or the attempt.
         $layout = $attempt->layout;
         $groupquestions = explode(',', $layout);
 
@@ -764,9 +764,9 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
     protected function get_converter_class_name($question, $quiz, $qsessionid) {
         global $DB;
         if ($question->qtype == 'deleted') {
-            $where = '(question = :questionid OR ' . $DB->sql_like('answer', ':randomid') . ') AND event = 7';
+            $WHERE = '(question = :questionid OR ' . $DB->sql_like('answer', ':randomid') . ') AND event = 7';
             $params = array('questionid' => $question->id, 'randomid' => "random{$question->id}-%");
-            if ($DB->record_exists_select('question_states', $where, $params)) {
+            if ($DB->record_exists_SELECT('question_states', $WHERE, $params)) {
                 $this->logger->log_assumption("Assuming that deleted question {$question->id} was manually graded.");
                 return 'qbehaviour_manualgraded_converter';
             }
@@ -960,7 +960,7 @@ function offlinequiz_update_form_file_names() {
 
     foreach ($offlinequizzes as $offlinequiz) {
 
-        $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
+        $cm = get_coursemodule_FROM_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
         $context = context_module::instance($cm->id);
 
         $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
@@ -1050,4 +1050,95 @@ function offlinequiz_get_number_of_columns($maxanswers) {
 
 function offlinequiz_get_number_of_pages($questions, $columns) {
     return ceil($questions / $columns / 24);
+}
+
+function offlinequiz_fix_question_versions() {
+    global $DB;
+    //first set all 
+    $sql = "SELECT DISTINCT gq1.id,gq1.offlinegroupid,  gq2.questionid
+                       FROM {offlinequiz_group_questions} gq1
+                       JOIN {question_versions} qv1 on qv1.questionid = gq1.questionid
+                       JOIN {question_versions} qv2 on qv2.questionbankentryid = qv1.questionbankentryid and qv1.version < qv2.version
+                       JOIN {offlinequiz_group_questions} gq2 on gq2.questionid = qv2.questionid and gq2.offlinequizid = gq1.offlinequizid";
+    $records = $DB->get_records_sql($sql);
+    foreach ($records as $record) {
+        $DB->set_field('offlinequiz_group_questions', 'questionid', $record->questionid,['id' => $record->id]);
+    }
+    $sql = "SELECT qr.id,qv.version FROM {question_references} qr 
+              JOIN {offlinequiz_group_questions} ogq on ogq.id = qr.itemid
+              JOIN {question_versions} qv on qv.questionid = ogq.questionid 
+              JOIN {question_bank_entries} mbe on mbe.id = qv.questionbankentryid 
+             WHERE component = 'mod_offlinequiz' and questionarea = 'slot'
+               AND qr.version is null or qr.version <> qv.version";
+    $records = $DB->get_records_sql($sql);
+    foreach ($records as $record) {
+        $DB->set_field('question_references', 'version', $record->version,['id' => $record->id]);
+    }
+
+
+    $sql = "SELECT ogq.id groupquestionid, og.templateusageid templateusageid, qa.id questionattemtid, qa.questionid oldquestionid, ogq.questionid newquestionid 
+              FROM {offlinequiz_groups} og
+              JOIN {question_usages} qu on qu.id = og.templateusageid
+              JOIN {offlinequiz_group_questions} ogq on og.id = ogq.offlinegroupid
+              JOIN {question_versions} oqv on ogq.questionid = oqv.questionid
+              JOIN {question_attempts} qa on qa.questionusageid = qu.id
+              JOIN {question_versions} tqv on tqv.questionid = qa.questionid and tqv.questionbankentryid = oqv.questionbankentryid
+             WHERE qa.questionid <> ogq.questionid";
+    $records = $DB->get_records_sql($sql);
+    foreach ($records as $record) {
+        $templateusage = question_engine::load_questions_usage_by_activity($record->templateusageid);
+        $oldquestionanswers = $DB->get_records('question_answers', ['question' => $record->oldquestionid]);
+        $newquestionanswers = array_values($DB->get_records('question_answers', ['question' => $record->newquestionid]));
+        $sql = "SELECT qasd.id AS id, qasd.value AS value
+                FROM {question_attempt_step_data} qasd
+                JOIN {question_attempt_steps} qas ON qas.id = qasd.attemptstepid
+                JOIN {question_attempts} qa ON qa.id = qas.questionattemptid
+               WHERE qa.questionusageid = :qubaid
+                 AND qa.questionid = :questionid
+                 AND qasd.name = '_order'";
+        $value = $DB->get_record_sql($sql, ['qubaid' => $templateusage->get_id(), 'questionid' => $record->oldquestionid]);
+        $values = explode(',', $value->value);
+        $replace = [];
+        $i = 0;
+        foreach ($oldquestionanswers as $oldquestionanswer) {
+            $replace[$oldquestionanswer->id] = $newquestionanswers[$i]->id;
+            $i++;
+        }
+        for ($i = 0; $i < count($values); $i++) {
+            $values[$i] = $replace[$values[$i]];
+        }
+        $values = implode(',', $values);
+        $DB->set_field('question_attempt_step_data', 'value', $values, ['id' => $value->id]);
+        $DB->set_field('question_attempts', 'questionid', $record->newquestionid, ['questionid' => $record->oldquestionid, 'questionusageid' => $templateusage->get_id()]);
+    }
+    
+
+    $sql = "SELECT ogq.id itemid, c.id usingcontextid, 'mod_offlinequiz' component, 'slot' questionarea,  qv.questionbankentryid questionbankentryid, qv.version \"version\"
+              FROM {offlinequiz_group_questions} ogq
+              JOIN {modules} m ON m.name ='offlinequiz' 
+              JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = ogq.offlinequizid 
+              JOIN {context} c ON c.instanceid = cm.id AND c.contextlevel = '70'
+              JOIN {question_versions} qv ON qv.questionid = ogq.questionid 
+              WHERE NOT EXISTS (
+                   SELECT 1
+                     FROM {question_references} mqr
+                    WHERE component = 'mod_offlinequiz'
+                      AND questionarea = 'slot'
+                      AND itemid = ogq.id
+                    )";
+    $sql2 = "INSERT INTO {question_references} (itemid, usingcontextid, component, questionarea, questionbankentryid, version) ($sql LIMIT 10000)";
+    $thiscount = $DB->count_records('question_references');
+    $lastcount = -1;
+    try {
+        while ($thiscount > $lastcount) {
+            $DB->execute($sql2);
+            $lastcount = $thiscount;
+            $thiscount = $DB->count_records('question_references');
+        }
+    } catch(Exception $e) {
+        //Database doesn't support this type of insert, we have to get them out of the databse and insert them manually.
+        while ($records = $DB->get_records_sql($sql, [], 0, 10000)) {
+            $DB->insert_records('question_references', $records);
+        }
+    }
 }

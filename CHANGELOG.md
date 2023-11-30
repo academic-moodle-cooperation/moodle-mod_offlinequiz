@@ -1,5 +1,18 @@
 CHANGELOG
 =========
+4.1.1/4.1.2
+-----------------
+**WARNING:** THIS UPDATE MAY TAKE SOME TIME ON BIGGER INSTANCES! For more information see https://github.com/academic-moodle-cooperation/moodle-mod_offlinequiz/issues/220
+* [Feature] Regrading now works automatically. It is still possible to regrade on request in case of an error.
+* [Feature] Using newer PDFWord version compatible with PHP 8.2+
+* [Feature] Better feedback on changing question versions.
+* [Bug] Fixed missing question references so you can't delete questions that are still in use.
+* [Bug] Fixed some bugs regarding participants lists with multiple pages and multiple groups
+* [Bug] Fixed that questions were not randomized even if shuffle questions was turned on.
+* [Bug] Fixed a bug that new versions were not added to all groups.
+* [Bug] Fixed a bug, that question versions were displayed wrongly.
+* [Bug] Fixed an error in the preview caused by changing question versions
+
 4.1.0
 -----------------
 * [Feature] Compatible Version for Moodle 4.01

@@ -328,15 +328,29 @@ switch($mode) {
         $potentialmemberscount = 0;
         $params = array_merge($rparams, $cparams);
 
+        // find $userinlistids in order to prevent users being added to multiple lists 
+        $sql = "SELECT DISTINCT p.*
+                      FROM {offlinequiz_participants} p
+                      JOIN {offlinequiz_p_lists} pl ON pl.id  = p.listid
+                     WHERE pl.offlinequizid = :offlinequizid";
+        $usersinlists = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id]);
+        $usersinlistsids = array();
+        foreach ($usersinlists as $userinlist) {
+            $usersinlistsids[] = $userinlist->userid;
+        }
+        
         if ($potentialmembers = get_enrolled_users($coursecontext, 'mod/offlinequiz:attempt')) {
             foreach ($potentialmembers as $member) {
-                if (empty($members[$member->id]) and (empty($group) or !empty($groupmembers[$member->id]))) {
-                    $potentialmembersoptions .= '<option value="' . $member->id . '">' . fullname($member) .
-                    ' (' . $member->{$offlinequizconfig->ID_field} . ')</option>';
-                    $potentialmemberscount++;
+                if (empty($members[$member->id]) and (empty($group) or !empty($groupmembers[$member->id]))) {                    
+                    if (!in_array($member->id, $usersinlistsids)) {
+                        $potentialmembersoptions .= '<option value="' . $member->id . '">' . fullname($member) .
+                        ' (' . $member->{$offlinequizconfig->ID_field} . ')</option>';
+                        $potentialmemberscount++;
+                    }                    
                 }
             }
         }
+
         $strpreview = get_string('participantslist', 'offlinequiz');
         include('participants/members.html');
         break;
@@ -601,7 +615,9 @@ switch($mode) {
                 $filename = $tempdir . '/' . $file;
                 set_time_limit(120);
                 $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
+
                 if ($scannedpage = $scanner->load_image($filename)) {
+
                     if ($scannedpage->status == 'ok') {
                         list($scanner, $scannedpage) = offlinequiz_check_scanned_participants_page(
                                                        $offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, true);

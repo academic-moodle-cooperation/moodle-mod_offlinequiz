@@ -11,14 +11,17 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Element;
 
+use InvalidArgumentException;
+use PhpOffice\PhpWord\Style\Font;
+
 /**
- * Field element
+ * Field element.
  *
  * @since 0.11.0
  * @see  http://www.schemacentral.com/sc/ooxml/t-w_CT_SimpleField.html
@@ -27,120 +30,154 @@ class Field extends AbstractElement
 {
     /**
      * Field properties and options. Depending on type, a field can have different properties
-     * and options
+     * and options.
      *
      * @var array
      */
-    protected $fieldsArray = array(
-        'PAGE' => array(
-           'properties' => array(
-               'format' => array('Arabic', 'ArabicDash', 'alphabetic', 'ALPHABETIC', 'roman', 'ROMAN'),
-           ),
-           'options' => array('PreserveFormat'),
-        ),
-        'NUMPAGES' => array(
-           'properties' => array(
-               'format' => array('Arabic', 'ArabicDash', 'CardText', 'DollarText', 'Ordinal', 'OrdText',
-                   'alphabetic', 'ALPHABETIC', 'roman', 'ROMAN', 'Caps', 'FirstCap', 'Lower', 'Upper', ),
-               'numformat' => array('0', '0,00', '#.##0', '#.##0,00', '€ #.##0,00(€ #.##0,00)', '0%', '0,00%'),
-           ),
-           'options' => array('PreserveFormat'),
-        ),
-        'DATE' => array(
-            'properties' => array(
-                'dateformat' => array(
-                    /* Generic formats */
+    protected $fieldsArray = [
+        'PAGE' => [
+            'properties' => [
+                'format' => ['Arabic', 'ArabicDash', 'alphabetic', 'ALPHABETIC', 'roman', 'ROMAN'],
+            ],
+            'options' => ['PreserveFormat'],
+        ],
+        'NUMPAGES' => [
+            'properties' => [
+                'format' => ['Arabic', 'ArabicDash', 'CardText', 'DollarText', 'Ordinal', 'OrdText',
+                    'alphabetic', 'ALPHABETIC', 'roman', 'ROMAN', 'Caps', 'FirstCap', 'Lower', 'Upper', ],
+                'numformat' => ['0', '0,00', '#.##0', '#.##0,00', '€ #.##0,00(€ #.##0,00)', '0%', '0,00%'],
+            ],
+            'options' => ['PreserveFormat'],
+        ],
+        'DATE' => [
+            'properties' => [
+                'dateformat' => [
+                    // Generic formats
                     'yyyy-MM-dd', 'yyyy-MM', 'MMM-yy', 'MMM-yyyy', 'h:mm am/pm', 'h:mm:ss am/pm', 'HH:mm', 'HH:mm:ss',
-                    /* Day-Month-Year formats */
+                    // Day-Month-Year formats
                     'dddd d MMMM yyyy', 'd MMMM yyyy', 'd-MMM-yy', 'd MMM. yy',
                     'd-M-yy', 'd-M-yy h:mm', 'd-M-yy h:mm:ss', 'd-M-yy h:mm am/pm', 'd-M-yy h:mm:ss am/pm', 'd-M-yy HH:mm', 'd-M-yy HH:mm:ss',
                     'd/M/yy', 'd/M/yy h:mm', 'd/M/yy h:mm:ss', 'd/M/yy h:mm am/pm', 'd/M/yy h:mm:ss am/pm', 'd/M/yy HH:mm', 'd/M/yy HH:mm:ss',
                     'd-M-yyyy', 'd-M-yyyy h:mm', 'd-M-yyyy h:mm:ss', 'd-M-yyyy h:mm am/pm', 'd-M-yyyy h:mm:ss am/pm', 'd-M-yyyy HH:mm', 'd-M-yyyy HH:mm:ss',
                     'd/M/yyyy', 'd/M/yyyy h:mm', 'd/M/yyyy h:mm:ss', 'd/M/yyyy h:mm am/pm', 'd/M/yyyy h:mm:ss am/pm', 'd/M/yyyy HH:mm', 'd/M/yyyy HH:mm:ss',
-                    /* Month-Day-Year formats */
+                    // Month-Day-Year formats
                     'dddd, MMMM d yyyy', 'MMMM d yyyy', 'MMM-d-yy', 'MMM. d yy',
                     'M-d-yy', 'M-d-yy h:mm', 'M-d-yy h:mm:ss', 'M-d-yy h:mm am/pm', 'M-d-yy h:mm:ss am/pm', 'M-d-yy HH:mm', 'M-d-yy HH:mm:ss',
                     'M/d/yy', 'M/d/yy h:mm', 'M/d/yy h:mm:ss', 'M/d/yy h:mm am/pm', 'M/d/yy h:mm:ss am/pm', 'M/d/yy HH:mm', 'M/d/yy HH:mm:ss',
                     'M-d-yyyy', 'M-d-yyyy h:mm', 'M-d-yyyy h:mm:ss', 'M-d-yyyy h:mm am/pm', 'M-d-yyyy h:mm:ss am/pm', 'M-d-yyyy HH:mm', 'M-d-yyyy HH:mm:ss',
                     'M/d/yyyy', 'M/d/yyyy h:mm', 'M/d/yyyy h:mm:ss', 'M/d/yyyy h:mm am/pm', 'M/d/yyyy h:mm:ss am/pm', 'M/d/yyyy HH:mm', 'M/d/yyyy HH:mm:ss',
-                ),
-            ),
-            'options' => array('PreserveFormat', 'LunarCalendar', 'SakaEraCalendar', 'LastUsedFormat'),
-        ),
-        'MACROBUTTON' => array(
-            'properties' => array('macroname' => ''),
-        ),
-        'XE' => array(
-            'properties' => array(),
-            'options'    => array('Bold', 'Italic'),
-        ),
-        'INDEX' => array(
-            'properties' => array(),
-            'options'    => array('PreserveFormat'),
-        ),
-        'STYLEREF' => array(
-            'properties' => array('StyleIdentifier' => ''),
-            'options'    => array('PreserveFormat'),
-        ),
-    );
+                ],
+            ],
+            'options' => ['PreserveFormat', 'LunarCalendar', 'SakaEraCalendar', 'LastUsedFormat'],
+        ],
+        'MACROBUTTON' => [
+            'properties' => ['macroname' => ''],
+        ],
+        'XE' => [
+            'properties' => [],
+            'options' => ['Bold', 'Italic'],
+        ],
+        'INDEX' => [
+            'properties' => [],
+            'options' => ['PreserveFormat'],
+        ],
+        'STYLEREF' => [
+            'properties' => ['StyleIdentifier' => ''],
+            'options' => ['PreserveFormat'],
+        ],
+    ];
 
     /**
-     * Field type
+     * Field type.
      *
      * @var string
      */
     protected $type;
 
     /**
-     * Field text
+     * Field text.
      *
-     * @var TextRun|string
+     * @var string|TextRun
      */
     protected $text;
 
     /**
-     * Field properties
+     * Field properties.
      *
      * @var array
      */
-    protected $properties = array();
+    protected $properties = [];
 
     /**
-     * Field options
+     * Field options.
      *
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
-     * Font style
+     * Font style.
      *
-     * @var \PhpOffice\PhpWord\Style\Font
+     * @var \PhpOffice\PhpWord\Style\Font|string
      */
     protected $fontStyle;
 
     /**
-     * Create a new Field Element
+     * Set Font style.
+     *
+     * @param array|\PhpOffice\PhpWord\Style\Font|string $style
+     *
+     * @return \PhpOffice\PhpWord\Style\Font|string
+     */
+    public function setFontStyle($style = null)
+    {
+        if ($style instanceof Font) {
+            $this->fontStyle = $style;
+        } elseif (is_array($style)) {
+            $this->fontStyle = new Font('text');
+            $this->fontStyle->setStyleByArray($style);
+        } elseif (null === $style) {
+            $this->fontStyle = null;
+        } else {
+            $this->fontStyle = $style;
+        }
+
+        return $this->fontStyle;
+    }
+
+    /**
+     * Get Font style.
+     *
+     * @return \PhpOffice\PhpWord\Style\Font|string
+     */
+    public function getFontStyle()
+    {
+        return $this->fontStyle;
+    }
+
+    /**
+     * Create a new Field Element.
      *
      * @param string $type
      * @param array $properties
      * @param array $options
-     * @param TextRun|string|null $text
+     * @param null|string|TextRun $text
+     * @param array|\PhpOffice\PhpWord\Style\Font|string $fontStyle
      */
-    public function __construct($type = null, $properties = array(), $options = array(), $text = null)
+    public function __construct($type = null, $properties = [], $options = [], $text = null, $fontStyle = null)
     {
         $this->setType($type);
         $this->setProperties($properties);
         $this->setOptions($options);
         $this->setText($text);
+        $this->setFontStyle($fontStyle);
     }
 
     /**
-     * Set Field type
+     * Set Field type.
      *
      * @param string $type
      *
-     * @throws \InvalidArgumentException
      * @return string
      */
     public function setType($type = null)
@@ -149,7 +186,7 @@ class Field extends AbstractElement
             if (isset($this->fieldsArray[$type])) {
                 $this->type = $type;
             } else {
-                throw new \InvalidArgumentException("Invalid type '$type'");
+                throw new InvalidArgumentException("Invalid type '$type'");
             }
         }
 
@@ -157,7 +194,7 @@ class Field extends AbstractElement
     }
 
     /**
-     * Get Field type
+     * Get Field type.
      *
      * @return string
      */
@@ -167,19 +204,18 @@ class Field extends AbstractElement
     }
 
     /**
-     * Set Field properties
+     * Set Field properties.
      *
      * @param array $properties
      *
-     * @throws \InvalidArgumentException
      * @return self
      */
-    public function setProperties($properties = array())
+    public function setProperties($properties = [])
     {
         if (is_array($properties)) {
             foreach (array_keys($properties) as $propkey) {
                 if (!(isset($this->fieldsArray[$this->type]['properties'][$propkey]))) {
-                    throw new \InvalidArgumentException("Invalid property '$propkey'");
+                    throw new InvalidArgumentException("Invalid property '$propkey'");
                 }
             }
             $this->properties = array_merge($this->properties, $properties);
@@ -189,7 +225,7 @@ class Field extends AbstractElement
     }
 
     /**
-     * Get Field properties
+     * Get Field properties.
      *
      * @return array
      */
@@ -199,19 +235,18 @@ class Field extends AbstractElement
     }
 
     /**
-     * Set Field options
+     * Set Field options.
      *
      * @param array $options
      *
-     * @throws \InvalidArgumentException
      * @return self
      */
-    public function setOptions($options = array())
+    public function setOptions($options = [])
     {
         if (is_array($options)) {
             foreach (array_keys($options) as $optionkey) {
                 if (!(isset($this->fieldsArray[$this->type]['options'][$optionkey])) && substr($optionkey, 0, 1) !== '\\') {
-                    throw new \InvalidArgumentException("Invalid option '$optionkey', possible values are " . implode(', ', $this->fieldsArray[$this->type]['options']));
+                    throw new InvalidArgumentException("Invalid option '$optionkey', possible values are " . implode(', ', $this->fieldsArray[$this->type]['options']));
                 }
             }
             $this->options = array_merge($this->options, $options);
@@ -221,7 +256,7 @@ class Field extends AbstractElement
     }
 
     /**
-     * Get Field properties
+     * Get Field properties.
      *
      * @return array
      */
@@ -231,11 +266,10 @@ class Field extends AbstractElement
     }
 
     /**
-     * Set Field text
+     * Set Field text.
      *
      * @param string|TextRun $text
      *
-     * @throws \InvalidArgumentException
      * @return null|string|TextRun
      */
     public function setText($text = null)
@@ -244,7 +278,7 @@ class Field extends AbstractElement
             if (is_string($text) || $text instanceof TextRun) {
                 $this->text = $text;
             } else {
-                throw new \InvalidArgumentException('Invalid text');
+                throw new InvalidArgumentException('Invalid text');
             }
         }
 
@@ -252,7 +286,7 @@ class Field extends AbstractElement
     }
 
     /**
-     * Get Field text
+     * Get Field text.
      *
      * @return string|TextRun
      */

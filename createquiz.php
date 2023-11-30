@@ -208,7 +208,7 @@ if ($mode == 'preview') {
         echo $OUTPUT->single_button(
             new moodle_url('/mod/offlinequiz/createquiz.php', $buttonoptions),
             get_string('createpdfforms', 'offlinequiz'),
-            'get', ['primary' => true]
+            'get', ['type' => 'primary']
         );
 
         echo '</div>';
@@ -304,7 +304,6 @@ if ($mode == 'preview') {
         foreach ($slots as $qid => $slot) {
             $questionslots[$templateusage->get_question($slot)->id] = $slot;
         }
-
         $questionnumber = 1;
         $currentpage = 1;
         if ($offlinequiz->shufflequestions) {

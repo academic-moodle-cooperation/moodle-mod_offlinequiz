@@ -11,17 +11,33 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
-namespace PhpOffice\PhpWord;
+namespace PhpOffice\PhpWord\Writer\HTML\Element;
 
 /**
- * @deprecated 0.12.0 Use `\PhpOffice\PhpWord\TemplateProcessor` instead.
+ * ListItem element HTML writer.
  *
- * @codeCoverageIgnore
+ * @since 0.10.0
  */
-class Template extends TemplateProcessor
+class ListItemRun extends TextRun
 {
+    /**
+     * Write list item.
+     *
+     * @return string
+     */
+    public function write()
+    {
+        if (!$this->element instanceof \PhpOffice\PhpWord\Element\ListItemRun) {
+            return '';
+        }
+
+        $writer = new Container($this->parentWriter, $this->element);
+        $content = $writer->write() . PHP_EOL;
+
+        return $content;
+    }
 }
