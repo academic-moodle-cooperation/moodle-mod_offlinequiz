@@ -2,7 +2,7 @@ CHANGELOG
 =========
 4.1.1/4.1.2
 -----------------
-* WARNING! THIS UPDATE MAY TAKE SOME TIME ON BIGGER INSTANCES! For more information see https://github.com/academic-moodle-cooperation/moodle-mod_offlinequiz/issues/220
+**WARNING:** THIS UPDATE MAY TAKE SOME TIME ON BIGGER INSTANCES! For more information see https://github.com/academic-moodle-cooperation/moodle-mod_offlinequiz/issues/220
 * [Feature] Regrading now works automatically. It is still possible to regrade on request in case of an error.
 * [Feature] Using newer PDFWord version compatible with PHP 8.2+
 * [Feature] Better feedback on changing question versions.
