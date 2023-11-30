@@ -484,6 +484,7 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
                AND qr.component = ?
                AND qr.questionarea = ?";
     $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slotid, 'mod_offlinequiz', 'slot']);
+    $version = $DB->get_field('question_versions','version',['questionid' => $questionid]);
 
     if (!$qreferenceitem) {
         // Create a new reference record for questions created already.
@@ -493,13 +494,14 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
         $questionreferences->questionarea = 'slot';
         $questionreferences->itemid = $slotid;
         $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
-        $questionreferences->version = null; // Always latest.
+        $questionreferences->version = $version;
         $DB->insert_record('question_references', $questionreferences);
 
     } else if ($qreferenceitem->itemid === 0 || $qreferenceitem->itemid === null) {
         $questionreferences = new \StdClass();
         $questionreferences->id = $qreferenceitem->id;
         $questionreferences->itemid = $slotid;
+        $questionreferences->version = $version;
         $DB->update_record('question_references', $questionreferences);
     } else {
         // If the reference record exits for another quiz.
@@ -509,7 +511,7 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
         $questionreferences->questionarea = 'slot';
         $questionreferences->itemid = $slotid;
         $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
-        $questionreferences->version = null; // Always latest.
+        $questionreferences->version = $version;
         $DB->insert_record('question_references', $questionreferences);
     }
 
@@ -654,7 +656,6 @@ function offlinequiz_repaginate_questions($offlinequizid, $offlinegroupid, $slot
  * @param boolean $shuffle Should the questions be reordered randomly?
  */
 function offlinequiz_shuffle_questions($questionids) {
-    srand((int)microtime() * 1000000); // For php < 4.2.
     shuffle($questionids);
     return $questionids;
 }
@@ -800,43 +801,39 @@ function offlinequiz_delete_result($resultid, $context) {
  * The grades of the questions in the group template qubas are also updated.
  * This function does not update 'sumgrades' in the offlinequiz table.
  *
- * @param int $offlinequiz  The offlinequiz to update / add the instances for.
+ * @param stdClass $offlinequiz  The offlinequiz to update / add the instances for.
  * @param int $questionid  The id of the question
  * @param int grade    The maximal grade for the question
  */
-function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade) {
+function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade, $newquestionid = null) {
     global $DB;
+    $transaction = $DB->start_delegated_transaction();
+    $DB->set_field('offlinequiz_group_questions', 'maxmark', $grade,
+        ['offlinequizid' => $offlinequiz->id, 'questionid' => $questionid]);
+    if ($newquestionid) {
+        $newquestionversion = $DB->get_field('question_versions', 'version', ['questionid' => $newquestionid]);
 
-    // First change the maxmark of the question in all offline quiz groups.
-    $groupquestionids = $DB->get_fieldset_select('offlinequiz_group_questions', 'id',
-                    'offlinequizid = :offlinequizid AND questionid = :questionid',
-                    array('offlinequizid' => $offlinequiz->id, 'questionid' => $questionid));
-
-    foreach ($groupquestionids as $groupquestionid) {
-        $DB->set_field('offlinequiz_group_questions', 'maxmark', $grade, array('id' => $groupquestionid));
+        $referenceids = $DB->get_records('offlinequiz_group_questions', ['questionid' => $questionid, 'offlinequizid' => $offlinequiz->id], 'id');
+        $DB->set_field('offlinequiz_group_questions', 'questionid', $newquestionid,
+            ['offlinequizid' => $offlinequiz->id, 'questionid' => $questionid]);
+        if ($referenceids && $newquestionversion) {
+            foreach ($referenceids as $referenceid) {
+                $DB->set_field('question_references', 'version', $newquestionversion, ['itemid' => $referenceid->id]);
+                if(!$referenceid->documentquestionid && $offlinequiz->docscreated) {
+                    $DB->set_field('offlinequiz_group_questions', 'documentquestionid', $questionid,['questionid' => $referenceid->questionid, 'offlinequizid' => $offlinequiz->id]);
+                }
+            }
+        }
     }
-
-    $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0,
-                $offlinequiz->numgroups);
+    $groups = $DB->get_records('offlinequiz_groups',
+        ['offlinequizid' => $offlinequiz->id], 'groupnumber');
 
     // Now change the maxmark of the question instance in the template question usages of the offlinequiz groups.
     foreach ($groups as $group) {
 
         if ($group->templateusageid) {
             $templateusage = question_engine::load_questions_usage_by_activity($group->templateusageid);
-            $slots = $templateusage->get_slots();
-
-            $slot = 0;
-            foreach ($slots as $thisslot) {
-                if ($templateusage->get_question($thisslot)->id == $questionid) {
-                    $slot = $thisslot;
-                    break;
-                }
-            }
-            if ($slot) {
-                // Update the grade in the template usage.
-                question_engine::set_max_mark_in_attempts(new qubaid_list(array($group->templateusageid)), $slot, $grade);
-            }
+            offlinequiz_update_quba($templateusage, $questionid, $newquestionid, $grade);
         }
     }
 
@@ -844,29 +841,66 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade)
     if ($results = $DB->get_records('offlinequiz_results', array('offlinequizid' => $offlinequiz->id))) {
         foreach ($results as $result) {
             if ($result->usageid > 0) {
-                $quba = question_engine::load_questions_usage_by_activity($result->usageid);
-                $slots = $quba->get_slots();
-
-                $slot = 0;
-                foreach ($slots as $thisslot) {
-                    if ($quba->get_question($thisslot)->id == $questionid) {
-                        $slot = $thisslot;
-                        break;
-                    }
-                }
-                if ($slot) {
-                    question_engine::set_max_mark_in_attempts(new qubaid_list(array($result->usageid)), $slot, $grade);
-
-                    // Now set the new sumgrades also in the offline quiz result.
-                    $newquba = question_engine::load_questions_usage_by_activity($result->usageid);
-                    $DB->set_field('offlinequiz_results', 'sumgrades',  $newquba->get_total_mark(),
-                        array('id' => $result->id));
-                }
+                $templateusage = question_engine::load_questions_usage_by_activity($result->usageid);
+                offlinequiz_update_quba($templateusage, $questionid, $newquestionid, $grade);
+                // Now set the new sumgrades also in the offline quiz result.
+                $DB->set_field('offlinequiz_results', 'sumgrades',  $templateusage->get_total_mark(),
+                    array('id' => $result->id));
             }
         }
     }
+    $DB->commit_delegated_transaction($transaction);
 }
 
+
+function offlinequiz_update_quba(question_usage_by_activity $templateusage, $oldquestionid, $newquestionid, $grade) {
+    global $DB;
+    $slots = $templateusage->get_slots();
+    $slot = 0;
+    foreach ($slots as $thisslot) {
+        if ($templateusage->get_question($thisslot)->id == $oldquestionid) {
+            $slot = $thisslot;
+            break;
+        }
+    }
+    if ($slot) {
+        if ($newquestionid) {
+            $oldquestionanswers = $DB->get_records('question_answers', ['question' => $oldquestionid]);
+            $newquestionanswers = array_values($DB->get_records('question_answers', ['question' => $newquestionid]));
+            $sql = "SELECT qasd.id AS id, qasd.value AS value
+                    FROM {question_attempt_step_data} qasd
+                    JOIN {question_attempt_steps} qas ON qas.id = qasd.attemptstepid
+                    JOIN {question_attempts} qa ON qa.id = qas.questionattemptid
+                    WHERE qa.questionusageid = :qubaid
+                    AND qa.questionid = :questionid
+                    AND qasd.name = '_order'";
+            $value = $DB->get_record_sql($sql, ['qubaid' => $templateusage->get_id(), 'questionid' => $oldquestionid]);
+            $values = explode(',', $value->value);
+            $replace = [];
+            $i = 0;
+            foreach ($oldquestionanswers as $oldquestionanswer) {
+                $replace[$oldquestionanswer->id] = $newquestionanswers[$i]->id;
+                $i++;
+            }
+            for ($i = 0; $i < count($values); $i++) {
+                $values[$i] = $replace[$values[$i]];
+            }
+            $values = implode(',', $values);
+            $DB->set_field('question_attempt_step_data', 'value', $values, ['id' => $value->id]);
+            $DB->set_field('question_attempts', 'questionid', $newquestionid, ['questionid' => $oldquestionid, 'questionusageid' => $templateusage->get_id()]);
+            // Update the grade in the template usage.
+            $templateusage = question_engine::load_questions_usage_by_activity($templateusage->get_id());
+        }
+        question_engine::set_max_mark_in_attempts(new qubaid_list([$templateusage->get_id()]), $slot, $grade);
+        $templateusage->regrade_question($slot, true, $grade);
+        question_engine::save_questions_usage_by_activity($templateusage);
+        $templateusage = question_engine::load_questions_usage_by_activity($templateusage->get_id());
+        $totalmark = $templateusage->get_total_mark();
+        $DB->set_field('offlinequiz_results', 'sumgrades', $totalmark, ['usageid' => $templateusage->get_id()]);
+    }
+    $templateusage = question_engine::load_questions_usage_by_activity($templateusage->get_id());
+    return $templateusage;
+}
 
 /**
  * Update the sumgrades field of the results in an offline quiz.
@@ -1601,6 +1635,9 @@ function offlinequiz_delete_pdf_forms($offlinequiz) {
     $DB->set_field('offlinequiz_groups', 'questionfilename', null, array('offlinequizid' => $offlinequiz->id));
     $DB->set_field('offlinequiz_groups', 'answerfilename', null, array('offlinequizid' => $offlinequiz->id));
     $DB->set_field('offlinequiz_groups', 'correctionfilename', null, array('offlinequizid' => $offlinequiz->id));
+    // Delete changed documentquestionids
+    $DB->set_field('offlinequiz_group_questions', 'documentquestionid', null, array('offlinequizid' => $offlinequiz->id));
+
 
     // Set offlinequiz->docscreated to 0.
     $offlinequiz->docscreated = 0;
@@ -2256,7 +2293,33 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
                 $slot->page = $maxpage;
             }
         }
-        $DB->insert_record('offlinequiz_group_questions', $slot);
+        $newid = $DB->insert_record('offlinequiz_group_questions', $slot);
+
+        $sql = "SELECT DISTINCT qr.id, qr.itemid
+              FROM {question} q
+              JOIN {question_versions} qv ON q.id = qv.questionid
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_references} qr ON qbe.id = qr.questionbankentryid AND qr.version = qv.version
+              JOIN {offlinequiz_group_questions} os ON os.id = qr.itemid
+             WHERE q.id = ?
+               AND os.id = ?
+               AND qr.component = ?
+               AND qr.questionarea = ?";
+        $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slot->slot, 'mod_offlinequiz', 'slot']);
+        
+        if (!$qreferenceitem) {
+            // Create a new reference record for questions created already.
+            $questionreferences = new \StdClass();
+            $questionreferences->usingcontextid = \context_module::instance($offlinequiz->cmid)->id;
+            $questionreferences->component = 'mod_offlinequiz';
+            $questionreferences->questionarea = 'slot';
+            $questionreferences->itemid = $newid;
+            $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
+            $version = $DB->get_record('question_versions', ['questionid' => $questionid]);
+            $questionreferences->version = $version->version;
+            $DB->insert_record('question_references', $questionreferences);
+        }
+        
         $trans->allow_commit();
     }
 }

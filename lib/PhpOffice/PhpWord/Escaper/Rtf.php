@@ -11,7 +11,7 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -26,8 +26,14 @@ class Rtf extends AbstractEscaper
 {
     protected function escapeAsciiCharacter($code)
     {
-        if (20 > $code || $code >= 80) {
-            return '{\u' . $code . '}';
+        if ($code == 9) {
+            return '{\\tab}';
+        }
+        if (0x20 > $code || $code >= 0x80) {
+            return '{\\u' . $code . '}';
+        }
+        if ($code == 123 || $code == 125 || $code == 92) { // open or close brace or backslash
+            return '\\' . chr($code);
         }
 
         return chr($code);
@@ -35,11 +41,12 @@ class Rtf extends AbstractEscaper
 
     protected function escapeMultibyteCharacter($code)
     {
-        return '\uc0{\u' . $code . '}';
+        return '\\uc0{\\u' . $code . '}';
     }
 
     /**
      * @see http://www.randomchaos.com/documents/?source=php_and_unicode
+     *
      * @param string $input
      */
     protected function escapeSingleValue($input)
@@ -47,7 +54,7 @@ class Rtf extends AbstractEscaper
         $escapedValue = '';
 
         $numberOfBytes = 1;
-        $bytes = array();
+        $bytes = [];
         for ($i = 0; $i < strlen($input); ++$i) {
             $character = $input[$i];
             $asciiCode = ord($character);
@@ -81,7 +88,7 @@ class Rtf extends AbstractEscaper
                     }
 
                     $numberOfBytes = 1;
-                    $bytes = array();
+                    $bytes = [];
                 }
             }
         }

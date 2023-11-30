@@ -64,7 +64,6 @@ class edit_renderer extends \plugin_renderer_base {
         global $CFG;
         $offlinequiz = $offlinequizobj->get_offlinequiz();
         $cm = $offlinequizobj->get_cm();
-        $thispageurl = $pageurl;
 
         // Now we echo the tabs.
         offlinequiz_print_tabs($offlinequiz, 'tabeditgroupquestions', $cm);
@@ -345,7 +344,8 @@ class edit_renderer extends \plugin_renderer_base {
         $select = html_writer::select($perpage, 'questionsperpage',
                 $structure->get_questions_per_page(), false);
 
-        $buttonattributes = array('type' => 'submit', 'name' => 'repaginate', 'value' => get_string('go'));
+        $buttonattributes = array('type' => 'submit', 'name' => 'repaginate', 'value' => get_string('go'),
+            'class' => 'btn btn-secondary');
 
         $formcontent = html_writer::tag('form', html_writer::div(
                     html_writer::input_hidden_params($hiddenurl) .
