@@ -449,7 +449,12 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         if (!empty($texfilter)) {
             $answertext = $texfilter->filter($answertext);
         }
-
+        // Issue #221: Moodle editor allow editing answers in PLAIN and Moodle format without escaping < and > characters.
+        // If answer format is not HTML then escape HTML special characters because they can break TCPDF.
+        if ($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
+            $answertext = s($answertext);
+        }
+        
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
         // Remove all paragraph tags because they mess up the layout.
