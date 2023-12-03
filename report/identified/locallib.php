@@ -84,6 +84,58 @@ class offlinequiz_answer_pdf_identified extends offlinequiz_answer_pdf {
         }
         }
     }
+    /**
+     * Overrides the footer to display PageGroup numbers instead of document-wide page numbers.
+     * @see TCPDF::Footer()
+     */
+    // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
+    public function Footer() {
+        $letterstr = ' ABCDEF';
+
+        $this->Line(11, 285, 14, 285);
+        $this->Line(12.5, 283.5, 12.5, 286.5);
+        $this->Line(193, 285, 196, 285);
+        $this->Line(194.5, 283.5, 194.5, 286.5);
+        $this->Rect(192, 282.5, 2.5, 2.5, 'F');                // Flip indicator.
+        $this->Rect(15, 281, 174, 0.5, 'F');                   // Bold line on bottom.
+
+        // Position at x mm from bottom.
+        $this->SetY(-20);
+        $this->SetFont('FreeSans', '', 8);
+        $this->Cell(10, 4, $this->formtype, 1, 0, 'C');
+
+        // ID of the offline quiz.
+        $this->Cell(15, 4, substr('0000000'.$this->offlinequiz, -7), 1, 0, 'C');
+
+        // Letter for the group.
+        $this->Cell(10, 4, $letterstr[$this->groupid], 1, 0, 'C');
+
+        // ID of the user who created the form.
+        $this->Cell(15, 4, substr('0000000'.$this->userid, -7), 1, 0, 'C');
+
+        // Name of the offline-quiz.
+        $title = $this->title;
+        $width = 100;
+
+        while ($this->GetStringWidth($title) > ($width - 1)) {
+            $title = mb_substr($title,  0,  mb_strlen($title) - 1);
+        }
+        $this->Cell($width, 4, $title, 1, 0, 'C');
+
+        $y = $this->GetY();
+        $x = $this->GetX();
+        // Print bar code for page.
+        offlinequiz_barcodewriter::print_barcode($this, $this->PageNo(), $x, $y);
+
+        $this->Rect($x, $y, 0.2, 3.7, 'F');
+
+        // Page number.
+        $this->Ln(3);
+        $this->SetFont('FreeSans', 'I', 8);
+        $this->Cell(0, 10, offlinequiz_str_html_pdf(get_string('page') . ' ' . $this->getPageNumGroupAlias() . '/' .
+                $this->getPageGroupAlias()), 0, 0, 'C');
+    }
+
 }
 
 /*
@@ -145,6 +197,7 @@ function offlinequiz_create_pdf_answer_body($pdf, $maxanswers, $templateusage, $
     $pdf->userid = $USER->id;
     $pdf->SetMargins(15, 20, 15);
     $pdf->SetAutoPageBreak(true, 20);
+    $pdf->startPageGroup();
     $pdf->AddPage();
 
     // Load all the questions and quba slots needed by this script.
