@@ -147,14 +147,17 @@ function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
     }
     $tabs = offlinequiz_get_tabs_object($offlinequiz, $cm);
     $ct = $tabs[$currenttab];
-    $options = [];
+  
+    // Create tabs structures.
+    $toprow = [];
     foreach ($tabs as $tabname => $tabobject) {
         if ($tabobject['tab'] == $ct['tab']) {
-            $options[$tabobject['url']->out()] = isset($tabobject['title'])?$tabobject['title'] : get_string($tabname, 'offlinequiz');
+            $title = isset($tabobject['title'])?$tabobject['title'] : get_string($tabname, 'offlinequiz');
+            $tabobj = new tabobject($tabname, $tabobject['url'], $title);
+            $toprow[] = $tabobj;
         }
     }
-    $selectobject = new \url_select($options);
-    echo $OUTPUT->render($selectobject);
+    echo $OUTPUT->tabtree($toprow, $currenttab);
 }
 
 function offlinequiz_get_tabs_object($offlinequiz, $cm) {
