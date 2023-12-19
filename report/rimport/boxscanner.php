@@ -87,7 +87,7 @@ class pixelcountboxscanner {
     }
 }
 
-class weighted_diagonal_box_scanner{
+class weighted_diagonal_box_scanner {
     private static $count = 0;
 
     /**
@@ -273,5 +273,3 @@ class weighted_diagonal_box_scanner{
         return $distancedownwards / sqrt($width * $height);
     }
 }
-
-

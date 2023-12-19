@@ -688,9 +688,9 @@ $string['questionsinthisofflinequiz'] = 'Questions in this offline quiz';
 $string['questiontextisempty'] = '[Empty question text]';
 $string['quizdate'] = 'Date of offline quiz';
 $string['quizopenclose'] = 'Open and close dates';
-$string['quizopenclose_help'] = 'The online review can be restricted to a specific time period. Click on "Show" to change the date and time settings. 
+$string['quizopenclose_help'] = 'The online review can be restricted to a specific time period. Click on "Show" to change the date and time settings.
 
-**Caution:** If no time period is activated for the online review, the review is unrestricted as long as the offline quiz is visible to the participants. 
+**Caution:** If no time period is activated for the online review, the review is unrestricted as long as the offline quiz is visible to the participants.
 
 In all cases, only the options ticked under "Review includes" are displayed.';
 $string['qversioncannotupdate'] = 'Question version cannot be updated';

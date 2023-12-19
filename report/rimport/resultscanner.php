@@ -127,8 +127,6 @@ class offlinequiz_resultscanner {
         return $position;
     }
 
-
-
     private function calculate_result(offlinequiz_result_page $page, $columndistance, $position, $questiononpage, $answercount) {
         for ($i = 0; $i < $answercount; $i++) {
             $expectedx = ANSWERS_DISTANCE_X + ($columndistance * $position['column'])
@@ -144,6 +142,4 @@ class offlinequiz_resultscanner {
             }
         }
     }
-
-
 }

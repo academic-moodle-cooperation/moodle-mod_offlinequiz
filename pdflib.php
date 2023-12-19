@@ -68,8 +68,7 @@ class offlinequiz_barcodewriter {
     }
 }
 
-class offlinequiz_pdf extends pdf
-{
+class offlinequiz_pdf extends pdf {
     /**
      * Containing the current page buffer after checkpoint() was called.
      */
@@ -92,8 +91,7 @@ class offlinequiz_pdf extends pdf
     }
 
 }
-class offlinequiz_question_pdf extends offlinequiz_pdf
-{
+class offlinequiz_question_pdf extends offlinequiz_pdf {
     private $tempfiles = array();
 
     /**
@@ -638,7 +636,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
     // Load the question type specific information.
     if (!get_question_options($questions)) {
-        print_error('Could not load question options');
+        throw new \moodle_exception('Could not load question options');
     }
 
     // Restore the question sessions to their most recent states.
@@ -827,7 +825,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
         $pdf->colwidth = 26 * 6.5;
     }
     if ($maxanswers > 26) {
-        print_error('Too many answers in one question');
+        throw new \moodle_exception('Too many answers in one question');
     }
     $pdf->userid = $USER->id;
     $pdf->SetMargins(15, 20, 15);
@@ -857,7 +855,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
 
     // Load the question type specific information.
     if (!get_question_options($questions)) {
-        print_error('Could not load question options');
+        throw new \moodle_exception('Could not load question options');
     }
 
     // Counting the total number of multichoice questions in the question usage.
@@ -980,7 +978,7 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
 
     // First get roleids for students.
     if (!$roles = get_roles_with_capability('mod/offlinequiz:attempt', CAP_ALLOW, $systemcontext)) {
-        print_error("No roles with capability 'mod/offlinequiz:attempt' defined in system context");
+        throw new \moodle_exception("No roles with capability 'mod/offlinequiz:attempt' defined in system context");
     }
 
     $roleids = array();

@@ -59,7 +59,7 @@ if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
     $offlinequiz->questions = $groupquestions;
 } else {
-    print_error('invalidgroupnumber', 'offlinequiz');
+    throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
 }
 
 // Create offlinequiz question bank view.

@@ -27,8 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class offlinequiz_html_translator
-{
+class offlinequiz_html_translator {
     private $tempfiles = array();
 
     public function __construct() {
@@ -106,7 +105,7 @@ class offlinequiz_html_translator
                         $file = $CFG->tempdir ."/offlinequiz/" . $unique . '.' . strtolower($filetype);
                         clearstatcache();
                         if (!check_dir_exists($CFG->tempdir . "/offlinequiz", true, true)) {
-                            print_error("Could not create data directory");
+                            throw new \moodle_exception("Could not create data directory");
                         }
                         $imagefile->copy_content_to($file);
                     } else {
@@ -151,7 +150,7 @@ class offlinequiz_html_translator
                     $file = $CFG->tempdir . "/offlinequiz/" . $unique . '.' . strtolower($pathparts["extension"]);
                     clearstatcache();
                     if (!check_dir_exists($CFG->tempdir . "/offlinequiz", true, true)) {
-                        print_error("Could not create data directory");
+                        throw new \moodle_exception("Could not create data directory");
                     }
                     copy($teximagefile, $file);
                     $teximage = true;

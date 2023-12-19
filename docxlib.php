@@ -62,8 +62,8 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
             array_shift($blocks);
         }
 
-        $listItemRun = $section->addListItemRun($depth, 'questionnumbering');
-        $listItemRun->addText(htmlspecialchars(html_entity_decode($itemstring)), $style);
+        $listitemrun = $section->addListItemRun($depth, 'questionnumbering');
+        $listitemrun->addText(htmlspecialchars(html_entity_decode($itemstring)), $style);
         // We also skip the first sequential newline because we got a newline with addListItem.
         if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
             array_shift($blocks);
@@ -75,7 +75,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
         if (empty($numbering)) {
             $textrun = $section->addTextRun();
         } else {
-            $textrun = $listItemRun;
+            $textrun = $listitemrun;
         }
         $counter = count($blocks);
         foreach ($blocks as $block) {
@@ -143,7 +143,7 @@ function offlinequiz_convert_underline_text_docx($text) {
 
     // Now add the remaining text after the image tag.
     $parts = preg_split('/<span style="text-decoration: underline;">|<u>/i', $text);
-    $span_u = preg_match('<span style="text-decoration: underline;">', $text); // Is it the span-underline?
+    $spanu = preg_match('<span style="text-decoration: underline;">', $text); // Is it the span-underline?
     $result = array();
 
     $firstpart = array_shift($parts);
@@ -153,7 +153,7 @@ function offlinequiz_convert_underline_text_docx($text) {
     }
 
     foreach ($parts as $part) {
-        if ($span_u && $closetagpos = strpos($part, '</span>')) {
+        if ($spanu && $closetagpos = strpos($part, '</span>')) {
             $underlineremain = substr($part, $closetagpos + 7);
         } else if ($closetagpos = strpos($part, '</u>')) {
             $underlineremain = substr($part, $closetagpos + 4);
@@ -596,7 +596,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Load the question type specific information.
     if (!get_question_options($questions)) {
-        print_error('Could not load question options');
+        throw new \moodle_exception('Could not load question options');
     }
 
     // Restore the question sessions to their most recent states.

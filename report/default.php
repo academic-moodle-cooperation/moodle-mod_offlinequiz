@@ -80,11 +80,11 @@ abstract class offlinequiz_default_report {
                 $reporttitle = get_string('statisticsplural', 'offlinequiz');
                 $currenttab = 'tabstatsoverview';
                 break;
-           case 'questionstats':
+            case 'questionstats':
                 $reporttitle = get_string('statisticsplural', 'offlinequiz');
                 $currenttab = 'tabquestionstats';
                 break;
-           case 'questionandanswerstats':
+            case 'questionandanswerstats':
                 $reporttitle = get_string('statisticsplural', 'offlinequiz');
                 $currenttab = 'tabquestionandanswerstats';
                 break;

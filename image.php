@@ -35,40 +35,40 @@ $resultid = required_param('resultid', PARAM_INT);
 $pageid      = optional_param('pageid', 0, PARAM_INT);
 
 if (!$result = $DB->get_record('offlinequiz_results', array('id' => $resultid))) {
-    print_error('noresult', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noresult', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', array('id' => $pageid))) {
-    print_error('nopage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('nopage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$offlinequiz = $DB->get_record("offlinequiz", array('id' => $result->offlinequizid))) {
-    print_error('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
-    print_error('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-    print_error('nocm', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('nocm', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0,
         $offlinequiz->numgroups)) {
-    print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
 require_login($course->id, false, $cm);
 $context = context_module::instance($cm->id);
 
 if (!has_capability('mod/offlinequiz:viewreports', $context) and !has_capability('mod/offlinequiz:attempt', $context)) {
-    print_error('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
 if (!has_capability('mod/offlinequiz:viewreports', $context) and $result->userid != $USER->id) {
-    print_error('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
 $options = offlinequiz_get_review_options($offlinequiz, $result, $context);
 
 if (!$options->sheetfeedback and !$options->gradedsheetfeedback) {
-    print_error('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
 $url = new moodle_url('/mod/offlinequiz/image.php', array('pageid' => $scannedpage->id, 'resultid' => $result->id));
@@ -169,11 +169,11 @@ if ($sheetloaded) {
         if (!$questions = $DB->get_records_sql($sql, $params)) {
             $viewurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/view.php',
                     array('q' => $offlinequiz->id));
-            print_error('noquestionsfound', 'offlinequiz', $viewurl);
+            throw new \moodle_exception('noquestionsfound', 'offlinequiz', $viewurl);
         }
         // Load the question type specific information.
         if (!get_question_options($questions)) {
-            print_error('Could not load question options');
+            throw new \moodle_exception('Could not load question options');
         }
 
         $questioncounter = 0;

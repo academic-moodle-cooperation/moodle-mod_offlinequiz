@@ -34,7 +34,7 @@ $PAGE->set_url('/mod/offlinequiz/index.php', array('id' => $id));
 $PAGE->set_pagelayout('incourse');
 
 if (!$course = $DB->get_record('course', array('id' => $id))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 $coursecontext = context_course::instance($id);

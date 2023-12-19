@@ -34,23 +34,23 @@ $page = optional_param('page', 0, PARAM_INT);         // The required page.
 $showall = optional_param('showall', 0, PARAM_BOOL);  // Not used at the moment.
 
 if (!$result = $DB->get_record("offlinequiz_results", array("id" => $resultid))) {
-    print_error("No such result ID exists");
+    throw new \moodle_exception("No such result ID exists");
 }
 if (!$offlinequiz = $DB->get_record("offlinequiz", array("id" => $result->offlinequizid))) {
-    print_error("The offlinequiz with id $result->offlinequiz belonging to result $result is missing");
+    throw new \moodle_exception("The offlinequiz with id $result->offlinequiz belonging to result $result is missing");
 }
 
 $offlinequiz->optionflags = 0;
 $offlinequiz->penaltyscheme = 0;
 
 if (!$group = $DB->get_record("offlinequiz_groups", array('id' => $result->offlinegroupid))) {
-    print_error("The offlinequiz group belonging to result $result is miss1ing");
+    throw new \moodle_exception("The offlinequiz group belonging to result $result is miss1ing");
 }
 if (!$course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
-    print_error("The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
+    throw new \moodle_exception("The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-    print_error("The course module for the offlinequiz with id $offlinequiz->id is missing");
+    throw new \moodle_exception("The course module for the offlinequiz with id $offlinequiz->id is missing");
 }
 
 $grade = offlinequiz_rescale_grade($result->sumgrades, $offlinequiz, $group);
@@ -79,7 +79,7 @@ if (!$isteacher) {
         redirect('view.php?q=' . $offlinequiz->id, get_string("noreview", "offlinequiz"));
     }
     if ($result->userid != $USER->id) {
-        print_error("This is not your result!", 'view.php?q=' . $offlinequiz->id);
+        throw new \moodle_exception("This is not your result!", 'view.php?q=' . $offlinequiz->id);
     }
 }
 
@@ -100,8 +100,7 @@ echo $OUTPUT->header();
 
 // Print heading and tabs if this is part of a preview.
 if ($isteacher) {
-    if ($result->userid == $USER->id) { // This is the report on a preview.
-    } else {
+    if (!($result->userid == $USER->id)) {
         $currenttab = 'tabresultsoverview';
         offlinequiz_print_tabs($offlinequiz, $currenttab, $cm);
     }
@@ -143,10 +142,10 @@ if ($options->marks != question_display_options::HIDDEN) {
         $table->data[] = array($strscore . ':', $resultmark . '/' . $maxmark . ' (' . $percentage . '%)');
 
         $a = new stdClass;
-	if(is_numeric(preg_replace('/,/i', '.', $grade))) {
+        if (is_numeric(preg_replace('/,/i', '.', $grade))) {
             $a->grade = format_float(preg_replace('/,/i', '.', $grade), $offlinequiz->decimalpoints);
         } else {
-	    $a->grade = $grade;
+            $a->grade = $grade;
         }
         $a->maxgrade = format_float($offlinequiz->grade, $offlinequiz->decimalpoints);
         $table->data[] = array($strgrade . ':', get_string('outof', 'offlinequiz', $a));
@@ -244,7 +243,7 @@ if (!$isteacher) {
 if ($options->attempt == question_display_options::VISIBLE || $isteacher) {
     // Load the questions needed by page.
     if (!$quba = question_engine::load_questions_usage_by_activity($result->usageid)) {
-        print_error('Could not load question usage');
+        throw new \moodle_exception('Could not load question usage');
     }
 
     $slots = $quba->get_slots();

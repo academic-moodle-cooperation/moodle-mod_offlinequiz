@@ -228,24 +228,24 @@ function get_course_objects($id, $q) {
     global $DB;
     if ($id) {
         if (!$cm = get_coursemodule_from_id('offlinequiz', $id)) {
-            print_error("There is no coursemodule with id $id");
+            throw new \moodle_exception("There is no coursemodule with id $id");
         }
         if (!$course = $DB->get_record("course", array('id' => $cm->course))) {
-            print_error("Course is misconfigured");
+            throw new \moodle_exception("Course is misconfigured");
         }
         if (!$offlinequiz = $DB->get_record("offlinequiz", array('id' => $cm->instance))) {
-            print_error("The offlinequiz with id $cm->instance corresponding to this coursemodule $id is missing");
+            throw new \moodle_exception("The offlinequiz with id $cm->instance corresponding to this coursemodule $id is missing");
         }
 
     } else {
         if (!$offlinequiz = $DB->get_record("offlinequiz", array('id' => $q))) {
-            print_error("There is no offlinequiz with id $q");
+            throw new \moodle_exception("There is no offlinequiz with id $q");
         }
         if (!$course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
-            print_error("The course with id $offlinequiz->course that the offlinequiz with id $q belongs to is missing");
+            throw new \moodle_exception("The course with id $offlinequiz->course that the offlinequiz with id $q belongs to is missing");
         }
         if (!$cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $course->id)) {
-            print_error("The course module for the offlinequiz with id $q is missing");
+            throw new \moodle_exception("The course module for the offlinequiz with id $q is missing");
         }
     }
     return [$offlinequiz, $course, $cm];
@@ -484,7 +484,7 @@ function offlinequiz_add_offlinequiz_question($questionid, $offlinequiz, $page =
                AND qr.component = ?
                AND qr.questionarea = ?";
     $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slotid, 'mod_offlinequiz', 'slot']);
-    $version = $DB->get_field('question_versions','version',['questionid' => $questionid]);
+    $version = $DB->get_field('question_versions', 'version', ['questionid' => $questionid]);
 
     if (!$qreferenceitem) {
         // Create a new reference record for questions created already.
@@ -819,8 +819,9 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade,
         if ($referenceids && $newquestionversion) {
             foreach ($referenceids as $referenceid) {
                 $DB->set_field('question_references', 'version', $newquestionversion, ['itemid' => $referenceid->id]);
-                if(!$referenceid->documentquestionid && $offlinequiz->docscreated) {
-                    $DB->set_field('offlinequiz_group_questions', 'documentquestionid', $questionid,['questionid' => $referenceid->questionid, 'offlinequizid' => $offlinequiz->id]);
+                if (!$referenceid->documentquestionid && $offlinequiz->docscreated) {
+                    $DB->set_field('offlinequiz_group_questions', 'documentquestionid', $questionid,
+                        ['questionid' => $referenceid->questionid, 'offlinequizid' => $offlinequiz->id]);
                 }
             }
         }
@@ -1567,7 +1568,7 @@ function offlinequiz_get_group_template_usage($offlinequiz, $group, $context) {
         $templateusage->set_preferred_behaviour('immediatefeedback');
 
         if (!$questionids) {
-            print_error(get_string('noquestionsfound', 'offlinequiz'), 'view.php?q='.$offlinequiz->id);
+            throw new \moodle_exception(get_string('noquestionsfound', 'offlinequiz'), 'view.php?q='.$offlinequiz->id);
         }
 
         // Gets database raw data for the questions.
@@ -1637,7 +1638,6 @@ function offlinequiz_delete_pdf_forms($offlinequiz) {
     $DB->set_field('offlinequiz_groups', 'correctionfilename', null, array('offlinequizid' => $offlinequiz->id));
     // Delete changed documentquestionids
     $DB->set_field('offlinequiz_group_questions', 'documentquestionid', null, array('offlinequizid' => $offlinequiz->id));
-
 
     // Set offlinequiz->docscreated to 0.
     $offlinequiz->docscreated = 0;
@@ -1772,7 +1772,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
     $offlinequizconfig = get_config('offlinequiz');
 
     if (!$course = $DB->get_record('course', array('id' => $coursecontext->instanceid))) {
-        print_error('invalid course');
+        throw new \moodle_exception('invalid course');
     }
     $pagesize = optional_param('pagesize', NUMBERS_PER_PAGE, PARAM_INT);
     $checkoption = optional_param('checkoption', 0, PARAM_INT);
@@ -1786,7 +1786,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
 
     // First get roleids for students from leagcy.
     if (!$roles = get_roles_with_capability('mod/offlinequiz:attempt', CAP_ALLOW, $systemcontext)) {
-        print_error("No roles with capability 'mod/offlinequiz:attempt' defined in system context");
+        throw new \moodle_exception("No roles with capability 'mod/offlinequiz:attempt' defined in system context");
     }
 
     $roleids = array();
@@ -2035,7 +2035,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
 
     // First get roleids for students from leagcy.
     if (!$roles = get_roles_with_capability('mod/offlinequiz:attempt', CAP_ALLOW, $systemcontext)) {
-        print_error("No roles with capability 'mod/offlinequiz:attempt' defined in system context");
+        throw new \moodle_exception("No roles with capability 'mod/offlinequiz:attempt' defined in system context");
     }
 
     $roleids = array();
@@ -2306,7 +2306,7 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
                AND qr.component = ?
                AND qr.questionarea = ?";
         $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slot->slot, 'mod_offlinequiz', 'slot']);
-        
+
         if (!$qreferenceitem) {
             // Create a new reference record for questions created already.
             $questionreferences = new \StdClass();
@@ -2319,7 +2319,6 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
             $questionreferences->version = $version->version;
             $DB->insert_record('question_references', $questionreferences);
         }
-        
         $trans->allow_commit();
     }
 }
@@ -2339,7 +2338,7 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
 
     $category = $DB->get_record('question_categories', array('id' => $categoryid));
     if (!$category) {
-        print_error('invalidcategoryid', 'error');
+        throw new \moodle_exception('invalidcategoryid', 'error');
     }
 
     $catcontext = context::instance_by_id($category->contextid);
@@ -2360,7 +2359,7 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
              WHERE qbe.questioncategoryid $qcsql
                AND q.parent = 0
                AND qv.status = 'ready'
-               AND q.qtype IN ('multichoice', 'multichoiceset') 
+               AND q.qtype IN ('multichoice', 'multichoiceset')
                AND NOT EXISTS (SELECT 1
                                  FROM {question_versions} qv2
                                  WHERE qv2.questionbankentryid = qv.questionbankentryid

@@ -41,15 +41,15 @@ class html_download {
     public function __construct($offlinequizid) {
         global $DB;
         if (!$offlinequiz = $DB->get_record("offlinequiz", array("id" => $offlinequizid))) {
-            print_error("The offlinequiz with id $offlinequizid belonging to result $result is missing");
+            throw new \moodle_exception("The offlinequiz with id $offlinequizid belonging to result $result is missing");
         }
         $this->offlinequiz = $offlinequiz;        if (!$course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
-            print_error(
+            throw new \moodle_exception(
              "The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
         }
         $this->course = $course;
         if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-            print_error("The course module for the offlinequiz with id $offlinequiz->id is missing");
+            throw new \moodle_exception("The course module for the offlinequiz with id $offlinequiz->id is missing");
         }
         $this->cm = $cm;
         $this->context = \context_module::instance($cm->id);
@@ -91,11 +91,11 @@ class html_download {
         $resultids = $this->get_result_ids($userids);
         foreach ($resultids as $resultid) {
             if (!$result = $DB->get_record("offlinequiz_results", array("id" => $resultid))) {
-                print_error("The offlinequiz result with id $resultid is missing");
+                throw new \moodle_exception("The offlinequiz result with id $resultid is missing");
 
             }
             if (!$group = $DB->get_record("offlinequiz_groups", array('id' => $result->offlinegroupid))) {
-                print_error("The offlinequiz group belonging to result $result is missing");
+                throw new \moodle_exception("The offlinequiz group belonging to result $result is missing");
             }
             $grade = offlinequiz_rescale_grade($result->sumgrades, $this->offlinequiz, $group);
             $options = offlinequiz_get_review_options($this->offlinequiz, $result, $this->context);
@@ -149,7 +149,7 @@ class html_download {
                 if ($options->attempt == \question_display_options::VISIBLE) {
                     // Load the questions needed by page.
                     if (!$quba = \question_engine::load_questions_usage_by_activity($result->usageid)) {
-                        print_error('Could not load question usage');
+                        throw new \moodle_exception('Could not load question usage');
                     }
 
                      $slots = $quba->get_slots();

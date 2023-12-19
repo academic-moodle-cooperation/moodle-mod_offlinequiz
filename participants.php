@@ -276,7 +276,7 @@ switch($mode) {
 
         // First get roleids for students from leagcy.
         if (!$roles = get_roles_with_capability('mod/offlinequiz:attempt', CAP_ALLOW, $systemcontext)) {
-            print_error("No roles with capability 'mod/offlinequiz:attempt' defined in system context");
+            throw new \moodle_exception("No roles with capability 'mod/offlinequiz:attempt' defined in system context");
         }
 
         $roleids = array();
@@ -328,7 +328,7 @@ switch($mode) {
         $potentialmemberscount = 0;
         $params = array_merge($rparams, $cparams);
 
-        // find $userinlistids in order to prevent users being added to multiple lists 
+        // find $userinlistids in order to prevent users being added to multiple lists
         $sql = "SELECT DISTINCT p.*
                       FROM {offlinequiz_participants} p
                       JOIN {offlinequiz_p_lists} pl ON pl.id  = p.listid
@@ -338,15 +338,15 @@ switch($mode) {
         foreach ($usersinlists as $userinlist) {
             $usersinlistsids[] = $userinlist->userid;
         }
-        
+
         if ($potentialmembers = get_enrolled_users($coursecontext, 'mod/offlinequiz:attempt')) {
             foreach ($potentialmembers as $member) {
-                if (empty($members[$member->id]) and (empty($group) or !empty($groupmembers[$member->id]))) {                    
+                if (empty($members[$member->id]) and (empty($group) or !empty($groupmembers[$member->id]))) {
                     if (!in_array($member->id, $usersinlistsids)) {
                         $potentialmembersoptions .= '<option value="' . $member->id . '">' . fullname($member) .
                         ' (' . $member->{$offlinequizconfig->ID_field} . ')</option>';
                         $potentialmemberscount++;
-                    }                    
+                    }
                 }
             }
         }
@@ -437,9 +437,8 @@ switch($mode) {
         if (!$download) {
             echo $OUTPUT->header();
             // Print the tabs.
-            offlinequiz_print_tabs($offlinequiz,'tabdownloadparticipantsforms', $cm);
+            offlinequiz_print_tabs($offlinequiz, 'tabdownloadparticipantsforms', $cm);
             echo $OUTPUT->heading_with_help(get_string('createpdfsparticipants', 'offlinequiz'), 'participants', 'offlinequiz');
-            
         }
         // Show update button.
         ?>

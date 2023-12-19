@@ -261,6 +261,4 @@ private static function save_page_status($scannedpageid, $status, $error) {
 
 }
 
-
-
 }
