@@ -2,6 +2,7 @@ CHANGELOG
 =========
 4.2.0
 -----------------
+* WARNING! THIS UPDATE MAY TAKE SOME TIME ON BIGGER INSTANCES! For more information see https://github.com/academic-moodle-cooperation/moodle-mod_offlinequiz/issues/220
 * [Feature] Compatible Version for Moodle 4.02
 * [Feature] Regrading now works automatically. It is still possible to regrade on request in case of an error.
 * [Feature] Using newer PDFWord version compatible with PHP 8.2+
