@@ -94,7 +94,7 @@ function offlinequiz_add_instance($offlinequiz) {
     }
 
     if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
-        print_error('invalidcourseid', 'error');
+        throw new \moodle_exception('invalidcourseid', 'error');
     }
 
     $context = context_module::instance($offlinequiz->coursemodule);
@@ -113,11 +113,11 @@ function offlinequiz_add_instance($offlinequiz) {
 
     try {
         if (!$offlinequiz->id = $DB->insert_record('offlinequiz', $offlinequiz)) {
-            print_error('Could not create Offlinequiz object!');
+            throw new \moodle_exception('Could not create Offlinequiz object!');
             return false;
         }
     } catch (Exception $e) {
-        print_error("ERROR: " . $e->debuginfo);
+        throw new \moodle_exception("ERROR: " . $e->debuginfo);
     }
 
     // Do the processing required after an add or an update.
@@ -468,7 +468,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
                 array('offlinequizid' => $offlinequiz->id, 'warningfilename' => $file->get_filename()))) {
             if (!$scannedpages = $DB->get_records('offlinequiz_scanned_pages', array('offlinequizid' => $offlinequiz->id,
                     'filename' => $file->get_filename()))) {
-                    print_error('scanned page not found');
+                throw new \moodle_exception('scanned page not found');
                     return false;
             }
         }
@@ -647,7 +647,6 @@ function offlinequiz_process_options(&$offlinequiz) {
     if (!empty($offlinequiz->adaptive)) {
         $offlinequiz->optionflags |= QUESTION_ADAPTIVE;
     }
-
 
     // Settings that get combined to go into the review column.
     $review = 0;
@@ -1320,7 +1319,7 @@ function offlinequiz_get_user_results($offlinequizid, $userid) {
  * @param navigation_node $offlinequiznode
  */
 function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
-    global $PAGE, $CFG, $DB;
+    global $CFG, $DB;
 
     // Included here as we only ever want to include this file if we really need to.
     require_once($CFG->libdir . '/questionlib.php');
@@ -1336,35 +1335,35 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
         $beforekey = $keys[$i + 1];
     }
 
-    if (has_capability('mod/offlinequiz:manage', $PAGE->cm->context)) {
+    if (has_capability('mod/offlinequiz:manage', $settings->get_page()->cm->context)) {
         $active = offlinequiz_get_active_tab();
-        //Tab Offlinequiz content.
-        if($active == 'tabofflinequizcontent') {
-            $url = $PAGE->url;
+        // Tab Offlinequiz content.
+        if ($active == 'tabofflinequizcontent') {
+            $url = $settings->get_page()->url;
         } else {
-            $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $PAGE->cm->id, 'tab' => 'tabofflinequizcontent']);
+            $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $settings->get_page()->cm->id, 'tab' => 'tabofflinequizcontent']);
         }
         $node = navigation_node::create(get_string('tabofflinequizcontent', 'offlinequiz'),
                 $url,
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_edit',
                 new pix_icon('t/edit', ''));
         $offlinequiznode->add_node($node, $beforekey);
-        //Tab results.
-        if($active == 'tabresults') {
-            $url = $PAGE->url;
+        // Tab results.
+        if ($active == 'tabresults') {
+            $url = $settings->get_page()->url;
         } else {
-            $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $PAGE->cm->id, 'tab' => 'tabresults']);
+            $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $settings->get_page()->cm->id, 'tab' => 'tabresults']);
         }
         $node = navigation_node::create(get_string('tabresults', 'offlinequiz'),
             $url,
             navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_results',
             new pix_icon('i/report', ''));
         $offlinequiznode->add_node($node, $beforekey);
-        //Tab statistics.
-        if($active == 'tabstatistics') {
-            $url = $PAGE->url;
+        // Tab statistics.
+        if ($active == 'tabstatistics') {
+            $url = $settings->get_page()->url;
         } else {
-            $url = new moodle_url('/mod/offlinequiz/report.php', array('id' => $PAGE->cm->id, 'mode' => 'statistics'));
+            $url = new moodle_url('/mod/offlinequiz/report.php', array('id' => $settings->get_page()->cm->id, 'mode' => 'statistics'));
         }
         $node = navigation_node::create(get_string('tabstatistics', 'offlinequiz'),
             $url,
@@ -1372,34 +1371,31 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
             new pix_icon('i/report', ''));
         $node->set_force_into_more_menu(true);
         $offlinequiznode->add_node($node, $beforekey);
-        //Tab attendances
-        $participantsusage = $DB->get_field('offlinequiz', 'participantsusage', ['id' => $PAGE->cm->instance]);
-        if($participantsusage) {
-            if($active == 'tabattendances') {
-                $url = $PAGE->url;
+        // Tab attendances
+        $participantsusage = $DB->get_field('offlinequiz', 'participantsusage', ['id' => $settings->get_page()->cm->instance]);
+        if ($participantsusage) {
+            if ($active == 'tabattendances') {
+                $url = $settings->get_page()->url;
             } else {
-                $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $PAGE->cm->id, 'tab' => 'tabattendances']);
+                $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $settings->get_page()->cm->id, 'tab' => 'tabattendances']);
             }
             $node = navigation_node::create(get_string('tabattendances', 'offlinequiz'),
                     $url,
                     navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_participants',
                     new pix_icon('i/group', ''));
-            if($active == 'tabattendances') {
+            if ($active == 'tabattendances') {
                 $node->make_active();
             }
             $offlinequiznode->add_node($node, $beforekey);
         }
-
     }
-
-    question_extend_settings_navigation($offlinequiznode, $PAGE->cm->context)->trim_if_empty();
+    question_extend_settings_navigation($offlinequiznode, $settings->get_page()->cm->context)->trim_if_empty();
 }
-
 
 function offlinequiz_get_active_tab() {
     global $PAGE;
     $url = $PAGE->url->out();
-    if(strpos($url,'/mod/offlinequiz/edit.php') || strpos($url, '/mod/offlinequiz/createquiz.php')) {
+    if (strpos($url, '/mod/offlinequiz/edit.php') || strpos($url, '/mod/offlinequiz/createquiz.php')) {
         return 'tabofflinequizcontent';
     } else if (strpos($url, '/mod/offlinequiz/report.php') && strpos($url, 'mode=statistics')) {
         return 'tabstatistics';

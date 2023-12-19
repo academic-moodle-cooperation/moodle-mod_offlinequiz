@@ -32,15 +32,15 @@ $page = optional_param('page', 1, PARAM_INT);  // offlinequiz ID.
 
 if ($id) {
     if (! $cm = get_coursemodule_from_id('offlinequiz', $id)) {
-        print_error("There is no coursemodule with id $id");
+        throw new \moodle_exception("There is no coursemodule with id $id");
     }
 
     if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error("Course is misconfigured");
+        throw new \moodle_exception("Course is misconfigured");
     }
 
     if (! $offlinequiz = $DB->get_record('offlinequiz', array('id' => $cm->instance))) {
-        print_error("The offlinequiz with id $cm->instance corresponding to this coursemodule $id is missing");
+        throw new \moodle_exception("The offlinequiz with id $cm->instance corresponding to this coursemodule $id is missing");
     }
 }
 

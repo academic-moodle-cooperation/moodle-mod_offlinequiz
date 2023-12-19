@@ -202,7 +202,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
                         redirect($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id . '&amp;mode=rimport');
                     } else {
-                        print_error('invalidsesskey');
+                        throw new \moodle_exception('invalidsesskey');
                     }
                     break;
                 default:

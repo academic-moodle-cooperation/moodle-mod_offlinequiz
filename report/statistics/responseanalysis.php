@@ -143,23 +143,19 @@ class offlinequiz_statistics_response_analyser {
 
         $partresponses = $qa->classify_response();
         foreach ($partresponses as $subpartid => $partresponse) {
-            if (!isset($this->responses[$subpartid][$partresponse->responseclassid]
-                    [$partresponse->response])) {
+            if (!isset($this->responses[$subpartid][$partresponse->responseclassid][$partresponse->response])) {
                 $resp = new stdClass();
                 $resp->count = 0;
                 if (!is_null($partresponse->fraction)) {
                     $resp->fraction = $partresponse->fraction;
                 } else {
-                    $resp->fraction = $this->responseclasses[$subpartid]
-                            [$partresponse->responseclassid]->fraction;
+                    $resp->fraction = $this->responseclasses[$subpartid][$partresponse->responseclassid]->fraction;
                 }
 
-                $this->responses[$subpartid][$partresponse->responseclassid]
-                        [$partresponse->response] = $resp;
+                $this->responses[$subpartid][$partresponse->responseclassid][$partresponse->response] = $resp;
             }
 
-            $this->responses[$subpartid][$partresponse->responseclassid]
-                    [$partresponse->response]->count += 1;
+            $this->responses[$subpartid][$partresponse->responseclassid][$partresponse->response]->count += 1;
         }
     }
 

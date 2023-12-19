@@ -597,7 +597,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         echo 'finshed at ' . time() . "\n";
     }
 
-    public function get_attempts_extra_WHERE() {
+    public function get_attempts_extra_where() {
         return ' AND needsupgradetonewqe = 1';
     }
 
@@ -610,15 +610,15 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         $params = array('offlinequizid' => $quiz->id);
 
         // Actually we want all the attempts, also the ones with sheet = 1 for the group template usages.
-        $WHERE = 'offlinequiz = :offlinequizid ' . $this->get_attempts_extra_WHERE();
+        $where = 'offlinequiz = :offlinequizid ' . $this->get_attempts_extra_where();
 
-        $quizattemptsrs = $DB->get_recordset_SELECT('offlinequiz_attempts', $WHERE, $params, 'uniqueid');
+        $quizattemptsrs = $DB->get_recordset_SELECT('offlinequiz_attempts', $where, $params, 'uniqueid');
 
         $questionsessionsrs = $DB->get_recordset_sql("
                 SELECT s.*
                 FROM {question_sessions} s
                 JOIN {offlinequiz_attempts} a ON (s.attemptid = a.uniqueid)
-                WHERE $WHERE
+                WHERE $where
                 ORDER BY attemptid, questionid
                 ", $params);
 
@@ -626,7 +626,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
                 SELECT s.*
                 FROM {question_states} s
                 JOIN {offlinequiz_attempts} a ON (s.attempt = a.uniqueid)
-                WHERE $WHERE
+                WHERE $where
                 ORDER BY s.attempt, question, seq_number, s.id
                 ", $params);
 
@@ -764,9 +764,9 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
     protected function get_converter_class_name($question, $quiz, $qsessionid) {
         global $DB;
         if ($question->qtype == 'deleted') {
-            $WHERE = '(question = :questionid OR ' . $DB->sql_like('answer', ':randomid') . ') AND event = 7';
+            $where = '(question = :questionid OR ' . $DB->sql_like('answer', ':randomid') . ') AND event = 7';
             $params = array('questionid' => $question->id, 'randomid' => "random{$question->id}-%");
-            if ($DB->record_exists_SELECT('question_states', $WHERE, $params)) {
+            if ($DB->record_exists_SELECT('question_states', $where, $params)) {
                 $this->logger->log_assumption("Assuming that deleted question {$question->id} was manually graded.");
                 return 'qbehaviour_manualgraded_converter';
             }
@@ -1054,7 +1054,7 @@ function offlinequiz_get_number_of_pages($questions, $columns) {
 
 function offlinequiz_fix_question_versions() {
     global $DB;
-    //first set all 
+    // first set all
     $sql = "SELECT DISTINCT gq1.id,gq1.offlinegroupid,  gq2.questionid
                        FROM {offlinequiz_group_questions} gq1
                        JOIN {question_versions} qv1 on qv1.questionid = gq1.questionid
@@ -1062,21 +1062,20 @@ function offlinequiz_fix_question_versions() {
                        JOIN {offlinequiz_group_questions} gq2 on gq2.questionid = qv2.questionid and gq2.offlinequizid = gq1.offlinequizid";
     $records = $DB->get_records_sql($sql);
     foreach ($records as $record) {
-        $DB->set_field('offlinequiz_group_questions', 'questionid', $record->questionid,['id' => $record->id]);
+        $DB->set_field('offlinequiz_group_questions', 'questionid', $record->questionid, ['id' => $record->id]);
     }
-    $sql = "SELECT qr.id,qv.version FROM {question_references} qr 
+    $sql = "SELECT qr.id,qv.version FROM {question_references} qr
               JOIN {offlinequiz_group_questions} ogq on ogq.id = qr.itemid
-              JOIN {question_versions} qv on qv.questionid = ogq.questionid 
-              JOIN {question_bank_entries} mbe on mbe.id = qv.questionbankentryid 
+              JOIN {question_versions} qv on qv.questionid = ogq.questionid
+              JOIN {question_bank_entries} mbe on mbe.id = qv.questionbankentryid
              WHERE component = 'mod_offlinequiz' and questionarea = 'slot'
                AND qr.version is null or qr.version <> qv.version";
     $records = $DB->get_records_sql($sql);
     foreach ($records as $record) {
-        $DB->set_field('question_references', 'version', $record->version,['id' => $record->id]);
+        $DB->set_field('question_references', 'version', $record->version, ['id' => $record->id]);
     }
 
-
-    $sql = "SELECT ogq.id groupquestionid, og.templateusageid templateusageid, qa.id questionattemtid, qa.questionid oldquestionid, ogq.questionid newquestionid 
+    $sql = "SELECT ogq.id groupquestionid, og.templateusageid templateusageid, qa.id questionattemtid, qa.questionid oldquestionid, ogq.questionid newquestionid
               FROM {offlinequiz_groups} og
               JOIN {question_usages} qu on qu.id = og.templateusageid
               JOIN {offlinequiz_group_questions} ogq on og.id = ogq.offlinegroupid
@@ -1114,10 +1113,10 @@ function offlinequiz_fix_question_versions() {
 
     $sql = "SELECT ogq.id itemid, c.id usingcontextid, 'mod_offlinequiz' component, 'slot' questionarea,  qv.questionbankentryid questionbankentryid, qv.version \"version\"
               FROM {offlinequiz_group_questions} ogq
-              JOIN {modules} m ON m.name ='offlinequiz' 
-              JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = ogq.offlinequizid 
+              JOIN {modules} m ON m.name ='offlinequiz'
+              JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = ogq.offlinequizid
               JOIN {context} c ON c.instanceid = cm.id AND c.contextlevel = '70'
-              JOIN {question_versions} qv ON qv.questionid = ogq.questionid 
+              JOIN {question_versions} qv ON qv.questionid = ogq.questionid
               WHERE NOT EXISTS (
                    SELECT 1
                      FROM {question_references} mqr
@@ -1134,8 +1133,8 @@ function offlinequiz_fix_question_versions() {
             $lastcount = $thiscount;
             $thiscount = $DB->count_records('question_references');
         }
-    } catch(Exception $e) {
-        //Database doesn't support this type of insert, we have to get them out of the databse and insert them manually.
+    } catch (Exception $e) {
+        // Database doesn't support this type of insert, we have to get them out of the databse and insert them manually.
         while ($records = $DB->get_records_sql($sql, [], 0, 10000)) {
             $DB->insert_records('question_references', $records);
         }

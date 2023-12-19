@@ -1597,12 +1597,11 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2023092600, 'offlinequiz');
     }
 
-    if($oldversion < 2023102104) {
+    if ($oldversion < 2023102104) {
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
         offlinequiz_fix_question_versions();
         upgrade_mod_savepoint(true, 2023102104, 'offlinequiz');
     }
-
 
     return true;
 }

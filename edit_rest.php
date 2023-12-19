@@ -52,7 +52,7 @@ $offlinequiz = $DB->get_record('offlinequiz', array('id' => $offlinequizid), '*'
 if ($offlinequizgroup = $DB->get_record('offlinequiz_groups', array('id' => $offlinegroupid))) {
     $offlinequiz->groupid = $offlinequizgroup->id;
 } else {
-    print_error('invalidgroupnumber', 'offlinequiz');
+    throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
 }
 
 $cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $offlinequiz->course);

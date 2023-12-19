@@ -41,24 +41,24 @@ $action        = optional_param('action', 'load', PARAM_TEXT);
 $userchanged   = optional_param('userchanged', 0, PARAM_INT);
 
 if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', array('id' => $scannedpageid))) {
-    print_error('noscannedpage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpageid);
+    throw new \moodle_exception('noscannedpage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpageid);
 }
 
 if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $scannedpage->offlinequizid))) {
-    print_error('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
 if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
-    print_error('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+    throw new \moodle_exception('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
         array('course' => $offlinequiz->course,
          'offlinequiz' => $offlinequiz->id));
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-    print_error('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
+    throw new \moodle_exception('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
 }
 if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber',
         '*', 0, $offlinequiz->numgroups)) {
-    print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
 require_login($course->id, false, $cm);
@@ -206,7 +206,7 @@ if ($action == 'cancel') {
 } else if ($action == 'checkuser') {
 
     if (!confirm_sesskey()) {
-        print_error('invalidsesskey');
+        throw new \moodle_exception('invalidsesskey');
         echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
 onClick=\"self.close(); return false;\"><br />";
         die;
@@ -283,7 +283,7 @@ onClick=\"self.close(); return false;\"><br />";
 } else if ($action == 'update') {
 
     if (!confirm_sesskey()) {
-        print_error('invalidsesskey');
+        throw new \moodle_exception('invalidsesskey');
         echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
 onClick=\"self.close(); return false;\"><br />";
         die;
@@ -405,7 +405,7 @@ onClick=\"self.close(); return false;\"><br />";
     // O=============================================.
 } else if ($action == 'rotate') {
     if (!confirm_sesskey()) {
-        print_error('invalidsesskey');
+        throw new \moodle_exception('invalidsesskey');
         echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
 onClick=\"self.close(); return false;\"><br />";
         die;
@@ -455,7 +455,7 @@ onClick=\"self.close(); return false;\"><br />";
 } else if ($action == 'setpage') {
 
     if (!confirm_sesskey()) {
-        print_error('invalidsesskey');
+        throw new \moodle_exception('invalidsesskey');
         echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
         onClick=\"self.close(); return false;\"><br />";
         die;
@@ -492,7 +492,7 @@ onClick=\"self.close(); return false;\"><br />";
 } else if ($action == 'readjust') {
 
     if (!confirm_sesskey()) {
-        print_error('invalidsesskey');
+        throw new \moodle_exception('invalidsesskey');
         echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
 onClick=\"self.close(); return false;\"><br />";
         die;
@@ -520,7 +520,7 @@ onClick=\"self.close(); return false;\"><br />";
     // O Action enrol.
     // O=============================================.
     if (!confirm_sesskey()) {
-        print_error('invalidsesskey');
+        throw new \moodle_exception('invalidsesskey');
         echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
 onClick=\"self.close(); return false;\"><br />";
         die;
@@ -634,7 +634,7 @@ if (!empty($choices)) {
 if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz->numgroups) {
     if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id,
         'groupnumber' => $groupnumber))) {
-        print_error('nogroup', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
+        throw new \moodle_exception('nogroup', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
     }
 } else {
     $group = null;

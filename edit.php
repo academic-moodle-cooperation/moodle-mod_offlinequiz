@@ -91,7 +91,7 @@ if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
     $offlinequiz->questions = $groupquestions;
 } else {
-    print_error('invalidgroupnumber', 'offlinequiz');
+    throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
 }
 
 $offlinequiz->sumgrades = $offlinequizgroup->sumgrades;
@@ -128,12 +128,10 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
                 $updatereference->version = $DB->get_field_sql($sql, [$questionupdate->itemid]);
 
                 $DB->update_record('question_references', $updatereference);
-
             }
         }
     }
 }
-
 
 // Get the course object and related bits.
 $offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
@@ -142,11 +140,11 @@ if ($warning = optional_param('warning', '', PARAM_TEXT)) {
     $structure->add_warning(urldecode($warning));
 }
 $changedversionsexist = $DB->count_records_select('offlinequiz_group_questions', 'documentquestionid IS NOT NULL AND offlinequizid = $1', [$offlinequiz->id]);
-$hasresults = $DB->count_records('offlinequiz_results',['offlinequizid' => $offlinequiz->id]);
-if($changedversionsexist && $hasresults) {
-    $recordupdateanddocscreated = 
+$hasresults = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
+if ($changedversionsexist && $hasresults) {
+    $recordupdateanddocscreated =
     $structure->add_warning(get_string('documentschangedwithresults', 'offlinequiz'));
-} else if($changedversionsexist && !$hasresults) {
+} else if ($changedversionsexist && !$hasresults) {
     $recordupdateanddocscreated = get_string('documentschanged', 'offlinequiz');
     $structure->add_warning($recordupdateanddocscreated);
 }
@@ -342,7 +340,7 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
 // Get the question bank view.
 $questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
 $questionbank->set_offlinequiz_has_scanned_pages($docscreated);
-if($newquestionid) {
+if ($newquestionid) {
     $thispageurl->remove_params('lastchanged');
     $thispageurl->params(['versionschanged' => 2]);
     redirect($thispageurl);
@@ -378,7 +376,7 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
 }
 
 $PAGE->requires->data_for_js('offlinequiz_edit_config', $offlinequizeditconfig);
-$PAGE->requires->js('/question/qengine.js');
+$PAGE->requires->js_module('core_question_engine');
 
 echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content'));
 

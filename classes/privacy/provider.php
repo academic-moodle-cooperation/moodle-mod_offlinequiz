@@ -34,8 +34,7 @@ class provider implements
 // This plugin currently implements the original plugin\provider interface.
 \core_privacy\local\request\plugin\provider,
 // This plugin implements the userlist-provider.
-\core_privacy\local\request\core_userlist_provider
-{
+\core_privacy\local\request\core_userlist_provider {
     public static function get_metadata(collection $collection) : collection {
 
         $collection->link_subsystem('core_files', 'privacy:metadata:core_files');

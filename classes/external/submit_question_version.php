@@ -115,8 +115,7 @@ class submit_question_version extends external_api {
             $newdata = new stdClass();
             $newdata->id = $slotdata->id;
             $newdata->questionid = $newquestionid;
-            $offlinequiz = $DB->get_record('offlinequiz',['id' => $slotdata->offlinequizid]);
-            
+            $offlinequiz = $DB->get_record('offlinequiz', ['id' => $slotdata->offlinequizid]);
 
             $reference = new stdClass();
             $reference->id = $referencedata->id;

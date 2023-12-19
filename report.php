@@ -36,24 +36,24 @@ $q = optional_param('q', 0, PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA);
 if ($id) {
     if (!$cm = get_coursemodule_from_id('offlinequiz', $id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $cm->instance))) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 
 } else {
     if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $q))) {
-        print_error('invalidofflinequizid', 'offlinequiz');
+        throw new \moodle_exception('invalidofflinequizid', 'offlinequiz');
     }
     if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
     if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 }
 
@@ -84,7 +84,7 @@ if ($node) {
 $reportlist = offlinequiz_report_list($context);
 
 if (empty($reportlist)) {
-    print_error('erroraccessingreport', 'offlinequiz');
+    throw new \moodle_exception('erroraccessingreport', 'offlinequiz');
 }
 
 // Validate the requested report name.
@@ -93,10 +93,10 @@ if ($mode == '') {
     $url->param('mode', reset($reportlist));
     redirect($url);
 } else if (!in_array($mode, $reportlist)) {
-    print_error('erroraccessingreport', 'offlinequiz');
+    throw new \moodle_exception('erroraccessingreport', 'offlinequiz');
 }
 if (!is_readable("report/$mode/report.php")) {
-    print_error('reportnotfound', 'offlinequiz', '', $mode);
+    throw new \moodle_exception('reportnotfound', 'offlinequiz', '', $mode);
 }
 
 // Open the selected offlinequiz report and display it.
@@ -106,7 +106,7 @@ if (is_readable($file)) {
 }
 $reportclassname = 'offlinequiz_' . $mode . '_report';
 if (!class_exists($reportclassname)) {
-    print_error('preprocesserror', 'offlinequiz');
+    throw new \moodle_exception('preprocesserror', 'offlinequiz');
 }
 
 // Display the report.

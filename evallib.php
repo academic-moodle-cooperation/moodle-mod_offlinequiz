@@ -826,7 +826,7 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
                 $scannedpage->listnumber > $maxlistnumber) {
             $scannedpage->status = 'error';
             $scannedpage->error = 'invalidlistnumber';
-            # for the unlikely case that the listnumber is out of range, due to scanning errors
+            // for the unlikely case that the listnumber is out of range, due to scanning errors
             if ($scannedpage->listnumber > 50000) {
                 $scannedpage->listnumber = 9999;
                 echo $OUTPUT->notification(get_string('scanerrorlistnumber', 'offlinequiz_rimport'), 'error');
@@ -884,7 +884,7 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
 
                     $scannedpage->status = 'error';
                     $scannedpage->error = 'invalidlistnumber';
-                    # for the unlikely case that the listnumber is out of range, due to scanning errors
+                    // for the unlikely case that the listnumber is out of range, due to scanning errors
                     if ($scannedpage->listnumber > 50000) {
                         $scannedpage->listnumber = 9999;
                         echo $OUTPUT->notification(get_string('scanerrorlistnumber', 'offlinequiz_rimport'), 'error');
@@ -975,11 +975,10 @@ function offlinequiz_process_scanned_participants_page($offlinequiz, offlinequiz
 
     // Check if all users are in the offlinequiz_p_list.
     if ($scannedpage->status == 'ok') {
+        // $list = $DB->get_record('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id)); //,
+        // 'listnumber' => $scannedpage->listnumber));
+        // $userdata = $DB->get_records('offlinequiz_participants', array('listid' => $list->id));
 
-//         $list = $DB->get_record('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id)); //,
-//         //        'listnumber' => $scannedpage->listnumber));
-//         $userdata = $DB->get_records('offlinequiz_participants', array('listid' => $list->id));
-        
         $sql = "SELECT DISTINCT p.*
                       FROM {offlinequiz_participants} p
                       JOIN {offlinequiz_p_lists} pl ON pl.id  = p.listid
@@ -1017,12 +1016,12 @@ function offlinequiz_submit_scanned_participants_page($offlinequiz, $scannedpage
 
     if (!$list = $DB->get_record('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id,
             'listnumber' => $scannedpage->listnumber))) {
-            print_error('missing list ' . $scannedpage->listnumber);
+        throw new \moodle_exception('missing list ' . $scannedpage->listnumber);
     }
     if (!$userdata = $DB->get_records('offlinequiz_participants', array('listid' => $list->id))) {
-        print_error('missing userdata');
+        throw new \moodle_exception('missing userdata');
     }
-    
+
     // Index the user data by userid.
     $users = array();
     foreach ($userdata as $user) {
@@ -1043,19 +1042,19 @@ function offlinequiz_submit_scanned_participants_page($offlinequiz, $scannedpage
         if (count($attuserdata) > 1) {
             echo $OUTPUT->notification(get_string('errormultiuserinlist', 'offlinequiz'), 'error');
 
-            //break;
-           $scannedpage->status = 'error';
-           $scannedpage->error = 'multiuserinlist';
+            // break;
+            $scannedpage->status = 'error';
+            $scannedpage->error = 'multiuserinlist';
             $DB->update_record('offlinequiz_scanned_p_pages', $scannedpage);
         } else {
-            if ($choice->value == 1) {            
-               foreach ($attuserdata as $userdata) {
+            if ($choice->value == 1) {
+                foreach ($attuserdata as $userdata) {
                     $userdata->checked = 1;
                     $DB->update_record('offlinequiz_participants', $userdata);
                 }
-               // $DB->set_field('offlinequiz_participants', 'checked', 1, array('userid' => $choice->userid, 'listid' => $list->id));
+                // $DB->set_field('offlinequiz_participants', 'checked', 1, array('userid' => $choice->userid, 'listid' => $list->id));
                 // The following makes sure that the output is sent immediately.
-                //@flush();@ob_flush();
+                // @flush();@ob_flush();
             }
         }
     }

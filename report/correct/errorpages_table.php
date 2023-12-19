@@ -32,40 +32,38 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/tablelib.php');
 
 class offlinequiz_selectall_table extends flexible_table {
-    
+
     protected $reportscript;
     protected $params;
-    
-    
+
     public function __construct($uniqueid, $reportscript, $params) {
         parent::__construct($uniqueid);
         $this->reportscript = $reportscript;
         $this->params = $params;
     }
-    
+
     public function print_nothing_to_display() {
         global $OUTPUT;
         return;
     }
-    
+
     public function wrap_html_start() {
-        
         echo '<div id="tablecontainer" class="centerbox">';
         echo '<form id="reportform" method="post" action="'. $this->reportscript .
         '" onsubmit="return confirm(\'' . $this->params['strreallydel'] . '\');">';
         echo ' <div>';
-        
+
         foreach ($this->params as $name => $value) {
             echo '<input type="hidden" name="' . $name .'" value="' . $value . '" />';
         }
         echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         echo '  <center>';
     }
-    
+
     public function wrap_html_finish() {
         $strselectall = get_string('selectall', 'offlinequiz');
         $strselectnone = get_string('selectnone', 'offlinequiz');
-        
+
         echo '<table id="commands">';
         echo '<tr><td>';
         echo '<a href="#" class="selectall">'. $strselectall . '</a> / ';
@@ -82,11 +80,10 @@ class offlinequiz_selectall_table extends flexible_table {
 } // End class.
 
 class offlinequiz_partlist_table extends offlinequiz_selectall_table {
-    
     public function wrap_html_finish() {
         $strselectall = get_string('selectall', 'offlinequiz');
         $strselectnone = get_string('selectnone', 'offlinequiz');
-        
+
         echo '<table id="commands">';
         echo '<tr><td>';
         echo '<a href="#" class="selectall">'. $strselectall . '</a> / ';
@@ -96,7 +93,7 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
             'uncheck' => get_string('uncheckparts', 'offlinequiz'));
         echo html_writer::select($options, 'action', '', array('' => 'choosedots'),
             array('onchange' => 'this.form.submit(); return true;'));
-        
+
         echo '<noscript id="noscriptmenuaction" style="display: inline;"><div>';
         echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
         echo '<script type="text/javascript">' . "\n<!--\n" .
@@ -106,9 +103,8 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
         // Close form.
         echo ' </div>';
         echo '</form></div>';
-        
     }
-    
+
     protected function print_one_initials_bar($alpha, $current, $class, $title, $urlvar) {
         echo html_writer::start_tag('div', array('class' => 'initialbar ' . $class)) .
         $title . ' : ';
@@ -118,7 +114,7 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
             echo html_writer::tag('strong', get_string('all'));
         }
         echo '&nbsp;';
-        
+
         foreach ($alpha as $letter) {
             if ($letter === $current) {
                 echo html_writer::tag('strong', $letter);
@@ -127,9 +123,6 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
             }
             echo '&nbsp;';
         }
-        
         echo html_writer::end_tag('div');
     }
-    
-    
 }
