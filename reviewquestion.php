@@ -42,24 +42,24 @@ if ($seq !== 0) {
 $PAGE->set_url($currenturl);
 
 if (!$result = $DB->get_record('offlinequiz_results', array('id' => $resultid))) {
-    print_error('result does not exist');
+    throw new \moodle_exception('result does not exist');
 }
 if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $result->offlinequizid))) {
-    print_error('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
+    throw new \moodle_exception('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
     $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
-    print_error('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
+    throw new \moodle_exception('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
     $COURSE->id, array('course' => $offlinequiz->course,
          'offlinequiz' => $offlinequiz->id));
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-    print_error('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
+    throw new \moodle_exception('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
     $COURSE->id, $offlinequiz->id);
 }
 if (!$groups = $DB->get_records('offlinequiz_groups',
         array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
-    print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
+    throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
     $COURSE->id, $scannedpage->offlinequizid);
 }
 
@@ -77,7 +77,7 @@ if (!has_capability('mod/offlinequiz:viewreports', $context) && ($USER->id != $r
 }
 
 if ($result->status != 'complete') {
-    print_error('resultnotcomplete', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
+    throw new \moodle_exception('resultnotcomplete', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
 }
 
 $options = offlinequiz_get_review_options($offlinequiz, $result, $context);

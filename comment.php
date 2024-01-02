@@ -36,21 +36,21 @@ $PAGE->set_url('/mod/offlinequiz/comment.php', array('resultid' => $resultid, 's
 
 // Get all the data from the DB.
 if (! $result = $DB->get_record("offlinequiz_results", array("id" => $resultid))) {
-    print_error("No such result ID exists");
+    throw new \moodle_exception("No such result ID exists");
 }
 if (! $offlinequiz = $DB->get_record("offlinequiz", array("id" => $result->offlinequizid))) {
-    print_error("The offlinequiz with id $result->offlinequiz belonging to result $result is missing");
+    throw new \moodle_exception("The offlinequiz with id $result->offlinequiz belonging to result $result is missing");
 }
 if (! $course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
-    print_error("The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
+    throw new \moodle_exception("The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
 }
 if (! $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-    print_error("The course module for the offlinequiz with id $offlinequiz->id is missing");
+    throw new \moodle_exception("The course module for the offlinequiz with id $offlinequiz->id is missing");
 }
 
 // Can only grade finished results.
 if ($result->status != 'complete') {
-    print_error('resultnotcomplete', 'offlinequiz');
+    throw new \moodle_exception('resultnotcomplete', 'offlinequiz');
 }
 
 // Check login and permissions.
@@ -61,7 +61,7 @@ require_capability('mod/offlinequiz:grade', $context);
 
 // Load the questions needed by page.
 if (!$quba = question_engine::load_questions_usage_by_activity($result->usageid)) {
-    print_error('Could not load question usage');
+    throw new \moodle_exception('Could not load question usage');
 }
 
 $slotquestion = $quba->get_question($slot);

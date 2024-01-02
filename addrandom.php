@@ -48,7 +48,7 @@ $groupnumber = optional_param('groupnumber', 1, PARAM_INT);
 
 // Get the course object and related bits.
 if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_login($course, false, $cm);
@@ -58,7 +58,7 @@ $completion->set_module_viewed($cm);
 // You also need the moodle/question:useall capability somewhere.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
 if (!$contexts->having_cap('moodle/question:useall')) {
-    print_error('nopermissions', '', '', 'use');
+    throw new \moodle_exception('nopermissions', '', '', 'use');
 }
 
 if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
@@ -75,7 +75,7 @@ $offlinequiz->groupnumber = $groupnumber;
 if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     $offlinequiz->groupid = $offlinequizgroup->id;
 } else {
-    print_error('invalidgroupnumber', 'offlinequiz');
+    throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
 }
 
 
@@ -157,7 +157,7 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 if (!$offlinequizname = $DB->get_field($cm->modname, 'name', array('id' => $cm->instance))) {
-            print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 $groupletters = 'ABCDEFGHIJKL';
 echo $OUTPUT->heading(get_string('addrandomquestiontoofflinequiz', 'offlinequiz',

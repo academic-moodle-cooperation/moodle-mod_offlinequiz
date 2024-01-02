@@ -43,11 +43,11 @@ if ($tab == 'tabofflinequizcontent') {
              WHERE ogq.id IS NULL
                AND og.offlinequizid = :id";
     $hasmissinggroupquestions = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
-    if($hasmissinggroupquestions) {
+    if ($hasmissinggroupquestions) {
         $newurl = $tabslist['tabeditgroupquestions']['url'];
     } else {
         $newurl = $tabslist['tabpreview']['url'];
-    } 
+    }
 } else if ($tab == 'tabresults') {
     $hasresults = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
     $needscorrections = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
@@ -79,7 +79,7 @@ if ($tab == 'tabofflinequizcontent') {
              WHERE opl.offlinequizid = :id
                AND ospp.status = 'ok'";
     $hasresults = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
-    if(!$existparticipantslists) {
+    if (!$existparticipantslists) {
         $newurl = $tabslist['tabparticipantlists']['url'];
     } else if ($existslistnoparticipants) {
         $newurl = $tabslist['tabeditparticipants']['url'];

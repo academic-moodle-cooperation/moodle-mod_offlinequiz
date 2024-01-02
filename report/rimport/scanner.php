@@ -510,7 +510,7 @@ class offlinequiz_page_scanner {
         $fs = get_file_storage();
 
         if (!$file = $fs->get_file($this->contextid, 'mod_offlinequiz', 'imagefiles', 0, '/', $filename)) {
-            print_error('Could not load file');
+            throw new \moodle_exception('Could not load file');
         }
 
         $this->filename = $file->get_filename();

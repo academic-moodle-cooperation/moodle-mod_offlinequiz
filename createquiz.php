@@ -46,7 +46,7 @@ $offlinequiz->optionflags = 0;
 
 require_login($course->id, false, $cm);
 if (!$context = context_module::instance($cm->id)) {
-    print_error("The context for the course module with ID $cm->id is missing");
+    throw new \moodle_exception("The context for the course module with ID $cm->id is missing");
 }
 $offlinequiz->cmid = $cm->id;
 
@@ -84,7 +84,7 @@ if (!$groups = $DB->get_records(
     0,
     $offlinequiz->numgroups
 )) {
-    print_error('There are no offlinequiz groups', "edit.php?q=$offlinequiz->id$amp;sesskey=".sesskey());
+    throw new \moodle_exception('There are no offlinequiz groups', "edit.php?q=$offlinequiz->id$amp;sesskey=".sesskey());
 }
 
 // Redmine 2131: Handle download all before any HTML output is produced.
@@ -139,7 +139,7 @@ $hasscannedpages = offlinequiz_has_scanned_pages($offlinequiz->id);
 // Delete the PDF forms if forcepdfnew and if there are no scanned pages yet.
 if ($forcepdfnew) {
     if ($hasscannedpages) {
-        print_error(
+        throw new \moodle_exception(
             'Some answer forms have already been analysed',
             "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey()
             );
@@ -147,7 +147,7 @@ if ($forcepdfnew) {
         // Redmine 2750: Always delete templates as well.
         offlinequiz_delete_template_usages($offlinequiz);
         $offlinequiz = offlinequiz_delete_pdf_forms($offlinequiz);
-        
+
         $doctype = 'PDF';
         if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
             $doctype = 'DOCX';
@@ -164,7 +164,7 @@ if ($forcepdfnew) {
         );
         $event = \mod_offlinequiz\event\docs_deleted::create($params);
         $event->trigger();
-        redirect(new moodle_url('createquiz.php',['q' => $offlinequiz->id, 'mode' => 'preview']));
+        redirect(new moodle_url('createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'preview']));
         die();
     }
 }
@@ -283,7 +283,7 @@ if ($mode == 'preview') {
         }
         // Load the question type specific information.
         if (!get_question_options($questions)) {
-            print_error('Could not load question options');
+            throw new \moodle_exception('Could not load question options');
         }
 
         // Get or create a question usage for this offline group.
@@ -427,7 +427,7 @@ if ($mode == 'preview') {
 
             if (!$offlinequiz->docscreated) {
                 if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
-                    print_error(
+                    throw new \moodle_exception(
                         "Missing data for group ".$groupletter,
                         "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey()
                     );
@@ -484,7 +484,7 @@ if ($mode == 'preview') {
             $groupletter = $letterstr[$group->groupnumber - 1];
 
             if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
-                print_error(
+                throw new \moodle_exception(
                     "Missing data for group " . $groupletter,
                     "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey()
                 );
@@ -533,7 +533,7 @@ if ($mode == 'preview') {
             $groupletter = $letterstr[$group->groupnumber - 1];
 
             if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
-                print_error(
+                throw new \moodle_exception(
                     "Missing data for group " . $groupletter,
                     "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey()
                 );

@@ -65,7 +65,7 @@ if ($groupnumber > 0) {
         $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
         $offlinequiz->questions = $groupquestions;
     } else {
-        print_error('invalidgroupnumber', 'offlinequiz');
+        throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
     }
 } else {
     $offlinequiz->groupid = 0;
@@ -91,7 +91,7 @@ if (groups_get_activity_groupmode($cm)) {
     $groups = array();
 }
 if ($offlinequizstatistics->groupid && !in_array($offlinequizstatistics->groupid, array_keys($groups))) {
-    print_error('groupnotamember', 'group');
+    throw new \moodle_exception('groupnotamember', 'group');
 }
 
 // Load the rest of the required data.

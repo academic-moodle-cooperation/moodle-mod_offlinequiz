@@ -81,7 +81,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
     // Load the question type specific information.
     if (!get_question_options($questions)) {
-        print_error('Could not load question options');
+        throw new \moodle_exception('Could not load question options');
     }
 
     $number = 1;
@@ -384,7 +384,7 @@ function offlinequiz_convert_html_to_latex($text) {
 function offlinequiz_get_answer_latex($question, $answer) {
     $answertext = $question->options->answers[$answer]->answer;
     $answertext = offlinequiz_convert_html_to_latex($answertext);
-    if ($question->options->answers [$answer]->fraction > 0) {
+    if ($question->options->answers[$answer]->fraction > 0) {
         $result = '\item\answerIs{true} ' . $answertext;
     } else {
         $result = '\item\answerIs{false} ' . $answertext;

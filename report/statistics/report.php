@@ -89,7 +89,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
 
         if (!$groups = $DB->get_records('offlinequiz_groups',
                 array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
-            print_error('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
+            throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
                 $COURSE->id, $scannedpage->offlinequizid);
         }
 
@@ -110,7 +110,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
                 $offlinequiz->questions = $groupquestions;
             } else {
-                print_error('invalidgroupnumber', 'offlinequiz');
+                throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
             }
         } else {
             $offlinequiz->groupid = 0;
@@ -337,7 +337,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         } else if ($questionid) {
             // Report on an individual question indexed by position.
             if (!isset($questions[$questionid])) {
-                print_error('questiondoesnotexist', 'question');
+                throw new \moodle_exception('questiondoesnotexist', 'question');
             }
 
             $this->output_individual_question_data($offlinequiz, $questions[$questionid]);
@@ -352,7 +352,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         } else if ($qid) {
             // Report on an individual sub-question indexed questionid.
             if (!isset($subquestions[$qid])) {
-                print_error('questiondoesnotexist', 'question');
+                throw new \moodle_exception('questiondoesnotexist', 'question');
             }
 
             $this->output_individual_question_data($offlinequiz, $subquestions[$qid]);

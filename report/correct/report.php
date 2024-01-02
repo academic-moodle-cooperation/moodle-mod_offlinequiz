@@ -239,7 +239,7 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
 
                     redirect($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id . '&amp;mode=correct');
                 } else {
-                    print_error('invalidsesskey');
+                    throw new \moodle_exception('invalidsesskey');
                 }
                 break;
             default:

@@ -24,6 +24,8 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import {eventTypes} from 'core_filters/events';
+
 var CSS = {
     QBANKLOADING:       'div.questionbankloading',
     ADDQUESTIONLINKS:   '.menu [data-action="questionbank"]',
@@ -173,7 +175,7 @@ Y.extend(POPUP, Y.Base, {
                     });
 
         });
-        Y.on(M.core.event.FILTER_CONTENT_UPDATED,this.options_changed, this);
+        Y.on(eventTypes.filterContentUpdated,this.options_changed, this);
         this.searchRegionInitialised = false;
         if (this.dialogue.get('visible')) {
             this.initialiseSearchRegion();

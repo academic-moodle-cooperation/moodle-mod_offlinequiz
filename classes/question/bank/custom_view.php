@@ -261,14 +261,14 @@ class custom_view extends \core_question\local\bank\view {
             }
         }
         $fields = array_unique($fields);
-        
+
         // Build the order by clause.
         $sorts = [];
         foreach ($this->sort as $sort => $order) {
             list($colname, $subsort) = $this->parse_subsort($sort);
             $sorts[] = $this->requiredcolumns[$colname]->sort_expression($order < 0, $subsort);
         }
-        
+
         // Build the where clause.
         $latestversion = 'qv.version = (SELECT MAX(v.version)
                                           FROM {question_versions} v
@@ -292,6 +292,5 @@ class custom_view extends \core_question\local\bank\view {
         $sql .= '   AND q.qtype IN (\'multichoice\', \'multichoiceset\', \'description\') ';
         $this->countsql = 'SELECT count(1)' . $sql;
         $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
-        }
-
+    }
 }
