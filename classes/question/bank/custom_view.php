@@ -66,7 +66,7 @@ class custom_view extends \core_question\local\bank\view {
                 'checkbox_column',
                 'question_type_column',
                 'question_name_text_column',
-                'preview_action_column',
+                'mod_quiz\question\bank\preview_action_column',
             );
         } else {
             $offlinequizquestionbankcolumns = explode(',', $CFG->offlinequizquestionbankcolumns);
@@ -103,7 +103,7 @@ class custom_view extends \core_question\local\bank\view {
 
     protected function default_sort(): array {
         return array(
-            'core_question\\bank\\question_type_column' => 1,
+            'qbank_viewquestiontype\\question_type_column' => 1,
             'mod_offlinequiz\\question\\bank\\question_name_text_column' => 1,
         );
     }
@@ -161,7 +161,8 @@ class custom_view extends \core_question\local\bank\view {
         $pagevars['showhidden'] = $showhidden;
         $pagevars['qbshowtext'] = $showquestiontext;
         $pagevars['qtagids'] = $tagids;
-        $this->display($pagevars, $tabname);
+        $this->set_pagevars($pagevars);
+        $this->display();
         $out = ob_get_contents();
         ob_end_clean();
         return $out;
@@ -197,26 +198,6 @@ class custom_view extends \core_question\local\bank\view {
             echo \html_writer::empty_tag('input', $params);
         }
         echo "</div>\n";
-    }
-
-    /**
-     * Prints a form to choose categories.
-     * @param string $categoryandcontext 'categoryID,contextID'.
-     * @deprecated since Moodle 2.6 MDL-40313.
-     * @see \core_question\bank\search\category_condition
-     * @todo MDL-41978 This will be deleted in Moodle 2.8
-     */
-    protected function print_choose_category_message(): void {
-        global $OUTPUT;
-        debugging('print_choose_category_message() is deprecated, ' .
-                'please use \core_question\bank\search\category_condition instead.', DEBUG_DEVELOPER);
-        echo $OUTPUT->box_start('generalbox questionbank');
-        $this->display_category_form($this->contexts->having_one_edit_tab_cap('edit'),
-                $this->baseurl, $categoryandcontext);
-        echo "<p style=\"text-align:center;\"><b>";
-        print_string('selectcategoryabove', 'question');
-        echo "</b></p>";
-        echo $OUTPUT->box_end();
     }
 
     protected function display_options_form($showquestiontext, $scriptpath = '/mod/offlinequiz/edit.php',
