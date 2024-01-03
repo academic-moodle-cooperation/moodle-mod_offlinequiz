@@ -26,6 +26,11 @@
  */
 
 namespace mod_offlinequiz\question\bank;
+use qbank_managecategories\category_condition;
+use qbank_deletequestion\hidden_condition;
+use core\output\datafilter;
+use core_question\local\bank\filter_condition_manager;
+
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -57,6 +62,10 @@ class custom_view extends \core_question\local\bank\view {
         $this->offlinequiz = $offlinequiz;
     }
 
+    public function get_offlinequiz() {
+        return $this->offlinequiz;
+    }
+
     protected function wanted_columns(): array {
         global $CFG;
 
@@ -66,7 +75,7 @@ class custom_view extends \core_question\local\bank\view {
                 'checkbox_column',
                 'question_type_column',
                 'question_name_text_column',
-                'mod_quiz\question\bank\preview_action_column',
+                'mod_offlinequiz\question\bank\preview_action_column',
             );
         } else {
             $offlinequizquestionbankcolumns = explode(',', $CFG->offlinequizquestionbankcolumns);
@@ -161,6 +170,31 @@ class custom_view extends \core_question\local\bank\view {
         $pagevars['showhidden'] = $showhidden;
         $pagevars['qbshowtext'] = $showquestiontext;
         $pagevars['qtagids'] = $tagids;
+        $pagevars['tabname'] = 'questions';
+        $pagevars['qperpage'] = DEFAULT_QUESTIONS_PER_PAGE;
+        $pagevars['filter']  = [];
+        [$categoryid, $contextid] = category_condition::validate_category_param($pagevars['cat']);
+        if (!is_null($categoryid)) {
+            $category = category_condition::get_category_record($categoryid, $contextid);
+            $pagevars['filter']['category'] = [
+                'jointype' => category_condition::JOINTYPE_DEFAULT,
+                'values' => [$category->id],
+                'filteroptions' => ['includesubcategories' => false],
+            ];
+        }
+        $pagevars['filter']['hidden'] = [
+            'jointype' => hidden_condition::JOINTYPE_DEFAULT,
+            'values' => [0],
+        ];
+        $pagevars['jointype'] = datafilter::JOINTYPE_ALL;
+        if (!empty($pagevars['filter'])) {
+            $pagevars['filter'] = filter_condition_manager::unpack_filteroptions_param($pagevars['filter']);
+        }
+        if (isset($pagevars['filter']['jointype'])) {
+            $pagevars['jointype'] = $pagevars['filter']['jointype'];
+            unset($pagevars['filter']['jointype']);
+        }
+
         $this->set_pagevars($pagevars);
         $this->display();
         $out = ob_get_contents();
