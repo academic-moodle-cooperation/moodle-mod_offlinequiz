@@ -69,7 +69,6 @@ $event->trigger();
 
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
-
 // Start getting Data
 $status = [];
 $sql = "SELECT og.id, og.groupnumber, count(ogq.id) questions, og.sumgrades
@@ -77,8 +76,9 @@ $sql = "SELECT og.id, og.groupnumber, count(ogq.id) questions, og.sumgrades
      LEFT JOIN {offlinequiz_group_questions} ogq ON og.id = ogq.offlinegroupid
          WHERE og.offlinequizid = :offlinequizid
       GROUP BY og.groupnumber, og.id
+        HAVING og.groupnumber - 1 < :numgroups
       ORDER BY og.groupnumber";
-$status['groups'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id ]);
+$status['groups'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id, 'numgroups' => $offlinequiz->numgroups]);
 $status['groupswithoutquestions'] = [];
 foreach ($status['groups'] as $group) {
     if (!$group->questions) {
