@@ -24,8 +24,6 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {eventTypes} from 'core_filters/events';
-
 var CSS = {
     QBANKLOADING:       'div.questionbankloading',
     ADDQUESTIONLINKS:   '.menu [data-action="questionbank"]',
@@ -103,7 +101,10 @@ Y.extend(POPUP, Y.Base, {
         Y.log('Starting load.', 'debug', 'moodle-mod_offlinequiz-offlinequizquestionbank');
         this.dialogue.bodyNode.append(this.loadingDiv);
         Y.log('queryString:' + queryString, 'debug', 'moodle-mod_offlinequiz-offlinequizquestionbank');
-
+        if(!queryString.includes("cmid=")) {
+            var cmid = new URLSearchParams(window.location.search).get('cmid');
+            queryString = queryString + '&cmid=' + cmid;
+        }
         Y.io(M.cfg.wwwroot + '/mod/offlinequiz/questionbank.ajax.php' + queryString, {
             method: 'GET',
             on: {
@@ -175,7 +176,9 @@ Y.extend(POPUP, Y.Base, {
                     });
 
         });
-        Y.on(eventTypes.filterContentUpdated,this.options_changed, this);
+        require(['core_form/events'], function(formEvent) {
+            document.addEventListener(formEvent.eventTypes.filterContentUpdated,this.options_changed,this);
+        });
         this.searchRegionInitialised = false;
         if (this.dialogue.get('visible')) {
             this.initialiseSearchRegion();
