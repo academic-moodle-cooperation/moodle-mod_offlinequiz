@@ -277,7 +277,9 @@ class offlinequiz_statistics_question_stats {
             $this->sumofmarkvariance += $question->_stats->markvariance;
 
             if ($question->_stats->covariancewithoverallmark >= 0) {
-                $sumofcovariancewithoverallmark += sqrt($question->_stats->covariancewithoverallmark);
+                if(!is_null($question->_stats->covariancewithoverallmark)) {
+                    $sumofcovariancewithoverallmark += sqrt($question->_stats->covariancewithoverallmark);
+                }
                 $question->_stats->negcovar = 0;
             } else {
                 $question->_stats->negcovar = 1;
