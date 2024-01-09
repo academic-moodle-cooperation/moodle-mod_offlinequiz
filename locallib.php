@@ -850,6 +850,7 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade,
             }
         }
     }
+    $DB->delete_records('offlinequiz_statistics', ['offlinequizid' => $offlinequiz->id]);
     $DB->commit_delegated_transaction($transaction);
 }
 
