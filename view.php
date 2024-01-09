@@ -75,7 +75,7 @@ $sql = "SELECT og.id, og.groupnumber, count(ogq.id) questions, og.sumgrades
           FROM {offlinequiz_groups} og
      LEFT JOIN {offlinequiz_group_questions} ogq ON og.id = ogq.offlinegroupid
          WHERE og.offlinequizid = :offlinequizid
-      GROUP BY og.groupnumber, og.id
+      GROUP BY og.groupnumber, og.id, og.sumgrades
         HAVING og.groupnumber - 1 < :numgroups
       ORDER BY og.groupnumber";
 $status['groups'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id, 'numgroups' => $offlinequiz->numgroups]);
