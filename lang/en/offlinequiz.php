@@ -252,6 +252,7 @@ $string['groupoutofrange'] = 'Group was out of range and replaced with group A.'
 $string['hasresult'] = 'Result exists';
 $string['hotspotdeletiontask'] = 'Deletion of hotspots';
 $string['html'] = 'HTML';
+$string['id'] = 'User-ID';
 $string['idnumber'] = 'ID number';
 $string['imagefile'] = 'Image file';
 $string['imagenotfound'] = 'Image file: {$a} not found!';

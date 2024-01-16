@@ -51,7 +51,7 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
         $table = new \mod_offlinequiz\correct\offlinequiz_selectall_table('mod_offlinequiz_import_report', 'report.php', $tableparams);
 
         $tablecolumns = array('checkbox', 'counter', 'userkey', 'groupnumber', 'pagenumber', 'time', 'error', 'info', 'link');
-        $tableheaders = array('', '#', get_string($offlinequizconfig->ID_field, 'offlinequiz_rimport'),
+        $tableheaders = array('', '#', offlinequiz_get_id_field_name(), 'offlinequiz_rimport'),
                 get_string('group'), get_string('page'), get_string('importedon', 'offlinequiz_rimport'),
                 get_string('error'), get_string('info'), '');
 

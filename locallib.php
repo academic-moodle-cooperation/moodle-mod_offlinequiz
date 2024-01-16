@@ -1675,6 +1675,18 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
 }
 
 /**
+ * returns the lang string of the id_field
+ */
+function offlinequiz_get_id_field_name() {
+    $offlinequizconfig = get_config('offlinequiz');
+    if(get_string_manager()->string_exists($offlinequizconfig->ID_field,'core')) {
+        return get_string($offlinequizconfig->ID_field);
+    } else {
+        //Some table fields don't have a name (e.g. id). We have to make langstrings for them
+        return get_string($offlinequizconfig->ID_field, 'offlinequiz');
+    }
+}
+/**
  * Prints a preview for a question in an offlinequiz to Stdout.
  *
  * @param object $question
@@ -1845,7 +1857,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
     // Define table columns.
     $tablecolumns = array('checkbox', 'picture', 'fullname', $offlinequizconfig->ID_field, 'listnumber', 'attempt', 'checked');
     $tableheaders = array('<input type="checkbox" name="toggle" class="select-all-checkbox"/>',
-            '', get_string('fullname'), get_string($offlinequizconfig->ID_field), get_string('participantslist', 'offlinequiz'),
+            '', get_string('fullname'), offlinequiz_get_id_field_name(), get_string('participantslist', 'offlinequiz'),
             get_string('attemptexists', 'offlinequiz'), get_string('present', 'offlinequiz'));
 
     $table->define_columns($tablecolumns);
@@ -2066,7 +2078,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
 
     // Define table headers.
     $tableheaders = array(get_string('fullname'),
-                          get_string($offlinequizconfig->ID_field),
+                          offlinequiz_get_id_field_name(),
                           get_string('participantslist', 'offlinequiz'),
                           get_string('attemptexists', 'offlinequiz'),
                           get_string('present', 'offlinequiz'));
