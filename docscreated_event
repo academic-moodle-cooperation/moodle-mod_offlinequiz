@@ -574,27 +574,31 @@ if ($mode == 'preview') {
 
         echo $OUTPUT->box_end();
 
-        // Remember that we have created the documents.
+        // Only send event if we have actually created new documents.
+        if ($offline->docs_created == 0) {
+            $doctype = 'PDF';
+            if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
+                $doctype = 'DOCX';
+            } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
+                $doctype = 'LATEX';
+            }
+            $params = array(
+                'context' => $context,
+                'other' => array(
+                        'offlinequizid' => $offlinequiz->id,
+                        'reportname' => $mode,
+                        'doctype' => $doctype
+    
+                )
+            );
+            $event = \mod_offlinequiz\event\docs_created::create($params);
+            $event->trigger();
+        }
+
+        // Register that we have created the documents.
         $offlinequiz->docscreated = 1;
         $DB->set_field('offlinequiz', 'docscreated', 1, array('id' => $offlinequiz->id));
 
-        $doctype = 'PDF';
-        if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
-            $doctype = 'DOCX';
-        } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
-            $doctype = 'LATEX';
-        }
-        $params = array(
-            'context' => $context,
-            'other' => array(
-                    'offlinequizid' => $offlinequiz->id,
-                    'reportname' => $mode,
-                    'doctype' => $doctype
-
-            )
-        );
-        $event = \mod_offlinequiz\event\docs_created::create($params);
-        $event->trigger();
     }
 }
 
