@@ -818,7 +818,7 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade,
             ['offlinequizid' => $offlinequiz->id, 'questionid' => $questionid]);
         if ($referenceids && $newquestionversion) {
             foreach ($referenceids as $referenceid) {
-                $DB->set_field('question_references', 'version', $newquestionversion, ['itemid' => $referenceid->id]);
+                $DB->set_field('question_references', 'version', $newquestionversion, ['id' => $referenceid->id]);
                 if(!$referenceid->documentquestionid && $offlinequiz->docscreated) {
                     $DB->set_field('offlinequiz_group_questions', 'documentquestionid', $questionid,['questionid' => $referenceid->questionid, 'offlinequizid' => $offlinequiz->id]);
                 }
