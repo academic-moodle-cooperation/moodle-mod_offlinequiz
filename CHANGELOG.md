@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+4.2.1
+-----------------
+* fix a bug where changing the version in offlinequiz break other quiz instances
+
 4.2.0
 -----------------
 * WARNING! THIS UPDATE MAY TAKE SOME TIME ON BIGGER INSTANCES! For more information see https://github.com/academic-moodle-cooperation/moodle-mod_offlinequiz/issues/220
