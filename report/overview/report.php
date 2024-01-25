@@ -163,13 +163,13 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 }
                 offlinequiz_grade_item_update($offlinequiz, 'reset');
                 offlinequiz_update_grades($offlinequiz);
-                redirect(
-                        new moodle_url('/mod/offlinequiz/report.php',
-                                array('mode' => 'overview', 'id' => $cm->id,
-                                    'noresults' => $noresults, 'group' => $groupid,
-                                    'pagesize' => $pagesize
-                                )));
             }
+            redirect(
+                new moodle_url('/mod/offlinequiz/report.php',
+                    array('mode' => 'overview', 'id' => $cm->id,
+                        'noresults' => $noresults, 'group' => $groupid,
+                        'pagesize' => $pagesize
+                    )));
         }
 
         // Now check if asked download of data.
