@@ -220,7 +220,7 @@ function offlinequiz_delete_instance($id) {
             offlinequiz_delete_scanned_p_page($page, $context);
         }
     }
-
+    $DB->delete_records('moquestion_references',['usingcontextid' => $context->id]);
     if ($events = $DB->get_records('event', array('modulename' => 'offlinequiz', 'instance' => $offlinequiz->id))) {
         foreach ($events as $event) {
             $event = calendar_event::load($event);
