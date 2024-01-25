@@ -2,7 +2,7 @@ CHANGELOG
 =========
 4.1.3
 -----------------
-* fix a bug where changing the version in offlinequiz break other quiz instances
+* [Bug] Fixed a bug where changing the version in offlinequiz break other quiz instances
 
 4.1.1/4.1.2
 -----------------
