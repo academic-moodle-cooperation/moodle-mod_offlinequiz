@@ -128,7 +128,7 @@ class submit_question_version extends external_api {
             if ($response['result']) {
                 $response['result'] = $DB->update_record('question_references', $reference);
             }
-            \offlinequiz_update_question_instance($offlinequiz, $oldquestionid, $slotdata->maxmark, $newquestionid);
+            \offlinequiz_update_question_instance($offlinequiz,$context->id, $oldquestionid, $slotdata->maxmark, $newquestionid);
             $response['result'] = true;
         }
         return $response;
