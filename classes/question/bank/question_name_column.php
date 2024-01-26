@@ -17,43 +17,56 @@
 namespace mod_offlinequiz\question\bank;
 
 /**
- * A column type for the name followed by the start of the question text.
+ * A column type for the name of the question name.
  *
- * @package    mod_offlinequiz
- * @category   question
- * @copyright  2009 Tim Hunt
- * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_offlinequiz
+ * @category  question
+ * @copyright 2009 Tim Hunt
+ * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_name_text_column extends question_name_column {
+class question_name_column extends \core_question\local\bank\column_base {
+
+    /**
+     * @var null $checkboxespresent
+     */
+    protected $checkboxespresent = null;
 
     public function get_name(): string {
-        return 'questionnametext';
+        return 'questionname';
+    }
+
+    public function get_title(): string {
+        return get_string('question');
+    }
+
+    protected function label_for($question): string {
+        if (is_null($this->checkboxespresent)) {
+            $this->checkboxespresent = $this->qbank->has_column('core_question\local\bank\checkbox_column');
+        }
+        if ($this->checkboxespresent) {
+            return 'checkq' . $question->id;
+        } else {
+            return '';
+        }
     }
 
     protected function display_content($question, $rowclasses): void {
-        echo \html_writer::start_tag('div');
         $labelfor = $this->label_for($question);
         if ($labelfor) {
             echo \html_writer::start_tag('label', ['for' => $labelfor]);
         }
-        echo offlinequiz_question_tostring($question, false, true, true, $question->tags);
+        echo format_string($question->name);
         if ($labelfor) {
             echo \html_writer::end_tag('label');
         }
-        echo \html_writer::end_tag('div');
     }
 
     public function get_required_fields(): array {
-        $fields = parent::get_required_fields();
-        $fields[] = 'q.questiontext';
-        $fields[] = 'q.questiontextformat';
-        $fields[] = 'qbe.idnumber';
-        return $fields;
+        return ['q.id', 'q.name'];
     }
 
-    public function load_additional_data(array $questions) {
-        parent::load_additional_data($questions);
-        parent::load_question_tags($questions);
+    public function is_sortable() {
+        return 'q.name';
     }
 }
