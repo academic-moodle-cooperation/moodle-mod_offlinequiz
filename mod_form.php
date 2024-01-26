@@ -363,12 +363,12 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $items = array();
 
         $group = array();
-        $group[] = $mform->createElement('advcheckbox', 'completionpass', null, get_string('completionpass', 'offlinequiz'),
+        $group[] = $mform->createElement('advcheckbox', 'completionpass' . $this->get_suffix(), null, get_string('completionpass', 'offlinequiz'),
             array('group' => 'cpass'));
-        $mform->disabledIf('completionpass', 'completionusegrade', 'notchecked');
+        $mform->disabledIf('completionpass' . $this->get_suffix(), 'completionusegrade', 'notchecked');
 
         $mform->addGroup($group, 'completionpassgroup', get_string('completionpass', 'offlinequiz'), ' &nbsp; ', false);
-        $mform->addHelpButton('completionpassgroup', 'completionpass', 'offlinequiz');
+        $mform->addHelpButton('completionpassgroup', 'completionpass' . $this->get_suffix(), 'offlinequiz');
         $items[] = 'completionpassgroup';
 
         return $items;
