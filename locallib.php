@@ -805,7 +805,7 @@ function offlinequiz_delete_result($resultid, $context) {
  * @param int $questionid  The id of the question
  * @param int grade    The maximal grade for the question
  */
-function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade, $newquestionid = null) {
+function offlinequiz_update_question_instance($offlinequiz, $contextid, $questionid, $grade, $newquestionid = null) {
     global $DB;
     $transaction = $DB->start_delegated_transaction();
     $DB->set_field('offlinequiz_group_questions', 'maxmark', $grade,
@@ -813,14 +813,15 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade,
     if ($newquestionid) {
         $newquestionversion = $DB->get_field('question_versions', 'version', ['questionid' => $newquestionid]);
 
-        $referenceids = $DB->get_records('offlinequiz_group_questions', ['questionid' => $questionid, 'offlinequizid' => $offlinequiz->id], 'id');
+        $groupquestions = $DB->get_records('offlinequiz_group_questions', ['questionid' => $questionid, 'offlinequizid' => $offlinequiz->id], 'id');
         $DB->set_field('offlinequiz_group_questions', 'questionid', $newquestionid,
             ['offlinequizid' => $offlinequiz->id, 'questionid' => $questionid]);
-        if ($referenceids && $newquestionversion) {
-            foreach ($referenceids as $referenceid) {
-                $DB->set_field('question_references', 'version', $newquestionversion, ['itemid' => $referenceid->id]);
-                if(!$referenceid->documentquestionid && $offlinequiz->docscreated) {
-                    $DB->set_field('offlinequiz_group_questions', 'documentquestionid', $questionid,['questionid' => $referenceid->questionid, 'offlinequizid' => $offlinequiz->id]);
+        if ($groupquestions && $newquestionversion) {
+            foreach ($groupquestions as $groupquestion) {
+                $DB->set_field('question_references', 'version', $newquestionversion, ['itemid' => $groupquestion->id, 'component' => 'mod_offlinequiz', 'usingcontextid' => $contextid]);
+                if (!$groupquestion->documentquestionid && $offlinequiz->docscreated) {
+                    $DB->set_field('offlinequiz_group_questions', 'documentquestionid', $questionid,
+                        ['questionid' => $groupquestion->questionid, 'offlinequizid' => $offlinequiz->id]);
                 }
             }
         }
