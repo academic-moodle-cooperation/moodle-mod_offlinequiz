@@ -101,8 +101,15 @@ foreach ($queues as $queue) {
     }
 }
 $status['docsuploaded'] = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id]);
+$sql = "SELECT *
+FROM {offlinequiz_scanned_pages}
+WHERE offlinequizid = :offlinequizid
+AND (status = 'error'
+    OR status = 'suspended'
+    OR error = 'missingpages')";
+$status['correctionerrors'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id]);
 $status['correctionerrors'] = $DB->get_records('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
-$status['resultscount'] = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
+$status['resultscount'] = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id, 'status' => 'complete']);
 
 $sql = "SELECT opl.*,
                     (SELECT count(*)
