@@ -2175,56 +2175,50 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
  *       If false, show only question name.
  * @param bool $return If true (default), return the output. If false, print it.
  */
-function offlinequiz_question_tostring($question, $showicon = false,
-        $showquestiontext = true, $return = true, $shorttitle = false) {
-    global $COURSE;
-
+function offlinequiz_question_tostring($question, $showicon = false, $showquestiontext = true,
+                                       $showidnumber = false, $showtags = false) {
+    global $OUTPUT;
     $result = '';
 
-    $formatoptions = new stdClass();
-    $formatoptions->noclean = true;
-    $formatoptions->para = false;
-
-    $questiontext = strip_tags(question_utils::to_plain_text($question->questiontext, $question->questiontextformat,
-                                                             array('noclean' => true, 'para' => false)));
-    $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
-
-    $result .= '<span class="questionname" title="' . $questiontitle . '">';
-    if ($shorttitle && strlen($questiontitle) > 25) {
-        $questiontitle = shorten_text($questiontitle, 25, false, '...');
-    }
-
+    // Question name.
+    $name = shorten_text(format_string($question->name), 200);
     if ($showicon) {
-        $result .= print_question_icon($question, true);
-        echo ' ';
+        $name .= print_question_icon($question) . ' ' . $name;
+    }
+    $result .= html_writer::span($name, 'questionname');
+
+    // Question idnumber.
+    if ($showidnumber && $question->idnumber !== null && $question->idnumber !== '') {
+        $result .= ' ' . html_writer::span(
+                html_writer::span(get_string('idnumber', 'question'), 'accesshide') .
+                ' ' . s($question->idnumber), 'badge badge-primary');
     }
 
-    if ($shorttitle) {
-        $result .= $questiontitle;
+    // Question tags.
+    if (is_array($showtags)) {
+        $tags = $showtags;
+    } else if ($showtags) {
+        $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
     } else {
-        $result .= shorten_text(format_string($question->name), 200) . '</span>';
+        $tags = [];
+    }
+    if ($tags) {
+        $result .= $OUTPUT->tag_list($tags, null, 'd-inline', 0, null, true);
     }
 
+    // Question text.
     if ($showquestiontext) {
-        $result .= '<span class="questiontext" title="' . $questiontext . '">';
-
-        $questiontext = shorten_text($questiontext, 200);
-
-        if (!empty($questiontext)) {
-            $result .= $questiontext;
-        } else {
-            $result .= '<span class="error">';
-            $result .= get_string('questiontextisempty', 'offlinequiz');
-            $result .= '</span>';
+        $questiontext = question_utils::to_plain_text($question->questiontext,
+            $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
+        $questiontext = shorten_text($questiontext, 50);
+        if ($questiontext) {
+            $result .= ' ' . html_writer::span(s($questiontext), 'questiontext');
         }
-        $result .= '</span>';
     }
-    if ($return) {
-        return $result;
-    } else {
-        echo $result;
-    }
+
+    return $result;
 }
+
 /**
  * Add a question to a offlinequiz group
  *

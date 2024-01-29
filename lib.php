@@ -1502,3 +1502,110 @@ function offlinequiz_delete_references($offlinequizid): void {
         $DB->delete_records('question_references', $params);
     }
 }
+
+/**
+ * Generates the question bank in a fragment output. This allows
+ * the question bank to be displayed in a modal.
+ *
+ * The only expected argument provided in the $args array is
+ * 'querystring'. The value should be the list of parameters
+ * URL encoded and used to build the question bank page.
+ *
+ * The individual list of parameters expected can be found in
+ * question_build_edit_resources.
+ *
+ * @param array $args The fragment arguments.
+ * @return string The rendered mform fragment.
+ */
+function mod_offlinequiz_output_fragment_offlinequiz_question_bank($args): string {
+    global $PAGE;
+
+    // Retrieve params.
+    $params = [];
+    $extraparams = [];
+    $querystring = parse_url($args['querystring'], PHP_URL_QUERY);
+    parse_str($querystring, $params);
+
+    $viewclass = \mod_offlinequiz\question\bank\custom_view::class;
+    $extraparams['view'] = $viewclass;
+
+    // Build required parameters.
+    [$contexts, $thispageurl, $cm, $offlinequiz, $pagevars, $extraparams] =
+        build_required_params_for_custom_view($params, $extraparams);
+
+    /*list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
+        question_edit_setup('editq', '/mod/offlinequiz/edit.php', false);*/
+
+    $course = get_course($cm->course);
+    require_capability('mod/offlinequiz:manage', $contexts->lowest());
+
+    // Custom View.
+    //$questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
+    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $offlinequiz);
+
+    // Output.
+    $renderer = $PAGE->get_renderer('mod_offlinequiz', 'edit');
+    return $renderer->question_bank_contents($questionbank, $pagevars);
+}
+
+/**
+ * Build required parameters for question bank custom view
+ *
+ * @param array $params the page parameters
+ * @param array $extraparams additional parameters
+ * @return array
+ */
+function build_required_params_for_custom_view(array $params, array $extraparams): array {
+    // Retrieve questions per page.
+    $viewclass = $extraparams['view'] ?? null;
+    $defaultpagesize = $viewclass ? $viewclass::DEFAULT_PAGE_SIZE : DEFAULT_QUESTIONS_PER_PAGE;
+    // Build the required params.
+    [$thispageurl, $contexts, $cmid, $cm, $module, $pagevars] = question_build_edit_resources(
+        'editq',
+        '/mod/offlinequiz/edit.php',
+        array_merge($params, $extraparams),
+        $defaultpagesize);
+
+    // Add cmid so we can retrieve later in extra params.
+    $extraparams['cmid'] = $cmid;
+
+    return [$contexts, $thispageurl, $cm, $module, $pagevars, $extraparams];
+}
+
+/**
+ * Question data fragment to get the question html via ajax call.
+ *
+ * @param array $args
+ * @return string
+ */
+function mod_offlinequiz_output_fragment_question_data(array $args): string {
+    // Return if there is no args.
+    if (empty($args)) {
+        return '';
+    }
+
+    // Retrieve params from query string.
+    [$params, $extraparams] = \core_question\local\bank\filter_condition_manager::extract_parameters_from_fragment_args($args);
+
+    // Build required parameters.
+    $cmid = clean_param($args['cmid'], PARAM_INT);
+    $thispageurl = new \moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cmid]);
+    $thiscontext = \context_module::instance($cmid);
+    $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
+    $defaultcategory = question_make_default_categories($contexts->all());
+    $params['cat'] = implode(',', [$defaultcategory->id, $defaultcategory->contextid]);
+
+    $course = get_course($params['courseid']);
+    [, $cm] = get_module_from_cmid($cmid);
+    $params['tabname'] = 'questions';
+
+    // Custom question bank View.
+    $viewclass = clean_param($args['view'], PARAM_NOTAGS);
+    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $params, $extraparams);
+
+    // Question table.
+    $questionbank->add_standard_search_conditions();
+    ob_start();
+    $questionbank->display_question_list();
+    return ob_get_clean();
+}
