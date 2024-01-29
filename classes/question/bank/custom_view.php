@@ -31,6 +31,7 @@ use core\output\datafilter;
 use core_question\local\bank\column_base;
 use core_question\local\bank\condition;
 use core_question\local\bank\question_version_status;
+use mod_offlinequiz\question\bank\filter\custom_category_condition;
 use qbank_managecategories\category_condition;
 
 use qbank_deletequestion\hidden_condition;
@@ -89,10 +90,28 @@ class custom_view extends \core_question\local\bank\view {
         parent::__construct($contexts, $pageurl, $course, $cm);
         $this->offlinequiz = $offlinequiz;
     }*/
-    public function __construct($contexts, $pageurl, $course, $cm, $offlinequiz) {
+    public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams, $offlinequiz = null) {
+        // Default filter condition.
+        if (!isset($params['filter'])) {
+            $params['filter']  = [];
+            [$categoryid, $contextid] = custom_category_condition::validate_category_param($params['cat']);
+            if (!is_null($categoryid)) {
+                $category = custom_category_condition::get_category_record($categoryid, $contextid);
+                $params['filter']['category'] = [
+                    'jointype' => custom_category_condition::JOINTYPE_DEFAULT,
+                    'values' => [$category->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ];
+            }
+        }
         $this->init_columns($this->wanted_columns(), $this->heading_column());
-        parent::__construct($contexts, $pageurl, $course, $cm);
-        $this->offlinequiz = $offlinequiz;
+        if (is_null($offlinequiz)) {
+            parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
+            [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
+        } else {
+            parent::__construct($contexts, $pageurl, $course, $cm);
+            $this->offlinequiz = $offlinequiz;
+        }
     }
 
     public function get_offlinequiz() {
@@ -482,5 +501,23 @@ class custom_view extends \core_question\local\bank\view {
         }
         $this->countsql = 'SELECT count(1)' . $sql;
         $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
+    }
+
+    public function add_standard_search_conditions(): void {
+        foreach ($this->plugins as $componentname => $plugin) {
+            if (\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
+                $pluginentrypointobject = new $plugin();
+                if ($componentname === 'qbank_managecategories') {
+                    $pluginentrypointobject = new offlinequiz_managecategories_feature();
+                }
+                if ($componentname === 'qbank_viewquestiontext' || $componentname === 'qbank_deletequestion') {
+                    continue;
+                }
+                $pluginobjects = $pluginentrypointobject->get_question_filters($this);
+                foreach ($pluginobjects as $pluginobject) {
+                    $this->add_searchcondition($pluginobject, $pluginobject->get_condition_key());
+                }
+            }
+        }
     }
 }

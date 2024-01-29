@@ -1541,7 +1541,7 @@ function mod_offlinequiz_output_fragment_offlinequiz_question_bank($args): strin
 
     // Custom View.
     //$questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
-    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $offlinequiz);
+    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams, $offlinequiz);
 
     // Output.
     $renderer = $PAGE->get_renderer('mod_offlinequiz', 'edit');

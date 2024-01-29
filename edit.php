@@ -338,7 +338,7 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
 }
 
 // Get the question bank view.
-$questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $offlinequiz);
+$questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $pagevars, [], $offlinequiz);
 $questionbank->set_offlinequiz_has_scanned_pages($docscreated);
 if ($newquestionid) {
     $thispageurl->remove_params('lastchanged');
