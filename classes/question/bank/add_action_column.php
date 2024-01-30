@@ -19,7 +19,7 @@ namespace mod_offlinequiz\question\bank;
 /**
  * A column type for the add this question to the quiz action.
  *
- * @package    mod_quiz
+ * @package    mod_offlinequiz
  * @category   question
  * @copyright  2009 Tim Hunt
  * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>

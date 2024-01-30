@@ -28,7 +28,7 @@ import * as FormChangeChecker from 'core_form/changechecker';
 import * as ModalEvents from 'core/modal_events';
 
 const SELECTORS = {
-    ADD_TO_QUIZ_CONTAINER: 'td.addtoquizaction',
+    ADD_TO_OFFLINEQUIZ_CONTAINER: 'td.addtoofflinequizaction',
     ANCHOR: 'a[href]',
     PREVIEW_CONTAINER: 'td.previewaction',
     ADD_QUESTIONS_FORM: 'form#questionsubmit',
@@ -36,7 +36,7 @@ const SELECTORS = {
 };
 
 export default class ModalOfflinequizQuestionBank extends Modal {
-    static TYPE = 'mod_quiz-quiz-question-bank';
+    static TYPE = 'mod_offlinequiz-offlinequiz-question-bank';
 
     /**
      * Create the question bank modal.
@@ -76,7 +76,6 @@ export default class ModalOfflinequizQuestionBank extends Modal {
      * @return {void}
      */
     show() {
-        window.console.log('show');
         this.reloadBodyContent(window.location.search);
         return super.show(this);
     }
@@ -92,7 +91,6 @@ export default class ModalOfflinequizQuestionBank extends Modal {
      * @param {string} querystring URL encoded string.
      */
     reloadBodyContent(querystring) {
-        window.console.log('reloadbodycontent');
         // Load the question bank fragment to be displayed in the modal.
         this.setBody(Fragment.loadFragment(
             'mod_offlinequiz',
@@ -108,11 +106,11 @@ export default class ModalOfflinequizQuestionBank extends Modal {
      * Update the URL of the anchor element that the user clicked on to make
      * sure that the question is added to the correct page.
      *
-     * @method handleAddToQuizEvent
+     * @method handleAddToOfflinequizEvent
      * @param {event} e A JavaScript event
      * @param {object} anchorElement The anchor element that was triggered
      */
-    handleAddToQuizEvent(e, anchorElement) {
+    handleAddToOfflinequizEvent(e, anchorElement) {
         // If the user clicks the plus icon to add the question to the page
         // directly then we need to intercept the click in order to adjust the
         // href and include the correct add on page id before the page is
@@ -162,7 +160,7 @@ export default class ModalOfflinequizQuestionBank extends Modal {
         super.registerEventListeners(this);
 
         this.getModal().on('submit', SELECTORS.ADD_QUESTIONS_FORM, (e) => {
-            // If the user clicks on the "Add selected questions to the quiz" button to add some questions to the page
+            // If the user clicks on the "Add selected questions to the offlinequiz" button to add some questions to the page
             // then we need to intercept the submit in order to include the correct "add on page id" before the form is
             // submitted.
             const formElement = $(e.currentTarget);
@@ -177,8 +175,8 @@ export default class ModalOfflinequizQuestionBank extends Modal {
             const anchorElement = $(e.currentTarget);
 
             // If the anchor element was the add to quiz link.
-            if (anchorElement.closest(SELECTORS.ADD_TO_QUIZ_CONTAINER).length) {
-                this.handleAddToQuizEvent(e, anchorElement);
+            if (anchorElement.closest(SELECTORS.ADD_TO_OFFLINEQUIZ_CONTAINER).length) {
+                this.handleAddToOfflinequizEvent(e, anchorElement);
                 return;
             }
 
