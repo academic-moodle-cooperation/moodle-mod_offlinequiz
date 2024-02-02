@@ -376,9 +376,16 @@ switch($mode) {
             echo '<br />&nbsp;<br /></div>';
         }
         if ($action == 'uncheck' and $participantids = optional_param_array('participantid', array(), PARAM_INT)) {
+            confirm_sesskey();
             foreach ($participantids as $participantid) {
-                if ($participantid) {
-                    $DB->set_field('offlinequiz_participants', 'checked', 0, array('id' => $participantid));
+                $sql = "SELECT p.id 
+                          FROM {offlinequiz_p_lists} l
+                          JOIN {offlinequiz_participants} p ON p.listid = l.id
+                          WHERE l.offlinequizid = :offlinequizid
+                          AND p.userid = :userid";
+                $pid = $DB->get_field_sql($sql,['offlinequizid' => $offlinequiz->id, 'userid' => $participantid]);
+                if ($pid) {
+                    $DB->set_field('offlinequiz_participants', 'checked', 0, array('id' => $pid));
                 }
 
                 // Log this event.
@@ -398,10 +405,15 @@ switch($mode) {
         }
         if ($action == 'check' and $participantids = optional_param_array('participantid', array(), PARAM_INT)) {
             foreach ($participantids as $participantid) {
-                if ($participantid) {
-                    $DB->set_field('offlinequiz_participants', 'checked', 1, array('id' => $participantid));
+                $sql = "SELECT p.id
+                          FROM {offlinequiz_p_lists} l
+                          JOIN {offlinequiz_participants} p ON p.listid = l.id
+                          WHERE l.offlinequizid = :offlinequizid
+                          AND p.userid = :userid";
+                $pid = $DB->get_field_sql($sql,['offlinequizid' => $offlinequiz->id, 'userid' => $participantid]);
+                if ($pid) {
+                    $DB->set_field('offlinequiz_participants', 'checked', 1, array('id' => $pid));
                 }
-
                 // Log this event.
                 $userid = $DB->get_field('offlinequiz_participants', 'userid', array('id' => $participantid));
                 $params = array (
