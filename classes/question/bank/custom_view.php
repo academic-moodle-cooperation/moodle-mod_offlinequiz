@@ -29,13 +29,11 @@ namespace mod_offlinequiz\question\bank;
 
 use core\output\datafilter;
 use core_question\local\bank\column_base;
+use core_question\local\bank\column_manager_base;
 use core_question\local\bank\condition;
 use core_question\local\bank\question_version_status;
 use mod_offlinequiz\question\bank\filter\custom_category_condition;
 use qbank_managecategories\category_condition;
-
-use qbank_deletequestion\hidden_condition;
-use core_question\local\bank\filter_condition_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -55,6 +53,11 @@ class custom_view extends \core_question\local\bank\view {
     protected $offlinequizhasattempts = false;
     /** @var \stdClass the offlinequiz settings. */
     protected $offlinequiz = false;
+
+    /**
+     * @var string $component the component the api is used from.
+     */
+    public $component = 'mod_offlinequiz';
 
     /** @var int The maximum displayed length of the category info. */
     const MAX_TEXT_LENGTH = 200;
@@ -82,11 +85,10 @@ class custom_view extends \core_question\local\bank\view {
             }
         }
         $this->init_columns($this->wanted_columns(), $this->heading_column());
+        parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
         if (is_null($offlinequiz)) {
-            parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
             [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
         } else {
-            parent::__construct($contexts, $pageurl, $course, $cm);
             $this->offlinequiz = $offlinequiz;
         }
     }
@@ -94,6 +96,17 @@ class custom_view extends \core_question\local\bank\view {
     public function get_offlinequiz() {
         return $this->offlinequiz;
     }
+
+    /**
+     * Don't display plugin controls.
+     *
+     * @param \core\context $context
+     * @param int $categoryid
+     * @return string
+     */
+    /*protected function get_plugin_controls(\core\context $context, int $categoryid): string {
+        return '';
+    }*/
 
     protected function get_question_bank_plugins(): array {
         $questionbankclasscolumns = [];
@@ -124,11 +137,18 @@ class custom_view extends \core_question\local\bank\view {
         return 'mod_offlinequiz\\question\\bank\\question_name_text_column';
     }
 
-    protected function default_sort(): array {
+    /*protected function default_sort(): array {
         return array(
             'qbank_viewquestiontype\\question_type_column' => 1,
             'mod_offlinequiz\\question\\bank\\question_name_text_column' => 1,
         );
+    }*/
+    protected function default_sort(): array {
+        // Using the extended class for quiz specific sort.
+        return [
+            'qbank_viewquestiontype__question_type_column' => SORT_ASC,
+            'mod_offlinequiz__question__bank__question_name_text_column' => SORT_ASC,
+        ];
     }
 
     /**
@@ -178,7 +198,7 @@ class custom_view extends \core_question\local\bank\view {
      * @param string $tabname
      * @return string HTML code for the form
      */
-    public function render($pagevars, $tabname): string {
+    /*public function render($pagevars, $tabname): string {
         ob_start();
 
         /*$pagevars = [];
@@ -191,7 +211,7 @@ class custom_view extends \core_question\local\bank\view {
         $pagevars['qtagids'] = $tagids;
         $pagevars['tabname'] = 'questions';
         $pagevars['qperpage'] = DEFAULT_QUESTIONS_PER_PAGE;
-        $pagevars['filter']  = [];*/
+        $pagevars['filter']  = [];*
         [$categoryid, $contextid] = category_condition::validate_category_param($pagevars['cat']);
         if (!is_null($categoryid)) {
             $category = category_condition::get_category_record($categoryid, $contextid);
@@ -221,6 +241,33 @@ class custom_view extends \core_question\local\bank\view {
         $out = ob_get_contents();
         ob_end_clean();
         return $out;
+    }*/
+
+    /**
+     * Just use the base column manager in this view.
+     *
+     * @return void
+     */
+    protected function init_column_manager(): void {
+        $this->columnmanager = new column_manager_base();
+    }
+
+    /**
+     * Renders the html question bank (same as display, but returns the result).
+     *
+     * Note that you can only output this rendered result once per page, as
+     * it contains IDs which must be unique.
+     *
+     * @param array $pagevars
+     * @param string $tabname
+     * @return string HTML code for the form
+     */
+    public function render($pagevars, $tabname): string {
+        ob_start();
+        $this->display();
+        $out = ob_get_contents();
+        ob_end_clean();
+        return $out;
     }
 
     /**
@@ -245,7 +292,11 @@ class custom_view extends \core_question\local\bank\view {
                     'type' => 'submit',
                     'name' => 'add',
                     'value' => get_string('addtoofflinequiz', 'offlinequiz'),
-                    'class' => 'btn btn-primary'
+                    'class' => 'btn btn-primary',
+                    'data-action' => 'toggle',
+                    'data-togglegroup' => 'qbank',
+                    'data-toggle' => 'action',
+                    'disabled' => true
             );
             if ($cmoptions->hasattempts) {
                 $params['disabled'] = 'disabled';
@@ -293,6 +344,14 @@ class custom_view extends \core_question\local\bank\view {
 
     protected function create_new_question_form($category, $canadd): void {
         // Don't display this.
+    }
+
+    /**
+     * Override the base implementation in \core_question\local\bank\view
+     * because we don't want to print the headers in the fragment
+     * for the modal.
+     */
+    protected function display_question_bank_header(): void {
     }
 
     /**

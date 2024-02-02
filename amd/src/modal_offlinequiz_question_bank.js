@@ -44,7 +44,6 @@ export default class ModalOfflinequizQuestionBank extends Modal {
      * @param {Number} contextId Current context id.
      */
     static init(contextId) {
-        window.console.log('init');
         const selector = '.menu [data-action="questionbank"]';
         document.addEventListener('click', (e) => {
             const trigger = e.target.closest(selector);
