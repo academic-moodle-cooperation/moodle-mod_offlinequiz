@@ -1530,18 +1530,14 @@ function mod_offlinequiz_output_fragment_offlinequiz_question_bank($args): strin
     $extraparams['view'] = $viewclass;
 
     // Build required parameters.
-    [$contexts, $thispageurl, $cm, $offlinequiz, $pagevars, $extraparams] =
+    [$contexts, $thispageurl, $cm, $pagevars, $extraparams] =
         build_required_params_for_custom_view($params, $extraparams);
-
-    /*list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
-        question_edit_setup('editq', '/mod/offlinequiz/edit.php', false);*/
 
     $course = get_course($cm->course);
     require_capability('mod/offlinequiz:manage', $contexts->lowest());
 
     // Custom View.
-    //$questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
-    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams, $offlinequiz);
+    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
 
     // Output.
     $renderer = $PAGE->get_renderer('mod_offlinequiz', 'edit');
@@ -1569,7 +1565,7 @@ function build_required_params_for_custom_view(array $params, array $extraparams
     // Add cmid so we can retrieve later in extra params.
     $extraparams['cmid'] = $cmid;
 
-    return [$contexts, $thispageurl, $cm, $module, $pagevars, $extraparams];
+    return [$contexts, $thispageurl, $cm, $pagevars, $extraparams];
 }
 
 /**

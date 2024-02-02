@@ -23,7 +23,7 @@ use core_question\local\bank\question_version_status;
  *
  * This is required as quiz will only use ready questions and the count should show according to that.
  *
- * @package    mod_quiz
+ * @package    mod_offlinequiz
  * @category   question
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
