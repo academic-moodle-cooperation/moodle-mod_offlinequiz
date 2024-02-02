@@ -66,7 +66,7 @@ abstract class offlinequiz_default_report {
                 break;
             case 'rimport':
                 $reporttitle = get_string('resultimport', 'offlinequiz');
-                $currenttab = 'tabresultsoverview';
+                $currenttab = 'tabofflinequizupload';
                 break;
             case 'regrade':
                 $reporttitle = get_string('regradingquiz', 'offlinequiz');
