@@ -257,15 +257,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('html', '<input id="basefilename" type="hidden" value="' . $CFG->wwwroot .
                 '/mod/offlinequiz/pix/studentview/' . $language . '/img">');
 
-        $module = array(
-                'name'      => 'mod_offlinequiz_mod_form',
-                'fullpath'  => '/mod/offlinequiz/mod_form.js',
-                'requires'  => array(),
-                'strings'   => array(),
-                'async'     => false,
-        );
-
-        $PAGE->requires->jquery();
         $PAGE->requires->js('/mod/offlinequiz/mod_form.js');
 
         // -------------------------------------------------------------------------------
