@@ -20,11 +20,11 @@ use core_question\local\bank\view;
 use mod_offlinequiz\question\bank\filter\custom_category_condition;
 
 /**
- * Class quiz_managecategories_feature
+ * Class offlinequiz_managecategories_feature
  *
  * Overrides the default categories feature with a custom category condition.
  *
- * @package    mod_quiz
+ * @package    mod_offlinequiz
  * @copyright  2022 Catalyst IT EU Ltd.
  * @author     Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
