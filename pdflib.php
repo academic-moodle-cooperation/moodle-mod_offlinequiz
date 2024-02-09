@@ -411,7 +411,9 @@ function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $o
     if (!empty($texfilter)) {
         $questiontext = $texfilter->filter($questiontext);
     }
-
+    if($question->questiontextformat == FORMAT_PLAIN) {
+        $questiontext = s($questiontext);
+    }
     // Remove all HTML comments (typically from MS Office).
     $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
 
@@ -447,7 +449,9 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         if (!empty($texfilter)) {
             $answertext = $texfilter->filter($answertext);
         }
-
+        if($question->options->answers[$answer]->answerformat == FORMAT_PLAIN) {
+            $answertext = s($answertext);
+        }
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
         // Remove all paragraph tags because they mess up the layout.
