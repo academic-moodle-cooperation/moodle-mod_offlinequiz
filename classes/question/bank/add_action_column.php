@@ -17,7 +17,7 @@
 namespace mod_offlinequiz\question\bank;
 
 /**
- * A column type for the add this question to the quiz action.
+ * A column type for the add this question to the offlinequiz action.
  *
  * @package    mod_offlinequiz
  * @category   question

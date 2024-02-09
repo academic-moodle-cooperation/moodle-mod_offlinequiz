@@ -19,9 +19,9 @@ namespace mod_offlinequiz\question\bank\filter;
 use core_question\local\bank\question_version_status;
 
 /**
- * A custom filter condition helper for quiz to select question categories.
+ * A custom filter condition helper for offlinequiz to select question categories.
  *
- * This is required as quiz will only use ready questions and the count should show according to that.
+ * This is required as offlinequiz will only use ready questions and the count should show according to that.
  *
  * @package    mod_offlinequiz
  * @category   question
