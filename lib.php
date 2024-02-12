@@ -1531,7 +1531,7 @@ function mod_offlinequiz_output_fragment_offlinequiz_question_bank($args): strin
 
     // Build required parameters.
     [$contexts, $thispageurl, $cm, $pagevars, $extraparams] =
-        build_required_params_for_custom_view($params, $extraparams);
+        mod_offlinequiz_build_required_parameters_for_custom_view($params, $extraparams);
 
     $course = get_course($cm->course);
     require_capability('mod/offlinequiz:manage', $contexts->lowest());
@@ -1551,7 +1551,7 @@ function mod_offlinequiz_output_fragment_offlinequiz_question_bank($args): strin
  * @param array $extraparams additional parameters
  * @return array
  */
-function build_required_params_for_custom_view(array $params, array $extraparams): array {
+function mod_offlinequiz_build_required_parameters_for_custom_view(array $params, array $extraparams): array {
     // Retrieve questions per page.
     $viewclass = $extraparams['view'] ?? null;
     $defaultpagesize = $viewclass ? $viewclass::DEFAULT_PAGE_SIZE : DEFAULT_QUESTIONS_PER_PAGE;
@@ -1564,6 +1564,10 @@ function build_required_params_for_custom_view(array $params, array $extraparams
 
     // Add cmid so we can retrieve later in extra params.
     $extraparams['cmid'] = $cmid;
+
+    if(isset($params['groupnumber'])) {
+        $thispageurl->param('groupnumber', $params['groupnumber']);
+    }
 
     return [$contexts, $thispageurl, $cm, $pagevars, $extraparams];
 }

@@ -70,7 +70,7 @@ class custom_view extends \core_question\local\bank\view {
      * @param \stdClass $cm activity settings.
      * @param \stdClass $offlinequiz offlinequiz settings.
      */
-    public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams, $offlinequiz = null) {
+    public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams) {
         // Default filter condition.
         if (!isset($params['filter'])) {
             $params['filter']  = [];
@@ -86,15 +86,7 @@ class custom_view extends \core_question\local\bank\view {
         }
         $this->init_columns($this->wanted_columns(), $this->heading_column());
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
-        if (is_null($offlinequiz)) {
-            [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
-        } else {
-            $this->offlinequiz = $offlinequiz;
-        }
-    }
-
-    public function get_offlinequiz() {
-        return $this->offlinequiz;
+        [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
     }
 
     /**
@@ -137,12 +129,6 @@ class custom_view extends \core_question\local\bank\view {
         return 'mod_offlinequiz\\question\\bank\\question_name_text_column';
     }
 
-    /*protected function default_sort(): array {
-        return array(
-            'qbank_viewquestiontype\\question_type_column' => 1,
-            'mod_offlinequiz\\question\\bank\\question_name_text_column' => 1,
-        );
-    }*/
     protected function default_sort(): array {
         // Using the extended class for quiz specific sort.
         return [
@@ -175,73 +161,7 @@ class custom_view extends \core_question\local\bank\view {
         $params['sesskey'] = sesskey();
         $params['cmid'] = $this->cm->id;
         return new \moodle_url('/mod/offlinequiz/edit.php', $params);
-        /*$addurl = new \moodle_url($this->baseurl, $params);
-        return $addurl;*/
     }
-
-    public function offlinequiz_contains($questionid) {
-        global $CFG, $DB;
-
-        /*if (in_array($questionid, $this->offlinequiz->questions)) {
-            return true;
-        }*/
-        return false;
-    }
-
-    /**
-     * Renders the html question bank (same as display, but returns the result).
-     *
-     * Note that you can only output this rendered result once per page, as
-     * it contains IDs which must be unique.
-     *
-     * @param array $pagevars
-     * @param string $tabname
-     * @return string HTML code for the form
-     */
-    /*public function render($pagevars, $tabname): string {
-        ob_start();
-
-        /*$pagevars = [];
-        $pagevars['qpage'] = $page;
-        $pagevars['qperpage'] = $perpage;
-        $pagevars['cat'] = $cat;
-        $pagevars['recurse'] = $recurse;
-        $pagevars['showhidden'] = $showhidden;
-        $pagevars['qbshowtext'] = $showquestiontext;
-        $pagevars['qtagids'] = $tagids;
-        $pagevars['tabname'] = 'questions';
-        $pagevars['qperpage'] = DEFAULT_QUESTIONS_PER_PAGE;
-        $pagevars['filter']  = [];*
-        [$categoryid, $contextid] = category_condition::validate_category_param($pagevars['cat']);
-        if (!is_null($categoryid)) {
-            $category = category_condition::get_category_record($categoryid, $contextid);
-            $pagevars['filter']['category'] = [
-                'jointype' => category_condition::JOINTYPE_DEFAULT,
-                'values' => [$category->id],
-                'filteroptions' => ['includesubcategories' => false],
-            ];
-        }
-        $pagevars['filter']['hidden'] = [
-            'jointype' => hidden_condition::JOINTYPE_DEFAULT,
-            'values' => [0],
-        ];
-        $pagevars['jointype'] = datafilter::JOINTYPE_ALL;
-        if (!empty($pagevars['filter'])) {
-            $pagevars['filter'] = filter_condition_manager::unpack_filteroptions_param($pagevars['filter']);
-        }
-        if (isset($pagevars['filter']['jointype'])) {
-            $pagevars['jointype'] = $pagevars['filter']['jointype'];
-            unset($pagevars['filter']['jointype']);
-        }
-
-        $this->set_pagevars($pagevars);
-
-
-        $this->display();
-        $out = ob_get_contents();
-        ob_end_clean();
-        return $out;
-    }*/
 
     /**
      * Just use the base column manager in this view.
@@ -342,8 +262,15 @@ class custom_view extends \core_question\local\bank\view {
         echo '</div></noscript></fieldset></form>';
     }
 
+    /**
+     * Override the base implementation in \core_question\local\bank\view
+     * because we don't want to print new question form in the fragment
+     * for the modal.
+     *
+     * @param false|mixed|\stdClass $category
+     * @param bool $canadd
+     */
     protected function create_new_question_form($category, $canadd): void {
-        // Don't display this.
     }
 
     /**
@@ -420,5 +347,14 @@ class custom_view extends \core_question\local\bank\view {
                 }
             }
         }
+    }
+
+    /**
+     * Return the offlinequiz settings for the offlinequiz this question bank is displayed in.
+     *
+     * @return bool|\stdClass
+     */
+    public function get_offlinequiz() {
+        return $this->offlinequiz;
     }
 }
