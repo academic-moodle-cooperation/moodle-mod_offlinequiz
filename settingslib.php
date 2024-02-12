@@ -204,7 +204,7 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
                 $postfix = $matches[3];
                 $field = $matches[4];
                 // Check the number of digits.
-                if ($digits < 1 || $digits > 9) {
+                if ($digits < 1 || $digits > 10) {
                     return get_string('invalidnumberofdigits', 'offlinequiz');
                 }
                    // Check for valid user table field.

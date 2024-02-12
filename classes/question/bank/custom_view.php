@@ -26,7 +26,18 @@
  */
 
 namespace mod_offlinequiz\question\bank;
+
+use core\output\datafilter;
+use core_question\local\bank\column_base;
+use core_question\local\bank\column_manager_base;
+use core_question\local\bank\condition;
+use core_question\local\bank\question_version_status;
+use mod_offlinequiz\question\bank\filter\custom_category_condition;
+use qbank_managecategories\category_condition;
+
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
 
 /**
@@ -36,10 +47,17 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_view extends \core_question\local\bank\view {
+    /** @var int number of questions per page to show in the add from question bank modal. */
+    const DEFAULT_PAGE_SIZE = 20;
     /** @var bool whether the offlinequiz this is used by has been attemptd. */
     protected $offlinequizhasattempts = false;
     /** @var \stdClass the offlinequiz settings. */
     protected $offlinequiz = false;
+
+    /**
+     * @var string $component the component the api is used from.
+     */
+    public $component = 'mod_offlinequiz';
 
     /** @var int The maximum displayed length of the category info. */
     const MAX_TEXT_LENGTH = 200;
@@ -52,44 +70,54 @@ class custom_view extends \core_question\local\bank\view {
      * @param \stdClass $cm activity settings.
      * @param \stdClass $offlinequiz offlinequiz settings.
      */
-    public function __construct($contexts, $pageurl, $course, $cm, $offlinequiz) {
-        parent::__construct($contexts, $pageurl, $course, $cm);
-        $this->offlinequiz = $offlinequiz;
+    public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams) {
+        // Default filter condition.
+        if (!isset($params['filter'])) {
+            $params['filter']  = [];
+            [$categoryid, $contextid] = custom_category_condition::validate_category_param($params['cat']);
+            if (!is_null($categoryid)) {
+                $category = custom_category_condition::get_category_record($categoryid, $contextid);
+                $params['filter']['category'] = [
+                    'jointype' => custom_category_condition::JOINTYPE_DEFAULT,
+                    'values' => [$category->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ];
+            }
+        }
+        $this->init_columns($this->wanted_columns(), $this->heading_column());
+        parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
+        [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
     }
 
-    protected function wanted_columns(): array {
-        global $CFG;
+    /**
+     * Don't display plugin controls.
+     *
+     * @param \core\context $context
+     * @param int $categoryid
+     * @return string
+     */
+    /*protected function get_plugin_controls(\core\context $context, int $categoryid): string {
+        return '';
+    }*/
 
-        if (empty($CFG->offlinequizquestionbankcolumns)) {
-            $offlinequizquestionbankcolumns = array(
-                'add_action_column',
-                'checkbox_column',
-                'question_type_column',
-                'question_name_text_column',
-                'preview_action_column',
-            );
-        } else {
-            $offlinequizquestionbankcolumns = explode(',', $CFG->offlinequizquestionbankcolumns);
-        }
+    protected function get_question_bank_plugins(): array {
+        $questionbankclasscolumns = [];
+        $customviewcolumns = [
+            'mod_offlinequiz\question\bank\add_action_column' . column_base::ID_SEPARATOR  . 'add_action_column',
+            'core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column',
+            'qbank_viewquestiontype\question_type_column' . column_base::ID_SEPARATOR . 'question_type_column',
+            'mod_offlinequiz\question\bank\question_name_text_column' . column_base::ID_SEPARATOR . 'question_name_text_column',
+            'mod_offlinequiz\question\bank\preview_action_column'  . column_base::ID_SEPARATOR  . 'preview_action_column',
+        ];
 
-        foreach ($offlinequizquestionbankcolumns as $fullname) {
-            if (!class_exists($fullname)) {
-                if (class_exists('mod_offlinequiz\\question\\bank\\' . $fullname)) {
-                    $fullname = 'mod_offlinequiz\\question\\bank\\' . $fullname;
-                } else if (class_exists('qbank_previewquestion\\' . $fullname)) {
-                    $fullname = 'qbank_previewquestion\\' . $fullname;
-                } else if (class_exists('question_bank_' . $fullname)) {
-                    debugging('Legacy question bank column class question_bank_' .
-                            $fullname . ' should be renamed to mod_offlinequiz\\question\\bank\\' .
-                            $fullname, DEBUG_DEVELOPER);
-                    $fullname = 'question_bank_' . $fullname;
-                } else {
-                    throw new \coding_exception("No such class exists: $fullname");
-                }
+        foreach ($customviewcolumns as $columnid) {
+            [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $columnid, 2);
+            if (class_exists($columnclass)) {
+                $questionbankclasscolumns[$columnid] = $columnclass::from_column_name($this, $columnname);
             }
-            $this->requiredcolumns[$fullname] = new $fullname($this);
         }
-        return $this->requiredcolumns;
+
+        return $questionbankclasscolumns;
     }
 
     /**
@@ -102,10 +130,11 @@ class custom_view extends \core_question\local\bank\view {
     }
 
     protected function default_sort(): array {
-        return array(
-            'core_question\\bank\\question_type_column' => 1,
-            'mod_offlinequiz\\question\\bank\\question_name_text_column' => 1,
-        );
+        // Using the extended class for quiz specific sort.
+        return [
+            'qbank_viewquestiontype__question_type_column' => SORT_ASC,
+            'mod_offlinequiz__question__bank__question_name_text_column' => SORT_ASC,
+        ];
     }
 
     /**
@@ -130,17 +159,17 @@ class custom_view extends \core_question\local\bank\view {
         $params = $this->baseurl->params();
         $params['addquestion'] = $questionid;
         $params['sesskey'] = sesskey();
-        $addurl = new \moodle_url($this->baseurl, $params);
-        return $addurl;
+        $params['cmid'] = $this->cm->id;
+        return new \moodle_url('/mod/offlinequiz/edit.php', $params);
     }
 
-    public function offlinequiz_contains($questionid) {
-        global $CFG, $DB;
-
-        if (in_array($questionid, $this->offlinequiz->questions)) {
-            return true;
-        }
-        return false;
+    /**
+     * Just use the base column manager in this view.
+     *
+     * @return void
+     */
+    protected function init_column_manager(): void {
+        $this->columnmanager = new column_manager_base();
     }
 
     /**
@@ -149,19 +178,13 @@ class custom_view extends \core_question\local\bank\view {
      * Note that you can only output this rendered result once per page, as
      * it contains IDs which must be unique.
      *
+     * @param array $pagevars
+     * @param string $tabname
      * @return string HTML code for the form
      */
-    public function render($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext, $tagids) {
+    public function render($pagevars, $tabname): string {
         ob_start();
-        $pagevars = [];
-        $pagevars['qpage'] = $page;
-        $pagevars['qperpage'] = $perpage;
-        $pagevars['cat'] = $cat;
-        $pagevars['recurse'] = $recurse;
-        $pagevars['showhidden'] = $showhidden;
-        $pagevars['qbshowtext'] = $showquestiontext;
-        $pagevars['qtagids'] = $tagids;
-        $this->display($pagevars, $tabname);
+        $this->display();
         $out = ob_get_contents();
         ob_end_clean();
         return $out;
@@ -189,7 +212,11 @@ class custom_view extends \core_question\local\bank\view {
                     'type' => 'submit',
                     'name' => 'add',
                     'value' => get_string('addtoofflinequiz', 'offlinequiz'),
-                    'class' => 'btn btn-primary'
+                    'class' => 'btn btn-primary',
+                    'data-action' => 'toggle',
+                    'data-togglegroup' => 'qbank',
+                    'data-toggle' => 'action',
+                    'disabled' => true
             );
             if ($cmoptions->hasattempts) {
                 $params['disabled'] = 'disabled';
@@ -197,26 +224,6 @@ class custom_view extends \core_question\local\bank\view {
             echo \html_writer::empty_tag('input', $params);
         }
         echo "</div>\n";
-    }
-
-    /**
-     * Prints a form to choose categories.
-     * @param string $categoryandcontext 'categoryID,contextID'.
-     * @deprecated since Moodle 2.6 MDL-40313.
-     * @see \core_question\bank\search\category_condition
-     * @todo MDL-41978 This will be deleted in Moodle 2.8
-     */
-    protected function print_choose_category_message(): void {
-        global $OUTPUT;
-        debugging('print_choose_category_message() is deprecated, ' .
-                'please use \core_question\bank\search\category_condition instead.', DEBUG_DEVELOPER);
-        echo $OUTPUT->box_start('generalbox questionbank');
-        $this->display_category_form($this->contexts->having_one_edit_tab_cap('edit'),
-                $this->baseurl, $categoryandcontext);
-        echo "<p style=\"text-align:center;\"><b>";
-        print_string('selectcategoryabove', 'question');
-        echo "</b></p>";
-        echo $OUTPUT->box_end();
     }
 
     protected function display_options_form($showquestiontext, $scriptpath = '/mod/offlinequiz/edit.php',
@@ -255,8 +262,23 @@ class custom_view extends \core_question\local\bank\view {
         echo '</div></noscript></fieldset></form>';
     }
 
+    /**
+     * Override the base implementation in \core_question\local\bank\view
+     * because we don't want to print new question form in the fragment
+     * for the modal.
+     *
+     * @param false|mixed|\stdClass $category
+     * @param bool $canadd
+     */
     protected function create_new_question_form($category, $canadd): void {
-        // Don't display this.
+    }
+
+    /**
+     * Override the base implementation in \core_question\local\bank\view
+     * because we don't want to print the headers in the fragment
+     * for the modal.
+     */
+    protected function display_question_bank_header(): void {
     }
 
     /**
@@ -265,27 +287,13 @@ class custom_view extends \core_question\local\bank\view {
      */
     protected function build_query(): void {
         // Get the required tables and fields.
-        $joins = [];
-        $fields = ['qv.status', 'qc.id as categoryid', 'qv.version', 'qv.id as versionid', 'qbe.id as questionbankentryid'];
-        if (!empty($this->requiredcolumns)) {
-            foreach ($this->requiredcolumns as $column) {
-                $extrajoins = $column->get_extra_joins();
-                foreach ($extrajoins as $prefix => $join) {
-                    if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
-                        throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
-                    }
-                    $joins[$prefix] = $join;
-                }
-                $fields = array_merge($fields, $column->get_required_fields());
-            }
-        }
-        $fields = array_unique($fields);
+        [$fields, $joins] = $this->get_component_requirements(array_merge($this->requiredcolumns, $this->questionactions));
 
         // Build the order by clause.
         $sorts = [];
-        foreach ($this->sort as $sort => $order) {
-            list($colname, $subsort) = $this->parse_subsort($sort);
-            $sorts[] = $this->requiredcolumns[$colname]->sort_expression($order < 0, $subsort);
+        foreach ($this->sort as $sortname => $sortorder) {
+            [$colname, $subsort] = $this->parse_subsort($sortname);
+            $sorts[] = $this->requiredcolumns[$colname]->sort_expression($sortorder == SORT_DESC, $subsort);
         }
 
         // Build the where clause.
@@ -294,22 +302,59 @@ class custom_view extends \core_question\local\bank\view {
                                           JOIN {question_bank_entries} be
                                             ON be.id = v.questionbankentryid
                                          WHERE be.id = qbe.id)';
-        $readyonly = "qv.status = '" . \core_question\local\bank\question_version_status::QUESTION_STATUS_READY . "' ";
-        $tests = ['q.parent = 0', $latestversion, $readyonly];
+        $onlyready = '((' . "qv.status = '" . question_version_status::QUESTION_STATUS_READY . "'" .'))';
         $this->sqlparams = [];
+        $conditions = [];
         foreach ($this->searchconditions as $searchcondition) {
             if ($searchcondition->where()) {
-                $tests[] = '((' . $searchcondition->where() .'))';
+                $conditions[] = '((' . $searchcondition->where() .'))';
             }
             if ($searchcondition->params()) {
                 $this->sqlparams = array_merge($this->sqlparams, $searchcondition->params());
             }
         }
+        $majorconditions = ['q.parent = 0', $latestversion, $onlyready];
+        // Get higher level filter condition.
+        $jointype = isset($this->pagevars['jointype']) ? (int)$this->pagevars['jointype'] : condition::JOINTYPE_DEFAULT;
+        $nonecondition = ($jointype === datafilter::JOINTYPE_NONE) ? ' NOT ' : '';
+        $separator = ($jointype === datafilter::JOINTYPE_ALL) ? ' AND ' : ' OR ';
         // Build the SQL.
         $sql = ' FROM {question} q ' . implode(' ', $joins);
-        $sql .= ' WHERE ' . implode(' AND ', $tests);
+        $sql .= ' WHERE ' . implode(' AND ', $majorconditions);
         $sql .= '   AND q.qtype IN (\'multichoice\', \'multichoiceset\', \'description\') ';
+        if (!empty($conditions)) {
+            $sql .= ' AND ' . $nonecondition . ' ( ';
+            $sql .= implode($separator, $conditions);
+            $sql .= ' ) ';
+        }
         $this->countsql = 'SELECT count(1)' . $sql;
         $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
+    }
+
+    public function add_standard_search_conditions(): void {
+        foreach ($this->plugins as $componentname => $plugin) {
+            if (\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
+                $pluginentrypointobject = new $plugin();
+                if ($componentname === 'qbank_managecategories') {
+                    $pluginentrypointobject = new offlinequiz_managecategories_feature();
+                }
+                if ($componentname === 'qbank_viewquestiontext' || $componentname === 'qbank_deletequestion') {
+                    continue;
+                }
+                $pluginobjects = $pluginentrypointobject->get_question_filters($this);
+                foreach ($pluginobjects as $pluginobject) {
+                    $this->add_searchcondition($pluginobject, $pluginobject->get_condition_key());
+                }
+            }
+        }
+    }
+
+    /**
+     * Return the offlinequiz settings for the offlinequiz this question bank is displayed in.
+     *
+     * @return bool|\stdClass
+     */
+    public function get_offlinequiz() {
+        return $this->offlinequiz;
     }
 }

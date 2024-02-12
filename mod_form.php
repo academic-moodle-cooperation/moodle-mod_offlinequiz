@@ -257,15 +257,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('html', '<input id="basefilename" type="hidden" value="' . $CFG->wwwroot .
                 '/mod/offlinequiz/pix/studentview/' . $language . '/img">');
 
-        $module = array(
-                'name'      => 'mod_offlinequiz_mod_form',
-                'fullpath'  => '/mod/offlinequiz/mod_form.js',
-                'requires'  => array(),
-                'strings'   => array(),
-                'async'     => false,
-        );
-
-        $PAGE->requires->jquery();
         $PAGE->requires->js('/mod/offlinequiz/mod_form.js');
 
         // -------------------------------------------------------------------------------
@@ -363,13 +354,13 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $items = array();
 
         $group = array();
-        $group[] = $mform->createElement('advcheckbox', 'completionpass', null, get_string('completionpass', 'offlinequiz'),
+        $group[] = $mform->createElement('advcheckbox', 'completionpass' . $this->get_suffix(), null, get_string('completionpass', 'offlinequiz'),
             array('group' => 'cpass'));
-        $mform->disabledIf('completionpass', 'completionusegrade', 'notchecked');
+        $mform->disabledIf('completionpass' . $this->get_suffix(), 'completionusegrade', 'notchecked');
 
-        $mform->addGroup($group, 'completionpassgroup', get_string('completionpass', 'offlinequiz'), ' &nbsp; ', false);
-        $mform->addHelpButton('completionpassgroup', 'completionpass', 'offlinequiz');
-        $items[] = 'completionpassgroup';
+        $mform->addGroup($group, 'completionpassgroup' . $this->get_suffix(), get_string('completionpass', 'offlinequiz'), ' &nbsp; ', false);
+        $mform->addHelpButton('completionpassgroup' . $this->get_suffix(), 'completionpass', 'offlinequiz');
+        $items[] = 'completionpassgroup'  . $this->get_suffix();
 
         return $items;
     }

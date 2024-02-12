@@ -56,7 +56,8 @@ $systemcontext = context_system::instance();
 
 // We redirect students to info.
 if (!has_capability('mod/offlinequiz:createofflinequiz', $context)) {
-    redirect('view.php?q='.$offlinequiz->id);
+    $url = new moodle_url('/mod/offlinequiz/view.php', ['q' => $offlinequiz->id]);
+    redirect($url);
 }
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
@@ -142,7 +143,9 @@ switch($mode) {
                         $DB->set_field('offlinequiz_p_lists', 'name', $data->name, array('id' => $data->listid));
                     }
                 }
-                redirect('participants.php?mode=editlists&amp;q='.$offlinequiz->id, get_string('changessaved'));
+                $url = new moodle_url('/mod/offlinequiz/participants.php',
+                    ['mode'=> 'editlists','q' => $offlinequiz->id]);
+                redirect($url, get_string('changessaved'));
                 break;
             default:
                 // Print the heading.
@@ -205,8 +208,8 @@ switch($mode) {
 
         if (!$list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid))) {
             if (!$lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), ' listnumber ASC ')) {
-                $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
-                        array('q' => $offlinequiz->id, 'mode' => 'editlists'));
+                $url = new moodle_url('/mod/offlinequiz/participants.php',
+                        ['q' => $offlinequiz->id, 'mode' => 'editlists']);
                 redirect($url);
             } else {
                 $list = array_pop($lists);
@@ -376,9 +379,16 @@ switch($mode) {
             echo '<br />&nbsp;<br /></div>';
         }
         if ($action == 'uncheck' and $participantids = optional_param_array('participantid', array(), PARAM_INT)) {
+            confirm_sesskey();
             foreach ($participantids as $participantid) {
-                if ($participantid) {
-                    $DB->set_field('offlinequiz_participants', 'checked', 0, array('id' => $participantid));
+                $sql = "SELECT p.id 
+                          FROM {offlinequiz_p_lists} l
+                          JOIN {offlinequiz_participants} p ON p.listid = l.id
+                          WHERE l.offlinequizid = :offlinequizid
+                          AND p.userid = :userid";
+                $pid = $DB->get_field_sql($sql,['offlinequizid' => $offlinequiz->id, 'userid' => $participantid]);
+                if ($pid) {
+                    $DB->set_field('offlinequiz_participants', 'checked', 0, array('id' => $pid));
                 }
 
                 // Log this event.
@@ -398,10 +408,15 @@ switch($mode) {
         }
         if ($action == 'check' and $participantids = optional_param_array('participantid', array(), PARAM_INT)) {
             foreach ($participantids as $participantid) {
-                if ($participantid) {
-                    $DB->set_field('offlinequiz_participants', 'checked', 1, array('id' => $participantid));
+                $sql = "SELECT p.id
+                          FROM {offlinequiz_p_lists} l
+                          JOIN {offlinequiz_participants} p ON p.listid = l.id
+                          WHERE l.offlinequizid = :offlinequizid
+                          AND p.userid = :userid";
+                $pid = $DB->get_field_sql($sql,['offlinequizid' => $offlinequiz->id, 'userid' => $participantid]);
+                if ($pid) {
+                    $DB->set_field('offlinequiz_participants', 'checked', 1, array('id' => $pid));
                 }
-
                 // Log this event.
                 $userid = $DB->get_field('offlinequiz_participants', 'userid', array('id' => $participantid));
                 $params = array (
@@ -419,7 +434,8 @@ switch($mode) {
         }
         // We redirect if no list has been created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
-            redirect('participants.php?q='.$offlinequiz->id, get_string('createlistfirst', 'offlinequiz'));
+            ;
+            redirect(new moodle_url('/mod/offlinequiz/participants.php',['q' => $offlinequiz->id]), get_string('createlistfirst', 'offlinequiz'));
         } else {
             if ($download) {
                 offlinequiz_download_partlist($offlinequiz, $download, $coursecontext, $systemcontext);
@@ -431,7 +447,7 @@ switch($mode) {
     case 'createpdfs':
         // We redirect if no list has been created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
-            redirect('participants.php?q='.$offlinequiz->id, get_string('createlistfirst', 'offlinequiz'));
+            redirect(new moodle_url('/mod/offlinequiz/participants.php',['q' => $offlinequiz->id]), get_string('createlistfirst', 'offlinequiz'));
         }
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
@@ -510,7 +526,7 @@ switch($mode) {
     case 'correct':
         // We redirect if no list created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
-            redirect('participants.php?q='.$offlinequiz->id, get_string('createlistfirst', 'offlinequiz'));
+            redirect(new moodle_url('/mod/offlinequiz/participants.php',['q' => $offlinequiz->id]), get_string('createlistfirst', 'offlinequiz'));
         }
 
         $lists = $DB->get_records_sql("
@@ -531,7 +547,7 @@ switch($mode) {
         }
 
         if ($redirect) {
-            redirect('participants.php?mode=createpdfs&amp;q=' . $offlinequiz->id, get_string('createpdffirst', 'offlinequiz'));
+            redirect(new moodle_url('/mod/offlinequiz/participants.php',['mode'=> 'createpdfs','q' => $offlinequiz->id]), get_string('createpdffirst', 'offlinequiz'));
         }
 
         // Only print headers and tabs if not asked to download data.
@@ -653,8 +669,11 @@ switch($mode) {
                 die;
             } else {
                 $first = $last + 1;
-                redirect("$CFG->wwwroot/mod/offlinequiz/participants.php?q=$offlinequiz->id&amp;mode=upload&amp;" .
-                        "action=upload&amp;tempdir=$tempdir&amp;first=$first&amp;numimports=$numimports&amp;sesskey=".sesskey());
+                $url = new moodle_url('/mod/offlinequiz/participants.php',
+                    ['mode'=> 'upload','q' => $offlinequiz->id, 'action' => 'upload', 'tempdir' => $tempdir,
+                        'first' => $first, 'numimports' => $numimports, 'sesskey' => sesskey()
+                    ]);
+                redirect($url);
             }
             $importform->display();
         } else if ($action == 'delete') {

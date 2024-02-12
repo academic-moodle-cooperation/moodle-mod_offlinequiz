@@ -59,7 +59,7 @@ define("OFFLINEQUIZ_PART_USER_ERROR", "23");
 define("OFFLINEQUIZ_PART_LIST_ERROR", "24");
 define("OFFLINEQUIZ_IMPORT_NUMUSERS", "50");
 
-define('OFFLINEQUIZ_USER_FORMULA_REGEXP', "/^([^\[]*)\[([\-]?[0-9]+)\]([^\=]*)=([a-z]+)$/");
+define('OFFLINEQUIZ_USER_FORMULA_REGEXP', "/^([^\[]*)\[([\-]?[0-9]+)\]([^\=]*)=([a-z]+[0-9]?)$/");
 
 define('OFFLINEQUIZ_GROUP_LETTERS', "ABCDEFGHIJKL");  // Letters for naming offlinequiz groups.
 
@@ -805,7 +805,7 @@ function offlinequiz_delete_result($resultid, $context) {
  * @param int $questionid  The id of the question
  * @param int grade    The maximal grade for the question
  */
-function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade, $newquestionid = null) {
+function offlinequiz_update_question_instance($offlinequiz, $contextid, $questionid, $grade, $newquestionid = null) {
     global $DB;
     $transaction = $DB->start_delegated_transaction();
     $DB->set_field('offlinequiz_group_questions', 'maxmark', $grade,
@@ -813,15 +813,15 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade,
     if ($newquestionid) {
         $newquestionversion = $DB->get_field('question_versions', 'version', ['questionid' => $newquestionid]);
 
-        $referenceids = $DB->get_records('offlinequiz_group_questions', ['questionid' => $questionid, 'offlinequizid' => $offlinequiz->id], 'id');
+        $groupquestions = $DB->get_records('offlinequiz_group_questions', ['questionid' => $questionid, 'offlinequizid' => $offlinequiz->id], 'id');
         $DB->set_field('offlinequiz_group_questions', 'questionid', $newquestionid,
             ['offlinequizid' => $offlinequiz->id, 'questionid' => $questionid]);
-        if ($referenceids && $newquestionversion) {
-            foreach ($referenceids as $referenceid) {
-                $DB->set_field('question_references', 'version', $newquestionversion, ['id' => $referenceid->id]);
-                if (!$referenceid->documentquestionid && $offlinequiz->docscreated) {
+        if ($groupquestions && $newquestionversion) {
+            foreach ($groupquestions as $groupquestion) {
+                $DB->set_field('question_references', 'version', $newquestionversion, ['itemid' => $groupquestion->id, 'component' => 'mod_offlinequiz', 'usingcontextid' => $contextid]);
+                if (!$groupquestion->documentquestionid && $offlinequiz->docscreated) {
                     $DB->set_field('offlinequiz_group_questions', 'documentquestionid', $questionid,
-                        ['questionid' => $referenceid->questionid, 'offlinequizid' => $offlinequiz->id]);
+                        ['questionid' => $groupquestion->questionid, 'offlinequizid' => $offlinequiz->id]);
                 }
             }
         }
@@ -850,6 +850,7 @@ function offlinequiz_update_question_instance($offlinequiz, $questionid, $grade,
             }
         }
     }
+    $DB->delete_records('offlinequiz_statistics', ['offlinequizid' => $offlinequiz->id]);
     $DB->commit_delegated_transaction($transaction);
 }
 
@@ -1674,6 +1675,18 @@ function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
 }
 
 /**
+ * returns the lang string of the id_field
+ */
+function offlinequiz_get_id_field_name() {
+    $offlinequizconfig = get_config('offlinequiz');
+    if(get_string_manager()->string_exists($offlinequizconfig->ID_field,'core')) {
+        return get_string($offlinequizconfig->ID_field);
+    } else {
+        //Some table fields don't have a name (e.g. id). We have to make langstrings for them
+        return get_string($offlinequizconfig->ID_field, 'offlinequiz');
+    }
+}
+/**
  * Prints a preview for a question in an offlinequiz to Stdout.
  *
  * @param object $question
@@ -1844,7 +1857,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
     // Define table columns.
     $tablecolumns = array('checkbox', 'picture', 'fullname', $offlinequizconfig->ID_field, 'listnumber', 'attempt', 'checked');
     $tableheaders = array('<input type="checkbox" name="toggle" class="select-all-checkbox"/>',
-            '', get_string('fullname'), get_string($offlinequizconfig->ID_field), get_string('participantslist', 'offlinequiz'),
+            '', get_string('fullname'), offlinequiz_get_id_field_name(), get_string('participantslist', 'offlinequiz'),
             get_string('attemptexists', 'offlinequiz'), get_string('present', 'offlinequiz'));
 
     $table->define_columns($tablecolumns);
@@ -1920,7 +1933,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
                 $attempt = false;
             }
             $row = array(
-                    '<input type="checkbox" name="participantid[]" value="' . $participant->id
+                    '<input type="checkbox" name="participantid[]" value="' . $participant->userid
                      . '"  class="select-multiple-checkbox"/>',
                     $picture,
                     $userlink,
@@ -2065,7 +2078,7 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
 
     // Define table headers.
     $tableheaders = array(get_string('fullname'),
-                          get_string($offlinequizconfig->ID_field),
+                          offlinequiz_get_id_field_name(),
                           get_string('participantslist', 'offlinequiz'),
                           get_string('attemptexists', 'offlinequiz'),
                           get_string('present', 'offlinequiz'));
@@ -2162,56 +2175,50 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
  *       If false, show only question name.
  * @param bool $return If true (default), return the output. If false, print it.
  */
-function offlinequiz_question_tostring($question, $showicon = false,
-        $showquestiontext = true, $return = true, $shorttitle = false) {
-    global $COURSE;
-
+function offlinequiz_question_tostring($question, $showicon = false, $showquestiontext = true,
+                                       $showidnumber = false, $showtags = false) {
+    global $OUTPUT;
     $result = '';
 
-    $formatoptions = new stdClass();
-    $formatoptions->noclean = true;
-    $formatoptions->para = false;
-
-    $questiontext = strip_tags(question_utils::to_plain_text($question->questiontext, $question->questiontextformat,
-                                                             array('noclean' => true, 'para' => false)));
-    $questiontitle = strip_tags(format_text($question->name, $question->questiontextformat, $formatoptions, $COURSE->id));
-
-    $result .= '<span class="questionname" title="' . $questiontitle . '">';
-    if ($shorttitle && strlen($questiontitle) > 25) {
-        $questiontitle = shorten_text($questiontitle, 25, false, '...');
-    }
-
+    // Question name.
+    $name = shorten_text(format_string($question->name), 200);
     if ($showicon) {
-        $result .= print_question_icon($question, true);
-        echo ' ';
+        $name .= print_question_icon($question) . ' ' . $name;
+    }
+    $result .= html_writer::span($name, 'questionname');
+
+    // Question idnumber.
+    if ($showidnumber && $question->idnumber !== null && $question->idnumber !== '') {
+        $result .= ' ' . html_writer::span(
+                html_writer::span(get_string('idnumber', 'question'), 'accesshide') .
+                ' ' . s($question->idnumber), 'badge badge-primary');
     }
 
-    if ($shorttitle) {
-        $result .= $questiontitle;
+    // Question tags.
+    if (is_array($showtags)) {
+        $tags = $showtags;
+    } else if ($showtags) {
+        $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
     } else {
-        $result .= shorten_text(format_string($question->name), 200) . '</span>';
+        $tags = [];
+    }
+    if ($tags) {
+        $result .= $OUTPUT->tag_list($tags, null, 'd-inline', 0, null, true);
     }
 
+    // Question text.
     if ($showquestiontext) {
-        $result .= '<span class="questiontext" title="' . $questiontext . '">';
-
-        $questiontext = shorten_text($questiontext, 200);
-
-        if (!empty($questiontext)) {
-            $result .= $questiontext;
-        } else {
-            $result .= '<span class="error">';
-            $result .= get_string('questiontextisempty', 'offlinequiz');
-            $result .= '</span>';
+        $questiontext = question_utils::to_plain_text($question->questiontext,
+            $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
+        $questiontext = shorten_text($questiontext, 50);
+        if ($questiontext) {
+            $result .= ' ' . html_writer::span(s($questiontext), 'questiontext');
         }
-        $result .= '</span>';
     }
-    if ($return) {
-        return $result;
-    } else {
-        echo $result;
-    }
+
+    return $result;
 }
+
 /**
  * Add a question to a offlinequiz group
  *

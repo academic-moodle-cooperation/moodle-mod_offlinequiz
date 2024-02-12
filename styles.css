@@ -1336,3 +1336,8 @@ input#showviewbutton {
     background-color: #f8f9fa;
     padding: 1em;
 }
+@media all{
+    #page-mod-offlinequiz-edit #questionscontainer .justify-content-start {
+        display: none !important;
+    }
+}
