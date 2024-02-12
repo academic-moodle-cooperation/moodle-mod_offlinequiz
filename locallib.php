@@ -1933,7 +1933,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
                 $attempt = false;
             }
             $row = array(
-                    '<input type="checkbox" name="participantid[]" value="' . $participant->id
+                    '<input type="checkbox" name="participantid[]" value="' . $participant->userid
                      . '"  class="select-multiple-checkbox"/>',
                     $picture,
                     $userlink,
