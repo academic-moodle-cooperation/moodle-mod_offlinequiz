@@ -117,7 +117,7 @@ switch($requestmethod) {
                             }
 
                             // Grade has really changed.
-                            offlinequiz_update_question_instance($offlinequiz, $slot->questionid, unformat_float($maxmark));
+                            offlinequiz_update_question_instance($offlinequiz, $modcontext->id, $slot->questionid, unformat_float($maxmark));
                             offlinequiz_update_all_attempt_sumgrades($offlinequiz);
                             offlinequiz_update_grades($offlinequiz, 0, true);
                         }

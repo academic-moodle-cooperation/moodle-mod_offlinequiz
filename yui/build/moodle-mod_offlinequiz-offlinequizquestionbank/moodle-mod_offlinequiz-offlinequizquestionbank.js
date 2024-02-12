@@ -101,7 +101,10 @@ Y.extend(POPUP, Y.Base, {
 
     load_content : function(queryString) {
         this.dialogue.bodyNode.append(this.loadingDiv);
-
+        if(!queryString.includes("cmid=")) {
+            var cmid = new URLSearchParams(window.location.search).get('cmid');
+            queryString = queryString + '&cmid=' + cmid;
+        }
         Y.io(M.cfg.wwwroot + '/mod/offlinequiz/questionbank.ajax.php' + queryString, {
             method: 'GET',
             on: {
@@ -169,7 +172,9 @@ Y.extend(POPUP, Y.Base, {
                     });
 
         });
-        Y.on(M.core.event.FILTER_CONTENT_UPDATED,this.options_changed, this);
+        require(['core_form/events'], function(formEvent) {
+            document.addEventListener(formEvent.eventTypes.filterContentUpdated,this.options_changed,this);
+        });
         this.searchRegionInitialised = false;
         if (this.dialogue.get('visible')) {
             this.initialiseSearchRegion();

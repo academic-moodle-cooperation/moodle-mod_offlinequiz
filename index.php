@@ -151,9 +151,6 @@ foreach ($offlinequizzes as $offlinequiz) {
             $strsection = $offlinequiz->section;
             $strsection = get_section_name($course, $offlinequiz->section);
         }
-        if ($currentsection) {
-            $learningtable->data[] = 'hr';
-        }
         $currentsection = $offlinequiz->section;
     }
     $data[] = $strsection;

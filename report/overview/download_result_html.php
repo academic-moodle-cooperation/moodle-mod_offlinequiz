@@ -140,12 +140,7 @@ class html_download {
             if ($options->sheetfeedback == \question_display_options::VISIBLE ||
               $options->gradedsheetfeedback == \question_display_options::VISIBLE) {
 
-                     $user = $DB->get_record('user', array('id' => $result->userid));
-                     $userkey = $user->{$offlinequizconfig->ID_field};
-
-                     $scannedpages = $DB->get_records('offlinequiz_scanned_pages', array('resultid' => $result->id), 'pagenumber ASC');
-                     // Options for the popup_action.
-
+                // Options for the popup_action.
                 if ($options->attempt == \question_display_options::VISIBLE) {
                     // Load the questions needed by page.
                     if (!$quba = \question_engine::load_questions_usage_by_activity($result->usageid)) {

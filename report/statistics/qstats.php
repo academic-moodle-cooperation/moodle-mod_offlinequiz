@@ -116,16 +116,7 @@ class offlinequiz_statistics_question_stats {
 
         // Trying to make this work on MySQL
         // First we get the questionattemptids that we actually need.
-        $questionattemptids = $DB->get_fieldset_sql("
-                SELECT qa.id
-                  FROM $fromqa
-                  JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid
-                 WHERE qa.questionid $qsql
-                   AND $whereqa", $qparams + $qaparams);
-
-        list($qaidssql, $qaidsparams) = $DB->get_in_or_equal($questionattemptids, SQL_PARAMS_NAMED, 'qaid');
-
-        $params = array_merge($qparams, $qaparams, $qaidsparams);
+        $params = array_merge($qparams, $qaparams);
 
         // Works already quite a bit faster.
         $this->lateststeps = $DB->get_records_sql("
@@ -135,21 +126,14 @@ class offlinequiz_statistics_question_stats {
                     qa.questionid,
                     qa.slot,
                     qa.maxmark,
-                    qas.fraction * qa.maxmark as mark
+                    qas.fraction,
+                    qa.maxmark as mark
 
                 FROM $fromqa
-                JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid
-                JOIN (
-                      SELECT questionattemptid, MAX(id) AS latestid
-                        FROM {question_attempt_steps} qass
-                       WHERE qass.questionattemptid $qaidssql
-                    GROUP BY questionattemptid
-                ) lateststepid ON lateststepid.questionattemptid = qa.id
-                JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
-
-                WHERE
-                    qa.questionid $qsql AND
-                    $whereqa", $params);
+                JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid AND qa.questionid $qsql
+                JOIN {question_attempt_steps} qas ON 
+                      qas.id =(SELECT MAX(id) FROM {question_attempt_steps} qas2 WHERE qas2.questionattemptid = qa.id)
+                WHERE $whereqa", $params);
     }
 
     /*
@@ -277,7 +261,9 @@ class offlinequiz_statistics_question_stats {
             $this->sumofmarkvariance += $question->_stats->markvariance;
 
             if ($question->_stats->covariancewithoverallmark >= 0) {
-                $sumofcovariancewithoverallmark += sqrt($question->_stats->covariancewithoverallmark);
+                if(!is_null($question->_stats->covariancewithoverallmark)) {
+                    $sumofcovariancewithoverallmark += sqrt($question->_stats->covariancewithoverallmark);
+                }
                 $question->_stats->negcovar = 0;
             } else {
                 $question->_stats->negcovar = 1;

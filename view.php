@@ -69,16 +69,16 @@ $event->trigger();
 
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
-
 // Start getting Data
 $status = [];
 $sql = "SELECT og.id, og.groupnumber, count(ogq.id) questions, og.sumgrades
           FROM {offlinequiz_groups} og
      LEFT JOIN {offlinequiz_group_questions} ogq ON og.id = ogq.offlinegroupid
          WHERE og.offlinequizid = :offlinequizid
-      GROUP BY og.groupnumber, og.id
+      GROUP BY og.groupnumber, og.id, og.sumgrades
+        HAVING og.groupnumber - 1 < :numgroups
       ORDER BY og.groupnumber";
-$status['groups'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id ]);
+$status['groups'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id, 'numgroups' => $offlinequiz->numgroups]);
 $status['groupswithoutquestions'] = [];
 foreach ($status['groups'] as $group) {
     if (!$group->questions) {
@@ -101,8 +101,15 @@ foreach ($queues as $queue) {
     }
 }
 $status['docsuploaded'] = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id]);
+$sql = "SELECT *
+FROM {offlinequiz_scanned_pages}
+WHERE offlinequizid = :offlinequizid
+AND (status = 'error'
+    OR status = 'suspended'
+    OR error = 'missingpages')";
+$status['correctionerrors'] = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id]);
 $status['correctionerrors'] = $DB->get_records('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
-$status['resultscount'] = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
+$status['resultscount'] = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id, 'status' => 'complete']);
 
 $sql = "SELECT opl.*,
                     (SELECT count(*)

@@ -163,13 +163,13 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 }
                 offlinequiz_grade_item_update($offlinequiz, 'reset');
                 offlinequiz_update_grades($offlinequiz);
-                redirect(
-                        new moodle_url('/mod/offlinequiz/report.php',
-                                array('mode' => 'overview', 'id' => $cm->id,
-                                    'noresults' => $noresults, 'group' => $groupid,
-                                    'pagesize' => $pagesize
-                                )));
             }
+            redirect(
+                new moodle_url('/mod/offlinequiz/report.php',
+                    array('mode' => 'overview', 'id' => $cm->id,
+                        'noresults' => $noresults, 'group' => $groupid,
+                        'pagesize' => $pagesize
+                    )));
         }
 
         // Now check if asked download of data.
@@ -188,9 +188,10 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         $tablecolumns = array('checkbox', 'picture', 'fullname', $offlinequizconfig->ID_field,
             'timestart', 'offlinegroupid', 'sumgrades'
         );
+
         $tableheaders = array(
             '<input type="checkbox" class="select-all-checkbox"/>', '',
-            get_string('fullname'), get_string($offlinequizconfig->ID_field),
+            get_string('fullname'), offlinequiz_get_id_field_name(),
             get_string('importedon', 'offlinequiz'), get_string('group'),
             get_string('grade', 'offlinequiz')
         );
@@ -268,7 +269,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             list($myxls, $formats) = offlinequiz_sheetlib_initialize_headers($workbook);
 
             // Here starts workshhet headers.
-            $headers = array(get_string($offlinequizconfig->ID_field), get_string('firstname'),
+            $headers = array(offlinequiz_get_id_field_name(), get_string('firstname'),
                 get_string('lastname'), get_string('importedon', 'offlinequiz'),
                 get_string('group'), get_string('grade', 'offlinequiz'), get_string('letter', 'offlinequiz')
             );
@@ -291,7 +292,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
             header("Pragma: public");
             echo "\xEF\xBB\xBF"; // UTF-8 BOM.
 
-            $headers = get_string($offlinequizconfig->ID_field) . ", " . get_string('firstname') . ", " . get_string("lastname") .
+            $headers = offlinequiz_get_id_field_name() . ", " . get_string('firstname') . ", " . get_string("lastname") .
                      ", " . get_string('importedon', 'offlinequiz') . ", " . get_string('group') .
                      ", " . get_string('grade', 'offlinequiz') . ", " . get_string('letter', 'offlinequiz');
             if (!empty($withparticipants)) {
@@ -310,7 +311,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
             // Print the table headers.
             echo get_string('firstname') . ',' . get_string('lastname') . ',' .
-                     get_string($offlinequizconfig->ID_field) . ',' . get_string('group');
+                offlinequiz_get_id_field_name() . ',' . get_string('group');
             $maxquestions = offlinequiz_get_maxquestions($offlinequiz, $groups);
             for ($i = 0; $i < $maxquestions; $i++) {
                 echo ', ' . get_string('question') . ' ' . ($i + 1);
@@ -496,7 +497,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                     );
                 }
 
-                if (!empty($result) && $result->offlinegroupid) {
+                if (!empty($result) && $result->offlinegroupid && $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade) {
                     $outputgrade = format_float($result->sumgrades /
                             $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints, false);
                 } else {

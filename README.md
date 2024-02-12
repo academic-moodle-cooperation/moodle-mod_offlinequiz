@@ -1,11 +1,11 @@
-Offline Quiz Module
+Offline Quiz 
 ===================
 
 This file is part of the mod_offlinequiz plugin for Moodle - <http://moodle.org/>
 
 *Author:*    Thomas Wedekind, Juergen Zimmer, Richard Rode, Alexander Heher, Adrian Czermak
 
-*Copyright:* 2014 [Academic Moodle Cooperation](http://www.academic-moodle-cooperation.org)
+*Copyright:* [Academic Moodle Cooperation](http://www.academic-moodle-cooperation.org)
 
 *License:*   [GNU GPL v3 or later](http://www.gnu.org/copyleft/gpl.html)
 
@@ -13,156 +13,64 @@ This file is part of the mod_offlinequiz plugin for Moodle - <http://moodle.org/
 Description
 -----------
 
-The MC Offline Quiz module adds paper-and-pencil multiple-choice quizzes to Moodle. In offline
-quizzes students mark answers to questions on a sheet of paper (the answer form). The students'
-answer forms are evaluated and graded automatically by the offline quiz module.
-
-More precisely, a complete offline quiz consists (at least) of the following steps:
-
-* A teacher creates an offline quiz in Moodle and adds multiple-choice questions, all-or-nothing
-  multiple-choice questions or description questions (text) to the quiz. This is very similar to
-  creating online quizzes (standard Moodle quizzes).
-
-* From the question lists the teacher creates question sheets and answer forms as PDF (DOCX, LaTeX)
-  documents using the module.
-
-* The question sheets and answer forms are handed out to students for the actual quiz. The students
-  mark the answers they think are correct in the answer form.
-
-* The teacher scans the filled-in answer forms and uploads the resulting images into the offline
-  quiz. The scanned answer forms are evaluated and graded automatically by the module.
-
-* If necessary, the teacher corrects errors that might have occurred due to mistakes made by the
-  students or due to bad scan quality.
-
-After results have been created in an offline quiz, students can review their result as usual. If
-the teacher allows it, students can also see the scanned answer forms and which markings have been
-recognised as crosses.
-
-The module supports up to six groups which are not related to Moodle course groups. Each group can
-contain a different set of questions in a different order. Separate question sheets and answer
-forms are created for the different offline quiz groups.
-
-The module also supports lists of participants which are useful for checking which students
-actually took part in the exam. Lists of participants are pre-filled with students in Moodle. PDF
-versions of those lists can be created in the module for easy marking during the exam. The marked
-lists can be uploaded and evaluated automatically.
-
-Furthermore you can use the Offline Quiz Cron plugin (report_offlinequizcron), which adds an interface to the Offline Quiz activity (mod_offlinequiz) to inspect and change pending cronjobs for the Offline Quiz. 
-
-- https://moodle.org/plugins/report_offlinequizcron
-- https://github.com/academic-moodle-cooperation/moodle-report_offlinequizcron
+The Offline Quiz activity allows the creation of multiple choice tests with questions from the question bank of a Moodle course, which are handed out to students in printed form. After completion, the answer forms are scanned and can be automatically evaluated online directly in Moodle. 
 
 
-Example
+Usage
 -------
 
-The Offline Quiz module is used intensively at different Austrian universities for mass exams.
-Hundreds of students can be easily examined at the same time (given enough seating space in lecture
-halls) without the need for expensive e-testing equipment.
+Teachers want to conduct the final examination of a course with several hundred students in a lecture hall.
+For this purpose, an offline quiz is created in a Moodle course and the quiz is filled with questions from the question bank. To make copying more difficult, the lecturers decide to create several groups in the offline quiz that contain different questions. The forms are then generated, downloaded and printed out.
+
+Two forms are handed out to students during the exam: the questionnaire (contains the questions and answer options) and the corresponding answer sheet (form with boxes to tick the selected answers). After the exam, all answer sheets are scanned and uploaded in the offline quiz of the Moodle course for evaluation.
+Forms that could not be automatically evaluated by the system, e.g. because the ID number was incorrectly ticked or ticks or crossed out ticks are unclear, must be corrected by the teachers in the offline quiz. 
+Teachers can now allow students to view their exams online, where they can, for example, see the points they have achieved and check that their ticks have been recognized.
+
+*Note:* The question types multiple choice, description and all-or-nothing multiple choice are currently supported. Questionnaires can be downloaded in PDF, DOCX or LaTeX format.
 
 
 Requirements
 ------------
 
-The plugin is available for Moodle 2.5+.
+* You need to have imagemagick and the relating php module (http://pecl.php.net/package/imagick) installed. It is used for converting the uploaded answer sheets. If you have problems that not all pdf pages are recognized try to increase the memory limit of imagemagick which can be found in the policy.xml (in linux based systems in /etc/ImageMagick-${version}/policy.xml).
 
-You need to have imagemagick and the relating php module (http://pecl.php.net/package/imagick) installed.
-It is used for converting the uploaded answer sheets.
-
-If you want to use LaTeX formulas in the questions it is necessary to have LaTeX installed.
+* If you want to use LaTeX formulas in the questions it is necessary to have LaTeX installed.
 See https://www.latex-project.org/get/ for more information how to install it.
 You can set your latex path in the admin settings at:
-Plugins -> Filters -> Manage filters -> TeX Notation -> Settings
+*Website administration -> Plugins -> Filters -> Manage filters -> TeX Notation -> Settings*.
 Everything should work if the "pathconvert" has a tick symbol.
+
+* The plugin uses a cron job for evaluating the answer forms. If you didn't configure the offline-quiz
+cron job, the automated analysis of answer forms is not going work! Information about how to
+configure cron jobs can be found at https://docs.moodle.org/en/Cron
+
+* The admin setting *useridentification* has to be set to a formula describing how the user IDs
+can be retrieved from the digits marked by the students on the answer forms. Details can be found at the admin settings description.
 
 
 Installation
 ------------
 
-* Copy the module code directly to the mod/offlinequiz directory.
+* Copy the code directly to the mod/offlinequiz directory.
 
 * Log into Moodle as administrator.
 
 * Open the administration area (http://your-moodle-site/admin) to start the installation
   automatically.
 
-
-Cron Job
---------
-
-The plugin uses a cron job for evaluating the answer forms. If you didn't configure the offline-quiz
-cron job, the automated analysis of answer forms is not going work! Information about how to
-configure cron jobs can be found at https://docs.moodle.org/en/Cron
-
-Before Version 3.2 there was an additional cron job required. This cron job is no longer necessary,
-unless you intend to run the cron job on a separate server.
-
-Since the evaluation of answer forms usually takes a lot of system resources, it is recommended to
-run this cron job on a separate application server to take load from the frontend servers.
-
-If you want to run the cron job on a dedicated server you have to disable it in the moodle settings
-and create an additional job on the dedicated server looking like this:
-
-    */10 * * * * DATE=`date +\%Y\%m\%d`; php <your moodle root dir>/admin/cli/scheduled_task.php --execute="\mod_offlinequiz\task\page_evaluation_task" >> /var/log/moodle/cron-olq.log.$DATE 2>&1
+Furthermore you can use the report [Offline Quiz Cronjob Admin](https://moodle.org/plugins/report_offlinequizcron), which adds an interface to the Offline Quiz activity to inspect and change pending cronjobs. 
 
 
-Admin Settings
---------------
-
-In the website admin settings for the module
-
-_Site Administration -> Plugins -> Activity modules -> Offline Quiz_
-
-One can choose the default settings for the module and also determine the University Logo that will
-appear on the top of the answer forms:
-
-* formula for participant identification (text field)
-* mix questions (checkbox)
-* mix answers (checkbox)
-* logo URL (text field)
-* copyright indication (checkbox)
-* settings for exam inspection (checkbox)
-* decimal places (drop down)
-* paper's white level (drop down)
-* 1-click inscription (checkbox)
-* role for inscription (drop down)
-* saving days (text field)
-
-The user identification has to be set to a formula describing how the user IDs
-can be retrieved from the digits marked by the students on the answer forms. For example:
-
-A user identification formula
-
-    a[7]=username
-
-means that the students mark a 7 digit number on the answer form. A concatenation of the letter 'a'
-and that number denotes the 'username' of the user in Moodle's 'user' table.
-
-A formula
-
-    b[5]cd=idnumber
-
-means that the students mark a 5 digit number on the answer form. A concatenation of the letter
-'b', the marked number, and the string 'cd' denotes the 'idnumber' of the user in Moodle's 'user'
-table.
-
-
-Scanning of Answer Forms
+Privacy API
 ------------------------
 
-Answer forms should be scanned as black-and-white images with 200 - 300 dpi. Do not scan in
-greyscale! Supported file types are TIF, PNG and GIF and PDF.
-
-If you have problems that not all pdf pages are recognized try to increase the memory limit of imagemagick which can be found in the policy.xml (in linux based systems in /etc/ImageMagick-${version}/policy.xml).
+The plugin fully implements the Moodle Privacy API.
 
 
 Documentation
 -------------
 
-You can find a cheat sheet for the plugin on the [AMC
-website](https://academic-moodle-cooperation.org/mod_offlinequiz/) and a video tutorial
-in German only in the [AMC YouTube Channel](https://www.youtube.com/c/AMCAcademicMoodleCooperation).
+You can find a documentation for the plugin on the [AMC website](https://academic-moodle-cooperation.org/mod_offlinequiz/).
 
 
 Bug Reports / Support

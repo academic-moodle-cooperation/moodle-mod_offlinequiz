@@ -1088,7 +1088,7 @@ class offlinequiz_page_scanner {
     public function pixel_is_black($x, $y) {
         global $CFG;
 
-        if ($x >= imagesx($this->image) or $y >= imagesy($this->image)) { // Point is out of range.
+        if (round($x) >= imagesx($this->image) or round($y) >= imagesy($this->image)) { // Point is out of range.
             return false;
         }
         $rgb = imagecolorsforindex($this->image, imagecolorat($this->image, round($x), round($y)));
