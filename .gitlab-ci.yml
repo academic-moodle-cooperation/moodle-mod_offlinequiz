@@ -5,7 +5,6 @@ cache:
 variables:
   CI_BUILD_DIR: "$CI_PROJECT_DIR"
   COMPOSER_HOME: "$CI_PROJECT_DIR/.composer/cache"
-  MUSTACHE_IGNORE_NAMES: "email_html_body.mustache, email_html.mustache, email_text.mustache"
 
   POSTGRES_USER: "postgres"
   POSTGRES_HOST_AUTH_METHOD: "trust"
@@ -21,24 +20,28 @@ variables:
     - cd ../..
     - moodle-db-isready
     - moodle-plugin-ci install --moodle="moodle-upstream-core" --db-host=$DB_HOST --db-port=$DB_PORT
+    - eval $(failed setup-command)
   script:
-    - moodle-plugin-ci phplint
-    #- moodle-plugin-ci phpcpd
-    - moodle-plugin-ci phpmd
-    - moodle-plugin-ci codechecker
-    - moodle-plugin-ci validate
-    - moodle-plugin-ci savepoints
-    #- moodle-plugin-ci mustache
-    #- moodle-plugin-ci grunt
-    #- moodle-plugin-ci phpdoc
-    - moodle-plugin-ci phpunit
-    #- moodle-plugin-ci behat --profile chrome
+    - moodle-plugin-ci phplint || failed
+    - moodle-plugin-ci phpcpd || true
+    - moodle-plugin-ci phpmd || failed
+    - moodle-plugin-ci phpcs || failed
+    - moodle-plugin-ci validate || failed
+    - moodle-plugin-ci savepoints || failed
+    - moodle-plugin-ci mustache || failed
+    - moodle-plugin-ci grunt || failed
+    - moodle-plugin-ci phpdoc || failed
+    - moodle-plugin-ci phpunit || failed
+    - moodle-plugin-ci behat --profile chrome
+    - failed result
+  after_script:
+    - failed report
   parallel:
     matrix:
       - MOODLE_BRANCH: [ "MOODLE_403_STABLE" ]
-        PHP_VERSION: [ "8.1" ]
+        PHP_VERSION: [ "8.0", "8.1", "8.2" ]
 
-code_checker_pgsql:
+test:postgres:
   <<: *job_configuration
   services:
     - postgres:14
@@ -48,7 +51,18 @@ code_checker_pgsql:
     DB_HOST: postgres
     DB_PORT: 5432
 
-code_checker_mariadb:
+test:mysql:
+  <<: *job_configuration
+  services:
+    - name: mysql:8.0.23
+      command: ["mysqld", "--port=6033"]
+    - docker:dind
+  variables:
+    DB: mysqli
+    DB_HOST: mysql
+    DB_PORT: 6033
+
+test:mariadb:
   <<: *job_configuration
   services:
     - mariadb:10.6
@@ -57,3 +71,4 @@ code_checker_mariadb:
     DB: "mariadb"
     DB_HOST: "mariadb"
     DB_PORT: 3306
+
