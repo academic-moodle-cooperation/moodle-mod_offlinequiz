@@ -1567,6 +1567,7 @@ function mod_offlinequiz_build_required_parameters_for_custom_view(array $params
 
     if(isset($params['groupnumber'])) {
         $thispageurl->param('groupnumber', $params['groupnumber']);
+        $pagevars['groupnumber'] = $params['groupnumber'];
     }
 
     return [$contexts, $thispageurl, $cm, $pagevars, $extraparams];
