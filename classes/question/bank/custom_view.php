@@ -87,7 +87,7 @@ class custom_view extends \core_question\local\bank\view {
         $this->init_columns($this->wanted_columns(), $this->heading_column());
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
         [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
-        $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $params['groupnumber']);
+        $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $params['groupid']);
     }
 
     /**

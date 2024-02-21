@@ -83,14 +83,13 @@ if ($groupnumber === -1) {
 }
 
 $offlinequiz->groupnumber = $groupnumber;
-$thispageurl->param('groupnumber', $offlinequiz->groupnumber);
 
 // Load the offlinequiz group and set the groupid in the offlinequiz object.
 if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     $offlinequiz->groupid = $offlinequizgroup->id;
     $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
     $offlinequiz->questions = $groupquestions;
-    $pagevars['groupnumber'] = $offlinequiz->groupid;
+    $pagevars['groupid'] = $offlinequiz->groupid;
 } else {
     throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
 }
