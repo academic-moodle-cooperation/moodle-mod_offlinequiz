@@ -1341,3 +1341,29 @@ input#showviewbutton {
         display: none !important;
     }
 }
+
+#page-mod-offlinequiz-edit .question-bank-table {
+    width: 100%;
+}
+
+#page-mod-offlinequiz-edit .question-bank-table .iconcol {
+    width: 16px;
+    padding: 0;
+    text-align: center;
+}
+
+#page-mod-offlinequiz-edit .question-bank-table .checkbox {
+    width: 32px;
+    padding: 0;
+    text-align: center;
+}
+
+#page-mod-offlinequiz-edit .question-bank-table .qtype {
+    width: 28px;
+    padding: 0;
+    text-align: center;
+}
+
+#page-mod-offlinequiz-edit .question-bank-table .questionnametext {
+    padding: 0 0.2em;
+}

@@ -32,7 +32,8 @@ class question_name_text_column extends question_name_column {
     }
 
     protected function display_content($question, $rowclasses): void {
-        echo \html_writer::start_tag('div');
+        $attributes = $this->qbank->offlinequiz_contains($question->id) ? ['class' => 'greyed'] : [];
+        echo \html_writer::start_tag('div', $attributes);
         $labelfor = $this->label_for($question);
         if ($labelfor) {
             echo \html_writer::start_tag('label', ['for' => $labelfor]);

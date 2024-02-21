@@ -87,6 +87,7 @@ class custom_view extends \core_question\local\bank\view {
         $this->init_columns($this->wanted_columns(), $this->heading_column());
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
         [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
+        $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $params['groupnumber']);
     }
 
     /**
@@ -104,7 +105,7 @@ class custom_view extends \core_question\local\bank\view {
         $questionbankclasscolumns = [];
         $customviewcolumns = [
             'mod_offlinequiz\question\bank\add_action_column' . column_base::ID_SEPARATOR  . 'add_action_column',
-            'core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column',
+            'mod_offlinequiz\question\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column',
             'qbank_viewquestiontype\question_type_column' . column_base::ID_SEPARATOR . 'question_type_column',
             'mod_offlinequiz\question\bank\question_name_text_column' . column_base::ID_SEPARATOR . 'question_name_text_column',
             'mod_offlinequiz\question\bank\preview_action_column'  . column_base::ID_SEPARATOR  . 'preview_action_column',
@@ -226,42 +227,6 @@ class custom_view extends \core_question\local\bank\view {
         echo "</div>\n";
     }
 
-    protected function display_options_form($showquestiontext, $scriptpath = '/mod/offlinequiz/edit.php',
-            $showtextoption = false): void {
-        // Overridden just to change the default values of the arguments.
-        parent::display_options_form($showquestiontext, $scriptpath, $showtextoption);
-    }
-
-    protected function print_category_info($category) {
-        $formatoptions = new stdClass();
-        $formatoptions->noclean = true;
-        $strcategory = get_string('category', 'offlinequiz');
-        echo '<div class="categoryinfo"><div class="categorynamefieldcontainer">' .
-                $strcategory;
-        echo ': <span class="categorynamefield">';
-        echo shorten_text(strip_tags(format_string($category->name)), 60);
-        echo '</span></div><div class="categoryinfofieldcontainer">' .
-                '<span class="categoryinfofield">';
-        echo shorten_text(strip_tags(format_text($category->info, $category->infoformat,
-                $formatoptions, $this->course->id)), 200);
-        echo '</span></div></div>';
-    }
-
-    protected function display_options($recurse, $showhidden, $showquestiontext) {
-        debugging('display_options() is deprecated, see display_options_form() instead.', DEBUG_DEVELOPER);
-        echo '<form method="get" action="edit.php" id="displayoptions">';
-        echo "<fieldset class='invisiblefieldset'>";
-        echo \html_writer::input_hidden_params($this->baseurl,
-                array('recurse', 'showhidden', 'qbshowtext'));
-        $this->display_category_form_checkbox('recurse', $recurse,
-                get_string('includesubcategories', 'question'));
-        $this->display_category_form_checkbox('showhidden', $showhidden,
-                get_string('showhidden', 'question'));
-        echo '<noscript><div class="centerpara"><input type="submit" value="' .
-                get_string('go') . '" />';
-        echo '</div></noscript></fieldset></form>';
-    }
-
     /**
      * Override the base implementation in \core_question\local\bank\view
      * because we don't want to print new question form in the fragment
@@ -356,5 +321,9 @@ class custom_view extends \core_question\local\bank\view {
      */
     public function get_offlinequiz() {
         return $this->offlinequiz;
+    }
+
+    public function offlinequiz_contains($questionid) {
+        return in_array($questionid, $this->offlinequiz->questions) ? true : false;
     }
 }

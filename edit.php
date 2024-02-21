@@ -90,6 +90,7 @@ if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     $offlinequiz->groupid = $offlinequizgroup->id;
     $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
     $offlinequiz->questions = $groupquestions;
+    $pagevars['groupnumber'] = $offlinequiz->groupid;
 } else {
     throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
 }
