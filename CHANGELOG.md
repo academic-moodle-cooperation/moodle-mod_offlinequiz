@@ -3,21 +3,24 @@ CHANGELOG
 4.3.0
 -----------------
 * [Feature] Compatible Version for Moodle 4.03
-* [Feature] Supports questions from global context and uses the question add popup like in quiz
-* [Feature] You can now use up to 10 digits for the user identification
-* [Feature] "id" and columns with numbers (phone1,phone2) work now as user identification field and are officially supported
-* [Bug] Fix for wrong amount of tests with errors/results displayed on the overview page
-* [Bug] github-221 "<" and ">" now working also in plain text fields
-* [Bug] Setting participants as present/not present now working again
-* [Bug] Statistics now working with big offlinequizzes with many users even on big moodle instances
-* [Bug] fix for divide by zero error in statistics if nobody chose the answer of a question
-* [Bug] not choosing any results to delete doesn't throw an error anymore
-* [Bug] Image out of bounds error for skew answer sheets
+* [Feature] Support questions from global context and use the question add popup like in quiz
+* [Feature] Support for up to 10 digits for the user identification [github #213]
+* [Feature] User table field "id" and fields with numbers (phone1,phone2) are now officially supported for user identification [github #181 and #204/ github pull request #207/ #208 @mhughes2k]
+* [Bug] Fixed wrong amount of tests with errors/results displayed on the overview page
+* [Bug] Fixed bug for "<" and ">" in plain text fields [github #221]
+* [Bug] Fixed bug to manually mark participants as present/not present [github #173]
+* [Bug] Fixed statistics to work with big offlinequizzes with many users even on big moodle instances
+* [Bug] Fixed bug with divide by zero error in statistics if nobody chose the answer of a question
+* [Bug] Fixed bug with error message when no results where chosen to delete
+* [Bug] Fixed image out of bounds error for skew answer sheets
 * [Bug] Fixed some filename errors under windows
-* [Bug] Fix for github #222 page not displayed course block Activities if there are offlinequizzes in multiple sections
-* [Bug] fixed #211 Overview not correctly displayed under oracle databases
-* [Bug] deleting groups has no effect in overview
-* [Bug] many other small bugfixes
+* [Bug] Fixed that page not displayed in course block Activities if there are offlinequizzes in multiple sections [github #222]
+* [Bug] Fixed incorrect overview displayed under oracle databases [github #211]
+* [Bug] Fixed statistics under oracle databases [github #146]
+* [Bug] Fixed bug in line 155 index.php [github #222]
+* [Bug] Fixed bug with url enconding [github pull request #188 @jboulen]
+* [Bug] Fixed that deleting groups has no effect in overview
+* [Bug] Fixed many other small bugs
 
 4.2.0
 -----------------
