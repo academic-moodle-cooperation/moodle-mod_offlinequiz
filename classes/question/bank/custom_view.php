@@ -17,8 +17,7 @@
 /**
  * Defines the custom question bank view used on the Edit offlinequiz page.
  *
- * @package       mod
- * @subpackage    offlinequiz
+ * @package       mod_offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.8+
@@ -27,19 +26,17 @@
 
 namespace mod_offlinequiz\question\bank;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core\output\datafilter;
 use core_question\local\bank\column_base;
-use core_question\local\bank\column_manager_base;
 use core_question\local\bank\condition;
+use core_question\local\bank\column_manager_base;
 use core_question\local\bank\question_version_status;
 use mod_offlinequiz\question\bank\filter\custom_category_condition;
 use qbank_managecategories\category_condition;
 
-defined('MOODLE_INTERNAL') || die();
-
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
-
-
 /**
  * Subclass to customise the view of the question bank for the offlinequiz editing screen.
  *
