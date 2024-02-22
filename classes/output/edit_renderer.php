@@ -124,9 +124,6 @@ class edit_renderer extends \plugin_renderer_base {
             $this->page->requires->js_call_amd('mod_offlinequiz/modal_offlinequiz_question_bank', 'init', [
                 $thiscontext->id
             ]);
-            /*$this->page->requires->yui_module('moodle-mod_offlinequiz-offlinequizquestionbank',
-                    'M.mod_offlinequiz.offlinequizquestionbank.init',
-                    array('class' => 'questionbank', 'cmid' => $structure->get_cmid()));*/
 
             $popups .= $this->random_question_form($pageurl, $contexts, $pagevars);
             $this->page->requires->yui_module('moodle-mod_offlinequiz-randomquestion',

@@ -68,6 +68,7 @@ class custom_view extends \core_question\local\bank\view {
      * @param \stdClass $offlinequiz offlinequiz settings.
      */
     public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams) {
+        global $PAGE;
         // Default filter condition.
         if (!isset($params['filter'])) {
             $params['filter']  = [];
@@ -84,7 +85,7 @@ class custom_view extends \core_question\local\bank\view {
         $this->init_columns($this->wanted_columns(), $this->heading_column());
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
         [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
-        $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $params['groupid']);
+        $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $extraparams['groupid']);
     }
 
     /**

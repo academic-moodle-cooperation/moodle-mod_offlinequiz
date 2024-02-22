@@ -1569,7 +1569,7 @@ function mod_offlinequiz_build_required_parameters_for_custom_view(array $params
 
     // Load the offlinequiz group and set the groupid in the offlinequiz object.
     if ($offlinequizgroup = offlinequiz_get_group($module, $groupnumber)) {
-        $pagevars['groupid'] = $offlinequizgroup->id;
+        $extraparams['groupid'] = $offlinequizgroup->id;
     } else {
         throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
     }
@@ -1606,6 +1606,11 @@ function mod_offlinequiz_output_fragment_question_data(array $args): string {
 
     // Custom question bank View.
     $viewclass = clean_param($args['view'], PARAM_NOTAGS);
+
+    $jsonString = stripslashes($args['extraparams']);
+    $extraparamsarray = json_decode($jsonString, true);
+    $extraparams['groupid'] = $extraparamsarray['groupid'];
+
     $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $params, $extraparams);
 
     // Question table.
