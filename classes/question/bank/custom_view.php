@@ -68,7 +68,6 @@ class custom_view extends \core_question\local\bank\view {
      * @param \stdClass $offlinequiz offlinequiz settings.
      */
     public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams) {
-        global $PAGE;
         // Default filter condition.
         if (!isset($params['filter'])) {
             $params['filter']  = [];
