@@ -20,7 +20,7 @@ CHANGELOG
 * [Bug] Fixed bug in line 155 index.php [github #222]
 * [Bug] Fixed bug with url enconding [github pull request #188 @jboulen]
 * [Bug] Fixed that deleting groups has no effect in overview
-* [Bug] Fixed many other small bugs
+* [Bug] Grades and Gradebook update now correctly after question version is changed 
 
 4.2.0
 -----------------
