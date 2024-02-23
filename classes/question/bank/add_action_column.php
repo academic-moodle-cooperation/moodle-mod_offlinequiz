@@ -61,4 +61,8 @@ class add_action_column extends \core_question\local\bank\column_base {
             new \pix_icon('t/add', $this->stradd));
         echo $OUTPUT->render($link);
     }
+
+    public function get_default_width(): int {
+        return 16;
+    }
 }

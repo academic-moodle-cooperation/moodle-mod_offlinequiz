@@ -87,17 +87,6 @@ class custom_view extends \core_question\local\bank\view {
         $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $extraparams['groupid']);
     }
 
-    /**
-     * Don't display plugin controls.
-     *
-     * @param \core\context $context
-     * @param int $categoryid
-     * @return string
-     */
-    /*protected function get_plugin_controls(\core\context $context, int $categoryid): string {
-        return '';
-    }*/
-
     protected function get_question_bank_plugins(): array {
         $questionbankclasscolumns = [];
         $customviewcolumns = [

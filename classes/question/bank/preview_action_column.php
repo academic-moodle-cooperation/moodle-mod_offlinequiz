@@ -47,4 +47,8 @@ class preview_action_column extends \core_question\local\bank\column_base {
         $editrenderer = $PAGE->get_renderer('offlinequiz', 'edit');
         echo $editrenderer->question_preview_icon($this->qbank->get_offlinequiz(), $question);
     }
+
+    public function get_default_width(): int {
+        return 30;
+    }
 }

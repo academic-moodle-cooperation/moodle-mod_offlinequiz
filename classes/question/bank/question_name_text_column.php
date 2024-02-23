@@ -57,4 +57,8 @@ class question_name_text_column extends question_name_column {
         parent::load_additional_data($questions);
         parent::load_question_tags($questions);
     }
+
+    public function get_default_width(): int {
+        return 540;
+    }
 }
