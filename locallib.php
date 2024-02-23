@@ -2192,6 +2192,16 @@ function offlinequiz_question_tostring($question, $showicon = false, $showquesti
                 ' ' . s($question->idnumber), 'badge badge-primary');
     }
 
+    // Question text.
+    if ($showquestiontext) {
+        $questiontext = question_utils::to_plain_text($question->questiontext,
+            $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
+        $questiontext = shorten_text($questiontext, 50);
+        if ($questiontext) {
+            $result .= ' ' . html_writer::span(s($questiontext), 'questiontext');
+        }
+    }
+
     // Question tags.
     if (is_array($showtags)) {
         $tags = $showtags;
@@ -2202,16 +2212,6 @@ function offlinequiz_question_tostring($question, $showicon = false, $showquesti
     }
     if ($tags) {
         $result .= $OUTPUT->tag_list($tags, null, 'd-inline', 0, null, true);
-    }
-
-    // Question text.
-    if ($showquestiontext) {
-        $questiontext = question_utils::to_plain_text($question->questiontext,
-            $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
-        $questiontext = shorten_text($questiontext, 50);
-        if ($questiontext) {
-            $result .= ' ' . html_writer::span(s($questiontext), 'questiontext');
-        }
     }
 
     return $result;
