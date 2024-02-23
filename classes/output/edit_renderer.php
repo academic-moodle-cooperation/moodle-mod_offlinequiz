@@ -124,9 +124,6 @@ class edit_renderer extends \plugin_renderer_base {
             $this->page->requires->js_call_amd('mod_offlinequiz/modal_offlinequiz_question_bank', 'init', [
                 $thiscontext->id
             ]);
-            /*$this->page->requires->yui_module('moodle-mod_offlinequiz-offlinequizquestionbank',
-                    'M.mod_offlinequiz.offlinequizquestionbank.init',
-                    array('class' => 'questionbank', 'cmid' => $structure->get_cmid()));*/
 
             $popups .= $this->random_question_form($pageurl, $contexts, $pagevars);
             $this->page->requires->yui_module('moodle-mod_offlinequiz-randomquestion',
@@ -1303,6 +1300,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output / send back in response to an AJAX request.
      */
     public function question_bank_contents(\mod_offlinequiz\question\bank\custom_view $questionbank, array $pagevars) {
+
         $qbank = $questionbank->render($pagevars, 'editq');
         return html_writer::div(html_writer::div($qbank, 'bd'), 'questionbankformforpopup');
     }

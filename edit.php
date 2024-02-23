@@ -83,14 +83,13 @@ if ($groupnumber === -1) {
 }
 
 $offlinequiz->groupnumber = $groupnumber;
-$thispageurl->param('groupnumber', $offlinequiz->groupnumber);
 
 // Load the offlinequiz group and set the groupid in the offlinequiz object.
 if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
     $offlinequiz->groupid = $offlinequizgroup->id;
     $groupquestions = offlinequiz_get_group_question_ids($offlinequiz);
     $offlinequiz->questions = $groupquestions;
-    $pagevars['groupnumber'] = $offlinequiz->groupid;
+    $extraparams['groupid'] = $offlinequiz->groupid;
 } else {
     throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
 }
@@ -339,7 +338,7 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
 }
 
 // Get the question bank view.
-$questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $pagevars, []);
+$questionbank = new mod_offlinequiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
 $questionbank->set_offlinequiz_has_scanned_pages($docscreated);
 if ($newquestionid) {
     $thispageurl->remove_params('lastchanged');
