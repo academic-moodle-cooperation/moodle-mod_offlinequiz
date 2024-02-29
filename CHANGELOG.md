@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+4.2.2
+-----------------
+* [Bug] Grades and Gradebook update now correctly after question version is changed
+
 4.2.1
 -----------------
 * [Bug] Fixed a bug where changing the version in offlinequiz break other quiz instances
