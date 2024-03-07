@@ -50,6 +50,8 @@ class custom_view extends \core_question\local\bank\view {
     protected $offlinequizhasattempts = false;
     /** @var \stdClass the offlinequiz settings. */
     protected $offlinequiz = false;
+    /** @var int groupnumber*/
+    protected $groupnumber;
 
     /**
      * @var string $component the component the api is used from.
@@ -68,6 +70,7 @@ class custom_view extends \core_question\local\bank\view {
      * @param \stdClass $offlinequiz offlinequiz settings.
      */
     public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams) {
+        global $DB;
         // Default filter condition.
         if (!isset($params['filter'])) {
             $params['filter']  = [];
@@ -85,6 +88,10 @@ class custom_view extends \core_question\local\bank\view {
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
         [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
         $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $extraparams['groupid']);
+        if($extraparams['groupid']) {
+            $groupnumber = $DB->get_field('offlinequiz_groups', 'groupnumber', ['id' => $extraparams['groupid']]);
+            $this->groupnumber = $groupnumber;
+        }
     }
 
     protected function get_question_bank_plugins(): array {
@@ -147,6 +154,7 @@ class custom_view extends \core_question\local\bank\view {
         $params['addquestion'] = $questionid;
         $params['sesskey'] = sesskey();
         $params['cmid'] = $this->cm->id;
+        $params['groupnumber'] = $this->groupnumber;
         return new \moodle_url('/mod/offlinequiz/edit.php', $params);
     }
 

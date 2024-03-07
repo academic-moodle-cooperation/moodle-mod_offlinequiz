@@ -52,7 +52,6 @@ class add_action_column extends \core_question\local\bank\column_base {
         if (!question_has_capability_on($question, 'use') || $this->qbank->offlinequiz_contains($question->id)) {
             return;
         }
-        
         $link = new \action_link(
             $this->qbank->add_to_offlinequiz_url($question->id),
             '',
