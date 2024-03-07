@@ -1570,6 +1570,7 @@ function mod_offlinequiz_build_required_parameters_for_custom_view(array $params
     // Load the offlinequiz group and set the groupid in the offlinequiz object.
     if ($offlinequizgroup = offlinequiz_get_group($module, $groupnumber)) {
         $extraparams['groupid'] = $offlinequizgroup->id;
+        $extraparams['groupnumber'] = $groupnumber;
     } else {
         throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
     }
