@@ -59,7 +59,7 @@ define("OFFLINEQUIZ_PART_USER_ERROR", "23");
 define("OFFLINEQUIZ_PART_LIST_ERROR", "24");
 define("OFFLINEQUIZ_IMPORT_NUMUSERS", "50");
 
-define('OFFLINEQUIZ_USER_FORMULA_REGEXP', "/^([^\[]*)\[([\-]?[0-9]+)\]([^\=]*)=([a-z]+)$/");
+define('OFFLINEQUIZ_USER_FORMULA_REGEXP', "/^([^\[]*)\[([\-]?[0-9]+)\]([^\=]*)=([a-z]+[0-9]?)$/");
 
 define('OFFLINEQUIZ_GROUP_LETTERS', "ABCDEFGHIJKL");  // Letters for naming offlinequiz groups.
 
@@ -843,13 +843,12 @@ function offlinequiz_update_question_instance($offlinequiz, $contextid, $questio
         foreach ($results as $result) {
             if ($result->usageid > 0) {
                 $templateusage = question_engine::load_questions_usage_by_activity($result->usageid);
-                offlinequiz_update_quba($templateusage, $questionid, $newquestionid, $grade);
-                // Now set the new sumgrades also in the offline quiz result.
-                $DB->set_field('offlinequiz_results', 'sumgrades',  $templateusage->get_total_mark(),
-                    array('id' => $result->id));
+                $templateusage = offlinequiz_update_quba($templateusage, $questionid, $newquestionid, $grade);
             }
         }
     }
+    $DB->delete_records('offlinequiz_statistics', ['offlinequizid' => $offlinequiz->id]);
+    offlinequiz_update_grades($offlinequiz);
     $DB->commit_delegated_transaction($transaction);
 }
 
