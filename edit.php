@@ -61,7 +61,7 @@ if (array_key_exists('offlinequizdeleteselected', $_POST) && $_POST['offlinequiz
 }
 
 list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
-   question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
+   offlinequiz_question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
 
 $course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);
 
@@ -73,14 +73,7 @@ $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
 // Determine groupid.
-$groupnumber    = optional_param('groupnumber', 1, PARAM_INT);
-if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
-    $groupnumber = $SESSION->question_pagevars['groupnumber'];
-}
-
-if ($groupnumber === -1) {
-    $groupnumber = 1;
-}
+$groupnumber    = $pagevars['groupnumber'];
 
 $offlinequiz->groupnumber = $groupnumber;
 

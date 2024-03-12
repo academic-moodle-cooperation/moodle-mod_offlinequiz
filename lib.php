@@ -1532,7 +1532,6 @@ function mod_offlinequiz_output_fragment_offlinequiz_question_bank($args): strin
     // Build required parameters.
     [$contexts, $thispageurl, $cm, $pagevars, $extraparams] =
         mod_offlinequiz_build_required_parameters_for_custom_view($params, $extraparams);
-
     $course = get_course($cm->course);
     require_capability('mod/offlinequiz:manage', $contexts->lowest());
 

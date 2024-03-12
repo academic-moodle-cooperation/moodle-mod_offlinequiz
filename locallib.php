@@ -1485,6 +1485,30 @@ function offlinequiz_question_edit_button($cmid, $question, $returnurl, $content
         return $contentaftericon;
     }
 }
+/**
+ * Common setup for all pages for editing offlinequiz questions.
+ * @param string $baseurl the name of the script calling this funciton. For examle 'qusetion/edit.php'.
+ * @param string $edittab code for this edit tab
+ * @param bool $requirecmid require cmid? default false
+ * @param bool $unused no longer used, do no pass
+ * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
+ */
+function offlinequiz_question_edit_setup($edittab, $baseurl, $requirecmid = false) {
+    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup($edittab, $baseurl, $requirecmid);
+    $groupnumber = optional_param('groupnumber', null, PARAM_INT);
+    if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
+        $groupnumber = $SESSION->question_pagevars['groupnumber'];
+    }
+    
+    if ($groupnumber === -1) {
+        $groupnumber = 1;
+    }
+    if ($groupnumber) {
+        $thispageurl->param('groupnumber',$groupnumber);
+        $pagevars['groupnumber'] = $groupnumber;
+    }
+    return array($thispageurl, $contexts, $cmid, $cm, $module, $pagevars);
+}
 
 /**
  * Creates HTML code for a question preview button.

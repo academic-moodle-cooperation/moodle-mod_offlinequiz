@@ -36,15 +36,14 @@ require_once($CFG->dirroot . '/question/category_class.php');
 
 
 list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars)
-    = question_edit_setup('editq', '/mod/offlinequiz/addrandom.php', true);
-
+    = offlinequiz_question_edit_setup('editq', '/mod/offlinequiz/addrandom.php', true);
+$groupnumber = $pagevars['groupnumber'];
 // These params are only passed from page request to request while we stay on
-// this page otherwise they would go in question_edit_setup.
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $addonpage = optional_param('addonpage', 0, PARAM_INT);
 $category = optional_param('category', 0, PARAM_INT);
 $scrollpos = optional_param('scrollpos', 0, PARAM_INT);
-$groupnumber = optional_param('groupnumber', 1, PARAM_INT);
+
 
 // Get the course object and related bits.
 if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
@@ -59,14 +58,6 @@ $completion->set_module_viewed($cm);
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
 if (!$contexts->having_cap('moodle/question:useall')) {
     throw new \moodle_exception('nopermissions', '', '', 'use');
-}
-
-if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
-    $groupnumber = $SESSION->question_pagevars['groupnumber'];
-}
-
-if ($groupnumber === -1) {
-    $groupnumber = 1;
 }
 
 $offlinequiz->groupnumber = $groupnumber;
