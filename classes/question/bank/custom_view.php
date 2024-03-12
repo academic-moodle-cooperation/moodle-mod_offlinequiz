@@ -201,7 +201,8 @@ class custom_view extends \core_question\local\bank\view {
 
         echo '<div class="modulespecificbuttonscontainer">';
         if ($canuseall) {
-
+            echo \html_writer::empty_tag('input',
+                ['name' => 'groupnumber', 'value' => $this->groupnumber,'type' => 'hidden']);
             // Add selected questions to the offlinequiz.
             $params = array(
                     'type' => 'submit',
@@ -211,7 +212,7 @@ class custom_view extends \core_question\local\bank\view {
                     'data-action' => 'toggle',
                     'data-togglegroup' => 'qbank',
                     'data-toggle' => 'action',
-                    'disabled' => true
+                    'disabled' => true,
             );
             if ($cmoptions->hasattempts) {
                 $params['disabled'] = 'disabled';
