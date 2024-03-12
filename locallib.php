@@ -1495,7 +1495,7 @@ function offlinequiz_question_edit_button($cmid, $question, $returnurl, $content
  */
 function offlinequiz_question_edit_setup($edittab, $baseurl, $requirecmid = false) {
     list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup($edittab, $baseurl, $requirecmid);
-    $groupnumber = optional_param('groupnumber', null, PARAM_INT);
+    $groupnumber = optional_param('groupnumber', 1, PARAM_INT);
     if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
         $groupnumber = $SESSION->question_pagevars['groupnumber'];
     }
@@ -1503,10 +1503,9 @@ function offlinequiz_question_edit_setup($edittab, $baseurl, $requirecmid = fals
     if ($groupnumber === -1) {
         $groupnumber = 1;
     }
-    if ($groupnumber) {
-        $thispageurl->param('groupnumber',$groupnumber);
-        $pagevars['groupnumber'] = $groupnumber;
-    }
+
+    $thispageurl->param('groupnumber',$groupnumber);
+    $pagevars['groupnumber'] = $groupnumber;
     return array($thispageurl, $contexts, $cmid, $cm, $module, $pagevars);
 }
 
