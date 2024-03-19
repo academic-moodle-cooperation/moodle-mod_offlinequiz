@@ -618,7 +618,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     $classname = '';
                     if ($rowdata->fraction > 0) {
                         $classname = 'greenrow';
-                    } else if ($rowdata->fraction < 0) {
+                    } else if ($rowdata->fraction <= 0) {
                         $classname = 'redrow';
                     }
                     $qtable->add_data_keyed($qtable->format_row($rowdata), $classname);
@@ -637,7 +637,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                     $classname = '';
                     if ($rowdata->fraction > 0) {
                         $classname = 'greenrow';
-                    } else if ($rowdata->fraction < 0) {
+                    } else if ($rowdata->fraction <= 0) {
                         $classname = 'redrow';
                     }
                     $qtable->add_data_keyed($qtable->format_row($rowdata), $classname);
@@ -815,7 +815,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
                 } else {
                     foreach ($responsesdata as $response => $data) {
                         $rowdata->response = $response;
-                        $this->output_response_data($rowdata, $rowdata->fraction, $data->count, $letterstr, $counter, $counter2, $partcounter, $question);
+                        $this->output_response_data($rowdata, $data->fraction, $data->count, $letterstr, $counter, $counter2, $partcounter, $question);
                         $counter++;
                         $partcounter++;
                         break; // We want to display every response only once.
@@ -834,7 +834,7 @@ class offlinequiz_statistics_report extends offlinequiz_default_report {
         $classname = '';
         if ($fraction > 0) {
             $classname = 'greenrow';
-        } else if ($fraction < 0) {
+        } else if ($fraction <= 0) {
             $classname = 'redrow';
         }
         if ($counter2 == 0 && $partcounter == 0) {
