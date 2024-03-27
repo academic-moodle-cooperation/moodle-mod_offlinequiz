@@ -2,9 +2,11 @@ CHANGELOG
 =========
 4.3.1
 -----------------
-* [Bug] Fixed some statistics that weren't displayed correctly (some more to go)
-* [Bug] adding and deleting multiple questions in Group B resulted adding them to group A
-* [Bug] Question preview not working properly
+* [Bug] Fixed some statistics that weren't displayed correctly
+* [Bug] Fixed bug with adding and deleting questions in Group B to F
+* [Bug] Fixed bug with adding questions randomly
+* [Bug] Fixed some bugs with the filter when adding questions from the question bank
+
 
 4.3.0
 -----------------
