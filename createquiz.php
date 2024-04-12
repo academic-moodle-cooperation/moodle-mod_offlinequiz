@@ -575,7 +575,7 @@ if ($mode == 'preview') {
         echo $OUTPUT->box_end();
 
         // Only send event if we have actually created new documents.
-        if ($offline->docs_created == 0) {
+        if ($offlinequiz->docscreated == 0) {
             $doctype = 'PDF';
             if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                 $doctype = 'DOCX';
