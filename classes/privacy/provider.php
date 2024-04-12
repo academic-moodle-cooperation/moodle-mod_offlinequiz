@@ -579,6 +579,7 @@ class provider implements
      * @param   context $context The specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
+        global $DB;
         if ($context->contextlevel != CONTEXT_MODULE) {
             // Only offlinequiz module will be handled.
             return;
@@ -593,7 +594,12 @@ class provider implements
             // A Module without course? Something that should never happen better do nothing!
             return;
         }
-        $users = user_get_participants($course->id);
+        $sql= "SELECT u.*
+                 FROM {user} u
+           INNER JOIN {role_assignments} ra ON ra.userid = u.id
+           INNER JOIN {context} ct ON ct.id = ra.contextid AND ct.contextlevel = 50
+                WHERE ct.instanceid = :courseid";
+        $users = $DB->get_records_sql($sql,['courseid' => $course->id]);
         foreach ($users as $user) {
             static::delete_data_for_user_in_offlinequiz($cm->instance, $user);
         }
