@@ -332,6 +332,14 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
             return '';
         }
 
+        if (!is_numeric($question->_stats->effectiveweight)) {
+            $result = get_string('notavailable', 'offlinequiz');
+            if (!$this->is_downloading()) {
+                $result .= $OUTPUT->pix_icon('help', get_string('discriminationindex_info', 'offlinequiz'), 'moodle');
+            }
+            return $result;
+        }
+
         if ($question->_stats->negcovar) {
             $negcovar = get_string('negcovar', 'offlinequiz_statistics');
 
@@ -353,11 +361,16 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_discrimination_index($question) {
+        global $OUTPUT;
         if (!property_exists($question, '_stats')) {
             return '';
         }
         if (!is_numeric($question->_stats->discriminationindex)) {
-            return $question->_stats->discriminationindex;
+            $result = get_string('notavailable', 'offlinequiz');
+            if(!$this->is_downloading()) {
+            $result .= $OUTPUT->pix_icon('help', get_string('discriminationindex_info', 'offlinequiz'), 'moodle');
+            }
+            return $result;
         }
 
         return format_float($question->_stats->discriminationindex, 2) . '%';

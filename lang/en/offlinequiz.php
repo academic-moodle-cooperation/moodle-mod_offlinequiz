@@ -157,6 +157,9 @@ $string['difficultytitlediff'] = 'Difference';
 $string['difficultytitle'] = 'Difficulty';
 $string['disableimgnewlines'] = 'Disable new lines before and after images';
 $string['disableimgnewlines_help'] = 'This option disables new lines before and after images in the pdf question sheets. Warning: This might lead to formatting problems.';
+$string['discriminationindex_info'] = 'Since the discrimination index calculates prediction of the question between good and inferior grades it can\'t be calculated if either
+- there are no different responses of the students in this question
+- there are no different grades in the exam';
 $string['displayoptions'] = 'Display options';
 $string['documentschanged'] = 'One ore more question(s) in the offlinequiz was/ were changed since creating the documents.<br>Future results will be regraded automatically during the evaluation to the current version of the question(s) chosen here. In the documents the origin version of the question(s) is still shown.';
 $string['documentschangedwithresults'] = 'One ore more question(s) in the offlinequiz was/ were changed since creating the documents.<br>Existing results were regraded automatically to the current version of the question(s) chosen here. In the documents the origin version of the question(s) is still shown.';
@@ -369,6 +372,7 @@ $string['noquestionselected'] = 'No questions selected!';
 $string['noresults'] = 'There are no results.';
 $string['noreview'] = 'You are not allowed to review this offline quiz';
 $string['notagselected'] = 'No tag selected';
+$string['notavailable'] = 'N/A';
 $string['nothingtodo'] = 'Nothing to do!';
 $string['notonattendancelist'] = 'Not on attendance list:';
 $string['notxtfile'] = 'No TXT file';

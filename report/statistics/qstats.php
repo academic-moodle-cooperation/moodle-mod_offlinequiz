@@ -127,7 +127,7 @@ class offlinequiz_statistics_question_stats {
                     qa.slot,
                     qa.maxmark,
                     qas.fraction,
-                    qa.maxmark as mark
+                    qas.fraction * qa.maxmark as mark
 
                 FROM $fromqa
                 JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid AND qa.questionid $qsql
