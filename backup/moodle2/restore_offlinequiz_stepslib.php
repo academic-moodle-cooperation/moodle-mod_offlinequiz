@@ -218,6 +218,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             if ($entry = $DB->get_field('question_versions', 'questionbankentryid', array('questionid' => $data->questionid))) {
                 $data->questionbankentryid = $entry;
             }
+            $data->version = $DB->get_field('question_versions', 'version', ['questionid' => $data->questionid]);
             $DB->insert_record('question_references', $data);
         }
     }
