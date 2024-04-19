@@ -220,7 +220,9 @@ function offlinequiz_delete_instance($id) {
             offlinequiz_delete_scanned_p_page($page, $context);
         }
     }
-    $DB->delete_records('question_references',['usingcontextid' => $context->id]);
+    $ctxid = $context->id;
+    $DB->delete_records('question_references',['usingcontextid' => $ctxid, 'component' => 'mod_offlinequiz',
+        'questionarea' => 'slot']);
     if ($events = $DB->get_records('event', array('modulename' => 'offlinequiz', 'instance' => $offlinequiz->id))) {
         foreach ($events as $event) {
             $event = calendar_event::load($event);
@@ -241,13 +243,11 @@ function offlinequiz_delete_instance($id) {
     // Delete template question usages of offlinequiz groups.
     offlinequiz_delete_template_usages($offlinequiz);
 
-    // Delete references.
-    offlinequiz_delete_references($offlinequiz->id);
-
     // All the tables with no dependencies...
     $tablestopurge = array(
             'offlinequiz_groups' => 'offlinequizid',
-            'offlinequiz' => 'id'
+            'offlinequiz' => 'id',
+            'offlinequiz_group_questions' => 'offlinequizid'
     );
 
     foreach ($tablestopurge as $table => $keyfield) {
@@ -1481,26 +1481,6 @@ function offlinequiz_get_coursemodule_info($coursemodule) {
         }
     }
     return $result;
-}
-
-/**
- * Delete question reference data.
- *
- * @param int $offlinequizid The id of quiz.
- */
-function offlinequiz_delete_references($offlinequizid): void {
-    global $DB;
-    $slots = $DB->get_records('offlinequiz_group_questions', ['offlinequizid' => $offlinequizid]);
-    foreach ($slots as $slot) {
-        $params = [
-            'itemid' => $slot->id,
-            'component' => 'mod_offlinequiz',
-            'questionarea' => 'slot'
-        ];
-
-        // Delete any references.
-        $DB->delete_records('question_references', $params);
-    }
 }
 
 /**
