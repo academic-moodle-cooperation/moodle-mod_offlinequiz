@@ -40,7 +40,6 @@ class provider implements
 
         $collection->link_subsystem('core_files', 'privacy:metadata:core_files');
         $collection->link_subsystem('core_question', 'privacy:metadata:core_question');
-        $collection->link_subsystem('mod_quiz', 'privacy:metadata:mod_quiz');
 
         $collection->add_database_table(
           'offlinequiz',
