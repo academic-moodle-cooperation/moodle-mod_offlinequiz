@@ -177,9 +177,6 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm) {
         'tabresultsoverview' =>
          ['tab' => 'tabresults',
           'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview'])],
-     'tabregrade' =>
-         ['tab' => 'tabresults',
-          'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'regrade'])],
      'tabstatsoverview' =>
          ['tab' => 'tabstatistics',
           'url' => new moodle_url('/mod/offlinequiz/report.php',

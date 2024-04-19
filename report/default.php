@@ -72,10 +72,6 @@ abstract class offlinequiz_default_report {
                 $reporttitle = get_string('resultimport', 'offlinequiz');
                 $currenttab = 'tabofflinequizupload';
                 break;
-            case 'regrade':
-                $reporttitle = get_string('regradingquiz', 'offlinequiz');
-                $currenttab = 'tabregrade';
-                break;
             case 'statsoverview':
                 $reporttitle = get_string('statisticsplural', 'offlinequiz');
                 $currenttab = 'tabstatsoverview';

@@ -866,7 +866,6 @@ $string['tabparticipantsupload'] = 'Upload';
 $string['tabpreview'] = 'Forms';
 $string['tabquestionandanswerstats'] = 'Question and answer analysis';
 $string['tabquestionstats'] = 'Question analysis';
-$string['tabregrade'] = 'Regrading';
 $string['tabresults'] = 'Results';
 $string['tabresultsoverview'] = 'Results';
 $string['tabstatistics'] = 'Statistics';
