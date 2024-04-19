@@ -192,7 +192,7 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
             }
 
             echo $OUTPUT->box_start('linkbox');
-            echo $OUTPUT->heading_with_help(get_string('correctheader', 'offlinequiz'), 'importnew', 'offlinequiz');
+            echo $OUTPUT->heading_with_help(get_string('correctionheader', 'offlinequiz'), 'correctionheader', 'offlinequiz');
             echo $OUTPUT->box_end();
         }
         // Print info about offlinequiz_queue jobs.

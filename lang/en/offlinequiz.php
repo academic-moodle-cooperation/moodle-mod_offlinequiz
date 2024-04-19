@@ -108,6 +108,22 @@ $string['copyright'] = '<strong>Warning: The texts on this page are just for you
 $string['copy'] = 'Copy';
 $string['correct'] = 'correct';
 $string['correctheader'] = 'Correction necessary: ';
+$string['correctionheader'] = 'Correction';
+$string['correctionheader_help'] = '...
+<p>The answer forms displayed here need your your attention and must be corrected manually. An automatic evaluation is not possible.</p>
+<u>The following errors may occur...</u>
+<ul>
+  <li><strong>Inaccurate markings:</strong> Some marks could not be evaluated.</li>
+  <li><strong>Invalid group number:</strong> The group number could not be evaluated.</li>
+  <li><strong>Invalid page number:</strong> The page number could not be evaluated.</li>
+  <li><strong>Not adjusted:</strong> The answer form was scanned crooked and cannot be evaluated.</li>
+  <li><strong>Different result exists:</strong> An evaluated result with a deviating group number already exists.</li>
+  <li><strong>Pages incomplete:</strong> The current answer sheet has been evaluated, but at least 1 additional sheet (is missing to complete the evaluation for the identified participant. (Only occurs with multi-page answer forms.)</li>
+  <li><strong>Result exists:</strong> An evaluated result with the same group number already exists.</li>
+  <li><strong>User not in course:</strong> The identified participant is not currently registered in the course.</li>
+  <li><strong>User does not exist:</strong> The identified participant is unknown.</li>
+</ul>
+...';
 $string['correcterror'] = 'solve';
 $string['correctforgroup'] = 'Correct answers for Group {$a}';
 $string['correctionerrors'] = 'Forms with correction errors: ';
