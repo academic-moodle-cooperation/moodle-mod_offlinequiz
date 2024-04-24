@@ -1632,7 +1632,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024041900, 'offlinequiz');
     }
-    if ($oldversion < 2024041900) {
+    if ($oldversion < 2024041901) {
         
         // Changing type of field participantsusage on table offlinequiz to int.
         $table = new xmldb_table('offlinequiz');
@@ -1642,9 +1642,9 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $dbman->change_field_default($table, $field);
         
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2024041900, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2024041901, 'offlinequiz');
     }
-    if ($oldversion < 2024041901) {
+    if ($oldversion < 2024041902) {
         
         // Changing nullability of field algorithmversion on table offlinequiz to null.
         $table = new xmldb_table('offlinequiz');
@@ -1654,9 +1654,9 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $dbman->change_field_notnull($table, $field);
         
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2024041901, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2024041902, 'offlinequiz');
     }
-    if ($oldversion < 2024041902) {
+    if ($oldversion < 2024041903) {
         
         // Changing the default of field listnumber on table offlinequiz_p_lists to 1.
         $table = new xmldb_table('offlinequiz_p_lists');
@@ -1667,9 +1667,9 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $dbman->change_field_default($table, $field);
         
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2024041902, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2024041903, 'offlinequiz');
     }
-    if ($oldversion < 2024041903) {
+    if ($oldversion < 2024041904) {
         
         // Changing nullability of field status on table offlinequiz_scanned_p_pages to not null.
         $table = new xmldb_table('offlinequiz_scanned_p_pages');
@@ -1679,9 +1679,9 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $dbman->change_field_notnull($table, $field);
 
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2024041903, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2024041904, 'offlinequiz');
     }
-    if ($oldversion < 2024041904) {
+    if ($oldversion < 2024041905) {
         
         // Changing type of field status on table offlinequiz_queue to char.
         $table = new xmldb_table('offlinequiz_queue');
@@ -1691,9 +1691,9 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $dbman->change_field_type($table, $field);
         
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2024041904, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2024041905, 'offlinequiz');
     }
-    if ($oldversion < 2024041905) {
+    if ($oldversion < 2024041906) {
 
         // Changing type of field status on table offlinequiz_queue_data to char.
         $table = new xmldb_table('offlinequiz_queue_data');
@@ -1703,7 +1703,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $dbman->change_field_notnull($table, $field);
 
         // Offlinequiz savepoint reached.
-        upgrade_mod_savepoint(true, 2024041905, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2024041906, 'offlinequiz');
     }
     
 

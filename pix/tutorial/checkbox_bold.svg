@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2021 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="100px" height="100px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 13.45 13.45"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#2B2A29;stroke-width:0.41;stroke-miterlimit:22.9256}
+    .str1 {stroke:#2B2A29;stroke-width:1.37;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .fil2 {fill:none}
+    .fil0 {fill:white}
+    .fil1 {fill:#2B2A29;fill-rule:nonzero}
+   ]]>
+  </style>
+   <clipPath id="id0">
+    <path d="M0 0l13.45 0 0 13.45 -13.45 0 0 -13.45z"/>
+   </clipPath>
+ </defs>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g>
+  </g>
+  <g style="clip-path:url(#id0)">
+   <g>
+    <rect class="fil0 str0" x="1.19" y="1.19" width="11.07" height="11.07"/>
+    <path class="fil1 str1" d="M6.41 9.98l-0.21 0.29c-1.56,2.13 -2.86,3.04 -3.66,2.52 -1.25,-0.81 -2.01,0.09 -1.85,-2.18 1.89,0.13 1.89,-1.1 2.97,-2.42l0.39 -0.47 -0.5 -0.52c-1.39,-1.45 -2.75,-3.66 -2.53,-4.64 1.13,-5.05 4.73,1.66 4.82,1.77l0.43 0.53 0.34 -0.44c1.56,-1.99 3.03,-2.82 4.32,-2.82 1.01,0 0.74,-0.36 1.26,1.14 -0.15,-0.02 0.09,0.8 0.03,0.8 -0.46,0 -0.41,0.92 -1.24,1.51 -0.83,0.59 -1.19,1.26 -1.76,2.01l-0.43 0.57 0.42 0.39c1.53,1.43 2,2.14 3.66,2.14 -0.89,1.76 -1.04,2.65 -2.01,2.65 -0.87,0 -2.14,-0.75 -3.79,-2.25l-0.66 -0.58z"/>
+   </g>
+  </g>
+  <polygon class="fil2" points="0,0 13.45,0 13.45,13.45 0,13.45 "/>
+ </g>
+</svg>

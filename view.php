@@ -363,15 +363,15 @@ $PAGE->set_heading($course->shortname);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagelayout('report');
 // Output starts here.
-echo $OUTPUT->header();
-
-// Print the page header.
-if ($edit != -1 and $PAGE->user_allowed_editing()) {
-    $USER->editing = $edit;
-}
 
 
 if (has_capability('mod/offlinequiz:manage', $context)) {
+    echo $OUTPUT->header();
+    
+    // Print the page header.
+    if ($edit != -1 and $PAGE->user_allowed_editing()) {
+        $USER->editing = $edit;
+    }
     echo $OUTPUT->render_from_template('mod_offlinequiz/teacher_view', $templatedata);
 } else if (has_capability('mod/offlinequiz:attempt', $context)) {
     $select = "SELECT *
@@ -387,22 +387,19 @@ if (has_capability('mod/offlinequiz:manage', $context)) {
               $options->sheetfeedback == question_display_options::VISIBLE ||
               $options->gradedsheetfeedback == question_display_options::VISIBLE
               )) {
-
-            echo '<div class="offlinequizinfo">';
             $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/review.php',
                     array('q' => $offlinequiz->id, 'resultid' => $result->id));
-            echo $OUTPUT->single_button($url, get_string('viewresults', 'offlinequiz'));
-            echo '</div>';
+            redirect($url);
+            die();
         }
     } else {
         if (!empty($offlinequiz->time) and $offlinequiz->time < time()) {
+            echo $OUTPUT->header();
             echo '<div class="offlinequizinfo">' . get_string('nogradesseelater', 'offlinequiz', fullname($USER)).'</div>';
         } else if ($offlinequiz->showtutorial) {
-            echo '<br/><div class="offlinequizinfo">';
-            $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial/index.php',
+            $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial.php',
                 array('id' => $cm->id));
-            echo $OUTPUT->single_button($url, get_string('starttutorial', 'offlinequiz'));
-            echo '</div>';
+            redirect($url);
         }
     }
 }

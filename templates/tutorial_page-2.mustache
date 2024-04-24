@@ -1,0 +1,26 @@
+<div>
+<h3>{{#str}} tutorial:header:2, mod_offlinequiz {{/str}}</h3>
+
+<p>{{#str}} tutorial:introduction:2:1, mod_offlinequiz {{/str}}</p>
+
+<p style="margin: 2em"><img src="./pix/tutorial/answersheet.jpg" border="1"></p>
+
+<p>{{#str}} tutorial:introduction:2:2, mod_offlinequiz {{/str}}</p>
+
+<p>{{#str}} tutorial:question:2, mod_offlinequiz {{/str}}</p>
+<form action="tutorial.php" method="get" id="page2" class="popupform">
+<input type="hidden" name="id" value="{{id}}">
+<input type="hidden" name="page" value="2">
+<p style="margin: 2em"><input type="radio" name="answer" value="1">
+&nbsp;&nbsp;&nbsp;<img src="./pix/tutorial/checkbox_light.svg" border="1"></p>
+<p style="margin: 2em"><input type="radio" name="answer" value="2">
+&nbsp;&nbsp;&nbsp;<img src="./pix/tutorial/checkbox_marked.svg" border="1"></p>
+<p style="margin: 2em"><input type="radio" name="answer" value="3">
+&nbsp;&nbsp;&nbsp;<img src="./pix/tutorial/checkbox_bold.svg" border="1"></p>
+<p style="margin: 2em"><input type="radio" name="answer" value="4">
+&nbsp;&nbsp;&nbsp;<img src="./pix/tutorial/checkbox_empty.svg" border="1"></p>
+<p style="margin: 2em"><input type="radio" name="answer" value="5">
+&nbsp;&nbsp;&nbsp;<img src="./pix/tutorial/checkbox_deleted.svg" border="1"></p>
+
+<p style="margin-left: 4em"><input class="btn btn-primary" type="submit" value="{{#str}} continue {{/str}}"></p></form><p>&nbsp;</p>
+</div>

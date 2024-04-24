@@ -1,0 +1,79 @@
+<div>
+<h3>{{#str}} tutorial:header:4, mod_offlinequiz {{/str}}</h3>
+
+<p>{{#str}} tutorial:introduction:4, mod_offlinequiz {{/str}}</p>
+
+<script type="text/javascript">
+var matrix = new Array({{usernumberlength}});
+for (a=1; a<={{usernumberlength}}; a++) {
+    matrix[a] = new Array(10);
+}
+
+function set_digit(image, i, j) {
+    className = image.className;
+    if (image.className == 'checkbox-empty') {
+        image.src = './pix/tutorial/checkbox_marked.svg';
+        image.className = 'checkbox-clicked'
+        matrix[j][i] = 1;
+    } else if (image.className == 'checkbox-clicked') {
+        image.src = './pix/tutorial/checkbox_deleted.svg';
+        image.className = 'checkbox-filled'
+        matrix[j][i] = 0;
+    } else if (image.className == 'checkbox-filled') {
+        image.src = './pix/tutorial/checkbox_empty.svg';
+        image.className = 'checkbox-empty';
+        matrix[j][i] = 0;
+    }
+}
+
+function load_number() {
+    var retwert = '';
+    for (i=1; i<={{usernumberlength}}; i++) {
+         var number = 'I';
+         for (j=0; j<=9; j++) {
+              if (number != 'I' && matrix[i][j] == 1) {
+                  number = 'X';
+              } else if (matrix[i][j] == 1) {
+                  number = j;
+              }
+         }
+         if (number == 'I') number = 'X';
+         retwert = retwert + number;
+    }
+    document.forms.page4.answer.value = retwert;
+}
+</script>
+
+<!-- fake matriculation number-->
+<div>
+<table class="offlinequiz-tutorial-number-table">
+<span class="center matnr">{{#str}} tutorial:question:4, mod_offlinequiz {{/str}}</span>
+
+<!-- header with matriculation Number-->
+<tr class="tableheader">
+  <th></th>
+    {{#usernumber}}
+      <th>{{digit}}</th>
+    {{/usernumber}}
+  <th></th>
+</tr>
+{{#digitsarray}}
+<tr>
+  <td>{{digitcountr}}</td>
+  {{#usernumber}}
+    <td><img class="checkbox-empty" src="./pix/tutorial/checkbox_empty.svg" onclick="set_digit(this, {{digitcountr}}, {{digitcountc}})"></td>
+  {{/usernumber}}
+  <td>{{digitcountr}}</td>
+</tr>
+{{/digitsarray}}
+</table>
+
+<form action="tutorial.php" method="get" id="page4" class="popupform">
+<input type="hidden" name="answer">
+<input type="hidden" name="id" value="{{id}}">
+<input type="hidden" name="page" value="4">
+
+<p><input class="btn btn-primary" type="submit" value="{{#str}} continue {{/str}}" onClick="load_number();"></p>
+</form>
+<p>&nbsp;</p><p>&nbsp;</p>
+</div>

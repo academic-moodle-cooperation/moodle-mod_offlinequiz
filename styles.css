@@ -1371,3 +1371,14 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit .modal-lg {
     max-width: 1200px;
 }
+#page-mod-offlinequiz-tutorial .offlinequiz-tutorial-number-table img {
+    cursor: pointer;
+}
+
+#page-mod-offlinequiz-tutorial .offlinequiz-tutorial-number-table .tableheader {
+    border-style: solid;
+    border-width: 1px;
+}
+#page-mod-offlinequiz-tutorial .offlinequiz-tutorial-number-table th {
+    font-size: 2em;
+}

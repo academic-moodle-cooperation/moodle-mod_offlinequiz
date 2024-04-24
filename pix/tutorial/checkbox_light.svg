@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2021 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="100px" height="100px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 13.44 13.44"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#2B2A29;stroke-width:0.41;stroke-miterlimit:22.9256}
+    .fil2 {fill:none}
+    .fil0 {fill:white}
+    .fil1 {fill:#6699FF;fill-rule:nonzero}
+   ]]>
+  </style>
+   <clipPath id="id0">
+    <path d="M0 0l13.44 0 0 13.44 -13.44 0 0 -13.44z"/>
+   </clipPath>
+ </defs>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g>
+  </g>
+  <g style="clip-path:url(#id0)">
+   <g>
+    <rect class="fil0 str0" x="1.22" y="1.23" width="11.06" height="11.06"/>
+    <path class="fil1" d="M2.99 2.89l0 0c0,0.43 0.19,0.93 0.5,1.48 0.39,0.7 0.99,1.45 1.66,2.18l0.17 0.18 -0.16 0.17c-0.45,0.51 -0.87,1.01 -1.23,1.47 -0.39,0.52 -0.72,0.97 -0.94,1.33 -0.1,0.15 -0.07,0.31 0.02,0.45 0.04,0.07 0.11,0.14 0.18,0.19l0 0c0.07,0.05 0.15,0.09 0.23,0.12 0.12,0.03 0.23,0.03 0.28,-0.03l2.39 -2.92 0.2 0.19c0.61,0.58 1.22,1.11 1.79,1.57 0.64,0.52 1.22,0.95 1.65,1.22 0.15,0.09 0.32,0.07 0.45,-0.02 0.07,-0.05 0.14,-0.12 0.19,-0.19l0 0c0.05,-0.07 0.1,-0.15 0.12,-0.23 0.04,-0.12 0.03,-0.23 -0.03,-0.28l-3.74 -3.05 0.17 -0.2c0.52,-0.63 1.07,-1.23 1.67,-1.79 0.59,-0.55 1.23,-1.06 1.93,-1.53 0.01,-0.01 0.01,-0.02 0.02,-0.04 0,-0.01 -0.01,-0.03 -0.01,-0.04 0,-0.01 -0.01,-0.02 -0.02,-0.03 0,0 0,0 -0.01,0 -0.51,-0.03 -1.13,0.22 -1.8,0.64 -0.82,0.52 -1.7,1.29 -2.53,2.12l-0.18 0.19 -0.19 -0.19c-0.51,-0.52 -0.97,-1.06 -1.44,-1.61 -0.35,-0.43 -0.71,-0.85 -1.09,-1.25 -0.05,-0.06 -0.16,-0.1 -0.25,-0.1z"/>
+   </g>
+  </g>
+  <polygon class="fil2" points="0,0 13.44,0 13.44,13.44 0,13.44 "/>
+ </g>
+</svg>

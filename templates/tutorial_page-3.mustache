@@ -1,0 +1,20 @@
+<div>
+<h3>{{#str}} tutorial:header:3, mod_offlinequiz {{/str}}</h3>
+
+<p>{{#str}} tutorial:introduction:3:1, mod_offlinequiz {{/str}}</p>
+
+<p style="margin: 2em"><img src="./pix/tutorial/answerform.svg" width="75%" border="1"></p>
+
+<p>{{#str}} tutorial:introduction:3:2, mod_offlinequiz {{/str}}</p>
+
+<p>{{#str}} tutorial:question:3, mod_offlinequiz {{/str}}</p>
+<form action="tutorial.php" method="get" id="page3" class="popupform">
+<input type="hidden" name="id" value="{{id}}">
+<input type="hidden" name="page" value="3">
+
+<p><input type="radio" name="answer" value="1">{{#str}} tutorial:option:3:1, mod_offlinequiz {{/str}}</p>
+<p><input type="radio" name="answer" value="2">{{#str}} tutorial:option:3:2, mod_offlinequiz {{/str}}</p>
+<p><input type="radio" name="answer" value="3">{{#str}} tutorial:option:3:3, mod_offlinequiz {{/str}}</p>
+<p><input type="radio" name="answer" value="4">{{#str}} tutorial:option:3:4, mod_offlinequiz {{/str}}</p>
+<input class="btn btn-primary" type="submit" value="{{#str}} continue {{/str}}">
+</div>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2021 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="100px" height="100px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 13.45 13.45"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#2B2A29;stroke-width:0.41;stroke-miterlimit:22.9256}
+    .fil1 {fill:none}
+    .fil0 {fill:white}
+   ]]>
+  </style>
+   <clipPath id="id0">
+    <path d="M0 0l13.45 0 0 13.45 -13.45 0 0 -13.45z"/>
+   </clipPath>
+ </defs>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g>
+  </g>
+  <g style="clip-path:url(#id0)">
+   <g>
+    <rect class="fil0 str0" x="1.19" y="1.19" width="11.07" height="11.07"/>
+   </g>
+  </g>
+  <polygon class="fil1" points="0,0 13.45,0 13.45,13.45 0,13.45 "/>
+ </g>
+</svg>
