@@ -1195,11 +1195,6 @@ input#showviewbutton {
     padding-top: 50px;
 }
 
-.modulespecificbuttonscontainer {
-    padding-left: 0.3em;
-    padding-right: 0.3em;
-}
-
 .offlinequizquestionlistcontrols {
     text-align: center;
 }
@@ -1370,4 +1365,9 @@ input#showviewbutton {
 
 #page-mod-offlinequiz-edit .modal-lg {
     max-width: 1200px;
+}
+
+#page-mod-offlinequiz-edit .modal-dialog-scrollable .modal-body,
+#page-mod-offlinequiz-edit .modal-dialog-scrollable .modal-content {
+    overflow: visible;
 }
