@@ -144,10 +144,6 @@ class custom_view extends \core_question\local\bank\view {
         }
     }
 
-    public function preview_question_url($question) {
-        return offlinequiz_question_preview_url($this->offlinequiz, $question);
-    }
-
     public function add_to_offlinequiz_url($questionid) {
         global $CFG;
         $params = $this->baseurl->params();
