@@ -1620,7 +1620,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $DB->delete_records_subquery('offlinequiz_group_questions', 'id', 'rid', $subquery);
         upgrade_mod_savepoint(true, 2024012202, 'offlinequiz');
     }
-    if ($oldversion < 2024041900) {
+     if ($oldversion < 2024041900) {
         
         // Changing type of field participantsusage on table offlinequiz to int.
         $table = new xmldb_table('offlinequiz');
