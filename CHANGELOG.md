@@ -1,12 +1,20 @@
 CHANGELOG
 =========
+
+4.3.2
+-----------------
+* [Bug] Fixed some more statistics errors (#245)
+* [Bug] Fixed some bugs regarding the filter for adding questions from question bank
+* [Bug] Fixed that the question version selection in restored offlinequizzes was not correct.
+* [Bug] Fixed that some data was not deleted correctly when deleting a course/offlinequiz activity (#230)
+* [Bug] Fixed that user_get_participants was used in the privacy provider which doesn't exist anymore (#242)
+
 4.3.1
 -----------------
 * [Bug] Fixed some statistics that weren't displayed correctly
 * [Bug] Fixed bug with adding and deleting questions in Group B to F
 * [Bug] Fixed bug with adding questions randomly
 * [Bug] Fixed some bugs with the filter when adding questions from the question bank
-
 
 4.3.0
 -----------------
