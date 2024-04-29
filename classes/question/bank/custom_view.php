@@ -92,6 +92,7 @@ class custom_view extends \core_question\local\bank\view {
             $groupnumber = $DB->get_field('offlinequiz_groups', 'groupnumber', ['id' => $extraparams['groupid']]);
             $this->groupnumber = $groupnumber;
         }
+        $this->pagesize = self::DEFAULT_PAGE_SIZE;
     }
 
     protected function get_question_bank_plugins(): array {
@@ -195,7 +196,7 @@ class custom_view extends \core_question\local\bank\view {
 
         $canuseall = has_capability('moodle/question:useall', $catcontext);
 
-        echo '<div class="modulespecificbuttonscontainer">';
+        echo \html_writer::start_tag('div', ['class' => 'pt-2']);
         if ($canuseall) {
             echo \html_writer::empty_tag('input',
                 ['name' => 'groupnumber', 'value' => $this->groupnumber,'type' => 'hidden']);
@@ -215,7 +216,7 @@ class custom_view extends \core_question\local\bank\view {
             }
             echo \html_writer::empty_tag('input', $params);
         }
-        echo "</div>\n";
+        echo \html_writer::end_tag('div');
     }
 
     /**
@@ -285,6 +286,11 @@ class custom_view extends \core_question\local\bank\view {
         }
         $this->countsql = 'SELECT count(1)' . $sql;
         $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
+
+        // Maybe move this part in future to js in modal_offlinequiz_question_bank
+        if ($this->get_question_count() <= $this->pagesize) {
+            $this->pagevars['qpage'] = 0;
+        }
     }
 
     public function add_standard_search_conditions(): void {
