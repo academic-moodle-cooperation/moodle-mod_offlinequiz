@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2021 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="300px" height="236px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 312.17 245.42"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str1 {stroke:#979798;stroke-width:2.99;stroke-miterlimit:22.9256}
+    .str0 {stroke:#979798;stroke-width:2.99;stroke-miterlimit:22.9256}
+    .fil2 {fill:none}
+    .fil0 {fill:white}
+    .fil1 {fill:#434242;fill-rule:nonzero}
+   ]]>
+  </style>
+   <clipPath id="id0">
+    <path d="M12.9 205.69c58.23,-5.86 67.3,12.11 85.72,27.71 34.47,29.18 40.98,-10.65 72.61,4.72 31.63,15.37 90.71,1.92 96.37,0.44l3.81 -19.92 40.76 21.52 0 -240.16 -312.17 0 1.41 240.16 11.49 -34.47z"/>
+   </clipPath>
+ </defs>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g>
+  </g>
+  <g style="clip-path:url(#id0)">
+   <g>
+    <rect class="fil0 str0" x="16.13" y="38.51" width="251.97" height="356.35"/>
+    <rect class="fil0 str1" transform="matrix(1.11127 0.195948 -0.277126 1.57166 48.987 19.3416)" width="223.29" height="223.29"/>
+    <path class="fil1" d="M143.04 172.76c0.25,-1.7 0.47,-2.99 0.62,-3.86 0.89,-5.04 2.37,-9.25 4.43,-12.66 1.53,-2.58 3.71,-5.08 6.53,-7.45 2.08,-1.76 5.69,-4.21 10.84,-7.33 5.12,-3.14 8.56,-5.76 10.31,-7.86 1.74,-2.08 2.85,-4.53 3.34,-7.28 0.87,-5 -0.29,-9.72 -3.53,-14.2 -3.24,-4.46 -7.67,-7.2 -13.34,-8.19 -5.47,-0.97 -10.34,-0.05 -14.6,2.72 -4.26,2.77 -7.62,7.69 -10.02,14.77l-12.94 -3.88c2.92,-9.55 7.77,-16.38 14.55,-20.54 6.78,-4.13 15.02,-5.37 24.67,-3.66 10.22,1.8 17.89,6.01 22.98,12.67 5.1,6.63 6.96,13.88 5.57,21.77 -0.79,4.58 -2.62,8.59 -5.42,12.08 -2.82,3.46 -7.84,7.42 -15.04,11.82 -4.85,2.97 -8.07,5.22 -9.65,6.76 -1.58,1.53 -2.9,3.39 -3.94,5.57 -1.01,2.17 -2.02,5.81 -3.01,10.93l-12.35 -2.18zm-5.32 25.61l2.57 -14.62 14.63 2.6 -2.58 14.62 -14.62 -2.6z"/>
+    <path class="fil2 str1" d="M16.43 205.22c58.22,-5.86 64.99,14.68 82.19,28.18 35.53,27.88 40.98,-10.65 72.61,4.72 31.63,15.37 89.3,1.92 94.96,0.44"/>
+   </g>
+  </g>
+  <path class="fil2" d="M12.9 205.69c58.23,-5.86 67.3,12.11 85.72,27.71 34.47,29.18 40.98,-10.65 72.61,4.72 31.63,15.37 90.71,1.92 96.37,0.44l3.81 -19.92 40.76 21.52 0 -240.16 -312.17 0 1.41 240.16 11.49 -34.47z"/>
+ </g>
+</svg>

@@ -48,7 +48,7 @@ offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 
 $usernumber = substr($USER->{$offlinequizconfig->ID_field}, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
-$actualusernumber = true;
+$generatedusernumber = false;
 if (!intval($usernumber)) {
     // The user doesn't have an idnumber, let's generate a random one.
     if(property_exists($SESSION,'offlinequiztutorialusernumber')) {
@@ -60,7 +60,7 @@ if (!intval($usernumber)) {
         }
         $SESSION->offlinequiztutorialusernumber = $usernumber;
     }
-    $actualusernumber = false;
+    $generatedusernumber = true;
 } else if(strlen($usernumber) < $offlinequizconfig->ID_digits) {
     $usernumber = substr(round($usernumber) . '0000000000000000000', 0, $offlinequizconfig->ID_digits);
 }
@@ -110,8 +110,9 @@ $templatedata = [
     'usernumber' => $unarray,
     'id' => $id,
     'usernumberlength' => $offlinequizconfig->ID_digits,
-    'actualusernumber' => $actualusernumber,
+    'generatedusernumber' => $generatedusernumber,
     'digitsarray' => $digitsarray,
+    'notification' => $notification,
 ];
 
 
@@ -126,8 +127,9 @@ $PAGE->set_url($thisurl);
 $PAGE->set_title(get_string('tutorial:title', 'offlinequiz', format_string($offlinequiz->name)));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
-echo $notification;
 $thisurl->remove_params(['page','answer']);
+echo '<div class="container"><div class="row">';
 echo $OUTPUT->render_from_template('mod_offlinequiz/tutorial_navigation',['url' => $thisurl->out()]);
 echo $OUTPUT->render_from_template('mod_offlinequiz/tutorial_page-' . $page, $templatedata);
+echo '</div></div>';
 echo $OUTPUT->footer();

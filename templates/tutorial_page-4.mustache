@@ -1,7 +1,8 @@
-<div>
+<div class="sideblock col-9">
+{{{notification}}}
 <h3>{{#str}} tutorial:header:4, mod_offlinequiz {{/str}}</h3>
 
-<p>{{#str}} tutorial:introduction:4, mod_offlinequiz {{/str}}</p>
+<p>{{#str}} tutorial:introduction:4, mod_offlinequiz {{/str}}</hp>
 
 <script type="text/javascript">
 var matrix = new Array({{usernumberlength}});
@@ -46,6 +47,9 @@ function load_number() {
 
 <!-- fake matriculation number-->
 <div>
+{{#generatedusernumber}}
+  <p class="generatedusernumberwarning">{{#str}} tutorial:generatedusernumberwarning, mod_offlinequiz {{/str}}</p>
+{{/generatedusernumber}}
 <table class="offlinequiz-tutorial-number-table">
 <span class="center matnr">{{#str}} tutorial:question:4, mod_offlinequiz {{/str}}</span>
 
@@ -75,5 +79,4 @@ function load_number() {
 
 <p><input class="btn btn-primary" type="submit" value="{{#str}} continue {{/str}}" onClick="load_number();"></p>
 </form>
-<p>&nbsp;</p><p>&nbsp;</p>
 </div>
