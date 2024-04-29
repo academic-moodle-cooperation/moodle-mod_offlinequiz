@@ -33,6 +33,7 @@ const SELECTORS = {
     PREVIEW_CONTAINER: 'td.previewquestionaction',
     ADD_QUESTIONS_FORM: 'form#questionsubmit',
     SORTERS: '.sorters',
+    PAGINATION: '#questionscontainer a[href].page-link',
 };
 
 export default class ModalOfflinequizQuestionBank extends Modal {
@@ -156,6 +157,10 @@ export default class ModalOfflinequizQuestionBank extends Modal {
 
             // Sorting links have their own handler.
             if (anchorElement.closest(SELECTORS.SORTERS).length) {
+                return;
+            }
+
+            if (anchorElement.closest(SELECTORS.PAGINATION).length) {
                 return;
             }
 
