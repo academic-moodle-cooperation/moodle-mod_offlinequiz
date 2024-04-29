@@ -1366,9 +1366,9 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit .modal-lg {
     max-width: 1200px;
 }
-#page-mod-offlinequiz-tutorial .offlinequiz-tutorial-number-table img {
-    cursor: pointer;
-}
+
+/* Offlinequiz tutorial */
+
 
 #page-mod-offlinequiz-tutorial .offlinequiz-tutorial-number-table .tableheader {
     border-style: solid;
@@ -1377,26 +1377,24 @@ input#showviewbutton {
 #page-mod-offlinequiz-tutorial .offlinequiz-tutorial-number-table th {
     font-size: 2em;
     text-align: center;
-    height: 3em;
+    height: 2.2em;
     font-weight: bold;
-}
-#page-mod-offlinequiz-tutorial .offlinequiz-tutorial-number-table th {
-    text-align: center;
 }
 
 #page-mod-offlinequiz-tutorial .offlinequiz-tutorial-number-table td {
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-weight: bold;
 }
 #page-mod-offlinequiz-tutorial .offlinequiz-tutorial-number-table img {
     width: 2em;
     margin: 0.5em;
+    cursor: pointer;
 }
 #page-mod-offlinequiz-tutorial .matnr {
     font-size: 2em;
     font-weight: bold;
     text-align: center;
-    padding: 5em;
+    padding: 2.5em;
 }
 #page-mod-offlinequiz-tutorial .questionimg {
     width: 50em;
@@ -1415,10 +1413,16 @@ input#showviewbutton {
     height: 3em;
 }
 #page-mod-offlinequiz-tutorial .questionsheet .option {
-    margin-left: 2em;
+    margin-left: 1.5em;
 }
 #page-mod-offlinequiz-tutorial .questionsheet .question {
-    margin-top: 2em;
+    margin-top: 1.5em;
+}
+#page-mod-offlinequiz-tutorial .questionsheet .answer {
+    margin-left: 1.5em;
+}
+#page-mod-offlinequiz-tutorial .questionitem {
+    font-weight: bold;
 }
 #page-mod-offlinequiz-tutorial .questionsheet {
     margin-left: 2em;
