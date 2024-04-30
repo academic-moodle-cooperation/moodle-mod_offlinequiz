@@ -1621,56 +1621,44 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2024012202, 'offlinequiz');
     }
      if ($oldversion < 2024041900) {
-        
         // Changing type of field participantsusage on table offlinequiz to int.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('participantsusage', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'grade');
-        
         // Launch change of type for field participantsusage.
         $dbman->change_field_type($table, $field);
-        
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024041900, 'offlinequiz');
     }
     if ($oldversion < 2024041901) {
-        
         // Changing type of field participantsusage on table offlinequiz to int.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('participantsusage', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'grade');
-        
         // Launch change of type for field participantsusage.
         $dbman->change_field_default($table, $field);
-        
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024041901, 'offlinequiz');
     }
     if ($oldversion < 2024041902) {
-        
         // Changing nullability of field algorithmversion on table offlinequiz to null.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('algorithmversion', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'disableimgnewlines');
-        
         // Launch change of nullability for field algorithmversion.
         $dbman->change_field_notnull($table, $field);
-        
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024041902, 'offlinequiz');
     }
     if ($oldversion < 2024041903) {
-        
         // Changing the default of field listnumber on table offlinequiz_p_lists to 1.
         $table = new xmldb_table('offlinequiz_p_lists');
         $field = new xmldb_field('listnumber', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '1', 'name');
-        
         // Launch change of default for field listnumber.
         $dbman->change_field_type($table, $field);
         $dbman->change_field_default($table, $field);
-        
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024041903, 'offlinequiz');
     }
     if ($oldversion < 2024041904) {
-        
         // Changing nullability of field status on table offlinequiz_scanned_p_pages to not null.
         $table = new xmldb_table('offlinequiz_scanned_p_pages');
         $field = new xmldb_field('status', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'time');
@@ -1682,14 +1670,14 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2024041904, 'offlinequiz');
     }
     if ($oldversion < 2024041905) {
-        
+
         // Changing type of field status on table offlinequiz_queue to char.
         $table = new xmldb_table('offlinequiz_queue');
         $field = new xmldb_field('status', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'timefinish');
-        
+
         // Launch change of type for field status.
         $dbman->change_field_type($table, $field);
-        
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024041905, 'offlinequiz');
     }
@@ -1705,7 +1693,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024041906, 'offlinequiz');
     }
-    
 
     return true;
 }
