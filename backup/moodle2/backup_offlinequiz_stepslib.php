@@ -41,7 +41,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
                 'name', 'intro', 'pdfintro', 'timeopen',
                 'timeclose', 'time', 'grade', 'participantsusage', 'numgroups', 'decimalpoints',
                 'review', 'questionsperpage', 'docscreated', 'shufflequestions', 'shuffleanswers',
-                'questions', 'sumgrades', 'papergray', 'fontsize', 'timecreated',
+                'questions', 'sumgrades', 'papergray', 'fontsize', 'pdffont', 'timecreated',
                 'timemodified', 'fileformat', 'showgrades', 'showquestioninfo', 'disableimgnewlines', 'showtutorial',
                 'printstudycodefield', 'id_digits', 'experimentalevaluation', 'completionpass'));
 
