@@ -167,6 +167,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->setType('pdfintro', PARAM_RAW);
         $mform->addHelpButton('pdfintro', 'pdfintro', 'offlinequiz');
 
+        $mform->setDefault('pdffont', offlinequiz_get_pdffont($offlinequiz));
         $options = array();
         $options[8] = 8;
         $options[9] = 9;
@@ -184,6 +185,25 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('select', 'fileformat', get_string('fileformat', 'offlinequiz'), $options, $attribs);
         $mform->addHelpButton('fileformat', 'fileformat', 'offlinequiz');
         $mform->setDefault('fileformat', 0);
+
+        require_once($CFG->dirroot . '/lib/pdflib.php');
+        $pdf = new pdf();
+        if($pdf) {
+            $fontfamilies = $pdf->get_font_families();
+        } else {
+            $fontfamilies = [];
+            $fontfamilies['fontfamilyfreserif'] = get_string('fontfamilyfreeserif', 'offlinequiz');
+        }
+        $options = [];
+        foreach ($fontfamilies as $name => $values) {
+
+            if(get_string_manager()->string_exists('fontfamily' . $name, 'offlinequiz') ) {
+                $options[$name] = get_string('fontfamily' . $name, 'offlinequiz');
+            } else {
+                $options[$name] = $name;
+            }
+        }
+        $mform->addElement('select', 'pdffont', get_string('pdffont', 'offlinequiz'), $options, $attribs);
 
         $mform->addElement('selectyesno', 'showgrades', get_string("showgrades", "offlinequiz"), $attribs);
         $mform->addHelpButton('showgrades', "showgrades", "offlinequiz");
@@ -239,6 +259,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->disabledIf('specificfeedbackclosed', 'attemptclosed');
         $mform->disabledIf('generalfeedbackclosed', 'attemptclosed');
         $mform->disabledIf('rightanswerclosed', 'attemptclosed');
+        $mform->disabledIf('pdffont','fileformat', 'neq', OFFLINEQUIZ_PDF_FORMAT);
         $mform->setExpanded('reviewoptionshdr');
         // Try to insert student view for teachers.
 

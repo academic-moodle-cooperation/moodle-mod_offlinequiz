@@ -100,7 +100,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf {
      */
     // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
     public function Header() {
-        $this->SetFont('FreeSans', 'I', 8);
+        $this->SetFont(offlinequiz_get_pdffont(), 'I', 8);
         // Title.
         $this->Ln(15);
         if (!empty($this->title)) {
@@ -120,7 +120,7 @@ class offlinequiz_question_pdf extends offlinequiz_pdf {
     public function Footer() {
         // Position at 2.5 cm from bottom.
         $this->SetY(-25);
-        $this->SetFont('FreeSans', 'I', 8);
+        $this->SetFont(offlinequiz_get_pdffont(), 'I', 8);
         // Page number.
         $this->Cell(0, 10, offlinequiz_str_html_pdf(get_string('page')) . ' ' . $this->getAliasNumPage() .
                 '/' . $this->getAliasNbPages(), 0, 0, 'C');
@@ -139,7 +139,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         global $CFG;
 
         $offlinequizconfig = get_config('offlinequiz');
-
+        $font = offlinequiz_get_pdffont();
         $letterstr = 'ABCDEF';
 
         $logourl = trim($offlinequizconfig->logourl);
@@ -158,14 +158,14 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $this->Line(12.5, 10.5, 12.5, 13.5);
         $this->Line(193, 12, 196, 12);
         $this->Line(194.5, 10.5, 194.5, 13.5);
-        $this->SetFont('FreeSans', 'B', 14);
+        $this->SetFont($font, 'B', 14);
         $this->SetXY(15,  15);
         $this->Cell(90, 4, offlinequiz_str_html_pdf(get_string('answerform',  'offlinequiz')), 0, 0, 'C');
         $this->Ln(6);
-        $this->SetFont('FreeSans', '', 10);
+        $this->SetFont($font, '', 10);
         $this->Cell(90, 6, offlinequiz_str_html_pdf(get_string('forautoanalysis',  'offlinequiz')), 0, 1, 'C');
         $this->Ln(2);
-        $this->SetFont('FreeSans', '', 8);
+        $this->SetFont($font, '', 8);
         $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('firstname')).":", 1, 0, 'L');
         $this->Cell(29, 7, ' '.offlinequiz_str_html_pdf(get_string('invigilator',  'offlinequiz')), 0, 1, 'C');
         $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('lastname')).":", 1, 1, 'L');
@@ -207,7 +207,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $this->Line(109, 29, 109, 50);
         $this->Line(130, 29, 130, 50);
 
-        $this->SetFont('FreeSans', 'B', 10);
+        $this->SetFont($font, 'B', 10);
         $this->SetXY(137, 27);
         $this->Cell($offlinequizconfig->ID_digits * 6.5, 7,
                     offlinequiz_str_html_pdf(get_string('idnumber',  'offlinequiz')), 0, 1, 'C');
@@ -223,7 +223,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $this->SetDrawColor(0);
 
         // Print boxes for the user ID number.
-        $this->SetFont('FreeSans', '', 12);
+        $this->SetFont($font, '', 12);
         for ($i = 0; $i < $offlinequizconfig->ID_digits; $i++) {
             $x = 139 + 6.5 * $i;
             for ($j = 0; $j <= 9; $j++) {
@@ -233,7 +233,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         }
 
         // Print the digits for the user ID number.
-        $this->SetFont('FreeSans', '', 10);
+        $this->SetFont($font, '', 10);
         for ($y = 0; $y <= 9; $y++) {
             $this->SetXY(134, ($y * 6 + 44));
             $this->Cell(3.5, 3.5, "$y", 0, 1, 'C');
@@ -257,6 +257,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
     // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
     public function Footer() {
         $letterstr = ' ABCDEF';
+        $font = offlinequiz_get_pdffont();
 
         $this->Line(11, 285, 14, 285);
         $this->Line(12.5, 283.5, 12.5, 286.5);
@@ -267,7 +268,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
         // Position at x mm from bottom.
         $this->SetY(-20);
-        $this->SetFont('FreeSans', '', 8);
+        $this->SetFont($font, '', 8);
         $this->Cell(10, 4, $this->formtype, 1, 0, 'C');
 
         // ID of the offline quiz.
@@ -297,7 +298,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
         // Page number.
         $this->Ln(3);
-        $this->SetFont('FreeSans', 'I', 8);
+        $this->SetFont($font, 'I', 8);
         $this->Cell(0, 10, offlinequiz_str_html_pdf(get_string('page') . ' ' . $this->getAliasNumPage() . '/' .
                 $this->getAliasNbPages()), 0, 0, 'C');
     }
@@ -313,6 +314,7 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
     // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
     public function Header() {
         global $CFG,  $DB;
+        $font = offlinequiz_get_pdffont();
 
         $this->Line(11,  12,  14, 12);
         $this->Line(12.5, 10.5, 12.5, 13.5);
@@ -321,7 +323,7 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
 
         $this->Line(12.5, 18, 18.5, 12);
 
-        $this->SetFont('FreeSans', 'I', 8);
+        $this->SetFont($font, 'I', 8);
 
         // Title.
         $x = $this->GetX();
@@ -339,7 +341,7 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
         $this->Cell(10, 3.5, '', 0, 0, 'C');
         $this->Cell(3.5, 3.5, '', 1, 0, 'C');
         $this->Image($CFG->dirroot . '/mod/offlinequiz/pix/kreuz.gif', $this->GetX() - 3.3, $this->Gety() + 0.2, 3.15, 0);
-        $this->SetFont('FreeSans', 'B', 10);
+        $this->SetFont($font, 'B', 10);
         $this->Cell(31, 3.5, "", 0, 0, 'L');
         $this->Cell(55, 3.5, offlinequiz_str_html_pdf(get_string('lastname')), 0, 0, 'L');
         $this->Cell(60, 3.5, offlinequiz_str_html_pdf(get_string('firstname')), 0, 1, 'L');
@@ -350,7 +352,7 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
         $this->Rect(145, 8, 25, 13);     // Square for the teachers to sign.
 
         $this->SetXY(145.5, 6.5);
-        $this->SetFont('FreeSans', '', 8);
+        $this->SetFont($font, '', 8);
         $this->Cell(29, 7, get_string('invigilator', 'offlinequiz'), 0, 0, 'L');
 
         $this->SetXY($x, $y);
@@ -362,6 +364,7 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
      */
     // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
     public function Footer() {
+        $font = offlinequiz_get_pdffont();
         $this->Line(11, 285, 14, 285);
         $this->Line(12.5, 283.5, 12.5, 286.5);
         $this->Line(193, 285, 196, 285);
@@ -372,7 +375,7 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
         // Position at 1.7 cm from bottom.
         $this->SetY(-17);
         // FreeSans italic 8.
-        $this->SetFont('FreeSans', 'I', 8);
+        $this->SetFont($font, 'I', 8);
         // Page number.
         $this->Cell(0, 10,
                     offlinequiz_str_html_pdf(get_string('page') . ' ' .
@@ -495,15 +498,16 @@ function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html
     $pdf->Ln();
 
     if ($pdf->is_overflowing()) {
+        $font = offlinequiz_get_pdffont();
         $pdf->backtrack();
         $pdf->AddPage();
         $pdf->Ln(14);
 
         // Print the question number and the HTML string again on the new page.
         if ($questiontype == 'multichoice' || $questiontype == 'multichoiceset') {
-            $pdf->SetFont('FreeSans', 'B', $fontsize);
+            $pdf->SetFont($font, 'B', $fontsize);
             $pdf->Cell(4, round($fontsize / 2), "$number)  ", 0, 0, 'R');
-            $pdf->SetFont('FreeSans', '', $fontsize);
+            $pdf->SetFont($font, '', $fontsize);
         }
 
         $pdf->writeHTMLCell(165,  round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
@@ -527,7 +531,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
     $groupletter = strtoupper($letterstr[$group->groupnumber - 1]);
-
+    $font = offlinequiz_get_pdffont($offlinequiz);
     $coursecontext = context_course::instance($courseid);
 
     $pdf = new offlinequiz_question_pdf('P', 'mm', 'A4');
@@ -544,7 +548,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     $pdf->AddPage();
 
     // Print title page.
-    $pdf->SetFont('FreeSans', 'B', 14);
+    $pdf->SetFont($font, 'B', 14);
     $pdf->Ln(4);
     if (!$correction) {
         $pdf->Cell(0, 4, offlinequiz_str_html_pdf(get_string('questionsheet', 'offlinequiz')), 0, 0, 'C');
@@ -553,7 +557,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
         } else {
             $pdf->Rect(34, 42, 137, 40, 'D');
         }
-        $pdf->SetFont('FreeSans', '', 10);
+        $pdf->SetFont($font, '', 10);
         // Line breaks to position name string etc. properly.
         $pdf->Ln(14);
         $pdf->Cell(58, 10, offlinequiz_str_html_pdf(get_string('name')) . ":", 0, 0, 'R');
@@ -574,8 +578,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             $pdf->Rect(76, 74, 80, 0.3, 'F');
         }
         $pdf->Ln(25);
-        $pdf->SetFont('FreeSans', '', $offlinequiz->fontsize);
-        $pdf->SetFontSize($offlinequiz->fontsize);
+        $pdf->SetFont($font, '', $offlinequiz->fontsize);
 
         // The PDF intro text can be arbitrarily long so we have to catch page overflows.
         if (!empty($offlinequiz->pdfintro)) {
@@ -683,9 +686,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             }
             // Finally print the question number and the HTML string.
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                $pdf->SetFont('FreeSans', 'B', $offlinequiz->fontsize);
+                $pdf->SetFont($font, 'B', $offlinequiz->fontsize);
                 $pdf->Cell(4, round($offlinequiz->fontsize / 2), "$number)  ", 0, 0, 'R');
-                $pdf->SetFont('FreeSans', '', $offlinequiz->fontsize);
+                $pdf->SetFont($font, '', $offlinequiz->fontsize);
             }
             offlinequiz_write_question_to_pdf($pdf, $offlinequiz->fontsize, $question->qtype, $html, $number);
             $number += $questions[$currentquestionid]->length;
@@ -730,9 +733,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
             // Finally print the question number and the HTML string.
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                $pdf->SetFont ( 'FreeSans', 'B', $offlinequiz->fontsize );
+                $pdf->SetFont ($font, 'B', $offlinequiz->fontsize );
                 $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
-                $pdf->SetFont ( 'FreeSans', '', $offlinequiz->fontsize );
+                $pdf->SetFont ($font, '', $offlinequiz->fontsize );
             }
 
             // This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
@@ -798,6 +801,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
 
     $letterstr = ' abcdefghijklmnopqrstuvwxyz';
     $groupletter = strtoupper($letterstr[$group->groupnumber]);
+    $font = offlinequiz_get_pdffont($offlinequiz);
 
     $fm = new stdClass();
     $fm->q = 0;
@@ -873,7 +877,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
 
     $pdf->SetY($offsety);
 
-    $pdf->SetFont('FreeSans', 'B', 10);
+    $pdf->SetFont($font, 'B', 10);
     foreach ($slots as $key => $slot) {
         set_time_limit(120);
         $slotquestion = $templateusage->get_question($slot);
@@ -891,14 +895,14 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
 
         // Print the answer letters every 8 questions.
         if ($number % 8 == 0) {
-            $pdf->SetFont('FreeSans', '', 8);
+            $pdf->SetFont($font, '', 8);
             $pdf->SetX(($col - 1) * ($pdf->colwidth) + $offsetx + 5);
             for ($i = 0; $i < $maxanswers; $i++) {
                 $pdf->Cell(3.5, 3.5, number_in_style($i, $question->options->answernumbering), 0, 0, 'C');
                 $pdf->Cell(3, 3.5, '', 0, 0, 'C');
             }
             $pdf->Ln(4.5);
-            $pdf->SetFont('FreeSans', 'B', 10);
+            $pdf->SetFont($font, 'B', 10);
         }
 
         $pdf->SetX(($col - 1) * ($pdf->colwidth) + $offsetx);
@@ -1029,7 +1033,7 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
 
     $position = 1;
 
-    $pdf->SetFont('FreeSans', '', 10);
+    $pdf->SetFont($font, '', 10);
     foreach ($participants as $participant) {
         $pdf->Cell(9, 3.5, "$position. ", 0, 0, 'R');
         $pdf->Cell(1, 3.5, '', 0, 0, 'C');

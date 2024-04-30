@@ -1693,6 +1693,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024041906, 'offlinequiz');
     }
+    if ($oldversion < 2024041907) {
+
+        // Define field pdffont to be added to offlinequiz.
+        $table = new xmldb_table('offlinequiz');
+        $field = new xmldb_field('pdffont', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'printstudycodefield');
+        
+        // Conditionally launch add field pdffont.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2024041907, 'offlinequiz');
+    }
 
     return true;
 }

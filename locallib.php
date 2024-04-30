@@ -238,6 +238,23 @@ function offlinequiz_make_questions_usage_by_activity($component, $context) {
     return new offlinequiz_question_usage_by_activity($component, $context);
 }
 
+function offlinequiz_get_pdffont($offlinequiz = null) {
+    $offlinequizconfig = get_config('offlinequiz');
+    if(!$offlinequiz) {
+        $id = optional_param('id', 0, PARAM_INT);               // Course Module ID.
+        $q = optional_param('q', 0, PARAM_INT);                 // Or offlinequiz ID.
+        list($offlinequiz, $course, $cm) = get_course_objects($id, $q);
+    }
+    if($offlinequiz && $offlinequiz->pdffont) {
+        return $offlinequiz->pdffont;
+    } else if($offlinequizconfig && $offlinequizconfig->defaultpdffont) {
+        return $offlinequizconfig->defaultpdffont;
+    } else {
+        //Default fallback if anything goes horribly wrong
+        return 'freeserif';
+    }
+}
+
 function get_course_objects($id, $q) {
     global $DB;
     if ($id) {
