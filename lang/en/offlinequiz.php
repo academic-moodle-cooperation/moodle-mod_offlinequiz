@@ -475,7 +475,6 @@ $string['printstudycodefield_help'] = 'If checked, the study code field will be 
 $string['privacy:data_folder_name'] = 'Offlinequiz data';
 $string['privacy:metadata:core_files'] = 'The offlinequiz uses the file API to store the generated question sheets, answer sheets and correction sheets as well as the filled out answer sheets.';
 $string['privacy:metadata:core_question'] = 'The offlinequiz uses the question API for saving the questions for the quizes.';
-$string['privacy:metadata:mod_quiz'] = 'The offlinequiz uses the quiz API for saving results of the quizes.';
 $string['privacy:metadata:offlinequiz:course'] = 'The \'course\' column in the offlinequiz table saves in which course this offlinequiz is stored in.';
 $string['privacy:metadata:offlinequiz:name'] = 'The \'name\' column saves the name of the offlinequiz.';
 $string['privacy:metadata:offlinequiz:introformat'] = 'This field is not used.';
