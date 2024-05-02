@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+4.2.3
+-----------------
+* [Feature] It is now possible to add own offlinequiz report plugins
+* [Bug] Fixed that some data was not deleted correctly when deleting a course/offlinequiz activity (#230) 
+
 4.2.2
 -----------------
 * [Bug] Grades and Gradebook update now correctly after question version is changed
