@@ -138,9 +138,6 @@ $sql = "SELECT count(*)
      LEFT JOIN {offlinequiz_p_choices} opc ON opc.userid = op.userid AND opc.scannedppageid = ospp.id 
          WHERE opl.offlinequizid = :offlinequizid AND opc.userid is null";
 $status['missingattendanceresults'] = $DB->count_records_sql($sql,['offlinequizid' => $offlinequiz->id]);
-$sql = "SELECT 1
-          FROM {offlinequiz_scanned_p_pages} ospp
-         WHERE ospp.offlinequizid = :offlinequizid AND opc.status = 'error'";
 $status['attendanceresultdocsbroken'] = $DB->count_records('offlinequiz_scanned_p_pages',['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
 $sql = "SELECT count(*) 
           FROM {offlinequiz_p_choices} oc
@@ -379,7 +376,7 @@ if($downloadattendance['status'] != STATUS_DONE) {
 }
 $uploadattendance[$uploadattendance['status']] = true;
 
-$url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'createpdfs', 'q' => $offlinequiz->id]);
+$url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'upload', 'q' => $offlinequiz->id]);
 
 $uploadattendance['link'] = $url->out(false);
 $uploadattendance['text'] = get_string('upload', 'offlinequiz');
