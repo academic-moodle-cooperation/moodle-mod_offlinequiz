@@ -1342,6 +1342,11 @@ class mod_offlinequiz_display_options extends question_display_options {
     public $gradedsheetfeedback = false;
 
     /**
+     * @var boolean if this is false, the student is not allowed to see the attempt
+     */
+    public $attempt;
+
+    /**
      * Set up the various options from the offlinequiz settings, and a time constant.
      * @param object $offlinequiz the offlinequiz settings.
      * @param int $one of the {@link DURING}, {@link IMMEDIATELY_AFTER},
