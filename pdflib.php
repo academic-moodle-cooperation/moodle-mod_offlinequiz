@@ -128,7 +128,11 @@ class offlinequiz_question_pdf extends offlinequiz_pdf {
 
 class offlinequiz_answer_pdf extends offlinequiz_pdf {
     public $groupid = 0;
-
+    public $group;
+    public $offlinequiz;
+    public $formtype;
+    public $colwidth;
+    public $userid;
     /**
      * (non-PHPdoc)
      * @see TCPDF::Header()

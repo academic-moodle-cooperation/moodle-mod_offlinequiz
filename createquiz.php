@@ -64,7 +64,7 @@ $strpreview = get_string('createquiz', 'offlinequiz');
 $strofflinequizzes = get_string("modulenameplural", "offlinequiz");
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
-$PAGE->set_url('/mod/offlinequiz/createquiz.php?id=' . $cm->id);
+$PAGE->set_url(new moodle_url('/mod/offlinequiz/createquiz.php', ['id' => $cm->id]));
 $PAGE->set_title($strpreview);
 $PAGE->activityheader->disable();
 $PAGE->set_heading($course->fullname);
@@ -84,7 +84,7 @@ if (!$groups = $DB->get_records(
     0,
     $offlinequiz->numgroups
 )) {
-    throw new \moodle_exception('There are no offlinequiz groups', "edit.php?q=$offlinequiz->id$amp;sesskey=".sesskey());
+    throw new \moodle_exception('There are no offlinequiz groups', 'mod_offlinequiz',new moodle_url('/mod/offlinequiz/edit.php', ['q' => $offlinequiz->id, 'sesskey' => sesskey()]));
 }
 
 // Redmine 2131: Handle download all before any HTML output is produced.
@@ -141,7 +141,8 @@ if ($forcepdfnew) {
     if ($hasscannedpages) {
         throw new \moodle_exception(
             'Some answer forms have already been analysed',
-            "/mod/offlinequiz/createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey()
+            'mod_offlinequiz',
+            new moodle_url('/mod/offlinequiz/createquiz.php' ,['q' => $offlinequiz->id, 'mode' => 'createpdfs', 'sesskey'=> sesskey()])
             );
     } else {
         // Redmine 2750: Always delete templates as well.
