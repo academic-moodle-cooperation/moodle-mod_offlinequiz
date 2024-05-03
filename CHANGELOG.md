@@ -3,12 +3,12 @@ CHANGELOG
 
 4.3.2
 -----------------
-* [Bug] Fixed some more statistics errors (#245)
+* [Bug] Fixed some more statistics errors [github #245]
 * [Bug] Fixed some bugs regarding the filter for adding questions from question bank
-* [Bug] Fixed that the question version selection in restored offlinequizzes was not correct.
-* [Bug] Fixed that some data was not deleted correctly when deleting a course/offlinequiz activity (#230)
-* [Bug] Fixed that user_get_participants was used in the privacy provider which doesn't exist anymore (#242)
-* [Bug] Fixed deleting offlinequizzes resulted in questions still in use. (#165)
+* [Bug] Fixed that the question version selection in restored offlinequizzes was not correct
+* [Bug] Fixed that some data was not deleted correctly when deleting a course/offlinequiz activity [github #230]
+* [Bug] Fixed that user_get_participants was used in the privacy provider which doesn't exist anymore [github #242]
+* [Bug] Fixed deleting offlinequizzes resulted in questions still in use [github #165]
 
 4.3.1
 -----------------

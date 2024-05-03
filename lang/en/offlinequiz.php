@@ -872,6 +872,7 @@ $string['statisticsviewheader'] = '3. Statistics';
 $string['statisticsplural'] = 'Statistics';
 $string['statsoverview'] = 'Statistics overview';
 $string['studycode'] = 'Study code';
+$string['subplugintype_offlinequiz_plural'] = 'Offlinequiz reports';
 $string['tabattendances'] = 'Attendances';
 $string['tabattendancesoverview'] = 'Attendances';
 $string['tabdownloadquizforms'] = 'Forms';
