@@ -243,7 +243,9 @@ function offlinequiz_get_pdffont($offlinequiz = null) {
     if(!$offlinequiz) {
         $id = optional_param('id', 0, PARAM_INT);               // Course Module ID.
         $q = optional_param('q', 0, PARAM_INT);                 // Or offlinequiz ID.
-        list($offlinequiz, $course, $cm) = get_course_objects($id, $q);
+        if($id || $q) {
+            list($offlinequiz, $course, $cm) = get_course_objects($id, $q);
+        }
     }
     if($offlinequiz && $offlinequiz->pdffont) {
         return $offlinequiz->pdffont;
