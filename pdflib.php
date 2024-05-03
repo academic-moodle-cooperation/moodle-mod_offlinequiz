@@ -109,7 +109,6 @@ class offlinequiz_question_pdf extends offlinequiz_pdf {
         $this->Rect(15, 25, 175, 0.3, 'F');
         // Line break.
         $this->Ln(15);
-        $this->diskcache = false;
     }
 
     /**

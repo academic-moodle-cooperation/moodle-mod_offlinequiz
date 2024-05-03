@@ -247,7 +247,7 @@ function offlinequiz_get_pdffont($offlinequiz = null) {
             list($offlinequiz, $course, $cm) = get_course_objects($id, $q);
         }
     }
-    if($offlinequiz && $offlinequiz->pdffont) {
+    if($offlinequiz && property_exists($offlinequiz,'pdffont')) {
         return $offlinequiz->pdffont;
     } else if($offlinequizconfig && $offlinequizconfig->defaultpdffont) {
         return $offlinequizconfig->defaultpdffont;
