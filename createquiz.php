@@ -141,7 +141,7 @@ if ($forcepdfnew) {
     if ($hasscannedpages) {
         throw new \moodle_exception(
             'Some answer forms have already been analysed',
-            "createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey()
+            "/mod/offlinequiz/createquiz.php?q=$offlinequiz->id&amp;mode=createpdfs&amp;sesskey=" . sesskey()
             );
     } else {
         // Redmine 2750: Always delete templates as well.
@@ -164,7 +164,7 @@ if ($forcepdfnew) {
         );
         $event = \mod_offlinequiz\event\docs_deleted::create($params);
         $event->trigger();
-        redirect(new moodle_url('createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'preview']));
+        redirect(new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'preview']));
         die();
     }
 }
