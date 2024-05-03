@@ -1033,7 +1033,7 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
 
     $position = 1;
 
-    $pdf->SetFont($font, '', 10);
+    $pdf->SetFont(offlinequiz_get_pdffont(), '', 10);
     foreach ($participants as $participant) {
         $pdf->Cell(9, 3.5, "$position. ", 0, 0, 'R');
         $pdf->Cell(1, 3.5, '', 0, 0, 'C');

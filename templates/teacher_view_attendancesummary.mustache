@@ -15,11 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 <div>
-  <ul class="attendancelists">
-    {{#attendancelists}}
-      <li>
-      <a href="{{link}}">{{name}}:{{participants}}</a>
-      </li>
-    {{/attendancelists}}
+  <ul>
+    <li>{{#str}} attendenceoverviewcorrectionnecessary, mod_offlinequiz {{/str}} {{correctionnecessary}}</li>
+    <li>{{#str}} attendenceoverviewattwithresults, mod_offlinequiz {{/str}} {{attwithresults}}</li>
+    <li>{{#str}} attendenceoverviewattwithoutresults, mod_offlinequiz {{/str}} {{attwithoutresults}}</li>
+    <li>{{#str}} attendenceoverviewnoattwithresults, mod_offlinequiz {{/str}} {{noattwithresults}}</li>
+    <li>{{#str}} attendenceoverviewnoattwithoutresults, mod_offlinequiz {{/str}} {{noattwithoutresults}}</li>
   </ul>
 </div>

@@ -1283,7 +1283,9 @@ input#showviewbutton {
     align-items: flex-start;
     gap: 3em;
 }
-
+#page-mod-offlinequiz-view .offlinequiz-view h3 {
+    width: 100%;
+}
 #page-mod-offlinequiz-view .offlinequiz-view-column {
     flex-grow: 1;
     padding-left: 1em;

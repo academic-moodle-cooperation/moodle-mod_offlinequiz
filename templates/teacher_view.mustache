@@ -36,14 +36,24 @@
     {{{statistics}}}
   </div>
   {{#displayparticipantssteps}}
-    <div class="offlinequiz-view-column offlinequiz-view-statistics-column">
+    <div class="offlinequiz-view offlinequiz-view-statistics-column">
       <h3>{{#str}} attendancesheadline, mod_offlinequiz {{/str}}</h3>
-      <ul class="oq-expandable {{participantslist-expanded}} fa-ul">
-        {{#participantsliststeps}}
+      <div class="offlinequiz-view-column">
+        <h4>{{#str}} attendancespreparationheadline, mod_offlinequiz {{/str}}</h4>
+        <ul class="oq-expandable {{participantslist-expanded}} fa-ul">
+          {{#participantslistpreparationsteps}}
             {{> mod_offlinequiz/teacher_view_step }}
-        {{/participantsliststeps}}
-      </ul>
-    </div>
+          {{/participantslistpreparationsteps}}
+        </ul>
+      </div>
+      <div class="offlinequiz-view-column">
+        <h4>{{#str}} attendancesevaluationheadline, mod_offlinequiz {{/str}}</h4>
+        <ul class="oq-expandable {{participantslist-expanded}} fa-ul">
+          {{#participantslistevaluationsteps}}
+            {{> mod_offlinequiz/teacher_view_step }}
+          {{/participantslistevaluationsteps}}
+        </ul>
+      </div>
   {{/displayparticipantssteps}}
   <div class="offlinequiz-view-header" >
     <h3>{{#str}} legend, mod_offlinequiz {{/str}}</h3>
