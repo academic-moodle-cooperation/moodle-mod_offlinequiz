@@ -3,7 +3,8 @@ CHANGELOG
 4.2.3
 -----------------
 * [Feature] It is now possible to add own offlinequiz report plugins
-* [Bug] Fixed that some data was not deleted correctly when deleting a course/offlinequiz activity (#230) 
+* [Bug] Fixed that some data was not deleted correctly when deleting a course/offlinequiz activity [github #230]
+* [Bug] Fixed deleting offlinequizzes resulted in questions still in use [github #165]
 
 4.2.2
 -----------------
