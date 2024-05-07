@@ -225,7 +225,7 @@ if ($status['docscreated']) {
 } else if (!count($status['groupswithoutquestions'])) {
     $preview['status'] = STATUS_NEXT;
 } else {
-    $preview['status'] = STATUS_NEXT;
+    $preview['status'] = STATUS_OPEN;
 }
 $preview[$preview['status']] = true;
 
@@ -252,7 +252,7 @@ $uploaddata['correcturl'] = $url->out(false);
 $upload['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_upload', $uploaddata);
 
 if (!$status['docscreated']) {
-    $upload['status'] = STATUS_NEXT;
+    $upload['status'] = STATUS_OPEN;
 } else if (!$status['resultscount'] && !$status['docsuploaded']) {
     $upload['status'] = STATUS_NEXT;
 } else {
@@ -289,7 +289,7 @@ $overview['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/te
 if ($status['correctionerrors']) {
     $overview['status'] = STATUS_NEXT;
 } else {
-    $overview['status'] = $status['resultscount'] ? STATUS_DONE : STATUS_NEXT;
+    $overview['status'] = $status['resultscount'] ? STATUS_DONE : STATUS_OPEN;
 }
 
 $overview[$overview['status']] = true;

@@ -105,10 +105,11 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         // Option for show tutorial.
         $mform->addElement('selectyesno', 'showtutorial', get_string("showtutorial", "offlinequiz"));
         $mform->addHelpButton('showtutorial', "showtutorial", "offlinequiz");
-        $mform->addElement('static', 'showtutorialdescription', '', get_string("showtutorialdescription", "offlinequiz") .
-                '<br/><a href="'.$CFG->wwwroot.'/mod/offlinequiz/tutorial/index.php">' . $CFG->wwwroot .
-                '/mod/offlinequiz/tutorial/index.php</a>');
-
+        if($this->_cm) {
+            $mform->addElement('static', 'showtutorialdescription', '', get_string("showtutorialdescription", "offlinequiz") .
+                '<br/><a href="'.$CFG->wwwroot.'/mod/offlinequiz/tutorial.php?id=' .
+                $this->_cm->id . '">' . "$CFG->wwwroot/mod/offlinequiz/tutorial.php?id=" . $this->_cm->id . '</a>');
+        }
         unset($options);
         $options = array();
         for ($i = 0; $i <= 3; $i++) {
@@ -141,6 +142,23 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->setType('grade', PARAM_FLOAT);
         // -------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('formsheetsettings', 'offlinequiz'));
+        require_once($CFG->dirroot . '/lib/pdflib.php');
+        $pdf = new pdf();
+        if($pdf) {
+            $fontfamilies = $pdf->get_font_families();
+        } else {
+            $fontfamilies = [];
+            $fontfamilies['fontfamilyfreserif'] = get_string('fontfamilyfreeserif', 'offlinequiz');
+        }
+        $options = [];
+        foreach ($fontfamilies as $name => $values) {
+            if(get_string_manager()->string_exists('fontfamily' . $name, 'offlinequiz') ) {
+                $options[$name] = get_string('fontfamily' . $name, 'offlinequiz');
+            } else {
+                $options[$name] = $name;
+            }
+        }
+        $mform->addElement('select', 'pdffont', get_string('pdffont', 'offlinequiz'), $options, $attribs);
 
         unset($options);
         $options[610] = get_string("darkgray", "offlinequiz");
@@ -157,7 +175,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->setDefault('printstudycodefield', $offlinequizconfig->printstudycodefield);
 
         // ------------------------------------------------------------------------------
-
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             $mform->addElement('editor', 'pdfintro', get_string('pdfintro', 'offlinequiz'), array('rows' => 20),
                      offlinequiz_get_editor_options($this->context));
@@ -186,24 +203,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('fileformat', 'fileformat', 'offlinequiz');
         $mform->setDefault('fileformat', 0);
 
-        require_once($CFG->dirroot . '/lib/pdflib.php');
-        $pdf = new pdf();
-        if($pdf) {
-            $fontfamilies = $pdf->get_font_families();
-        } else {
-            $fontfamilies = [];
-            $fontfamilies['fontfamilyfreserif'] = get_string('fontfamilyfreeserif', 'offlinequiz');
-        }
-        $options = [];
-        foreach ($fontfamilies as $name => $values) {
-
-            if(get_string_manager()->string_exists('fontfamily' . $name, 'offlinequiz') ) {
-                $options[$name] = get_string('fontfamily' . $name, 'offlinequiz');
-            } else {
-                $options[$name] = $name;
-            }
-        }
-        $mform->addElement('select', 'pdffont', get_string('pdffont', 'offlinequiz'), $options, $attribs);
 
         $mform->addElement('selectyesno', 'showgrades', get_string("showgrades", "offlinequiz"), $attribs);
         $mform->addHelpButton('showgrades', "showgrades", "offlinequiz");
@@ -259,7 +258,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->disabledIf('specificfeedbackclosed', 'attemptclosed');
         $mform->disabledIf('generalfeedbackclosed', 'attemptclosed');
         $mform->disabledIf('rightanswerclosed', 'attemptclosed');
-        $mform->disabledIf('pdffont','fileformat', 'neq', OFFLINEQUIZ_PDF_FORMAT);
         $mform->setExpanded('reviewoptionshdr');
         // Try to insert student view for teachers.
 

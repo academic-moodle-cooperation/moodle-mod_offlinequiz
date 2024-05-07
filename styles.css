@@ -1438,3 +1438,14 @@ input#showviewbutton {
     float: right;
     max-width: 20%;
 }
+#page-mod-offlinequiz-tutorial .answerimage {
+    max-width: 20em;
+}
+#page-mod-offlinequiz-tutorial .tutorialquestion {
+    background-color: #e7f3f5;
+    padding: 1em;
+    border-radius: 1em;
+}
+#page-mod-offlinequiz-tutorial .tutorialbutton {
+    margin-top: 1em;
+}

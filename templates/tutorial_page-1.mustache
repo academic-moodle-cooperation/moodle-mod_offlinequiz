@@ -26,14 +26,15 @@
 
     </div>
   </div>
+<form action="tutorial.php" method="get" id="page1">
+  <div class="tutorialquestion">
+    <h4>{{#str}} tutorial:question:1, mod_offlinequiz {{/str}}</h4>
 
-  <div>
-  <h4>{{#str}} tutorial:question:1, mod_offlinequiz {{/str}}</h4>
-<form action="tutorial.php" method="get" id="page1" class="popupform"><div>
-<input type="hidden" name="id" value="{{id}}">
-<input type="hidden" name="page" value="1">
-<div class="option"><input type="radio" name="answer" value="1" id="answer1"><label for="answer1"> {{#str}} tutorial:option:1:1, mod_offlinequiz {{/str}}</label></div>
-<div class="option"><input type="radio" name="answer" value="2" id="answer2"><label for="answer2"> {{#str}} tutorial:option:1:2, mod_offlinequiz {{/str}}</label></div>
-</select><input class="btn btn-primary" type="submit" value="{{#str}} continue{{/str}}"></form>
-</div>
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="page" value="1">
+    <div class="option"><input type="radio" name="answer" value="1" id="answer1"><label for="answer1"> {{#str}} tutorial:option:1:1, mod_offlinequiz {{/str}}</label></div>
+    <div class="option"><input type="radio" name="answer" value="2" id="answer2"><label for="answer2"> {{#str}} tutorial:option:1:2, mod_offlinequiz {{/str}}</label></div>
+  </div>
+  <input class="btn btn-primary tutorialbutton" type="submit" value="{{#str}} continue{{/str}}">
+</form>
 </div>

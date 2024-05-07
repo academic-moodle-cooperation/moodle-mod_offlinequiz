@@ -7,15 +7,17 @@
 <img class="questionimg" src="./pix/tutorial/answerform.svg">
 
 <p>{{#str}} tutorial:introduction:3:2, mod_offlinequiz {{/str}}</p>
+<form action="tutorial.php" method="get" id="page3">
+<div class="tutorialquestion">
+  <h4>{{#str}} tutorial:question:3, mod_offlinequiz {{/str}}</h4>
 
-<h4>{{#str}} tutorial:question:3, mod_offlinequiz {{/str}}</h4>
-<form action="tutorial.php" method="get" id="page3" class="popupform">
-<input type="hidden" name="id" value="{{id}}">
-<input type="hidden" name="page" value="3">
-
-<div class="option"><input type="radio" name="answer" value="1" id="answer1"><label for="answer1">{{#str}} tutorial:option:3:1, mod_offlinequiz {{/str}}</label></div>
-<div class="option"><input type="radio" name="answer" value="2" id="answer2"><label for="answer2">{{#str}} tutorial:option:3:2, mod_offlinequiz {{/str}}</label></div>
-<div class="option"><input type="radio" name="answer" value="3" id="answer3"><label for="answer3">{{#str}} tutorial:option:3:3, mod_offlinequiz {{/str}}</label></div>
-<div class="option"><input type="radio" name="answer" value="4" id="answer4"><label for="answer4">{{#str}} tutorial:option:3:4, mod_offlinequiz {{/str}}</label></div>
-<input class="btn btn-primary" type="submit" value="{{#str}} continue {{/str}}">
+  <input type="hidden" name="id" value="{{id}}">
+  <input type="hidden" name="page" value="3">
+  <div class="option"><input type="radio" name="answer" value="1" id="answer1"><label for="answer1">{{#str}} tutorial:option:3:1, mod_offlinequiz {{/str}}</label></div>
+  <div class="option"><input type="radio" name="answer" value="2" id="answer2"><label for="answer2">{{#str}} tutorial:option:3:2, mod_offlinequiz {{/str}}</label></div>
+  <div class="option"><input type="radio" name="answer" value="3" id="answer3"><label for="answer3">{{#str}} tutorial:option:3:3, mod_offlinequiz {{/str}}</label></div>
+  <div class="option"><input type="radio" name="answer" value="4" id="answer4"><label for="answer4">{{#str}} tutorial:option:3:4, mod_offlinequiz {{/str}}</label></div>
+</div>
+<input class="tutorialbutton btn btn-primary" type="submit" value="{{#str}} continue {{/str}}">
+</form>
 </div>
