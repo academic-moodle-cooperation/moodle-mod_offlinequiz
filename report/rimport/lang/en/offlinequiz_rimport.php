@@ -34,6 +34,7 @@ $string['errorcouldnotgrab'] = 'Could not grab';
 $string['errordifferentpage'] = 'Differing page exists';
 $string['errordoublepage'] = 'Page already exists';
 $string['errorfilenotfound'] = 'File not found';
+$string['errorfilenotimage'] = 'File is not an image or PDF doesn\'t contain an image.';
 $string['errorgrouperror'] = 'Invalid group number';
 $string['erroruseridviolation'] = 'Multiple users found';
 $string['errorinsecuremarkings'] = 'Inaccurate markings';

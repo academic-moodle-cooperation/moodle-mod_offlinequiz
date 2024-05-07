@@ -33,6 +33,7 @@ require_once($CFG->libdir . '/filelib.php');
 
 class offlinequiz_rimport_report extends offlinequiz_default_report {
 
+    public $context;
     /**
      * (non-PHPdoc)
      * @see offlinequiz_default_report::display()

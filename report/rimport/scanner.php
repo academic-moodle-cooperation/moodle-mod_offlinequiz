@@ -359,7 +359,13 @@ class offlinequiz_page_scanner {
         }
 
         $imageinfo = getimagesize($file);
-
+        if(!$imageinfo || !$imageinfo['0']) {
+            $scannedpage->status = 'error';
+            $scannedpage->error = 'filenotimage';
+            $scannedpage->filename = $this->filename;
+            $scannedpage->info = $this->filename;
+            return $scannedpage;
+        }
         // Reduce resolution of large images.
         $percent = round(300000 / $imageinfo['0']);
         if ($percent > 0 && $percent < 100) {
