@@ -1602,13 +1602,13 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         offlinequiz_fix_question_versions();
         upgrade_mod_savepoint(true, 2023070701.02, 'offlinequiz');
     }
-    if ($oldversion < 2024012202) {
+    if ($oldversion < 2023070705) {
         $subquery = "SELECT ogq.id AS rid
                           FROM {offlinequiz_group_questions} ogq
                      LEFT JOIN {offlinequiz} o ON ogq.offlinequizid = o.id
                          WHERE o.id IS NULL";
         $DB->delete_records_subquery('offlinequiz_group_questions', 'id', 'rid', $subquery);
-        upgrade_mod_savepoint(true, 2024012202, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2023070705, 'offlinequiz');
     }
 
 
