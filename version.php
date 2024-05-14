@@ -28,8 +28,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2023113003;
+$plugin->version   = 2024012304;
 $plugin->requires  = 2023042400;
 $plugin->component = 'mod_offlinequiz';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = "v4.2.3";
+$plugin->release   = "v4.2.4";
