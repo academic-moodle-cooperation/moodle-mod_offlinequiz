@@ -185,15 +185,16 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('pdfintro', 'pdfintro', 'offlinequiz');
 
         $mform->setDefault('pdffont', offlinequiz_get_pdffont($offlinequiz));
-        $options = array();
-        $options[8] = 8;
-        $options[9] = 9;
-        $options[10] = 10;
-        $options[11] = 11;
-        $options[12] = 12;
-        $options[14] = 14;
+        $options = [
+           8 => 8,
+           9 => 9,
+           10 => 10,
+           11 => 11,
+           12 => 12,
+           14 => 14
+        ];
         $mform->addElement('select', 'fontsize', get_string('fontsize', 'offlinequiz'), $options, $attribs);
-        $mform->setDefault('fontsize', 10);
+        $mform->setDefault('fontsize', $offlinequizconfig->defaultpdffontsize);
 
         $options = array();
         $options[OFFLINEQUIZ_PDF_FORMAT] = 'PDF';

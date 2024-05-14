@@ -45,6 +45,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('offlinequiz/printstudycodefield',
             get_string('printstudycodefield', 'offlinequiz'), get_string('printstudycodefield_help', 'offlinequiz'),
             1));
+    // Fontfamily.
     require_once($CFG->dirroot . '/lib/pdflib.php');
     $pdf = new pdf();
     if($pdf) {
@@ -64,6 +65,19 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('offlinequiz/defaultpdffont',
         get_string('defaultpdffont', 'offlinequiz'), get_string('defaultpdffont_help', 'offlinequiz'),
         'freeserif', $options));
+    // PDF default fontsize.
+    $options = [
+            8 => 8,
+            9 => 9,
+            10 => 10,
+            11 => 11,
+            12 => 12,
+            14 => 14
+        ];
+        
+    $settings->add(new admin_setting_configselect('offlinequiz/defaultpdffontsize',
+        get_string('defaultpdffontsize', 'offlinequiz'), get_string('defaultpdffontsize_help', 'offlinequiz'),
+        10, $options));
 
     // Shuffle questions.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/shufflequestions',
