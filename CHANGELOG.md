@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+4.1.6
+-----------------
+* [Bug] Fixed a version upgrade confusion bug which lead to offlinequiz not working anymore
+
 4.1.5
 -----------------
 * [Feature] It is now possible to add own offlinequiz report plugins
