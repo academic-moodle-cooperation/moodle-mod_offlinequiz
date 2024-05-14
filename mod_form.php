@@ -123,6 +123,8 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $context = context_module::instance($cm->id);
             $hasevalationrights = $offlinequizconfig->experimentalevaluation && has_capability('mod/offlinequiz:changeevaluationmode', $context);
         }
+        $mform->addElement('selectyesno', 'formforeachstudent', get_string('formforeachstudent', 'offlinequiz'));
+        $mform->addElement('static', 'formforeachstudentdesc', '', get_string("formforeachstudentdesc", "offlinequiz"));
         if (is_siteadmin() || $hasevalationrights) {
                 $mform->addElement('selectyesno', 'experimentalevaluation', get_string('experimentalevaluation', 'offlinequiz'));
                 $mform->addHelpButton('experimentalevaluation', 'experimentalevaluation', 'offlinequiz');

@@ -172,9 +172,17 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $this->Cell(90, 6, offlinequiz_str_html_pdf(get_string('forautoanalysis',  'offlinequiz')), 0, 1, 'C');
         $this->Ln(2);
         $this->SetFont('FreeSans', '', 8);
-        $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('firstname')).": " . $this->user->firstname, 1, 0, 'L');
+        if (empty($this->user)) {
+            $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('firstname')).": ", 1, 0, 'L');
+        } else {
+            $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('firstname')).": " . $this->user->firstname, 1, 0, 'L');
+        }
         $this->Cell(29, 7, ' '.offlinequiz_str_html_pdf(get_string('invigilator',  'offlinequiz')), 0, 1, 'C');
-        $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('lastname')).": " . $this->user->lastname, 1, 1, 'L');
+        if (empty($this->user)) {
+            $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('lastname')).": ", 1, 1, 'L');
+        } else {
+            $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('lastname')).": " . $this->user->lastname, 1, 1, 'L');
+        }
         $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('signature',  'offlinequiz')).":", 1, 1, 'L');
         $this->Ln(5);
         $this->Cell(20, 7, offlinequiz_str_html_pdf(get_string('group', 'offlinequiz')).":", 0, 0, 'L');
@@ -225,8 +233,10 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         }
 
         $this->SetXY(139, 36);
-        for ($i = 1; $i <= $offlinequizconfig->ID_digits; $i++) {      // Little lines to separate the digits.
-            $this->Cell(6.5, 0, offlinequiz_str_html_pdf($this->user->{$offlinequizconfig->ID_field}[$i - 1]), 0, 0, 'L');
+        if (!empty($this->user)) {
+            for ($i = 1; $i <= $offlinequizconfig->ID_digits; $i++) {      // Little lines to separate the digits.
+                $this->Cell(6.5, 0, offlinequiz_str_html_pdf($this->user->{$offlinequizconfig->ID_field}[$i - 1]), 0, 0, 'L');
+            }
         }
 
         $this->SetDrawColor(150);
@@ -240,8 +250,10 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
             for ($j = 0; $j <= 9; $j++) {
                 $y = 44 + $j * 6;
                 $this->Rect($x, $y, 3.5, 3.5);
-                if ($this->user->{$offlinequizconfig->ID_field}[$i] == $j) {
-                    $this->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif", $x,  $y + 0.15,  3.15,  0);
+                if (!empty($this->user)) {
+                    if ($this->user->{$offlinequizconfig->ID_field}[$i] == $j) {
+                        $this->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif", $x,  $y + 0.15,  3.15,  0);
+                    }
                 }
             }
         }
@@ -838,21 +850,25 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     list($rsql, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
     $params = array_merge($cparams, $rparams);
 
-    $sql = "SELECT DISTINCT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
-              FROM {user} u,
-                   {offlinequiz_participants} p,
-                   {role_assignments} ra,
-                   {offlinequiz_p_lists} pl
-             WHERE ra.userid = u.id
-               AND p.listid = pl.id
-               AND pl.offlinequizid = :offlinequizid
-               AND p.userid = u.id
-               AND ra.roleid $rsql AND ra.contextid $csql
-          ORDER BY u.lastname, u.firstname";
+    if ($offlinequiz->formforeachstudent == 1) {
+        $sql = "SELECT DISTINCT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
+                  FROM {user} u,
+                       {offlinequiz_participants} p,
+                       {role_assignments} ra,
+                       {offlinequiz_p_lists} pl
+                 WHERE ra.userid = u.id
+                   AND p.listid = pl.id
+                   AND pl.offlinequizid = :offlinequizid
+                   AND p.userid = u.id
+                   AND ra.roleid $rsql AND ra.contextid $csql
+              ORDER BY u.lastname, u.firstname";
 
-    $params['offlinequizid'] = $offlinequiz->id;
+        $params['offlinequizid'] = $offlinequiz->id;
 
-    $participants = $DB->get_records_sql($sql, $params);
+        $participants = $DB->get_records_sql($sql, $params);
+    } else {
+        $participants = [[]];
+    }
 
     $pdf = new offlinequiz_answer_pdf('P', 'mm', 'A4');
     $title = offlinequiz_str_html_pdf($offlinequiz->name);
@@ -883,10 +899,10 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     $pdf->userid = $USER->id;
     $pdf->SetMargins(15, 20, 15);
     $pdf->SetAutoPageBreak(true, 20);
-    $cuser = 0;
     foreach ($participants as $currentuser) {
-        $pdf->set_user($currentuser);
-        $cuser++;
+        if (!empty($currentuser)) {
+            $pdf->set_user($currentuser);
+        }
     $pdf->AddPage();
 
     // Load all the questions and quba slots needed by this script.

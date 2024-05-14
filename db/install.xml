@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/offlinequiz/db" VERSION="20230925" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
+<XMLDB PATH="mod/offlinequiz/db" VERSION="20240514" COMMENT="XMLDB file for Moodle 2.0+ mod/offlinequiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -38,6 +38,7 @@
         <FIELD NAME="algorithmversion" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="version of the evaluation algorithm"/>
         <FIELD NAME="experimentalevaluation" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="completionpass" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Completion pass enabled in settings or not"/>
+        <FIELD NAME="formforeachstudent" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for offlinequiz"/>
