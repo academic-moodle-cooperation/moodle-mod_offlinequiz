@@ -1621,5 +1621,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2024012202, 'offlinequiz');
     }
 
+    if ($oldversion < 2024012404) {
+
+        // Define field formforeachstudent to be added to offlinequiz.
+        $table = new xmldb_table('offlinequiz');
+        $field = new xmldb_field('formforeachstudent', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'completionpass');
+
+        // Conditionally launch add field formforeachstudent.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2024012404, 'offlinequiz');
+    }
+
     return true;
 }
