@@ -285,6 +285,7 @@ $resultsublistcontext['resultentry'][] = ['langstring' => get_string('evaluated'
     'link'       => $url->out(false)
 ];
 $overview['collapsible'] = true;
+$overview['unique'] = 'overview';
 $overview['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_resultsublist', $resultsublistcontext);
 if ($status['correctionerrors']) {
     $overview['status'] = STATUS_NEXT;
@@ -315,30 +316,36 @@ $templatedata['statistics'] = $OUTPUT->render_from_template('mod_offlinequiz/tea
 
 
 $editlists = [];
-$editlists['collapsible'] = true;
-$editlistsdata = [];
-$editlistsdata['attendancelists'] = [];
 $hasattlistwithoutstudents = false;
-foreach ($status['attendancelists'] as $list) {
-    $listobject = [];
-    $url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'editparticipants', 'action' => 'edit', 'q' => $offlinequiz->id, 'listid' => $list->id]);
-    $listobject['link'] = $url->out(false);
-    $listobject['name'] = $list->name;
-    if(!($listobject['participants'] = $list->participants)) {
-        $hasattlistwithoutstudents = true;
+if($status['attendancelists']) {
+    $editlists['collapsible'] = true;
+    $editlists['unique'] = 'editlists';
+    foreach ($status['attendancelists'] as $list) {
+        $listobject = [];
+        $url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'editparticipants', 'action' => 'edit', 'q' => $offlinequiz->id, 'listid' => $list->id]);
+        $listobject['link'] = $url->out(false);
+        $listobject['name'] = $list->name;
+        if(!($listobject['participants'] = $list->participants)) {
+            $hasattlistwithoutstudents = true;
+        }
+        $editlistsdata = [];
+        $editlistsdata['attendancelists'] = [];
+        $editlistsdata['attendancelists'][] = $listobject;
+        $editlists['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_attendancelists', $editlistsdata);
     }
-    $editlistsdata['attendancelists'][] = $listobject;
+} else {
+    $editlists['collapsible'] = false;
 }
-$editlists['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_attendancelists', $editlistsdata);
 
 if($status['attendancelists'] && !$hasattlistwithoutstudents) {
+    $editlists['collapsestatus'] = STATUS_DONE;
     $editlists['status'] = STATUS_DONE;
 } else {
+    $editlists['collapsestatus'] = STATUS_NEXT;
     $editlists['status'] = STATUS_NEXT;
 }
 
 
-$editlists['collapsestatus'] = STATUS_NEXT;
 
 $editlists[$editlists['status']] = true;
 
@@ -350,9 +357,9 @@ $editlists['text'] = get_string('tabparticipantlists', 'offlinequiz');
 
 $downloadattendance = [];
 $downloadattendance['collapsible'] = false;
-if($status['attendancelists'] && $status['attendancedocscreated']) {
+if($status['attendancelists'] == STATUS_DONE && $status['attendancedocscreated']) {
     $downloadattendance['status'] = STATUS_DONE;
-} elseif (!$editlists['status'] == STATUS_DONE) {
+} elseif ($editlists['status'] != STATUS_DONE) {
     $downloadattendance['status'] = STATUS_OPEN;
 } else {
     $downloadattendance['status'] = STATUS_NEXT;
@@ -383,6 +390,7 @@ $uploadattendance['text'] = get_string('upload', 'offlinequiz');
 
 $attendanceoverview = [];
 $attendanceoverview['collapsible'] = true;
+$attendanceoverview['unique'] = 'attendanceoverview';
 $attendanceoverviewcontext = [
     'correctionnecessary' => $status['attendanceresultdocsbroken'],
     'attwithresults' => $status['attwithresults'],
