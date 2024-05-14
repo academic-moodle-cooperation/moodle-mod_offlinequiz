@@ -1610,6 +1610,16 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $DB->delete_records_subquery('offlinequiz_group_questions', 'id', 'rid', $subquery);
         upgrade_mod_savepoint(true, 2024012202, 'offlinequiz');
     }
+    if ($oldversion < 2024012203) {
+        require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
+        $subquery = "SELECT qr.id AS rid
+                          FROM {question_references} qr
+                     LEFT JOIN {context} c ON qr.usingcontextid = c.id
+                         WHERE qr.component = 'mod_offlinequiz'
+                           AND c.id IS NULL";
+        $DB->delete_records_subquery('question_references', 'id', 'rid', $subquery);
+        upgrade_mod_savepoint(true, 2024012200, 'offlinequiz');
+    }
 
 
     return true;
