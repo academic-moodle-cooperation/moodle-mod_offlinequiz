@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+4.3.3
+-----------------
+* [Bug] Fixed a version upgrade path in Offlinequiz 4.1.5 which lead to offlinequiz not working anymore.
+
 4.3.2
 -----------------
 * [Bug] Fixed some more statistics errors [github #245]
