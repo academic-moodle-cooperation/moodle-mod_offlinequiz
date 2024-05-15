@@ -148,13 +148,26 @@ function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
     $tabs = offlinequiz_get_tabs_object($offlinequiz, $cm);
     $ct = $tabs[$currenttab];
     $options = [];
-    foreach ($tabs as $tabname => $tabobject) {
-        if ($tabobject['tab'] == $ct['tab']) {
-            $options[$tabobject['url']->out()] = isset($tabobject['title'])?$tabobject['title'] : get_string($tabname, 'offlinequiz');
+    // Setup the third level navigation using tabs or select object.
+    if (get_config('offlinequiz', 'usetabs')) {
+        foreach ($tabs as $tabname => $tabobject) {
+            if ($tabobject['tab'] == $ct['tab']) {
+                $title = isset($tabobject['title'])?$tabobject['title'] : get_string($tabname, 'offlinequiz');
+                $tabobj = new tabobject($tabname, $tabobject['url'], $title);
+                $toprow[] = $tabobj;
+            }
         }
+        echo $OUTPUT->tabtree($toprow, $currenttab);
+    } else {
+        foreach ($tabs as $tabname => $tabobject) {
+            if ($tabobject['tab'] == $ct['tab']) {
+                $options[$tabobject['url']->out()] = isset($tabobject['title'])?$tabobject['title'] : get_string($tabname, 'offlinequiz');
+            }
+        }
+        $selectobject = new \url_select($options);
+        echo $OUTPUT->render($selectobject);
+        navigation::
     }
-    $selectobject = new \url_select($options);
-    echo $OUTPUT->render($selectobject);
 }
 
 function offlinequiz_get_tabs_object($offlinequiz, $cm) {
