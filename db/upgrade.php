@@ -1618,7 +1618,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                          WHERE qr.component = 'mod_offlinequiz'
                            AND c.id IS NULL";
         $DB->delete_records_subquery('question_references', 'id', 'rid', $subquery);
-        upgrade_mod_savepoint(true, 2024012200, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2024012203, 'offlinequiz');
     }
 
 
