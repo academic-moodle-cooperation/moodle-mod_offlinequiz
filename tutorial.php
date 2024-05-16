@@ -96,10 +96,12 @@ if ($answer) {
         }
     }
     if ($correctanswers[$page] == $answer) {
+        $feedbackstring = '<b>' . get_string('tutorial:feedback:correct', 'offlinequiz') . ' ' . $feedbackstring;
         $notification = $OUTPUT->notification($feedbackstring, 'notifysuccess');
         //The user guessed right, we show him the next page
         $page = $page+1;
     } else {
+        $feedbackstring = '<b>' . get_string('tutorial:feedback:wrong', 'offlinequiz') . '</b> ' . $feedbackstring;
         $notification = $OUTPUT->notification($feedbackstring, 'notifyerror');
     }
     
