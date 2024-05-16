@@ -139,38 +139,38 @@ $sql = "SELECT count(*)
          WHERE opl.offlinequizid = :offlinequizid AND opc.userid is null";
 $status['missingattendanceresults'] = $DB->count_records_sql($sql,['offlinequizid' => $offlinequiz->id]);
 $status['attendanceresultdocsbroken'] = $DB->count_records('offlinequiz_scanned_p_pages',['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
-$sql = "SELECT count(*) 
-          FROM {offlinequiz_p_choices} oc
-          JOIN {offlinequiz_scanned_p_pages} ospp on ospp.id = oc.scannedppageid
-          JOIN {offlinequiz_results} oqr on oqr.userid = oc.userid and oqr.offlinequizid = ospp.offlinequizid 
-         WHERE ospp.offlinequizid = :offlinequizid 
+$sql = "SELECT DISTINCT op.userid
+          FROM {offlinequiz_participants} op
+          JOIN {offlinequiz_p_lists} opl on op.listid = opl.id
+     LEFT JOIN {offlinequiz_results} oqr on oqr.userid = op.userid and oqr.offlinequizid = opl.offlinequizid 
+         WHERE opl.offlinequizid = :offlinequizid 
            AND oqr.id is not null
-           AND oc.value = 1";
-$status['attwithresults'] = $DB->count_records_sql($sql,['offlinequizid' => $offlinequiz->id]);
-$sql = "SELECT count(*)
-          FROM {offlinequiz_p_choices} oc
-          JOIN {offlinequiz_scanned_p_pages} ospp on ospp.id = oc.scannedppageid
-          JOIN {offlinequiz_results} oqr on oqr.userid = oc.userid and oqr.offlinequizid = ospp.offlinequizid
-         WHERE ospp.offlinequizid = :offlinequizid
+           AND op.checked = 1";
+$status['attwithresults'] = $DB->get_records_sql($sql,['offlinequizid' => $offlinequiz->id]);
+$sql = "SELECT DISTINCT op.userid
+          FROM {offlinequiz_participants} op
+          JOIN {offlinequiz_p_lists} opl on op.listid = opl.id
+     LEFT JOIN {offlinequiz_results} oqr on oqr.userid = op.userid and oqr.offlinequizid = opl.offlinequizid 
+         WHERE opl.offlinequizid = :offlinequizid 
            AND oqr.id is null
-           AND oc.value = 1";
-$status['attwithoutresults'] = $DB->count_records_sql($sql,['offlinequizid' => $offlinequiz->id]);;
-$sql = "SELECT count(*)
-          FROM {offlinequiz_p_choices} oc
-          JOIN {offlinequiz_scanned_p_pages} ospp on ospp.id = oc.scannedppageid
-          JOIN {offlinequiz_results} oqr on oqr.userid = oc.userid and oqr.offlinequizid = ospp.offlinequizid
-         WHERE ospp.offlinequizid = :offlinequizid
+           AND op.checked = 1";
+$status['attwithoutresults'] = $DB->get_records_sql($sql,['offlinequizid' => $offlinequiz->id]);;
+$sql = "SELECT DISTINCT op.userid
+          FROM {offlinequiz_participants} op
+          JOIN {offlinequiz_p_lists} opl on op.listid = opl.id
+     LEFT JOIN {offlinequiz_results} oqr on oqr.userid = op.userid and oqr.offlinequizid = opl.offlinequizid 
+         WHERE opl.offlinequizid = :offlinequizid 
            AND oqr.id is not null
-           AND oc.value = 0";
-$status['noattwithresults'] = $DB->count_records_sql($sql,['offlinequizid' => $offlinequiz->id]);;
-$sql = "SELECT count(*)
-          FROM {offlinequiz_p_choices} oc
-          JOIN {offlinequiz_scanned_p_pages} ospp on ospp.id = oc.scannedppageid
-          JOIN {offlinequiz_results} oqr on oqr.userid = oc.userid and oqr.offlinequizid = ospp.offlinequizid
-         WHERE ospp.offlinequizid = :offlinequizid
+           AND op.checked = 0";
+$status['noattwithresults'] = $DB->get_records_sql($sql,['offlinequizid' => $offlinequiz->id]);;
+$sql = "SELECT DISTINCT op.userid
+          FROM {offlinequiz_participants} op
+          JOIN {offlinequiz_p_lists} opl on op.listid = opl.id
+     LEFT JOIN {offlinequiz_results} oqr on oqr.userid = op.userid and oqr.offlinequizid = opl.offlinequizid 
+         WHERE opl.offlinequizid = :offlinequizid 
            AND oqr.id is null
-           AND oc.value = 0";
-$status['noattwithoutresults'] = $DB->count_records_sql($sql,['offlinequizid' => $offlinequiz->id]);;
+           AND op.checked = 0";
+$status['noattwithoutresults'] = $DB->get_records_sql($sql,['offlinequizid' => $offlinequiz->id]);;
 
 $status['docscreated'] = $offlinequiz->docscreated;
 $groupnames = [];
@@ -357,7 +357,7 @@ $editlists['text'] = get_string('tabparticipantlists', 'offlinequiz');
 
 $downloadattendance = [];
 $downloadattendance['collapsible'] = false;
-if($status['attendancelists'] == STATUS_DONE && $status['attendancedocscreated']) {
+if($editlists['status'] == STATUS_DONE && $status['attendancedocscreated']) {
     $downloadattendance['status'] = STATUS_DONE;
 } elseif ($editlists['status'] != STATUS_DONE) {
     $downloadattendance['status'] = STATUS_OPEN;
@@ -393,10 +393,10 @@ $attendanceoverview['collapsible'] = true;
 $attendanceoverview['unique'] = 'attendanceoverview';
 $attendanceoverviewcontext = [
     'correctionnecessary' => $status['attendanceresultdocsbroken'],
-    'attwithresults' => $status['attwithresults'],
-    'attwithoutresults' => $status['attwithoutresults'],
-    'noattwithresults' => $status['noattwithresults'],
-    'noattwithoutresults' => $status['noattwithoutresults'],
+    'attwithresults' => count($status['attwithresults']),
+    'attwithoutresults' => count($status['attwithoutresults']),
+    'noattwithresults' => count($status['noattwithresults']),
+    'noattwithoutresults' => count($status['noattwithoutresults']),
 ];
 $attendanceoverview['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_attendancesummary', $attendanceoverviewcontext);
 if($status['attendanceresultdocsbroken']) {
