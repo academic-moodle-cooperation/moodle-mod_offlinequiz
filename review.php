@@ -191,9 +191,8 @@ if ($isteacher or ($options->sheetfeedback == question_display_options::VISIBLE)
                 $fs = get_file_storage();
                 $imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/',
                         $scannedpage->warningfilename);
-                echo '<br/>&nbsp;<br/><img name="formimage" src="' . $CFG->wwwroot .
-                 "/pluginfile.php/$context->id/mod_offlinequiz/imagefiles/0/" . $imagefile->get_filename() .
-                 '" border="1" width="760" />';
+                $imageurl = moodle_url::make_pluginfile_url($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $imagefile->get_filename());
+                echo '<br/>&nbsp;<br/><img name="formimage" src="' . $imageurl . '" border="1" width="760" />';
             }
         }
         if ($found) {

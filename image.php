@@ -143,8 +143,8 @@ if ($sheetloaded) {
     $imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename);
 
     // E.g. http://131.130.103.117/mod_offlinequiz/pluginfile.php/65/mod_offlinequiz/imagefiles/0/zimmer.png_1.
-    echo '<img name="formimage" src="' . $CFG->wwwroot . "/pluginfile.php/$context->id/mod_offlinequiz/imagefiles/0/" .
-    $imagefile->get_filename() .'" border="1" width="' . OQ_IMAGE_WIDTH .
+    $imageurl = moodle_url::make_pluginfile_url($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $imagefile->get_filename());
+    echo '<img name="formimage" src="' . $imageurl . '" border="1" width="' . OQ_IMAGE_WIDTH .
         '" style="position:absolute; top:0px; left:0px; display: block;">';
 
     $answerspots = $scanner->export_hotspots_answer(OQ_IMAGE_WIDTH);
