@@ -128,6 +128,12 @@ class submit_question_version extends external_api {
                 $response['result'] = $DB->update_record('question_references', $reference);
             }
             \offlinequiz_update_question_instance($offlinequiz,$context->id, $oldquestionid, $slotdata->maxmark, $newquestionid);
+
+            if ($canbeedited) {
+                // Regenerates question usages.
+                \offlinequiz_delete_template_usages($offlinequiz);
+            }
+
             $response['result'] = true;
         }
         return $response;
