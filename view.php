@@ -435,20 +435,19 @@ $PAGE->set_pagelayout('report');
 
 if (has_capability('mod/offlinequiz:manage', $context)) {
     echo $OUTPUT->header();
-    
     // Print the page header.
     if ($edit != -1 and $PAGE->user_allowed_editing()) {
         $USER->editing = $edit;
     }
     echo $OUTPUT->render_from_template('mod_offlinequiz/teacher_view', $templatedata);
-} else if (has_capability('mod/offlinequiz:attempt', $context)) {
+} else {
     $select = "SELECT *
          FROM {offlinequiz_results} qa
         WHERE qa.offlinequizid = :offlinequizid
           AND qa.userid = :userid
           AND qa.status = 'complete'";
     $result = $DB->get_record_sql($select, array('offlinequizid' => $offlinequiz->id, 'userid' => $USER->id));
-    if ($result && offlinequiz_results_open($offlinequiz)) {
+    if ($result && offlinequiz_results_open($offlinequiz) && has_capability('mod/offlinequiz:attempt', $context)) {
         $options = offlinequiz_get_review_options($offlinequiz, $result, $context);
         if ($result->timefinish && ($options->attempt == question_display_options::VISIBLE ||
               $options->marks >= question_display_options::MAX_ONLY ||
@@ -460,16 +459,17 @@ if (has_capability('mod/offlinequiz:manage', $context)) {
             redirect($url);
             die();
         }
+    } else if (has_capability('mod/offlinequiz:attempt', $context) && !empty($offlinequiz->time) && $offlinequiz->time < time()) {
+        echo $OUTPUT->header();
+        echo '<div class="offlinequizinfo">' . get_string('nogradesseelater', 'offlinequiz', fullname($USER)).'</div>';
+    } else if ($offlinequiz->showtutorial) {
+        $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial.php',
+            array('id' => $cm->id));
+        redirect($url);
     } else {
-        if (!empty($offlinequiz->time) and $offlinequiz->time < time()) {
-            echo $OUTPUT->header();
-            echo '<div class="offlinequizinfo">' . get_string('nogradesseelater', 'offlinequiz', fullname($USER)).'</div>';
-        } else if ($offlinequiz->showtutorial) {
-            $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial.php',
-                array('id' => $cm->id));
-            redirect($url);
-        }
+        echo $OUTPUT->header();
     }
+
 }
 
 // Finish the page.

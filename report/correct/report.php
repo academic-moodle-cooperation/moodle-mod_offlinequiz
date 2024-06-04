@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/filelib.php');
 
 class offlinequiz_correct_report extends offlinequiz_default_report {
+    var $context;
 
     private function print_error_report($offlinequiz) {
         global $CFG, $DB, $OUTPUT;
