@@ -130,7 +130,11 @@ $PAGE->set_title(get_string('tutorial:title', 'offlinequiz', format_string($offl
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 $thisurl->remove_params(['page','answer']);
-echo '<div class="container"><div class="row">';
+echo '<div class="container">';
+echo "<h2>" . get_string('tutorial', 'offlinequiz') . "</h2>";
+echo \core\notification::info('test');
+
+echo '<div class="row">';
 echo $OUTPUT->render_from_template('mod_offlinequiz/tutorial_navigation',['url' => $thisurl->out()]);
 echo $OUTPUT->render_from_template('mod_offlinequiz/tutorial_page-' . $page, $templatedata);
 echo '</div></div>';
