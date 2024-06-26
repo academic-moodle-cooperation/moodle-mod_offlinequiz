@@ -864,7 +864,6 @@ function offlinequiz_update_question_instance($offlinequiz, $contextid, $questio
 
     // Now change the maxmark of the question instance in the template question usages of the offlinequiz groups.
     foreach ($groups as $group) {
-
         if ($group->templateusageid) {
             $templateusage = question_engine::load_questions_usage_by_activity($group->templateusageid);
             offlinequiz_update_quba($templateusage, $questionid, $newquestionid, $grade);
