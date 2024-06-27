@@ -132,7 +132,6 @@ echo $OUTPUT->header();
 $thisurl->remove_params(['page','answer']);
 echo '<div class="container">';
 echo "<h2>" . get_string('tutorial', 'offlinequiz') . "</h2>";
-echo \core\notification::info('test');
 
 echo '<div class="row">';
 echo $OUTPUT->render_from_template('mod_offlinequiz/tutorial_navigation',['url' => $thisurl->out()]);
