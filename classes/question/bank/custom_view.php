@@ -88,6 +88,7 @@ class custom_view extends \core_question\local\bank\view {
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
         [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
         $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $extraparams['groupid']);
+        $this->offlinequiz->questionbankentries = offlinequiz_get_group_questionbankentry_ids($this->offlinequiz, $extraparams['groupid']);
         if($extraparams['groupid']) {
             $groupnumber = $DB->get_field('offlinequiz_groups', 'groupnumber', ['id' => $extraparams['groupid']]);
             $this->groupnumber = $groupnumber;
@@ -321,6 +322,8 @@ class custom_view extends \core_question\local\bank\view {
     }
 
     public function offlinequiz_contains($questionid) {
-        return in_array($questionid, $this->offlinequiz->questions) ? true : false;
+        global $DB;
+        $questionbankentryid = $DB->get_field('question_versions','questionbankentryid', ['questionid' => $questionid]);
+        return in_array($questionbankentryid, $this->offlinequiz->questionbankentries);
     }
 }

@@ -370,6 +370,30 @@ function offlinequiz_get_group_question_ids($offlinequiz, $groupid = 0) {
     return $questionids;
 }
 
+function offlinequiz_get_group_questionbankentry_ids($offlinequiz, $groupid) {
+    global $DB;
+    if (!$groupid) {
+        $groupid = $offlinequiz->groupid;
+    }
+
+    // This query only makes sense if it is restricted to a offline group.
+    if (!$groupid) {
+        return '';
+    }
+    
+    $sql = "SELECT qv.questionbankentryid
+              FROM {offlinequiz_group_questions} ogq
+              JOIN {question_versions} qv ON qv.questionid = ogq.questionid
+             WHERE offlinequizid = :offlinequizid
+               AND offlinegroupid = :offlinegroupid
+          ORDER BY slot ASC ";
+
+    $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $groupid);
+    $questionbankentryids = $DB->get_fieldset_sql($sql, $params);
+    
+    return $questionbankentryids;
+}
+
 
 /**
  *
