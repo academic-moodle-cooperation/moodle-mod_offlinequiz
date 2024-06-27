@@ -883,28 +883,32 @@ function offlinequiz_update_question_instance($offlinequiz, $contextid, $questio
             }
         }
     }
-    $groups = $DB->get_records('offlinequiz_groups',
-        ['offlinequizid' => $offlinequiz->id], 'groupnumber');
 
+    if($offlinequiz->docscreated) {
+        $groups = $DB->get_records('offlinequiz_groups',
+            ['offlinequizid' => $offlinequiz->id], 'groupnumber');
     // Now change the maxmark of the question instance in the template question usages of the offlinequiz groups.
-    foreach ($groups as $group) {
-        if ($group->templateusageid) {
-            $templateusage = question_engine::load_questions_usage_by_activity($group->templateusageid);
-            offlinequiz_update_quba($templateusage, $questionid, $newquestionid, $grade);
-        }
-    }
-
-    // Now do the same for the qubas of the results of the offline quiz.
-    if ($results = $DB->get_records('offlinequiz_results', array('offlinequizid' => $offlinequiz->id))) {
-        foreach ($results as $result) {
-            if ($result->usageid > 0) {
-                $templateusage = question_engine::load_questions_usage_by_activity($result->usageid);
-                $templateusage = offlinequiz_update_quba($templateusage, $questionid, $newquestionid, $grade);
+        foreach ($groups as $group) {
+            if ($group->templateusageid) {
+                $templateusage = question_engine::load_questions_usage_by_activity($group->templateusageid);
+                offlinequiz_update_quba($templateusage, $questionid, $newquestionid, $grade);
             }
         }
+    
+        // Now do the same for the qubas of the results of the offline quiz.
+        if ($results = $DB->get_records('offlinequiz_results', array('offlinequizid' => $offlinequiz->id))) {
+            foreach ($results as $result) {
+                if ($result->usageid > 0) {
+                    $templateusage = question_engine::load_questions_usage_by_activity($result->usageid);
+                    $templateusage = offlinequiz_update_quba($templateusage, $questionid, $newquestionid, $grade);
+                }
+            }
+        }
+        $DB->delete_records('offlinequiz_statistics', ['offlinequizid' => $offlinequiz->id]);
+        offlinequiz_update_grades($offlinequiz);
+    } else {
+        offlinequiz_delete_template_usages($offlinequiz);
     }
-    $DB->delete_records('offlinequiz_statistics', ['offlinequizid' => $offlinequiz->id]);
-    offlinequiz_update_grades($offlinequiz);
     $DB->commit_delegated_transaction($transaction);
 }
 
