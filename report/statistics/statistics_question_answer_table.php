@@ -51,7 +51,6 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      */
     public function __construct() {
         parent::__construct('mod-offlinequiz-report-statistics-report');
-        $this->defaultdownloadformat  = 'excel';
     }
 
     public function set_questiondata($questiondata) {
