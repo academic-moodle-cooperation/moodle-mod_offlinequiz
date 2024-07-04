@@ -44,6 +44,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/statistics/responseanalysi
 class offlinequiz_statistics_report extends offlinequiz_default_report {
     /** @var integer Time after which statistics are automatically recomputed. */
     const TIME_TO_CACHE_STATS = 900; // 15 minutes.
+    public $context;
 
     /** @var object instance of table class used for main questions stats table. */
     protected $table;
