@@ -51,6 +51,7 @@ class oq_point {
     public $y;
     public $blank;
     public $scannedpageid;
+    public $position;
 
     /**
      * Constructor
