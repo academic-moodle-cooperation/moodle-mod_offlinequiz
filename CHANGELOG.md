@@ -1,5 +1,16 @@
 CHANGELOG
 =========
+4.4.0
+-----------------
+* [Feature] 4.4 compatible Version with new logo using the new logo style
+* [Feature] Reworked the tutorial so it is translateable in AMOS now
+* [Feature] Deleted manual regrading since it's done automatically
+* [Feature] Introduced setting the PDF Font style. Warning for admins: The default font has changed but can be set in the admin settings
+* [Feature] Students will be sent immediately to either the tutorial or their result depending on the status of the offline quiz
+* [Bug] Fixed many PHP 8.2 warnings
+* [Bug] Fixed that a question could be added twice if an older version was already added
+* [Bug] Fixed some encoding issues for uploaded files
+* [Bug] Fixed an error in the document creation after changing the question version
 
 4.3.2
 -----------------
