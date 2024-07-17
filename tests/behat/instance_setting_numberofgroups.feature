@@ -26,49 +26,50 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I turn editing mode on
-    And I add a "Offline Quiz" to section "1" and I fill the form with:
+    And I add a offlinequiz activity to course "Course 1" section "1" and I fill the form with:
       | Offline quiz name | Add an offline quiz and multiple choice questions to create files for 6 groups |
       | Description | Add an offline quiz and multiple choice questions to create files for 6 groups |
       | Number of groups | 6 |
-    And I follow "Add an offline quiz and multiple choice questions to create files for 6 groups"
-    And I navigate to "Group Questions" in current page administration
+    And I am on the "Add an offline quiz and multiple choice questions to create files for 6 groups" "offlinequiz activity" page logged in as teacher1
+    And I follow "Questions"
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "Multi-choice-001" in the "categoryquestions" "table"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
     And I press "Add to offline quiz"
-    And I set the field "groupnumber" to "Questions in group B"
+    And I set the field "groupnumber" to "Group B"
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "Multi-choice-001" in the "categoryquestions" "table"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
     And I press "Add to offline quiz"
-    And I set the field "groupnumber" to "Questions in group C"
+    And I set the field "groupnumber" to "Group C"
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "Multi-choice-001" in the "categoryquestions" "table"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
     And I press "Add to offline quiz"
-    And I set the field "groupnumber" to "Questions in group D"
+    And I set the field "groupnumber" to "Group D"
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "Multi-choice-001" in the "categoryquestions" "table"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
     And I press "Add to offline quiz"
-    And I set the field "groupnumber" to "Questions in group E"
+    And I set the field "groupnumber" to "Group E"
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "Multi-choice-001" in the "categoryquestions" "table"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
     And I press "Add to offline quiz"
-    And I set the field "groupnumber" to "Questions in group F"
+    And I set the field "groupnumber" to "Group F"
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "Multi-choice-001" in the "categoryquestions" "table"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
     And I press "Add to offline quiz"
-    And I navigate to "Create forms" in current page administration
-    And I follow "Download forms"
+    And I navigate to "Offline Quiz" in current page administration
+    And I follow "Forms"
+    And I press "Create forms"
     Then I should see "Question form for group A"
     Then I should see "Question form for group B"
     Then I should see "Question form for group C"

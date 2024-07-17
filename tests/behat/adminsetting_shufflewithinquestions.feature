@@ -25,10 +25,10 @@ Feature: Within a moodle instance, an administrator should be able to set the va
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I turn editing mode on
-    And I add a "Offline Quiz" to section "1" and I fill the form with:
+    And I add a offlinequiz activity to course "Course 1" section "1" and I fill the form with:
       | Offline quiz name | Test offline quiz name |
       | Description | Add an offline quiz to the current course |
-    And I follow "Test offline quiz name"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test offline quiz name" "offlinequiz activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then the field "Shuffle within questions" matches value "Yes"
