@@ -26,18 +26,19 @@ Feature: Within a moodle instance, a teacher should be able to create the questi
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I turn editing mode on
-    And I add a "Offline Quiz" to section "1" and I fill the form with:
+    And I add a offlinequiz activity to course "Course 1" section "1" and I fill the form with:
       | Offline quiz name | Add an offline quiz and multiple choice questions to create question forms as DOCX |
       | Description | Add an offline quiz and multiple choice questions to create question forms as DOCX |
       | Format for question sheets | DOCX |
-    And I follow "Add an offline quiz and multiple choice questions to create question forms as DOCX"
-    And I navigate to "Group Questions" in current page administration
+    And I am on the "Add an offline quiz and multiple choice questions to create question forms as DOCX" "offlinequiz activity" page logged in as teacher1
+    And I follow "Group A: 0"
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
     And I press "Add to offline quiz"
-    And I navigate to "Create forms" in current page administration
-    And I follow "Download forms"
+    And I navigate to "Offline Quiz" in current page administration
+    And I follow "Forms"
+    And I press "Create forms"
     Then I should see "Question form for group A (DOCX)"
     Then I should see "Answer form for group A"
     Then I should see "Correction form for group A"
