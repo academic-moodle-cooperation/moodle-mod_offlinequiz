@@ -2,14 +2,14 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Creator: CorelDRAW 2021 (64-Bit) -->
 <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="24px" height="24px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 1 1"
+viewBox="0 0 0.86 0.86"
  xmlns:xlink="http://www.w3.org/1999/xlink"
  xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
  <defs>
   <style type="text/css">
    <![CDATA[
-    .str0 {stroke:#212529;stroke-width:0.05;stroke-miterlimit:22.9256}
-    .str1 {stroke:#212529;stroke-width:0.05;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .str0 {stroke:#212529;stroke-width:0.03;stroke-miterlimit:22.9256}
+    .str1 {stroke:#212529;stroke-width:0.03;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
     .fil0 {fill:none}
     .fil1 {fill:#212529;fill-rule:nonzero}
    ]]>
@@ -17,17 +17,17 @@ viewBox="0 0 1 1"
  </defs>
  <g id="Ebene_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <g id="_1347133898336">
-   <rect class="fil0" width="1" height="1"/>
+  <g id="_1546938522832">
+   <rect class="fil0" width="0.86" height="0.86"/>
    <g>
     <g>
-     <path class="fil0 str0" d="M0.82 0.34l0 0.5c0,0.04 -0.03,0.07 -0.07,0.07l-0.5 0c-0.04,0 -0.06,-0.03 -0.06,-0.07l0 -0.69c0,-0.04 0.02,-0.07 0.06,-0.07l0.31 0c0.03,0 0.06,0.03 0.06,0.07l0 0.06c0,0.04 0.03,0.07 0.07,0.07l0.06 0c0.04,0 0.07,0.03 0.07,0.06z"/>
-     <path class="fil0 str0" d="M0.8 0.26l-0.16 -0.15c-0.01,-0.02 -0.03,-0.03 -0.05,-0.03l-0.34 0c-0.04,0 -0.06,0.03 -0.06,0.07l0 0.69c0,0.04 0.02,0.07 0.06,0.07l0.5 0c0.04,0 0.07,-0.03 0.07,-0.07l0 -0.53c0,-0.02 -0.01,-0.04 -0.02,-0.05z"/>
+     <path class="fil0 str0" d="M0.7 0.29l0 0.43c0,0.03 -0.02,0.06 -0.05,0.06l-0.44 0c-0.03,0 -0.05,-0.03 -0.05,-0.06l0 -0.59c0,-0.03 0.02,-0.06 0.05,-0.06l0.27 0c0.03,0 0.05,0.03 0.05,0.06l0 0.05c0,0.03 0.03,0.06 0.06,0.06l0.06 0c0.03,0 0.05,0.02 0.05,0.05z"/>
+     <path class="fil0 str0" d="M0.68 0.22l-0.13 -0.13c-0.01,-0.01 -0.02,-0.02 -0.04,-0.02l-0.3 0c-0.03,0 -0.05,0.03 -0.05,0.06l0 0.59c0,0.03 0.02,0.06 0.05,0.06l0.44 0c0.03,0 0.05,-0.03 0.05,-0.06l0 -0.46c0,-0.01 0,-0.03 -0.02,-0.04z"/>
     </g>
-    <rect class="fil0 str1" x="0.32" y="0.42" width="0.36" height="0.36" rx="0.02" ry="0.02"/>
+    <rect class="fil0 str1" x="0.27" y="0.36" width="0.31" height="0.31" rx="0.02" ry="0.02"/>
     <g>
-     <path class="fil1" d="M0.38 0.48c0,-0.01 0.01,-0.01 0.02,0 0.03,0.03 0.06,0.08 0.1,0.11l0.12 0.09c0.01,0.02 -0.01,0.05 -0.03,0.04 -0.06,-0.04 -0.22,-0.17 -0.21,-0.24z"/>
-     <path class="fil1" d="M0.61 0.48c0.01,0 0.02,0.01 0.01,0.02 -0.04,0.02 -0.08,0.06 -0.11,0.1l-0.1 0.12c-0.01,0.01 -0.05,-0.01 -0.03,-0.04 0.04,-0.05 0.16,-0.21 0.23,-0.2z"/>
+     <path class="fil1" d="M0.32 0.41c0,-0.01 0.02,-0.01 0.02,0 0.03,0.03 0.06,0.07 0.09,0.1l0.1 0.08c0.01,0.01 -0.01,0.04 -0.03,0.03 -0.05,-0.04 -0.18,-0.15 -0.18,-0.21z"/>
+     <path class="fil1" d="M0.53 0.41c0,0 0.01,0.01 0,0.01 -0.04,0.03 -0.07,0.06 -0.09,0.09l-0.09 0.1c-0.01,0.02 -0.04,0 -0.03,-0.02 0.04,-0.05 0.14,-0.18 0.21,-0.18z"/>
     </g>
    </g>
   </g>
