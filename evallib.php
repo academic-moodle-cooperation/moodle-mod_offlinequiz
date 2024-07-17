@@ -827,7 +827,7 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
             $scannedpage->status = 'error';
             $scannedpage->error = 'invalidlistnumber';
             // for the unlikely case that the listnumber is out of range, due to scanning errors
-            if ($scannedpage->listnumber > 50000) {
+            if (property_exists($scannedpage, 'listnumber') && $scannedpage->listnumber > 50000) {
                 $scannedpage->listnumber = 9999;
                 echo $OUTPUT->notification(get_string('scanerrorlistnumber', 'offlinequiz_rimport'), 'error');
             }
