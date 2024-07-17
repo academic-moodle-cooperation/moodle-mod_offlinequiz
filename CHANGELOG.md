@@ -2,6 +2,7 @@ CHANGELOG
 =========
 4.4.0
 -----------------
+* [Info] You might want to checkout the new subplugin https://github.com/juacas/moodle-offlinequiz_identified for prefilled forms support. Since this Plugin is not from us we will not support it officially in any way, but it is a nice addition to offlinequiz.
 * [Feature] 4.4 compatible Version with new logo using the new logo style
 * [Feature] Reworked the tutorial so it is translateable in AMOS now
 * [Feature] Deleted manual regrading since it's done automatically
