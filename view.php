@@ -101,7 +101,7 @@ $sql = "SELECT u.id
 $queues = $DB->get_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id]);
 $status['pagesinprocessing'] = 0;
 foreach ($queues as $queue) {
-    if ($queue->status == 'new') {
+    if ($queue->status == 'new' || $queue->status == 'processing') {
         $status['pagesinprocessing'] += $DB->count_records('offlinequiz_queue_data', ['queueid' => $queue->id]);
     }
 }
