@@ -159,6 +159,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             }
         }
         $mform->addElement('select', 'pdffont', get_string('pdffont', 'offlinequiz'), $options, $attribs);
+        $mform->addHelpButton('pdffont', 'pdffont', 'offlinequiz');
 
         unset($options);
         $options[610] = get_string("darkgray", "offlinequiz");
