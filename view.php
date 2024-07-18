@@ -134,7 +134,7 @@ $status['attendanceuploads'] = $DB->count_records('offlinequiz_scanned_p_pages',
 $sql = "SELECT count(*)
           FROM {offlinequiz_p_lists} opl
           JOIN {offlinequiz_participants} op ON op.listid = opl.id 
-     LEFT JOIN {offlinequiz_p_choices} opc ON opc.userid = op.userid AND opc.scannedppageid = ospp.id 
+     LEFT JOIN {offlinequiz_p_choices} opc ON opc.userid = op.userid
          WHERE opl.offlinequizid = :offlinequizid AND opc.userid is null";
 $status['missingattendanceresults'] = $DB->count_records_sql($sql,['offlinequizid' => $offlinequiz->id]);
 $status['attendanceresultdocsbroken'] = $DB->count_records('offlinequiz_scanned_p_pages',['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
