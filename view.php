@@ -320,6 +320,8 @@ $hasattlistwithoutstudents = false;
 if($status['attendancelists']) {
     $editlists['collapsible'] = true;
     $editlists['unique'] = 'editlists';
+    $editlistsdata = [];
+    $editlistsdata['attendancelists'] = [];
     foreach ($status['attendancelists'] as $list) {
         $listobject = [];
         $url = new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'editparticipants', 'action' => 'edit', 'q' => $offlinequiz->id, 'listid' => $list->id]);
@@ -328,8 +330,8 @@ if($status['attendancelists']) {
         if(!($listobject['participants'] = $list->participants)) {
             $hasattlistwithoutstudents = true;
         }
-        $editlistsdata = [];
-        $editlistsdata['attendancelists'] = [];
+
+        
         $editlistsdata['attendancelists'][] = $listobject;
         $editlists['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_attendancelists', $editlistsdata);
     }
