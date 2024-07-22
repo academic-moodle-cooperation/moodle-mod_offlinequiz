@@ -10,7 +10,7 @@ CHANGELOG
 * [Feature] Students will be sent immediately to either the tutorial or their result depending on the status of the offline quiz
 * [Feature] Rework on the activity overview page: attendances now available in new style
 * [Feature] Report subplugins can now add themselves to the navigation by implementing a offlinequiz_${pluginname}_report->add_to_tabs() function. [github PR #219 - juacas]
-* [Info] You might want to checkout a new subplugin for prefilled forms support: https://github.com/juacas/moodle-offlinequiz_identified. Since this plugin is developed out of the community, we cannot provide support for it.
+* [Info] You might want to checkout a new subplugin for prefilled forms support: https://github.com/juacas/moodle-offlinequiz_identified. Since this plugin is developed by the community, we cannot provide support for it.
 * [Bug] Fixed PHP 8.2 warnings
 * [Bug] Fixed bug where a question could be added twice if an older version was already added
 * [Bug] Fixed encoding issues concerned with uploaded files
