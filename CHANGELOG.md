@@ -2,16 +2,23 @@ CHANGELOG
 =========
 4.4.0
 -----------------
-* [Info] You might want to checkout the new subplugin https://github.com/juacas/moodle-offlinequiz_identified for prefilled forms support. Since this Plugin is not from us we will not support it officially in any way, but it is a nice addition to offlinequiz.
-* [Feature] 4.4 compatible Version with new logo using the new logo style
-* [Feature] Reworked the tutorial so it is translateable in AMOS now
-* [Feature] Deleted manual regrading since it's done automatically
-* [Feature] Introduced setting the PDF Font style. Warning for admins: The default font has changed but can be set in the admin settings
+* [Feature] 4.4 compatible version with new logo using the new logo style
+* [Feature] Rework on the tutorial so it is translateable in AMOS now
+* [Feature] Manual regrading removed, since it's done automatically
+* [Feature] New setting for PDF font style. Warning for admins: The default font has changed - from (Free-)Sans - but can be (re-)set in the admin settings.
+* [Feature] New admin setting for default font size [github #254]
 * [Feature] Students will be sent immediately to either the tutorial or their result depending on the status of the offline quiz
-* [Bug] Fixed many PHP 8.2 warnings
-* [Bug] Fixed that a question could be added twice if an older version was already added
-* [Bug] Fixed some encoding issues for uploaded files
-* [Bug] Fixed an error in the document creation after changing the question version
+* [Feature] Rework on the activity overview page: attendances now available in new style
+* [Feature] Report subplugins can now add themselves to the navigation by implementing a offlinequiz_${pluginname}_report->add_to_tabs() function. [github PR #219 - juacas]
+* [Info] You might want to checkout a new subplugin for prefilled forms support: https://github.com/juacas/moodle-offlinequiz_identified. Since this plugin is developed out of the community, we cannot provide support for it.
+* [Bug] Fixed PHP 8.2 warnings
+* [Bug] Fixed bug where a question could be added twice if an older version was already added
+* [Bug] Fixed encoding issues concerned with uploaded files
+* [Bug] Fixed bug in the document creation after changing the question version
+
+4.3.3
+-----------------
+[Bug] Fixed a version upgrade path in Offlinequiz 4.1.5 which lead to offlinequiz not working anymore.
 
 4.3.2
 -----------------
