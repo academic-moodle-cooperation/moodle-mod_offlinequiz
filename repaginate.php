@@ -56,7 +56,7 @@ $repage->repaginate_slots($slotnumber, $repagtype);
 offlinequiz_delete_template_usages($offlinequizobj->get_offlinequiz());
 
 $structure = $offlinequizobj->get_structure();
-$slots = $structure->refresh_page_numbers_and_update_db($structure->get_offlinequiz());
+$structure->refresh_page_numbers_and_update_db($structure->get_offlinequiz());
 
 redirect(new moodle_url('edit.php',
     array('cmid' => $offlinequizobj->get_cmid(),

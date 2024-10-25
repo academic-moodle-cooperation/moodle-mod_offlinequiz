@@ -1449,3 +1449,22 @@ input#showviewbutton {
 #page-mod-offlinequiz-tutorial .tutorialbutton {
     margin-top: 1em;
 }
+
+.offlinequiz-queue-file {
+    padding-top: 0.25rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid #dee2e6;
+    width: 100%;
+}
+.offlinequiz-queue-list .offlinequiz-queue-file-property {
+    margin-right: 5em;
+    width: 40%;
+}
+.offlinequiz-queue-content {
+    margin: 1em 0em 1em 3em;
+}
+.offlinequiz-queue-item {
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 1rem;
+}
