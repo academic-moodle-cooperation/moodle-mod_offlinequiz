@@ -1736,7 +1736,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024072600, 'offlinequiz');
     }
-
     if ($oldversion < 2024073001) {
         // Define field errormessage to be added to offlinequiz_queue.
         $table = new xmldb_table('offlinequiz_queue');
