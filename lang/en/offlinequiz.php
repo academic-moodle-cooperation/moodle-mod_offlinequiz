@@ -743,6 +743,7 @@ $string['queuefilepagenumber'] = 'Page number:';
 $string['queuefilestatus'] = 'File status:';
 $string['queuefilestatusmessage_ok'] = 'OK';
 $string['queuefilestatusmessage_submitted'] = 'submitted';
+$string['queuefilestatusmessage_error'] = 'Correction necessary';
 $string['queuefilestudent'] = 'Student name:';
 $string['queuenotfinished'] = 'Evaluation not finished.';
 $string['queuenotstarted'] = 'Evaluation not started.';

@@ -321,11 +321,13 @@ class report extends default_report {
     }
 
     
-    public function get_page_content($offlinequiz, $queueid = 0, $queuepagematrix = null) {
+    public function get_page_content($offlinequiz, $queueid = 0, $queuepagematrix = []) {
         global $OUTPUT,$DB;
-        if($queueid) {
+        $rendered = '';
+        if($queueid && array_key_exists($queueid,$queuepagematrix)) {
             $context = [];
             $context['files'] = [];
+
             foreach($queuepagematrix[$queueid] as $page) {
                 $filecontext = [];
                 $filecontext['filename'] = $page->filename;
