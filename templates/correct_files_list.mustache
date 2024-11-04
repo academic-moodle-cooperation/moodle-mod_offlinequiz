@@ -17,34 +17,34 @@
 <div>
   <h5> {{#str}} queuefileheader, mod_offlinequiz {{/str}} </h5>
   <div>
-  {{#files}}
-  <div class="offlinequiz-queue-file">
-  <h6> {{filename}} </h6>
-  <span> {{#str}} queuefilestatus, mod_offlinequiz {{/str}}
-    {{#done}}
-      <i class="fa fa-check-circle notifysuccess"></i>
-    {{/done}}
-    {{#executing}}
-      <!--TODO executing icon-->
-    {{/executing}}
-    {{#error}}
-      <i class="fa fa-exclamation-circle offlinequiz-nextitem"></i>
-    {{/error}}
-     {{statusmessage}}
-  </span>
+    {{#files}}
+      <div class="offlinequiz-queue-file">
+        <h6> {{filename}} </h6>
+        <span> {{#str}} queuefilestatus, mod_offlinequiz {{/str}}
+          {{#done}}
+            <i class="fa fa-check-circle notifysuccess"></i>
+          {{/done}}
+          {{#executing}}
+            <!--TODO executing icon-->
+          {{/executing}}
+          {{#error}}
+            <i class="fa fa-exclamation-circle offlinequiz-nextitem"></i>
+          {{/error}}
+          {{statusmessage}}
+        </span>
 
-    {{#evaluated}}
-      <span> {{#str}} queuefilestudent, mod_offlinequiz {{/str}} {{studentname}}</span>
-      <span> {{#str}} queuefilepagenumber, mod_offlinequiz {{/str}} {{pagenumber}} </span>
-      <span> {{#str}} queuefilegroupnumber, mod_offlinequiz {{/str}} {{groupnumber}} </span>
-      {{#error}}
-        <a href="{{correctlink}}"> {{#str}} queuefilecorrect, mod_offlinequiz {{/str}}</a>
-      {{/error}}
-    {{/evaluated}}
-    <!-- TODO implement show file>-->
-    <a href="">show file</a>
-    <a href="{{fileurl}}">{{#str}} queuedownload, mod_offlinequiz {{/str}}</a>
-  </div>
-  {{/files}}
+        {{#evaluated}}
+          <span> {{#str}} queuefilestudent, mod_offlinequiz {{/str}} {{studentname}}</span>
+          <span> {{#str}} queuefilepagenumber, mod_offlinequiz {{/str}} {{pagenumber}} </span>
+          <span> {{#str}} queuefilegroupnumber, mod_offlinequiz {{/str}} {{groupnumber}} </span>
+          {{#error}}
+            <a href="{{correctlink}}"> {{#str}} queuefilecorrect, mod_offlinequiz {{/str}}</a>
+          {{/error}}
+        {{/evaluated}}
+        <!-- TODO implement show file>-->
+        <a href="">show file</a>
+        <a href="{{fileurl}}">{{#str}} queuedownload, mod_offlinequiz {{/str}}</a>
+      </div>
+    {{/files}}
   </div>
 </div>
