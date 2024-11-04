@@ -15,21 +15,19 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 <div>
-    <h3> {{#str}} queueheader, mod_offlinequiz {{/str}} </h3>
+  <h3> {{#str}} queueheader, mod_offlinequiz {{/str}} </h3>
   <div class="offlinequiz-queue-list">
     {{#queues}}
       <div id="offlinequiz-queue-{{queueid}}" class="offlinequiz-queue-item">
         <div id="offlinequiz-queue-{{queueid}}-header">
-          
-
           <div>
             <a role="button" id="queuefilescollapse-{{queueid}}" onclick="toggle_queue_content({{queueid}});">
-            <span class="expanded-icon icon-no-margin p-2 hide" title="Collapse">
-              <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
-            </span>
-            <span class="collapsed-icon icon-no-margin p-2" title="Expand">
-              <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
-            </span>
+              <span class="expanded-icon icon-no-margin p-2 hide" title="Collapse">
+                <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
+              </span>
+              <span class="collapsed-icon icon-no-margin p-2" title="Expand">
+                <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
+              </span>
             </a>
             {{#documentname}}
               <h4> {{documentname}} </h4>
@@ -45,12 +43,13 @@
             {{#deletelink}}
               <a href="{{deletelink}}"> {{#str}} delete {{/str}} </span>
             {{/deletelink}}
-            
           </div>
 
           <div id="offlinequiz-queue-{{queueid}}-content" class="collapse offlinequiz-queue-content" role="group" tabindex="-1">
             {{{expandedcontent}}}
           </div>
+        </div>
+      </div>
     </div>
     {{/queues}}
   </div>
