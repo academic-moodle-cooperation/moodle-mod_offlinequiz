@@ -133,8 +133,6 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
             }
             $coursecontext = context_course::instance($course->id);
 
-            offlinequiz_load_useridentification();
-
             $jobdata = $DB->get_records_sql("
                     SELECT *
                       FROM {offlinequiz_queue_data}
