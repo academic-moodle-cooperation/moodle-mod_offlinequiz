@@ -25,9 +25,7 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  **/
-
-$string['addingfilestoqueue'] = 'Adding {$a} files to form evaluation queue...';
-$string['addingfilestoqueue'] = '{$a} answer forms have been added to the evaluation queue. An email will be sent to your address after the data has been processed.';
+$string['addingfilestoqueue'] = 'Answer forms have been added to the evaluation queue. An email will be sent to your address after the data has been processed.';
 $string['correcterror'] = 'Correct';
 $string['deleteselectedpages'] = 'Delete selected pages';
 $string['errorcouldnotgrab'] = 'Could not grab';
