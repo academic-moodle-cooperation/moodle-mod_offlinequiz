@@ -185,7 +185,7 @@ class report extends default_report {
 
         $this->context = context_module::instance($cm->id);
 
-        $pageoptions = array();
+        $pageoptions = [];
         $pageoptions['id'] = $cm->id;
         $pageoptions['mode'] = 'correct';
 
@@ -255,13 +255,13 @@ class report extends default_report {
         
         $this->display_uploaded_files($offlinequiz);
     }
-        
+
     private function display_uploaded_files($offlinequiz) {
         global $DB, $OUTPUT;
         $sql = "SELECT q.*
                   FROM {offlinequiz_queue} q
                  WHERE q.offlinequizid = :offlinequizid
-                   AND EXISTS ( SELECT 1 FROM {offlinequiz_queue_data} qd where q.id = qd.queueid)";
+                   ";
         $queues = $DB->get_records_sql($sql,['offlinequizid' => $offlinequiz->id]);
         $queuefiles = $DB->get_records('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id]);
         $queuefilesmatrix = [];

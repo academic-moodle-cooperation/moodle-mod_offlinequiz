@@ -74,9 +74,6 @@ class report extends default_report {
 
         // Has the user submitted a file?
         if ($fromform = $importform->get_data() && confirm_sesskey()) {
-            // File checks out ok.
-            $fileisgood = false;
-
             // Work out if this is an uploaded file
             // or one from the filesarea.
             $realfilename = $importform->get_new_filename('newfile');
@@ -97,7 +94,7 @@ class report extends default_report {
 
             $importfile = $dirname . '/' . $realfilename;
 
-            if (!$result = $importform->save_file('newfile', $importfile, true)) {
+            if (!$importform->save_file('newfile', $importfile, true)) {
                 $job->status = 'error';
                 $job->error = 'uploadproblem';
                 $DB->update_record('offlinequiz_queue', $job);
