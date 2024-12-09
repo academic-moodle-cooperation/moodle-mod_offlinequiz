@@ -731,6 +731,7 @@ $string['questionsin'] = 'Questions in';
 $string['questionsingroup'] = 'Group';
 $string['questionsinthisofflinequiz'] = 'Questions in this offline quiz';
 $string['questiontextisempty'] = '[Empty question text]';
+$string['queueamountofpages'] = 'Amount of pages:';
 $string['queuedownload'] = 'Download';
 $string['queueheader'] = 'Uploaded files';
 $string['queuefileimportedat'] = 'File imported: ';
