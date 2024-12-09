@@ -97,6 +97,7 @@ class report extends default_report {
             if (!$importform->save_file('newfile', $importfile, true)) {
                 $job->status = 'error';
                 $job->error = 'uploadproblem';
+                $job->filename = $realfilename;
                 $DB->update_record('offlinequiz_queue', $job);
                 throw new moodle_exception('uploadproblem');
             }

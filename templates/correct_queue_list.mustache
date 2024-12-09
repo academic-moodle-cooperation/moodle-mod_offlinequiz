@@ -29,23 +29,54 @@
                 <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
               </span>
             </a>
-            {{#documentname}}
-              <h4> {{documentname}} </h4>
-            {{/documentname}}
-            <span class="offlinequiz-queue-file-property"> {{#str}} queuefileimportedat, mod_offlinequiz {{/str}} {{importdate}} </span>
-            <span class="offlinequiz-queue-file-property"> {{#str}} queuefileimportedby, mod_offlinequiz {{/str}} {{importedby}} </span>
-            <span class="offlinequiz-queue-file-property"> {{#str}} queuestatus, mod_offlinequiz {{/str}} {{status}} </span>
-            <span class="offlinequiz-queue-file-property"> {{#str}} queuestarttime, mod_offlinequiz {{/str}} {{starttime}} </span>
-            <span class="offlinequiz-queue-file-property"> {{#str}} queuefinishedtime, mod_offlinequiz {{/str}} {{finishtime}} </span>
-            {{#downloadlink}}
-              <a href="{{downloadlink}}"> {{#str}} download{{/str}} </span>
-            {{/downloadlink}}
-            {{#deletelink}}
-              <a href="{{deletelink}}"> {{#str}} delete {{/str}} </span>
-            {{/deletelink}}
+            {{#queuestatusdone}}
+              <i class="fa fa-li fa-lg fa-solid fa-check-circle notifysuccess"></i>
+            {{/queuestatusdone}}
+            {{#queuestatuserror}}
+              <i class="fa fa-li fa-lg fa-regular fa-exclamation-circle offlinequiz-nextitem"></i>
+            {{/queuestatuserror}}
+            {{#queuestatusprocessing}}
+              //TODO
+              <i class="fa fa-li fa-lg fa-regular fa-exclamation-circle offlinequiz-nextitem"></i>
+            {{/queuestatusprocessing}}
+            {{#queuestatusnotstarted}}
+              //TODO
+              <i class="fa fa-li fa-lg fa-regular fa-exclamation-circle offlinequiz-nextitem"></i>
+            {{/queuestatusnotstarted}}
+            <h4 class="offlinequiz-queue-header">{{importdate}}</h4>
           </div>
 
           <div id="offlinequiz-queue-{{queueid}}-content" class="collapse offlinequiz-queue-content" role="group" tabindex="-1">
+            <div class="container-fluid offlinequiz-queue-content-info">
+              <div class="row">
+                <div class="col-2">{{#str}} queuefilefilename, mod_offlinequiz {{/str}}</div>
+                <div class="col-10">{{documentname}} <a href="{{{downloadlink}}}"><i class="fa-solid fa-download fa-fw"></i> </a> </div>
+              </div>
+            </div>
+            <div class="container-fluid offlinequiz-queue-content-info">
+              <div class="row">
+                <div class="col-2">{{#str}} queueamountofpages, mod_offlinequiz {{/str}}</div>
+                <div class="col-10">{{numberofpages}}</div>
+              </div>
+            </div>
+            <div class="container-fluid offlinequiz-queue-content-info">
+              <div class="row">
+                <div class="col-2">{{#str}} queuefileimportedby, mod_offlinequiz {{/str}}</div>
+                <div class="col-10"><a href="{{{importedbylink}}}">{{importedby}}</a></div>
+              </div>
+            </div>
+            <div class="container-fluid offlinequiz-queue-content-info">
+              <div class="row">
+                <div class="col-2">{{#str}} queuestarttime, mod_offlinequiz {{/str}}</div>
+                <div class="col-10">{{starttime}}</div>
+              </div>
+            </div>
+            <div class="container-fluid offlinequiz-queue-content-info">
+              <div class="row">
+                <div class="col-2">{{#str}} queuefinishedtime, mod_offlinequiz {{/str}}</div>
+                <div class="col-10">{{finishtime}}</div>
+              </div>
+            </div>
             {{{expandedcontent}}}
           </div>
         </div>
