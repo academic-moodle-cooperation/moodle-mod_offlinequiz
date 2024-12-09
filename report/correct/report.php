@@ -186,7 +186,18 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
         $pageoptions['mode'] = 'correct';
 
         $action = optional_param('action', '', PARAM_ACTION);
-        if ($action != 'delete') {
+        if ($action == 'download') {
+            $queueid = optional_param('queueid', 0, PARAM_INT);
+            if($queueid) {
+                $queue = $DB->get_record('offlinequiz_queue', ['id' => $queueid]);
+                if($queue->offlinequizid == $offlinequiz->id) {
+                    $path = "$CFG->dataroot/offlinequiz/$queueid/$queue->filename";
+                    send_file($path, $queue->filename);
+                    die();
+                }
+            }
+        }
+        if ($action != 'delete' && $action != 'download') {
             $this->print_header_and_tabs($cm, $course, $offlinequiz, 'correct');
             if (!$offlinequiz->docscreated) {
                 echo $OUTPUT->heading(get_string('nopdfscreated', 'offlinequiz'));
@@ -249,10 +260,10 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
                 $this->print_error_report($offlinequiz);
         }
         
-        $this->display_uploaded_files($offlinequiz);
+        $this->display_uploaded_files($offlinequiz,$cm);
     }
 
-    private function display_uploaded_files($offlinequiz) {
+    private function display_uploaded_files($offlinequiz, $cm) {
         global $DB, $OUTPUT;
         $sql = "SELECT q.*
                   FROM {offlinequiz_queue} q
@@ -284,13 +295,14 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
                 $element = [];
 
                 $element['importedby'] = $this->get_user_name($queue->importuserid);
-                if(property_exists($queue, 'filename') && $queue->filename) {
-                    $link = new moodle_url('/mod/offlinequiz/report.php',
-                        ['action' => 'download', 'mode' => 'overview', 'queueid' => $queue->id]);
-                    $element['downloadlink'] = $link->out();
-                    $element['documentname'] = $queue->filename;
-                }
+                $importedbylink = new moodle_url('/user/view.php', ['id' => $queue->importuserid, 'course' => $offlinequiz->course]);
+                $element['importedbylink'] = $importedbylink->out();
+                $link = new moodle_url('/mod/offlinequiz/report.php',
+                    ['action' => 'download', 'mode' => 'correct', 'queueid' => $queue->id, 'id' =>$cm->id]);
+                $element['downloadlink'] = $link->out();
+                $element['documentname'] = $queue->filename;
                 $element['queueid'] = $queue->id;
+                $element['numberofpages'] = sizeof($queuefilesmatrix) - 1;
                 $date = new DateTime();
                 $date->setTimestamp(intval($queue->timecreated));
                 $element['importdate'] = userdate($date->getTimestamp());
@@ -308,6 +320,20 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
                 }
                 $element['expandedcontent'] = $this->get_page_content($offlinequiz, $queue->id, $queuefilesmatrix);
                 $element['collapsible'] = true;
+
+                $element['queuestatusdone'] = false;
+                $element['queuestatuserror'] = false;
+                $element['queuestatusprocessing'] = false;
+                $element['queuestatusnotstarted'] = false;
+                if($queue->timestart) {
+                    $element['queuestatusnotstarted'] = true;
+                } else if($this->queuehaserrors($queue)) {
+                    $element['queuestatuserror'] = true;
+                } else if($queue->timestarted) {
+                    $element['queuestatusprocessing'] = true;
+                } else {
+                    $element['queuestatusdone'] = true;
+                }
                 $elements[] = $element;
             }
             $context['queues'] = $elements;
@@ -353,6 +379,17 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
         return $rendered;
     }
 
+    
+    private function queuehaserrors($queue) {
+        global $DB;
+        if($queue->status == 'error') {
+            return true;
+        }
+        if($DB->record_exists('offlinequiz_queue_data', ['queueid' => $queue->id, 'status' => 'error'])) {
+            return true;
+        }
+        return false;
+    }
     
     public function get_user_name($userid) {
         global $DB;
