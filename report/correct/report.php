@@ -325,11 +325,11 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
                 $element['queuestatuserror'] = false;
                 $element['queuestatusprocessing'] = false;
                 $element['queuestatusnotstarted'] = false;
-                if($queue->timestart) {
+                if(!$queue->timestart) {
                     $element['queuestatusnotstarted'] = true;
                 } else if($this->queuehaserrors($queue)) {
                     $element['queuestatuserror'] = true;
-                } else if($queue->timestarted) {
+                } else if(!$queue->timefinish) {
                     $element['queuestatusprocessing'] = true;
                 } else {
                     $element['queuestatusdone'] = true;
