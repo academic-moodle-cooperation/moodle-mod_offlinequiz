@@ -1344,6 +1344,10 @@ input#showviewbutton {
     color: #2774b9;
 }
 
+.offlinequiz-processing, .offlinequiz-notstarted {
+    color: #777777;
+}
+
 .offlinequiz-locked {
     pointer-events:none;
     opacity:0.8;
