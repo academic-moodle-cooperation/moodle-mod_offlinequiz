@@ -32,6 +32,7 @@ class extract_files extends \core\task\adhoc_task {
         $dirname = "{$CFG->dataroot}/offlinequiz/import/$queue->id";
         $importfile = "$dirname/$queue->filename";
         $files = array();
+        require_once $CFG->libdir . '/filelib.php';
         $mimetype = mimeinfo('type', $importfile);
         if ($mimetype == 'application/zip') {
             $fp = get_file_packer('application/zip');
@@ -40,7 +41,7 @@ class extract_files extends \core\task\adhoc_task {
                 unlink($importfile);
                 $files = get_directory_list($dirname);
                 foreach ($files as $file) {
-                    $mimetype = mimeinfo('type', $file);
+                    $mimetype = \mimeinfo('type', $file);
                     if ($mimetype == 'application/pdf') {
                         $this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file);
                     }
