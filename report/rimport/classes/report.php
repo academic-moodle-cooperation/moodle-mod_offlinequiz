@@ -85,6 +85,7 @@ class report extends default_report {
             $job->timestart = 0;
             $job->timefinish = 0;
             $job->status = 'uploading';
+            $job->filename= $realfilename;
             if (!$job->id = $DB->insert_record('offlinequiz_queue', $job)) {
                 echo $OUTPUT->notification(get_string('couldnotcreatejob', 'offlinequiz_rimport'), 'notifyproblem');
             }
