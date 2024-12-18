@@ -265,26 +265,23 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
 
     private function display_uploaded_files($offlinequiz, $cm) {
         global $DB, $OUTPUT;
-        $sql = "SELECT q.*
+        $queues = $DB->get_records('offlinequiz_queue',['offlinequizid' => $offlinequiz->id]);
+        
+        $sql = "SELECT q.id queueid, qd.id queuedataid, qd.status status, qd.filename filename
                   FROM {offlinequiz_queue} q
-                 WHERE q.offlinequizid = :offlinequizid
-                   ";
-        $queues = $DB->get_records_sql($sql,['offlinequizid' => $offlinequiz->id]);
-        $queuefiles = $DB->get_records('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id]);
+                  JOIN {offlinequiz_queue_data} qd on q.id = qd.queueid
+             LEFT JOIN {offlinequiz_scanned_pages} sp ON sp.queuedataid = qd.id
+                 WHERE q.offlinequizid = :offlinequizid";
+        $queuefiles = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id]);
         $queuefilesmatrix = [];
-        $queuefilesmatrix[0] = [];
         if($queuefiles) {
             foreach ($queuefiles as $queuefile) {
-                if ($queuefile->queuedataid && !array_key_exists($queuefile->queuedataid, $queuefilesmatrix)) {
-                    $queuefilesmatrix[$queuefile->queuedataid] = [];
-                }
                 if ($queuefile->queuedataid) {
-                    $queuefilesmatrix[$queuefile->queuedataid][$queuefile->id] = $queuefile;
-                } else {
-                    //There is no queue anymore. W
-                    $queuefilesmatrix[0][$queuefile->id] = $queuefile;
+                    if (!array_key_exists($queuefile->queueid, $queuefilesmatrix)) {
+                        $queuefilesmatrix[$queuefile->queueid] = [];
+                    }
+                    $queuefilesmatrix[$queuefile->queueid][$queuefile->queuedataid] = $queuefile;
                 }
-                
             }
         }
         if($queues) {
@@ -344,7 +341,7 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
 
     
     public function get_page_content($offlinequiz, $queueid = 0, $queuepagematrix = []) {
-        global $OUTPUT,$DB;
+        global $OUTPUT, $DB;
         $rendered = '';
         if($queueid && array_key_exists($queueid,$queuepagematrix)) {
             $context = [];
