@@ -3,6 +3,9 @@
 
 namespace offlinequiz_rimport\task\adhoc;
 
+use function PHPUnit\Framework\throwException;
+use Complex\Exception;
+
 /**
  * An example of an adhoc task.
  */
@@ -70,8 +73,13 @@ class extract_files extends \core\task\adhoc_task {
         } else if ($mimetype == 'application/pdf') {
             $files = $this->extract_pdf_to_tiff ( $dirname, $importfile );
         } else if (preg_match('/^image/' , $mimetype)) {
-            
             $files[] = $queue->filename;
+        } else {
+            $queue->status = 'error';
+            $a = new \stdClass();
+            $a->mimetype = $mimetype;
+            $DB->update_record('offlinequiz_queue', $queue);
+            throw new Exception(get_string('unknownmimetype', 'offlinequiz', $a));
         }
         $added = count($files);
         $threshold = get_config('offlinequiz', 'blackwhitethreshold');
@@ -92,13 +100,13 @@ class extract_files extends \core\task\adhoc_task {
        $queue->status = 'finished';
        $queue->timefinished = time();
        
-    } finally {
-        // Just in case if there is an error and it's still processing write that into the queue.
-        if($queue->status == 'processing') {
-            $queue->status = 'error';
-            $queue->error = 'couldnotextractpages';
-            $DB->update_record('offlinequiz_queue', $queue);
-        }
+        } finally {
+            // Just in case if there is an error and it's still processing write that into the queue.
+            if($queue->status == 'processing') {
+                $queue->status = 'error';
+                $queue->error = 'couldnotextractpages';
+                $DB->update_record('offlinequiz_queue', $queue);
+            }
         }
     }
 
