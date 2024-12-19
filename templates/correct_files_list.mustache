@@ -15,22 +15,24 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 <div>
-  <h5> {{#str}} queuefileheader, mod_offlinequiz {{/str}} </h5>
-  <div>
+  <div class="container-fluid>
     {{#files}}
       <div class="offlinequiz-queue-file">
-        <h6> {{filename}} </h6>
-        <span> {{#str}} queuefilestatus, mod_offlinequiz {{/str}}
-          {{#done}}
-            <i class="fa fa-check-circle notifysuccess"></i>
-          {{/done}}
-          {{#executing}}
-            <!--TODO executing icon-->
-          {{/executing}}
-          {{#error}}
-            <i class="fa fa-exclamation-circle offlinequiz-nextitem"></i>
-          {{/error}}
-          {{statusmessage}}
+        
+        <span>
+          {{#filestatusdone}}
+              <i class="fa fa-lg fa-solid fa-check-circle notifysuccess"></i>
+          {{/filestatusdone}}
+          {{#filestatuserror}}
+            <i class="fa fa-lg fa-regular fa-exclamation-circle offlinequiz-nextitem"></i>
+          {{/filestatuserror}}
+          {{#filestatusprocessing}}
+            <i class="fa fa-lg fa-regular fa-spinner offlinequiz-processing"></i>
+          {{/filestatusprocessing}}
+          {{#filestatusnotstarted}}
+            <i class="far fa-lg fa-regular fa-circle offlinequiz-notstarted"></i>
+          {{/filestatusnotstarted}}
+          {{filename}}
         </span>
 
         {{#evaluated}}
