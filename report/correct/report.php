@@ -355,10 +355,13 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
                     $filecontext['evaluated'] = true;
                 }
                 if($page->status == 'ok') {
-                    $filecontext['done'] = true;
-                }
-                if($page->status == 'error') {
-                    $filecontext['error'] = true;
+                    $filecontext['filestatusdone'] = true;
+                } else if($page->status == 'error') {
+                    $filecontext['filestatuserror'] = true;
+                } else if($page->status == 'new'){
+                    $filecontext['filestatusnotstarted'] = true;
+                } else {
+                    $filecontext['filestatusprocessing'] = true;
                 }
                 if (!empty($page->userkey) && $page->userkey) {
                     //TODO get userkey
