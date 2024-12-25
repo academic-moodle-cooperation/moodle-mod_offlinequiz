@@ -101,7 +101,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             \core\task\manager::queue_adhoc_task($task, true);
             // Notify the user.
             echo $OUTPUT->notification(get_string('addingfilestoqueue', 'offlinequiz_rimport'), 'notifysuccess');
-            echo $OUTPUT->continue_button($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id . '&mode=rimport');
+            echo $OUTPUT->continue_button($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id . '&mode=correct');
         } else {
 
             // Print info about offlinequiz_queue jobs.

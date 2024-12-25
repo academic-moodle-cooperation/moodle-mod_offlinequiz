@@ -15,11 +15,10 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 <div>
-  <div class="container-fluid>
+  <div class="container-fluid offlinequiz-correct-filelist">
     {{#files}}
-      <div class="offlinequiz-queue-file">
-        
-        <span>
+      <div class="offlinequiz-queue-file row">
+        <div class="col-1">
           {{#filestatusdone}}
               <i class="fa fa-lg fa-solid fa-check-circle notifysuccess"></i>
           {{/filestatusdone}}
@@ -32,18 +31,30 @@
           {{#filestatusnotstarted}}
             <i class="far fa-lg fa-regular fa-circle offlinequiz-notstarted"></i>
           {{/filestatusnotstarted}}
+        </div>
+        <div class="col-5">
           {{filename}}
-        </span>
-
-        {{#evaluated}}
-          <span> {{#str}} queuefilestudent, mod_offlinequiz {{/str}} {{studentname}}</span>
-          <span> {{#str}} queuefilepagenumber, mod_offlinequiz {{/str}} {{pagenumber}} </span>
-          <span> {{#str}} queuefilegroupnumber, mod_offlinequiz {{/str}} {{groupnumber}} </span>
-          {{#error}}
-            <a href="{{correctlink}}"> {{#str}} queuefilecorrect, mod_offlinequiz {{/str}}</a>
-          {{/error}}
-        {{/evaluated}}
-        <a href="{{fileurl}}">{{#str}} queuedownload, mod_offlinequiz {{/str}}</a>
+        </div>
+        <div class="col-5">
+          {{#filestatusnotstarted}}
+            {{#str}} queuefilenotstarted, mod_offlinequiz {{/str}}
+          {{/filestatusnotstarted}}
+          {{#filestatusprocessing}}
+            {{#str}} queuefileprocessing, mod_offlinequiz {{/str}}
+          {{/filestatusprocessing}}
+          {{#evaluated}}
+            <span> {{#str}} queuefilestudent, mod_offlinequiz {{/str}} {{studentname}}</span>
+            <span> {{#str}} queuefilepagenumber, mod_offlinequiz {{/str}} {{pagenumber}} </span>
+            <span> {{#str}} queuefilegroupnumber, mod_offlinequiz {{/str}} {{groupnumber}} </span>
+            {{#filestatuserror}}
+              <a href="{{correctlink}}"> {{#str}} queuefilecorrect, mod_offlinequiz {{/str}}</a>
+            {{/filestatuserror}}
+          {{/evaluated}}
+        </div>
+        <div class="col-1">
+          <a href="{{{fileurl}}}"><i class="fa-solid fa-download fa-fw"></i> </a>
+          <a href="{{{editurl}}}"><i class="fas fa-edit"></i> </a>
+        </div>
       </div>
     {{/files}}
   </div>
