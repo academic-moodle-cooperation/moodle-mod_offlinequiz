@@ -1472,3 +1472,7 @@ input#showviewbutton {
 .offlinequiz-queue-header {
     display: inline;
 }
+
+.offlinequiz-queue-filelist {
+    padding-top: 1rem;
+}
