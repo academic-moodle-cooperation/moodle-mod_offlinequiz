@@ -267,7 +267,7 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
         global $DB, $OUTPUT;
         $queues = $DB->get_records('offlinequiz_queue',['offlinequizid' => $offlinequiz->id]);
         
-        $sql = "SELECT q.id queueid, qd.id queuedataid, qd.status status, qd.filename filename
+        $sql = "SELECT qd.id queuedataid, q.id queueid, qd.status status, qd.filename filename
                   FROM {offlinequiz_queue} q
                   JOIN {offlinequiz_queue_data} qd on q.id = qd.queueid
              LEFT JOIN {offlinequiz_scanned_pages} sp ON sp.queuedataid = qd.id
@@ -349,7 +349,7 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
 
             foreach($queuepagematrix[$queueid] as $page) {
                 $filecontext = [];
-                $filecontext['filename'] = $page->filename;
+                $filecontext['filename'] = substr($page->filename, strrpos($page->filename, '/') + 1);
                 $filecontext['statusmessage'] = get_string('queuefilestatusmessage_' . $page->status, 'offlinequiz');
                 if($page->status == 'OK'  || $page->status == 'error') {
                     $filecontext['evaluated'] = true;
