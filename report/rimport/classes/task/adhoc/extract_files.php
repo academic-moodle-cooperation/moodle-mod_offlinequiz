@@ -4,7 +4,6 @@
 namespace offlinequiz_rimport\task\adhoc;
 
 use function PHPUnit\Framework\throwException;
-use Complex\Exception;
 
 /**
  * An example of an adhoc task.
@@ -79,7 +78,7 @@ class extract_files extends \core\task\adhoc_task {
             $a = new \stdClass();
             $a->mimetype = $mimetype;
             $DB->update_record('offlinequiz_queue', $queue);
-            throw new Exception(get_string('unknownmimetype', 'offlinequiz', $a));
+            throw new \Exception(get_string('unknownmimetype', 'offlinequiz', $a));
         }
         $added = count($files);
         $threshold = get_config('offlinequiz', 'blackwhitethreshold');
