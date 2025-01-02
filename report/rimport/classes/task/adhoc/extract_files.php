@@ -40,7 +40,6 @@ class extract_files extends \core\task\adhoc_task {
             $fp = get_file_packer('application/zip');
             $files = $fp->extract_to_pathname($importfile, $dirname);
             if ($files) {
-                unlink($importfile);
                 $files = get_directory_list($dirname);
                 foreach ($files as $file) {
                     $mimetype = \mimeinfo('type', $file);
@@ -64,10 +63,6 @@ class extract_files extends \core\task\adhoc_task {
                 fread($handle, 1);
             }
             pclose($handle);
-            if (count(get_directory_list($dirname)) > 1) {
-                // It worked, remove original.
-                unlink($importfile);
-            }
             $files = get_directory_list($dirname);
         } else if ($mimetype == 'application/pdf') {
             $files = $this->extract_pdf_to_tiff ( $dirname, $importfile );
