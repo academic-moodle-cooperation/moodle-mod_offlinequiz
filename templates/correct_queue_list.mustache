@@ -51,12 +51,14 @@
                 <div class="col-8">{{documentname}} <a href="{{{downloadlink}}}"><i class="fa-solid fa-download fa-fw"></i> </a> </div>
               </div>
             </div>
-            <div class="container-fluid offlinequiz-queue-content-info">
-              <div class="row">
-                <div class="col-4">{{#str}} queueamountofpages, mod_offlinequiz {{/str}}</div>
-                <div class="col-8">{{numberofpages}}</div>
+            {{#numberofpages}}
+              <div class="container-fluid offlinequiz-queue-content-info">
+                <div class="row">
+                  <div class="col-4">{{#str}} queueamountofpages, mod_offlinequiz {{/str}}</div>
+                  <div class="col-8">{{numberofpages}}</div>
+                </div>
               </div>
-            </div>
+            {{/numberofpages}}
             <div class="container-fluid offlinequiz-queue-content-info">
               <div class="row">
                 <div class="col-4">{{#str}} queuefileimportedby, mod_offlinequiz {{/str}}</div>

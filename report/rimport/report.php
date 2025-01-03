@@ -71,7 +71,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             // or one from the filesarea.
             $realfilename = $importform->get_new_filename('newfile');
             //escape filename for security reasons
-            $realfilename = preg_replace('/[^A-Za-z0-9_\-]/', '_', $realfilename);
+            $realfilename = preg_replace('/[^A-Za-z0-9\-\_\.]/', '_', $realfilename);;
             // Create a new queue job.
             $job = new \stdClass();
             $job->offlinequizid = $offlinequiz->id;
@@ -97,7 +97,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 $DB->update_record('offlinequiz_queue', $job);
                 throw new moodle_exception('uploadproblem');
             }
-            $task = \offlinequiz_rimport\task\adhoc\extract_files::instance($job->id);
+            $task = \offlinequiz_correct\task\adhoc\extract_files::instance($job->id);
             //Execute ASAP.
             $task->set_next_run_time(time());
             \core\task\manager::queue_adhoc_task($task, true);
