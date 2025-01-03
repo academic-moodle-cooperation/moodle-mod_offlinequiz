@@ -299,7 +299,7 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
                 $element['downloadlink'] = $link->out();
                 $element['documentname'] = $queue->filename;
                 $element['queueid'] = $queue->id;
-                $element['numberofpages'] = sizeof($queuefilesmatrix) - 1;
+                $element['numberofpages'] = sizeof($queuefilesmatrix);
                 $date = new DateTime();
                 $date->setTimestamp(intval($queue->timecreated));
                 $element['importdate'] = userdate($date->getTimestamp());
