@@ -43,9 +43,18 @@
             {{#str}} queuefileprocessing, mod_offlinequiz {{/str}}
           {{/filestatusprocessing}}
           {{#evaluated}}
-            <span> {{#str}} queuefilestudent, mod_offlinequiz {{/str}} {{studentname}}</span>
-            <span> {{#str}} queuefilepagenumber, mod_offlinequiz {{/str}} {{pagenumber}} </span>
+            {{#studentname}}
+            <span> {{#str}} queuefilestudent, mod_offlinequiz {{/str}} {{studentname}}, </span>
+            {{/studentname}}
+            {{#pagenumber}}
+            <span> {{#str}} queuefilepagenumber, mod_offlinequiz {{/str}} {{pagenumber}}, </span>
+            {{/pagenumber}}
+            {{#groupnumber}}
             <span> {{#str}} queuefilegroupnumber, mod_offlinequiz {{/str}} {{groupnumber}} </span>
+            {{/groupnumber}}
+            {{#errormessage}}
+              {{#str}} {{errormessage}}, mod_offlinequiz {{/str}}
+            {{/errormessage}}
             {{#filestatuserror}}
               <a href="{{correctlink}}"> {{#str}} queuefilecorrect, mod_offlinequiz {{/str}}</a>
             {{/filestatuserror}}
