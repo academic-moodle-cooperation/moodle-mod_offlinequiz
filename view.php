@@ -102,7 +102,8 @@ $queues = $DB->get_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz
 $status['pagesinprocessing'] = 0;
 foreach ($queues as $queue) {
     if ($queue->status == 'new' || $queue->status == 'processing') {
-        $status['pagesinprocessing'] += $DB->count_records('offlinequiz_queue_data', ['queueid' => $queue->id]);
+        $status['pagesinprocessing'] += $DB->count_records('offlinequiz_queue_data', ['queueid' => $queue->id, 'status' => 'new']);
+        $status['pagesinprocessing'] += $DB->count_records('offlinequiz_queue_data', ['queueid' => $queue->id, 'status' => 'processing']);
     }
 }
 $status['docsuploaded'] = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id]);
