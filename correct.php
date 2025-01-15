@@ -191,7 +191,11 @@ if ($action == 'cancel') {
     $scannedpage->error = $origerror;
     $scannedpage->time = $origtime;
     $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
-
+    if($scannedpage->status == 'ok') {
+        $DB->set_field('offlinequiz_queue_data', 'status', 'processed', ['id' => $scannedpage->queuedataid]);
+    } else {
+        $DB->set_field('offlinequiz_queue_data', 'status', 'error', ['id' => $scannedpage->queuedataid]);
+    }
     // Display a button to close the window and die.
     echo '<html>';
     echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
@@ -217,6 +221,7 @@ onClick=\"self.close(); return false;\"><br />";
     $DB->set_field('offlinequiz_scanned_pages', 'status', 'ok', array('id' => $scannedpage->id));
     $scannedpage->error = '';
     $DB->set_field('offlinequiz_scanned_pages', 'error', '', array('id' => $scannedpage->id));
+    $DB->set_field('offlinequiz_queue_data','status','processed', ['id' => $scannedpage->queuedataid]);
 
     $groupnumber = required_param('groupnumber', PARAM_TEXT);
     $groupnumber = intval($groupnumber);
@@ -373,6 +378,11 @@ onClick=\"self.close(); return false;\"><br />";
             // Otherwise keep the old resultid.
             $scannedpage->resultid = $oldresultid;
             $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
+            if($scannedpage->status == 'ok') {
+                $DB->set_field('offlinequiz_queue_data', 'status', 'processed', ['id' => $scannedpage->queuedataid]);
+            } else {
+                $DB->set_field('offlinequiz_queue_data', 'status', 'error', ['id' => $scannedpage->queuedataid]);
+            }
         }
         // TODO we have to figure out what to do with the other pages in case of a multipage test.
     }
@@ -396,6 +406,11 @@ onClick=\"self.close(); return false;\"><br />";
     $pagenumber = intval($scannedpage->pagenumber);
 
     $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
+    if($scannedpage->status == 'ok') {
+        $DB->set_field('offlinequiz_queue_data', 'status', 'processed', ['id' => $scannedpage->queuedataid]);
+    } else {
+        $DB->set_field('offlinequiz_queue_data', 'status', 'error', ['id' => $scannedpage->queuedataid]);
+    }
 
     // The updated item information (crosses), will be processed later.
     $rawitemdata = required_param_array('item', PARAM_RAW);
@@ -447,6 +462,11 @@ onClick=\"self.close(); return false;\"><br />";
         $pagenumber = intval($scannedpage->pagenumber);
 
         $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
+        if($scannedpage->status == 'ok') {
+            $DB->set_field('offlinequiz_queue_data', 'status', 'processed', ['id' => $scannedpage->queuedataid]);
+        } else {
+            $DB->set_field('offlinequiz_queue_data', 'status', 'error', ['id' => $scannedpage->queuedataid]);
+        }
     }
 
     // O=============================================.
@@ -513,6 +533,11 @@ onClick=\"self.close(); return false;\"><br />";
     $pagenumber = intval($scannedpage->pagenumber);
 
     $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
+    if($scannedpage->status == 'ok') {
+        $DB->set_field('offlinequiz_queue_data', 'status', 'processed', ['id' => $scannedpage->queuedataid]);
+    } else {
+        $DB->set_field('offlinequiz_queue_data', 'status', 'error', ['id' => $scannedpage->queuedataid]);
+    }
 
 
 } else if ($action == 'enrol' && $offlinequizconfig->oneclickenrol) {
@@ -589,6 +614,12 @@ onClick=\"self.close(); return false;\"><br />";
         }
 
         $DB->update_record('offlinequiz_scanned_pages', $otherpage);
+        if($otherpage->status == 'ok') {
+            $DB->set_field('offlinequiz_queue_data', 'status', 'processed', ['id' => $otherpage->queuedataid]);
+        } else {
+            $DB->set_field('offlinequiz_queue_data', 'status', 'error', ['id' => $otherpage->queuedataid]);
+        }
+
     }
 
     // Now reset the status of the original page and check it again.
@@ -790,6 +821,11 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
             $scannedpage->error = 'insecuremarkings';
             $scannedpage->time = time();
             $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
+            if($scannedpage->status == 'ok') {
+                $DB->set_field('offlinequiz_queue_data', 'status', 'processed', ['id' => $scannedpage->queuedataid]);
+            } else {
+                $DB->set_field('offlinequiz_queue_data', 'status', 'error', ['id' => $scannedpage->queuedataid]);
+            }
         }
     }
 }
