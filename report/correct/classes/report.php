@@ -192,12 +192,24 @@ class report extends default_report {
         $action = optional_param('action', '', PARAM_ACTION);
         if ($action == 'download') {
             $queueid = optional_param('queueid', 0, PARAM_INT);
+            $queuedataid = optional_param('queuedataid', 0, PARAM_INT);
             if($queueid) {
                 $queue = $DB->get_record('offlinequiz_queue', ['id' => $queueid]);
                 if($queue->offlinequizid == $offlinequiz->id) {
-                    $path = "$CFG->dataroot/offlinequiz/$queueid/$queue->filename";
+                    $path = "$CFG->dataroot/offlinequiz/import/$queueid/$queue->filename";
                     send_file($path, $queue->filename);
                     die();
+                }
+            } else if($queuedataid) {
+                $queuedata = $DB->get_record('offlinequiz_queue_data', ['id' => $queuedataid]);
+                if($queuedata) {
+                    $queue = $DB->get_record('offlinequiz_queue', ['id' => $queuedata->queueid]);
+                    if($queue->offlinequizid == $offlinequiz->id) {
+                        $filename = pathinfo($queuedata->filename)['basename'];
+                        $path = "$CFG->dataroot/offlinequiz/import/$queuedata->queueid/$filename";
+                        send_file($path, $filename);
+                        die();
+                    }
                 }
             }
         }
@@ -319,7 +331,7 @@ class report extends default_report {
                 } else {
                     $element['finishtime'] = get_string('queuenotfinished', 'offlinequiz');
                 }
-                $element['expandedcontent'] = $this->get_page_content($offlinequiz, $queue->id, $queuefilesmatrix);
+                $element['expandedcontent'] = $this->get_page_content($cm, $offlinequiz, $queue->id, $queuefilesmatrix);
                 $element['collapsible'] = true;
 
                 $element['queuestatusdone'] = false;
@@ -344,16 +356,17 @@ class report extends default_report {
     }
 
     
-    public function get_page_content($offlinequiz, $queueid = 0, $queuepagematrix = []) {
+    public function get_page_content($cm, $offlinequiz, $queueid = 0, $queuepagematrix = []) {
         global $OUTPUT, $DB;
         $rendered = '';
         if($queueid && array_key_exists($queueid,$queuepagematrix)) {
             $context = [];
             $context['files'] = [];
 
-            foreach($queuepagematrix[$queueid] as $page) {
+            foreach($queuepagematrix[$queueid] as $queuedataid => $page) {
                 $filecontext = [];
                 $filecontext['filename'] = substr($page->filename, strrpos($page->filename, '/') + 1);
+                $filecontext['fileurl'] =  new moodle_url('/mod/offlinequiz/report.php', ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]);
                 $filecontext['statusmessage'] = get_string('queuefilestatusmessage_' . $page->status, 'offlinequiz');
                 if($page->status == 'OK'  || $page->status == 'error') {
                     $filecontext['evaluated'] = true;
@@ -374,7 +387,7 @@ class report extends default_report {
                     //get_
                     // = $this->get_user_name($DB->get_field('user, $return, $conditions));
                     //TODO
-                    $filecontext['studentname'] = 'Hans Wurst';
+                    $filecontext['studentname'] = '';
                 }
                 $context['files'][] = $filecontext;
             }
