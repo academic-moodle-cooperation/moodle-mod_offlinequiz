@@ -43,7 +43,6 @@
             {{/queuestatusnotstarted}}
             <h4 class="offlinequiz-queue-header">{{importdate}}</h4>
           </div>
-
           <div id="offlinequiz-queue-{{queueid}}-content" class="collapse offlinequiz-queue-content" role="group" tabindex="-1">
             <div class="container-fluid offlinequiz-queue-content-info">
               <div class="row">
@@ -81,16 +80,16 @@
           </div>
         </div>
       </div>
-    </div>
-  {{/queues}}
-  <script> 
-    function toggle_queue_content(queueid) {
-      expandedicon = document.querySelector("#queuefilescollapse-" + queueid + " .expanded-icon");
-      collapseicon = document.querySelector("#queuefilescollapse-" + queueid + " .collapsed-icon");
-      element = document.getElementById("offlinequiz-queue-" + queueid + "-content");
-      element.classList.toggle("show");
-      collapseicon.classList.toggle("hide");
-      expandedicon.classList.toggle("hide");
-    }
-  </script>
+    {{/queues}}
+    <script> 
+      function toggle_queue_content(queueid) {
+        expandedicon = document.querySelector("#queuefilescollapse-" + queueid + " .expanded-icon");
+        collapseicon = document.querySelector("#queuefilescollapse-" + queueid + " .collapsed-icon");
+        element = document.getElementById("offlinequiz-queue-" + queueid + "-content");
+        element.classList.toggle("show");
+        collapseicon.classList.toggle("hide");
+        expandedicon.classList.toggle("hide");
+      }
+    </script>
+  </div>
 </div>
