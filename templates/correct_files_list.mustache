@@ -20,7 +20,7 @@
       <div class="offlinequiz-queue-file row">
         <div class="col-1">
           {{#filestatusdone}}
-              <i class="fa fa-lg fa-solid fa-check-circle notifysuccess"></i>
+            <i class="fa fa-lg fa-solid fa-check-circle notifysuccess"></i>
           {{/filestatusdone}}
           {{#filestatuserror}}
             <i class="fa fa-lg fa-regular fa-exclamation-circle offlinequiz-nextitem"></i>
@@ -56,7 +56,7 @@
               {{#str}} {{errormessage}}, mod_offlinequiz {{/str}}
             {{/errormessage}}
             {{#filestatuserror}}
-              <a href="{{correctlink}}"> {{#str}} queuefilecorrect, mod_offlinequiz {{/str}}</a>
+              <a href="{{editurl}}"> {{#str}} queuefilecorrect, mod_offlinequiz {{/str}}</a>
             {{/filestatuserror}}
           {{/evaluated}}
         </div>
