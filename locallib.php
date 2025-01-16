@@ -2582,3 +2582,25 @@ function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
         $trans->allow_commit();
     }
 }
+
+function update_queue_status($queueid) {
+    global $DB;
+    $sql = "SELECT DISTINCT status, count(status) 
+            FROM {offlinequiz_queue_data} qd 
+            WHERE qd.queueid = :queueid
+            GROUP BY status";
+    $statuslist = $DB->get_records_sql($sql,['queueid' => $queueid]);
+    if(array_key_exists('error',$statuslist) ) {
+        $DB->set_field('offlinequiz_queue', 'status', 'error', ['id' => $queueid]);
+        return;
+    } else if(array_key_exists('processing',$statuslist)) {
+        $DB->set_field('offlinequiz_queue', 'status', 'processing', ['id' => $queueid]);
+        return;
+    } else if(!sizeof($statuslist)) {
+        $DB->set_field('offlinequiz_queue', 'status', 'new', ['id' => $queueid]);
+    } else {
+        $DB->set_field('offlinequiz_queue', 'status', 'processed', ['id' => $queueid]);
+    }
+    
+    
+}
