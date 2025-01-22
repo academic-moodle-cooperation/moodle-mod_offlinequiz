@@ -722,7 +722,7 @@ function offlinequiz_check_different_result($scannedpage) {
                 'userid' => $newresult->userid);
 
         $oldresult = $DB->get_record_sql($sql, $params);
-        if ($oldpageid = $DB->get_field('offlinequiz_scanned_pages', 'id',
+        if ($oldresult && $oldpageid = $DB->get_field('offlinequiz_scanned_pages', 'id',
                                         array('resultid' => $oldresult->id, 'pagenumber' => $scannedpage->pagenumber))) {
             $oldchoices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $oldpageid), 'slotnumber, choicenumber');
 

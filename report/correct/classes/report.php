@@ -369,10 +369,10 @@ class report extends default_report {
                 $filecontext['fileurl'] =  new moodle_url('/mod/offlinequiz/report.php', ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]);
                 $filecontext['editurl'] = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
                 $filecontext['statusmessage'] = get_string('queuefilestatusmessage_' . $page->status, 'offlinequiz');
-                if($page->status == 'OK'  || $page->status == 'error') {
+                if($page->status == 'OK'  || $page->status == 'error' || $page->status == 'submitted') {
                     $filecontext['evaluated'] = true;
                 }
-                if($page->status == 'ok') {
+                if($page->status == 'OK' || $page->status == 'submitted' || $page->status == 'missingpages' || $page->status == 'processed') {
                     $filecontext['filestatusdone'] = true;
                 } else if($page->status == 'error') {
                     $filecontext['filestatuserror'] = true;
