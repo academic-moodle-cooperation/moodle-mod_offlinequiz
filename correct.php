@@ -404,7 +404,7 @@ onClick=\"self.close(); return false;\"><br />";
     $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
     $groupnumber = intval($scannedpage->groupnumber);
     $pagenumber = intval($scannedpage->pagenumber);
-
+    $scannedpage = offlinequiz_check_different_result($scannedpage);
     $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
     if($scannedpage->status == 'ok') {
         $DB->set_field('offlinequiz_queue_data', 'status', 'processed', ['id' => $scannedpage->queuedataid]);
