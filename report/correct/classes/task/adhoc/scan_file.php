@@ -75,14 +75,14 @@ class scan_file extends \core\task\adhoc_task
                 // Try to load the image file.
                 echo 'job ' . $queue->id . ': evaluating ' . $queuedata->filename . "\n";
                 $scannedpage = $scanner->load_image($queuedata->filename);
+                $scannedpage->id = $DB->get_field('offlinequiz_scanned_pages', 'id', ['queuedataid' => $queuedata->id],IGNORE_MISSING);
                 if ($scannedpage->status == 'ok') {
                     echo 'job ' . $queue->id . ': image loaded ' . $scannedpage->filename . "\n";
                 } else if ($scannedpage->error == 'filenotfound') {
                     echo 'job ' . $queue->id . ': image file not found: ' . $scannedpage->filename . "\n";
                 }
-                // Unset the origfilename because we don't need it in the DB.
-                unset($scannedpage->origfilename);
                 $scannedpage->offlinequizid = $offlinequiz->id;
+                $scannedpage->queuedataid = $queuedata->id;
 
                 // If we could load the image file, the status is 'ok', so we can check the page for errors.
                 if ($scannedpage->status == 'ok') {
@@ -92,7 +92,6 @@ class scan_file extends \core\task\adhoc_task
                     if (property_exists($scannedpage, 'id') && ! empty($scannedpage->id)) {
                         $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
                     } else {
-                        $scannedpage->queuedataid = $queuedata->id;
                         $scannedpage->id = $DB->insert_record('offlinequiz_scanned_pages', $scannedpage);
                     }
                 }
@@ -160,11 +159,11 @@ class scan_file extends \core\task\adhoc_task
         }
 
         $sql = "SELECT count(*) FROM {offlinequiz_queue_data} oqd
-                        WHERE oqd.queueid = :queueid AND oqd.status <> 'new' AND oqd.status <> 'processing'";
-        $count = $DB->get_record_sql($sql, [
+                        WHERE oqd.queueid = :queueid AND oqd.status = 'new' OR oqd.status = 'processing'";
+        $count = $DB->count_records_sql($sql, [
             'queueid' => $queue->id
         ]);
-        if (!$count) {
+        if ($count == 0) {
             \offlinequiz_update_grades($offlinequiz);
 
             $queue->timefinish = time();
