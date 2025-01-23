@@ -315,7 +315,9 @@ class report extends default_report {
                 $element['downloadlink'] = $link->out();
                 $element['documentname'] = $queue->filename;
                 $element['queueid'] = $queue->id;
-                $element['numberofpages'] = sizeof($queuefilesmatrix);
+                if(key_exists($queue->id, $queuefilesmatrix)) {
+                    $element['numberofpages'] = sizeof($queuefilesmatrix[$queue->id]);
+                }
                 $date = new DateTime();
                 $date->setTimestamp(intval($queue->timecreated));
                 $element['importdate'] = userdate($date->getTimestamp());
@@ -358,6 +360,10 @@ class report extends default_report {
     
     public function get_page_content($cm, $offlinequiz, $queueid = 0, $queuepagematrix = []) {
         global $OUTPUT, $DB;
+        $options = array();
+        $options['height'] = 1200; // Optional.
+        $options['width'] = 1170; // Optional.
+        $options['resizable'] = false;
         $rendered = '';
         if($queueid && array_key_exists($queueid,$queuepagematrix)) {
             $context = [];
@@ -367,7 +373,11 @@ class report extends default_report {
                 $filecontext = [];
                 $filecontext['filename'] = substr($page->filename, strrpos($page->filename, '/') + 1);
                 $filecontext['fileurl'] =  new moodle_url('/mod/offlinequiz/report.php', ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]);
-                $filecontext['editurl'] = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
+                if($page->scannedpageid) {
+                    $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
+                    $filecontext['editurl'] = $OUTPUT->action_link($editurl,new pix_icon('t/edit', get_string('edit')) , new popup_action('click', $editurl, 'correct' .
+                        $page->scannedpageid, $options));
+                }
                 $filecontext['statusmessage'] = get_string('queuefilestatusmessage_' . $page->status, 'offlinequiz');
                 if($page->status == 'OK'  || $page->status == 'error' || $page->status == 'submitted') {
                     $filecontext['evaluated'] = true;
