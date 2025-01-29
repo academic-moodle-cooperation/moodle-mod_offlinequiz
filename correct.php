@@ -142,7 +142,11 @@ if (!$scanner->check_deleted()) {
 if ($action == 'load') {
     $filename = $scannedpage->filename;
     $userkey = $scannedpage->userkey;
-    $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
+    if($userkey) {
+        $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
+    } else {
+        $usernumber = 0;
+    }
     $groupnumber = intval($scannedpage->groupnumber);
     $pagenumber = intval($scannedpage->pagenumber);
 
@@ -401,7 +405,9 @@ onClick=\"self.close(); return false;\"><br />";
     }
 
     $userkey = $scannedpage->userkey;
-    $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
+    if($userkey) {
+        $usernumber = substr($userkey, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
+    }
     $groupnumber = intval($scannedpage->groupnumber);
     $pagenumber = intval($scannedpage->pagenumber);
     $scannedpage = offlinequiz_check_different_result($scannedpage);

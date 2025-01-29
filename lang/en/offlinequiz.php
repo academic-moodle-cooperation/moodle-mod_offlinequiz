@@ -746,6 +746,7 @@ $string['queuefilestatusmessage_error'] = 'Correction necessary';
 $string['queuefilestatusmessage_new'] = 'submitted';
 $string['queuefilestatusmessage_processed'] = 'OK';
 $string['queuefilestatusmessage_submitted'] = 'submitted';
+$string['queuefilestatusmessage_processing'] = 'processing';
 $string['queuefilenotstarted'] = 'Evaluation not started yet';
 $string['queuefileprocessing'] = 'Evaluation in progress...';
 $string['queuefilestudent'] = 'Student name:';
