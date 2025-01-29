@@ -127,8 +127,10 @@ class extract_files extends \core\task\adhoc_task {
         pclose($handle);
 
         $files = get_directory_list($dirname);
-        if (count(get_directory_list($dirname)) > 1) {
-            unset($files[$importfile]);
+        
+        $importfilename = substr($importfile, strrpos($importfile, '/') + 1);
+        if (count(get_directory_list($dirname)) > 1 && $key = array_search($importfilename, $files)) {
+            unset($files[$key]);
             if($unlink) {
                 unlink($importfile);
             }
