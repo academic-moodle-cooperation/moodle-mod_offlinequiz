@@ -48,6 +48,9 @@ require_login($course->id, false, $cm);
 
 if (!offlinequiz_partlist_created($offlinequiz) and $mode != 'editlists') {
     $mode = 'editparticipants';
+    // Notify redirection.
+    $notify = get_string('createlistfirst', 'offlinequiz');
+    \core\notification::info($notify);
 }
 
 $context = context_module::instance($cm->id);
@@ -103,7 +106,7 @@ switch($mode) {
             echo $OUTPUT->header();
             $currenttab = 'participants';
             // Print the tabs.
-            offlinequiz_print_tabs($offlinequiz, 'tabeditparticipants', $cm);
+            offlinequiz_print_tabs($offlinequiz, 'tabparticipantlists', $cm);
         }
 
         switch ($action) {
