@@ -22,7 +22,8 @@
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace offlinequiz_statistics;
+use \flexible_table;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,7 +41,7 @@ require_once($CFG->libdir . '/tablelib.php');
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class offlinequiz_statistics_question_table extends flexible_table {
+class question_table extends flexible_table {
     /** @var object this question with a _stats field. */
     protected $questiondata;
 

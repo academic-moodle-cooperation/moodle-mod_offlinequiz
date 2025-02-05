@@ -25,7 +25,8 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  **/
-
+namespace offlinequiz_statistics;
+use \question_bank;
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -35,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class offlinequiz_statistics_question_stats {
+class question_stats {
     public $questions;
     public $subquestions = array();
 
@@ -72,7 +73,7 @@ class offlinequiz_statistics_question_stats {
      * @return object ready to hold all the question statistics.
      */
     protected function make_blank_question_stats() {
-        $stats = new stdClass();
+        $stats = new \stdClass();
         $stats->slot = null;
         $stats->s = 0;
         $stats->totalmarks = 0;

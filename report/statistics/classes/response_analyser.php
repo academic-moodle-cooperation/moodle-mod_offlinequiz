@@ -25,7 +25,7 @@
  * @since         Moodle 2.5
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace offlinequiz_statistics;
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class offlinequiz_statistics_response_analyser {
+class response_analyser {
     /** @var object the data from the database that defines the question. */
     protected $questiondata;
     protected $loaded = false;
@@ -66,7 +66,7 @@ class offlinequiz_statistics_response_analyser {
     public function __construct($questiondata) {
         $this->questiondata = $questiondata;
 
-        $this->responseclasses = question_bank::get_qtype($questiondata->qtype)->get_possible_responses(
+        $this->responseclasses = \question_bank::get_qtype($questiondata->qtype)->get_possible_responses(
                         $questiondata);
         foreach ($this->responseclasses as $subpartid => $responseclasses) {
             foreach ($responseclasses as $responseclassid => $notused) {
@@ -123,7 +123,7 @@ class offlinequiz_statistics_response_analyser {
      */
     public function analyse($qubaids) {
         // Load data.
-        $dm = new question_engine_data_mapper();
+        $dm = new \question_engine_data_mapper();
         $questionattempts = $dm->load_attempts_at_question($this->questiondata->id, $qubaids);
 
         // Analyse it.
@@ -136,15 +136,15 @@ class offlinequiz_statistics_response_analyser {
 
     /**
      * Analyse the data from one question attempt.
-     * @param question_attempt $qa the data to analyse.
+     * @param \question_attempt $qa the data to analyse.
      */
-    protected function add_data_from_one_attempt(question_attempt $qa) {
-        $blankresponse = question_classified_response::no_response();
+    protected function add_data_from_one_attempt(\question_attempt $qa) {
+        $blankresponse = \question_classified_response::no_response();
 
         $partresponses = $qa->classify_response();
         foreach ($partresponses as $subpartid => $partresponse) {
             if (!isset($this->responses[$subpartid][$partresponse->responseclassid][$partresponse->response])) {
-                $resp = new stdClass();
+                $resp = new \stdClass();
                 $resp->count = 0;
                 if (!is_null($partresponse->fraction)) {
                     $resp->fraction = $partresponse->fraction;
@@ -179,7 +179,7 @@ class offlinequiz_statistics_response_analyser {
         }
 
         foreach ($rows as $row) {
-            $this->responses[$row->subqid][$row->aid][$row->response] = new stdClass();
+            $this->responses[$row->subqid][$row->aid][$row->response] = new \stdClass();
             $this->responses[$row->subqid][$row->aid][$row->response]->count = $row->rcount;
             $this->responses[$row->subqid][$row->aid][$row->response]->fraction = $row->credit;
         }
@@ -197,14 +197,14 @@ class offlinequiz_statistics_response_analyser {
         global $DB;
 
         if (!$this->loaded) {
-            throw new coding_exception(
+            throw new \coding_exception(
                     'Question responses have not been analyised. Cannot store in the database.');
         }
 
         foreach ($this->responses as $subpartid => $partdata) {
             foreach ($partdata as $responseclassid => $classdata) {
                 foreach ($classdata as $response => $data) {
-                    $row = new stdClass();
+                    $row = new \stdClass();
                     $row->offlinequizstatisticsid = $offlinequizstatisticsid;
                     $row->questionid = $this->questiondata->id;
                     $row->subqid = $subpartid;
