@@ -21,12 +21,15 @@
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace offlinequiz_statistics;
+use \flexible_table;
+use \html_writer;
+use \moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
-require_once(__DIR__ . '/statisticslib.php');
+require_once(__DIR__ . '/../statisticslib.php');
 
 
 /**
@@ -36,7 +39,7 @@ require_once(__DIR__ . '/statisticslib.php');
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class offlinequiz_question_answer_statistics_table extends flexible_table {
+class question_answer_statistics_table extends flexible_table {
     /** @var object the offlinequiz settings. */
     protected $offlinequiz;
 
@@ -180,7 +183,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
      */
     protected function col_qtype($question) {
         if (property_exists($question, 'qtype') && $question->qtype) {
-            return question_bank::get_qtype_name($question->qtype);
+            return \question_bank::get_qtype_name($question->qtype);
         } else {
             return '';
         }
@@ -199,7 +202,7 @@ class offlinequiz_question_answer_statistics_table extends flexible_table {
         }
 
         if (property_exists($question, '_stats')) {
-            require_once('statisticslib.php');
+            require_once(__DIR__ . '/../statisticslib.php');
             return mod_offlinequiz_print_column_stats_name($question, $this->baseurl, $name, $this->is_dubious_question($question));
         }
         return $name;

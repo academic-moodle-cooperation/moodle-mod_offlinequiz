@@ -25,12 +25,18 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
+namespace offlinequiz_correct;
+use \context_module;
+use \navigation_node;
+use \moodle_url;
+use \popup_action;
+use mod_offlinequiz\default_report;
+use mod_offlinequiz\correct\offlinequiz_selectall_table;
 
 defined('MOODLE_INTERNAL') || die();
+// require_once($CFG->libdir . '/filelib.php');
 
-require_once($CFG->libdir . '/filelib.php');
-
-class offlinequiz_correct_report extends offlinequiz_default_report {
+class report extends default_report {
     var $context;
     static $users = [];
 
@@ -45,12 +51,10 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
 
         $letterstr = 'ABCDEFGHIJKL';
 
-        require_once('errorpages_table.php');
-
         $tableparams = array('q' => $offlinequiz->id, 'mode' => 'correct', 'action' => 'delete',
                 'strreallydel'  => addslashes(get_string('deletepagecheck', 'offlinequiz')));
 
-        $table = new \mod_offlinequiz\correct\offlinequiz_selectall_table('mod_offlinequiz_import_report', 'report.php', $tableparams);
+        $table = new offlinequiz_selectall_table('mod_offlinequiz_import_report', 'report.php', $tableparams);
 
         $tablecolumns = array('checkbox', 'counter', 'userkey', 'groupnumber', 'pagenumber', 'time', 'error', 'info', 'link');
         $tableheaders = ['', '#', offlinequiz_get_id_field_name(),
@@ -271,7 +275,6 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
                 // Print the table with answer forms that need correction.
                 $this->print_error_report($offlinequiz);
         }
-        
         $this->display_uploaded_files($offlinequiz,$cm);
     }
 
@@ -420,5 +423,23 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
             $this::$users[$userid] = fullname($user);
         }
         return $this::$users[$userid];
+    }
+
+    // Add navigation nodes to mod_offlinequiz_result.
+    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node   {
+        // TODO: Move string to subplugin.
+        $navnode= navigation_node::create(text: get_string('tabofflinequizcorrect', 'offlinequiz'),
+                                        action: new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct']),
+                                        key: $this->get_navigation_key());
+
+        $parentnode = $navigation->get('mod_offlinequiz_results');
+        $parentnode->add_node($navnode);
+        return $navigation;
+    }
+    public function get_report_title(): string {
+        return get_string('correct', 'offlinequiz');
+    }
+    public function get_navigation_key(): string {
+        return 'tabofflinequizcorrect';
     }
 }

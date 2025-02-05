@@ -29,7 +29,6 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/reportlib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/default.php');
 
 $id = optional_param('id', 0, PARAM_INT);
 $q = optional_param('q', 0, PARAM_INT);
@@ -95,22 +94,9 @@ if ($mode == '') {
 } else if (!in_array($mode, $reportlist)) {
     throw new \moodle_exception('erroraccessingreport', 'offlinequiz');
 }
-if (!is_readable("report/$mode/report.php")) {
-    throw new \moodle_exception('reportnotfound', 'offlinequiz', '', $mode);
-}
-
-// Open the selected offlinequiz report and display it.
-$file = $CFG->dirroot . '/mod/offlinequiz/report/' . $mode . '/report.php';
-if (is_readable($file)) {
-    include_once($file);
-}
-$reportclassname = 'offlinequiz_' . $mode . '_report';
-if (!class_exists($reportclassname)) {
-    throw new \moodle_exception('preprocesserror', 'offlinequiz');
-}
-
+// // Open the selected offlinequiz report and display it.
+$report = offlinequiz_instantiate_plugin($mode);
 // Display the report.
-$report = new $reportclassname();
 $report->display($offlinequiz, $cm, $course);
 
 // Print footer.

@@ -21,8 +21,8 @@
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
+namespace offlinequiz_statistics;
+use \moodleform;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class offlinequiz_statistics_settings_form extends moodleform {
+class settings_form extends moodleform {
     protected function definition() {
         $mform = $this->_form;
 

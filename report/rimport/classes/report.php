@@ -25,13 +25,20 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
-
+namespace offlinequiz_rimport;
 defined('MOODLE_INTERNAL') || die();
+use mod_offlinequiz\default_report;
+use \context_module;
+use \moodle_url;
+use \moodle_exception;
+use \navigation_node;
+use \offlinequiz_upload_form;
+use \stdClass;
 
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/upload_form.php');
 require_once($CFG->libdir . '/filelib.php');
 
-class offlinequiz_rimport_report extends offlinequiz_default_report {
+class report extends default_report {
 
     public $context;
     /**
@@ -158,5 +165,21 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                     $importform->display();
             }
         }
+    }
+
+    // Add navigation nodes to mod_offlinequiz_result.
+    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node
+    {     
+        $parentnode = $navigation->get('mod_offlinequiz_results');
+        $parentnode->add(text: get_string('importforms', 'offlinequiz_rimport'),
+                        action:  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport']),
+                        key: $this->get_navigation_key());
+        return $navigation;
+    }
+    public function get_report_title(): string {
+        return get_string('resultimport', 'offlinequiz');
+    }
+    public function get_navigation_key(): string {
+        return 'tabofflinequizupload';
     }
 }
