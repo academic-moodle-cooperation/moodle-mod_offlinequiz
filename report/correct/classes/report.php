@@ -275,14 +275,12 @@ class report extends default_report {
                 // Print the table with answer forms that need correction.
                 $this->print_error_report($offlinequiz);
         }
-        
         $this->display_uploaded_files($offlinequiz,$cm);
     }
 
     private function display_uploaded_files($offlinequiz, $cm) {
         global $DB, $OUTPUT;
         $queues = $DB->get_records('offlinequiz_queue',['offlinequizid' => $offlinequiz->id]);
-        
         $sql = "SELECT qd.id queuedataid, q.id queueid, qd.status status, qd.filename filename, sp.id scannedpageid, sp.error error, sp.userkey userkey
                   FROM {offlinequiz_queue} q
                   JOIN {offlinequiz_queue_data} qd on q.id = qd.queueid
@@ -424,5 +422,23 @@ class report extends default_report {
             $this::$users[$userid] = fullname($user);
         }
         return $this::$users[$userid];
+    }
+
+    // Add navigation nodes to mod_offlinequiz_result.
+    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node   {
+        // TODO: Move string to subplugin.
+        $navnode= navigation_node::create(text: get_string('tabofflinequizcorrect', 'offlinequiz'),
+                                        action: new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct']),
+                                        key: $this->get_navigation_key());
+
+        $parentnode = $navigation->get('mod_offlinequiz_results');
+        $parentnode->add_node($navnode);
+        return $navigation;
+    }
+    public function get_report_title(): string {
+        return get_string('correct', 'offlinequiz');
+    }
+    public function get_navigation_key(): string {
+        return 'tabofflinequizcorrect';
     }
 }
