@@ -32,7 +32,6 @@ global $DB, $CFG;
 
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/default.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
 
 $scannedpageid = optional_param('pageid', 0, PARAM_INT);

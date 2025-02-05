@@ -23,11 +23,9 @@
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+use mod_offlinequiz\correct\offlinequiz_selectall_table;
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/tablelib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/correct/errorpages_table.php');
 
 class participants_report {
     /**

@@ -17,7 +17,7 @@
 require_once(__DIR__ . '/../../config.php');
 require_once('locallib.php');
 
-$tab = optional_param('tab', '', PARAM_ALPHA);
+$tab = optional_param('tab', '', PARAM_ALPHAEXT);
 $id = required_param('id', PARAM_INT);
 
 list($offlinequiz, $course, $cm) = get_course_objects($id, null);
@@ -25,79 +25,99 @@ list($offlinequiz, $course, $cm) = get_course_objects($id, null);
 require_login($course->id, true, $cm);
 $context = context_module::instance($cm->id);
 
-$newurl = new moodle_url('/mod/offlinequiz/view.php', ['id' => $id]);
+$defaulturl = new moodle_url('/mod/offlinequiz/view.php', ['id' => $id]);
 
 // We redirect students to info.
 if (!has_capability('mod/offlinequiz:createofflinequiz', $context)) {
-    redirect($newurl);
+    redirect($defaulturl);
 }
 
+$PAGE->set_url(new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $id, 'tab' => $tab]));
 
+$navigation = offlinequiz_get_tabs_object($offlinequiz, $cm);
 
-
-$tabslist = offlinequiz_get_tabs_object($offlinequiz, $cm);
-if ($tab == 'tabofflinequizcontent') {
-    $sql = "SELECT count(*)
-              FROM {offlinequiz_groups} og
-         LEFT JOIN {offlinequiz_group_questions} ogq ON ogq.offlinegroupid = og.id
-             WHERE ogq.id IS NULL
-               AND og.offlinequizid = :id";
-    $hasmissinggroupquestions = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
-    if ($hasmissinggroupquestions) {
-        $newurl = $tabslist['tabeditgroupquestions']['url'];
-    } else {
-        $newurl = $tabslist['tabpreview']['url'];
+// Give plugins a chance for routing the request.
+$newurl = '';
+$pluginmanager = core_plugin_manager::instance();
+$subplugins = $pluginmanager->get_subplugins_of_plugin('mod_offlinequiz');
+foreach ($subplugins as $subplugin) {
+    // Instantiate class.
+    $plugin = offlinequiz_instantiate_plugin($subplugin->name);
+    if (!$plugin) {
+        continue;
     }
-} else if ($tab == 'tabresults') {
-    $hasresults = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
-    $needscorrections = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
-    if ($needscorrections) {
-        $newurl = $tabslist['tabofflinequizupload']['url'];
-    } else if ($hasresults) {
-        $newurl = $tabslist['tabresultsoverview']['url'];
-    } else {
-        $newurl = $tabslist['tabofflinequizupload']['url'];
+    $askedroute = $plugin->route($offlinequiz, $cm, $course, $tab);
+    if ($askedroute) {
+        $newurl =  $navigation->find($askedroute, null)->action();
+        break;
     }
-} else if ($tab == 'tabattendances') {
-    $existparticipantslists = $DB->record_exists('offlinequiz_p_lists', ['offlinequizid' => $offlinequiz->id]);
-    $sql = "SELECT count(*)
-              FROM {offlinequiz_p_lists} opl
-         LEFT JOIN {offlinequiz_participants} op ON op.listid = opl.id
-              WHERE op.id IS NULL
-                AND opl. offlinequizid = :id";
-    $existslistnoparticipants = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
-    $sql = "SELECT count(*)
-              FROM {offlinequiz_p_lists} opl
-              JOIN {offlinequiz_scanned_p_pages} ospp ON opl.id = ospp.listnumber
-             WHERE opl.offlinequizid = :id
-               AND ospp.status = 'error'";
-    $needscorrection = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
-
-    $sql = "SELECT count(*)
-              FROM {offlinequiz_p_lists} opl
-              JOIN {offlinequiz_scanned_p_pages} ospp ON opl.id = ospp.listnumber
-             WHERE opl.offlinequizid = :id
-               AND ospp.status = 'ok'";
-    $hasresults = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
-    if (!$existparticipantslists) {
-        $newurl = $tabslist['tabparticipantlists']['url'];
-    } else if ($existslistnoparticipants) {
-        $newurl = $tabslist['tabeditparticipants']['url'];
-    } else if ($needscorrection) {
-        $newurl = $tabslist['tabparticipantsupload']['url'];
-    } else if ($hasresults) {
-        $newurl = $tabslist['tabattendancesoverview']['url'];
-    } else {
-        $newurl = $tabslist['tabdownloadparticipantsforms']['url'];
-    }
-} else if ($tab == 'tabforms') {
-    if ($offlinequiz->docscreated) {
-        $newurl = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id,
-                                                                     'mode' => 'createpdfs',
-                                                                     'tab' => 'forms']);
-    } else {
-        $newurl = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id,
-                                                                     'tab' => 'forms']);
-    }
+}
+// If no plugin has a redirection, check the default ones.
+if ($newurl == '') {
+    if ($tab == 'mod_offlinequiz_edit') {
+        $sql = "SELECT count(*)
+                  FROM {offlinequiz_groups} og
+             LEFT JOIN {offlinequiz_group_questions} ogq ON ogq.offlinegroupid = og.id
+                 WHERE ogq.id IS NULL
+                   AND og.offlinequizid = :id";
+        $hasmissinggroupquestions = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
+        if ($hasmissinggroupquestions) {
+            $newurl = $navigation->find('tabeditgroupquestions', null)->action();
+        } else {
+            $newurl = $navigation->find('tabpreview', null)->action();
+        }
+    } else if ($tab == 'mod_offlinequiz_results') { // TODO: Move to plugin Route tab..
+        $hasresults = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
+        $needscorrections = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
+        if ($needscorrections) {
+            $newurl = $navigation->find('tabofflinequizupload', null)->action();
+    
+        } else if ($hasresults) {
+            $newurl = $navigation->find('tabresultsoverview', null)->action();
+        } else {
+            $newurl = $navigation->find('tabofflinequizupload', null)->action();
+        }
+    } else if ($tab == 'tabattendances') {
+        $existparticipantslists = $DB->record_exists('offlinequiz_p_lists', ['offlinequizid' => $offlinequiz->id]);
+        $sql = "SELECT count(*)
+                  FROM {offlinequiz_p_lists} opl
+             LEFT JOIN {offlinequiz_participants} op ON op.listid = opl.id
+                  WHERE op.id IS NULL
+                    AND opl. offlinequizid = :id";
+        $existslistnoparticipants = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
+        $sql = "SELECT count(*)
+                  FROM {offlinequiz_p_lists} opl
+                  JOIN {offlinequiz_scanned_p_pages} ospp ON opl.id = ospp.listnumber
+                 WHERE opl.offlinequizid = :id
+                   AND ospp.status = 'error'";
+        $needscorrection = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
+    
+        $sql = "SELECT count(*)
+                  FROM {offlinequiz_p_lists} opl
+                  JOIN {offlinequiz_scanned_p_pages} ospp ON opl.id = ospp.listnumber
+                 WHERE opl.offlinequizid = :id
+                   AND ospp.status = 'ok'";
+        $hasresults = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
+        if (!$existparticipantslists) {
+            $newurl = $navigation->find('tabparticipantlists', null)->action();
+        } else if ($existslistnoparticipants) {
+            $newurl = $navigation->find('tabeditparticipants', null)->action();
+        } else if ($needscorrection) {
+            $newurl = $navigation->find('tabparticipantsupload', null)->action();
+        } else if ($hasresults) {
+            $newurl = $navigation->find('tabattendancesoverview', null)->action();
+        } else {
+            $newurl = $navigation->find('tabdownloadparticipantsforms', null)->action();
+        }
+    } else if ($tab == 'tabforms') {
+        if ($offlinequiz->docscreated) {
+            $newurl = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id,
+                                                                         'mode' => 'createpdfs',
+                                                                         'tab' => 'forms']);
+        } else {
+            $newurl = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id,
+                                                                         'tab' => 'forms']);
+        }
+}
 }
 redirect($newurl);

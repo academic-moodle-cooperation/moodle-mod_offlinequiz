@@ -26,7 +26,6 @@
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/default.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
