@@ -455,7 +455,7 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         if (!empty($texfilter)) {
             $answertext = $texfilter->filter($answertext);
         }
-        if($question->options->answers[$answer]->answerformat == FORMAT_PLAIN) {
+        if($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
             $answertext = s($answertext);
         }
         // Remove all HTML comments (typically from MS Office).
