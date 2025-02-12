@@ -25,16 +25,16 @@
  */
 
 function showStudentView() {
-    attempt = $('#id_attemptclosed').is(":checked") && !$('#id_attemptclosed').is(":disabled");
-    correctness = $('#id_correctnessclosed').is(":checked") && !$('#id_correctnessclosed').is(":disabled");
-    marks = $('#id_marksclosed').is(":checked") && !$('#id_marksclosed').is(":disabled");
-    specificfeedback = $('#id_specificfeedbackclosed').is(":checked") && !$('#id_specificfeedbackclosed').is(":disabled");
-    generalfeedback = $('#id_generalfeedbackclosed').is(":checked") && !$('#id_generalfeedbackclosed').is(":disabled");
-    rightanswer = $('#id_rightanswerclosed').is(":checked") && !$('#id_rightanswerclosed').is(":disabled");
-    sheet = $('#id_sheetclosed').is(":checked") && !$('#id_sheetclosed').is(":disabled");
-    gradedsheet = $('#id_gradedsheetclosed').is(":checked") && !$('#id_gradedsheetclosed').is(":disabled");
+    attempt = document.getElementById('id_attemptclosed').checked && !document.getElementById('id_attemptclosed').disabled;
+    correctness = document.getElementById('id_correctnessclosed').checked && !document.getElementById('id_correctnessclosed').disabled;
+    marks = document.getElementById('id_marksclosed').checked && !document.getElementById('id_marksclosed').disabled;
+    specificfeedback = document.getElementById('id_specificfeedbackclosed').checked && !document.getElementById('id_specificfeedbackclosed').disabled;
+    generalfeedback = document.getElementById('id_generalfeedbackclosed').checked && !document.getElementById('id_generalfeedbackclosed').disabled;
+    rightanswer = document.getElementById('id_rightanswerclosed').checked && !document.getElementById('id_rightanswerclosed').disabled;
+    sheet = document.getElementById('id_sheetclosed').checked && !document.getElementById('id_sheetclosed').disabled;
+    gradedsheet = document.getElementById('id_gradedsheetclosed').checked && !document.getElementById('id_gradedsheetclosed').disabled;
 
-    baseurl = $('#basefilename').val();
+    baseurl = document.getElementById('basefilename').value;
     imagefile1 = '';
     imagefile2 = '';
     imagefile3 = '';
@@ -97,55 +97,94 @@ function showStudentView() {
         imagefile3 = imagefile3 + '.png';
     }
 
+    const popup = document.querySelector('.Popup');
+    const overlay = document.querySelector('#overlay');
+
     if (imagefile1 != '') {
-        $('<img />').attr({ 'id': 'image1', 'width': '100%', 'src': imagefile1}).appendTo($('.Popup'));
-        $('<br/>').appendTo($('.Popup'));
+        var img = document.createElement('img');
+        img.id = 'image1';
+        img.style.width = '100%';
+        img.src = imagefile1;
+        var br = document.createElement('br');
+        popup.append(img, br);
     }
 
     if (imagefile2 != '') {
-        $('<img />').attr({ 'id': 'image2', 'width': '100%', 'src': imagefile2}).appendTo($('.Popup'));
-        $('<br/>').appendTo($('.Popup'));
+        var img = document.createElement('img');
+        img.id = 'image2';
+        img.style.width = '100%';
+        img.src = imagefile2;
+        var br = document.createElement('br');
+        popup.append(img, br);
     }
 
     if (imagefile3 != '') {
-        $('<img />').attr({ 'id': 'image3', 'width': '100%', 'src': imagefile3}).appendTo($('.Popup'));
-        $('<br/>').appendTo($('.Popup'));
+        var img = document.createElement('img');
+        img.id = 'image3';
+        img.style.width = '100%';
+        img.src = imagefile3;
+        var br = document.createElement('br');
+        popup.append(img, br);
     }
 
     if (pagefile != '') {
-        $('<hr/>').appendTo($('.Popup'));
-        $('<img />').attr({ 'id': 'image4', 'width': '100%', 'src': pagefile}).appendTo($('.Popup'));
-        $('<br/>').appendTo($('.Popup'));
+
+
+        var hr = document.createElement('hr');
+        popup.appendChild(hr);
+
+        var img = document.createElement('img');
+        img.id = 'image4';
+        img.style.width = '100%';  // Use style for percentage-based width
+        img.src = pagefile;
+        popup.appendChild(img);
+
+        var br = document.createElement('br');
+        popup.appendChild(br);
     }
 
-    $('.Popup').fadeIn("slow");
-    $('#overlay').fadeIn("slow");
+    popup.classList.add('fade', 'show');
+    overlay.classList.add('fade', 'show');
 }
 
-function closePopup () {
-    $('.Popup').fadeOut('slow');
-    $('#overlay').fadeOut('slow');
-
-    $('.Popup').children('img').remove();
-    $('.Popup').children('br').remove();
-    $('.Popup').children('hr').remove();
+function closePopup() {
+    const popup = document.querySelector('.Popup');
+    const overlay = document.querySelector('#overlay');
+    
+    popup.classList.add('fade-out');
+    overlay.classList.add('fade-out','hide');
+    popup.classList.remove('fade', 'show');
+    overlay.classList.remove('fade', 'show');
+    
+    popup.addEventListener('transitionend', () => {
+          popup.classList.add('hidden');
+    });
+    overlay.addEventListener('transitionend', () => {
+          overlay.classList.add('hidden');
+    });
+    
+    while (child = popup.querySelector('img, br, hr')) {
+        popup.removeChild(child);
+    }
 }
 
-// Catch ESC key to close popup.
-$(document).keyup(function(e) {
+function closePopupOnEsc(e) {
     if (e.keyCode == 27) {
         closePopup();
-    }   // esc
-});
+    }
+}
 
-// Close popup when user clicks on overlay.
-$("#overlay").click(function(e){
-    if ($('.Popup').is(':visible')) {
+
+
+// Catch ESC key to close popup.
+addEventListener("keyup", closePopupOnEsc);
+
+document.getElementById('overlay').addEventListener('click', function closePopupOnClick() {
+    if (document.getElementsByClassName('Popup')[0].visible) {
         closePopup();
     }
-});
+})
 
-// Prevent events from getting pass .popup.
-$(".Popup").click(function(e){
+document.getElementsByClassName('Popup')[0].addEventListener('click', function(e) {
     e.stopPropagation();
 });

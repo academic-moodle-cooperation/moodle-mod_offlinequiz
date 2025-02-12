@@ -750,6 +750,26 @@ table.offlinequizreviewsummary td.cell {
     top: 0;
     left: 0;
 }
+
+#overlay.fade,
+.Popup.fade {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  display: none;
+}
+
+#overlay.fade.show,
+.Popup.fade.show {
+  opacity: 1;
+  display: block;
+}
+
+#overlay.fade-out,
+.Popup.fade-out {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
 input#showviewbutton {
     display: none;
 }
