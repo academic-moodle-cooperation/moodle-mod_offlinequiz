@@ -617,7 +617,6 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         if (!empty($texfilter)) {
             $answertext = $texfilter->filter($answertext);
         }
-        // If text format is not FORMAT_HTML, escape the text to protect < and > characters #221.
         if($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
             $answertext = s($answertext);
         }
