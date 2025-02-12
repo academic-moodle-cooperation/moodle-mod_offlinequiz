@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+4.5.0
+* [Feature] 4.5 compatible version
+
 4.4.0
 -----------------
 * [Feature] 4.4 compatible version with new logo using the new logo style
