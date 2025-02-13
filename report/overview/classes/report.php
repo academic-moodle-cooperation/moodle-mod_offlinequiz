@@ -26,13 +26,26 @@
  *
  *
  */
+namespace offlinequiz_overview;
 defined('MOODLE_INTERNAL') || die();
 use offlinequiz_result_download\html_download;
+use mod_offlinequiz\default_report;
+use \moodle_url;
+use \navigation_node;
+use \context_module;
+use \context_system;
+use \offlinequiz_results_table;
+use \MoodleODSWorkbook;
+use \MoodleExcelWorkbook;
+use \question_engine;
+use \context_course;
+use \html_writer;
+
 require_once($CFG->libdir . '/tablelib.php');
-require_once('results_table.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/report/overview/results_table.php');
 require_once($CFG->libdir . '/gradelib.php');
 
-class offlinequiz_overview_report extends offlinequiz_default_report {
+class report extends default_report {
 
     /**
      * (non-PHPdoc)
@@ -51,7 +64,7 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
         $groupid = optional_param('group', 0, PARAM_INT);
 
         if ($download && $download == "html") {
-            $selectedresultids = array();
+            $selectedresultids = [];
 
             $offlinequizid = required_param('q', PARAM_INT);
 
@@ -82,12 +95,12 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
 
             require_once($CFG->libdir . '/grouplib.php');
             $groupselecturl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php',
-                    array('id' => $cm->id,
+                    ['id' => $cm->id,
                             'mode' => 'overview',
                             'noresults' => $noresults,
                             'pagesize' => $pagesize,
                             'group' => $groupid
-                    ));
+                    ]);
 
             echo groups_print_activity_menu($cm, $groupselecturl, true);
             echo $OUTPUT->box_end();
@@ -716,5 +729,42 @@ class offlinequiz_overview_report extends offlinequiz_default_report {
                 return format_string($letter);
             }
         }
+    }
+       // Add navigation nodes to mod_offlinequiz_result.
+    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node
+       {
+        // TODO: Move strings to subplugin.
+        $navnode= navigation_node::create(text: get_string('tabresultsoverview', 'offlinequiz'),
+                                        action:  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview']),
+                                        key: $this->get_navigation_key());
+
+        $parentnode = $navigation->get('mod_offlinequiz_results');
+        $parentnode->add_node($navnode);
+        return $navigation;
+       }
+    public function get_report_title(): string {
+        return get_string('results', 'offlinequiz');
+    }
+    public function get_navigation_key(): string {
+        return 'tabresultsoverview';
+    }
+    public function route($offlinequiz, $cm, $course, $tab): string|false
+    {
+        global $DB;
+        if ($tab == 'mod_offlinequiz_results') { // TODO: Move to plugin Route tab..
+            $hasresults = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
+            // JPC: $needscorrections = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
+            // if ($needscorrections) {
+            //     $newurl = $navigation->find('tabofflinequizupload', null)->action();
+        
+            // } else 
+            if ($hasresults) {
+                return 'tabresultsoverview';
+            }
+            //  else {
+            //     $newurl = $navigation->find('tabofflinequizupload', null)->action();
+            // }
+        }
+        return false;
     }
 }

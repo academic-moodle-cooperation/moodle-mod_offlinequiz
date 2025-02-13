@@ -27,9 +27,10 @@
  *
  **/
 namespace mod_offlinequiz\correct;
-defined('MOODLE_INTERNAL') || die();
+use \html_writer;
+use \stdClass;
 
-require_once($CFG->libdir.'/tablelib.php');
+defined('MOODLE_INTERNAL') || die();
 
 class offlinequiz_partlist_table extends offlinequiz_selectall_table {
 
