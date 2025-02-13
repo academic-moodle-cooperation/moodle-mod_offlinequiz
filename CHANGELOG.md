@@ -1,6 +1,7 @@
 CHANGELOG
 =========
 4.5.0
+-----------------
 * [Feature] 4.5 compatible version
 
 4.4.0
