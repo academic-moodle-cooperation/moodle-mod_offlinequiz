@@ -1587,8 +1587,14 @@ function mod_offlinequiz_output_fragment_question_data(array $args): string {
     // Custom question bank View.
     $viewclass = clean_param($args['view'], PARAM_NOTAGS);
 
-    $jsonString = stripslashes($args['extraparams']);
+    $jsonString = $args['extraparams'];
     $extraparamsarray = json_decode($jsonString, true);
+    if ($extraparamsarray === null) {
+        // Backward compatibility prior Moodle 4.3.9, 4.4.6, 4.5.2 and 5.x.
+        $jsonString = stripslashes($args['extraparams']);
+        $extraparamsarray = json_decode($jsonString, true);
+    }
+
     $extraparams['groupid'] = $extraparamsarray['groupid'];
 
     $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $params, $extraparams);
