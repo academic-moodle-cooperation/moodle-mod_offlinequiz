@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+4.5.1
+-----------------
+* [Bug] Fixed that adding questions was not possible, introduced through moodle core 4.5.2
+
 4.5.0
 -----------------
 * [Feature] 4.5 compatible version
