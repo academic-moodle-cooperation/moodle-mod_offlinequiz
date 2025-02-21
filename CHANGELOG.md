@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+4.4.1
+-----------------
+* [Bug] Fixed that adding questions was not possible, introduced through moodle core 4.4.6
+
 4.4.0
 -----------------
 * [Feature] 4.4 compatible version with new logo using the new logo style
