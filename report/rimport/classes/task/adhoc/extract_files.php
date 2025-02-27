@@ -1,7 +1,7 @@
 <?php
 
 
-namespace offlinequiz_correct\task\adhoc;
+namespace offlinequiz_import\task\adhoc;
 
 use function PHPUnit\Framework\throwException;
 
@@ -36,7 +36,7 @@ class extract_files extends \core\task\adhoc_task {
                 $DB->set_field('offlinequiz_queue_data', 'status', 'new', ['queueid' =>$queue->id]);
                 $DB->set_field('offlinequiz_queue_data', 'error', '', ['queueid' =>$queue->id]);
                 foreach ($queuedatas as $queuedata) {
-                    $task = \offlinequiz_correct\task\adhoc\scan_file::instance($queuedata->id);
+                    $task = \offlinequiz_import\task\adhoc\scan_file::instance($queuedata->id);
                     //Execute ASAP.
                     $task->set_next_run_time(time());
                     \core\task\manager::queue_adhoc_task($task, true);
@@ -106,7 +106,7 @@ class extract_files extends \core\task\adhoc_task {
                     $queue->error = 'couldnotextractpages';
                     $added--;
                 }
-                $task = \offlinequiz_correct\task\adhoc\scan_file::instance($jobfile->id);
+                $task = \offlinequiz_import\task\adhoc\scan_file::instance($jobfile->id);
                 //Execute ASAP.
                 $task->set_next_run_time(time());
                 \core\task\manager::queue_adhoc_task($task, true);

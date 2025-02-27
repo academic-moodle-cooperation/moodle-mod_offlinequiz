@@ -104,7 +104,7 @@ class report extends default_report {
                 $DB->update_record('offlinequiz_queue', $job);
                 throw new moodle_exception('uploadproblem');
             }
-            $task = \offlinequiz_correct\task\adhoc\extract_files::instance($job->id);
+            $task = \offlinequiz_import\task\adhoc\extract_files::instance($job->id);
             //Execute ASAP.
             $task->set_next_run_time(time());
             \core\task\manager::queue_adhoc_task($task, true);

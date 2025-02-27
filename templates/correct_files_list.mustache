@@ -42,23 +42,9 @@
           {{#filestatusprocessing}}
             {{#str}} queuefileprocessing, mod_offlinequiz {{/str}}
           {{/filestatusprocessing}}
-          {{#evaluated}}
-            {{#studentname}}
-            <span> {{#str}} queuefilestudent, mod_offlinequiz {{/str}} {{studentname}}, </span>
-            {{/studentname}}
-            {{#pagenumber}}
-            <span> {{#str}} queuefilepagenumber, mod_offlinequiz {{/str}} {{pagenumber}}, </span>
-            {{/pagenumber}}
-            {{#groupnumber}}
-            <span> {{#str}} queuefilegroupnumber, mod_offlinequiz {{/str}} {{groupnumber}} </span>
-            {{/groupnumber}}
-            {{#errormessage}}
-              {{#str}} {{errormessage}}, mod_offlinequiz {{/str}}
-            {{/errormessage}}
-            {{#filestatuserror}}
-              <a href="{{editurl}}"> {{#str}} queuefilecorrect, mod_offlinequiz {{/str}}</a>
-            {{/filestatuserror}}
-          {{/evaluated}}
+          {{#statusmessage}}
+            <span> {{statusmessage}} </span>
+          {{/statusmessage}}
         </div>
         <div class="col-1">
           <a href="{{{fileurl}}}"><i class="fa-solid fa-download fa-fw"></i> </a>
