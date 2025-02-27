@@ -1,5 +1,5 @@
 <?php
-namespace offlinequiz_correct\task\adhoc;
+namespace offlinequiz_import\task\adhoc;
 
 require_once ($CFG->dirroot . '/mod/offlinequiz/lib.php');
 require_once ($CFG->dirroot . '/mod/offlinequiz/locallib.php');
