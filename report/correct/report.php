@@ -279,7 +279,7 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
         global $DB, $OUTPUT;
         $queues = $DB->get_records('offlinequiz_queue',['offlinequizid' => $offlinequiz->id]);
         
-        $sql = "SELECT qd.id queuedataid, q.id queueid, qd.status status, qd.filename filename, sp.id scannedpageid
+        $sql = "SELECT qd.id queuedataid, q.id queueid, qd.status status, qd.filename filename, sp.id scannedpageid, sp.error error, sp.userkey userkey
                   FROM {offlinequiz_queue} q
                   JOIN {offlinequiz_queue_data} qd on q.id = qd.queueid
              LEFT JOIN {offlinequiz_scanned_pages} sp ON sp.queuedataid = qd.id
@@ -355,6 +355,7 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
 
     
     public function get_page_content($cm, $offlinequiz, $queueid = 0, $queuepagematrix = []) {
+        $offlinequizconfig = get_config('offlinequiz');
         global $OUTPUT, $DB;
         $options = array();
         $options['height'] = 1200; // Optional.
@@ -387,14 +388,11 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
                 } else {
                     $filecontext['filestatusprocessing'] = true;
                 }
-                if (!empty($page->userkey) && $page->userkey) {
-                    //TODO get userkey
-
-                    //$userkey = $offlinequizconfig->ID_prefix . $usernumber . $offlinequizconfig->ID_postfix;
-                    //get_
-                    // = $this->get_user_name($DB->get_field('user, $return, $conditions));
-                    //TODO
-                    $filecontext['studentname'] = '';
+                if($page->status == 'error' && $page->error) {
+                    $filecontext['statusmessage'] = get_string('error' . $page->error, 'offlinequiz_rimport');
+                } elseif (!empty($page->userkey) && $page->userkey) {
+                    $user = $DB->get_record('user',[$offlinequizconfig->ID_field => $page->userkey]);
+                    $filecontext['statusmessage'] = fullname($user);
                 }
                 $context['files'][] = $filecontext;
             }
