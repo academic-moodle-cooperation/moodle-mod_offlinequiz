@@ -1840,7 +1840,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     $filters = filter_get_active_in_context($context);
 
     if (array_key_exists('mathjaxloader', $filters)) {
-        $mathjaxfilter = new filter_mathjaxloader\text_filter($context, array());
+        $mathjaxfilter = new filter_mathjaxloader\text_filter($context, []);
         $mathjaxfilter->setup($page, $context);
     }
     if (array_key_exists('tex', $filters)) {
