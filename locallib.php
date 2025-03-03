@@ -1813,7 +1813,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
         $mathjaxfilter->setup($page, $context);
     }
     if (array_key_exists('tex', $filters)) {
-        $texfilter = new filter_tex($context, array());
+        $texfilter = new \filter_tex\text_filter($context, []);
     }
     if ($mathjaxfilter) {
         $text = $mathjaxfilter->filter($text);
