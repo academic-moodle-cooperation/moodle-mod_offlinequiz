@@ -1783,7 +1783,7 @@ function offlinequiz_get_id_field_name() {
 function offlinequiz_print_question_preview($question, $choiceorder, $number, $context, $page) {
     global $CFG, $DB;
 
-    require_once($CFG->dirroot . '/filter/mathjaxloader/filter.php' );
+    //require_once($CFG->dirroot . '/filter/mathjaxloader/filter.php' );
 
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
 
@@ -1809,7 +1809,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     $filters = filter_get_active_in_context($context);
 
     if (array_key_exists('mathjaxloader', $filters)) {
-        $mathjaxfilter = new filter_mathjaxloader($context, array());
+        $mathjaxfilter = new filter_mathjaxloader\text_filter($context, []);
         $mathjaxfilter->setup($page, $context);
     }
     if (array_key_exists('tex', $filters)) {
