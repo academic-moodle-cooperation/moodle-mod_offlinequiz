@@ -425,47 +425,4 @@ class report extends default_report {
         }
         return $this::$users[$userid];
     }
-    /**
-     * @param string dirname
-     * @param string importfile
-     */
-    private function extract_pdf_to_tiff($dirname, $importfile) {
-        // Extract each page to a separate file.
-        $newfile = "$importfile-%03d.tiff";
-        $handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
-        fread($handle, 1);
-        while (!feof($handle)) {
-            fread($handle, 1);
-        }
-        pclose($handle);
-        if (count(get_directory_list($dirname)) > 1) {
-            // It worked, remove original.
-            unlink($importfile);
-        }
-        $files = get_directory_list($dirname);
-        return $files;
-    }
-
-    private function convert_black_white($file, $threshold) {
-        $command = "convert " . realpath($file) . " -threshold $threshold% " . realpath($file);
-        popen($command, 'r');
-    }
-
-    // Add navigation nodes to mod_offlinequiz_result.
-    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node   {
-        // TODO: Move string to subplugin.
-        $navnode= navigation_node::create(text: get_string('tabofflinequizcorrect', 'offlinequiz'),
-                                        action: new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct']),
-                                        key: $this->get_navigation_key());
-
-        $parentnode = $navigation->get('mod_offlinequiz_results');
-        $parentnode->add_node($navnode);
-        return $navigation;
-    }
-    public function get_report_title(): string {
-        return get_string('correct', 'offlinequiz');
-    }
-    public function get_navigation_key(): string {
-        return 'tabofflinequizcorrect';
-    }
 }
