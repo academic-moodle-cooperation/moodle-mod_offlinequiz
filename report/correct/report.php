@@ -421,29 +421,4 @@ class offlinequiz_correct_report extends offlinequiz_default_report {
         }
         return $this::$users[$userid];
     }
-    /**
-     * @param dirname
-     * @param importfile
-     */
-    private function extract_pdf_to_tiff($dirname, $importfile) {
-        // Extract each page to a separate file.
-        $newfile = "$importfile-%03d.tiff";
-        $handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
-        fread($handle, 1);
-        while (!feof($handle)) {
-            fread($handle, 1);
-        }
-        pclose($handle);
-        if (count(get_directory_list($dirname)) > 1) {
-            // It worked, remove original.
-            unlink($importfile);
-        }
-        $files = get_directory_list($dirname);
-        return $files;
-    }
-
-    private function convert_black_white($file, $threshold) {
-        $command = "convert " . realpath($file) . " -threshold $threshold% " . realpath($file);
-        popen($command, 'r');
-    }
 }
