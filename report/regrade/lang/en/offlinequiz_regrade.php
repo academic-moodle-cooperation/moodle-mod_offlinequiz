@@ -27,4 +27,5 @@
  **/
 
 $string['pluginname'] = 'Offlinequiz Regrading';
+$string['privacy:metadata'] = 'This plugin does not store any user related data.';
 $string['reallyregrade'] = 'Really regrade';
