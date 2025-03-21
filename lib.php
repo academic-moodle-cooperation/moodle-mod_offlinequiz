@@ -1577,7 +1577,7 @@ function mod_offlinequiz_output_fragment_question_data(array $args): string {
     $thispageurl = new \moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cmid]);
     $thiscontext = \context_module::instance($cmid);
     $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
-    $defaultcategory = question_make_default_categories($contexts->all());
+    $defaultcategory = question_get_default_category($contexts->lowest()->id);
     $params['cat'] = implode(',', [$defaultcategory->id, $defaultcategory->contextid]);
 
     $course = get_course($params['courseid']);
