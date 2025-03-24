@@ -97,7 +97,7 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
                 $DB->update_record('offlinequiz_queue', $job);
                 throw new moodle_exception('uploadproblem');
             }
-            $task = \offlinequiz_import\task\adhoc\extract_files::instance($job->id);
+            $task = \offlinequiz_rimport\task\adhoc\extract_files::instance($job->id);
             //Execute ASAP.
             $task->set_next_run_time(time());
             \core\task\manager::queue_adhoc_task($task, true);
