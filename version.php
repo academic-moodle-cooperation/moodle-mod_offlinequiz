@@ -1,4 +1,4 @@
-<?php
++<?php
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // It is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2024073001;
+$plugin->version   = 2025015000;
 $plugin->requires  = 2024042200;
 $plugin->component = 'mod_offlinequiz';
 $plugin->maturity  = MATURITY_STABLE;
