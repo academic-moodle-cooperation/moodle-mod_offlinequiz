@@ -38,6 +38,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class report extends default_report {
     var $context;
+    static $users = [];
 
     private function print_error_report($offlinequiz) {
         global $CFG, $DB, $OUTPUT;
@@ -251,6 +252,117 @@ class report extends default_report {
                 // Print the table with answer forms that need correction.
                 $this->print_error_report($offlinequiz);
         }
+        
+        $this->display_uploaded_files($offlinequiz);
+    }
+        
+    private function display_uploaded_files($offlinequiz) {
+        global $DB, $OUTPUT;
+        $sql = "SELECT q.*
+                  FROM {offlinequiz_queue} q
+                 WHERE q.offlinequizid = :offlinequizid
+                   AND EXISTS ( SELECT 1 FROM {offlinequiz_queue_data} qd where q.id = qd.queueid)";
+        $queues = $DB->get_records_sql($sql,['offlinequizid' => $offlinequiz->id]);
+        $queuefiles = $DB->get_records('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id]);
+        $queuefilesmatrix = [];
+        $queuefilesmatrix[0] = [];
+        if($queuefiles) {
+            foreach ($queuefiles as $queuefile) {
+                if ($queuefile->queuedataid && !array_key_exists($queuefile->queuedataid, $queuefilesmatrix)) {
+                    $queuefilesmatrix[$queuefile->queuedataid] = [];
+                }
+                if ($queuefile->queuedataid) {
+                    $queuefilesmatrix[$queuefile->queuedataid][$queuefile->id] = $queuefile;
+                } else {
+                    //There is no queue anymore. W
+                    $queuefilesmatrix[0][$queuefile->id] = $queuefile;
+                }
+                
+            }
+        }
+        if($queues) {
+            $context = [];
+            $context['queues'] =0;
+            $elements = [];
+            foreach($queues as $queue) {
+                $element = [];
+
+                $element['importedby'] = $this->get_user_name($queue->importuserid);
+                if(property_exists($queue, 'filename') && $queue->filename) {
+                    $link = new moodle_url('/mod/offlinequiz/report.php',
+                        ['action' => 'download', 'mode' => 'overview', 'queueid' => $queue->id]);
+                    $element['downloadlink'] = $link->out();
+                    $element['documentname'] = $queue->filename;
+                }
+                $element['queueid'] = $queue->id;
+                $date = new DateTime();
+                $date->setTimestamp(intval($queue->timecreated));
+                $element['importdate'] = userdate($date->getTimestamp());
+                if($queue->timestart) {
+                    $date->setTimestamp(intval($queue->timestart));
+                    $element['starttime'] = userdate($date->getTimestamp());
+                } else {
+                    $element['starttime'] = get_string('queuenotstarted', 'offlinequiz');
+                }
+                if($queue->timefinish) {
+                    $date->setTimestamp(intval($queue->timefinish));
+                    $element['finishtime'] = userdate($date->getTimestamp());
+                } else {
+                    $element['finishtime'] = get_string('queuenotfinished', 'offlinequiz');
+                }
+                $element['expandedcontent'] = $this->get_page_content($offlinequiz, $queue->id, $queuefilesmatrix);
+                $element['collapsible'] = true;
+                $elements[] = $element;
+            }
+            $context['queues'] = $elements;
+            $rendered = $OUTPUT->render_from_template('mod_offlinequiz/correct_queue_list', $context);
+            echo $rendered;
+        }
+    }
+
+    
+    public function get_page_content($offlinequiz, $queueid = 0, $queuepagematrix = null) {
+        global $OUTPUT,$DB;
+        if($queueid) {
+            $context = [];
+            $context['files'] = [];
+            foreach($queuepagematrix[$queueid] as $page) {
+                $filecontext = [];
+                $filecontext['filename'] = $page->filename;
+                $filecontext['statusmessage'] = get_string('queuefilestatusmessage_' . $page->status, 'offlinequiz');
+                if($page->status == 'OK'  || $page->status == 'error') {
+                    $filecontext['evaluated'] = true;
+                }
+                if($page->status == 'ok') {
+                    $filecontext['done'] = true;
+                }
+                if($page->status == 'error') {
+                    $filecontext['error'] = true;
+                }
+                if (!empty($page->userkey) && $page->userkey) {
+                    //TODO get userkey
+
+                    //$userkey = $offlinequizconfig->ID_prefix . $usernumber . $offlinequizconfig->ID_postfix;
+                    //get_
+                    // = $this->get_user_name($DB->get_field('user, $return, $conditions));
+                    //TODO
+                    $filecontext['studentname'] = 'Hans Wurst';
+                }
+                $context['files'][] = $filecontext;
+            }
+            $rendered = $OUTPUT->render_from_template('mod_offlinequiz/correct_files_list', $context);
+        }
+        return $rendered;
+    }
+
+    
+    public function get_user_name($userid) {
+        global $DB;
+        if(!array_key_exists($userid, $this::$users)) {
+            $user = $DB->get_record('user', ['id' => $userid]);
+            $this::$users[$userid] = fullname($user);
+        }
+        return $this::$users[$userid];
     }
     /**
      * @param string dirname
