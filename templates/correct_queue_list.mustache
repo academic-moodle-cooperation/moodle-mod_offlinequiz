@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+<div>
+    <h3> {{#str}} queueheader, mod_offlinequiz {{/str}} </h3>
+  <div class="offlinequiz-queue-list">
+    {{#queues}}
+      <div id="offlinequiz-queue-{{queueid}}" class="offlinequiz-queue-item">
+        <div id="offlinequiz-queue-{{queueid}}-header">
+          
+
+          <div>
+            <a role="button" id="queuefilescollapse-{{queueid}}" onclick="toggle_queue_content({{queueid}});">
+            <span class="expanded-icon icon-no-margin p-2 hide" title="Collapse">
+              <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
+            </span>
+            <span class="collapsed-icon icon-no-margin p-2" title="Expand">
+              <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
+            </span>
+            </a>
+            {{#documentname}}
+              <h4> {{documentname}} </h4>
+            {{/documentname}}
+            <span class="offlinequiz-queue-file-property"> {{#str}} queuefileimportedat, mod_offlinequiz {{/str}} {{importdate}} </span>
+            <span class="offlinequiz-queue-file-property"> {{#str}} queuefileimportedby, mod_offlinequiz {{/str}} {{importedby}} </span>
+            <span class="offlinequiz-queue-file-property"> {{#str}} queuestatus, mod_offlinequiz {{/str}} {{status}} </span>
+            <span class="offlinequiz-queue-file-property"> {{#str}} queuestarttime, mod_offlinequiz {{/str}} {{starttime}} </span>
+            <span class="offlinequiz-queue-file-property"> {{#str}} queuefinishedtime, mod_offlinequiz {{/str}} {{finishtime}} </span>
+            {{#downloadlink}}
+              <a href="{{downloadlink}}"> {{#str}} download{{/str}} </span>
+            {{/downloadlink}}
+            {{#deletelink}}
+              <a href="{{deletelink}}"> {{#str}} delete {{/str}} </span>
+            {{/deletelink}}
+            
+          </div>
+
+          <div id="offlinequiz-queue-{{queueid}}-content" class="collapse offlinequiz-queue-content" role="group" tabindex="-1">
+            {{{expandedcontent}}}
+          </div>
+    </div>
+    {{/queues}}
+  </div>
+  <script> 
+    function toggle_queue_content(queueid) {
+      expandedicon = document.querySelector("#queuefilescollapse-" + queueid + " .expanded-icon");
+      collapseicon = document.querySelector("#queuefilescollapse-" + queueid + " .collapsed-icon");
+      element = document.getElementById("offlinequiz-queue-" + queueid + "-content");
+      element.classList.toggle("show");
+      collapseicon.classList.toggle("hide");
+      expandedicon.classList.toggle("hide");
+    }
+  </script>
+</div>
