@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+4.3.5
+-----------------
+* [Bug] Added missing privacy API for the regrade subplugin
 
 4.3.4
 -----------------
