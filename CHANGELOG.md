@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+4.3.4
+-----------------
+* [Bug] Fixed that adding questions was not possible, introduced through moodle core 4.3.10
+
 4.3.3
 -----------------
 * [Bug] Fixed a version upgrade path in Offlinequiz 4.1.5 which lead to offlinequiz not working anymore.
