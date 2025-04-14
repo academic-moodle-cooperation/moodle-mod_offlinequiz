@@ -1708,7 +1708,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2024043002, 'offlinequiz');
     }
     if ($oldversion < 2024071202) {
-        
+
         // Define field pdffont to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('pdffont', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'printstudycodefield');
@@ -1717,7 +1717,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        
+
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024071202, 'offlinequiz');
     }

@@ -378,7 +378,7 @@ function offlinequiz_get_group_questionbankentry_ids($offlinequiz, $groupid) {
 
     // This query only makes sense if it is restricted to a offline group.
     if (!$groupid) {
-        return '';
+        return [];
     }
     
     $sql = "SELECT qv.questionbankentryid
