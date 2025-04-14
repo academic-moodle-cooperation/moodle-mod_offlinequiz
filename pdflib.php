@@ -655,7 +655,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     // We need a mapping from question IDs to slots, assuming that each question occurs only once.
     $slots = $templateusage->get_slots();
 
-    $texfilter = new \filter_tex\text_filter($contex, []);
+    $texfilter = new \filter_tex\text_filter($context, []);
 
     // If shufflequestions has been activated we go through the questions in the order determined by
     // the template question usage.
@@ -809,7 +809,7 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
     $fm->q = 0;
     $fm->a = 0;
 
-    $texfilter = new filter_tex($context, array());
+    $texfilter = new filter_tex\text_filter($context, array());
 
     $pdf = new offlinequiz_answer_pdf('P', 'mm', 'A4');
     $title = offlinequiz_str_html_pdf($offlinequiz->name);

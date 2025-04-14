@@ -1783,8 +1783,6 @@ function offlinequiz_get_id_field_name() {
 function offlinequiz_print_question_preview($question, $choiceorder, $number, $context, $page) {
     global $CFG, $DB;
 
-    //require_once($CFG->dirroot . '/filter/mathjaxloader/filter.php' );
-
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
 
     echo '<div id="q' . $question->id . '" class="preview">
