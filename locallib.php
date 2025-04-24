@@ -210,38 +210,40 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm): navigation_node {
         text: get_string('tabpreview', 'offlinequiz'), 
         action: new moodle_url('/mod/offlinequiz/navigate.php', ['tab' => 'tabforms', 'id' => $cm->id]),
         key: 'tabpreview');
-    // Populate participants tab.
+    // Populate participants tab if it exists. Participants menu exists if "record attendance" is enabled.
     $participantsnode = $secondarynav->get('mod_offlinequiz_participants');
-    // Add "Edit lists" tab.
-    $participantsnode->add(
-        text: get_string('tabparticipantlists', 'offlinequiz'),
-        action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'editlists']),
-        key: 'tabparticipantlists');
-    // Add "Edit participants" tab.
-    $participantsnode->add(
-        text: get_string('tabeditparticipants', 'offlinequiz'),
-        action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'editparticipants']),
-        key: 'tabeditparticipants');
-    // Add "Create PDFs" tab.
-    $participantsnode->add(
-        text: get_string('tabdownloadparticipantsforms', 'offlinequiz'),
-        action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs']),
-        key: 'tabdownloadparticipantsforms');
-    // Add "Upload" tab.
-    $participantsnode->add(
-        text: get_string('tabparticipantsupload', 'offlinequiz'),
-        action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'upload']),
-        key: 'tabparticipantsupload');
-    // Add "Correct" tab.
-    $participantsnode->add(
-        text: get_string('tabparticipantscorrect', 'offlinequiz'),
-        action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'correct']),
-        key: 'tabparticipantscorrect');
-    // Add "Attendances" tab.
-    $participantsnode->add(
-        text: get_string('attendances', 'offlinequiz'),
-        action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'attendances']),
-        key: 'tabattendancesoverview');
+    if ($participantsnode) {
+        // Add "Edit lists" tab.
+        $participantsnode->add(
+            text: get_string('tabparticipantlists', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'editlists']),
+            key: 'tabparticipantlists');
+        // Add "Edit participants" tab.
+        $participantsnode->add(
+            text: get_string('tabeditparticipants', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'editparticipants']),
+            key: 'tabeditparticipants');
+        // Add "Create PDFs" tab.
+        $participantsnode->add(
+            text: get_string('tabdownloadparticipantsforms', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs']),
+            key: 'tabdownloadparticipantsforms');
+        // Add "Upload" tab.
+        $participantsnode->add(
+            text: get_string('tabparticipantsupload', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'upload']),
+            key: 'tabparticipantsupload');
+        // Add "Correct" tab.
+        $participantsnode->add(
+            text: get_string('tabparticipantscorrect', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'correct']),
+            key: 'tabparticipantscorrect');
+        // Add "Attendances" tab.
+        $participantsnode->add(
+            text: get_string('attendances', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'attendances']),
+            key: 'tabattendancesoverview');
+    }
 
     // Add navigation from subplugins.
     $pluginmanager = core_plugin_manager::instance();
