@@ -126,6 +126,22 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         }
     }
 
+    /**
+     * Process question references which replaces the direct connection to quiz slots to question.
+     *
+     * @param array $data the data from the XML file.
+     */
+    public function process_question_reference($data) {
+        global $DB;
+        $data = (object) $data;
+        $data->usingcontextid = $this->get_mappingid('context', $data->usingcontextid);
+        $data->itemid = $this->get_new_parentid('offlinequiz_groupquestion');
+        if ($entry = $this->get_mappingid('question_bank_entry', $data->questionbankentryid)) {
+            $data->questionbankentryid = $entry;
+        }
+        $DB->insert_record('question_references', $data);
+    }
+
     public function process_result_question_usage($data) {
         $this->restore_question_usage_worker($data, 'result_');
     }
@@ -206,7 +222,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             $data->questionid = $newid;
         }
         $newitemid = $DB->insert_record('offlinequiz_group_questions', $data);
-
+        $this->set_mapping('offlinequiz_groupquestion', $oldid, $newitemid);
         if ($this->task->get_old_moduleversion() < 2022071500 || $newid == false) {
             $data = (object) $data;
             $data->usingcontextid = $this->task->get_contextid();
@@ -220,6 +236,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             }
             $data->version = $DB->get_field('question_versions', 'version', ['questionid' => $data->questionid]);
             $DB->insert_record('question_references', $data);
+            
         }
     }
 
