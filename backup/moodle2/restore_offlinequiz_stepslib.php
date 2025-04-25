@@ -74,7 +74,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $groupquestion = new restore_path_element('offlinequiz_groupquestion',
              '/activity/offlinequiz/groups/group/groupquestions/groupquestion');
         $paths[] = $groupquestion;
-        if ($this->task->get_old_moduleversion() >= 2022071500) {
+        if ($this->task->get_old_moduleversion() >= 2024071203) {
             $this->add_question_references($groupquestion, $paths);
         }
 
