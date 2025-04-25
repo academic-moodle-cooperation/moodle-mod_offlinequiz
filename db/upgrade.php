@@ -1721,5 +1721,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024071202, 'offlinequiz');
     }
+    if ($oldversion < 2024071203) {
+        require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
+        offlinequiz_fix_question_references();
+        upgrade_mod_savepoint(true, 2024071203, 'offlinequiz');
+    }
     return true;
 }
