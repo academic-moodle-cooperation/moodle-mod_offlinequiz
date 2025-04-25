@@ -223,7 +223,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         }
         $newitemid = $DB->insert_record('offlinequiz_group_questions', $data);
         $this->set_mapping('offlinequiz_groupquestion', $oldid, $newitemid);
-        if ($this->task->get_old_moduleversion() < 2022071500 || $newid == false) {
+        if ($this->task->get_old_moduleversion() < 2024071203 || $newid == false) {
             $data = (object) $data;
             $data->usingcontextid = $this->task->get_contextid();
             $data->itemid = $newitemid;
