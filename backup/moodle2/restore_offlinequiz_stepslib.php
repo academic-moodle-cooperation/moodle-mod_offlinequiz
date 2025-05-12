@@ -125,6 +125,43 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             }
         }
     }
+    
+    /**
+     * This method does the actual work for process_question_attempt or
+     * process_{nameprefix}_question_attempt.
+     * @param array $data the data from the XML file.
+     * @param string $nameprefix the element name prefix.
+     */
+    protected function restore_question_attempt_worker($data, $nameprefix) {
+        global $DB;
+        
+        $data = (object)$data;
+        $oldid = $data->id;
+        
+        $question = $this->get_mapping('question', $data->questionid);
+        $data->questionid = $question->newitemid;
+        
+        $data->questionusageid = $this->get_new_parentid($nameprefix . 'question_usage');
+        
+        if (!property_exists($data, 'variant')) {
+            $data->variant = 1;
+        }
+        
+        if (!property_exists($data, 'maxfraction')) {
+            $data->maxfraction = 1;
+        }
+        
+        $newitemid = $DB->insert_record('question_attempts', $data);
+        
+        $this->set_mapping($nameprefix . 'question_attempt', $oldid, $newitemid);
+        if (isset($question->info->qtype)) {
+            $qtype = $question->info->qtype;
+        } else {
+            $qtype = $DB->get_record('question', ['id' => $data->questionid])->qtype;
+        }
+        $this->qtypes[$newitemid] = $qtype;
+        $this->newquestionids[$newitemid] = $data->questionid;
+    }
 
     /**
      * Process question references which replaces the direct connection to quiz slots to question.
