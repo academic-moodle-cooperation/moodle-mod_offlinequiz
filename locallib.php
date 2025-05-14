@@ -156,14 +156,24 @@ function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
     if (!$node) {
         return;
     }
-    // Render sibbling.
-    $options = [];
-    // @var navigation_node $child
-    foreach ($node->get_siblings() as $child) {
-        $options[$child->action->out()] = $child->text;
+
+    if(get_config('offlinequiz', 'usetabs')) {
+        foreach ($node->get_siblings() as $child) {
+            $title = isset($child->text)? $child->text : get_string($child->key, 'offlinequiz');
+            $tabobj = new \core\output\tabobject($child->key, $child->action->out(), $title);
+            $toprow[] = $tabobj;
+        }
+        echo $OUTPUT->tabtree($toprow, $currenttab);
+    } else {
+        // Render sibbling.
+        $options = [];
+        // @var navigation_node $child
+        foreach ($node->get_siblings() as $child) {
+                $options[$child->action->out()] = $child->text;
+        }
+        $selectobject = new \url_select($options, $node->action->out(), false);
+        echo $OUTPUT->render($selectobject);
     }
-    $selectobject = new \url_select($options, $node->action->out(), false);
-    echo $OUTPUT->render($selectobject);
 }
 
 /**
