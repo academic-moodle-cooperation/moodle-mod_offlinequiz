@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
 
 
 list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars)
-    = offlinequiz_question_edit_setup('editq', '/mod/offlinequiz/addrandom.php', true);
+= offlinequiz_question_edit_setup('editq', '/mod/offlinequiz/addrandom.php', true);
 $groupnumber = $pagevars['groupnumber'];
 // These params are only passed from page request to request while we stay on
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
@@ -73,9 +73,9 @@ if ($returnurl) {
     $returnurl = new moodle_url($returnurl);
 } else {
     $returnurl = new moodle_url('/mod/offlinequiz/edit.php',
-            array('cmid' => $cmid,
-                  'groupnumber' => $offlinequiz->groupnumber
-            ));
+        ['cmid' => $cmid,
+            'groupnumber' => $offlinequiz->groupnumber
+        ]);
 }
 if ($scrollpos) {
     $returnurl->param('scrollpos', $scrollpos);
@@ -87,20 +87,19 @@ $PAGE->set_url($thispageurl);
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
-$qcobject = new \qbank_managecategories\question_category_object(
-    $pagevars['cpage'],
+$qcobject = new \qbank_managecategories\question_categories(
     $thispageurl,
     $contexts->having_one_edit_tab_cap('categories'),
-    $defaultcategoryobj->id,
-    $defaultcategory,
+    $cmid,
+    $course->id,
     null,
-    $contexts->having_cap('moodle/question:add'));
+    $contexts->lowest());
 
 $mform = new offlinequiz_add_random_form(new moodle_url('/mod/offlinequiz/addrandom.php'),
-                array('contexts' => $contexts,
-                      'cat' => $pagevars['cat'],
-                      'groupnumber' => $offlinequiz->groupnumber
-                ));
+    ['contexts' => $contexts,
+     'cat' => $pagevars['cat'],
+     'groupnumber' => $offlinequiz->groupnumber]
+    );
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
@@ -121,12 +120,11 @@ if ($data = $mform->get_data()) {
 
         $returnurl->param('cat', $categoryid . ',' . $contextid);
     } else {
-        throw new coding_exception(
-                'It seems a form was submitted without any button being pressed???');
+        throw new coding_exception('It seems a form was submitted without any button being pressed???');
     }
 
     offlinequiz_add_random_questions($offlinequiz, $offlinequizgroup, $categoryid,
-            $data->numbertoadd, $includesubcategories, $preventsamequestion);
+        $data->numbertoadd, $includesubcategories, $preventsamequestion);
     offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
     redirect($returnurl);
@@ -151,7 +149,7 @@ if (!$offlinequizname = $DB->get_field($cm->modname, 'name', array('id' => $cm->
 }
 $groupletters = 'ABCDEFGHIJKL';
 echo $OUTPUT->heading(get_string('addrandomquestiontoofflinequiz', 'offlinequiz',
-        array('name' => $offlinequizname, 'group' => $groupletters[$offlinequiz->groupnumber - 1])), 2);
+    ['name' => $offlinequizname, 'group' => $groupletters[$offlinequiz->groupnumber - 1]]), 2);
 $mform->display();
 echo $OUTPUT->footer();
 
