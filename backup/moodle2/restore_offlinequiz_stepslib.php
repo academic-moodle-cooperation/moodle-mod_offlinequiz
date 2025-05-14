@@ -47,20 +47,8 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $offlinequiz = new restore_path_element('offlinequiz', '/activity/offlinequiz');
         $paths[] = $offlinequiz;
 
-        // Scanned pages and their choices and corners.
-        $paths[] = new restore_path_element('offlinequiz_scannedpage', '/activity/offlinequiz/scannedpages/scannedpage');
-        $paths[] = new restore_path_element('offlinequiz_choice', '/activity/offlinequiz/scannedpages/scannedpage/choices/choice');
-        $paths[] = new restore_path_element('offlinequiz_corner', '/activity/offlinequiz/scannedpages/scannedpage/corners/corner');
-
-        // Lists of participants and their scanned pages.
         $paths[] = new restore_path_element('offlinequiz_plist',
-             '/activity/offlinequiz/plists/plist');
-        $paths[] = new restore_path_element('offlinequiz_participant',
-             '/activity/offlinequiz/plists/plist/participants/participant');
-        $paths[] = new restore_path_element('offlinequiz_scannedppage',
-             '/activity/offlinequiz/scannedppages/scannedppage');
-        $paths[] = new restore_path_element('offlinequiz_pchoice',
-             '/activity/offlinequiz/scannedppages/scannedppage/pchoices/pchoice');
+            '/activity/offlinequiz/plists/plist');
 
         // Handle offlinequiz groups.
         // We need to identify this path to add the question usages.
@@ -80,6 +68,18 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
 
         // We only add the results if userinfo was activated.
         if ($userinfo) {
+            // Scanned pages and their choices and corners.
+            $paths[] = new restore_path_element('offlinequiz_scannedpage', '/activity/offlinequiz/scannedpages/scannedpage');
+            $paths[] = new restore_path_element('offlinequiz_choice', '/activity/offlinequiz/scannedpages/scannedpage/choices/choice');
+            $paths[] = new restore_path_element('offlinequiz_corner', '/activity/offlinequiz/scannedpages/scannedpage/corners/corner');
+            
+            // Lists of participants and their scanned pages.
+            $paths[] = new restore_path_element('offlinequiz_participant',
+                '/activity/offlinequiz/plists/plist/participants/participant');
+            $paths[] = new restore_path_element('offlinequiz_scannedppage',
+                '/activity/offlinequiz/scannedppages/scannedppage');
+            $paths[] = new restore_path_element('offlinequiz_pchoice',
+                '/activity/offlinequiz/scannedppages/scannedppage/pchoices/pchoice');
             $offlinequizresult = new restore_path_element('offlinequiz_result',
                 '/activity/offlinequiz/results/result');
             $paths[] = $offlinequizresult;
