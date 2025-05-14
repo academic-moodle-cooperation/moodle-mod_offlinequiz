@@ -182,4 +182,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('offlinequiz/experimentalevaluation',
             get_string('configexperimentalevaluation', 'offlinequiz'),
             get_string('configexperimentalevaluationdesc', 'offlinequiz'), 0));
+    // Enable tabs interface.
+    $settings->add(new admin_setting_configcheckbox('offlinequiz/usetabs', get_string('usetabs', 'offlinequiz'),
+        get_string('usetabsdesc', 'offlinequiz'), 0));
 }
