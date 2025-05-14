@@ -1109,21 +1109,21 @@ function offlinequiz_fix_question_versions() {
         $values = implode(',', $values);
         $DB->set_field('question_attempt_step_data', 'value', $values, ['id' => $value->id]);
         $DB->set_field('question_attempts', 'questionid', $record->newquestionid, ['questionid' => $record->oldquestionid, 'questionusageid' => $templateusage->get_id()]);
-    }
+   }
+   offlinequiz_fix_question_references();
 
+}
+
+function offlinequiz_fix_question_references() {
+    global $DB;
     $sql = "SELECT ogq.id itemid, c.id usingcontextid, 'mod_offlinequiz' component, 'slot' questionarea,  qv.questionbankentryid questionbankentryid, qv.version \"version\"
               FROM {offlinequiz_group_questions} ogq
               JOIN {modules} m ON m.name ='offlinequiz'
               JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = ogq.offlinequizid
               JOIN {context} c ON c.instanceid = cm.id AND c.contextlevel = '70'
               JOIN {question_versions} qv ON qv.questionid = ogq.questionid
-              WHERE NOT EXISTS (
-                   SELECT 1
-                     FROM {question_references} mqr
-                    WHERE component = 'mod_offlinequiz'
-                      AND questionarea = 'slot'
-                      AND itemid = ogq.id
-                    )";
+         LEFT JOIN {question_references} mqr on component = 'mod_offlinequiz' AND questionarea = 'slot' AND itemid = ogq.id
+             WHERE mqr.id is null";
     $sql2 = "INSERT INTO {question_references} (itemid, usingcontextid, component, questionarea, questionbankentryid, version) ($sql LIMIT 10000)";
     $thiscount = $DB->count_records('question_references');
     $lastcount = -1;

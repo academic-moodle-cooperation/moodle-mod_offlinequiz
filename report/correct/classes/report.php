@@ -30,6 +30,8 @@ use \context_module;
 use \navigation_node;
 use \moodle_url;
 use \popup_action;
+use \DateTime;
+use \pix_icon;
 use mod_offlinequiz\default_report;
 use mod_offlinequiz\correct\offlinequiz_selectall_table;
 
@@ -307,9 +309,9 @@ class report extends default_report {
                 $element = [];
 
                 $element['importedby'] = $this->get_user_name($queue->importuserid);
-                $importedbylink = new moodle_url('/user/view.php', ['id' => $queue->importuserid, 'course' => $offlinequiz->course]);
+                $importedbylink = new \moodle_url('/user/view.php', ['id' => $queue->importuserid, 'course' => $offlinequiz->course]);
                 $element['importedbylink'] = $importedbylink->out();
-                $link = new moodle_url('/mod/offlinequiz/report.php',
+                $link = new \moodle_url('/mod/offlinequiz/report.php',
                     ['action' => 'download', 'mode' => 'correct', 'queueid' => $queue->id, 'id' =>$cm->id]);
                 $element['downloadlink'] = $link->out();
                 $element['documentname'] = $queue->filename;
