@@ -26,17 +26,6 @@
 
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 
-M.mod_offlinequiz.init_attempt_form = function(Y) {
-    M.core_question_engine.init_form(Y, '#responseform');
-    Y.on('submit', M.mod_offlinequiz.timer.stop, '#responseform');
-    M.core_formchangechecker.init({formid: 'responseform'});
-};
-
-M.mod_offlinequiz.init_review_form = function(Y) {
-    M.core_question_engine.init_form(Y, '.questionflagsaveform');
-    Y.on('submit', function(e) { e.halt(); }, '.questionflagsaveform');
-};
-
 M.mod_offlinequiz.init_comment_popup = function(Y) {
     // Add a close button to the window.
     var closebutton = Y.Node.create('<input type="button" />');
