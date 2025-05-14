@@ -87,14 +87,13 @@ $PAGE->set_url($thispageurl);
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
-$qcobject = new \qbank_managecategories\question_category_object(
-    $pagevars['cpage'],
+$qcobject = new \qbank_managecategories\question_categories(
     $thispageurl,
     $contexts->having_one_edit_tab_cap('categories'),
-    $defaultcategoryobj->id,
-    $defaultcategory,
+    $cmid,
+    $course->id,
     null,
-    $contexts->having_cap('moodle/question:add'));
+    $contexts->lowest());
 
 $mform = new offlinequiz_add_random_form(new moodle_url('/mod/offlinequiz/addrandom.php'),
                 array('contexts' => $contexts,
