@@ -50,7 +50,9 @@ function offlinequiz_report_list($context) {
     }
 
     $reports = $DB->get_records('offlinequiz_reports', null, 'displayorder DESC', 'name, capability');
-    $reportdirs = \core_component::get_plugin_list('offlinequiz');
+
+    $reportdirs = core_component::get_plugin_list('offlinequiz');
+
 
     // Order the reports tab in descending order of displayorder.
     $reportcaps = array();
