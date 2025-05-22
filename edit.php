@@ -68,8 +68,9 @@ require_login($course, false, $cm);
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
 require_capability('mod/offlinequiz:manage', $contexts->lowest());
 
+$context = $contexts->lowest();
+$defaultcategoryobj = question_get_default_category($context->id);
 
-question_make_default_categories($contexts->all());
 
 // Determine groupid.
 $groupnumber    = $pagevars['groupnumber'];
