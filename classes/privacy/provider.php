@@ -33,6 +33,7 @@ class provider implements
 
 // This plugin currently implements the original plugin\provider interface.
 \core_privacy\local\request\plugin\provider,
+\core_privacy\local\request\user_preference_provider,
 // This plugin implements the userlist-provider.
 \core_privacy\local\request\core_userlist_provider {
     public static function get_metadata(collection $collection) : collection {
@@ -236,6 +237,8 @@ class provider implements
           ],
           'privacy:metadata:offlinequiz_scanned_p_pages'
           );
+
+        $collection->add_user_preference('offlinequiz_pagesize', 'privacy:metadata:offlinequizpagesize');
 
         return $collection;
     }
@@ -456,6 +459,27 @@ class provider implements
         $datafoldername = get_string('privacy:data_folder_name', 'mod_offlinequiz');
         writer::with_context($context)
         ->export_data([$datafoldername], $exportobject);
+    }
+
+    /**
+     * Stores the user preferences related to mod_offlinequiz.
+     *
+     * @param  int $userid The user ID that we want the preferences for.
+     */
+    public static function export_user_preferences(int $userid) {
+        $context = \context_system::instance();
+        $offlinequizpreferences = [
+            'offlinequiz_pagesize' => ['string' => get_string('privacy:metadata:offlinequizpagesize', 'mod_offlinequiz'), 'bool' => false],
+        ];
+        foreach ($offlinequizpreferences as $key => $preference) {
+            $value = get_user_preferences($key, null, $userid);
+            if ($preference['bool']) {
+                $value = transform::yesno($value);
+            }
+            if (isset($value)) {
+                writer::with_context($context)->export_user_preference('mod_offlinequiz', $key, $value, $preference['string']);
+            }
+        }
     }
 
     private static function get_scanned_p_page_objects($pchoices) {
