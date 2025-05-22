@@ -634,6 +634,7 @@ $string['privacy:metadata:offlinequiz_scanned_p_pages:time'] = 'The time this pa
 $string['privacy:metadata:offlinequiz_scanned_p_pages:status'] = 'The status of this scanned page.';
 $string['privacy:metadata:offlinequiz_scanned_p_pages:error'] = 'The error (if exists) that this page triggered while processing.';
 $string['privacy:metadata:offlinequiz_scanned_p_pages'] = 'This table saves participant pages and their general information.';
+$string['privacy:metadata:offlinequizpagesize'] = 'Sets the number of entries for the resultspage.';
 $string['questionanalysis'] = 'Question analysis';
 $string['questionanalysistitle'] = 'Question analysis table';
 $string['questionandansweranalysis'] = 'Question and answer analysis';

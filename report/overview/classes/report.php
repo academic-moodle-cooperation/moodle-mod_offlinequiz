@@ -60,7 +60,22 @@ class report extends default_report {
 
         // Set table options.
         $noresults = optional_param('noresults', 0, PARAM_INT);
-        $pagesize = optional_param('pagesize', 10, PARAM_INT);
+        // set and safe pagesize according to user preferences
+        $pspreference = get_user_preferences('offlinequiz_pagesize');
+        if ($pspreference) {
+            $pagesizedefault = $pspreference;
+        } else {
+            $pagesizedefault = 20;
+        }
+        $pagesize = optional_param('pagesize', $pagesizedefault, PARAM_INT);
+
+        if (!$pspreference) {
+            set_user_preference('offlinequiz_pagesize', $pagesize);
+        }
+        if ($pagesize != $pagesizedefault) {
+            set_user_preference('offlinequiz_pagesize', $pagesize);
+        }
+
         $groupid = optional_param('group', 0, PARAM_INT);
 
         if ($download && $download == "html") {
