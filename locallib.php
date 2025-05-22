@@ -139,101 +139,146 @@ class offlinequiz_question_usage_by_activity extends question_usage_by_activity 
         return $quba;
     }
 }
-
+/**
+ * Print the tertiary menu for offlinequiz using navigation_node structure.
+ * Get sibbling nodes of current active node and render them as select object.
+ */
 function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
-    global $CFG, $OUTPUT;
+    global $CFG, $OUTPUT, $PAGE;
     if (empty($offlinequiz) || empty($currenttab) || empty($cm) ) {
         return;
     }
-    $tabs = offlinequiz_get_tabs_object($offlinequiz, $cm);
-    $ct = $tabs[$currenttab];
-    $options = [];
-    foreach ($tabs as $tabname => $tabobject) {
-        if ($tabobject['tab'] == $ct['tab']) {
-            $options[$tabobject['url']->out()] = isset($tabobject['title'])?$tabobject['title'] : get_string($tabname, 'offlinequiz');
-        }
+    $secondarynav = offlinequiz_get_tabs_object($offlinequiz, $cm);
+    // Print tertiary navigation from secondarynav.
+
+    // Get current node.
+    $node = $secondarynav->find($currenttab, navigation_node::TYPE_CUSTOM);
+    if (!$node) {
+        return;
     }
-    $selectobject = new \url_select($options);
-    echo $OUTPUT->render($selectobject);
+
+    if(get_config('offlinequiz', 'usetabs')) {
+        foreach ($node->get_siblings() as $child) {
+            $title = isset($child->text)? $child->text : get_string($child->key, 'offlinequiz');
+            $tabobj = new \core\output\tabobject($child->key, $child->action->out(), $title);
+            $toprow[] = $tabobj;
+        }
+        echo $OUTPUT->tabtree($toprow, $currenttab);
+    } else {
+        // Render sibbling.
+        $options = [];
+        // @var navigation_node $child
+        foreach ($node->get_siblings() as $child) {
+                $options[$child->action->out()] = $child->text;
+        }
+        $selectobject = new \url_select($options, $node->action->out(), false);
+        echo $OUTPUT->render($selectobject);
+    }
 }
 
-function offlinequiz_get_tabs_object($offlinequiz, $cm) {
-    global $CFG;
+/**
+ * Populate the tertiary navigation structure for offlinequiz.
+ * Tab structure is defined using navigation_node objects.
+ * Navigation hierarchy has nodes with keys:
+ *  mod_offlinequiz_edit ==> tabofflinequizcontent -> Preparation
+ *    - tabeditgroupquestions
+ *    - tabpreview
+ *  mod_offlinequiz_participants ==> tabattendances -> Participants
+ *    - tabparticipantlists ==> mode=editparticipants
+ *    - tabeditparticipants ==> mode=editlists
+ *    - tabdownloadparticipantsforms
+ *    - tabparticipantsupload
+ *    - tabparticipantscorrect
+ *    - tabattendancesoverview
+ *  mod_offlinequiz_results ==> results
+ *  mod_offlinequiz_attendances ==> attendances
+ *  mod_offlinequiz_statistics ==> statistics
+ * Subplugins can add their own nodes to the navigation tree.
+ * 
+ * @param mixed $offlinequiz
+ * @param mixed $cm
+ * @return navigation_node|false
+ */
+function offlinequiz_get_tabs_object($offlinequiz, $cm): navigation_node {
+    global $CFG, $PAGE;
     if (empty($offlinequiz) || empty($cm) ) {
-        return [];
+        return false;
     }
-    $tabs = ['tabeditgroupquestions' =>
-         ['tab' => 'tabofflinequizcontent',
-          'url'  => new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0])],
-     'tabpreview' =>
-         ['tab' => 'tabofflinequizcontent',
-          'url' => new moodle_url('/mod/offlinequiz/navigate.php', ['tab' => 'tabforms', 'id' => $cm->id])],
-      'tabofflinequizupload' =>
-        ['tab' => 'tabresults',
-            'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport'])],
-        'tabofflinequizcorrect' =>
-        ['tab' => 'tabresults',
-            'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct'])],
-        'tabresultsoverview' =>
-         ['tab' => 'tabresults',
-          'url' => new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview'])],
-     'tabstatsoverview' =>
-         ['tab' => 'tabstatistics',
-          'url' => new moodle_url('/mod/offlinequiz/report.php',
-                     ['q' => $offlinequiz->id, 'mode' => 'statistics'])],
-     'tabquestionstats' =>
-         ['tab' => 'tabstatistics',
-          'url' => new moodle_url('/mod/offlinequiz/report.php',
-                     ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionstats'])],
-     'tabquestionandanswerstats' =>
-         ['tab' => 'tabstatistics',
-          'url' => new moodle_url('/mod/offlinequiz/report.php',
-                     ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionandanswerstats'])],
-     'tabparticipantlists' =>
-         ['tab' => 'tabattendances',
-          'url' => new moodle_url('/mod/offlinequiz/participants.php',
-                     ['q' => $offlinequiz->id, 'mode' => 'editlists'])],
-     'tabeditparticipants' =>
-         ['tab' => 'tabattendances',
-          'url' => new moodle_url('/mod/offlinequiz/participants.php',
-                     ['q' => $offlinequiz->id, 'mode' => 'editparticipants'])],
-     'tabdownloadparticipantsforms' =>
-         ['tab' => 'tabattendances',
-          'url' => new moodle_url('/mod/offlinequiz/participants.php',
-                     ['q' => $offlinequiz->id, 'mode' => 'createpdfs'])],
-     'tabparticipantsupload' =>
-         ['tab' => 'tabattendances',
-          'url' => new moodle_url('/mod/offlinequiz/participants.php',
-                     ['q' => $offlinequiz->id, 'mode' => 'upload'])],
-     'tabparticipantscorrect' =>
-         ['tab' => 'tabattendances',
-          'url' => new moodle_url('/mod/offlinequiz/participants.php',
-                     ['q' => $offlinequiz->id, 'mode' => 'correct'])],
-     'tabattendancesoverview' =>
-         ['tab' => 'tabattendances',
-          'url' => new moodle_url('/mod/offlinequiz/participants.php',
-                     ['q' => $offlinequiz->id, 'mode' => 'attendances'])],
-     ];
-    // Add tabs from subplugins.
+    
+    $secondarynav = $PAGE->secondarynav;
+    // Populate static tabs.
+
+    // Populate "Preparation" tab.
+    $preparationnode = $secondarynav->get('mod_offlinequiz_edit');
+    // Add "Edit group questions" tab.
+    $preparationnode->add(
+        text: get_string('tabeditgroupquestions', 'offlinequiz'),
+        action: new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0]),
+        key: 'tabeditgroupquestions');
+    // Add "Preview" tab.
+    $preparationnode->add(
+        text: get_string('tabpreview', 'offlinequiz'), 
+        action: new moodle_url('/mod/offlinequiz/navigate.php', ['tab' => 'tabforms', 'id' => $cm->id]),
+        key: 'tabpreview');
+    // Populate participants tab if it exists. Participants menu exists if "record attendance" is enabled.
+    $participantsnode = $secondarynav->get('mod_offlinequiz_participants');
+    if ($participantsnode) {
+        // Add "Edit lists" tab.
+        $participantsnode->add(
+            text: get_string('tabparticipantlists', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'editlists']),
+            key: 'tabparticipantlists');
+        // Add "Edit participants" tab.
+        $participantsnode->add(
+            text: get_string('tabeditparticipants', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'editparticipants']),
+            key: 'tabeditparticipants');
+        // Add "Create PDFs" tab.
+        $participantsnode->add(
+            text: get_string('tabdownloadparticipantsforms', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs']),
+            key: 'tabdownloadparticipantsforms');
+        // Add "Upload" tab.
+        $participantsnode->add(
+            text: get_string('tabparticipantsupload', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'upload']),
+            key: 'tabparticipantsupload');
+        // Add "Correct" tab.
+        $participantsnode->add(
+            text: get_string('tabparticipantscorrect', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'correct']),
+            key: 'tabparticipantscorrect');
+        // Add "Attendances" tab.
+        $participantsnode->add(
+            text: get_string('attendances', 'offlinequiz'),
+            action: new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'attendances']),
+            key: 'tabattendancesoverview');
+    }
+
+    // Add navigation from subplugins.
     $pluginmanager = core_plugin_manager::instance();
     $subplugins = $pluginmanager->get_subplugins_of_plugin('mod_offlinequiz');
     foreach ($subplugins as $subplugin) {
         // Instantiate the subplugin.
-        $file = $subplugin->rootdir . '/report.php';
-        if (is_readable($file)) {
-            require_once($CFG->dirroot . '/mod/offlinequiz/report/default.php');
-            require_once($file);
-            $class = "offlinequiz_{$subplugin->name}_report";
-            $plugin = new $class();
-            if (method_exists($plugin, 'add_to_tabs')) {
-                $tabs = $plugin->add_to_tabs($tabs, $cm, $offlinequiz);
+        $plugin = offlinequiz_instantiate_plugin($subplugin->name);
+        if ($plugin) {
+            if (method_exists($plugin, 'add_to_navigation')) {
+                $plugin->add_to_navigation($secondarynav, $cm, $offlinequiz);
             }
         }
     }
     
-    return $tabs;
+    return $secondarynav;
 }
-
+function offlinequiz_instantiate_plugin($subpluginname): mixed {
+    // Check if class exists.
+    $class = "offlinequiz_{$subpluginname}\\report";
+    if (class_exists($class)) {
+        return new $class();
+    } else {
+        return false;
+    }
+}
 function offlinequiz_make_questions_usage_by_activity($component, $context) {
     return new offlinequiz_question_usage_by_activity($component, $context);
 }
@@ -1545,7 +1590,7 @@ function offlinequiz_question_edit_button($cmid, $question, $returnurl, $content
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
         return '<a title="' . $action . '" href="' . $questionurl->out() . '"><img src="' .
                 $OUTPUT->pix_url($icon) . '" alt="' . $action . '" />' . $contentaftericon .
-                '</a>';
+                '</a>'; // TODO use $OUTPUT->action_link
     } else {
         return $contentaftericon;
     }
@@ -1783,7 +1828,7 @@ function offlinequiz_get_id_field_name() {
 function offlinequiz_print_question_preview($question, $choiceorder, $number, $context, $page) {
     global $CFG, $DB;
 
-    require_once($CFG->dirroot . '/filter/mathjaxloader/filter.php' );
+    //require_once($CFG->dirroot . '/filter/mathjaxloader/filter.php' );
 
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
 
@@ -1809,11 +1854,11 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     $filters = filter_get_active_in_context($context);
 
     if (array_key_exists('mathjaxloader', $filters)) {
-        $mathjaxfilter = new filter_mathjaxloader($context, array());
+        $mathjaxfilter = new filter_mathjaxloader\text_filter($context, []);
         $mathjaxfilter->setup($page, $context);
     }
     if (array_key_exists('tex', $filters)) {
-        $texfilter = new filter_tex($context, array());
+        $texfilter = new \filter_tex\text_filter($context, []);
     }
     if ($mathjaxfilter) {
         $text = $mathjaxfilter->filter($text);
@@ -1938,7 +1983,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
             'pagesize' => $pagesize,
             'strreallydel' => '');
 
-    $table = new offlinequiz_partlist_table('mod-offlinequiz-participants', 'participants.php', $tableparams);
+    $table = new mod_offlinequiz\correct\offlinequiz_partlist_table('mod-offlinequiz-participants', 'participants.php', $tableparams);
 
     // Define table columns.
     $tablecolumns = array('checkbox', 'picture', 'fullname', $offlinequizconfig->ID_field, 'listnumber', 'attempt', 'checked');
@@ -2414,6 +2459,7 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
         }
         $trans->allow_commit();
     }
+    return false;
 }
 
 /**
@@ -2581,4 +2627,26 @@ function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
 
         $trans->allow_commit();
     }
+}
+
+function update_queue_status($queueid) {
+    global $DB;
+    $sql = "SELECT DISTINCT status, count(status) 
+            FROM {offlinequiz_queue_data} qd 
+            WHERE qd.queueid = :queueid
+            GROUP BY status";
+    $statuslist = $DB->get_records_sql($sql,['queueid' => $queueid]);
+    if(array_key_exists('error',$statuslist) ) {
+        $DB->set_field('offlinequiz_queue', 'status', 'error', ['id' => $queueid]);
+        return;
+    } else if(array_key_exists('processing',$statuslist)) {
+        $DB->set_field('offlinequiz_queue', 'status', 'processing', ['id' => $queueid]);
+        return;
+    } else if(!sizeof($statuslist)) {
+        $DB->set_field('offlinequiz_queue', 'status', 'new', ['id' => $queueid]);
+    } else {
+        $DB->set_field('offlinequiz_queue', 'status', 'processed', ['id' => $queueid]);
+    }
+    
+    
 }

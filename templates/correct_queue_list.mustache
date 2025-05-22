@@ -1,0 +1,95 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+<div>
+  <h3> {{#str}} queueheader, mod_offlinequiz {{/str}} </h3>
+  <div class="offlinequiz-queue-list">
+    {{#queues}}
+      <div id="offlinequiz-queue-{{queueid}}" class="offlinequiz-queue-item">
+        <div id="offlinequiz-queue-{{queueid}}-header">
+          <div>
+            <a role="button" id="queuefilescollapse-{{queueid}}" onclick="toggle_queue_content({{queueid}});">
+              <span class="expanded-icon icon-no-margin p-2 hide" title="Collapse">
+                <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
+              </span>
+              <span class="collapsed-icon icon-no-margin p-2" title="Expand">
+                <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
+              </span>
+            </a>
+            {{#queuestatusdone}}
+              <i class="fa fa-lg fa-solid fa-check-circle notifysuccess"></i>
+            {{/queuestatusdone}}
+            {{#queuestatuserror}}
+              <i class="fa fa-lg fa-regular fa-exclamation-circle offlinequiz-nextitem"></i>
+            {{/queuestatuserror}}
+            {{#queuestatusprocessing}}
+              <i class="fa fa-lg fa-regular fa-spinner offlinequiz-processing"></i>
+            {{/queuestatusprocessing}}
+            {{#queuestatusnotstarted}}
+              <i class="far fa-lg fa-regular fa-circle offlinequiz-notstarted"></i>
+            {{/queuestatusnotstarted}}
+            <h4 class="offlinequiz-queue-header">{{importdate}}</h4>
+          </div>
+          <div id="offlinequiz-queue-{{queueid}}-content" class="collapse offlinequiz-queue-content" role="group" tabindex="-1">
+            <div class="container-fluid offlinequiz-queue-content-info">
+              <div class="row">
+                <div class="col-4">{{#str}} queuefilefilename, mod_offlinequiz {{/str}}</div>
+                <div class="col-8">{{documentname}} <a href="{{{downloadlink}}}"><i class="fa-solid fa-download fa-fw"></i> </a> </div>
+              </div>
+            </div>
+            {{#numberofpages}}
+              <div class="container-fluid offlinequiz-queue-content-info">
+                <div class="row">
+                  <div class="col-4">{{#str}} queueamountofpages, mod_offlinequiz {{/str}}</div>
+                  <div class="col-8">{{numberofpages}}</div>
+                </div>
+              </div>
+            {{/numberofpages}}
+            <div class="container-fluid offlinequiz-queue-content-info">
+              <div class="row">
+                <div class="col-4">{{#str}} queuefileimportedby, mod_offlinequiz {{/str}}</div>
+                <div class="col-8"><a href="{{{importedbylink}}}">{{importedby}}</a></div>
+              </div>
+            </div>
+            <div class="container-fluid offlinequiz-queue-content-info">
+              <div class="row">
+                <div class="col-4">{{#str}} queuestarttime, mod_offlinequiz {{/str}}</div>
+                <div class="col-8">{{starttime}}</div>
+              </div>
+            </div>
+            <div class="container-fluid offlinequiz-queue-content-info">
+              <div class="row">
+                <div class="col-4">{{#str}} queuefinishedtime, mod_offlinequiz {{/str}}</div>
+                <div class="col-8">{{finishtime}}</div>
+              </div>
+            </div>
+            {{{expandedcontent}}}
+          </div>
+        </div>
+      </div>
+    {{/queues}}
+    <script> 
+      function toggle_queue_content(queueid) {
+        expandedicon = document.querySelector("#queuefilescollapse-" + queueid + " .expanded-icon");
+        collapseicon = document.querySelector("#queuefilescollapse-" + queueid + " .collapsed-icon");
+        element = document.getElementById("offlinequiz-queue-" + queueid + "-content");
+        element.classList.toggle("show");
+        collapseicon.classList.toggle("hide");
+        expandedicon.classList.toggle("hide");
+      }
+    </script>
+  </div>
+</div>

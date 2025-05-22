@@ -35,10 +35,11 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  **/
-
+namespace mod_offlinequiz;
+use navigation_node;
 defined('MOODLE_INTERNAL') || die();
 
-abstract class offlinequiz_default_report {
+abstract class default_report {
     const NO_GROUPS_ALLOWED = -2;
 
     /**
@@ -48,7 +49,18 @@ abstract class offlinequiz_default_report {
      * @param $offlinequiz this offlinequiz.
      */
     abstract public function display($cm, $course, $offlinequiz);
-
+    /**
+     * Add this report to the tabs structure.
+     * Extension point for adding the plugin to the tabs.
+     * TODO: move static structure from offlinequiz_get_tabs_object into this function implementations.
+     */
+    abstract public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node;
+    abstract public function get_report_title(): string;
+    /**
+     * Navigation key is used to identify this plugin in tabs and other places.
+     * @return string
+     */
+    abstract public function get_navigation_key(): string;
     /**
      * Initialise some parts of $PAGE and start output.
      *
@@ -56,36 +68,12 @@ abstract class offlinequiz_default_report {
      * @param object $course the course settings.
      * @param object $offlinequiz the offlinequiz settings.
      * @param string $reportmode the report name.
+     * @param string $subtype the subtype of the report.
      */
-    public function print_header_and_tabs($cm, $course, $offlinequiz, $reportmode = 'overview') {
+    public function print_header_and_tabs($cm, $course, $offlinequiz, $reportmode = 'overview', $subtype = '') {
         global $CFG, $PAGE, $OUTPUT;
-        switch ($reportmode) {
-            case 'correct':
-                $reporttitle = get_string('correct', 'offlinequiz');
-                $currenttab = 'tabresultsoverview';
-                break;
-            case 'overview':
-                $reporttitle = get_string('results', 'offlinequiz');
-                $currenttab = 'tabresultsoverview';
-                break;
-            case 'rimport':
-                $reporttitle = get_string('resultimport', 'offlinequiz');
-                $currenttab = 'tabofflinequizupload';
-                break;
-            case 'statsoverview':
-                $reporttitle = get_string('statisticsplural', 'offlinequiz');
-                $currenttab = 'tabstatsoverview';
-                break;
-            case 'questionstats':
-                $reporttitle = get_string('statisticsplural', 'offlinequiz');
-                $currenttab = 'tabquestionstats';
-                break;
-            case 'questionandanswerstats':
-                $reporttitle = get_string('statisticsplural', 'offlinequiz');
-                $currenttab = 'tabquestionandanswerstats';
-                break;
-        }
-
+        $reporttitle = $this->get_report_title();
+        $currenttab = $this->get_navigation_key();
         // Print the page header.
         $PAGE->set_title(format_string($offlinequiz->name) . ' -- ' . $reporttitle);
         $PAGE->set_heading($course->fullname);
@@ -112,12 +100,16 @@ abstract class offlinequiz_default_report {
 
         return $currentgroup;
     }
+    
     /**
-     * Add this report to the tabs structure.
-     * Extension point for adding the plugin to the tabs.
-     * TODO: move static structure from offlinequiz_get_tabs_object into this function implementations.
+     * Route the request to the correct tab depending conditions.
+     * @param object $offlinequiz the offlinequiz settings.
+     * @param object $cm the course-module for this offlinequiz.
+     * @param object $course the course we are in.
+     * @param string $tab the requested tab.
+     * @return string|false the navigation key (tabname) to redirect to, or false if no redirect is needed.
      */
-    public function add_to_tabs($tabs, $cm, $offlinequiz) {
-        return $tabs;
+    public function route($offlinequiz, $cm, $course, $tab): string|false {
+        return false;
     }
 }

@@ -31,7 +31,6 @@ require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->dirroot . '/lib/pdflib.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/type/questionbase.php');
-require_once($CFG->dirroot . '/filter/tex/filter.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/documentlib.php');
 
@@ -125,7 +124,9 @@ class offlinequiz_question_pdf extends offlinequiz_pdf {
                 '/' . $this->getAliasNbPages(), 0, 0, 'C');
     }
 }
-
+/**
+ * Answer form generator.
+ */
 class offlinequiz_answer_pdf extends offlinequiz_pdf {
     public $groupid = 0;
     public $group;
@@ -295,15 +296,176 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $y = $this->GetY();
         $x = $this->GetX();
         // Print bar code for page.
-        offlinequiz_barcodewriter::print_barcode($this, $this->PageNo(), $x, $y);
+        offlinequiz_barcodewriter::print_barcode($this, $this->getGroupPageNo(), $x, $y);
 
         $this->Rect($x, $y, 0.2, 3.7, 'F');
 
         // Page number.
         $this->Ln(3);
         $this->SetFont($font, 'I', 8);
-        $this->Cell(0, 10, offlinequiz_str_html_pdf(get_string('page') . ' ' . $this->getAliasNumPage() . '/' .
-                $this->getAliasNbPages()), 0, 0, 'C');
+        $this->Cell(0, 10, offlinequiz_str_html_pdf(get_string('page') . ' ' . $this->getPageNumGroupAlias() . '/' .
+                                                                $this->getPageGroupAlias()), 0, 0, 'C');
+    }
+    /*
+    * Generates the body of PDF answer form for an offlinequiz group using an optional groupletter.
+    * 
+    * @param offlinequiz_answer_pdf $pdf the PDF object
+    * @param int $maxanswers the maximum number of answers in all question of the offline group
+    * @param question_usage_by_activity $templateusage the template question  usage for this offline group
+    * @param object $offlinequiz The offlinequiz object
+    * @param object $group the offline group object
+    * @param int $courseid the ID of the Moodle course
+    * @param object $context the context of the offline quiz.
+    * @param string $groupletter the groupletter to mark. No mark if empty.
+    */
+    public function add_answer_page($maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter): void    {
+        global $CFG, $DB, $OUTPUT, $USER;
+        // Static variable for caching the questions. Useful in case of consecutive calls.
+        static $questions_cache = [];
+        $pdf = $this; // Shortcut.
+
+        $font = offlinequiz_get_pdffont($offlinequiz);
+
+        // $fm = new stdClass();
+        // $fm->q = 0;
+        // $fm->a = 0;
+
+        // $texfilter = new filter_tex($context, array());
+
+        $title = offlinequiz_str_html_pdf($offlinequiz->name);
+        if (!empty($offlinequiz->time)) {
+            $title = $title . ": " . offlinequiz_str_html_pdf(userdate($offlinequiz->time));
+        }
+        $pdf->set_title($title);
+        $pdf->group = $groupletter;
+        $pdf->groupid = $group->groupnumber;
+        $pdf->offlinequiz = $offlinequiz->id;
+        $pdf->formtype = 4;
+        $pdf->colwidth = 7 * 6.5;
+        if ($maxanswers > 5) {
+            $pdf->formtype = 3;
+            $pdf->colwidth = 9 * 6.5;
+        }
+        if ($maxanswers > 7) {
+            $pdf->formtype = 2;
+            $pdf->colwidth = 14 * 6.5;
+        }
+        if ($maxanswers > 12) {
+            $pdf->formtype = 1;
+            $pdf->colwidth = 26 * 6.5;
+        }
+        if ($maxanswers > 26) {
+            throw new \moodle_exception('Too many answers in one question');
+        }
+        $pdf->userid = $USER->id;
+        $pdf->SetMargins(15, 20, 15);
+        $pdf->SetAutoPageBreak(true, 20);
+        // Start a page group to support generation of page sets. Each pagegroup has its own page numbering.
+        $pdf->startPageGroup();
+        $pdf->AddPage();
+
+        // Load all the questions and quba slots needed by this script.
+        $slots = $templateusage->get_slots();
+
+        // Check cache for questions.
+        if (empty($questions_cache[$offlinequiz->id][$group->id])) {
+            $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
+                    FROM {offlinequiz_group_questions} ogq
+                    JOIN {question} q ON ogq.questionid = q.id
+                    JOIN {question_versions} qv ON qv.questionid = q.id
+                    JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                    JOIN {question_categories} c ON qbe.questioncategoryid = c.id
+                    WHERE ogq.offlinequizid = :offlinequizid
+                    AND ogq.offlinegroupid = :offlinegroupid
+                ORDER BY ogq.slot ASC ";
+            $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
+
+            if (!$questions = $DB->get_records_sql($sql, $params)) {
+                throw new \moodle_exception('noquestionsfound', 'offlinequiz', null,$groupletter);
+            }
+
+            // Load the question type specific information.
+            if (!get_question_options($questions)) {
+                throw new \moodle_exception('Could not load question options');
+            }
+
+            $questions_cache[$offlinequiz->id][$group->id] = $questions;
+        } else {
+            $questions = $questions_cache[$offlinequiz->id][$group->id];
+        }
+        // Counting the total number of multichoice questions in the question usage.
+        $totalnumber = offlinequiz_count_multichoice_questions($templateusage);
+
+        $number = 0;
+        $col = 1;
+        $offsety = 105.5;
+        $offsetx = 17.3;
+        $page = 1;
+
+        $pdf->SetY($offsety);
+
+        $pdf->SetFont($font, 'B', 10);
+        foreach ($slots as $key => $slot) {
+            set_time_limit(120);
+            $slotquestion = $templateusage->get_question($slot);
+            $currentquestionid = $slotquestion->id;
+            $attempt = $templateusage->get_question_attempt($slot);
+            $order = $slotquestion->get_order($attempt);  // Order of the answers.
+
+            // Get the question data.
+            $question = $questions[$currentquestionid];
+
+            // Only look at multichoice questions.
+            if ($question->qtype != 'multichoice' && $question->qtype != 'multichoiceset') {
+                continue;
+            }
+
+            // Print the answer letters every 8 questions.
+            if ($number % 8 == 0) {
+                $pdf->SetFont($font, '', 8);
+                $pdf->SetX(($col - 1) * ($pdf->colwidth) + $offsetx + 5);
+                for ($i = 0; $i < $maxanswers; $i++) {
+                    $pdf->Cell(3.5, 3.5, number_in_style($i, $question->options->answernumbering), 0, 0, 'C');
+                    $pdf->Cell(3, 3.5, '', 0, 0, 'C');
+                }
+                $pdf->Ln(4.5);
+                $pdf->SetFont($font, 'B', 10);
+            }
+
+            $pdf->SetX(($col - 1) * ($pdf->colwidth) + $offsetx);
+
+            $pdf->Cell(5, 1, ($number + 1).")  ", 0, 0, 'R');
+
+            // Print one empty box for each answer.
+            $x = $pdf->GetX();
+            $y = $pdf->GetY();
+
+            for ($i = 1; $i <= count($order); $i++) {
+                // Move the boxes slightly down to align with question number.
+                $pdf->Rect($x, $y + 0.6, 3.5, 3.5, '', array('all' => array('width' => 0.2)));
+                $x += 6.5;
+            }
+
+            $pdf->SetX($x);
+
+            $pdf->Ln(6.5);
+
+            // Switch to next column if necessary.
+            if (($number + 1) % 24 == 0) {
+                $pdf->SetY($offsety);
+                $col++;
+                // Do a pagebreak if necessary.
+                if ($col > $pdf->formtype and ($number + 1) < $totalnumber) {
+                    $col = 1;
+                    $pdf->AddPage();
+                    $page++;
+                    $pdf->SetY($offsety);
+                }
+            }
+            $number ++;
+        }
+
+        $group->numberofpages = $page;
     }
 }
 
@@ -455,7 +617,7 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         if (!empty($texfilter)) {
             $answertext = $texfilter->filter($answertext);
         }
-        if($question->options->answers[$answer]->answerformat == FORMAT_PLAIN) {
+        if($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
             $answertext = s($answertext);
         }
         // Remove all HTML comments (typically from MS Office).
@@ -656,7 +818,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     // We need a mapping from question IDs to slots, assuming that each question occurs only once.
     $slots = $templateusage->get_slots();
 
-    $texfilter = new filter_tex($context, array());
+    $texfilter = new \filter_tex\text_filter($context, []);
 
     // If shufflequestions has been activated we go through the questions in the order determined by
     // the template question usage.
@@ -804,144 +966,11 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
 
     $letterstr = ' abcdefghijklmnopqrstuvwxyz';
     $groupletter = strtoupper($letterstr[$group->groupnumber]);
-    $font = offlinequiz_get_pdffont($offlinequiz);
-
-    $fm = new stdClass();
-    $fm->q = 0;
-    $fm->a = 0;
-
-    $texfilter = new filter_tex($context, array());
 
     $pdf = new offlinequiz_answer_pdf('P', 'mm', 'A4');
-    $title = offlinequiz_str_html_pdf($offlinequiz->name);
-    if (!empty($offlinequiz->time)) {
-        $title = $title . ": " . offlinequiz_str_html_pdf(userdate($offlinequiz->time));
-    }
-    $pdf->set_title($title);
-    $pdf->group = $groupletter;
-    $pdf->groupid = $group->groupnumber;
-    $pdf->offlinequiz = $offlinequiz->id;
-    $pdf->formtype = 4;
-    $pdf->colwidth = 7 * 6.5;
-    if ($maxanswers > 5) {
-        $pdf->formtype = 3;
-        $pdf->colwidth = 9 * 6.5;
-    }
-    if ($maxanswers > 7) {
-        $pdf->formtype = 2;
-        $pdf->colwidth = 14 * 6.5;
-    }
-    if ($maxanswers > 12) {
-        $pdf->formtype = 1;
-        $pdf->colwidth = 26 * 6.5;
-    }
-    if ($maxanswers > 26) {
-        throw new \moodle_exception('Too many answers in one question');
-    }
-    $pdf->userid = $USER->id;
-    $pdf->SetMargins(15, 20, 15);
-    $pdf->SetAutoPageBreak(true, 20);
-    $pdf->AddPage();
 
-    // Load all the questions and quba slots needed by this script.
-    $slots = $templateusage->get_slots();
+    $pdf->add_answer_page($maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter);
 
-    $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
-              FROM {offlinequiz_group_questions} ogq
-              JOIN {question} q ON ogq.questionid = q.id
-              JOIN {question_versions} qv ON qv.questionid = q.id
-              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-              JOIN {question_categories} c ON qbe.questioncategoryid = c.id
-             WHERE ogq.offlinequizid = :offlinequizid
-               AND ogq.offlinegroupid = :offlinegroupid
-          ORDER BY ogq.slot ASC ";
-    $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
-
-    if (!$questions = $DB->get_records_sql($sql, $params)) {
-        echo $OUTPUT->box_start();
-        echo $OUTPUT->error_text(get_string('noquestionsfound', 'offlinequiz', $groupletter));
-        echo $OUTPUT->box_end();
-        return;
-    }
-
-    // Load the question type specific information.
-    if (!get_question_options($questions)) {
-        throw new \moodle_exception('Could not load question options');
-    }
-
-    // Counting the total number of multichoice questions in the question usage.
-    $totalnumber = offlinequiz_count_multichoice_questions($templateusage);
-
-    $number = 0;
-    $col = 1;
-    $offsety = 105.5;
-    $offsetx = 17.3;
-    $page = 1;
-
-    $pdf->SetY($offsety);
-
-    $pdf->SetFont($font, 'B', 10);
-    foreach ($slots as $key => $slot) {
-        set_time_limit(120);
-        $slotquestion = $templateusage->get_question($slot);
-        $currentquestionid = $slotquestion->id;
-        $attempt = $templateusage->get_question_attempt($slot);
-        $order = $slotquestion->get_order($attempt);  // Order of the answers.
-
-        // Get the question data.
-        $question = $questions[$currentquestionid];
-
-        // Only look at multichoice questions.
-        if ($question->qtype != 'multichoice' && $question->qtype != 'multichoiceset') {
-            continue;
-        }
-
-        // Print the answer letters every 8 questions.
-        if ($number % 8 == 0) {
-            $pdf->SetFont($font, '', 8);
-            $pdf->SetX(($col - 1) * ($pdf->colwidth) + $offsetx + 5);
-            for ($i = 0; $i < $maxanswers; $i++) {
-                $pdf->Cell(3.5, 3.5, number_in_style($i, $question->options->answernumbering), 0, 0, 'C');
-                $pdf->Cell(3, 3.5, '', 0, 0, 'C');
-            }
-            $pdf->Ln(4.5);
-            $pdf->SetFont($font, 'B', 10);
-        }
-
-        $pdf->SetX(($col - 1) * ($pdf->colwidth) + $offsetx);
-
-        $pdf->Cell(5, 1, ($number + 1).")  ", 0, 0, 'R');
-
-        // Print one empty box for each answer.
-        $x = $pdf->GetX();
-        $y = $pdf->GetY();
-
-        for ($i = 1; $i <= count($order); $i++) {
-            // Move the boxes slightly down to align with question number.
-            $pdf->Rect($x, $y + 0.6, 3.5, 3.5, '', array('all' => array('width' => 0.2)));
-            $x += 6.5;
-        }
-
-        $pdf->SetX($x);
-
-        $pdf->Ln(6.5);
-
-        // Switch to next column if necessary.
-        if (($number + 1) % 24 == 0) {
-            $pdf->SetY($offsety);
-            $col++;
-            // Do a pagebreak if necessary.
-            if ($col > $pdf->formtype and ($number + 1) < $totalnumber) {
-                $col = 1;
-                $pdf->AddPage();
-                $page++;
-                $pdf->SetY($offsety);
-            }
-        }
-        $number ++;
-    }
-
-    $group->numberofpages = $page;
     $DB->update_record('offlinequiz_groups', $group);
 
     $fs = get_file_storage();
@@ -1104,10 +1133,10 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
 /**
  * Function to transform Moodle HTML code of a question into proprietary markup that only supports italic, underline and bold.
  *
- * @param unknown_type $input The input text.
- * @param unknown_type $stripalltags Whether all tags should be stripped.
- * @param unknown_type $questionid The ID of the question the text stems from.
- * @param unknown_type $coursecontextid The course context ID.
+ * @param string $input The input text.
+ * @param boolean $stripalltags Whether all tags should be stripped.
+ * @param int $questionid The ID of the question the text stems from.
+ * @param int $coursecontextid The course context ID.
  * @return mixed
  */
 function offlinequiz_str_html_pdf($input, $stripalltags=true, $questionid=null, $coursecontextid=null) {

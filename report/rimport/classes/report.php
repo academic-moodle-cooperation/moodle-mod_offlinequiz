@@ -25,13 +25,20 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
-
+namespace offlinequiz_rimport;
 defined('MOODLE_INTERNAL') || die();
+use mod_offlinequiz\default_report;
+use \context_module;
+use \moodle_url;
+use \moodle_exception;
+use \navigation_node;
+use \offlinequiz_upload_form;
+use \stdClass;
 
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/upload_form.php');
 require_once($CFG->libdir . '/filelib.php');
 
-class offlinequiz_rimport_report extends offlinequiz_default_report {
+class report extends default_report {
 
     public $context;
     /**
@@ -67,96 +74,43 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
 
         // Has the user submitted a file?
         if ($fromform = $importform->get_data() && confirm_sesskey()) {
-            // File checks out ok.
-            $fileisgood = false;
-
             // Work out if this is an uploaded file
             // or one from the filesarea.
             $realfilename = $importform->get_new_filename('newfile');
-            // Create a unique temp dir.
-            $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
-            $dirname = "{$CFG->tempdir}/offlinequiz/import/$unique";
-            check_dir_exists($dirname, true, true);
-
-            $importfile = $dirname . '/' . $realfilename;
-
-            if (!$result = $importform->save_file('newfile', $importfile, true)) {
-                throw new moodle_exception('uploadproblem');
-            }
-
-            $files = array();
-            $mimetype = mimeinfo('type', $importfile);
-            if ($mimetype == 'application/zip') {
-                $fp = get_file_packer('application/zip');
-                $files = $fp->extract_to_pathname($importfile, $dirname);
-                if ($files) {
-                    unlink($importfile);
-                    $files = get_directory_list($dirname);
-                    foreach ($files as $file) {
-                        $mimetype = mimeinfo('type', $file);
-                        if ($mimetype == 'application/pdf') {
-                            $this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file);
-                        }
-                    }
-                    $files = get_directory_list($dirname);
-                } else {
-                    echo $OUTPUT->notification(get_string('couldnotunzip', 'offlinequiz_rimport', $realfilename), 'notifyproblem');
-
-                }
-            } else if ($mimetype == 'image/tiff') {
-                // Extract each TIFF subfiles into a file.
-                // (it would be better to know if there are subfiles, but it is pretty cheap anyway).
-                $newfile = "$importfile-%d.tiff";
-                $handle = popen("convert '$importfile' '$newfile'", 'r');
-                fread($handle, 1);
-                while (!feof($handle)) {
-                    fread($handle, 1);
-                }
-                pclose($handle);
-                if (count(get_directory_list($dirname)) > 1) {
-                    // It worked, remove original.
-                    unlink($importfile);
-                }
-                $files = get_directory_list($dirname);
-            } else if ($mimetype == 'application/pdf') {
-                $files = $this->extract_pdf_to_tiff ( $dirname, $importfile );
-            } else if (preg_match('/^image/' , $mimetype)) {
-
-                $files[] = $realfilename;
-            }
-            $added = count($files);
-
+            //escape filename for security reasons
+            $realfilename = preg_replace('/[^A-Za-z0-9\-\_\.]/', '_', $realfilename);;
             // Create a new queue job.
-            $job = new stdClass();
+            $job = new \stdClass();
             $job->offlinequizid = $offlinequiz->id;
             $job->importuserid = $USER->id;
             $job->timecreated = time();
             $job->timestart = 0;
             $job->timefinish = 0;
             $job->status = 'uploading';
+            $job->filename= $realfilename;
             if (!$job->id = $DB->insert_record('offlinequiz_queue', $job)) {
                 echo $OUTPUT->notification(get_string('couldnotcreatejob', 'offlinequiz_rimport'), 'notifyproblem');
             }
-            $threshold = get_config('offlinequiz', 'blackwhitethreshold');
-            // Add the files to the job.
-            foreach ($files as $file) {
-                if ($threshold && $threshold > 0 && $threshold < 100) {
-                    $this->convert_black_white("$dirname/$file", $threshold);
-                }
-                $jobfile = new stdClass();
-                $jobfile->queueid = $job->id;
-                $jobfile->filename = "$dirname/$file";
-                $jobfile->status = 'new';
-                if (!$jobfile->id = $DB->insert_record('offlinequiz_queue_data', $jobfile)) {
-                    echo $OUTPUT->notification(get_string('couldnotcreatejobfile', 'offlinequiz_rimport'), 'notifyproblem');
-                    $added--;
-                }
-            }
-            $DB->set_field('offlinequiz_queue', 'status', 'new', ['id' => $job->id]);
+            // Create a unique temp dir.
+            $dirname = "{$CFG->dataroot}/offlinequiz/import/$job->id";
+            check_dir_exists($dirname, true, true);
 
+            $importfile = $dirname . '/' . $realfilename;
+
+            if (!$importform->save_file('newfile', $importfile, true)) {
+                $job->status = 'error';
+                $job->error = 'uploadproblem';
+                $job->filename = $realfilename;
+                $DB->update_record('offlinequiz_queue', $job);
+                throw new moodle_exception('uploadproblem');
+            }
+            $task = \offlinequiz_rimport\task\adhoc\extract_files::instance($job->id);
+            //Execute ASAP.
+            $task->set_next_run_time(time());
+            \core\task\manager::queue_adhoc_task($task, true);
             // Notify the user.
-            echo $OUTPUT->notification(get_string('addingfilestoqueue', 'offlinequiz_rimport', $added), 'notifysuccess');
-            echo $OUTPUT->continue_button($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id . '&mode=rimport');
+            echo $OUTPUT->notification(get_string('addingfilestoqueue', 'offlinequiz_rimport'), 'notifysuccess');
+            echo $OUTPUT->continue_button($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id . '&mode=correct');
         } else {
 
             // Print info about offlinequiz_queue jobs.
@@ -212,29 +166,20 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
             }
         }
     }
-    /**
-     * @param dirname
-     * @param importfile
-     */
-    private function extract_pdf_to_tiff($dirname, $importfile) {
-        // Extract each page to a separate file.
-        $newfile = "$importfile-%03d.tiff";
-        $handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
-        fread($handle, 1);
-        while (!feof($handle)) {
-            fread($handle, 1);
-        }
-        pclose($handle);
-        if (count(get_directory_list($dirname)) > 1) {
-            // It worked, remove original.
-            unlink($importfile);
-        }
-        $files = get_directory_list($dirname);
-        return $files;
-    }
 
-    private function convert_black_white($file, $threshold) {
-        $command = "convert " . realpath($file) . " -threshold $threshold% " . realpath($file);
-        popen($command, 'r');
+    // Add navigation nodes to mod_offlinequiz_result.
+    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node
+    {     
+        $parentnode = $navigation->get('mod_offlinequiz_results');
+        $parentnode->add(text: get_string('importforms', 'offlinequiz_rimport'),
+                        action:  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport']),
+                        key: $this->get_navigation_key());
+        return $navigation;
+    }
+    public function get_report_title(): string {
+        return get_string('resultimport', 'offlinequiz');
+    }
+    public function get_navigation_key(): string {
+        return 'tabofflinequizupload';
     }
 }

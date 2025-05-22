@@ -1344,6 +1344,10 @@ input#showviewbutton {
     color: #2774b9;
 }
 
+.offlinequiz-processing, .offlinequiz-notstarted {
+    color: #777777;
+}
+
 .offlinequiz-locked {
     pointer-events:none;
     opacity:0.8;
@@ -1468,4 +1472,26 @@ input#showviewbutton {
 }
 #page-mod-offlinequiz-tutorial .tutorialbutton {
     margin-top: 1em;
+}
+
+.offlinequiz-queue-file {
+    padding-top: 0.25rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid #dee2e6;
+    width: 100%;
+}
+.offlinequiz-queue-content {
+    margin: 1em 0em 1em 3em;
+}
+.offlinequiz-queue-item {
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 1rem;
+}
+.offlinequiz-queue-header {
+    display: inline;
+}
+
+.offlinequiz-queue-filelist {
+    padding-top: 1rem;
 }

@@ -45,12 +45,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
                 'timemodified', 'fileformat', 'showgrades', 'showquestioninfo', 'disableimgnewlines', 'showtutorial',
                 'printstudycodefield', 'id_digits', 'experimentalevaluation', 'completionpass'));
 
-        $qinstances = new backup_nested_element('question_instances');
 
-        $qinstance = new backup_nested_element('question_instance', array('id'), array(
-                'questionid', 'grade'));
-
-        $this->add_question_references($qinstance, 'mod_offlinequiz', 'slot');
 
         $groups = new backup_nested_element('groups');
         $group = new backup_nested_element('group', array('id'), array(
@@ -111,16 +106,14 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $groups->add_child($group);
         $group->add_child($groupquestions);
         $groupquestions->add_child($groupquestion);
-        $offlinequiz->add_child($groups);
 
+        $this->add_question_references($groupquestion, 'mod_offlinequiz', 'slot');
+        
+        $offlinequiz->add_child($groups);
+        
         // Results are children of the offlinequiz.
         $results->add_child($result);
         $offlinequiz->add_child($results);
-
-        // Build the tree.
-        // Question instances are children of the offlinequiz.
-        $qinstances->add_child($qinstance);
-        $offlinequiz->add_child($qinstances);
 
         // Choices and corners are children of scannedpages which are children of the offlinequiz.
         $scannedpage->add_child($choices);

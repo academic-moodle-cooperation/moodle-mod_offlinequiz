@@ -1707,6 +1707,66 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2024043002, 'offlinequiz');
     }
+    if ($oldversion < 2024072500) {
 
+        // Define field queuedataid to be added to offlinequiz_scanned_pages.
+        $table = new xmldb_table('offlinequiz_scanned_pages');
+        $field = new xmldb_field('queuedataid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'resultid');
+
+        // Conditionally launch add field queuedataid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2024072500, 'offlinequiz');
+    }
+
+    if ($oldversion < 2024072600) {
+
+        // Define field filename to be added to offlinequiz_queue.
+        $table = new xmldb_table('offlinequiz_queue');
+        $field = new xmldb_field('filename', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'status');
+
+        // Conditionally launch add field filename.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2024072600, 'offlinequiz');
+    }
+    if ($oldversion < 2024073001) {
+        // Define field errormessage to be added to offlinequiz_queue.
+        $table = new xmldb_table('offlinequiz_queue');
+        $field = new xmldb_field('error', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'status');
+
+        // Conditionally launch add field errormessage.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2024073001, 'offlinequiz');
+    }
+    if ($oldversion < 2025020100) {
+
+        // Define field pdffont to be added to offlinequiz.
+        $table = new xmldb_table('offlinequiz');
+        $field = new xmldb_field('pdffont', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'printstudycodefield');
+
+        // Conditionally launch add field pdffont.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2025020100, 'offlinequiz');
+    }
+    if ($oldversion < 2025020101) {
+        require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
+        offlinequiz_fix_question_references();
+        upgrade_mod_savepoint(true, 2025020101, 'offlinequiz');
+    }
     return true;
 }
