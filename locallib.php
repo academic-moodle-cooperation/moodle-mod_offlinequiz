@@ -1849,33 +1849,18 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     $text = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', $text);
 
     // Filter only for tex formulas.
-    $texfilter = null;
-    $mathjaxfilter = null;
-    $filters = filter_get_active_in_context($context);
+    $mathfilters = offlinequiz_get_math_filters($context, $page);
 
-    if (array_key_exists('mathjaxloader', $filters)) {
-        $mathjaxfilter = new filter_mathjaxloader\text_filter($context, []);
-        $mathjaxfilter->setup($page, $context);
-    }
-    if (array_key_exists('tex', $filters)) {
-        $texfilter = new \filter_tex\text_filter($context, []);
-    }
-    if ($mathjaxfilter) {
-        $text = $mathjaxfilter->filter($text);
+    // Apply all filters.
+    foreach ($mathfilters as $filter) {
+        $text = $filter->filter($text);
         if ($question->qtype != 'description') {
             foreach ($choiceorder as $key => $answer) {
-                $question->options->answers[$answer]->answer = $mathjaxfilter->filter($question->options->answers[$answer]->answer);
-            }
-        }
-    } else if ($texfilter) {
-        $text = $texfilter->filter($text);
-        if ($question->qtype != 'description') {
-            foreach ($choiceorder as $key => $answer) {
-                $question->options->answers[$answer]->answer = $texfilter->filter($question->options->answers[$answer]->answer);
+                $question->options->answers[$answer]->answer = $filter->filter($question->options->answers[$answer]->answer);
             }
         }
     }
-
+   
     echo $text;
 
     echo '  </div>';
@@ -1902,7 +1887,35 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     }
     echo "</div>";
 }
+/**
+ * Returns the list of math filters which are used to filter the question text.
+ *
+ * @param object $context
+ * @param object $page
+ * @return array
+ */
+function offlinequiz_get_math_filters($context, $page) {
+    $filters = filter_get_active_in_context($context);
+    $mathfilters = [];
 
+    if (array_key_exists('mathjaxloader', $filters) && $page) {
+        $mathjaxfilter = new filter_mathjaxloader\text_filter($context, []);
+        $mathjaxfilter->setup($page, $context);
+        $mathfilters[] = $mathjaxfilter;
+    } else {
+        // Mathjax is not available, so we have to use the old filter.
+        $mathjaxfilter = new filter_tex\text_filter($context, []);
+        $mathfilters[] = $mathjaxfilter;
+    }
+          
+    // Wiris support.
+    // if (array_key_exists('wiris', $filters)) {
+    //     // Use a forged wiris filter to force the use of PHP rendering.
+    //     $wirisfilter = new mod_offlinequiz\output\wiris_filter($context, []);
+    //     $mathfilters[] = $wirisfilter;
+    // }
+    return $mathfilters;
+}
 /**
  * Prints a list of participants to Stdout.
  *

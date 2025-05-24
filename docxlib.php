@@ -400,16 +400,17 @@ function offlinequiz_convert_image_docx($text) {
 }
 
 function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
-      $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2) {
+      $texfilters, $offlinequiz, $trans, $section, $answernumbering, $level2) {
     $attempt = $templateusage->get_question_attempt($slot);
     $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
     foreach ($order as $key => $answer) {
         $answertext = $question->options->answers[$answer]->answer;
         // Filter only for tex formulas.
-        if (!empty($texfilter)) {
+        foreach ($texfilters as $texfilter) {
             $answertext = $texfilter->filter($answertext);
         }
+        
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
         // Remove all paragraph tags because they mess up the layout.
@@ -606,7 +607,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     // We need a mapping from question IDs to slots, assuming that each question occurs only once.
     $slots = $templateusage->get_slots();
 
-    $texfilter = new filter_tex($context, array());
+    $texfilters = offlinequiz_get_math_filters($context, null);
     // Create the docx question numbering. This is only created once since we number all questions from 1...n.
     $questionnumbering = $docx->addNumberingStyle('questionnumbering', ['type' => 'multilevel', 'levels' => array(
         ['format' => 'decimal', 'text' => '%1)',  'left' => 10, 'hanging' => 300, 'tabPos' => 10],
@@ -629,10 +630,9 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = $question->questiontext;
 
             // Filter only for tex formulas.
-            if (!empty($texfilter)) {
+            foreach ($texfilters as $texfilter) {
                 $questiontext = $texfilter->filter($questiontext);
             }
-
             // Remove all HTML comments (typically from MS Office).
             $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
 
@@ -655,7 +655,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
                 // There is only a slot for multichoice questions.
                 offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
-                    $texfilter, $offlinequiz, $trans, $section, $questionnumbering, $level2);
+                    $texfilters, $offlinequiz, $trans, $section, $questionnumbering, $level2);
             }
             $section->addTextBreak();
             $number++;
@@ -685,7 +685,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = $question->questiontext;
 
             // Filter only for tex formulas.
-            if (!empty($texfilter)) {
+            foreach ($texfilters as $texfilter) {
                 $questiontext = $texfilter->filter($questiontext);
             }
 
@@ -721,7 +721,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 $slotquestion = $templateusage->get_question($slot);
 
                 offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
-                    $texfilter, $offlinequiz, $trans, $section, $questionnumbering, $level2);
+                    $texfilters, $offlinequiz, $trans, $section, $questionnumbering, $level2);
                 $section->addTextBreak();
                 $number++;
                 // End if multichoice.
