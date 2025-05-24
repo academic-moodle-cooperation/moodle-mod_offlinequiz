@@ -63,7 +63,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
         }
 
         $listitemrun = $section->addListItemRun($depth, 'questionnumbering');
-        $listitemrun->addText(htmlspecialchars(html_entity_decode($itemstring)), $style);
+        $listitemrun->addText(html_entity_decode($itemstring), $style);
         // We also skip the first sequential newline because we got a newline with addListItem.
         if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
             array_shift($blocks);
@@ -86,7 +86,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
                     continue;
                 }
                 if (array_key_exists('style', $block) && !empty($block['style'])) {
-                    $textrun->addText(htmlspecialchars(html_entity_decode($block['value'])), $block['style']);
+                    $textrun->addText(html_entity_decode($block['value']), $block['style']);
                 } else {
                     $textrun->addText(htmlspecialchars(html_entity_decode($block['value'])), 'nStyle');
                 }
@@ -407,17 +407,15 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
     foreach ($order as $key => $answer) {
         $answertext = $question->options->answers[$answer]->answer;
         // Filter only for tex formulas.
-        foreach ($texfilters as $texfilter) {
-            $answertext = $texfilter->filter($answertext);
-        }
-        
+        $answertext = offlinequiz_apply_filters($answertext, $texfilters);
+
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
-        // Remove all paragraph tags because they mess up the layout.
-        $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
+        // Remove all paragraph tags because they mess up the layout. JPC:Exclude <pre>.
+        $answertext = preg_replace("/<p\\b(?:\\s+[A-Za-z_:][\\w:.-]*(?:\\s*=\\s*(?:\"[^\"]*\"|'[^']*'|[^\\s'\">=]+))?)*\\s*/ms", "", $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
-        $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
+        $answertext = preg_replace("/<\/p\\b[^>]*>/ms", "", $answertext);
         $answertext = $trans->fix_image_paths($answertext, $question->contextid,
             'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
 
@@ -452,6 +450,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     $docx = new \PhpOffice\PhpWord\PhpWord();
     $trans = new offlinequiz_html_translator();
+    \PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);   // Escape < and other characters.
 
     // Define cell style arrays.
     $cellstyle = array('valign' => 'center');
@@ -607,7 +606,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     // We need a mapping from question IDs to slots, assuming that each question occurs only once.
     $slots = $templateusage->get_slots();
 
-    $texfilters = offlinequiz_get_math_filters($context, null);
+    $texfilters = offlinequiz_get_math_filters($context);
     // Create the docx question numbering. This is only created once since we number all questions from 1...n.
     $questionnumbering = $docx->addNumberingStyle('questionnumbering', ['type' => 'multilevel', 'levels' => array(
         ['format' => 'decimal', 'text' => '%1)',  'left' => 10, 'hanging' => 300, 'tabPos' => 10],
@@ -630,9 +629,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = $question->questiontext;
 
             // Filter only for tex formulas.
-            foreach ($texfilters as $texfilter) {
-                $questiontext = $texfilter->filter($questiontext);
-            }
+            $questiontext = offlinequiz_apply_filters($questiontext, $texfilters);
+
             // Remove all HTML comments (typically from MS Office).
             $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
 
@@ -643,7 +641,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
 
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
-            $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
+            // JPC: Preserve pre tags.
+            $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
             $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
                                                     0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
@@ -685,9 +684,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = $question->questiontext;
 
             // Filter only for tex formulas.
-            foreach ($texfilters as $texfilter) {
-                $questiontext = $texfilter->filter($questiontext);
-            }
+            $questiontext = offlinequiz_apply_filters($questiontext, $texfilters);
 
             // Remove all HTML comments (typically from MS Office).
             $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
@@ -699,7 +696,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
 
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
-            $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
+            // JPC: Preserve pre tags.
+            $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
             $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
                                                     0.6, 300, $offlinequiz->disableimgnewlines, 'docx');

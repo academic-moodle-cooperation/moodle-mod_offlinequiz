@@ -185,4 +185,9 @@ if ($ADMIN->fulltree) {
     // Enable tabs interface.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/usetabs', get_string('usetabs', 'offlinequiz'),
         get_string('usetabsdesc', 'offlinequiz'), 0));
+    // If wiris is installed, add the setting to enable it.
+    if (get_config('wiris_enabled')) {
+        $settings->add(new admin_setting_configcheckbox('offlinequiz/wirismathfilter_enabled',
+            get_string('wirismathenabled', 'offlinequiz'), get_string('wirismathenabled_help', 'offlinequiz'), 0));
+    }
 }

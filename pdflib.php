@@ -576,9 +576,7 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
     $questiontext = $question->questiontext;
 
     // Filter only for tex formulas.
-    foreach ($texfilters as $texfilter) {
-        $questiontext = $texfilter->filter($questiontext);
-    }
+    $questiontext = offlinequiz_apply_filters($questiontext, $texfilters);
     
     if($question->questiontextformat == FORMAT_PLAIN) {
         $questiontext = s($questiontext);
@@ -593,7 +591,8 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
     $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
 
     // Remove all class info from paragraphs because TCPDF won't use CSS.
-    $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
+    // JPC: Exclude pre tags.
+    $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
     $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
         1, 300, $offlinequiz->disableimgnewlines);
@@ -615,17 +614,17 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
     foreach ($order as $key => $answer) {
         $answertext = $question->options->answers[$answer]->answer;
         // Filter only for tex formulas.
-        foreach ($texfilters as $texfilter) {
-            $answertext = $texfilter->filter($answertext);
-        }
-        
+        $answertext = offlinequiz_apply_filters($answertext, $texfilters);
+        // If the answer is in plain text, escape it.        
         if($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
             $answertext = s($answertext);
         }
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
         // Remove all paragraph tags because they mess up the layout.
-        $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
+        $answertext = preg_replace("/<p\\b[^>]*>/ms", "", $answertext);
+        // Remove <span> tags.
+        $answertext = preg_replace("/<span\\b[^>]*>/ms", "", $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
