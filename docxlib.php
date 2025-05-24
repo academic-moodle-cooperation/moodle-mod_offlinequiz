@@ -63,7 +63,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
         }
 
         $listitemrun = $section->addListItemRun($depth, 'questionnumbering');
-        $listitemrun->addText(htmlspecialchars(html_entity_decode($itemstring)), $style);
+        $listitemrun->addText(html_entity_decode($itemstring), $style);
         // We also skip the first sequential newline because we got a newline with addListItem.
         if (!empty($blocks) && $blocks[0]['type'] == 'newline') {
             array_shift($blocks);
@@ -86,7 +86,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
                     continue;
                 }
                 if (array_key_exists('style', $block) && !empty($block['style'])) {
-                    $textrun->addText(htmlspecialchars(html_entity_decode($block['value'])), $block['style']);
+                    $textrun->addText(html_entity_decode($block['value']), $block['style']);
                 } else {
                     $textrun->addText(htmlspecialchars(html_entity_decode($block['value'])), 'nStyle');
                 }
@@ -451,6 +451,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     $docx = new \PhpOffice\PhpWord\PhpWord();
     $trans = new offlinequiz_html_translator();
+    \PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);   // Escape < and other characters.
 
     // Define cell style arrays.
     $cellstyle = array('valign' => 'center');
