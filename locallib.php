@@ -1846,38 +1846,18 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
             $context->id, 'offlinequiz');
 
     // Remove leading paragraph tags because the cause a line break after the question number.
-    $text = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', $text);
+    $text = preg_replace('/<p\\b[^>]*>(.*)<\/p\\b[^>]*>/i', '$1', $text);
 
     // Filter only for tex formulas.
-    $texfilter = null;
-    $mathjaxfilter = null;
-    $filters = filter_get_active_in_context($context);
-
-    if (array_key_exists('mathjaxloader', $filters)) {
-        $mathjaxfilter = new filter_mathjaxloader\text_filter($context, []);
-        $mathjaxfilter->setup($page, $context);
-    }
-    if (array_key_exists('tex', $filters)) {
-        $texfilter = new \filter_tex\text_filter($context, []);
-    }
-    if ($mathjaxfilter) {
-        $text = $mathjaxfilter->filter($text);
-        if ($question->qtype != 'description') {
-            foreach ($choiceorder as $key => $answer) {
-                $question->options->answers[$answer]->answer = $mathjaxfilter->filter($question->options->answers[$answer]->answer);
-            }
-        }
-    } else if ($texfilter) {
-        $text = $texfilter->filter($text);
-        if ($question->qtype != 'description') {
-            foreach ($choiceorder as $key => $answer) {
-                $question->options->answers[$answer]->answer = $texfilter->filter($question->options->answers[$answer]->answer);
-            }
+    $mathfilters = offlinequiz_get_math_filters($context, $page);
+    $text = offlinequiz_apply_filters($text, $mathfilters );
+        
+    if ($question->qtype != 'description') {
+        foreach ($choiceorder as $key => $answer) {
+            $question->options->answers[$answer]->answer = offlinequiz_apply_filters($question->options->answers[$answer]->answer, $mathfilters);
         }
     }
-
     echo $text;
-
     echo '  </div>';
     if ($question->qtype != 'description') {
         echo '  <div class="grade">';
@@ -1889,7 +1869,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
             // Remove all HTML comments (typically from MS Office).
             $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
             // Remove all paragraph tags because they mess up the layout.
-            $answertext = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', $answertext);
+            $answertext = preg_replace('/<p\\b[^>]*>(.*)<\/p\\b[^>]*>/i', '$1', $answertext);
             // Rewrite image URLs.
             $answertext = question_rewrite_question_preview_urls($answertext, $question->id,
             $question->contextid, 'question', 'answer', $question->options->answers[$answer]->id,
@@ -1901,6 +1881,46 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
         }
     }
     echo "</div>";
+}
+/**
+ * Returns the list of math filters which are used to filter the question text.
+ *
+ * @param object $context
+ * @param object $page
+ * @return array
+ */
+function offlinequiz_get_math_filters($context, $page = null) {
+    $filters = filter_get_active_in_context($context);
+    $mathfilters = [];
+
+    if (array_key_exists('mathjaxloader', $filters) && $page) {
+        $mathjaxfilter = new filter_mathjaxloader\text_filter($context, []);
+        $mathjaxfilter->setup($page, $context);
+        $mathfilters[] = $mathjaxfilter;
+    } else {
+        // Mathjax is not available, so we have to use the old filter.
+        $mathjaxfilter = new filter_tex\text_filter($context, []);
+        $mathfilters[] = $mathjaxfilter;
+    }
+          
+    // Wiris support.
+    if (array_key_exists('wiris', $filters) 
+        && get_config('offlinequiz', 'wirismathfilter_enabled')) {
+        // Use a forged wiris filter to force the use of PHP rendering.
+        $wirisfilter = new mod_offlinequiz\output\wiris_filter($context, []);
+        $mathfilters[] = $wirisfilter;
+    }
+    
+    return $mathfilters;
+}
+/**
+ * Apply filters to a text.
+ */
+function offlinequiz_apply_filters($text, $filters) {
+    foreach ($filters as $filter) {
+        $text = $filter->filter($text);
+    }
+    return $text;
 }
 
 /**
