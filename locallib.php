@@ -206,20 +206,24 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm): navigation_node {
     }
     
     $secondarynav = $PAGE->secondarynav;
-    // Populate static tabs.
+    // Populate Predefined tabs.
 
     // Populate "Preparation" tab.
     $preparationnode = $secondarynav->get('mod_offlinequiz_edit');
-    // Add "Edit group questions" tab.
-    $preparationnode->add(
-        text: get_string('tabeditgroupquestions', 'offlinequiz'),
-        action: new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0]),
-        key: 'tabeditgroupquestions');
-    // Add "Preview" tab.
-    $preparationnode->add(
-        text: get_string('tabpreview', 'offlinequiz'), 
-        action: new moodle_url('/mod/offlinequiz/navigate.php', ['tab' => 'tabforms', 'id' => $cm->id]),
-        key: 'tabpreview');
+    if ($preparationnode) {
+        // Add "Questions" (Edit group questions) tab.
+        if (has_capability('mod/offlinequiz:manage', context_module::instance($cm->id))) {
+            $preparationnode->add(
+                text: get_string('tabeditgroupquestions', 'offlinequiz'),
+                action: new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0]),
+                key: 'tabeditgroupquestions');
+        }
+        // Add "Forms Preview" tab.
+        $preparationnode->add(
+            text: get_string('tabpreview', 'offlinequiz'), 
+            action: new moodle_url('/mod/offlinequiz/navigate.php', ['tab' => 'tabforms', 'id' => $cm->id]),
+            key: 'tabpreview');
+    }
     // Populate participants tab if it exists. Participants menu exists if "record attendance" is enabled.
     $participantsnode = $secondarynav->get('mod_offlinequiz_participants');
     if ($participantsnode) {

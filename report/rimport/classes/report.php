@@ -47,8 +47,8 @@ class report extends default_report {
      */
     public function display($offlinequiz, $cm, $course) {
         global $CFG, $COURSE, $DB, $OUTPUT, $USER;
-
         $this->context = context_module::instance($cm->id);
+        require_capability('mod/offlinequiz:grade', $this->context);
 
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;

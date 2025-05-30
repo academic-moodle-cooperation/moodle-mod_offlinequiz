@@ -66,8 +66,10 @@ $course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MU
 
 require_login($course, false, $cm);
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
-require_capability('mod/offlinequiz:manage', $contexts->lowest());
-
+if (!has_capability('mod/offlinequiz:manage', $contexts->lowest())) {
+    // Redirect to formstab.
+    redirect(new moodle_url('/mod/offlinequiz/navigate.php', ['tab' => 'tabforms', 'id' => $cmid]));
+};
 
 question_make_default_categories($contexts->all());
 

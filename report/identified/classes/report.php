@@ -104,10 +104,11 @@ class report extends default_report
                                          action: $url,
                                          key: $this->get_navigation_key());
 
-        // Get tabofflinequizcontent.
+        // Get tabofflinequizcontent "Preparation" parent node.
         $parentnode = $navigation->get('mod_offlinequiz_edit');
-        $parentnode->add_node($navnode);
-               
+        if ($parentnode) {
+            $parentnode->add_node($navnode);
+        }
         return $navigation;
     }
     public function get_report_title(): string {
