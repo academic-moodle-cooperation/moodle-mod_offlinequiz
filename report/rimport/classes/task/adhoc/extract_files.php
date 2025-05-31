@@ -31,7 +31,7 @@ class extract_files extends \core\task\adhoc_task {
         $queue->status = 'processing';
         $DB->update_record('offlinequiz_queue',$queue);
         try {
-            if($queuedatas = $DB->get_record('offlinequiz_queue_data',['queueid' =>$queue->id])) {
+            if($queuedatas = $DB->get_records('offlinequiz_queue_data',['queueid' =>$queue->id])) {
                 //This is a rerun. Just queue all the files again and we're done
                 $DB->set_field('offlinequiz_queue_data', 'status', 'new', ['queueid' =>$queue->id]);
                 $DB->set_field('offlinequiz_queue_data', 'error', '', ['queueid' =>$queue->id]);
