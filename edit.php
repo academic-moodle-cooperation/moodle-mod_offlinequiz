@@ -71,7 +71,11 @@ if (!has_capability('mod/offlinequiz:manage', $contexts->lowest())) {
     redirect(new moodle_url('/mod/offlinequiz/navigate.php', ['tab' => 'tabforms', 'id' => $cmid]));
 };
 
-question_make_default_categories($contexts->all());
+
+$context = $contexts->lowest();
+$defaultcategoryobj = question_get_default_category($context->id);
+
+
 
 // Determine groupid.
 $groupnumber    = $pagevars['groupnumber'];

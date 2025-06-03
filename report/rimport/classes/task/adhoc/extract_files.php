@@ -31,7 +31,7 @@ class extract_files extends \core\task\adhoc_task {
         $queue->status = 'processing';
         $DB->update_record('offlinequiz_queue',$queue);
         try {
-            if($queuedatas = $DB->get_record('offlinequiz_queue_data',['queueid' =>$queue->id])) {
+            if($queuedatas = $DB->get_records('offlinequiz_queue_data',['queueid' =>$queue->id])) {
                 //This is a rerun. Just queue all the files again and we're done
                 $DB->set_field('offlinequiz_queue_data', 'status', 'new', ['queueid' =>$queue->id]);
                 $DB->set_field('offlinequiz_queue_data', 'error', '', ['queueid' =>$queue->id]);
@@ -57,7 +57,9 @@ class extract_files extends \core\task\adhoc_task {
                     foreach ($files as $file) {
                         $mimetype = \mimeinfo('type', $file);
                         if ($mimetype == 'application/pdf') {
-                            $this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file, true);
+                            if(!$this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file, true)) {
+                                return;
+                            }
                         }
                     }
                     $files = get_directory_list($dirname);
@@ -65,6 +67,7 @@ class extract_files extends \core\task\adhoc_task {
                 } else {
                     $queue->status = 'error';
                     $queue->error = 'couldnotunzip';
+                    $queue->timefinish = time();
                     $DB->update_record('offlinequiz_queue', $queue);
                 }
             } else if ($mimetype == 'image/tiff') {
@@ -76,21 +79,29 @@ class extract_files extends \core\task\adhoc_task {
                 while (!feof($handle)) {
                     fread($handle, 1);
                 }
-                pclose($handle);
+                $result = pclose($handle);
+                if($result) {
+                    $queue->status = 'error';
+                    $queue->error = 'couldnotextracttiff';
+                    $queue->timefinish = time();
+                    $DB->update_record('offlinequiz_queue', $queue);
+                    return;
+                }
                 $files = get_directory_list($dirname);
                 $files = $this->remove_original_file($files, $queue->filename);
             } else if ($mimetype == 'application/pdf') {
-                $files = $this->extract_pdf_to_tiff ( $dirname, $importfile );
+                if(!$files = $this->extract_pdf_to_tiff ( $dirname, $importfile )) {
+                    return;
+                }
             } else if (preg_match('/^image/' , $mimetype)) {
                 $files[] = $queue->filename;
             } else {
                 $queue->status = 'error';
-                $a = new \stdClass();
-                $a->mimetype = $mimetype;
+                $queue->error = 'unknownmimetype';
+                $queue->timefinish = time();
                 $DB->update_record('offlinequiz_queue', $queue);
-                throw new \Exception(get_string('unknownmimetype', 'offlinequiz', $a));
+                return;
             }
-            $added = count($files);
             $threshold = get_config('offlinequiz', 'blackwhitethreshold');
             // Add the files to the job.
             foreach ($files as $file) {
@@ -103,17 +114,15 @@ class extract_files extends \core\task\adhoc_task {
                 $jobfile->status = 'new';
                 if (!$jobfile->id = $DB->insert_record('offlinequiz_queue_data', $jobfile)) {
                     $queue->status = 'error';
-                    $queue->error = 'couldnotextractpages';
-                    $added--;
+                    $queue->error = 'couldnotinsertjobs';
+                    $queue->timefinish = time();
+                    $DB->update_record('offlinequiz_queue', $queue);
+                    return;
                 }
                 $task = \offlinequiz_rimport\task\adhoc\scan_file::instance($jobfile->id);
                 //Execute ASAP.
                 $task->set_next_run_time(time());
                 \core\task\manager::queue_adhoc_task($task, true);
-            }
-            if($queue->status != 'error') {
-              $queue->status = 'finished';
-              $queue->timefinished = time();
             }
         } finally {
             // Just in case if there is an error and it's still processing write that into the queue.
@@ -129,7 +138,8 @@ class extract_files extends \core\task\adhoc_task {
      * @param dirname
      * @param importfile
      */
-    private function extract_pdf_to_tiff($dirname, $importfile, $unlink = false) {
+    private function extract_pdf_to_tiff($dirname, $importfile, $queue, $unlink = false) {
+        global $DB;
         // Extract each page to a separate file.
         $newfile = "$importfile-%03d.tiff";
         $handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
@@ -137,8 +147,14 @@ class extract_files extends \core\task\adhoc_task {
         while (!feof($handle)) {
             fread($handle, 1);
         }
-        pclose($handle);
-
+        $returncode = pclose($handle);
+        if($returncode) {
+            $queue->status = 'error';
+            $queue->error = 'couldnotextractpdf';
+            $queue->timefinish = time();
+            $DB->update_record('offlinequiz_queue', $queue);
+            return [];
+        }
         $files = get_directory_list($dirname);
         
         $importfilename = substr($importfile, strrpos($importfile, '/') + 1);

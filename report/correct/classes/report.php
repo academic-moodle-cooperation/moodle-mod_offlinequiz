@@ -282,7 +282,7 @@ class report extends default_report {
 
     private function display_uploaded_files($offlinequiz, $cm) {
         global $DB, $OUTPUT;
-        $queues = $DB->get_records('offlinequiz_queue',['offlinequizid' => $offlinequiz->id]);
+        $queues = $DB->get_records('offlinequiz_queue',['offlinequizid' => $offlinequiz->id],'timecreated DESC');
         
         $sql = "SELECT qd.id queuedataid, q.id queueid, qd.status status, qd.filename filename, sp.id scannedpageid, sp.error error, sp.userkey userkey
                   FROM {offlinequiz_queue} q
@@ -345,6 +345,9 @@ class report extends default_report {
                     $element['queuestatusnotstarted'] = true;
                 } else if($this->queuehaserrors($queue)) {
                     $element['queuestatuserror'] = true;
+                    if($queue->error) {
+                        $element['queueerror'] = get_string($queue->error,'mod_offlinequiz');
+                    }
                 } else if(!$queue->timefinish) {
                     $element['queuestatusprocessing'] = true;
                 } else {
