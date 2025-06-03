@@ -383,7 +383,14 @@ class Image extends AbstractElement
             $imageBinary = ob_get_contents();
             ob_end_clean();
         } elseif ($this->sourceType == self::SOURCE_STRING) {
-            $imageBinary = $this->source;
+                // If getimagesizefromstring fails, try to read the image data from the string
+            if (str_contains($this->source, ',')) {
+                [, $base64] = explode(',', $this->source, 2);
+                // 2. Decodificar Base64 → binarios PNG
+                $imageBinary = base64_decode($base64);
+            } else {
+                $imageBinary = $this->source;
+            }
         } else {
             $fileHandle = fopen($actualSource, 'rb', false);
             if ($fileHandle !== false) {
@@ -435,6 +442,18 @@ class Image extends AbstractElement
             $imageData = $this->getArchiveImageSize($this->source);
         } elseif ($this->sourceType == self::SOURCE_STRING) {
             $imageData = @getimagesizefromstring($this->source);
+            if ($imageData === false) {
+                // If getimagesizefromstring fails, try to read the image data from the string
+               if (str_contains($this->source, ',')) {
+                        [, $base64] = explode(',', $this->source, 2);
+                    } else {
+                        $base64 = $this->source;           // por si llega sin encabezado
+                    }
+                // 2. Decodificar Base64 → binarios PNG
+                $binary = base64_decode($base64);
+                // 3. Obtener la información de la imagen
+                $imageData = getimagesizefromstring($binary);
+            }
         } else {
             $imageData = @getimagesize($this->source);
         }

@@ -570,15 +570,14 @@ function number_in_style($num, $style) {
 /**
  * prints the question to the pdf
  */
-function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz) {
+function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $offlinequiz) {
     $pdf->checkpoint();
 
     $questiontext = $question->questiontext;
 
     // Filter only for tex formulas.
-    if (!empty($texfilter)) {
-        $questiontext = $texfilter->filter($questiontext);
-    }
+    $questiontext = offlinequiz_apply_filters($questiontext, $texfilters);
+    
     if($question->questiontextformat == FORMAT_PLAIN) {
         $questiontext = s($questiontext);
     }
@@ -592,7 +591,8 @@ function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $o
     $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
 
     // Remove all class info from paragraphs because TCPDF won't use CSS.
-    $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
+    // JPC: Exclude pre tags.
+    $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
     $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
         1, 300, $offlinequiz->disableimgnewlines);
@@ -604,7 +604,7 @@ function offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $o
 }
 
 function offlinequiz_get_answers_html($offlinequiz, $templateusage,
-    $slot, $question, $texfilter, $trans, $correction) {
+    $slot, $question, $texfilters, $trans, $correction) {
     $html = '';
     $slotquestion = $templateusage->get_question ( $slot );
     // There is only a slot for multichoice questions.
@@ -614,16 +614,17 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
     foreach ($order as $key => $answer) {
         $answertext = $question->options->answers[$answer]->answer;
         // Filter only for tex formulas.
-        if (!empty($texfilter)) {
-            $answertext = $texfilter->filter($answertext);
-        }
+        $answertext = offlinequiz_apply_filters($answertext, $texfilters);
+        // If the answer is in plain text, escape it.        
         if($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
             $answertext = s($answertext);
         }
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
         // Remove all paragraph tags because they mess up the layout.
-        $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
+        $answertext = preg_replace("/<p\\b[^>]*>/ms", "", $answertext);
+        // Remove <span> tags.
+        $answertext = preg_replace("/<span\\b[^>]*>/ms", "", $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
         $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
@@ -818,7 +819,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     // We need a mapping from question IDs to slots, assuming that each question occurs only once.
     $slots = $templateusage->get_slots();
 
-    $texfilter = new \filter_tex\text_filter($context, []);
+    $texfilters = offlinequiz_get_math_filters($context, null);
 
     // If shufflequestions has been activated we go through the questions in the order determined by
     // the template question usage.
@@ -835,12 +836,12 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             set_time_limit(120);
             $question = $questions[$currentquestionid];
 
-            $html = offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
+            $html = offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $offlinequiz);
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 $html = $html . offlinequiz_get_answers_html($offlinequiz, $templateusage,
-                    $slot, $question, $texfilter, $trans, $correction);
+                    $slot, $question, $texfilters, $trans, $correction);
 
             }
             if ($offlinequiz->disableimgnewlines) {
@@ -886,14 +887,14 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             set_time_limit( 120 );
 
             // Either we print the question HTML.
-            $html = offlinequiz_print_question_html($pdf, $question, $texfilter, $trans, $offlinequiz);
+            $html = offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $offlinequiz);
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
 
                 $slot = $questionslots[$currentquestionid];
 
                 $html = $html . offlinequiz_get_answers_html($offlinequiz, $templateusage,
-                    $slot, $question, $texfilter, $trans, $correction);
+                    $slot, $question, $texfilters, $trans, $correction);
             }
 
             // Finally print the question number and the HTML string.

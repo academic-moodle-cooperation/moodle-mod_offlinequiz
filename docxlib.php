@@ -400,23 +400,22 @@ function offlinequiz_convert_image_docx($text) {
 }
 
 function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
-      $texfilter, $offlinequiz, $trans, $section, $answernumbering, $level2) {
+      $texfilters, $offlinequiz, $trans, $section, $answernumbering, $level2) {
     $attempt = $templateusage->get_question_attempt($slot);
     $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
     foreach ($order as $key => $answer) {
         $answertext = $question->options->answers[$answer]->answer;
         // Filter only for tex formulas.
-        if (!empty($texfilter)) {
-            $answertext = $texfilter->filter($answertext);
-        }
+        $answertext = offlinequiz_apply_filters($answertext, $texfilters);
+
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
-        // Remove all paragraph tags because they mess up the layout.
-        $answertext = preg_replace("/<p[^>]*>/ms", "", $answertext);
+        // Remove all paragraph tags because they mess up the layout. JPC:Exclude <pre>.
+        $answertext = preg_replace("/<p\\b(?:\\s+[A-Za-z_:][\\w:.-]*(?:\\s*=\\s*(?:\"[^\"]*\"|'[^']*'|[^\\s'\">=]+))?)*\\s*/ms", "", $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
-        $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
+        $answertext = preg_replace("/<\/p\\b[^>]*>/ms", "", $answertext);
         $answertext = $trans->fix_image_paths($answertext, $question->contextid,
             'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
 
@@ -607,7 +606,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     // We need a mapping from question IDs to slots, assuming that each question occurs only once.
     $slots = $templateusage->get_slots();
 
-    $texfilter = new filter_tex($context, array());
+    $texfilters = offlinequiz_get_math_filters($context);
     // Create the docx question numbering. This is only created once since we number all questions from 1...n.
     $questionnumbering = $docx->addNumberingStyle('questionnumbering', ['type' => 'multilevel', 'levels' => array(
         ['format' => 'decimal', 'text' => '%1)',  'left' => 10, 'hanging' => 300, 'tabPos' => 10],
@@ -630,9 +629,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = $question->questiontext;
 
             // Filter only for tex formulas.
-            if (!empty($texfilter)) {
-                $questiontext = $texfilter->filter($questiontext);
-            }
+            $questiontext = offlinequiz_apply_filters($questiontext, $texfilters);
 
             // Remove all HTML comments (typically from MS Office).
             $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
@@ -644,7 +641,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
 
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
-            $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
+            // JPC: Preserve pre tags.
+            $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
             $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
                                                     0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
@@ -656,7 +654,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
                 // There is only a slot for multichoice questions.
                 offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
-                    $texfilter, $offlinequiz, $trans, $section, $questionnumbering, $level2);
+                    $texfilters, $offlinequiz, $trans, $section, $questionnumbering, $level2);
             }
             $section->addTextBreak();
             $number++;
@@ -686,9 +684,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = $question->questiontext;
 
             // Filter only for tex formulas.
-            if (!empty($texfilter)) {
-                $questiontext = $texfilter->filter($questiontext);
-            }
+            $questiontext = offlinequiz_apply_filters($questiontext, $texfilters);
 
             // Remove all HTML comments (typically from MS Office).
             $questiontext = preg_replace("/<!--.*?--\s*>/ms", "", $questiontext);
@@ -700,7 +696,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
 
             // Remove all class info from paragraphs because TCDOCX won't use CSS.
-            $questiontext = preg_replace('/<p[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
+            // JPC: Preserve pre tags.
+            $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
             $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
                                                     0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
@@ -722,7 +719,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
                 $slotquestion = $templateusage->get_question($slot);
 
                 offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
-                    $texfilter, $offlinequiz, $trans, $section, $questionnumbering, $level2);
+                    $texfilters, $offlinequiz, $trans, $section, $questionnumbering, $level2);
                 $section->addTextBreak();
                 $number++;
                 // End if multichoice.
