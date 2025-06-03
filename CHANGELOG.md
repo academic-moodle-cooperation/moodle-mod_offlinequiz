@@ -1,5 +1,13 @@
 CHANGELOG
 =========
+4.5.3
+-----------------
+* [Bug] Deprecated use of \qbank_managecategories\question_category_object in addrandom.php (github #296)
+* [Bug] No change in version was possible after restore
+* [Bug] json syntax error message when adding questionbank question (github #285)
+* [Bug] Missing pdffont setting for newer installations.
+* [Bug] Fix deprecated mathjaxloader (github #286)
+
 4.5.1
 -----------------
 * [Bug] Fixed that adding questions was not possible, introduced through moodle core 4.5.2
