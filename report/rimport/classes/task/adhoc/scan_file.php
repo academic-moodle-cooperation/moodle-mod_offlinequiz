@@ -4,7 +4,6 @@ namespace offlinequiz_rimport\task\adhoc;
 require_once ($CFG->dirroot . '/mod/offlinequiz/lib.php');
 require_once ($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once ($CFG->dirroot . '/mod/offlinequiz/evallib.php');
-require_once ($CFG->dirroot . '/mod/offlinequiz/report/default.php');
 require_once ($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
 
 /**
@@ -101,11 +100,11 @@ class scan_file extends \core\task\adhoc_task
                 // checks whether the result for a student is complete.
                 if ($scannedpage->status == 'ok') {
                     // We can process the answers and submit them if possible.
-                    $scannedpage = \offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $questionsperpage, $coursecontext, true);
-                    echo 'job ' . $job->id . ': processed answers for ' . $scannedpage->id . "\n";
+                    $scannedpage = \offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $queue->importuserid, $questionsperpage, $coursecontext, true);
+                    echo 'job ' . $queue->id . ': processed answers for ' . $scannedpage->id . "\n";
                 } else if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
                     // Already process the answers but don't submit them.
-                    $scannedpage = \offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $job->importuserid, $questionsperpage, $coursecontext, false);
+                    $scannedpage = \offlinequiz_process_scanned_page($offlinequiz, $scanner, $scannedpage, $queue->importuserid, $questionsperpage, $coursecontext, false);
 
                     // Compare the old and the new result wrt. the choices.
                     $scannedpage = \offlinequiz_check_different_result($scannedpage);
@@ -139,7 +138,7 @@ class scan_file extends \core\task\adhoc_task
                 $engine->save_page(2);
             }
         } catch (\Exception $e) {
-            echo 'job ' . $job->id . ': ' . $e->getMessage() . "\n";
+            echo 'job ' . $queue->id . ': ' . $e->getMessage() . "\n";
             $DB->set_field('offlinequiz_queue_data', 'status', 'error', array(
                 'id' => $queuedata->id
             ));
@@ -203,16 +202,31 @@ class scan_file extends \core\task\adhoc_task
 
                 $mailtext .= "\n" . get_string('importnumberexisting', 'offlinequiz', $doubleentry);
 
-                $linkoverview = "$CFG->wwwroot/mod/offlinequiz/report.php?q={$queue->offlinequizid}&mode=overview";
+                $linkoverview = new \moodle_url('/mod/offlinequiz/report.php', ['q' => $queue->offlinequizid, 'mode' => 'overview']);
                 $mailtext .= "\n\n" . get_string('importlinkresults', 'offlinequiz', $linkoverview);
 
-                $linkupload = "$CFG->wwwroot/mod/offlinequiz/report.php?q={$queue->offlinequizid}&mode=rimport";
+                $linkupload = new \moodle_url('/mod/offlinequiz/report.php', ['q' => $queue->offlinequizid, 'mode' => 'rimport']);
                 $mailtext .= "\n" . get_string('importlinkverify', 'offlinequiz', $linkupload);
 
                 $mailtext .= "\n\n" . get_string('importtimestart', 'offlinequiz', userdate($queue->timestart));
                 $mailtext .= "\n" . get_string('importtimefinish', 'offlinequiz', userdate($queue->timefinish));
+                
+                // SEnd message to user using message api.
+                
+                $eventdata = new \core\message\message();
+                $eventdata->name = 'jobs';
+                $eventdata->courseid = $course->id;
+                $eventdata->component = 'mod_offlinequiz';
+                $eventdata->userfrom = \core\user::NOREPLY_USER; // No user from, this is a system message.
+                $eventdata->userto = $user;
+                $eventdata->subject = get_string('importmailsubject', 'offlinequiz');
+                $eventdata->fullmessage = $mailtext;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml = $mailtext;
+                $eventdata->notification = 1;
+                $eventdata->smallmessage = $mailtext;
 
-                email_to_user($user, $CFG->noreplyaddress, get_string('importmailsubject', 'offlinequiz'), $mailtext);
+                message_send($eventdata);
             }
         }
     }
