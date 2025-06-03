@@ -64,6 +64,14 @@
                 <div class="col-8"><a href="{{{importedbylink}}}">{{importedby}}</a></div>
               </div>
             </div>
+            {{#queueerror}}
+              <div class="container-fluid offlinequiz-queue-content-info">
+                <div class="row">
+                  <div class="col-4">{{#str}} queuefileerror, mod_offlinequiz {{/str}}</div>
+                  <div class="col-8">{{queueerror}}</div>
+                </div>
+              </div>
+            {{/queueerror}}
             <div class="container-fluid offlinequiz-queue-content-info">
               <div class="row">
                 <div class="col-4">{{#str}} queuestarttime, mod_offlinequiz {{/str}}</div>
