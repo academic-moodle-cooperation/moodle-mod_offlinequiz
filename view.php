@@ -435,7 +435,7 @@ $PAGE->set_pagelayout('report');
 // Output starts here.
 
 
-if (has_capability('mod/offlinequiz:manage', $context)) {
+if (has_any_capability(['mod/offlinequiz:viewreports', 'mod/offlinequiz:manage'], $context)) {
     echo $OUTPUT->header();
     // Print the page header.
     if ($edit != -1 and $PAGE->user_allowed_editing()) {

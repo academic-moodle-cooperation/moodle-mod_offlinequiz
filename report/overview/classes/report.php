@@ -129,7 +129,8 @@ class report extends default_report {
         $answerletters = 'abcdefghijklmnopqrstuvwxyz';
 
         if ($action == 'delete' && confirm_sesskey()) {
-
+            require_capability('mod/offlinequiz:grade', context_module::instance($cm->id));
+            
             $selectedresultids = array();
             $params = (array) data_submitted();
 

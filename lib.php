@@ -1338,20 +1338,24 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
     } else if (array_key_exists($i + 1, $keys)) {
         $beforekey = $keys[$i + 1];
     }
+    $managecapability = has_capability('mod/offlinequiz:manage', $settings->get_page()->cm->context);
+    $viewreportscapability = has_capability('mod/offlinequiz:viewreports', $settings->get_page()->cm->context);
 
-    if (has_capability('mod/offlinequiz:manage', $settings->get_page()->cm->context)) {
-        $active = offlinequiz_get_active_tab();
-        // Tab Offlinequiz content.
-        if ($active == 'mod_offlinequiz_edit') {
-            $url = $settings->get_page()->url;
-        } else {
-            $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $settings->get_page()->cm->id, 'tab' => 'mod_offlinequiz_edit']);
-        }
+    $active = offlinequiz_get_active_tab();
+    // Tab Offlinequiz content.
+    if ($active == 'mod_offlinequiz_edit') {
+        $url = $settings->get_page()->url;
+    } else {
+        $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $settings->get_page()->cm->id, 'tab' => 'mod_offlinequiz_edit']);
+    }
+    if ($managecapability || $viewreportscapability) {
         $node = navigation_node::create(get_string('tabofflinequizcontent', 'offlinequiz'),
                 $url,
                 navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_edit',
                 new pix_icon('t/edit', ''));
         $offlinequiznode->add_node($node, $beforekey);
+    }
+    if ($viewreportscapability) {
         // Tab results.
         if ($active == 'mod_offlinequiz_results') {
             $url = $settings->get_page()->url;
@@ -1363,6 +1367,8 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
             navigation_node::TYPE_SETTING, null, 'mod_offlinequiz_results',
             new pix_icon('i/report', ''));
         $offlinequiznode->add_node($node, $beforekey);
+    }
+    if ($viewreportscapability) {
         // Tab statistics.
         if ($active == 'mod_offlinequiz_statistics') {
             $url = $settings->get_page()->url;
@@ -1375,6 +1381,8 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
             new pix_icon('i/report', ''));
         $node->set_force_into_more_menu(true);
         $offlinequiznode->add_node($node, $beforekey);
+    }
+    if ($viewreportscapability || $managecapability) {
         // Tab attendances
         $participantsusage = $DB->get_field('offlinequiz', 'participantsusage', ['id' => $settings->get_page()->cm->instance]);
         if ($participantsusage) {
