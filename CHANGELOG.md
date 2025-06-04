@@ -2,15 +2,17 @@ CHANGELOG
 =========
 4.5.3
 -----------------
-* [Bug] Deprecated use of \qbank_managecategories\question_category_object in addrandom.php (github #296)
-* [Bug] No change in version was possible after restore
-* [Bug] json syntax error message when adding questionbank question (github #285)
-* [Bug] Missing pdffont setting for newer installations.
-* [Bug] Fix deprecated mathjaxloader (github #286)
+* [Bug] Fixed that no change in version was possible after restore
+* [Bug] Fixed missing pdffont setting for newer installations
+* [Bug] Fixed missing column-definition for pdffont in file install.xml [github #290]
+* [Bug] Fixed answers which contain < > characters still break the PDFs in specific situations. [github PR #283 @juacas]
+* [Bug] Fixed deprecated use of \qbank_managecategories\question_category_object in addrandom.php [github #296]
+* [Bug] Fixed deprecated filter mathjaxloader [github #286/ github PR #287 @mhughes2k]
+* [Bug] Fixed JSON parse error with unrecognized token '<' when adding questions [github #294]
 
 4.5.1
 -----------------
-* [Bug] Fixed that adding questions was not possible, introduced through moodle core 4.5.2
+* [Bug] Fixed that adding questions was not possible, introduced through moodle core 4.5.2 [github #284/ github PR #285 @jboulen]
 
 4.5.0
 -----------------
@@ -25,7 +27,7 @@ CHANGELOG
 * [Feature] New admin setting for default font size [github #254]
 * [Feature] Students will be sent immediately to either the tutorial or their result depending on the status of the offline quiz
 * [Feature] Rework on the activity overview page: attendances now available in new style
-* [Feature] Report subplugins can now add themselves to the navigation by implementing a offlinequiz_${pluginname}_report->add_to_tabs() function. [github PR #219 - juacas]
+* [Feature] Report subplugins can now add themselves to the navigation by implementing a offlinequiz_${pluginname}_report->add_to_tabs() function. [github PR #219 @juacas]
 * [Info] You might want to checkout a new subplugin for prefilled forms support: https://github.com/juacas/moodle-offlinequiz_identified. Since this plugin is developed by the community, we cannot provide support for it.
 * [Bug] Fixed PHP 8.2 warnings
 * [Bug] Fixed bug where a question could be added twice if an older version was already added
