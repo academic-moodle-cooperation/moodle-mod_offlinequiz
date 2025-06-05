@@ -124,7 +124,7 @@ class extract_files extends \core\task\adhoc_task {
                 $task->set_next_run_time(time());
                 \core\task\manager::queue_adhoc_task($task, true);
             }
-        } finally {
+        } catch (\exception $e) {
             // Just in case if there is an error and it's still processing write that into the queue.
             if($queue->status == 'processing') {
                 $queue->status = 'error';
