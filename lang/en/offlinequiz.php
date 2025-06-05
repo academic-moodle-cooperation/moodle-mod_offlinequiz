@@ -137,6 +137,7 @@ $string['correctionforms'] = 'Correction forms';
 $string['correctionoptionsheading'] = 'Correction options';
 $string['correctupdated'] = 'Updated correction form for group {$a}.';
 $string['couldnotgrab'] = 'Could not grab image {$a}';
+$string['couldnotextractpages'] = 'Error while extracting pages from the uploaded files.';
 $string['couldnotinsertjobs'] = 'Error with the database while extracting pages';
 $string['couldnotregister'] = 'Could not register user {$a}';
 $string['couldnotextracttiff'] = 'Error while converting tiff to single images. Please try a smaller document or contact your local administrator.';
