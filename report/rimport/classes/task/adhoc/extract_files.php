@@ -168,7 +168,7 @@ class extract_files extends \core\task\adhoc_task {
     }
 
     private function convert_black_white($file, $threshold) {
-        $command = "convert " . escapeshellarg(realpath($file)) . " -threshold $threshold% " .  escapeshellarg(realpath($file));
+        $command = "convert " . escapeshellarg(realpath($file)) . " -colorspace gray -threshold $threshold% " .  escapeshellarg(realpath($file));
         popen($command, 'r');
     }
     
