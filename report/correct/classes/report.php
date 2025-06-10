@@ -346,7 +346,7 @@ class report extends default_report {
                 } else if($this->queuehaserrors($queue)) {
                     $element['queuestatuserror'] = true;
                     if($queue->error) {
-                        $element['queueerror'] = get_string($queue->error,'mod_offlinequiz');
+                        $element['queueerror'] = get_string($queue->error,'offlinequiz');
                     }
                 } else if(!$queue->timefinish) {
                     $element['queuestatusprocessing'] = true;
