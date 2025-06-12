@@ -419,9 +419,14 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
 
     protected function after_execute() {
         parent::after_execute();
+        $userinfo = $this->get_setting_value('userinfo');
         // Add offlinequiz related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_offlinequiz', 'intro', null);
-        $this->add_related_files('mod_offlinequiz', 'imagefiles', null);
+        if($userinfo) {
+            $this->add_related_files('mod_offlinequiz', 'imagefiles', null);
+            $this->add_related_files('mod_offlinequiz', 'queue', null);
+            $this->add_related_files('mod_offlinequiz', 'queuedata', null);
+        }
         $this->add_related_files('mod_offlinequiz', 'pdfs', null);
     }
 }

@@ -182,7 +182,11 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
 
         // Define file annotations.
         $offlinequiz->annotate_files('mod_offlinequiz', 'intro', null);
-        $offlinequiz->annotate_files('mod_offlinequiz', 'imagefiles', null); // This file area has no itemid.
+        if($userinfo) {
+            $offlinequiz->annotate_files('mod_offlinequiz', 'imagefiles', null); // This file area has no itemid.
+            $offlinequiz->annotate_files('mod_offlinequiz', 'queuedata', null);
+            $offlinequiz->annotate_files('mod_offlinequiz', 'queue', null);
+        }
         $offlinequiz->annotate_files('mod_offlinequiz', 'pdfs', null);
 
         // Define id annotations.

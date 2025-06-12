@@ -1768,5 +1768,34 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         offlinequiz_fix_question_references();
         upgrade_mod_savepoint(true, 2025020101, 'offlinequiz');
     }
+    if ($oldversion < 2025061200) {
+
+        // Define field fileid to be added to offlinequiz_queue.
+        $table = new xmldb_table('offlinequiz_queue');
+        $field = new xmldb_field('fileid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'filename');
+
+        // Conditionally launch add field fileid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2025061200, 'offlinequiz');
+    }
+    if ($oldversion < 2025061201) {
+
+        // Define field fileid to be added to offlinequiz_queue_data.
+        $table = new xmldb_table('offlinequiz_queue_data');
+        $field = new xmldb_field('fileid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'queueid');
+
+        // Conditionally launch add field fileid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2025061201, 'offlinequiz');
+    }
+    
     return true;
 }

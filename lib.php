@@ -437,8 +437,8 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
         return false;
     }
 
-    // The file file areas served by this method.
-    $fileareas = array('pdfs', 'participants', 'imagefiles');
+    // The file areas served by this method.
+    $fileareas = array('pdfs', 'participants', 'imagefiles', 'queuefiles', 'queuedatafiles');
     if (!in_array($filearea, $fileareas)) {
         return false;
     }

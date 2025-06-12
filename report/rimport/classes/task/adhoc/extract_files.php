@@ -46,6 +46,9 @@ class extract_files extends \core\task\adhoc_task {
             }
             $dirname = "{$CFG->dataroot}/offlinequiz/import/$queue->id";
             $importfile = "$dirname/$queue->filename";
+            if(!file_exists($importfile)) {
+                $this->restorefile($queue->filename, $queue, $importfile);
+            }
             $files = array();
             require_once $CFG->libdir . '/filelib.php';
             $mimetype = mimeinfo('type', $importfile);
@@ -177,5 +180,13 @@ class extract_files extends \core\task\adhoc_task {
             unset($files[$key]);
         }
         return $files;
+    }
+    private function restorefile($filename, $queue, $restorepath) {
+        $fs = get_file_storage();
+        $cm = get_coursemodule_from_instance('offlinequiz', $queue->offlinequizid);
+        $context = \context_module::instance($cm->id);
+        $pathhash = $fs->get_pathname_hash($context->id, 'mod_offlinequiz', 'queue', $queue->id, '/', $filename);
+        $file = $fs->get_file_by_hash($pathhash);
+        $file->copy_content_to($restorepath);
     }
 }

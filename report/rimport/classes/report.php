@@ -102,8 +102,10 @@ class report extends default_report {
                 $job->error = 'uploadproblem';
                 $job->filename = $realfilename;
                 $DB->update_record('offlinequiz_queue', $job);
-                throw new moodle_exception('uploadproblem');
+                throw new \moodle_exception('uploadproblem');
             }
+            $filesentry = $this->create_file_entry($realfilename, $importfile, $job->id);
+            $DB->set_field('offlinequiz_quue','fileid', $filesentry->id);
             $task = \offlinequiz_rimport\task\adhoc\extract_files::instance($job->id);
             //Execute ASAP.
             $task->set_next_run_time(time());
@@ -166,6 +168,24 @@ class report extends default_report {
             }
         }
     }
+
+    private function create_file_entry($filename, $pathname, $jobid) {
+        $fs = get_file_storage();
+        $filerecord = array(
+            'contextid' => $this->contextid,      // ID of context.
+            'component' => 'mod_offlinequiz', // Usually = table name.
+            'filearea'  => 'queue',      // Usually = table name.
+            'itemid'    => $jobid,                 // Usually = ID of row in table.
+            'filepath'  => '/'                // Any path beginning and ending in.
+        ); // Any filename.
+
+        $filerecord['filename'] = $filename;
+        if (!$fs->file_exists($this->contextid, 'mod_offlinequiz', 'queue', $jobid, '/', $filename)) {
+            $newfile = $fs->create_file_FROM_pathname($filerecord, $pathname);
+        }
+        return $newfile;
+    }
+
 
     // Add navigation nodes to mod_offlinequiz_result.
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node
