@@ -105,7 +105,6 @@ class report extends default_report {
                 throw new \moodle_exception('uploadproblem');
             }
             $filesentry = $this->create_file_entry($realfilename, $importfile, $job->id);
-            $DB->set_field('offlinequiz_quue','fileid', $filesentry->id);
             $task = \offlinequiz_rimport\task\adhoc\extract_files::instance($job->id);
             //Execute ASAP.
             $task->set_next_run_time(time());
@@ -172,7 +171,7 @@ class report extends default_report {
     private function create_file_entry($filename, $pathname, $jobid) {
         $fs = get_file_storage();
         $filerecord = array(
-            'contextid' => $this->contextid,      // ID of context.
+            'contextid' => $this->context->id,      // ID of context.
             'component' => 'mod_offlinequiz', // Usually = table name.
             'filearea'  => 'queue',      // Usually = table name.
             'itemid'    => $jobid,                 // Usually = ID of row in table.

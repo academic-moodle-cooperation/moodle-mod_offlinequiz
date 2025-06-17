@@ -424,8 +424,8 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->add_related_files('mod_offlinequiz', 'intro', null);
         if($userinfo) {
             $this->add_related_files('mod_offlinequiz', 'imagefiles', null);
-            $this->add_related_files('mod_offlinequiz', 'queue', null);
-            $this->add_related_files('mod_offlinequiz', 'queuedata', null);
+            $this->add_related_files('mod_offlinequiz', 'queue', 'offlinequiz_queue');
+            $this->add_related_files('mod_offlinequiz', 'queuedata', 'offlinequiz_queue_data');
         }
         $this->add_related_files('mod_offlinequiz', 'pdfs', null);
     }

@@ -23,7 +23,7 @@ class scan_file extends \core\task\adhoc_task
 
     public function execute()
     {
-        global $DB;
+        global $DB, $CFG;
         $data = $this->get_custom_data();
         $queuedata = $DB->get_record('offlinequiz_queue_data', [
             'id' => $data->queuedataid
@@ -60,10 +60,14 @@ class scan_file extends \core\task\adhoc_task
         ], 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
             $this->log_error($queuedata, 'nogroupsfound');
         }
+        $dirname = "{$CFG->dataroot}/offlinequiz/import/$queue->id";
+        $importfile = "$dirname/$queuedata->filename";
+        if(!file_exists($importfile)) {
+            
+            $this->restorefile($context->id,$queue->id,$queue->filename, $importfile);
+        }
         list ($maxquestions, $maxanswers, $formtype, $questionsperpage) = \offlinequiz_get_question_numbers($offlinequiz, $groups);
         $doubleentry = 0;
-        $pathparts = pathinfo($queuedata->filename);
-        $dirname = $pathparts['dirname'];
 
         set_time_limit(120);
         try {
@@ -73,7 +77,7 @@ class scan_file extends \core\task\adhoc_task
                 $scanner = new \offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
                 // Try to load the image file.
                 echo 'job ' . $queue->id . ': evaluating ' . $queuedata->filename . "\n";
-                $scannedpage = $scanner->load_image($queuedata->filename);
+                $scannedpage = $scanner->load_image("$dirname/$queuedata->filename");
                 $scannedpage->id = $DB->get_field('offlinequiz_scanned_pages', 'id', ['queuedataid' => $queuedata->id],IGNORE_MISSING);
                 if ($scannedpage->status == 'ok') {
                     echo 'job ' . $queue->id . ': image loaded ' . $scannedpage->filename . "\n";
@@ -229,6 +233,14 @@ class scan_file extends \core\task\adhoc_task
                 message_send($eventdata);
             }
         }
+    }
+    
+    private function restorefile($contextid, $queuedataid, $filename, $restorepath) {
+        $fs = get_file_storage();
+        
+        $pathhash = $fs->get_pathname_hash($contextid, 'mod_offlinequiz', 'queuedata', $queuedataid, '/', $filename);
+        $file = $fs->get_file_by_hash($pathhash);
+        $file->copy_content_to($restorepath);
     }
 
     private function log_error($queuedata, $errorcode)
