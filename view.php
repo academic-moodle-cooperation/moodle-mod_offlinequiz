@@ -465,20 +465,19 @@ if (has_any_capability(['mod/offlinequiz:viewreports', 'mod/offlinequiz:manage']
         echo $OUTPUT->header();
         echo '<div class="offlinequizinfo">' . get_string('nogradesseelater', 'offlinequiz', fullname($USER)).'</div>';
     } else if ($offlinequiz->showtutorial) {
-        $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial.php',
-            array('id' => $cm->id));
         echo $OUTPUT->header();
-        // Shows the student identification number.
         $offlinequizconfig = get_config('offlinequiz');
-        $idnumber = substr($USER->{$offlinequizconfig->ID_field},
-                          strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
-        $idnumber = $USER->{$offlinequizconfig->ID_field};
-        echo '<div class="offlinequizinfo">' . get_string('useridentification', 'offlinequiz'). ': ' . $idnumber . '</div>';
-        // Offer to do the tutorial.
-        echo '<br/><div class="offlinequizinfo">';
-        $url = new moodle_url('/mod/offlinequiz/tutorial.php', array('id' => $cm->id));    
-        echo $OUTPUT->single_button($url, get_string('starttutorial', 'offlinequiz'));
-        echo '</div>';
+        $tutorialcontext = [];
+        $url = new \moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial.php',
+            ['id' => $cm->id]);
+        $tutorialcontext['tutorialstarturl'] = $url->out();
+        $usernumber = substr($USER->{$offlinequizconfig->ID_field},
+        strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
+        if($usernumber) {
+            $identificationinfo = get_string('tutorial:identification_info', 'offlinequiz', $usernumber);
+            $tutorialcontext['notification'] = $OUTPUT->notification($identificationinfo, 'info');
+        }
+        echo $OUTPUT->render_from_template('mod_offlinequiz/tutorial_start', $tutorialcontext);
     } else {
         echo $OUTPUT->header();
     }
