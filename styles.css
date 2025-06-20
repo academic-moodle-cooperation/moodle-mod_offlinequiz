@@ -1151,10 +1151,11 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit .section .activity .actions {
-	position: inherit;
-	white-space: nowrap;
-	background: #e6e6e6;
-	padding: .1em 0;
+    position: inherit;
+    white-space: nowrap;
+    background: #e6e6e6;
+    padding: .1em 0;
+    display: flex;
 }
 
 #page-mod-offlinequiz-edit .section .activity .actions .version-selection {
@@ -1494,4 +1495,8 @@ input#showviewbutton {
 
 .offlinequiz-queue-filelist {
     padding-top: 1rem;
+}
+#offlinequiz-queue-uploadbutton {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }

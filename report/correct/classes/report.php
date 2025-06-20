@@ -356,6 +356,9 @@ class report extends default_report {
                 $elements[] = $element;
             }
             $context['queues'] = $elements;
+            $link = new \moodle_url('/mod/offlinequiz/report.php',
+                ['mode' => 'rimport',  'id' =>$cm->id]);
+            $context['uploadfurtherfileslink'] = $link->out();
             $rendered = $OUTPUT->render_from_template('mod_offlinequiz/correct_queue_list', $context);
             echo $rendered;
         }
