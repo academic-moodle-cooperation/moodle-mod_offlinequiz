@@ -179,7 +179,7 @@ class report extends default_report {
         ); // Any filename.
 
         $filerecord['filename'] = $filename;
-        if (!$fs->file_exists($this->contextid, 'mod_offlinequiz', 'queue', $jobid, '/', $filename)) {
+        if (!$fs->file_exists($this->context->id, 'mod_offlinequiz', 'queue', $jobid, '/', $filename)) {
             $newfile = $fs->create_file_FROM_pathname($filerecord, $pathname);
         }
         return $newfile;
