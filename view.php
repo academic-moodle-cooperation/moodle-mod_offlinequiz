@@ -467,7 +467,18 @@ if (has_any_capability(['mod/offlinequiz:viewreports', 'mod/offlinequiz:manage']
     } else if ($offlinequiz->showtutorial) {
         $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/tutorial.php',
             array('id' => $cm->id));
-        redirect($url);
+        echo $OUTPUT->header();
+        // Shows the student identification number.
+        $offlinequizconfig = get_config('offlinequiz');
+        $idnumber = substr($USER->{$offlinequizconfig->ID_field},
+                          strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
+        $idnumber = $USER->{$offlinequizconfig->ID_field};
+        echo '<div class="offlinequizinfo">' . get_string('useridentification', 'offlinequiz'). ': ' . $idnumber . '</div>';
+        // Offer to do the tutorial.
+        echo '<br/><div class="offlinequizinfo">';
+        $url = new moodle_url('/mod/offlinequiz/tutorial.php', array('id' => $cm->id));    
+        echo $OUTPUT->single_button($url, get_string('starttutorial', 'offlinequiz'));
+        echo '</div>';
     } else {
         echo $OUTPUT->header();
     }
