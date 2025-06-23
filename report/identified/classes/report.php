@@ -98,16 +98,18 @@ class report extends default_report
    
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node
     {
-        // Add navigation nodes to mod_tabofflinequizcontent and mod_tabattendances.
-        $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'identified', 'id' => $cm->id]);
-        $navnode= navigation_node::create(text: get_string('identified', 'offlinequiz_identified'),
-                                         action: $url,
-                                         key: $this->get_navigation_key());
-
-        // Get tabofflinequizcontent "Preparation" parent node.
-        $parentnode = $navigation->get('mod_offlinequiz_edit');
-        if ($parentnode) {
-            $parentnode->add_node($navnode);
+        if(get_config('offlinequiz_identified', 'enableidentified')) {
+            // Add navigation nodes to mod_tabofflinequizcontent and mod_tabattendances.
+            $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'identified', 'id' => $cm->id]);
+            $navnode= navigation_node::create(text: get_string('identified', 'offlinequiz_identified'),
+                                             action: $url,
+                                             key: $this->get_navigation_key());
+    
+            // Get tabofflinequizcontent "Preparation" parent node.
+            $parentnode = $navigation->get('mod_offlinequiz_edit');
+            if ($parentnode) {
+                $parentnode->add_node($navnode);
+            }
         }
         return $navigation;
     }

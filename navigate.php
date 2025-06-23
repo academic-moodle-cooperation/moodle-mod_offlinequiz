@@ -38,15 +38,14 @@ $navigation = offlinequiz_get_tabs_object($offlinequiz, $cm);
 
 // Give plugins a chance for routing the request.
 $newurl = '';
-$pluginmanager = core_plugin_manager::instance();
-$subplugins = $pluginmanager->get_subplugins_of_plugin('mod_offlinequiz');
-foreach ($subplugins as $subplugin) {
+$subplugins = \core_component::get_plugin_list('offlinequiz');
+foreach ($subplugins as $subplugin => $subpluginpath) {
     // Instantiate class.
-    $plugin = offlinequiz_instantiate_plugin($subplugin->name);
-    if (!$plugin) {
+    $reportclass = offlinequiz_instantiate_report_class($subplugin);
+    if (!$reportclass) {
         continue;
     }
-    $askedroute = $plugin->route($offlinequiz, $cm, $course, $tab);
+    $askedroute = $reportclass->route($offlinequiz, $cm, $course, $tab);
     if ($askedroute) {
         $newurl =  $navigation->find($askedroute, null)->action();
         break;
