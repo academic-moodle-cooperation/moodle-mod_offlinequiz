@@ -279,6 +279,7 @@ $string['formspreview'] = 'Preview';
 $string['formwarning'] = 'There is no answer form defined. Please contact your administrator.';
 $string['fromquestionbank'] = 'from question bank';
 $string['functiondisabledbysecuremode'] = 'That functionality is currently disabled';
+$string['furtheroptionsheading'] = 'Further Options';
 $string['generalfeedback'] = 'General feedback';
 $string['generalfeedback_help'] = 'General feedback is text which is shown after a question has been attempted. Unlike feedback for a specific question which depends on the response given, the same general feedback is always shown.';
 $string['generatepdfform'] = 'Generate PDF form';
@@ -379,9 +380,11 @@ $string['missingitemdata'] = 'Missing answer(s) for user {$a}';
 $string['missinglogdata'] = 'Missing logdata for existing result.';
 $string['missingquestion'] = 'This question no longer seems to exist';
 $string['missinguserid'] = 'Missing user identification number! Could not read barcode!';
-$string['modulename_help'] = 'This module allows the teacher to design offline quizzes consisting of multiple choice questions.
-These questions are kept in the Moodle question bank and can be re-used within courses and even between courses.
-The offline quizzes can be downloaded as PDF-, DOCX- or LaTeX-files. The students mark their answers on form sheets. The form sheets are scanned and the answers imported into the system.';
+$string['modulename_help'] = 'This module allows the teacher to design offline quizzes consisting of multiple choice questions. These questions are kept in the Moodle question bank and can be re-used within courses and even between courses. The offline quizzes can be downloaded as PDF-, DOCX- or LaTeX-files. The students mark their answers on form sheets. The form sheets are scanned and the answers imported into the system.
+
+<p><a href="https://academic-moodle-cooperation.org/anleitungen/offline-test-einstellungen/?lng=en" target="_blank">Offline quiz: settings</a></p>
+<p><a href="https://academic-moodle-cooperation.org/anleitungen/offline-test-fragen-hinzufugen-und-formulare-generieren/?lng=en" target="_blank">Offline quiz: add questions and generate forms</a></p>
+<p><a href="https://academic-moodle-cooperation.org/anleitungen/offline-test-durchfuhren-und-auswerten/?lng=en" target="_blank">Offline quiz: Conduct and evaluate offline quiz</a></p>';
 $string['moveselectedonpage'] = 'Move selected questions to page: {$a}';
 $string['copyselectedtogroup'] = 'Add selected questions to group: {$a}';
 $string['copytogroup'] = 'Add all questions to group: {$a}';

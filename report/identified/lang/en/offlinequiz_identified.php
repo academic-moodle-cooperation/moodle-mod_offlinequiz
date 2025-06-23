@@ -14,10 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$string['pluginname'] = 'Identified forms';
-$string['identified'] = 'Identified forms';
+$string['pluginname'] = 'Prefilled forms';
+$string['enableidentified'] = 'Enable prefilled forms';
+$string['enableidentified_help'] = 'Gives the user the choice to print prefilled forms. This makes filling the idnumber easier, but removes the ability to decide the users group at the time of the exam.';
+$string['offlinequizidentifiedheading'] = 'Prefilled forms';
+$string['identified'] = 'Prefilled forms';
 $string['identifiedreport'] = 'Select group and list to generate the premarked forms. It may take a while depending on the number of students. Create your lists in the <a href="{$a}">Attendance lists section.</a>';
-$string['noparticipantsinlist'] = 'There are no participants in the selected list';
-$string['notgenerated'] = 'The forms have not been generated yet. Please, go to the <a href="{$a}">Preparation section</a> and create your exams.';
+$string['missinggroup'] = 'Missing data for group {$a}';
 $string['nogroupmark'] = 'Don\'t mark group checkbox.';
+$string['noparticipantsinlist'] = 'There are no participants in the selected list';
+$string['noroles'] ='No roles with capability \'mod/offlinequiz:attempt\' defined in system context';
+$string['notgenerated'] = 'The forms have not been generated yet. Please, go to the <a href="{$a}">Preparation section</a> and create your exams.';
 $string['onlyifaccess'] = 'Only for students with access to this offline quiz.';

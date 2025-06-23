@@ -182,12 +182,26 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('offlinequiz/experimentalevaluation',
             get_string('configexperimentalevaluation', 'offlinequiz'),
             get_string('configexperimentalevaluationdesc', 'offlinequiz'), 0));
+
+    // If wiris is installed, add the setting to enable it.
+
+    $settings->add(new admin_setting_heading('furtheroptionsheading',
+        get_string('furtheroptionsheading', 'offlinequiz'), ''));
+
     // Enable tabs interface.
     $settings->add(new admin_setting_configcheckbox('offlinequiz/usetabs', get_string('usetabs', 'offlinequiz'),
         get_string('usetabsdesc', 'offlinequiz'), 0));
-    // If wiris is installed, add the setting to enable it.
+
     if (get_config('wiris_enabled')) {
         $settings->add(new admin_setting_configcheckbox('offlinequiz/wirismathfilter_enabled',
             get_string('wirismathenabled', 'offlinequiz'), get_string('wirismathenabled_help', 'offlinequiz'), 0));
+    }
+    
+    $subplugins = core_component::get_plugin_list('offlinequiz');
+    foreach ($subplugins as $subpluginname => $subpluginpath) {
+        $settingspath = $subpluginpath . '/settings.php';
+        if (file_exists($settingspath)) {
+            include($settingspath);
+        }
     }
 }

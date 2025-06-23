@@ -165,12 +165,10 @@ class extract_files extends \core\task\adhoc_task {
         $files = get_directory_list($dirname);
         
         $importfilename = substr($importfile, strrpos($importfile, '/') + 1);
-        if (count(get_directory_list($dirname)) > 1 && $key = array_search($importfilename, $files)) {
-            unset($files[$key]);
-            if($unlink) {
+        if ($unlink && count(get_directory_list($dirname)) > 1 && $key = array_search($importfilename, $files)) {
                 unlink($importfile);
-            }
         }
+        $files = $this->remove_original_file($files, $queue->filename);
         return $files;
     }
 
@@ -179,7 +177,7 @@ class extract_files extends \core\task\adhoc_task {
         popen($command, 'r');
     }
     
-    private function remove_original_file($files,$original) {
+    private function remove_original_file($files, $original) {
         if (($key = array_search($original, $files)) !== false) {
             unset($files[$key]);
         }
