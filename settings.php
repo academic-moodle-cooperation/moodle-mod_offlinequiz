@@ -190,4 +190,13 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_configcheckbox('offlinequiz/wirismathfilter_enabled',
             get_string('wirismathenabled', 'offlinequiz'), get_string('wirismathenabled_help', 'offlinequiz'), 0));
     }
+    
+
+    $subplugins = core_component::get_plugin_list('offlinequiz');
+    foreach ($subplugins as $subpluginname => $subpluginpath) {
+        $settingspath = $subpluginpath . '/settings.php';
+        if (file_exists($settingspath)) {
+            include($settingspath);
+        }
+    }
 }

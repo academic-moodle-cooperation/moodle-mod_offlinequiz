@@ -260,21 +260,18 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm): navigation_node {
     }
 
     // Add navigation from subplugins.
-    $pluginmanager = core_plugin_manager::instance();
-    $subplugins = $pluginmanager->get_subplugins_of_plugin('mod_offlinequiz');
-    foreach ($subplugins as $subplugin) {
+    $subplugins = \core_component::get_plugin_list('offlinequiz');
+    foreach ($subplugins as $subplugin => $subpluginpath) {
         // Instantiate the subplugin.
-        $plugin = offlinequiz_instantiate_plugin($subplugin->name);
-        if ($plugin) {
-            if (method_exists($plugin, 'add_to_navigation')) {
-                $plugin->add_to_navigation($secondarynav, $cm, $offlinequiz);
-            }
+        $reportclass = offlinequiz_instantiate_report_class($subplugin);
+        if ($reportclass && method_exists($reportclass, 'add_to_navigation')) {
+            $reportclass->add_to_navigation($secondarynav, $cm, $offlinequiz);
         }
     }
     
     return $secondarynav;
 }
-function offlinequiz_instantiate_plugin($subpluginname): mixed {
+function offlinequiz_instantiate_report_class($subpluginname): mixed {
     // Check if class exists.
     $class = "offlinequiz_{$subpluginname}\\report";
     if (class_exists($class)) {
