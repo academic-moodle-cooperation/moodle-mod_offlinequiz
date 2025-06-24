@@ -67,7 +67,6 @@ class scan_file extends \core\task\adhoc_task
             $this->restorefile($context->id,$queue->id,$queue->filename, $importfile);
         }
         list ($maxquestions, $maxanswers, $formtype, $questionsperpage) = \offlinequiz_get_question_numbers($offlinequiz, $groups);
-        $doubleentry = 0;
 
         set_time_limit(120);
         try {
@@ -132,9 +131,6 @@ class scan_file extends \core\task\adhoc_task
                         'id' => $queuedata->id
                     ));
                 }
-                if ($scannedpage->error == 'doublepage') {
-                    $doubleentry ++;
-                }
             } else {
                 $contextid = 0;
                 $engine = new \offlinequiz_result_import\offlinequiz_result_engine($offlinequiz, $context->id, $queuedata->filename, 0);
@@ -161,78 +157,7 @@ class scan_file extends \core\task\adhoc_task
             }
         }
 
-        $sql = "SELECT count(*) FROM {offlinequiz_queue_data} oqd
-                        WHERE oqd.queueid = :queueid AND oqd.status = 'new' OR oqd.status = 'processing'";
-        $count = $DB->count_records_sql($sql, [
-            'queueid' => $queue->id
-        ]);
-        if ($count == 0) {
-            \offlinequiz_update_grades($offlinequiz);
-
-            $queue->timefinish = time();
-            $DB->set_field('offlinequiz_queue', 'timefinish', $queue->timefinish, array(
-                'id' => $queue->id
-            ));
-            $queuedata->status = 'finished';
-            $DB->set_field('offlinequiz_queue', 'status', 'finished', array(
-                'id' => $queue->id
-            ));
-
-            echo date('Y-m-d-H:i') . ": Import queue with id $queue->id imported.\n\n";
-
-            if ($user = $DB->get_record('user', array(
-                'id' => $queue->importuserid
-            ))) {
-                $mailtext = get_string('importisfinished', 'offlinequiz', format_text($offlinequiz->name, FORMAT_PLAIN));
-
-                // How many pages have been imported successfully.
-                $countsql = "SELECT COUNT(id)
-                               FROM {offlinequiz_queue_data}
-                              WHERE queueid = :queueid
-                                AND status = 'processed'";
-                $params = array(
-                    'queueid' => $queue->id
-                );
-
-                $mailtext .= "\n\n" . get_string('importnumberpages', 'offlinequiz', $DB->count_records_sql($countsql, $params));
-
-                // How many pages have an error.
-                $countsql = "SELECT COUNT(id)
-                               FROM {offlinequiz_queue_data}
-                              WHERE queueid = :queueid
-                                AND status = 'error'";
-
-                $mailtext .= "\n" . get_string('importnumberverify', 'offlinequiz', $DB->count_records_sql($countsql, $params));
-
-                $mailtext .= "\n" . get_string('importnumberexisting', 'offlinequiz', $doubleentry);
-
-                $linkoverview = new \moodle_url('/mod/offlinequiz/report.php', ['q' => $queue->offlinequizid, 'mode' => 'overview']);
-                $mailtext .= "\n\n" . get_string('importlinkresults', 'offlinequiz', $linkoverview);
-
-                $linkupload = new \moodle_url('/mod/offlinequiz/report.php', ['q' => $queue->offlinequizid, 'mode' => 'rimport']);
-                $mailtext .= "\n" . get_string('importlinkverify', 'offlinequiz', $linkupload);
-
-                $mailtext .= "\n\n" . get_string('importtimestart', 'offlinequiz', userdate($queue->timestart));
-                $mailtext .= "\n" . get_string('importtimefinish', 'offlinequiz', userdate($queue->timefinish));
-                
-                // SEnd message to user using message api.
-                
-                $eventdata = new \core\message\message();
-                $eventdata->name = 'jobs';
-                $eventdata->courseid = $course->id;
-                $eventdata->component = 'mod_offlinequiz';
-                $eventdata->userfrom = \core\user::NOREPLY_USER; // No user from, this is a system message.
-                $eventdata->userto = $user;
-                $eventdata->subject = get_string('importmailsubject', 'offlinequiz');
-                $eventdata->fullmessage = $mailtext;
-                $eventdata->fullmessageformat = FORMAT_PLAIN;
-                $eventdata->fullmessagehtml = $mailtext;
-                $eventdata->notification = 1;
-                $eventdata->smallmessage = $mailtext;
-
-                message_send($eventdata);
-            }
-        }
+        
     }
     
     private function restorefile($contextid, $queuedataid, $filename, $restorepath) {
