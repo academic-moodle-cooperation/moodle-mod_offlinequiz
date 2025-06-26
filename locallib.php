@@ -2668,6 +2668,4 @@ function update_queue_status($queueid) {
     } else {
         $DB->set_field('offlinequiz_queue', 'status', 'processed', ['id' => $queueid]);
     }
-    
-    
 }

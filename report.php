@@ -75,10 +75,7 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/offlinequiz:viewreports', $context);
 $PAGE->activityheader->disable();
-$node = $PAGE->settingsnav->find('mod_offlinequiz_results', navigation_node::TYPE_SETTING);
-if ($node) {
-    $node->make_active();
-}
+
 
 $reportlist = offlinequiz_report_list($context);
 

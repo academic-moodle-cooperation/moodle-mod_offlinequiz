@@ -25,7 +25,7 @@
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+use mod_offlinequiz\constants\offlinequiz_page;
 require_once("../../config.php");
 require_once('locallib.php');
 require_once('pdflib.php');
@@ -367,6 +367,7 @@ if ($mode == 'preview') {
 
     $url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id]);
     echo $OUTPUT->single_button($url, get_string('backtopreview', 'offlinequiz'), 'get');
+    echo \mod_offlinequiz\output\action_api::insert_all_actions('offlinequiz', offlinequiz_page::CREATEQUIZ_CREATEPDFS, $cm, $offlinequiz);
 
     // Print buttons for delete/recreate iff there are no scanned pages yet.
     if (!$hasscannedpages) {

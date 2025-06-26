@@ -15,24 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Administration settings definitions for the offlinequiz module.
+ * Renderer outputting the offlinequiz editing UI.
  *
- * @package       offlinequiz
- * @subpackage    identified
- * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at
  * @copyright     2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 5.0+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_offlinequiz\constants;
 
-defined('MOODLE_INTERNAL') || die();
+class offlinequiz_page {
+    public const CREATEQUIZ_CREATEPDFS = 'createquiz.php&mode=createpdfs';
 
-if ($hassiteconfig) {
-    if ($ADMIN->fulltree) {
-        $settings->add(new admin_setting_heading('offlinequizidentifiedheading',
-            get_string('offlinequizidentifiedheading', 'offlinequiz_identified'), ''));
-        $settings->add(new admin_setting_configcheckbox('offlinequiz_identified/enableidentified',
-            get_string('enableidentified', 'offlinequiz_identified'), get_string('enableidentified_help', 'offlinequiz_identified'),
-            1));
-    }
 }
