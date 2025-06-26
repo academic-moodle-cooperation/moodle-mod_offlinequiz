@@ -1779,7 +1779,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         }
         
         // Always upgrade the savepoint
-        upgrade_plugin_savepoint(true, 2025062600, 'offlinequiz');
+        upgrade_mod_savepoint(true, 2025062600, 'offlinequiz');
     }
     
     return true;
