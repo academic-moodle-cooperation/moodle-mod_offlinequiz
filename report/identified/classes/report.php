@@ -29,8 +29,9 @@ namespace offlinequiz_identified;
 use mod_offlinequiz\default_report;
 use \navigation_node;
 use \moodle_url;
+use \mod_offlinequiz\constants\offlinequiz_page;
 defined('MOODLE_INTERNAL') || die();
-require_once("report/identified/locallib.php");
+
 /**
  * Offlinequiz identified forms generator.
  */
@@ -41,6 +42,7 @@ class report extends default_report
     {
         global $CFG, $OUTPUT, $PAGE, $DB;
         $context = \context_module::instance($cm->id);
+        require_once($CFG->dirroot . '/mod/offlinequiz/report/identified/locallib.php');
         $toform = ['id' => $cm->id, 'offlinequiz' => $offlinequiz, 'listid' => null, 'groupid' => null];
         $mform = new identifiedformselector(null, $toform, 'get');
         // Disable if forms are not generated.
@@ -86,6 +88,8 @@ class report extends default_report
             if ($resultmsg) {
                 echo $OUTPUT->notification($resultmsg, 'notifyproblem');
             }
+            $url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs']);
+            echo $OUTPUT->single_button($url, get_string('return', 'offlinequiz_identified'), 'get');
             // Display the description.
             // Url: participants.php?q=1&mode=editlists.
             $url = new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'editlists', 'tabs'=>'tabattendances']);
@@ -96,27 +100,28 @@ class report extends default_report
         return true;
     }
    
-    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node
-    {
-        if(get_config('offlinequiz_identified', 'enableidentified')) {
-            // Add navigation nodes to mod_tabofflinequizcontent and mod_tabattendances.
-            $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'identified', 'id' => $cm->id]);
-            $navnode= navigation_node::create(text: get_string('identified', 'offlinequiz_identified'),
-                                             action: $url,
-                                             key: $this->get_navigation_key());
-    
-            // Get tabofflinequizcontent "Preparation" parent node.
-            $parentnode = $navigation->get('mod_offlinequiz_edit');
-            if ($parentnode) {
-                $parentnode->add_node($navnode);
-            }
-        }
+    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         return $navigation;
+    }
+    public function get_active_tab ($url) {
+        if(strpos($url, '/mod/offlinequiz/report.php') && strpos($url, 'mode=identified')) {
+            return 'mod_offlinequiz_edit';
+        }
     }
     public function get_report_title(): string {
         return get_string('pluginname', 'offlinequiz_identified');
     }
     public function get_navigation_key(): string {
         return 'tab_identifiedforms';
+    }
+    public function get_actions_html($sourceplugin, $sourcepage, $cm, $offlinequiz) {
+        global $OUTPUT;
+        if(get_config('offlinequiz_identified', 'enableidentified')) {
+            if($sourceplugin == 'offlinequiz' && $sourcepage == offlinequiz_page::CREATEQUIZ_CREATEPDFS && $offlinequiz->docscreated == 1) {
+                $url = new \moodle_url('/mod/offlinequiz/report.php', ['mode' => 'identified', 'q' => $offlinequiz->id]);
+                $html = $OUTPUT->single_button($url, get_string('identified', 'offlinequiz_identified'), 'get');
+            }
+        }
+        return $html;
     }
 }

@@ -1768,6 +1768,19 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         offlinequiz_fix_question_references();
         upgrade_mod_savepoint(true, 2025062400, 'offlinequiz');
     }
+    if ($oldversion < 2025062600) {
+        
+        // Name of the plugin you want to uninstall
+        $plugincomponent = 'offlinequiz_regrade';
+        
+        // Check if plugin is installed
+        if (core_plugin_manager::instance()->get_plugin_info($plugincomponent)) {
+            uninstall_plugin('offlinequiz', 'regrade');
+        }
+        
+        // Always upgrade the savepoint
+        upgrade_plugin_savepoint(true, 2025062600, 'offlinequiz');
+    }
     
     return true;
 }

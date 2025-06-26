@@ -183,7 +183,7 @@ class report extends default_report {
      * @see offlinequiz_default_report::display()
      */
     public function display($offlinequiz, $cm, $course) {
-        global $CFG, $DB, $OUTPUT, $USER;
+        global $CFG, $DB, $OUTPUT;
 
         $this->context = context_module::instance($cm->id);
 

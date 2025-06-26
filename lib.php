@@ -1407,6 +1407,17 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
 function offlinequiz_get_active_tab() {
     global $PAGE;
     $url = $PAGE->url->out();
+    $subplugins = \core_component::get_plugin_list('offlinequiz');
+    foreach ($subplugins as $subplugin => $subpluginpath) {
+        // Instantiate the subplugin.
+        $reportclass = offlinequiz_instantiate_report_class($subplugin);
+        if ($reportclass && method_exists($reportclass, 'get_active_tab')) {
+            $activetab = $reportclass->get_active_tab($url);
+            if($activetab) {
+                return $activetab;
+            }
+        }
+    }
     if (strpos($url, '/mod/offlinequiz/edit.php') || strpos($url, '/mod/offlinequiz/createquiz.php')) {
         return 'mod_offlinequiz_edit';
     } else if (strpos($url, '/mod/offlinequiz/report.php') && strpos($url, 'mode=statistics')) {
