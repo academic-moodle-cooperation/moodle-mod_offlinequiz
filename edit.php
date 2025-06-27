@@ -45,7 +45,7 @@
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/addrandomform.php');
+// require_once($CFG->dirroot . '/mod/offlinequiz/addrandomform.php');
 
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
@@ -251,7 +251,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     redirect($afteractionurl);
 }
 
-if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
+/*if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     // Add random questions to the offlinequiz.
     $structure->check_can_be_edited();
     $recurse = optional_param('recurse', 0, PARAM_BOOL);
@@ -261,9 +261,23 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     $randomcount = required_param('randomcount', PARAM_INT);
 
     offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount, $recurse, $preventsamequestion);
-
     offlinequiz_delete_template_usages($offlinequiz);
     offlinequiz_update_sumgrades($offlinequiz);
+    redirect($afteractionurl);
+}*/
+
+if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
+    // Add random questions to the quiz.
+    $structure->check_can_be_edited();
+    $recurse = optional_param('recurse', 0, PARAM_BOOL);
+    $addonpage = optional_param('addonpage', 0, PARAM_INT);
+    $categoryid = required_param('categoryid', PARAM_INT);
+    $randomcount = required_param('randomcount', PARAM_INT);
+    offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount);
+    //quiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $recurse);
+
+    //quiz_delete_previews($quiz);
+    //$gradecalculator->recompute_quiz_sumgrades();
     redirect($afteractionurl);
 }
 
