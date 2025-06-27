@@ -36,7 +36,6 @@ use mod_offlinequiz\default_report;
 use mod_offlinequiz\correct\offlinequiz_selectall_table;
 
 defined('MOODLE_INTERNAL') || die();
-// require_once($CFG->libdir . '/filelib.php');
 
 class report extends default_report {
     var $context;

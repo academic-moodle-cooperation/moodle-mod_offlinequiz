@@ -18,7 +18,7 @@ namespace offlinequiz_rimport\task\adhoc;
 /**
  * An example of an adhoc task.
  */
-class scan_file extends \core\task\adhoc_task {
+class send_notifications extends \core\task\adhoc_task {
     public static function instance(int $queueid): self
     {
         $task = new self();
