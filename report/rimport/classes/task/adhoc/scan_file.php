@@ -137,6 +137,7 @@ class scan_file extends \core\task\adhoc_task
                 $resultpage = $engine->scanpage();
                 $engine->save_page(2);
             }
+            $this->send_notifications($queue->id);
         } catch (\Exception $e) {
             echo 'job ' . $queue->id . ': ' . $e->getMessage() . "\n";
             $DB->set_field('offlinequiz_queue_data', 'status', 'error', array(
@@ -158,6 +159,13 @@ class scan_file extends \core\task\adhoc_task
         }
 
         
+    }
+    
+    private function send_notifications($queueid) {
+        $task = \offlinequiz_rimport\task\adhoc\send_notifications::instance($queueid);
+        //Execute ASAP.
+        $task->set_next_run_time(time());
+        \core\task\manager::queue_adhoc_task($task, true);
     }
     
     private function restorefile($contextid, $queuedataid, $filename, $restorepath) {

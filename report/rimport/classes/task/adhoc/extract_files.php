@@ -63,7 +63,7 @@ class extract_files extends \core\task\adhoc_task {
                     foreach ($files as $file) {
                         $mimetype = \mimeinfo('type', $file);
                         if ($mimetype == 'application/pdf') {
-                            if(!$this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file, true)) {
+                            if(!$this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file, $queue, true)) {
                                 return;
                             }
                         }
