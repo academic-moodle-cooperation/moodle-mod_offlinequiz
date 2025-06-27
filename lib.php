@@ -1408,7 +1408,9 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
 }
 
 function offlinequiz_get_active_tab() {
-    global $PAGE;
+    
+    global $PAGE, $CFG;
+    require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
     $url = $PAGE->url->out();
     $subplugins = \core_component::get_plugin_list('offlinequiz');
     foreach ($subplugins as $subplugin => $subpluginpath) {
