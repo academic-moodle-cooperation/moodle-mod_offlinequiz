@@ -33,6 +33,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_question\local\bank\question_bank_helper;
+use qbank_managecategories\helper;
+
 // If, for some reason, you need to use global variables instead of constants, do not forget to make them
 // global as this file can be included inside a function scope. However, using the global variables
 // at the module level is not recommended.
@@ -1525,8 +1528,14 @@ function mod_offlinequiz_output_fragment_offlinequiz_question_bank($args): strin
     $querystring = parse_url($args['querystring'], PHP_URL_QUERY);
     parse_str($querystring, $params);
 
+    // Load the bank we are looking at rather than always the quiz module itself.
+    $params['cmid'] = clean_param($args['bankcmid'], PARAM_INT);
+
     $viewclass = \mod_offlinequiz\question\bank\custom_view::class;
     $extraparams['view'] = $viewclass;
+
+    // We need the quiz modid to POST back to.
+    $extraparams['quizcmid'] = clean_param($args['quizcmid'], PARAM_INT);
 
     // Build required parameters.
     [$contexts, $thispageurl, $cm, $pagevars, $extraparams] =
@@ -1562,6 +1571,8 @@ function mod_offlinequiz_build_required_parameters_for_custom_view(array $params
 
     // Add cmid so we can retrieve later in extra params.
     $extraparams['cmid'] = $cmid;
+
+    $extraparams['requirebankswitch'] = !empty(question_bank_helper::get_activity_types_with_shareable_questions());
 
     $groupnumber = isset($params['groupnumber']) ? $params['groupnumber'] : 1;
 
@@ -1623,4 +1634,89 @@ function mod_offlinequiz_output_fragment_question_data(array $args): string {
     ob_start();
     $questionbank->display_question_list();
     return ob_get_clean();
+}
+
+/**
+ * Build and return the output for the question bank and category chooser.
+ *
+ * @param array $args provided by the AJAX request.
+ * @return string html to render to the modal.
+ */
+function mod_offlinequiz_output_fragment_switch_question_bank($args): string {
+    global $USER, $COURSE, $OUTPUT;
+
+    $quizcmid = clean_param($args['quizcmid'], PARAM_INT);
+
+    $switchbankwidget = new \core_question\output\switch_question_bank($quizcmid, $COURSE->id, $USER->id);
+
+    return $OUTPUT->render($switchbankwidget);
+}
+
+/**
+ * Generates the add random question in a fragment output. This allows the
+ * form to be rendered in javascript, for example inside a modal.
+ *
+ * The required arguments as keys in the $args array are:
+ *      addonpage {int} The page id to add this question to.
+ *      returnurl {string} URL to return to after form submission.
+ *      quizcmid {int} The quiz course module id the questions are being added to.
+ *      bankcmid {int} The question bank course module id the questions are being added from.
+ *
+ * @param array $args The fragment arguments.
+ * @return string The rendered mform fragment.
+ */
+function mod_offlinequiz_output_fragment_add_random_question_form($args) {
+    global $PAGE, $OUTPUT;
+
+    $extraparams = [];
+    $extraparams['quizcmid'] = clean_param($args['quizcmid'], PARAM_INT);
+    $extraparams['cmid'] = clean_param($args['bankcmid'], PARAM_INT);
+
+    // Build required parameters.
+    [$contexts, $thispageurl, $cm, $pagevars, $extraparams] =
+        build_required_parameters_for_custom_view($args, $extraparams);
+
+    // Additional param to differentiate with other question bank view.
+    $extraparams['view'] = mod_offlinequiz\question\bank\random_question_view::class;
+
+    $course = get_course($cm->course);
+    require_capability('mod/quiz:manage', $contexts->lowest());
+
+    // Custom View.
+    $questionbank = new mod_offlinequiz\question\bank\random_question_view($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
+
+    $renderer = $PAGE->get_renderer('mod_offlinequiz', 'edit');
+    $questionbankoutput = $renderer->question_bank_contents($questionbank, $pagevars);
+
+    $maxrand = 100;
+    for ($i = 1; $i <= min(100, $maxrand); $i++) {
+        $randomcount[] = ['value' => $i, 'name' => $i];
+    }
+
+    // Parent category select.
+    $usablecontexts = $contexts->having_cap('moodle/question:useall');
+    $categoriesarray = helper::question_category_options($usablecontexts);
+    $catoptions = [];
+    foreach ($categoriesarray as $group => $opts) {
+        // Options for each category group.
+        $categories = [];
+        foreach ($opts as $context => $name) {
+            $categories[] = ['value' => $context, 'name' => $name];
+        }
+        $catoptions[] = ['label' => $group, 'options' => $categories];
+    }
+
+    // Template data.
+    $data = [
+        'questionbank' => $questionbankoutput,
+        'randomoptions' => $randomcount,
+        'questioncategoryoptions' => $catoptions,
+    ];
+
+    $helpicon = new \help_icon('parentcategory', 'question');
+    $data['questioncategoryhelp'] = $helpicon->export_for_template($renderer);
+
+    $result = $OUTPUT->render_from_template('mod_offlinequiz/add_random_question_form', $data);
+
+    return $result;
 }

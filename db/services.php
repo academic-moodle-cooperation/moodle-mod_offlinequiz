@@ -26,12 +26,19 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$functions = array(
+$functions = [
     'mod_offlinequiz_set_question_version' => [
-            'classname'     => 'mod_offlinequiz\external\submit_question_version',
-            'description'   => 'Set the version of question that would be required for a given offlinequiz.',
-            'type'          => 'write',
-            'capabilities'  => 'mod/offlinequiz:view',
-            'ajax'          => true,
-    ]
-);
+        'classname'     => 'mod_offlinequiz\external\submit_question_version',
+        'description'   => 'Set the version of question that would be required for a given offlinequiz.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/offlinequiz:view',
+        'ajax'          => true,
+    ],
+    'mod_offlinequiz_add_random_questions' => [
+        'classname'     => 'mod_offlinequiz\external\add_random_questions',
+        'description'   => 'Add a number of random questions to a offlinequiz.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/offlinequiz:manage',
+        'ajax'          => true,
+    ],
+];

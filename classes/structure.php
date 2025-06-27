@@ -878,4 +878,62 @@ class structure {
 
         return $versionoptions;
     }
+
+    /**
+     * Whether the current user can add random questions to the offlinequiz or not.
+     * It is only possible to add a random question if the user has the moodle/question:useall capability
+     * on at least one of the contexts related to the one where we are currently editing questions.
+     *
+     * @return bool
+     */
+    public function can_add_random_questions() {
+        if ($this->canaddrandom === null) {
+            $quizcontext = $this->offlinequizobj->get_context();
+            $relatedcontexts = new \core_question\local\bank\question_edit_contexts($quizcontext);
+            $usablecontexts = $relatedcontexts->having_cap('moodle/question:useall');
+
+            $this->canaddrandom = !empty($usablecontexts);
+        }
+
+        return $this->canaddrandom;
+    }
+
+    /**
+     * Add a random question to the offlinequiz at a given point.
+     *
+     * @param int $addonpage the page on which to add the question.
+     * @param int $number the number of random questions to add.
+     * @param array $filtercondition the filter condition. Must contain at least a category filter.
+     */
+    public function add_random_questions(int $addonpage, int $number, array $filtercondition): void {
+        global $DB;
+
+        if (!isset($filtercondition['filter']['category'])) {
+            throw new \invalid_parameter_exception('$filtercondition must contain at least a category filter.');
+        }
+        $categoryid = $filtercondition['filter']['category']['values'][0];
+
+        $category = $DB->get_record('question_categories', ['id' => $categoryid]);
+        if (!$category) {
+            new \moodle_exception('invalidcategoryid');
+        }
+
+        $catcontext = \context::instance_by_id($category->contextid);
+        require_capability('moodle/question:useall', $catcontext);
+
+        // Create the selected number of random questions.
+        for ($i = 0; $i < $number; $i++) {
+            // Slot data.
+            $randomslotdata = new stdClass();
+            $randomslotdata->quizid = $this->get_offlinequizid();
+            $randomslotdata->usingcontextid = context_module::instance($this->get_cmid())->id;
+            $randomslotdata->questionscontextid = $category->contextid;
+            $randomslotdata->maxmark = 1;
+
+            $randomslot = new \mod_offlinequiz\local\structure\slot_random($randomslotdata);
+            $randomslot->set_quiz($this->get_offlinequiz());
+            $randomslot->set_filter_condition(json_encode($filtercondition));
+            $randomslot->insert($addonpage);
+        }
+    }
 }

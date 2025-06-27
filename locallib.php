@@ -2483,6 +2483,25 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
     return false;
 }
 
+function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $categoryid, int $number): void {
+    debugging(
+        'quiz_add_random_questions is deprecated. Please use mod_quiz\structure::add_random_questions() instead.',
+        DEBUG_DEVELOPER
+    );
+
+    $settings = quiz_settings::create($quiz->id);
+    $structure = structure::create_for_quiz($settings);
+    $structure->add_random_questions($addonpage, $number, [
+        'filter' => [
+            'category' => [
+                'jointype' => condition::JOINTYPE_DEFAULT,
+                'values' => [$categoryid],
+                'filteroptions' => ['includesubcategories' => false],
+            ],
+        ],
+    ]);
+}
+
 /**
  * Randomly add a number of multichoice questions to an offlinequiz group.
  *
@@ -2492,7 +2511,7 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
  * @param unknown_type $number
  * @param unknown_type $includesubcategories
  */
-function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $categoryid,
+/*function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $categoryid,
         $number, $recurse, $preventsamequestion) {
     global $DB;
 
@@ -2573,7 +2592,7 @@ function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $category
     }
 
     offlinequiz_add_questionlist_to_group($chosenids, $offlinequiz, $offlinegroup, null, $maxmarks);
-}
+}*/
 
 /**
  *

@@ -58,6 +58,13 @@ class custom_view extends \core_question\local\bank\view {
      */
     public $component = 'mod_offlinequiz';
 
+    /**
+     * Determine if the 'switch question bank' button must be displayed.
+     *
+     * @var bool
+     */
+    protected bool $requirebankswitch;
+
     /** @var int The maximum displayed length of the category info. */
     const MAX_TEXT_LENGTH = 200;
 
@@ -94,6 +101,7 @@ class custom_view extends \core_question\local\bank\view {
             $this->groupnumber = $groupnumber;
         }
         $this->pagesize = self::DEFAULT_PAGE_SIZE;
+        $this->requirebankswitch = $extraparams['requirebankswitch'] ?? true;
     }
 
     protected function get_question_bank_plugins(): array {
@@ -325,5 +333,45 @@ class custom_view extends \core_question\local\bank\view {
         global $DB;
         $questionbankentryid = $DB->get_field('question_versions','questionbankentryid', ['questionid' => $questionid]);
         return in_array($questionbankentryid, $this->offlinequiz->questionbankentries);
+    }
+
+    /**
+     * Shows the question bank interface.
+     *
+     * @return void
+     */
+    public function display(): void {
+
+        echo \html_writer::start_div('questionbankwindow boxwidthwide boxaligncenter', [
+            'data-component' => 'core_question',
+            'data-callback' => 'display_question_bank',
+            'data-contextid' => $this->contexts->lowest()->id,
+        ]);
+
+        // Show the 'switch question bank' button.
+        echo $this->display_bank_switch();
+
+        // Show the filters and search options.
+        $this->wanted_filters();
+        // Continues with list of questions.
+        $this->display_question_list();
+        echo \html_writer::end_div();
+    }
+
+    /**
+     * Get the current bank header and bank switch button.
+     *
+     * @return string
+     */
+    protected function display_bank_switch(): string {
+        global $OUTPUT;
+
+        if (!$this->requirebankswitch) {
+            return '';
+        }
+
+        $cminfo = \cm_info::create($this->cm);
+
+        return $OUTPUT->render_from_template('mod_offlinequiz/switch_bank_header', ['currentbank' => $cminfo->get_formatted_name()]);
     }
 }
