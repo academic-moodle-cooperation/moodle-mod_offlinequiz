@@ -950,6 +950,10 @@ input#showviewbutton {
 	padding-left: 22px;
 }
 
+#page-mod-offlinequiz-edit #editbuttonsgroup {
+	display: flex;
+}
+
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_0 {
     min-width: 1.3em;
 }
@@ -1475,10 +1479,13 @@ input#showviewbutton {
     margin-top: 1em;
 }
 
+.offlinequiz-queue-file-header {
+	font-weight: bold;
+}
+
 .offlinequiz-queue-file {
-    padding-top: 0.25rem;
+    padding-top: 0.5rem;
     margin-top: 0.25rem;
-    border-top: 1px solid #dee2e6;
     width: 100%;
 }
 .offlinequiz-queue-content {
