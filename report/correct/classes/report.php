@@ -382,7 +382,7 @@ class report extends default_report {
                 $filecontext['fileurl'] =  new moodle_url('/mod/offlinequiz/report.php', ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]);
                 if($page->scannedpageid) {
                     $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
-                    $filecontext['editurl'] = $OUTPUT->action_link($editurl,new pix_icon('t/edit', get_string('edit')) , new popup_action('click', $editurl, 'correct' .
+                    $filecontext['editurl'] = $OUTPUT->action_link($editurl,new pix_icon('t/edit', get_string('queuefilecorrectionhovertext', 'offlinequiz')) , new popup_action('click', $editurl, 'correct' .
                         $page->scannedpageid, $options));
                 }
                 $filecontext['statusmessage'] = get_string('queuefilestatusmessage_' . $page->status, 'offlinequiz');

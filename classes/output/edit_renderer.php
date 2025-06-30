@@ -82,13 +82,14 @@ class edit_renderer extends \plugin_renderer_base {
 
         $output .= $this->repaginate_button($structure, $pageurl, $offlinequiz);
         $output .= $this->total_marks($offlinequiz);
-
+        $output .= '<div id="editbuttonsgroup" >';
         // Start form for question checkboxes.
         $output .= $this->start_add_to_group_form($offlinequiz, $pageurl);
         // Add buttons for adding selected to another group and for removing selected.
         $output .= $this->add_to_group_button($structure, $offlinequiz,  $pageurl);
         $output .= $this->remove_selected_button($structure, $offlinequiz,  $pageurl);
         $output .= $this->select_all_links($structure);
+        $output .= '</div>';
 
         // Show the questions organised into sections and pages.
         $output .= $this->start_section_list();
@@ -114,26 +115,6 @@ class edit_renderer extends \plugin_renderer_base {
         // Inialise the JavaScript.
         $this->initialise_editing_javascript($offlinequizobj->get_course(), $offlinequizobj->get_offlinequiz(),
                 $structure, $contexts, $pagevars, $pageurl);
-
-        // Include the contents of any other popups required.
-        /*if ($structure->can_be_edited()) {
-            $popups = '';
-
-            $popups .= $this->question_bank_loading();
-            $thiscontext = $contexts->lowest();
-            $this->page->requires->js_call_amd('mod_offlinequiz/modal_offlinequiz_question_bank', 'init', [
-                $thiscontext->id
-            ]);
-
-            $popups .= $this->random_question_form($pageurl, $contexts, $pagevars);
-            this->page->requires->yui_module('moodle-mod_offlinequiz-randomquestion',
-                    'M.mod_offlinequiz.randomquestion.init');
-
-            $output .= html_writer::div($popups, 'mod_offlinequiz_edit_forms');
-
-            // Include the question chooser.
-            $output .= $this->question_chooser();
-        }*/
 
         if ($structure->can_be_edited()) {
             $thiscontext = $contexts->lowest();

@@ -16,6 +16,20 @@
 }}
 <div>
   <div class="container-fluid offlinequiz-correct-filelist">
+      <div class="offlinequiz-queue-file offlinequiz-queue-file-header row">
+         <div class="col-1">
+           {{#str}} queuefilestatusheader, mod_offlinequiz {{/str}}
+         </div>
+         <div class="col-4">
+           {{#str}} queuefilesfileheader, mod_offlinequiz {{/str}}
+         </div>
+         <div class="col-5">
+           {{#str}} queuefilesdetailsheader, mod_offlinequiz {{/str}}
+         </div>
+         <div class="col-2">
+           {{#str}} queuefilesactionsheader, mod_offlinequiz {{/str}}
+         </div>
+      </div>
     {{#files}}
       <div class="offlinequiz-queue-file row">
         <div class="col-1">
@@ -32,7 +46,7 @@
             <i class="far fa-lg fa-regular fa-circle offlinequiz-notstarted"></i>
           {{/filestatusnotstarted}}
         </div>
-        <div class="col-5">
+        <div class="col-4">
           {{filename}}
         </div>
         <div class="col-5">
@@ -46,9 +60,9 @@
             <span> {{statusmessage}} </span>
           {{/statusmessage}}
         </div>
-        <div class="col-1">
-          <a href="{{{fileurl}}}"><i class="fa-solid fa-download fa-fw"></i> </a>
+        <div class="col-2">
           {{{editurl}}}
+          <a href="{{{fileurl}}}" title="{{#str}} queuefiledownloadhovertext, mod_offlinequiz {{/str}}"><i class="fa-solid fa-download fa-fw"></i> </a>
         </div>
       </div>
     {{/files}}
