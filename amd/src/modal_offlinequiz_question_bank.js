@@ -28,7 +28,7 @@ import * as ModalEvents from 'core/modal_events';
 import * as Notification from 'core/notification';
 
 const SELECTORS = {
-    ADD_TO_QUIZ_CONTAINER: 'td.addtoofflinequizaction',
+    ADD_TO_OFFLINEQUIZ_CONTAINER: 'td.addtoofflinequizaction',
     ANCHOR: 'a[href]',
     PREVIEW_CONTAINER: 'td.previewquestionaction',
     ADD_QUESTIONS_FORM: 'form#questionsubmit',

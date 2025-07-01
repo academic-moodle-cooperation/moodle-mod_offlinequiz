@@ -173,8 +173,13 @@ class custom_view extends \core_question\local\bank\view {
         }
     }
 
+    /**
+     * URL of add to offlinequiz.
+     *
+     * @param $questionid
+     * @return \moodle_url
+     */
     public function add_to_offlinequiz_url($questionid) {
-        global $CFG;
         $params = $this->baseurl->params();
         $params['addquestion'] = $questionid;
         $params['sesskey'] = sesskey();
