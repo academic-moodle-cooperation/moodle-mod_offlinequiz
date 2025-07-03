@@ -815,8 +815,10 @@ class edit_renderer extends \plugin_renderer_base {
 
 
     private function question_checkbox($question) {
-         $checkbox = '<input class="select-multiple-checkbox" id="s' . $question->id . '" type="checkbox" name="s' .
-                $question->id . '"/>';
+         $checkbox = '<input class="select-multiple-checkbox" '.
+             'id="s' . $question->id . '" type="checkbox" ' .
+             'name="s' . $question->id . '" form="offlinequizbulkcopyform" ' .
+             'aria-label="' . get_string('selectquestion', 'mod_offlinequiz', $question->id) . '"/>';
          return html_writer::span($checkbox, 'question_checkbox');
     }
 
