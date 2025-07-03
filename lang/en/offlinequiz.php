@@ -874,6 +874,7 @@ $string['selectgroup'] = 'Select group';
 $string['selectlist'] = 'Please select a list or try to readjust sheet:';
 $string['selectmultipletoolbar'] = 'Select multiple toolbar';
 $string['selectpage'] = 'Please select page number or try to readjust sheet:';
+$string['selectquestion'] = 'Select question {$a}';
 $string['showallparts'] = 'Show all {$a} participants';
 $string['showcopyright'] = 'Show copyright statement';
 $string['showcopyrightdesc'] = 'If you enable this option, a copyright statement will be shown on the student result review page.';
