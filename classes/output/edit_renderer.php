@@ -158,10 +158,10 @@ class edit_renderer extends \plugin_renderer_base {
             ];
         }
         $templatecontext['groupchoiceselected'] = $offlinequiz->groupnumber;
-        $pageurl = new \moodle_url('/mod/offlinequiz/edit.php', ['cmid' =>  $cm->id]);
+        $pageurl = new \moodle_url('/mod/offlinequiz/edit.php', ['cmid' =>  $offlinequiz->cmid]);
         $templatecontext['groupchoiceactionurl'] = $pageurl;
 
-        $templatecontext['addtogroupdisabled'] = $structure->can_be_edited();
+        $templatecontext['addtogroupdisabled'] = !$structure->can_be_edited();
         return $templatecontext;
     }
 
