@@ -16,7 +16,7 @@
 }}
 <div>
   <div class="offlinequizeditsection row">
-    <div class="groupchoice col-8">
+    <div class="groupchoice col-7">
       <div class="single-select d-inline-block">
         <form method="get" action="{{{groupchoiceactionurl}}}" class="d-flex flex-wrap align-items-center">
           <input type="hidden" name="cmid" value="{{cmid}}"></input>
@@ -39,19 +39,31 @@
         </span>
       </div>
     </div>
-    <div class="maxgrade col-4">
-      <form>
+    <div class="maxgrade col-5 ms-auto">
+      <form class="row ms-auto">
         <input type="hidden" name="cmid" value="{{cmid}}"></input>
         <input type="hidden" name="sesskey" value="{{sesskey}}"></input>
-        <input type="hidden" name="groupnumber" value="{{groupnumber}}></input>
-        <label for="inputmaxgrade">
-          {{#str}} maximumgradex,  {{/str}}
-          <input type="text" id="inputmaxgrade" name="maxgrade" size="{{maxgradeinputsize}}" value="{{maxgradevalue}}"></input>        
-        </label>
-        <button type="submit" name="savechanges" value="true" class="btn btn-secondary savechanges">
+        <input type="hidden" name="groupnumber" value="{{groupnumber}}"></input>
+        <div class="inputmaxgradelabel col-5 pe-0">
+          <label for="inputmaxgrade">
+            {{#str}} maximumgradex,  {{/str}}
+          </label>
+        </div>
+        <div class="col-4">
+          <input type="text" id="inputmaxgrade" name="maxgrade" size="{{maxgradeinputsize}}" value="{{maxgradevalue}}"></input>
+        </div>
+        <button type="submit" name="savechanges" value="true" class="btn btn-secondary savechanges col-3">
           {{#str}} save, mod_offlinequiz {{/str}}
         </button>
       </form>
+      <div class="sumgrades row ms-auto">
+        <span class="totalpoints col-5 pe-0">
+          {{#str}} totalmarksx, mod_offlinequiz {{/str}}
+        </span>
+        <span class="mod_offlinequiz_summarks col-4">{{sumgrades}}</span>
+        <div class="col-3" />
+      </div>
+    </div>
     </div>
     <div class="warnings col-12">
       {{#warningsempty}}
@@ -65,14 +77,8 @@
         </div>
       {{/warningsexist}}
     </div>
-    <div class="repaginatebutton col-8 d-flex">
+    <div class="repaginatebutton col-12">
       {{{repaginatebutton}}}
-    </div>
-    <div class="sumgrades col-4 d-flex">
-      <span class="totalpoints">
-        {{#str}} totalmarksx, mod_offlinequiz {{/str}}
-        <span class="mod_offlinequiz_summarks">{{sumgrades}}</span>
-      </span>
     </div>
     <div class="col-12 editquestionsform">
       <form method="post" action="{{addtogroupformurl}}" id="offlinequizbulkcopyform" class="offlinequizbulkcopyform">

@@ -810,14 +810,6 @@ input#showviewbutton {
     margin: 0.4em;
 }
 
-#page-mod-offlinequiz-edit .btn.savechanges {
-    margin-left: 0.4em;
-}
-
-#page-mod-offlinequiz-edit input#inputmaxgrade {
-    width: 4em;
-}
-
 #page-mod-offlinequiz-edit li.activity > div,
 #page-mod-offlinequiz-edit li.pagenumber {
     position: relative;
@@ -1056,9 +1048,19 @@ input#showviewbutton {
     
 }
 
-#page-mod-offlinequiz-edit .maxgrade form {
-    float: right;
-    margin-top: 0.5em;
+#page-mod-offlinequiz-edit .maxgrade {
+	max-width: 35em;
+}
+
+#page-mod-offlinequiz-edit #inputmaxgrade {
+    width:100%;
+}
+
+#page-mod-offlinequiz-edit .inputmaxgradelabel label,
+#page-mod-offlinequiz-edit .edit_grades .totalpoints {
+	padding: 0;
+	justify-content: flex-end;
+	display: flex;
 }
 
 #page-mod-offlinequiz-edit .editing_move {
@@ -1067,8 +1069,8 @@ input#showviewbutton {
 	top: 0;
 }
 
-#page-mod-offlinequiz-edit .maxgrade label {
-    display: inline;
+#page-mod-offlinequiz-edit .savechanges {
+	height: 2.5em;
 }
 
 #page-mod-offlinequiz-edit .edit_grades .maxgrade {
@@ -1076,16 +1078,8 @@ input#showviewbutton {
     top: 0;
 }
 #page-mod-offlinequiz-edit .totalpoints {
-    display: block;
-    float: right;
-    margin: -3.5em 1em 0 1em;
-    padding: .2em;
-}
-#page-mod-offlinequiz-edit .edit_grades .totalpoints {
-    display: block;
-    float: right;
-    margin: -2em 1em 0 1em;
-    padding: .2em;
+    display: flex;
+    justify-content: flex-end;
 }
 
 #page-mod-offlinequiz-edit.dir-rtl .maxgrade,
@@ -1322,15 +1316,6 @@ input#showviewbutton {
 
 .path-mod-offlinequiz .urlselect {
     margin-bottom: 1em;
-}
-
-@media only screen and (max-width: 62em) {
-    #page-mod-offlinequiz-edit .totalpoints {
-        margin: -2em 1em 0 1em;
-    }
-    #page-mod-offlinequiz-edit .maxgrade {
-        margin-bottom: 1.5em;
-    }
 }
 
 @media only screen and (min-width: 50em) and (max-width: 60em) {
