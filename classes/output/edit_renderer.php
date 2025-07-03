@@ -73,23 +73,24 @@ class edit_renderer extends \plugin_renderer_base {
             ' ' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber],
             'editingofflinequiz', 'offlinequiz', '',
             get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
-        $output = '';
+        $templatecontext = [];
+        $templatecontext['sesskey'] = sesskey();
+        $templatecontext['groupnumber'] = $offlinequiz->groupnumber;
+        $templatecontext['cmid'] = $cm->id;
+        $templatecontext['groupid'] = $offlinequiz->groupid;
         // Information at the top.
-        $output .= $this->offlinequiz_group_selector($offlinequiz, $pageurl);
-        $output .= $this->offlinequiz_information($structure);
-        $output .= $this->maximum_grade_input($offlinequiz, $this->page->url);
-        $output .= $this->offlinequiz_state_warnings($structure);
-
-        $output .= $this->repaginate_button($structure, $pageurl, $offlinequiz);
-        $output .= $this->total_marks($offlinequiz);
-        $output .= '<div id="editbuttonsgroup" >';
+        $templatecontext = $this->offlinequiz_group_selector_values($offlinequiz, $cm, $templatecontext);
+        $templatecontext = $this->offlinequiz_information_values($structure, $templatecontext);
+        $templatecontext = $this->maximum_grade_input_values($offlinequiz, $this->page->url, $templatecontext);
+        $templatecontext = $this->offlinequiz_state_warnings_values($structure,$templatecontext);
+        $templatecontext = $this->repaginate_button_values($structure, $pageurl, $offlinequiz, $templatecontext);
+        $templatecontext = $this->total_marks($offlinequiz, $templatecontext);
+        $templatecontext = $this->start_add_to_group_form_values($offlinequiz, $pageurl, $templatecontext);
+        $templatecontext = $this->add_to_group_button($structure, $offlinequiz,  $pageurl, $templatecontext);
+        $output = $this->render_from_template('mod_offlinequiz/edit_buttons', $templatecontext);
         // Start form for question checkboxes.
-        $output .= $this->start_add_to_group_form($offlinequiz, $pageurl);
-        // Add buttons for adding selected to another group and for removing selected.
-        $output .= $this->add_to_group_button($structure, $offlinequiz,  $pageurl);
-        $output .= $this->remove_selected_button($structure, $offlinequiz,  $pageurl);
-        $output .= $this->select_all_links($structure);
-        $output .= '</div>';
+        //$output .= $this->remove_selected_button($structure, $offlinequiz,  $pageurl);
+        //$output .= $this->select_all_links($structure);
 
         // Show the questions organised into sections and pages.
         $output .= $this->start_section_list();
@@ -140,36 +141,28 @@ class edit_renderer extends \plugin_renderer_base {
         echo $output;
     }
 
-    private function start_add_to_group_form($offlinequiz, $pageurl) {
-        $output = '';
-
-        $output .= '<form method="post" action="' .
-                $pageurl->out() . '" id="offlinequizbulkcopyform" class="offlinequizbulkcopyform">';
-        $output .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-        $output .= '<input type="hidden" name="fromofflinegroup" value="' . $offlinequiz->groupid . '" />';
-        return $output;
+    private function start_add_to_group_form_values($offlinequiz, $pageurl, $templatecontext) {
+        $templatecontext['addtogroupformurl'] = $pageurl->out();
+        $templatecontext['offlinegroupid'] =  $offlinequiz->groupid;
+        return $templatecontext;
     }
 
-    private function add_to_group_button($structure, $offlinequiz, $pageurl) {
+    private function add_to_group_button($structure, $offlinequiz, $pageurl, $templatecontext) {
+        // Compute the offlinequiz group letters.
         $letterstr = 'ABCDEFGHIJKL';
-        $options = array();
-        $options[0] = get_string('selectagroup', 'offlinequiz');
+        $templatecontext['addtogroupotpions'] = [];
         for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
-            if ($i != $offlinequiz->groupnumber) {
-                $options[$i] = $letterstr[$i - 1];
-            }
+            $templatecontext['addtogroupotpions'][] =
+            [  'number' => $i,
+                'letter' => $letterstr[$i - 1]
+            ];
         }
+        $templatecontext['groupchoiceselected'] = $offlinequiz->groupnumber;
+        $pageurl = new \moodle_url('/mod/offlinequiz/edit.php', ['cmid' =>  $cm->id]);
+        $templatecontext['groupchoiceactionurl'] = $pageurl;
 
-        $select = html_writer::select($options, 'copyselectedtogrouptop', $offlinequiz->groupnumber, array());
-
-        $copyingdisabled = '';
-        if (!$structure->can_be_edited()) {
-            $copyingdisabled = 'disabled="disabled"';
-        }
-        $output = get_string('copyselectedtogroup', 'offlinequiz', $select) .
-            '<input class="btn btn-secondary" type="submit" name="savechanges" value="' . get_string('add') .
-            '" ' . $copyingdisabled . '/>';
-        return html_writer::div($output, 'copyselected');
+        $templatecontext['addtogroupdisabled'] = $structure->can_be_edited();
+        return $templatecontext;
     }
 
     private function end_add_to_group_form() {
@@ -200,28 +193,23 @@ class edit_renderer extends \plugin_renderer_base {
      * @param unknown $offlinequiz
      * @return string
      */
-    public function offlinequiz_group_selector($offlinequiz, \moodle_url $pageurl) {
-
-        $output = '';
-        // Print the group choice select.
+    public function offlinequiz_group_selector_values($offlinequiz, $cm, $templatecontext) {
 
         // Compute the offlinequiz group letters.
         $letterstr = 'ABCDEFGHIJKL';
-        $groupletters = array();
-        $groupoptions = array();
+        $templatecontext['groupchoiceoptions'] = [];
 
         for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
-            $groupletters[$i] = $letterstr[$i - 1];
-            $groupoptions[$i] = get_string('questionsingroup', 'offlinequiz') . ' ' . $letterstr[$i - 1];
+            $templatecontext['groupchoiceoptions'][] =
+            ['number' => $i,
+             'letter' => $letterstr[$i - 1],
+             'selected' => ($offlinequiz->groupnumber == $i),
+            ];
         }
-
-        $selecturl = unserialize(serialize($pageurl));
-        $selecturl->remove_params('groupnumber');
-        $output .= html_writer::start_div('groupchoice');
-        $output .= $this->single_select(
-                   $selecturl, 'groupnumber', $groupoptions, $offlinequiz->groupnumber, array(), 'groupmenu123');
-        $output .= html_writer::end_div();
-        return $output;
+        $templatecontext['groupchoiceselected'] = $offlinequiz->groupnumber;
+        $pageurl = new \moodle_url('/mod/offlinequiz/edit.php', ['cmid' =>  $cm->id]);
+        $templatecontext['groupchoiceactionurl'] = $pageurl;
+        return $templatecontext;
     }
 
     /**
@@ -232,18 +220,22 @@ class edit_renderer extends \plugin_renderer_base {
      * @param structure $structure the offlinequiz structure.
      * @return string HTML to output.
      */
-    public function offlinequiz_state_warnings(structure $structure) {
+    public function offlinequiz_state_warnings_values(structure $structure, $templatecontext) {
+        
         $warnings = $structure->get_edit_page_warnings();
-        if (empty($warnings)) {
-            return $this->box('', 'emptystatusdisplay');
-        }
+        $templatecontext['warningsempty'] = empty($warnings);
+        $templatecontext['warningsexist'] = !empty($warnings);
 
-        $output = array();
+        $templatewarnings = [];
         foreach ($warnings as $warning) {
-            $output[] = \html_writer::tag('p', $warning);
+            $templatewarnings[] = ['text' => $warning, 'more' => true];
         }
-        $result = $this->box(implode("\n", $output), 'statusdisplay');
-        return $result;
+        if($templatewarnings) {
+            $lastkey = array_key_last($templatewarnings);
+            $templatewarnings[$lastkey]['more'] = false; 
+        }
+        $templatecontext['warnings'] = $templatewarnings;
+        return $templatecontext;
     }
 
     /**
@@ -252,16 +244,13 @@ class edit_renderer extends \plugin_renderer_base {
      * @param structure $structure the offlinequiz structure.
      * @return string HTML to output.
      */
-    public function offlinequiz_information(structure $structure) {
+    public function offlinequiz_information_values(structure $structure, $templatecontext) {
+
         list($currentstatus, $explanation) = $structure->get_dates_summary();
-
-        $output = html_writer::span(
-                    get_string('numquestionsx', 'offlinequiz', $structure->get_question_count()),
-                    'numberofquestions') . ' | ' .
-                html_writer::span($currentstatus, 'offlinequizopeningstatus',
-                    array('title' => $explanation));
-
-        return html_writer::div($output, 'statusbar');
+        $templatecontext['informationcurrentstatus'] = $currentstatus;
+        $templatecontext['informationexplanation'] = $explanation;
+        $templatecontext['informationquestioncount'] = $structure->get_question_count();
+        return $templatecontext;
     }
 
     /**
@@ -271,27 +260,10 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
-    public function maximum_grade_input($offlinequiz, \moodle_url $pageurl) {
-        $output = '';
-        $output .= html_writer::start_div('maxgrade');
-        $output .= html_writer::start_tag('form', array('method' => 'post', 'action' => 'edit.php',
-                'class' => 'offlinequizsavegradesform'));
-        $output .= html_writer::start_tag('fieldset', array('class' => 'invisiblefieldset'));
-        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
-        $output .= html_writer::input_hidden_params($pageurl);
-        $a = html_writer::empty_tag('input', array('type' => 'text', 'id' => 'inputmaxgrade',
-                'name' => 'maxgrade', 'size' => ($offlinequiz->decimalpoints + 2),
-                'value' => offlinequiz_format_grade($offlinequiz, $offlinequiz->grade)));
-        $output .= html_writer::tag('label', get_string('maximumgradex', '', $a),
-                array('for' => 'inputmaxgrade'));
-        $output .= html_writer::start_tag('button', array('type' => 'submit',
-                'name' => 'savechanges', 'value' => 'true', 'class' => 'btn btn-secondary savechanges'));
-        $output .= get_string('save', 'offlinequiz');
-        $output .= html_writer::end_tag('button');
-        $output .= html_writer::end_tag('fieldset');
-        $output .= html_writer::end_tag('form');
-        $output .= html_writer::end_tag('div');
-        return $output;
+    public function maximum_grade_input_values($offlinequiz, \moodle_url $pageurl, $templatecontext) {
+        $templatecontext['maxgradeinputsize'] = $offlinequiz->decimalpoints + 2;
+        $templatecontext['maxgradevalue'] = offlinequiz_format_grade($offlinequiz, $offlinequiz->grade);
+        return $templatecontext;
     }
 
     /**
@@ -300,7 +272,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
-    protected function repaginate_button(structure $structure, \moodle_url $pageurl, $offlinequiz) {
+    protected function repaginate_button_values(structure $structure, \moodle_url $pageurl, $offlinequiz, $templatecontext) {
 
         $header = html_writer::tag('span', get_string('repaginatecommand', 'offlinequiz'), array('class' => 'repaginatecommand'));
         $form = $this->repaginate_form($structure, $pageurl);
@@ -323,9 +295,9 @@ class edit_renderer extends \plugin_renderer_base {
         } else {
             $this->page->requires->yui_module('moodle-mod_offlinequiz-repaginate', 'M.mod_offlinequiz.repaginate.init');
         }
-
-        return html_writer::tag('div',
-                html_writer::empty_tag('input', $buttonoptions), $containeroptions);
+        $templatecontext['repaginatebutton'] = html_writer::tag('div',
+            html_writer::empty_tag('input', $buttonoptions), $containeroptions);
+        return $templatecontext;
     }
 
     /**
@@ -418,11 +390,9 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \stdClass $offlinequiz the offlinequiz settings from the database.
      * @return string HTML to output.
      */
-    public function total_marks($offlinequiz) {
-        $totalmark = html_writer::span(offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades), 'mod_offlinequiz_summarks');
-        return html_writer::tag('span',
-                get_string('totalmarksx', 'offlinequiz', $totalmark),
-                array('class' => 'totalpoints'));
+    public function total_marks($offlinequiz, $templatecontext) {
+        $templatecontext['sumgrades'] = offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades);
+        return $templatecontext;
     }
 
     /**

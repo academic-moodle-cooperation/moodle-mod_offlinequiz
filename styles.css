@@ -482,6 +482,7 @@ table.offlinequizreviewsummary td.cell {
 }
 #page-mod-offlinequiz-report table#attempts th.sumgrades {
     text-align: right;
+    float: right;
 }
 #page-mod-offlinequiz-report table#attempts td.sumgrades {
     text-align: right;
@@ -983,6 +984,10 @@ input#showviewbutton {
     margin-right: 1em;
 }
 
+#page-mod-offlinequiz-edit .offlinequizeditsection {
+	display: flex;
+}
+
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .edit_icon,
 #page-mod-offlinequiz-edit ul.slots li.section li.activity a.preview,
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .editing_delete,
@@ -1040,29 +1045,20 @@ input#showviewbutton {
     margin-top: 0.2em;
 }
 
-#page-mod-offlinequiz-edit div.groupchoice {
-    float: left;
-    margin: 0.5em 1.5em 0.7em 0;
-}
-
 #page-mod-offlinequiz-edit .clear {
     clear: both;
 }
 
 
 #page-mod-offlinequiz-edit .statusbar {
-    float: left;
-    margin: 0.6em 0 0.6em 0;
+    margin-left: 0.6em;
+    display: inline-block;
+    
 }
 
-#page-mod-offlinequiz-edit .maxgrade {
-    display: block;
+#page-mod-offlinequiz-edit .maxgrade form {
     float: right;
-    margin: -2.5em 1em 0 1em;
-    padding: .2em;
-}
-#page-mod-offlinequiz-edit .maxgrade {
-    margin-top: 2.2em;
+    margin-top: 0.5em;
 }
 
 #page-mod-offlinequiz-edit .editing_move {
@@ -1102,15 +1098,17 @@ input#showviewbutton {
     margin-right: 2em;
     clear: both;
 }
-
-#page-mod-offlinequiz-edit div.copyselected {
-    display: inline-block;
+#page-mod-offlinequiz-edit .copyselected {
+	display: flex;
 }
-#page-mod-offlinequiz-edit div.removeselected {
-    display: inline-block;
+#page-mod-offlinequiz-edit .addselectedtogrouptext {
+    align-self: center;
+}
+#page-mod-offlinequiz-edit #menucopyselectedtogrouptop {
+	margin-left: 1em;
 }
 #page-mod-offlinequiz-edit div.removeselected input {
-    margin-left: 0;
+    margin-left: 0.5em;
 }
 
 #page-mod-offlinequiz-edit div.randomquestionformforpopup input[type="checkbox"] {
