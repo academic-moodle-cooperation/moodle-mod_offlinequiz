@@ -34,7 +34,6 @@ use core_question\local\bank\condition;
 use core_question\local\bank\column_manager_base;
 use core_question\local\bank\question_version_status;
 use mod_offlinequiz\question\bank\filter\custom_category_condition;
-use qbank_managecategories\category_condition;
 
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 /**
@@ -104,6 +103,26 @@ class custom_view extends \core_question\local\bank\view {
         $this->requirebankswitch = $extraparams['requirebankswitch'] ?? true;
     }
 
+    /**
+     * Just use the base column manager in this view.
+     *
+     * @return void
+     */
+    protected function init_column_manager(): void {
+        $this->columnmanager = new column_manager_base();
+    }
+
+    /**
+     * Don't display plugin controls.
+     *
+     * @param \core\context $context
+     * @param int $categoryid
+     * @return string
+     */
+    protected function get_plugin_controls(\core\context $context, int $categoryid): string {
+        return '';
+    }
+
     protected function get_question_bank_plugins(): array {
         $questionbankclasscolumns = [];
         $customviewcolumns = [
@@ -154,23 +173,19 @@ class custom_view extends \core_question\local\bank\view {
         }
     }
 
+    /**
+     * URL of add to offlinequiz.
+     *
+     * @param $questionid
+     * @return \moodle_url
+     */
     public function add_to_offlinequiz_url($questionid) {
-        global $CFG;
         $params = $this->baseurl->params();
         $params['addquestion'] = $questionid;
         $params['sesskey'] = sesskey();
         $params['cmid'] = $this->cm->id;
         $params['groupnumber'] = $this->groupnumber;
         return new \moodle_url('/mod/offlinequiz/edit.php', $params);
-    }
-
-    /**
-     * Just use the base column manager in this view.
-     *
-     * @return void
-     */
-    protected function init_column_manager(): void {
-        $this->columnmanager = new column_manager_base();
     }
 
     /**
@@ -332,7 +347,10 @@ class custom_view extends \core_question\local\bank\view {
     public function offlinequiz_contains($questionid) {
         global $DB;
         $questionbankentryid = $DB->get_field('question_versions','questionbankentryid', ['questionid' => $questionid]);
-        return in_array($questionbankentryid, $this->offlinequiz->questionbankentries);
+        if (is_array($this->offlinequiz->questionbankentries)) {
+            return in_array($questionbankentryid, $this->offlinequiz->questionbankentries);
+        }
+        return false;
     }
 
     /**
