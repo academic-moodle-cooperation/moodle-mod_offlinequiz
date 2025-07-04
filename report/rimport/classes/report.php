@@ -190,9 +190,13 @@ class report extends default_report {
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node
     {     
         $parentnode = $navigation->get('mod_offlinequiz_results');
-        $parentnode->add(text: get_string('importforms', 'offlinequiz_rimport'),
-                        action:  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport']),
-                        key: $this->get_navigation_key());
+        if($parentnode) {
+            $newnode = \navigation_node::create(text: get_string('importforms', 'offlinequiz_rimport'),
+                action:  new \moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport']),
+                key: $this->get_navigation_key());
+            //Now include as a the first item.
+            $parentnode->add_node($newnode,'tabofflinequizcorrect');
+        }
         return $navigation;
     }
     public function get_report_title(): string {
