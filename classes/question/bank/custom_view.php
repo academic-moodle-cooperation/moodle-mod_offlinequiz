@@ -91,6 +91,7 @@ class custom_view extends \core_question\local\bank\view {
             }
         }
         $this->init_columns($this->wanted_columns(), $this->heading_column());
+        $this->pagesize = self::DEFAULT_PAGE_SIZE;
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
         [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
         $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $extraparams['groupid']);
@@ -99,7 +100,6 @@ class custom_view extends \core_question\local\bank\view {
             $groupnumber = $DB->get_field('offlinequiz_groups', 'groupnumber', ['id' => $extraparams['groupid']]);
             $this->groupnumber = $groupnumber;
         }
-        $this->pagesize = self::DEFAULT_PAGE_SIZE;
         $this->requirebankswitch = $extraparams['requirebankswitch'] ?? true;
     }
 
