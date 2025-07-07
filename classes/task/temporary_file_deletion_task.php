@@ -37,7 +37,7 @@ class temporary_file_deletion_task extends \core\task\scheduled_task {
     }
 
     public function execute() {
-        global $DB;
+        global $DB,$CFG;
         // Delete old temporary files not needed any longer.
         $keepdays = get_config('offlinequiz', 'keepfilesfordays');
         $keepseconds = $keepdays * 24 * 60 * 60;
@@ -57,13 +57,20 @@ class temporary_file_deletion_task extends \core\task\scheduled_task {
                     if (empty($dirname)) {
                         $pathparts = pathinfo($file->filename);
                         $dirname = $pathparts['dirname'];
+                    } else {
+                        break;
                     }
-                    $DB->delete_records('offlinequiz_queue_data', array('id' => $file->id));
                 }
+            }
+            if(empty($dirname)) {
+                $dirname = "$CFG->dataroot/offlinequiz/import/$jobid/";
+            }
+            if(is_dir($dirname)) {
                 // Remove the temporary directory.
                 echo "Removing dir " . $dirname . "\n";
                 remove_dir($dirname);
             }
+            $DB->delete_records('offlinequiz_queue_data', ['queueids' => $jobid->id]);
         }
     }
 }

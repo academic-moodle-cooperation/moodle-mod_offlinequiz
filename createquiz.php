@@ -187,7 +187,7 @@ if ($mode == 'preview') {
         echo $OUTPUT->box_start('generalbox controlbuttonbox');
 
         unset($buttonoptions);
-        $buttonoptions = array();
+        $buttonoptions = [];
         $buttonoptions['q'] = $offlinequiz->id;
         $buttonoptions['forcenew'] = true;
         $buttonurl = new moodle_url('/mod/offlinequiz/createquiz.php', $buttonoptions);
