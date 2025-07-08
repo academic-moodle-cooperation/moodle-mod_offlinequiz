@@ -1464,12 +1464,16 @@ input#showviewbutton {
 
 .offlinequiz-queue-file-header {
 	font-weight: bold;
+    padding-top: 0.5rem;
+    margin-top: 0.25rem;
+    width: 100%;
 }
 
 .offlinequiz-queue-file {
     padding-top: 0.5rem;
     margin-top: 0.25rem;
     width: 100%;
+    border-top: 1px solid #dee2e6;
 }
 .offlinequiz-queue-content {
     margin: 1em 0em 1em 3em;
