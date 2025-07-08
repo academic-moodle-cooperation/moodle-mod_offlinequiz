@@ -116,6 +116,7 @@ class report extends default_report
     }
     public function get_actions_html($sourceplugin, $sourcepage, $cm, $offlinequiz) {
         global $OUTPUT;
+        $html = '';
         if(get_config('offlinequiz_identified', 'enableidentified')) {
             if($sourceplugin == 'offlinequiz' && $sourcepage == offlinequiz_page::CREATEQUIZ_CREATEPDFS && $offlinequiz->docscreated == 1) {
                 $url = new \moodle_url('/mod/offlinequiz/report.php', ['mode' => 'identified', 'q' => $offlinequiz->id]);
