@@ -149,7 +149,7 @@ class extract_files extends \core\task\adhoc_task {
         global $DB;
         // Extract each page to a separate file.
         $newfile = "$importfile-%03d.tiff";
-        $handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
+        $handle = popen("cd $dirname;convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
         fread($handle, 1);
         while (!feof($handle)) {
             fread($handle, 1);
