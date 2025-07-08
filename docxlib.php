@@ -411,11 +411,11 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
 
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
-        // Remove all paragraph tags because they mess up the layout. JPC:Exclude <pre>.
-        $answertext = preg_replace("/<p\\b(?:\\s+[A-Za-z_:][\\w:.-]*(?:\\s*=\\s*(?:\"[^\"]*\"|'[^']*'|[^\\s'\">=]+))?)*\\s*/ms", "", $answertext);
+        // Remove all paragraph tags because they mess up the layout.
+        $answertext = preg_replace('/<p\b(?:\s+[A-Za-z_:][\w:.-]*(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s\'">=]+))?)*\s*>/i', "", $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
-        $answertext = preg_replace("/<\/p\\b[^>]*>/ms", "", $answertext);
+        $answertext = preg_replace("/<\/p>/i", "", $answertext);
         $answertext = $trans->fix_image_paths($answertext, $question->contextid,
             'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
 
