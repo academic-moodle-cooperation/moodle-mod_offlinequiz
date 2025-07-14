@@ -2489,7 +2489,7 @@ function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $c
         DEBUG_DEVELOPER
     );
 
-    $settings = quiz_settings::create($quiz->id);
+    /*$settings = quiz_settings::create($quiz->id);
     $structure = structure::create_for_quiz($settings);
     $structure->add_random_questions($addonpage, $number, [
         'filter' => [
@@ -2499,7 +2499,92 @@ function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $c
                 'filteroptions' => ['includesubcategories' => false],
             ],
         ],
-    ]);
+    ]);*/
+    global $DB;
+
+    $category = $DB->get_record('question_categories', ['id' => $categoryid]);
+    if (!$category) {
+        new \moodle_exception('invalidcategoryid');
+    }
+
+    $catcontext = \context::instance_by_id($category->contextid);
+    require_capability('moodle/question:useall', $catcontext);
+
+    $categoryids = array($category->id);
+
+    list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
+
+    $sql = "SELECT q.id
+              FROM {question} q
+              JOIN {question_versions} qv ON qv.questionid = q.id
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+             WHERE qbe.questioncategoryid $qcsql
+               AND q.parent = 0
+               AND qv.status = 'ready'
+               AND q.qtype IN ('multichoice', 'multichoiceset')
+               AND NOT EXISTS (SELECT 1
+                                 FROM {question_versions} qv2
+                                 WHERE qv2.questionbankentryid = qv.questionbankentryid
+                                   AND qv.version < qv2.version) ";
+
+        // Find all questions in the selected categories that are not in the offline test yet.
+        $sql .= "AND NOT EXISTS (SELECT 1
+                                   FROM {offlinequiz_group_questions} ogq
+                                   JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
+                                  WHERE qv3.questionbankentryid = qv.questionbankentryid
+                                    AND ogq.offlinequizid = :offlinequizid)";
+
+    $qcparams['offlinequizid'] = $quiz->id;
+    $qcparams['offlinegroupid'] = 1;
+
+    $questionids = $DB->get_fieldset_sql($sql, $qcparams);
+    shuffle($questionids);
+
+    $chosenids = array();
+    while (($questionid = array_shift($questionids)) && $number > 0) {
+        $chosenids[] = $questionid;
+        $number -= 1;
+    }
+
+    $maxmarks = array();
+    if ($chosenids) {
+        // Get the old maxmarks in case questions are already in other offlinequiz groups.
+        list($qsql, $params) = $DB->get_in_or_equal($chosenids, SQL_PARAMS_NAMED);
+
+        $sql = "SELECT id, questionid, maxmark
+                  FROM {offlinequiz_group_questions}
+                 WHERE offlinequizid = :offlinequizid
+                   AND questionid $qsql";
+        $params['offlinequizid'] = $quiz->id;
+
+        if ($slots = $DB->get_records_sql($sql, $params)) {
+            foreach ($slots as $slot) {
+                if (!array_key_exists($slot->questionid, $maxmarks)) {
+                    $maxmarks[$slot->questionid] = $slot->maxmark;
+                }
+            }
+        }
+    }
+
+    $offlinegroup = new stdClass();
+    $offlinegroup->id = 1;
+
+    offlinequiz_add_questionlist_to_group($chosenids, $quiz, $offlinegroup, null, $maxmarks);
+
+    // Create the selected number of random questions.
+    /*for ($i = 0; $i < $number; $i++) {
+        // Slot data.
+        $randomslotdata = new stdClass();
+        $randomslotdata->quizid = $quiz->id;
+        $randomslotdata->usingcontextid = context_module::instance($quiz->cmid)->id;
+        $randomslotdata->questionscontextid = $category->contextid;
+        $randomslotdata->maxmark = 1;
+
+        $randomslot = new \mod_offlinequiz\local\structure\slot_random($randomslotdata);
+        $randomslot->set_quiz($quiz);
+        //$randomslot->set_filter_condition(json_encode($filtercondition));
+        $randomslot->insert($addonpage);
+    }*/
 }
 
 /**
