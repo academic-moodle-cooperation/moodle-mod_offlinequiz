@@ -138,15 +138,22 @@ class add_random_questions extends external_api {
                 'sortdata' => [],
                 'filter' => $filter,
             ];
+        } else {
+            $categoryid = $filtercondition['filter']['category']['values'][0];
         }
 
         // Add random question to the quiz.
         [$quiz, ] = get_module_from_cmid($cmid);
-        $settings = quiz_settings::create_for_cmid($cmid);
+
+        offlinequiz_add_random_questions($quiz, 0, $categoryid, $randomcount);
+        offlinequiz_delete_template_usages($quiz);
+        offlinequiz_update_sumgrades($quiz);
+
+        /*$settings = quiz_settings::create_for_cmid($cmid);
         $structure = structure::create_for_quiz($settings);
         $structure->add_random_questions($addonpage, $randomcount, $filtercondition);
         quiz_delete_previews($quiz);
-        quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_quiz_sumgrades();
+        quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_quiz_sumgrades();*/
 
         return ['message' => get_string('addarandomquestion_success', 'mod_quiz')];
     }
