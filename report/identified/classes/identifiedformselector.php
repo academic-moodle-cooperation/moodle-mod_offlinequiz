@@ -77,7 +77,7 @@ class identifiedformselector extends \moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'mode', 'identified');
         $mform->setType('mode', PARAM_TEXT);
-        $mform->addElement('select', 'groupnumber', get_string('group', 'offlinequiz'), $groupsoptions);
+        $mform->addElement('select', 'groupnumber', get_string('group', 'offlinequiz_identified'), $groupsoptions);
         $mform->setType('groupnumber', PARAM_INT);
         $mform->setDefault('groupnumber', 0);
         $mform->addRule('groupnumber', null, 'required', null, 'client');
@@ -85,13 +85,16 @@ class identifiedformselector extends \moodleform {
         $mform->addElement('checkbox', 'nogroupmark', get_string('nogroupmark', 'offlinequiz_identified'));
         $mform->setDefault('nogroupmark', 0);
         
-        $mform->addElement('select', 'list', get_string('participants', 'offlinequiz'), $lists);
+        $mform->addElement('select', 'list', get_string('participants', 'offlinequiz_identified'), $lists);
         $mform->setType('list', PARAM_INT);
         $mform->setDefault('list', 0);
         // Check box for only if access.
-        $mform->addElement('checkbox', 'onlyifaccess', get_string('onlyifaccess', 'offlinequiz_identified'));
+        // currently not used and hidden. check offlinequiz #205 for more info
+        //$mform->addElement('checkbox', 'onlyifaccess', get_string('onlyifaccess', 'offlinequiz_identified'));
+        $mform->addElement('hidden', 'onlyifaccess', 0);
+        $mform->setType('onlyifaccess', PARAM_INT);
         // Set list required.
         $mform->addRule('list', null, 'required', null, 'client');
-        $mform->addElement('submit', 'submitbutton', get_string('submit'));
+        $mform->addElement('submit', 'submitbutton', get_string('create', 'offlinequiz_identified'));
     }
 }

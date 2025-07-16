@@ -27,3 +27,6 @@ $string['noroles'] ='No roles with capability \'mod/offlinequiz:attempt\' define
 $string['notgenerated'] = 'The forms have not been generated yet. Please, go to the <a href="{$a}">Preparation section</a> and create your exams.';
 $string['onlyifaccess'] = 'Only for students with access to this offline quiz.';
 $string['return'] = 'Return to forms';
+$string['group'] = 'Offline quiz group';
+$string['participants'] = 'Attendance list';
+$string['create'] = 'Create';
