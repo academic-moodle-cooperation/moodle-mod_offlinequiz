@@ -2483,7 +2483,7 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
     return false;
 }
 
-function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $categoryid, int $number): void {
+function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $categoryid, int $number, int $groupid): void {
     debugging(
         'quiz_add_random_questions is deprecated. Please use mod_quiz\structure::add_random_questions() instead.',
         DEBUG_DEVELOPER
@@ -2528,14 +2528,15 @@ function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $c
                                    AND qv.version < qv2.version) ";
 
         // Find all questions in the selected categories that are not in the offline test yet.
-        $sql .= "AND NOT EXISTS (SELECT 1
+    $sql .= "AND NOT EXISTS (SELECT 1
                                    FROM {offlinequiz_group_questions} ogq
                                    JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
                                   WHERE qv3.questionbankentryid = qv.questionbankentryid
-                                    AND ogq.offlinequizid = :offlinequizid)";
+                                    AND ogq.offlinequizid = :offlinequizid
+                                    AND ogq.offlinegroupid = :offlinegroupid)";
 
     $qcparams['offlinequizid'] = $quiz->id;
-    $qcparams['offlinegroupid'] = 1;
+    $qcparams['offlinegroupid'] = $groupid;
 
     $questionids = $DB->get_fieldset_sql($sql, $qcparams);
     shuffle($questionids);
@@ -2567,7 +2568,7 @@ function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $c
     }
 
     $offlinegroup = new stdClass();
-    $offlinegroup->id = 1;
+    $offlinegroup->id = $groupid;
 
     offlinequiz_add_questionlist_to_group($chosenids, $quiz, $offlinegroup, null, $maxmarks);
 
