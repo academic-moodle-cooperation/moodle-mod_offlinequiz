@@ -264,7 +264,7 @@ if ($mode == 'preview') {
               WHERE ogq.offlinequizid = :offlinequizid
                 AND ogq.offlinegroupid = :offlinegroupid
               ORDER BY ogq.slot ASC ";
-        $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
+        $params = ['offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id];
 
         $questions = $DB->get_records_sql($sql, $params);
 
