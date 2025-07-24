@@ -156,6 +156,7 @@ class scan_file extends \core\task\adhoc_task
             } else {
                 $DB->insert_record('offlinequiz_scanned_pages', $scannedpage);
             }
+            $this->send_notifications($queue->id);
         }
 
         
