@@ -34,7 +34,7 @@ class send_notifications extends \core\task\adhoc_task {
         $queue = $DB->get_record('offlinequiz_queue',['id' => $data->queueid]);
         
         $sql = "SELECT count(*) FROM {offlinequiz_queue_data} oqd
-                        WHERE oqd.queueid = :queueid AND oqd.status = 'new' OR oqd.status = 'processing'";
+                        WHERE oqd.queueid = :queueid AND (oqd.status = 'new' OR oqd.status = 'processing')";
         $count = $DB->count_records_sql($sql, [
             'queueid' => $queue->id
         ]);
