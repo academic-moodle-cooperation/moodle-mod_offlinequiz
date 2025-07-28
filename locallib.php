@@ -1818,6 +1818,22 @@ function offlinequiz_get_id_field_name() {
         return get_string($offlinequizconfig->ID_field, 'offlinequiz');
     }
 }
+
+function offlinequiz_get_user_by_userkey($offlinequiz, $userkey) {
+    global $DB;
+    $offlinequizconfig = get_config('offlinequiz');
+    $idfield = $offlinequizconfig->ID_field;
+    $sql = "SELECT u.*
+              FROM {user} u
+              JOIN {user_enrolments} ue on ue.userid = u.id
+              JOIN {enrol} e on ue.enrolid = e.id
+             WHERE $idfield = :userkey
+               AND e.courseid = :courseid";
+    $users = $DB->get_records_sql($sql,['userkey' => $userkey, 'courseid' =>$offlinequiz->course]); 
+    if($users) {
+        return reset($users);
+    }
+}
 /**
  * Prints a preview for a question in an offlinequiz to Stdout.
  *

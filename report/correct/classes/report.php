@@ -401,7 +401,7 @@ class report extends default_report {
                 if($page->status == 'error' && $page->error) {
                     $filecontext['statusmessage'] = get_string('error' . $page->error, 'offlinequiz_rimport');
                 } elseif (!empty($page->userkey) && $page->userkey) {
-                    $user = $DB->get_record('user',[$offlinequizconfig->ID_field => $page->userkey]);
+                    $user = offlinequiz_get_user_by_userkey($offlinequiz, $page->userkey);
                     $filecontext['statusmessage'] = fullname($user);
                 }
                 $context['files'][] = $filecontext;
