@@ -165,7 +165,7 @@ class scan_file extends \core\task\adhoc_task
     private function send_notifications($queueid) {
         $task = \offlinequiz_rimport\task\adhoc\send_notifications::instance($queueid);
         //Execute ASAP.
-        $task->set_next_run_time(time() + 60);
+        $task->set_next_run_time(time());
         \core\task\manager::queue_adhoc_task($task, true);
     }
     
