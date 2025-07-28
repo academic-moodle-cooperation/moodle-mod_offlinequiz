@@ -25,6 +25,7 @@ namespace offlinequiz_statistics;
 use \flexible_table;
 use \html_writer;
 use \moodle_url;
+use \question_bank;
 
 defined('MOODLE_INTERNAL') || die();
 
