@@ -603,7 +603,7 @@ class report extends default_report {
             }
         }
 
-        $responesstats = new offlinequiz_statistics_response_analyser($question);
+        $responesstats = new response_analyser($question);
         $responesstats->load_cached($offlinequizstats->id);
 
         $qtable->question_setup($reporturl, $question, $responesstats);
@@ -1318,7 +1318,7 @@ class report extends default_report {
             }
             $done[$question->id] = 1;
 
-            $responesstats = new offlinequiz_statistics_response_analyser($question);
+            $responesstats = new response_analyser($question);
             $responesstats->analyse($qubaids);
             $responesstats->store_cached($offlinequizstatisticsid);
         }

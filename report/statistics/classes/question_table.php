@@ -63,7 +63,7 @@ class question_table extends flexible_table {
      * @param bool $hassubqs
      */
     public function question_setup($reporturl, $questiondata,
-            offlinequiz_statistics_response_analyser $responsestats) {
+            response_analyser $responsestats) {
         $this->questiondata = $questiondata;
 
         $this->define_baseurl($reporturl->out());
