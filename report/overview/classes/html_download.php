@@ -25,9 +25,8 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace offlinequiz_result_download;
+namespace offlinequiz_overview;
 
-require_once(dirname(__FILE__) . '/../../../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
 

@@ -28,7 +28,6 @@
  */
 namespace offlinequiz_overview;
 defined('MOODLE_INTERNAL') || die();
-use offlinequiz_result_download\html_download;
 use mod_offlinequiz\default_report;
 use \moodle_url;
 use \navigation_node;
@@ -83,7 +82,7 @@ class report extends default_report {
 
             $offlinequizid = required_param('q', PARAM_INT);
 
-            require_once('download_result_html.php');
+
             $download = new html_download($offlinequizid);
             $download->printhtml();
             return;
