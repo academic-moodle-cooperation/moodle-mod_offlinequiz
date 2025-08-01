@@ -1676,7 +1676,7 @@ function mod_offlinequiz_output_fragment_add_random_question_form($args) {
 
     // Build required parameters.
     [$contexts, $thispageurl, $cm, $pagevars, $extraparams] =
-        build_required_parameters_for_custom_view($args, $extraparams);
+        mod_offlinequiz_build_required_parameters_for_custom_view($args, $extraparams);
 
     // Additional param to differentiate with other question bank view.
     $extraparams['view'] = mod_offlinequiz\question\bank\random_question_view::class;
