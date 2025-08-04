@@ -288,9 +288,9 @@ export default class ModalAddRandomQuestion extends Modal {
                     if (addRandomButton) {
                         const randomcount = document.querySelector(SELECTORS.SELECT_NUMBER_TO_ADD).value;
                         const filtercondition = document.querySelector(SELECTORS.FILTER_CONDITION_ELEMENT).dataset?.filtercondition;
-                        const groupid = document.querySelector(SELECTORS.GROUP_ID).value;
+                        const groupnumber = document.querySelector(SELECTORS.GROUP_ID).value;
 
-                        this.addQuestions(quizcmid, addonpage, randomcount, filtercondition, '', '', groupid);
+                        this.addQuestions(quizcmid, addonpage, randomcount, filtercondition, '', '', groupnumber);
                         return;
                     }
                     // Add new category if the add category button was clicked.
@@ -380,7 +380,7 @@ export default class ModalAddRandomQuestion extends Modal {
      * @param {string} filtercondition Filter condition
      * @param {string} newcategory add new category
      * @param {string} parentcategory parent category of new category
-     * @param {number} groupid group id
+     * @param {number} groupnumber groupnumber
      */
     async addQuestions(
         quizcmid,
@@ -389,7 +389,7 @@ export default class ModalAddRandomQuestion extends Modal {
         filtercondition,
         newcategory,
         parentcategory,
-        groupid
+        groupnumber
     ) {
         // We do not need to resolve this Pending because the form submission will result in a page redirect.
         new Pending('mod-offlinequiz/modal_add_random_questions');
@@ -402,7 +402,7 @@ export default class ModalAddRandomQuestion extends Modal {
                 filtercondition,
                 newcategory,
                 parentcategory,
-                groupid,
+                groupnumber,
             }
         };
         try {
