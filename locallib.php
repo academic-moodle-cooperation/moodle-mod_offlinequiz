@@ -2500,12 +2500,12 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
 }
 
 function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $categoryid, int $number, int $groupid): void {
-    debugging(
+    /*debugging(
         'quiz_add_random_questions is deprecated. Please use mod_quiz\structure::add_random_questions() instead.',
         DEBUG_DEVELOPER
     );
 
-    /*$settings = quiz_settings::create($quiz->id);
+    $settings = quiz_settings::create($quiz->id);
     $structure = structure::create_for_quiz($settings);
     $structure->add_random_questions($addonpage, $number, [
         'filter' => [
