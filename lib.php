@@ -1682,7 +1682,7 @@ function mod_offlinequiz_output_fragment_add_random_question_form($args) {
     $extraparams['view'] = mod_offlinequiz\question\bank\random_question_view::class;
 
     $course = get_course($cm->course);
-    require_capability('mod/quiz:manage', $contexts->lowest());
+    require_capability('mod/offlinequiz:manage', $contexts->lowest());
 
     // Custom View.
     $questionbank = new mod_offlinequiz\question\bank\random_question_view($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);

@@ -71,9 +71,9 @@ class add_random_questions extends external_api {
                     VALUE_DEFAULT,
                     0,
                 ),
-                'groupid' => new external_value(
+                'groupnumber' => new external_value(
                     PARAM_INT,
-                    'Group id',
+                    'Groupnumber',
                     VALUE_DEFAULT,
                     1,
                 ),
@@ -99,7 +99,7 @@ class add_random_questions extends external_api {
         string $filtercondition = '',
         string $newcategory = '',
         string $parentcategory = '',
-        int $groupid = 0,
+        int $groupnumber = 0,
     ): array {
         [
             'cmid' => $cmid,
@@ -108,7 +108,7 @@ class add_random_questions extends external_api {
             'filtercondition' => $filtercondition,
             'newcategory' => $newcategory,
             'parentcategory' => $parentcategory,
-            'groupid' => $groupid,
+            'groupnumber' => $groupnumber,
         ] = self::validate_parameters(self::execute_parameters(), [
             'cmid' => $cmid,
             'addonpage' => $addonpage,
@@ -116,7 +116,7 @@ class add_random_questions extends external_api {
             'filtercondition' => $filtercondition,
             'newcategory' => $newcategory,
             'parentcategory' => $parentcategory,
-            'groupid' => $groupid,
+            'groupnumber' => $groupnumber,
         ]);
 
         // Validate context.
@@ -147,14 +147,15 @@ class add_random_questions extends external_api {
                 'sortdata' => [],
                 'filter' => $filter,
             ];
-        } else {
-            $categoryid = $filtercondition['filter']['category']['values'][0];
         }
+
+        $categoryid = $filtercondition['filter']['category']['values'][0];
 
         // Add random question to the quiz.
         [$quiz, ] = get_module_from_cmid($cmid);
+        $group = offlinequiz_get_group($quiz, $groupnumber);
 
-        offlinequiz_add_random_questions($quiz, 0, $categoryid, $randomcount, $groupid);
+        offlinequiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $group->id);
         offlinequiz_delete_template_usages($quiz);
         offlinequiz_update_sumgrades($quiz);
 
