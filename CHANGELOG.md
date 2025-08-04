@@ -1,5 +1,42 @@
 CHANGELOG
 =========
+5.0.0
+-----------------
+* [Feature] 5.0 compatible version.
+* [Feature] Adding questions is changed to the behaviour like in Quiz 5.0
+* [Feature] Introduced a list of all uploaded files to the offline quiz on the "Correction" page.
+* [Feature] It is possible to download the original uploaded file now.
+* [Feature] Offlinequiz uses adhoc tasks now instead of cronjobs. The old cronjobs are still supported for compatibility reasons.
+* [Feature] (Technical) Notifications that an upload has been processed use the moodle notifications API to give users more choice how to use it.  [github PR #308 @juacas]
+* [Feature] Now offlinequiz supports wiris math equations. [github PR 305 @juacas]
+* [Feature] It is now possible to create prefilled forms for a students attendance list. If you used the subplugin "identified" please uninstall it before upgrading [github pull #299 @juacas]
+* [Feature] (Technical) Started supporting easier sub plugin development for offlinequiz. Documentation will come for a later release.
+* [Feature] The amount of pages being displayed is now saved for each user [github #265]
+* [Feature] Students get more info before they can try the tutorial [github #311, PR #313 @juacas]
+* [Feature] Administrators can choose if the navigation is displayed as tab or select [PR #282 @juacas, PR #298, @juacas]
+* [Bug] Fixed that uploading large files crashing the webserver by moving the page extraction to adhoc task.
+* [Bug] Fixed restoring without user data creates records of scanned pages [#github 301]
+* [Bug] Fixed uploading files with special made strange erros.
+* [Bug] Deprecated JS function M.core_question_engine.init_form removed [github #297]
+* [Bug] Fixed black images extraction [github PR #314 @juacas]
+* [Bug] Non editing teachers can't access the activity [github #309/ github PR #310 @juacas]
+* [Bug] Rewrote the backup process to fix multiple backup/restore bugs.
+* [Bug] Fixed that < breaks docx documents [github #306, PR #305 @juacas]
+
+4.5.3
+----------------
+* [Bug] Fixed that no change in version was possible after restore
+* [Bug] Fixed missing pdffont setting for newer installations
+* [Bug] Fixed missing column-definition for pdffont in file install.xml [github #290]
+* [Bug] Fixed answers which contain < > characters still break the PDFs in specific situations. [github PR #283 @juacas]
+* [Bug] Fixed deprecated use of \qbank_managecategories\question_category_object in addrandom.php [github #296]
+* [Bug] Fixed deprecated filter mathjaxloader [github #286/ github PR #287 @mhughes2k]
+* [Bug] Fixed JSON parse error with unrecognized token '<' when adding questions [github #294]
+
+4.5.2
+-----------------
+This version was skipped.
+
 4.5.1
 -----------------
 * [Bug] Fixed that adding questions was not possible, introduced through moodle core 4.5.2
