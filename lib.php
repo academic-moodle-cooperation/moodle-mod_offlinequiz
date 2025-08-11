@@ -1538,7 +1538,7 @@ function mod_offlinequiz_output_fragment_offlinequiz_question_bank($args): strin
 
     // We need the quiz modid to POST back to.
     $extraparams['quizcmid'] = clean_param($args['quizcmid'], PARAM_INT);
-    $params['groupnumber'] = isset($args['groupnumber']) ? clean_param($args['quizcmid'], PARAM_INT) : 1;
+    $params['groupnumber'] = isset($args['groupnumber']) ? clean_param($args['groupnumber'], PARAM_INT) : 1;
 
     // Build required parameters.
     [$contexts, $thispageurl, $cm, $pagevars, $extraparams] =
