@@ -1577,10 +1577,9 @@ function mod_offlinequiz_build_required_parameters_for_custom_view(array $params
 
     $extraparams['requirebankswitch'] = !empty(question_bank_helper::get_activity_types_with_shareable_questions());
 
-    $groupnumber = isset($params['groupnumber']) ? $params['groupnumber'] : 1;
-
+    [$offlinequiz] = get_module_from_cmid($extraparams['quizcmid']);
     // Load the offlinequiz group and set the groupid in the offlinequiz object.
-    if ($offlinequizgroup = offlinequiz_get_group($module, $groupnumber)) {
+    if ($offlinequizgroup = offlinequiz_get_group($offlinequiz, $params['groupnumber'])) {
         $extraparams['groupid'] = $offlinequizgroup->id;
         $extraparams['groupnumber'] = $groupnumber;
     } else {
