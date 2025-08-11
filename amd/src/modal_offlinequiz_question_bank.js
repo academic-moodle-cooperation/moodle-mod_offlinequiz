@@ -111,6 +111,7 @@ export default class ModalOfflinequizQuestionBank extends Modal {
                 querystring,
                 quizcmid: this.quizCmId,
                 bankcmid: this.bankCmId,
+                groupnumber: 1,
             }
         ));
     }
