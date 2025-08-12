@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+5.0.1
+-----------------
+* [Bug] Fixed that it was not possible to use questions from other question banks
+
 5.0.0
 -----------------
 * [Feature] 5.0 compatible version.
