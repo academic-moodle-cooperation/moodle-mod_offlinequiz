@@ -136,6 +136,10 @@ if ($ADMIN->fulltree) {
             get_string('decimalplaces', 'offlinequiz'), get_string('configdecimalplaces', 'offlinequiz'),
             2, $options));
 
+    $settings->add(new admin_setting_configtext('offlinequiz/maximumgrade',
+            get_string('maximumgrade'), get_string('configmaximumgrade', 'offlinequiz'),
+            100, PARAM_INT));
+
     $settings->add(new admin_setting_heading('scanningheading',
             get_string('scanningoptionsheading', 'offlinequiz'), ''));
 

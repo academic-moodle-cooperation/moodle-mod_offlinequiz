@@ -85,7 +85,7 @@ function offlinequiz_add_instance($offlinequiz) {
     // Process the options from the form.
     $offlinequiz->timecreated = time();
     $offlinequiz->questions = '';
-    $offlinequiz->grade = 100;
+    $offlinequiz->grade = get_config('offlinequiz', 'maximumgrade');
 
     $result = offlinequiz_process_options($offlinequiz);
 

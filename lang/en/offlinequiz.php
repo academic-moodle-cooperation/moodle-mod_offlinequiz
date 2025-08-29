@@ -102,6 +102,7 @@ $string['configexperimentalevaluation'] = 'Experimental evaluation of answer she
 $string['configexperimentalevaluationdesc'] = 'DO NOT USE IN PRODUCTION! This option is used for alpha tests of the new evaluation algorithm. If this option is turned to yes, you can turn it on in the options of the offlinequiz instance. We highly discourage to use this option. There is no support at all for lost data due to turning on this option.';
 $string['configintro'] = 'The values you set here are used as default values for the settings of new offline quizzes.';
 $string['configkeepfilesfordays'] = 'Determine how many days the uploaded image files are kept in temporary storage. During this time the image files are available in the offline quiz admin report.';
+$string['configmaximumgrade'] = 'The default grade that the offline quiz grade is scaled to be out of.';
 $string['configonlylocalcategories'] = 'No shared question categories allowed.';
 $string['configshuffleanswers'] = 'Shuffle answers';
 $string['configshufflequestions'] = 'If you enable this option, then the order of questions in the offline quiz groups will be randomly shuffled each time you re-create the preview in the "Create forms" tab.';
