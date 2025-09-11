@@ -103,56 +103,211 @@ class oq_point {
  *
  */
 class offlinequiz_page_scanner {
-
+    /**
+     *
+     * @var bool if the page scanner is calibrated yet
+     */
     public $calibrated;
+    /**
+     *
+     * @var int contextid of this page.
+     */
     public $contextid;
+    /**
+     *
+     * @var int id of the offlinequiz
+     */
     public $offlinequizid;
+    /**
+     *
+     * @var string the name of the file
+     */
     public $filename;
+    /**
+     *
+     * @var mixed The file that was originally used
+     */
     public $sourcefile;
+    /**
+     *
+     * @var mixed The image of this page
+     */
     public $pageimage;
+    /**
+     *
+     * @var mixed The path to this image
+     */
     public $path;
+    /**
+     *
+     * @var mixed The amount of digits that are used for this page
+     */
     public $iddigits;
+    /**
+     *
+     * @var int|unknown_type maximum amount of answers on this page
+     */
     public $maxanswers;
+    /**
+     *
+     * @var unknown_type maximum amount of questions for this offlinequiz
+     */
     public $maxquestions;
+    /**
+     *
+     * @var mixed how many questions are on this page
+     */
     public $questionsonpage;
+    /**
+     *
+     * @var int The type of the form
+     */
     public $formtype;
+    /**
+     *
+     * @var float The pagenumber
+     */
     public $numpages;
+    /**
+     *
+     * @var mixed the calibrating offset
+     */
     public $offset;
+    /**
+     *
+     * @var mixed imagemagick image
+     */
     public $image;
+    /**
+     *
+     * @var mixed zoomfactor for this image in x direction
+     */
     public $zoomx;
+    /**
+     *
+     * @var mixed zoomfactor for this image in y direction
+     */
     public $zoomy;
+    /**
+     *
+     * @var mixed the alpha-value for the black/white conversion
+     */
     public $alpha;
-    public $hotspots;      // We store all the points in this array. This makes it easy to rotate them all together.
-    public $pattern;       // contains the hotspot pattern for a cross.
-    public $pattern1;      // Contains the hotspot pattern for a cross moved to one of the corners.
-    public $pattern2;      // Contains the hotspot pattern for a cross moved to one of the corners.
-    public $pattern3;      // Contains the hotspot pattern for a cross moved to one of the corners.
-    public $pattern4;      // Contains the hotspot pattern for a cross moved to one of the corners.
+    /**
+     *
+     * @var mixed object of the hotspots. We store all the points in this array. This makes it easy to rotate them all together.
+     */
+    public $hotspots;
+    /**
+     *
+     * @var mixed contains the hotspot pattern for a cross.
+     */
+    public $pattern;
+    /**
+     *
+     * @var mixed Contains the hotspot pattern for a cross moved to one of the corners.
+     */
+    public $pattern1;
+    /**
+     *
+     * @var mixed Contains the hotspot pattern for a cross moved to one of the corners.
+     */
+    public $pattern2;
+    /**
+     *
+     * @var mixed Contains the hotspot pattern for a cross moved to one of the corners.
+     */
+    public $pattern3;
+    /**
+     *
+     * @var mixed Contains the hotspot pattern for a cross moved to one of the corners.
+     */
+    public $pattern4;
+    /**
+     *
+     * @var mixed papergray setting of this offlinequiz
+     */
     public $papergray;
-    public $corners;       // The corners as passed by evallib.php or correct.php.
+    /**
+     *
+     * @var mixed corners array The corners as passed by evallib.php or correct.php.
+     */
+    public $corners;
+    /**
+     *
+     * @var mixed lowertrigger pixel
+     */
     public $lowertrigger;
+    /**
+     *
+     * @var mixed uppertrigger pixel
+     */
     public $uppertrigger;
+    /**
+     *
+     * @var mixed lower warning border
+     */
     public $lowerwarning;
+    /**
+     *
+     * @var mixed upper warning border
+     */
     public $upperwarning;
+    /**
+     *
+     * @var mixed upperleft corner
+     */
     public $upperleft;
+    /**
+     *
+     * @var mixed lowerleft corner
+     */
     public $lowerleft;
+    /**
+     *
+     * @var mixed upperright corner
+     */
     public $upperright;
+    /**
+     *
+     * @var mixed lowerright corner
+     */
     public $lowerright;
-    public $insecure;      // This flag is set if one of the boxes is between value and warning level.
-    public $blankbox;      // This flag is set if one of the boxes could not be grabbed.
+    /**
+     *
+     * @var mixed This flag is set if one of the boxes is between value and warning level.
+     */
+    public $insecure;
+    /**
+     *
+     * @var mixed This flag is set if one of the boxes could not be grabbed.
+     */
+    public $blankbox;
+    /**
+     * if this page is in the original orientation
+     * @var bool
+     */
     public $ontop;
+    /**
+     *
+     * @var mixed the database page object
+     */
     public $page;
+    /**
+     *
+     * @var mixed hotspot cache
+     */
     public $cache;
 
     /**
      * Constructor
      *
-     * @param unknown_type $offlinequiz
-     * @param unknown_type $contextid
-     * @param unknown_type $maxquestions
-     * @param unknown_type $maxanswers
+     * @param stdclass $offlinequiz
+     * @param int $contextid
+     * @param int $maxquestions
+     * @param int $maxanswers
      */
-    public function __construct($offlinequiz, $contextid, $maxquestions, $maxanswers) {
+    public function __construct($offlinequiz, $contextid, int $maxquestions, $maxanswers) {
         if ($maxanswers > 26) {
             $maxanswers = 26; // There won't be more than 26 answers or 96 questions on the sheet.
         }

@@ -344,6 +344,7 @@ $string['instruction3'] = 'Corrected boxes cannot be marked again. Please do not
 $string['introduction'] = 'Introduction';
 $string['invalidformula'] = 'Invalid formula for user identification. The formula must have the form <prefix>[<#digits>]<suffix>=<db-field&>.';
 $string['invalidnumberofdigits'] = 'Invalid number of digits used. Only 1 up to 9 digit(s) are allowed.';
+$string['invalidofflinequizid'] = 'Invalid offlinequiz id';
 $string['invaliduserfield'] = 'Invalid field of the user table used.';
 $string['invigilator'] = 'Invigilator';
 $string['ischecked'] = 'Participation is checked';
@@ -402,6 +403,7 @@ $string['noattemptsonly'] = 'Show students with no results only';
 $string['nocourse'] = 'The course with id {$a->course} that the offline quiz with ID {$a->offlinequiz} belongs to is missing.';
 $string['nogradesseelater'] = 'This quiz has not been graded yet for {$a}. Results will be published here.';
 $string['nogroupdata'] = 'No group data for user {$a}';
+$string['nogroups'] = 'No groups created for this offlinequiz';
 $string['nomcquestions'] = 'There are no multiple choice questions in group {$a}!';
 $string['noofflinequiz'] = 'There is no offline quiz with id {$a}!';
 $string['nopages'] = 'No pages imported';
