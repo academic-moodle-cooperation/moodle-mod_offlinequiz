@@ -1698,7 +1698,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Define field pdffont to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('pdffont', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'printstudycodefield');
-        
+
         // Conditionally launch add field pdffont.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -1769,18 +1769,31 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2025062400, 'offlinequiz');
     }
     if ($oldversion < 2025062600) {
-        
+
         // Name of the plugin you want to uninstall
         $plugincomponent = 'offlinequiz_regrade';
-        
+
         // Check if plugin is installed
         if (core_plugin_manager::instance()->get_plugin_info($plugincomponent)) {
             uninstall_plugin('offlinequiz', 'regrade');
         }
-        
+
         // Always upgrade the savepoint
         upgrade_mod_savepoint(true, 2025062600, 'offlinequiz');
     }
-    
+    if ($oldversion < 2015092501.01) {
+        // Define field errormessage to be added to offlinequiz_queue.
+        $table = new xmldb_table('offlinequiz_queue');
+        $field = new xmldb_field('error', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'status');
+
+        // Conditionally launch add field errormessage.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Offlinequiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015092501.01, 'offlinequiz');
+    }
+
     return true;
 }
