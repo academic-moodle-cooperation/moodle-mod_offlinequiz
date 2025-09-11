@@ -70,7 +70,7 @@ class temporary_file_deletion_task extends \core\task\scheduled_task {
                 echo "Removing dir " . $dirname . "\n";
                 remove_dir($dirname);
             }
-            $DB->delete_records('offlinequiz_queue_data', ['queueids' => $jobid]);
+            $DB->delete_records('offlinequiz_queue_data', ['queueid' => $jobid]);
         }
     }
 }
