@@ -75,6 +75,7 @@ class extract_files extends \core\task\adhoc_task {
                     $queue->error = 'couldnotunzip';
                     $queue->timefinish = time();
                     $DB->update_record('offlinequiz_queue', $queue);
+                    return;
                 }
             } else if ($mimetype == 'image/tiff') {
                 // Extract each TIFF subfiles into a file.
