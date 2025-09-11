@@ -17,7 +17,7 @@
 /**
  * form for uploading scanned documents in the rimport report
  *
- * @package       mod
+ * @package       offlinequiz_rimport
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -40,9 +40,9 @@ class offlinequiz_upload_form extends moodleform {
         $mform->addElement('header', 'importfileupload', get_string('importforms', 'offlinequiz_rimport'));
 
         $mform->addElement('filepicker', 'newfile', get_string('ziporimagefile', 'offlinequiz_rimport'), null,
-                array('subdirs' => 0, 'accepted_types' =>
-                        array('.jpeg', 'JPEG', 'JPG', 'jpg', '.png', '.zip',
-                              '.ZIP', '.tif', '.TIF', '.tiff', '.TIFF' , ".pdf", ".PDF")));
+                ['subdirs' => 0, 'accepted_types' =>
+                        ['.jpeg', 'JPEG', 'JPG', 'jpg', '.png', '.zip',
+                              '.ZIP', '.tif', '.TIF', '.tiff', '.TIFF' , ".pdf", ".PDF"]]);
 
         $mform->addRule('newfile', null, 'required', null, 'client');
 

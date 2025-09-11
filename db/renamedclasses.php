@@ -17,7 +17,7 @@
 /**
  * Lists renamed classes so that the autoloader can make the old names still work.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -28,10 +28,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Array old class name => new class name.
-$renamedclasses = array(
+$renamedclasses = [
 
     // Changed in Moodle 2.8.
     'offlinequiz_question_bank_view'                 => 'mod_offlinequiz\question\bank\custom_view',
     'question_bank_add_to_offlinequiz_action_column' => 'mod_offlinequiz\question\bank\add_action_column',
     'question_bank_question_name_text_column' => 'mod_offlinequiz\question\bank\question_name_text_column',
-);
+];

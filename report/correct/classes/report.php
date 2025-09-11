@@ -17,7 +17,7 @@
 /**
  * The results import report for offlinequizzes
  *
- * @package       mod
+ * @package       offlinequiz_correct
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -26,12 +26,12 @@
  *
  */
 namespace offlinequiz_correct;
-use \context_module;
-use \navigation_node;
-use \moodle_url;
-use \popup_action;
-use \DateTime;
-use \pix_icon;
+use context_module;
+use navigation_node;
+use moodle_url;
+use popup_action;
+use DateTime;
+use pix_icon;
 use mod_offlinequiz\default_report;
 use mod_offlinequiz\correct\offlinequiz_selectall_table;
 
@@ -52,12 +52,12 @@ class report extends default_report {
 
         $letterstr = 'ABCDEFGHIJKL';
 
-        $tableparams = array('q' => $offlinequiz->id, 'mode' => 'correct', 'action' => 'delete',
-                'strreallydel'  => addslashes(get_string('deletepagecheck', 'offlinequiz')));
+        $tableparams = ['q' => $offlinequiz->id, 'mode' => 'correct', 'action' => 'delete',
+                'strreallydel'  => addslashes(get_string('deletepagecheck', 'offlinequiz'))];
 
         $table = new offlinequiz_selectall_table('mod_offlinequiz_import_report', 'report.php', $tableparams);
 
-        $tablecolumns = array('checkbox', 'counter', 'userkey', 'groupnumber', 'pagenumber', 'time', 'error', 'info', 'link');
+        $tablecolumns = ['checkbox', 'counter', 'userkey', 'groupnumber', 'pagenumber', 'time', 'error', 'info', 'link'];
         $tableheaders = ['', '#', offlinequiz_get_id_field_name(),
                 get_string('group'), get_string('page'), get_string('importedon', 'offlinequiz_rimport'),
                 get_string('error'), get_string('info'), ''];
@@ -105,7 +105,7 @@ class report extends default_report {
                         OR status = 'suspended'
                         OR error = 'missingpages')";
 
-        $params = array('offlinequizid' => $offlinequiz->id);
+        $params = ['offlinequizid' => $offlinequiz->id];
 
         // Add extra limits due to sorting by question grade.
         if ($sort = $table->get_sql_sort()) {
@@ -120,7 +120,7 @@ class report extends default_report {
         $strtimeformat = get_string('strftimedatetime');
 
         // Options for the popup_action.
-        $options = array();
+        $options = [];
         $options['height'] = 1200; // Optional.
         $options['width'] = 1170; // Optional.
         $options['resizable'] = false;
@@ -158,7 +158,7 @@ class report extends default_report {
             if ($page->status == 'suspended') {
                 $errorstr = get_string('waitingforanalysis', 'offlinequiz_rimport');
             }
-            $row = array(
+            $row = [
                     '<input type="checkbox" name="p' . $page->id . '" value="'.$page->id.'"  class="select-multiple-checkbox" />',
                     $counter.'&nbsp;',
                     $page->userkey,
@@ -167,8 +167,8 @@ class report extends default_report {
                     userdate($page->time, $strtimeformat),
                     $errorstr,
                     $page->info,
-                    $actionlink
-            );
+                    $actionlink,
+            ];
             $table->add_data($row);
             $counter++;
         }
@@ -233,10 +233,10 @@ class report extends default_report {
                    AND q.offlinequizid = :offlinequizid
                    AND q.status = :status2
                 ';
-        $newforms = $DB->get_record_sql($sql, array('offlinequizid' => $offlinequiz->id, 'status1' => 'new',
-                'status2' => 'new', 'status3' => ''));
-        $processingforms = $DB->get_record_sql($sql, array('offlinequizid' => $offlinequiz->id, 'status1' => 'processing',
-                'status2' => 'processing', 'status3' => 'new'));
+        $newforms = $DB->get_record_sql($sql, ['offlinequizid' => $offlinequiz->id, 'status1' => 'new',
+                'status2' => 'new', 'status3' => '']);
+        $processingforms = $DB->get_record_sql($sql, ['offlinequizid' => $offlinequiz->id, 'status1' => 'processing',
+                'status2' => 'processing', 'status3' => 'new']);
 
         if ($newforms->count > 0) {
             echo $OUTPUT->notification(get_string('newformsinqueue', 'offlinequiz_rimport', $newforms->count), 'notifysuccess');
@@ -252,7 +252,7 @@ class report extends default_report {
             case 'delete':
                 if (confirm_sesskey()) {
 
-                    $selectedpageids = array();
+                    $selectedpageids = [];
                     $params = (array) data_submitted();
 
                     foreach ($params as $key => $value) {
@@ -262,7 +262,7 @@ class report extends default_report {
                     }
 
                     foreach ($selectedpageids as $pageid) {
-                        if ($pageid && ($page = $DB->get_record('offlinequiz_scanned_pages', array('id' => $pageid)))) {
+                        if ($pageid && ($page = $DB->get_record('offlinequiz_scanned_pages', ['id' => $pageid]))) {
                             offlinequiz_delete_scanned_page($page, $this->context);
                         }
                     }
@@ -276,13 +276,13 @@ class report extends default_report {
                 // Print the table with answer forms that need correction.
                 $this->print_error_report($offlinequiz);
         }
-        $this->display_uploaded_files($offlinequiz,$cm);
+        $this->display_uploaded_files($offlinequiz, $cm);
     }
 
     private function display_uploaded_files($offlinequiz, $cm) {
         global $DB, $OUTPUT;
-        $queues = $DB->get_records('offlinequiz_queue',['offlinequizid' => $offlinequiz->id],'timecreated DESC');
-        
+        $queues = $DB->get_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id], 'timecreated DESC');
+
         $sql = "SELECT qd.id queuedataid, q.id queueid, qd.status status, qd.filename filename, sp.id scannedpageid, sp.error error, sp.userkey userkey
                   FROM {offlinequiz_queue} q
                   JOIN {offlinequiz_queue_data} qd on q.id = qd.queueid
@@ -302,7 +302,7 @@ class report extends default_report {
         }
         if($queues) {
             $context = [];
-            $context['queues'] =0;
+            $context['queues'] = 0;
             $elements = [];
             foreach($queues as $queue) {
                 $element = [];
@@ -311,7 +311,7 @@ class report extends default_report {
                 $importedbylink = new \moodle_url('/user/view.php', ['id' => $queue->importuserid, 'course' => $offlinequiz->course]);
                 $element['importedbylink'] = $importedbylink->out();
                 $link = new \moodle_url('/mod/offlinequiz/report.php',
-                    ['action' => 'download', 'mode' => 'correct', 'queueid' => $queue->id, 'id' =>$cm->id]);
+                    ['action' => 'download', 'mode' => 'correct', 'queueid' => $queue->id, 'id' => $cm->id]);
                 $element['downloadlink'] = $link->out();
                 $element['documentname'] = $queue->filename;
                 $element['queueid'] = $queue->id;
@@ -345,7 +345,7 @@ class report extends default_report {
                 } else if($this->queuehaserrors($queue)) {
                     $element['queuestatuserror'] = true;
                     if($queue->error) {
-                        $element['queueerror'] = get_string($queue->error,'offlinequiz');
+                        $element['queueerror'] = get_string($queue->error, 'offlinequiz');
                     }
                 } else if(!$queue->timefinish) {
                     $element['queuestatusprocessing'] = true;
@@ -356,33 +356,33 @@ class report extends default_report {
             }
             $context['queues'] = $elements;
             $link = new \moodle_url('/mod/offlinequiz/report.php',
-                ['mode' => 'rimport',  'id' =>$cm->id]);
+                ['mode' => 'rimport',  'id' => $cm->id]);
             $context['uploadfurtherfileslink'] = $link->out();
             $rendered = $OUTPUT->render_from_template('mod_offlinequiz/correct_queue_list', $context);
             echo $rendered;
         }
     }
 
-    
+
     public function get_page_content($cm, $offlinequiz, $queueid = 0, $queuepagematrix = []) {
         $offlinequizconfig = get_config('offlinequiz');
         global $OUTPUT, $DB;
-        $options = array();
+        $options = [];
         $options['height'] = 1200; // Optional.
         $options['width'] = 1170; // Optional.
         $options['resizable'] = false;
         $rendered = '';
-        if($queueid && array_key_exists($queueid,$queuepagematrix)) {
+        if($queueid && array_key_exists($queueid, $queuepagematrix)) {
             $context = [];
             $context['files'] = [];
 
             foreach($queuepagematrix[$queueid] as $queuedataid => $page) {
                 $filecontext = [];
                 $filecontext['filename'] = substr($page->filename, strrpos($page->filename, '/') + 1);
-                $filecontext['fileurl'] =  new moodle_url('/mod/offlinequiz/report.php', ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]);
+                $filecontext['fileurl'] = new moodle_url('/mod/offlinequiz/report.php', ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]);
                 if($page->scannedpageid) {
                     $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
-                    $filecontext['editurl'] = $OUTPUT->action_link($editurl,new pix_icon('t/edit', get_string('queuefilecorrectionhovertext', 'offlinequiz')) , new popup_action('click', $editurl, 'correct' .
+                    $filecontext['editurl'] = $OUTPUT->action_link($editurl, new pix_icon('t/edit', get_string('queuefilecorrectionhovertext', 'offlinequiz')) , new popup_action('click', $editurl, 'correct' .
                         $page->scannedpageid, $options));
                 }
                 $filecontext['statusmessage'] = get_string('queuefilestatusmessage_' . $page->status, 'offlinequiz');
@@ -400,7 +400,7 @@ class report extends default_report {
                 }
                 if($page->status == 'error' && $page->error) {
                     $filecontext['statusmessage'] = get_string('error' . $page->error, 'offlinequiz_rimport');
-                } elseif (!empty($page->userkey) && $page->userkey) {
+                } else if (!empty($page->userkey) && $page->userkey) {
                     $user = offlinequiz_get_user_by_userkey($offlinequiz, $page->userkey);
                     $filecontext['statusmessage'] = fullname($user);
                 }
@@ -411,7 +411,7 @@ class report extends default_report {
         return $rendered;
     }
 
-    
+
     private function queuehaserrors($queue) {
         global $DB;
         if($queue->status == 'error') {
@@ -422,7 +422,7 @@ class report extends default_report {
         }
         return false;
     }
-    
+
     public function get_user_name($userid) {
         global $DB;
         if(!array_key_exists($userid, $this::$users)) {
@@ -433,9 +433,9 @@ class report extends default_report {
     }
 
     // Add navigation nodes to mod_offlinequiz_result.
-    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node   {
+    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         // TODO: Move string to subplugin.
-        $navnode= navigation_node::create(text: get_string('tabofflinequizcorrect', 'offlinequiz'),
+        $navnode = navigation_node::create(text: get_string('tabofflinequizcorrect', 'offlinequiz'),
                                         action: new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct']),
                                         key: $this->get_navigation_key());
 

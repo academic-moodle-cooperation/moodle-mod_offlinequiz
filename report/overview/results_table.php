@@ -17,7 +17,7 @@
 /**
  * The file defines the results table shown in the overview report
  *
- * @package       mod
+ * @package       offlinequiz_overview
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -80,10 +80,10 @@ class offlinequiz_results_table extends flexible_table {
     }
 
     protected function print_one_initials_bar($alpha, $current, $class, $title, $urlvar) {
-        echo html_writer::start_tag('div', array('class' => 'initialbar linkbox ' . $class)) .
+        echo html_writer::start_tag('div', ['class' => 'initialbar linkbox ' . $class]) .
         $title . ' : ';
         if ($current) {
-            echo html_writer::link($this->baseurl->out(false, array($urlvar => '')), get_string('all'));
+            echo html_writer::link($this->baseurl->out(false, [$urlvar => '']), get_string('all'));
         } else {
             echo html_writer::tag('strong', get_string('all'));
         }
@@ -93,7 +93,7 @@ class offlinequiz_results_table extends flexible_table {
             if ($letter === $current) {
                 echo html_writer::tag('strong', $letter);
             } else {
-                echo html_writer::link($this->baseurl->out(false, array($urlvar => $letter)), $letter);
+                echo html_writer::link($this->baseurl->out(false, [$urlvar => $letter]), $letter);
             }
             echo '&nbsp;';
         }

@@ -17,7 +17,7 @@
 /**
  * Renderer outputting the offlinequiz editing UI.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at
  * @copyright     2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -38,5 +38,5 @@ class action_api {
             }
         }
         return $html;
-    } 
+    }
 }

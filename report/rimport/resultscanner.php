@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace offlinequiz_result_import;
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/questionlib.php');
@@ -105,7 +106,7 @@ class offlinequiz_resultscanner {
 
     }
 
-    private function get_number_of_columns ($maxanswers) {
+    private function get_number_of_columns($maxanswers) {
         $i = 1;
         $columnlimits = ANSWERS_COLUMNS_PER_PAGE_LIMITS;
         while (array_key_exists($i, $columnlimits) && $columnlimits[$i] > $maxanswers) {

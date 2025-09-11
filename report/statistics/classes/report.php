@@ -25,20 +25,20 @@
 namespace offlinequiz_statistics;
 
 defined('MOODLE_INTERNAL') || die();
-use \stdClass;
-use \context_course;
-use \context_module;
-use \navigation_node;
-use \moodle_url;
-use \pix_icon;
-use \popup_action;
-use \html_writer;
-use \html_table;
-use \qubaid_join;
-use \question_bank;
-use \question_utils;
-use \offlinequiz_statistics_table;
-use \offlinequiz_statistics_question_table;
+use stdClass;
+use context_course;
+use context_module;
+use navigation_node;
+use moodle_url;
+use pix_icon;
+use popup_action;
+use html_writer;
+use html_table;
+use qubaid_join;
+use question_bank;
+use question_utils;
+use offlinequiz_statistics_table;
+use offlinequiz_statistics_question_table;
 use mod_offlinequiz\default_report;
 
 
@@ -83,20 +83,20 @@ class report extends default_report {
         $questionid = optional_param('questionid', 0, PARAM_INT);
         // Determine statistics mode.
 
-        $pageoptions = array();
+        $pageoptions = [];
         $pageoptions['id'] = $cm->id;
         $pageoptions['mode'] = 'statistics';
         $pageoptions['statmode'] = $this->statmode;
 
         // When showing big tables add the JavaScript for the double scrollbar.
         if ($this->statmode == 'questionstats' || $this->statmode == 'questionandanswerstats') {
-            $module = array(
+            $module = [
                     'name'      => 'mod_offlinequiz_statistics',
                     'fullpath'  => '/mod/offlinequiz/report/statistics/doublescroll.js',
-                    'requires'  => array(),
-                    'strings'   => array(),
+                    'requires'  => [],
+                    'strings'   => [],
                     'async'     => false,
-            );
+            ];
 
             $PAGE->requires->jquery();
             $PAGE->requires->jquery_plugin('ui');
@@ -105,7 +105,7 @@ class report extends default_report {
         }
 
         if (!$groups = $DB->get_records('offlinequiz_groups',
-                array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
+                ['offlinequizid' => $offlinequiz->id], 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
             throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
                 $COURSE->id, $scannedpage->offlinequizid);
         }
@@ -120,7 +120,7 @@ class report extends default_report {
             $pageoptions['offlinegroup'] = $groupnumber;
             $offlinequiz->groupnumber = $groupnumber;
             $offlinequiz->sumgrades = $DB->get_field('offlinequiz_groups', 'sumgrades',
-                    array('offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnumber));
+                    ['offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnumber]);
 
             if ($offlinegroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
                 $offlinequiz->groupid = $offlinegroup->id;
@@ -133,7 +133,7 @@ class report extends default_report {
             $offlinequiz->groupid = 0;
             // The user wants to evaluate results from all offlinequiz groups.
             // Compare the sumgrades of all offlinequiz groups. First we put all sumgrades in an array.
-            $sumgrades = array();
+            $sumgrades = [];
             foreach ($groups as $group) {
                 $sumgrades[] = round($group->sumgrades, $offlinequiz->decimalpoints);
             }
@@ -156,7 +156,7 @@ class report extends default_report {
                       FROM {offlinequiz_group_questions}
                      WHERE offlinequizid = :offlinequizid";
 
-            $questionids = $DB->get_fieldset_sql($sql, array('offlinequizid' => $offlinequiz->id));
+            $questionids = $DB->get_fieldset_sql($sql, ['offlinequizid' => $offlinequiz->id]);
             $offlinequiz->questions = $questionids;
         }
 
@@ -176,16 +176,16 @@ class report extends default_report {
         $nostudentsingroup = false; // True if a group is selected and there is no one in it.
         if (empty($currentgroup)) {
             $currentgroup = 0;
-            $groupstudents = array();
+            $groupstudents = [];
 
         } else if ($currentgroup == self::NO_GROUPS_ALLOWED) {
-            $groupstudents = array();
+            $groupstudents = [];
             $nostudentsingroup = true;
 
         } else {
             // All users who can attempt offlinequizzes and who are in the currently selected group.
             $groupstudents = get_users_by_capability($this->context,
-                    array('mod/offlinequiz:reviewmyattempts', 'mod/offlinequiz:attempt'),
+                    ['mod/offlinequiz:reviewmyattempts', 'mod/offlinequiz:attempt'],
                     '', '', '', '', $currentgroup, '', false);
             if (!$groupstudents) {
                 $nostudentsingroup = true;
@@ -210,7 +210,7 @@ class report extends default_report {
             $report = get_string('questionstatsfilename', 'offlinequiz_statistics');
         }
         $courseshortname = format_string($course->shortname, true,
-                array('context' => context_course::instance($course->id)));
+                ['context' => context_course::instance($course->id)]);
         $filename = offlinequiz_report_download_filename($report, $courseshortname, $offlinequiz->name);
         $this->table->is_downloading($download, $filename,
                 get_string('offlinequizstructureanalysis', 'offlinequiz_statistics'));
@@ -245,7 +245,7 @@ class report extends default_report {
             $this->print_header_and_tabs($cm, $course, $offlinequiz,  'statistics', $this->statmode);
 
             // Options for the help text popup_action.
-            $options = array('width' => 650,
+            $options = ['width' => 650,
                     'height' => 400,
                     'resizable' => false,
                     'top' => 0,
@@ -257,7 +257,7 @@ class report extends default_report {
                     'status' => false,
                     'directories' => false,
                     'fullscreen' => false,
-                    'dependent' => false);
+                    'dependent' => false];
 
             $helpfilename = 'statistics_help_';
             if (current_language() == 'de') {
@@ -443,14 +443,14 @@ class report extends default_report {
     private function print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions) {
         global $CFG, $OUTPUT;
 
-        $options = array();
+        $options = [];
         $letterstr = 'ABCDEFGH';
         $prefix = get_string('statisticsforgroup', 'offlinequiz_statistics');
         $options[0] = get_string('allgroups', 'offlinequiz_statistics');
         foreach ($groups as $group) {
             $options[$group->groupnumber] = $prefix . ' ' . $letterstr[$group->groupnumber - 1];
         }
-        $urlparams = array('id' => $cm->id, 'mode' => 'statistics', 'statmode' => $pageoptions['statmode']);
+        $urlparams = ['id' => $cm->id, 'mode' => 'statistics', 'statmode' => $pageoptions['statmode']];
         if (key_exists('offlinegroup', $pageoptions)) {
             $urlparams['offlinegroup'] = $pageoptions['offlinegroup'];
         }
@@ -486,7 +486,7 @@ class report extends default_report {
         // Set up the question statistics table.
         $questionstatstable = new html_table();
         $questionstatstable->id = 'questionstatstable';
-        $questionstatstable->align = array('left', 'right');
+        $questionstatstable->align = ['left', 'right'];
         $questionstatstable->attributes['class'] = 'generaltable titlesleft';
 
         unset($datumfromtable['number']);
@@ -499,7 +499,7 @@ class report extends default_report {
         unset($datumfromtable['count']);
         unset($datumfromtable['fraction']);
 
-        $labels = array(
+        $labels = [
             's' => get_string('attempts', 'offlinequiz_statistics'),
             'facility' => get_string('facility', 'offlinequiz_statistics'),
             'sd' => get_string('standarddeviationq', 'offlinequiz_statistics'),
@@ -511,9 +511,9 @@ class report extends default_report {
             'correct' => get_string('correct', 'offlinequiz_statistics'),
             'partially' => get_string('partially', 'offlinequiz_statistics'),
             'wrong' => get_string('wrong', 'offlinequiz_statistics'),
-        );
+        ];
         foreach ($datumfromtable as $item => $value) {
-            $questionstatstable->data[] = array($labels[$item], $value);
+            $questionstatstable->data[] = [$labels[$item], $value];
         }
 
         // Display the various bits.
@@ -535,7 +535,7 @@ class report extends default_report {
                 $this->context->id, 'quiz_statistics');
 
         return $OUTPUT->box(format_text($text, $question->questiontextformat,
-                array('noclean' => true, 'para' => false, 'overflowdiv' => true)),
+                ['noclean' => true, 'para' => false, 'overflowdiv' => true]),
                 'questiontext boxaligncenter generalbox boxwidthnormal mdl-align');
     }
 
@@ -554,7 +554,7 @@ class report extends default_report {
             $text = $question->questiontext;
         }
         $questiontext = question_utils::to_plain_text($text, $question->questiontextformat,
-                array('noclean' => true, 'para' => false, 'overflowdiv' => true));
+                ['noclean' => true, 'para' => false, 'overflowdiv' => true]);
         return '&nbsp;&nbsp;&nbsp;' . $questiontext;
     }
 
@@ -697,7 +697,7 @@ class report extends default_report {
 
     protected function get_formatted_offlinequiz_info_data($course, $cm, $offlinequiz, $offlinequizstats) {
         // You can edit this array to control which statistics are displayed.
-        $todisplay = array( // Comment in 'firstattemptscount' => 'number'.
+        $todisplay = [ // Comment in 'firstattemptscount' => 'number'.
                     'allattemptscount' => 'number',
                     'maxgrade' => 'number_format',
                     'bestgrade' => 'scale_to_maxgrade',
@@ -709,7 +709,7 @@ class report extends default_report {
                     'kurtosis' => 'number_format',
                     'cic' => 'percent_to_number_format',
                     'errorratio' => 'number_format_percent',
-                    'standarderror' => 'scale_to_maxgrade');
+                    'standarderror' => 'scale_to_maxgrade'];
 
         if ($offlinequiz->sumgrades > 0) {
             $offlinequizstats->sumgrades = $offlinequiz->sumgrades;
@@ -724,7 +724,7 @@ class report extends default_report {
         $offlinequizstats->maxgrade = $offlinequiz->grade;
 
         // General information about the offlinequiz.
-        $offlinequizinfo = array();
+        $offlinequizinfo = [];
         $offlinequizinfo[get_string('offlinequizname', 'offlinequiz_statistics')] = format_string($offlinequiz->name);
 
         if ($cm->idnumber) {
@@ -843,8 +843,8 @@ class report extends default_report {
         }
     }
     private function output_response_data($rowdata, $fraction, $count, $letterstr, $counter, $counter2, $partcounter, $question) {
-        $rowdata->response = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"),
-            array('', '', '', ''), $rowdata->response);
+        $rowdata->response = str_ireplace(['<br />', '<br/>', '<br>', "\r\n"],
+            ['', '', '', ''], $rowdata->response);
         $rowdata->fraction = $fraction;
         $rowdata->count = $count;
         $rowdata->part = $letterstr[$counter] . ')';
@@ -857,8 +857,8 @@ class report extends default_report {
         if ($counter2 == 0 && $partcounter == 0) {
             if ($this->table->is_downloading()) {
                 $rowdata->name = format_text(strip_tags($question->questiontext), FORMAT_PLAIN);
-                $rowdata->name = str_ireplace(array('<br />', '<br/>', '<br>', "\r\n"),
-                    array('', '', '', ''), $rowdata->name);
+                $rowdata->name = str_ireplace(['<br />', '<br/>', '<br>', "\r\n"],
+                    ['', '', '', ''], $rowdata->name);
             } else {
                 $rowdata->name = format_text(html_to_text($question->questiontext));
             }
@@ -881,12 +881,12 @@ class report extends default_report {
     protected function output_offlinequiz_info_table($offlinequizinfo) {
         $offlinequizinfotable = new html_table();
         $offlinequizinfotable->id = 'statsoverviewtable';
-        $offlinequizinfotable->align = array('left', 'right');
+        $offlinequizinfotable->align = ['left', 'right'];
         $offlinequizinfotable->attributes['class'] = 'generaltable titlesleft';
-        $offlinequizinfotable->data = array();
+        $offlinequizinfotable->data = [];
 
         foreach ($offlinequizinfo as $heading => $value) {
-             $offlinequizinfotable->data[] = array($heading, $value);
+             $offlinequizinfotable->data[] = [$heading, $value];
         }
 
         return html_writer::table($offlinequizinfotable);
@@ -907,8 +907,8 @@ class report extends default_report {
         }
 
         // Reformat the data ready for output.
-        $headers = array();
-        $row = array();
+        $headers = [];
+        $row = [];
         foreach ($offlinequizinfo as $heading => $value) {
             $headers[] = $heading;
             if (is_double($value)) {
@@ -939,7 +939,7 @@ class report extends default_report {
 
         $output = $PAGE->get_renderer('mod_offlinequiz');
         $imageurl = new moodle_url('/mod/offlinequiz/report/statistics/statistics_graph.php',
-                array('id' => $offlinequizstatsid));
+                ['id' => $offlinequizstatsid]);
         $graphname = get_string('statisticsreportgraph', 'offlinequiz_statistics');
         echo $output->graph($imageurl, $graphname);
     }
@@ -963,10 +963,10 @@ class report extends default_report {
 
         $qstats = new stdClass();
         $qstats->questions = $questions;
-        $qstats->subquestions = array();
-        $qstats->responses = array();
+        $qstats->subquestions = [];
+        $qstats->responses = [];
 
-        return array(0, $offlinequizstats, false);
+        return [0, $offlinequizstats, false];
     }
 
     /**
@@ -1091,7 +1091,7 @@ class report extends default_report {
                     SUM(POWER((offlinequiza.sumgrades - $mean), 4)) AS power4
                     FROM $fromqa
                     WHERE $whereqa";
-            $params = array('mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean) + $qaparams;
+            $params = ['mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean] + $qaparams;
 
             $powers = $DB->get_record_sql($sql, $params, MUST_EXIST);
 
@@ -1143,7 +1143,7 @@ class report extends default_report {
             }
         }
 
-        return array($s, $offlinequizstats, $qstats);
+        return [$s, $offlinequizstats, $qstats];
     }
 
     /**
@@ -1170,16 +1170,16 @@ class report extends default_report {
         if ($offlinequiz->groupid) {
             $offlinequizstats = $DB->get_record_select('offlinequiz_statistics',
                 'offlinequizid = ? AND offlinegroupid = ? AND groupid = ? AND allattempts = ? AND timemodified > ?',
-                array($offlinequiz->id, $offlinequiz->groupid, $currentgroup, $useallattempts, $timemodified));
+                [$offlinequiz->id, $offlinequiz->groupid, $currentgroup, $useallattempts, $timemodified]);
         } else {
             $offlinequizstats = $DB->get_record_select('offlinequiz_statistics',
                 'offlinequizid = ? AND offlinegroupid = 0 AND groupid = ? AND allattempts = ? AND timemodified > ?',
-                    array($offlinequiz->id, $currentgroup, $useallattempts, $timemodified));
+                    [$offlinequiz->id, $currentgroup, $useallattempts, $timemodified]);
         }
 
         if (!$offlinequizstats) {
             // No cached data found.
-            return array(null, $questions, null, null);
+            return [null, $questions, null, null];
         }
 
         if ($useallattempts) {
@@ -1188,11 +1188,11 @@ class report extends default_report {
             $s = $offlinequizstats->firstattemptscount;
         }
 
-        $subquestions = array();
+        $subquestions = [];
         $questionstats = $DB->get_records('offlinequiz_q_statistics',
-                array('offlinequizstatisticsid' => $offlinequizstats->id));
+                ['offlinequizstatisticsid' => $offlinequizstats->id]);
 
-        $subquestionstats = array();
+        $subquestionstats = [];
         foreach ($questionstats as $stat) {
             $questions[$stat->questionid]->_stats = $stat;
         }
@@ -1206,7 +1206,7 @@ class report extends default_report {
             }
         }
 
-        return array($offlinequizstats, $questions, $subquestions, $s);
+        return [$offlinequizstats, $questions, $subquestions, $s];
     }
 
     /**
@@ -1291,7 +1291,7 @@ class report extends default_report {
                         $questions, $subquestions, $offlinequiz->groupid);
             }
         }
-        return array($offlinequizstats, $questions, $subquestions, $s);
+        return [$offlinequizstats, $questions, $subquestions, $s];
     }
 
     protected function analyse_responses($offlinequizstatisticsid, $offlinequizid, $currentgroup,
@@ -1300,7 +1300,7 @@ class report extends default_report {
         $qubaids = offlinequiz_statistics_qubaids_condition(
                 $offlinequizid, $currentgroup, $groupstudents, $useallattempts, false, $offlinegroupid);
 
-        $done = array();
+        $done = [];
         foreach ($questions as $question) {
             if (!question_bank::get_qtype($question->qtype, false)->can_analyse_responses()) {
                 continue;
@@ -1332,7 +1332,7 @@ class report extends default_report {
         if ($this->table->baseurl) {
             return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'offlinequiz_statistics'),
                     $this->table->baseurl->out_omit_querystring(), 'download',
-                    $this->table->baseurl->params() + array('everything' => 1));
+                    $this->table->baseurl->params() + ['everything' => 1]);
         }
     }
 
@@ -1375,7 +1375,7 @@ class report extends default_report {
         $a->count = $count;
 
         $recalcualteurl = new moodle_url($reporturl,
-                array('recalculate' => 1, 'sesskey' => sesskey()));
+                ['recalculate' => 1, 'sesskey' => sesskey()]);
         $output = '<br/>';
         $output .= $OUTPUT->box_start(
                 'boxaligncenter generalbox boxwidthnormal mdl-align', 'cachingnotice');
@@ -1399,12 +1399,12 @@ class report extends default_report {
 
         if ($offlinegroupid) {
             $todelete = $DB->get_records_menu('offlinequiz_statistics',
-                    array('offlinequizid' => $offlinequizid, 'offlinegroupid' => $offlinegroupid,
-                    'groupid' => $currentgroup, 'allattempts' => $useallattempts), '', 'id, 1');
+                    ['offlinequizid' => $offlinequizid, 'offlinegroupid' => $offlinegroupid,
+                    'groupid' => $currentgroup, 'allattempts' => $useallattempts], '', 'id, 1');
 
         } else {
-            $todelete = $DB->get_records_menu('offlinequiz_statistics', array('offlinequizid' => $offlinequizid,
-                    'groupid' => $currentgroup, 'allattempts' => $useallattempts), '', 'id, 1');
+            $todelete = $DB->get_records_menu('offlinequiz_statistics', ['offlinequizid' => $offlinequizid,
+                    'groupid' => $currentgroup, 'allattempts' => $useallattempts], '', 'id, 1');
         }
 
         if (!$todelete) {
@@ -1436,25 +1436,24 @@ class report extends default_report {
     /**
      * Add navigation nodes to mod_offlinequiz_result.
      */
-    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node{
+    public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         $parentnode = $navigation->get('mod_offlinequiz_statistics');
-        
+
         $parentnode->add_node(navigation_node::create(text: get_string('statsoverviewheader', 'offlinequiz_statistics'),
                                         action: new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'statistics']),
                                         key: $this->get_navigation_key_from_statmode('statsoverview'))
                             );
-        
+
         $parentnode->add_node( navigation_node::create(text: get_string('questionstats', 'offlinequiz_statistics'),
                                         action: new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionstats']),
                                         key: $this->get_navigation_key_from_statmode('questionstats'))
                         );
-        
 
         $parentnode->add_node( navigation_node::create(text: get_string('questionandanswerstats', 'offlinequiz_statistics'),
                                         action: new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionandanswerstats']),
                                         key: $this->get_navigation_key_from_statmode('questionandanswerstats'))
                     );
-        
+
         return $navigation;
     }
     public function get_report_title(): string {
@@ -1463,7 +1462,7 @@ class report extends default_report {
     public function get_navigation_key(): string {
         return $this->get_navigation_key_from_statmode($this->statmode);
     }
-    public function get_navigation_key_from_statmode($statmode): string {   
+    public function get_navigation_key_from_statmode($statmode): string {
         switch ($statmode) {
             case 'statsoverview':
                 return 'tabstatsoverview';
@@ -1474,7 +1473,7 @@ class report extends default_report {
             default:
                 throw new \coding_exception('Invalid statmode');
         }
-      }
+    }
 }
 
 function offlinequiz_statistics_attempts_sql($offlinequizid, $currentgroup, $groupstudents,
@@ -1484,7 +1483,7 @@ function offlinequiz_statistics_attempts_sql($offlinequizid, $currentgroup, $gro
     $fromqa = '{offlinequiz_results} offlinequiza ';
 
     $whereqa = 'offlinequiza.offlinequizid = :offlinequizid AND  offlinequiza.status = :offlinequizstatefinished';
-    $qaparams = array('offlinequizid' => $offlinequizid, 'offlinequizstatefinished' => 'complete');
+    $qaparams = ['offlinequizid' => $offlinequizid, 'offlinequizstatefinished' => 'complete'];
 
     if ($offlinegroupid) {
         $whereqa .= ' AND offlinequiza.offlinegroupid = :offlinegroupid';
@@ -1502,7 +1501,7 @@ function offlinequiz_statistics_attempts_sql($offlinequizid, $currentgroup, $gro
         $whereqa .= ' AND offlinequiza.sumgrades IS NOT NULL';
     }
 
-    return array($fromqa, $whereqa, $qaparams);
+    return [$fromqa, $whereqa, $qaparams];
 }
 
 /**

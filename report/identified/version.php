@@ -17,7 +17,7 @@
 /**
  * Offlinequiz identified forms generator version info
  *
- * @package       mod
+ * @package       offlinequiz_identified
  * @subpackage    offlinequiz
  * @author        Juan Pablo de Castro <juanpablo.decastro@uva.es>
  * @copyright     2023
@@ -33,6 +33,6 @@ $plugin->release = 'v0.1.0';
 $plugin->requires = 2011060313;
 $plugin->component = 'offlinequiz_identified';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->dependencies = array(
+$plugin->dependencies = [
     'mod_offlinequiz' => 2025020100,
-);
+];

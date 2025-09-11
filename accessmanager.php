@@ -17,7 +17,7 @@
 /**
  * Classes to enforce the various access rules that can apply to a offlinequiz.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -42,7 +42,7 @@ class offlinequiz_access_manager {
     /** @var int the time to be considered as 'now'. */
     protected $timenow;
     /** @var array of offlinequiz_access_rule_base. */
-    protected $rules = array();
+    protected $rules = [];
 
     /**
      * Create an instance for a particular offlinequiz.
@@ -68,7 +68,7 @@ class offlinequiz_access_manager {
      */
     protected function make_rules($offlinequizobj, $timenow, $canignoretimelimits) {
 
-        $rules = array();
+        $rules = [];
         foreach (self::get_rule_classes() as $ruleclass) {
             $rule = $ruleclass::make($offlinequizobj, $timenow, $canignoretimelimits);
             if ($rule) {
@@ -76,7 +76,7 @@ class offlinequiz_access_manager {
             }
         }
 
-        $superceededrules = array();
+        $superceededrules = [];
         foreach ($rules as $rule) {
             $superceededrules += $rule->get_superceded_rules();
         }
@@ -118,7 +118,7 @@ class offlinequiz_access_manager {
      * @return array key => lang string.
      */
     public static function get_browser_security_choices() {
-        $options = array('-' => get_string('none', 'offlinequiz'));
+        $options = ['-' => get_string('none', 'offlinequiz')];
         foreach (self::get_rule_classes() as $rule) {
             $options += $rule::get_browser_security_choices();
         }
@@ -187,7 +187,7 @@ class offlinequiz_access_manager {
     protected static function get_load_sql($offlinequizid, $rules, $basefields) {
         $allfields = $basefields;
         $alljoins = '{offlinequiz} offlinequiz';
-        $allparams = array('offlinequizid' => $offlinequizid);
+        $allparams = ['offlinequizid' => $offlinequizid];
 
         foreach ($rules as $rule) {
             list($fields, $joins, $params) = $rule::get_settings_sql($offlinequizid);
@@ -206,10 +206,10 @@ class offlinequiz_access_manager {
         }
 
         if ($allfields === '') {
-            return array('', array());
+            return ['', []];
         }
 
-        return array("SELECT $allfields FROM $alljoins WHERE offlinequiz.id = :offlinequizid", $allparams);
+        return ["SELECT $allfields FROM $alljoins WHERE offlinequiz.id = :offlinequizid", $allparams];
     }
 
     /**
@@ -232,7 +232,7 @@ class offlinequiz_access_manager {
         if ($sql) {
             $data = (array) $DB->get_record_sql($sql, $params);
         } else {
-            $data = array();
+            $data = [];
         }
 
         foreach ($rules as $rule) {
@@ -273,7 +273,7 @@ class offlinequiz_access_manager {
      * debugging.
      */
     public function get_active_rule_names() {
-        $classnames = array();
+        $classnames = [];
         foreach ($this->rules as $rule) {
             $classnames[] = get_class($rule);
         }
@@ -304,7 +304,7 @@ class offlinequiz_access_manager {
      *         would be sensible to output each one surrounded by &lt;p> tags.
      */
     public function describe_rules() {
-        $result = array();
+        $result = [];
         foreach ($this->rules as $rule) {
             $result = $this->accumulate_messages($result, $rule->description());
         }
@@ -323,7 +323,7 @@ class offlinequiz_access_manager {
      *         (== false) if access should be allowed.
      */
     public function prevent_new_attempt($numprevattempts, $lastattempt) {
-        $reasons = array();
+        $reasons = [];
         foreach ($this->rules as $rule) {
             $reasons = $this->accumulate_messages($reasons,
                     $rule->prevent_new_attempt($numprevattempts, $lastattempt));
@@ -340,7 +340,7 @@ class offlinequiz_access_manager {
      *         (== false) if access should be allowed.
      */
     public function prevent_access() {
-        $reasons = array();
+        $reasons = [];
         foreach ($this->rules as $rule) {
             $reasons = $this->accumulate_messages($reasons, $rule->prevent_access());
         }
@@ -470,7 +470,7 @@ class offlinequiz_access_manager {
      *      in a popup window.
      */
     public function get_popup_options() {
-        $options = array();
+        $options = [];
         foreach ($this->rules as $rule) {
             $options += $rule->get_popup_options();
         }
@@ -506,7 +506,7 @@ class offlinequiz_access_manager {
     public function make_review_link($attempt, $reviewoptions, $output) {
 
         // If the attempt is still open, don't link.
-        if (in_array($attempt->state, array(offlinequiz_attempt::IN_PROGRESS, offlinequiz_attempt::OVERDUE))) {
+        if (in_array($attempt->state, [offlinequiz_attempt::IN_PROGRESS, offlinequiz_attempt::OVERDUE])) {
             return $output->no_review_message('');
         }
 

@@ -17,7 +17,7 @@
 /**
  * Offlinequiz statistics report question calculations class.
  *
- * @package       mod
+ * @package       offlinequiz_statistics
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -26,7 +26,7 @@
  *
  **/
 namespace offlinequiz_statistics;
-use \question_bank;
+use question_bank;
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class question_stats {
     public $questions;
-    public $subquestions = array();
+    public $subquestions = [];
 
     protected $s;
     protected $summarksavg;
@@ -48,7 +48,7 @@ class question_stats {
     protected $lateststeps;
 
     protected $sumofmarkvariance = 0;
-    protected $randomselectors = array();
+    protected $randomselectors = [];
 
     /**
      * Constructor.
@@ -86,8 +86,8 @@ class question_stats {
         $stats->subquestions = '';
         $stats->covariancewithoverallmarksum = 0;
         $stats->randomguessscore = null;
-        $stats->markarray = array();
-        $stats->othermarksarray = array();
+        $stats->markarray = [];
+        $stats->othermarksarray = [];
         return $stats;
     }
 
@@ -104,7 +104,7 @@ class question_stats {
 
         $this->allattempts = $allattempts;
 
-        $questionids = array();
+        $questionids = [];
         foreach ($this->questions as $question) {
             $questionids[] = $question->id;
         }
@@ -144,7 +144,7 @@ class question_stats {
     public function compute_statistics() {
         set_time_limit(0);
 
-        $subquestionstats = array();
+        $subquestionstats = [];
 
         // Compute the statistics of position, and for random questions, work
         // out which questions appear in which positions.
@@ -156,7 +156,7 @@ class question_stats {
                     $subquestionstats[$step->questionid] = $this->make_blank_question_stats();
                     $subquestionstats[$step->questionid]->questionid = $step->questionid;
                     $subquestionstats[$step->questionid]->allattempts = $this->allattempts;
-                    $subquestionstats[$step->questionid]->usedin = array();
+                    $subquestionstats[$step->questionid]->usedin = [];
                     $subquestionstats[$step->questionid]->subquestion = true;
                     $subquestionstats[$step->questionid]->differentweights = false;
                     $subquestionstats[$step->questionid]->maxmark = $step->maxmark;
@@ -185,7 +185,7 @@ class question_stats {
                 $randomselectorstring = $this->questions[$step->questionid]->category .
                         '/' . $this->questions[$step->questionid]->questiontext;
                 if (!isset($this->randomselectors[$randomselectorstring])) {
-                    $this->randomselectors[$randomselectorstring] = array();
+                    $this->randomselectors[$randomselectorstring] = [];
                 }
                 $this->randomselectors[$randomselectorstring][$step->questionid] = $step->questionid;
             }

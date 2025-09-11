@@ -228,9 +228,9 @@ class custom_view extends \core_question\local\bank\view {
         echo \html_writer::start_tag('div', ['class' => 'pt-2']);
         if ($canuseall) {
             echo \html_writer::empty_tag('input',
-                ['name' => 'groupnumber', 'value' => $this->groupnumber,'type' => 'hidden']);
+                ['name' => 'groupnumber', 'value' => $this->groupnumber, 'type' => 'hidden']);
             // Add selected questions to the offlinequiz.
-            $params = array(
+            $params = [
                     'type' => 'submit',
                     'name' => 'add',
                     'value' => get_string('addtoofflinequiz', 'offlinequiz'),
@@ -239,7 +239,7 @@ class custom_view extends \core_question\local\bank\view {
                     'data-togglegroup' => 'qbank',
                     'data-toggle' => 'action',
                     'disabled' => true,
-            );
+            ];
             if ($cmoptions->hasattempts) {
                 $params['disabled'] = 'disabled';
             }
@@ -351,7 +351,7 @@ class custom_view extends \core_question\local\bank\view {
 
     public function offlinequiz_contains($questionid) {
         global $DB;
-        $questionbankentryid = $DB->get_field('question_versions','questionbankentryid', ['questionid' => $questionid]);
+        $questionbankentryid = $DB->get_field('question_versions', 'questionbankentryid', ['questionid' => $questionid]);
         if (is_array($this->offlinequiz->questionbankentries)) {
             return in_array($questionbankentryid, $this->offlinequiz->questionbankentries);
         }

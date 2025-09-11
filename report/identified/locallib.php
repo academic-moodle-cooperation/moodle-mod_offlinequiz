@@ -17,7 +17,7 @@
 /**
  * Creates the PDF forms for offlinequizzes
  *
- * @package       mod
+ * @package       offlinequiz_identified
  * @subpackage    offlinequiz
  * @author        Juan Pablo de Castro <juanpablo.decastro@uva.es>
  * @copyright     2023 Universidad de Valladolid {@link http://www.uva.es}
@@ -40,7 +40,7 @@ class offlinequiz_answer_pdf_identified extends offlinequiz_answer_pdf {
     public $participant = null;
     public $listno = null;
 
-    public function Header(){
+    public function header() {
         global $CFG, $DB;
         // participant data.
         parent::Header();
@@ -58,12 +58,12 @@ class offlinequiz_answer_pdf_identified extends offlinequiz_answer_pdf {
             $pdf->setXY(34.4,  36);
             $pdf->Cell(90, 7, ' '.offlinequiz_str_html_pdf($participant->lastname), 0, 1, 'L');
             // Print Check test.
-        
+
             $pdf->SetFont('FreeSans', '', 12);
             $pdf->SetXY(137, 34);
 
             for ($i = 0; $i < $offlinequizconfig->ID_digits; $i++) {      // Userid digits.
-                $pdf->SetXY(137 + $i*6.5, 34);
+                $pdf->SetXY(137 + $i * 6.5, 34);
                 $this->Cell(7, 7, $idnumber[$i], 0, 0, 'C');
             }
 
@@ -100,7 +100,7 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
         throw new \moodle_exception('noroles', 'offlinequiz_identified');
     }
 
-    $roleids = array();
+    $roleids = [];
     foreach ($roles as $role) {
         $roleids[] = $role->id;
     }
@@ -123,12 +123,12 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
     ORDER BY u.lastname, u.firstname";
 
     $params['offlinequizid'] = $offlinequiz->id;
-    $params['listid'] = $list->id;               
+    $params['listid'] = $list->id;
     // $sql = "SELECT p.userid
-    //         FROM {offlinequiz_participants} p, {offlinequiz_p_lists} pl
-    //         WHERE p.listid = pl.id
-    //         AND pl.offlinequizid = :offlinequizid
-    //         AND p.listid = :listid";
+    // FROM {offlinequiz_participants} p, {offlinequiz_p_lists} pl
+    // WHERE p.listid = pl.id
+    // AND pl.offlinequizid = :offlinequizid
+    // AND p.listid = :listid";
     // $params = array('offlinequizid' => $offlinequiz->id, 'listid' => $list->id);
 
     $users = $DB->get_records_sql($sql, $params);
@@ -145,9 +145,9 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
 
             if ( $cm->available) {
                 $filtereduserids[$user->id] = $user;
-            }                
+            }
         }
-        return $filtereduserids;   
+        return $filtereduserids;
     } else {
         return $users;
     }
@@ -170,7 +170,7 @@ function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $g
     }
 
     $pdf = new offlinequiz_identified\answer_pdf_identified('P', 'mm', 'A4');
-    
+
     $pdf->listno = $list->listnumber;
     $title = offlinequiz_str_html_pdf($offlinequiz->name);
     // Add the list name to the title.
@@ -179,17 +179,17 @@ function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $g
     $pdf->SetMargins(15, 25, 15);
     $pdf->SetAutoPageBreak(true, 20);
 
-    if ($nogroupmark==true){
+    if ($nogroupmark == true){
         $groupletter = '';
     } else {
         $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $groupletter = $letterstr[$groupnumber];
     }
     // Answer pages.
-    $group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnumber));
-  
+    $group = $DB->get_record('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnumber]);
+
     $pdf->SetFont('FreeSans', '', 10);
-    $maxanswers= offlinequiz_get_maxanswers($offlinequiz, array($group));
+    $maxanswers = offlinequiz_get_maxanswers($offlinequiz, [$group]);
     if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
         throw new \moodle_exception(
             "missinggroup" ,
@@ -198,7 +198,7 @@ function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $g
             $groupletter
         );
     }
- 
+
     foreach ($participants as $participant) {
         $pdf->add_participant_answer_page( $participant, $maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter);
     }

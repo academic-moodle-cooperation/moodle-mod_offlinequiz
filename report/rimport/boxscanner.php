@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace offlinequiz_result_import;
 
 defined('MOODLE_INTERNAL') || die();
@@ -143,12 +144,12 @@ class weighted_diagonal_box_scanner {
 
     }
 
-    private function remove_edges( \Imagick $image) {
+    private function remove_edges(\Imagick $image) {
         $geometry = $image->getimagegeometry();
         $maxx = 0;
         $maxy = 0;
-        $countx = array();
-        $county = array();
+        $countx = [];
+        $county = [];
 
         for ($i = 0; $i < $geometry["width"]; $i++) {
             $countx[$i] = 0;

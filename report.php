@@ -17,7 +17,7 @@
 /**
  * The reports interface for offlinequizzes
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -37,18 +37,18 @@ if ($id) {
     if (!$cm = get_coursemodule_from_id('offlinequiz', $id)) {
         throw new \moodle_exception('invalidcoursemodule');
     }
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
+    if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
         throw new \moodle_exception('coursemisconf');
     }
-    if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $cm->instance))) {
+    if (!$offlinequiz = $DB->get_record('offlinequiz', ['id' => $cm->instance])) {
         throw new \moodle_exception('invalidcoursemodule');
     }
 
 } else {
-    if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $q))) {
+    if (!$offlinequiz = $DB->get_record('offlinequiz', ['id' => $q])) {
         throw new \moodle_exception('invalidofflinequizid', 'offlinequiz');
     }
-    if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
+    if (!$course = $DB->get_record('course', ['id' => $offlinequiz->course])) {
         throw new \moodle_exception('invalidcourseid');
     }
     if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
@@ -56,7 +56,7 @@ if ($id) {
     }
 }
 
-$url = new moodle_url('/mod/offlinequiz/report.php', array('id' => $cm->id));
+$url = new moodle_url('/mod/offlinequiz/report.php', ['id' => $cm->id]);
 if ($mode != '') {
     $url->param('mode', $mode);
 }
@@ -65,10 +65,10 @@ $PAGE->set_pagelayout('report');
 $PAGE->force_settings_menu(true);
 $PAGE->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
         'M.mod_offlinequiz.init_resource_toolbox',
-        array(array(
+        [[
                 'courseid' => $course->id,
-                'offlinequizid' => $offlinequiz->id
-        ))
+                'offlinequizid' => $offlinequiz->id,
+        ]]
         );
 
 require_login($course, false, $cm);
@@ -100,13 +100,13 @@ $report->display($offlinequiz, $cm, $course);
 echo $OUTPUT->footer();
 
 // Log that this report was viewed.
-$params = array(
+$params = [
         'context' => $context,
-        'other' => array(
+        'other' => [
                 'offlinequizid' => $offlinequiz->id,
-                'reportname' => $mode
-        )
-);
+                'reportname' => $mode,
+        ],
+];
 $event = \mod_offlinequiz\event\report_viewed::create($params);
 $event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('offlinequiz', $offlinequiz);

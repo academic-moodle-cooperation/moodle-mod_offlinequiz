@@ -17,7 +17,7 @@
 /**
  * Define the steps used by the restore_offlinequiz_activity_task
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -41,7 +41,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
 
     protected function define_structure() {
 
-        $paths = array();
+        $paths = [];
         $userinfo = $this->get_setting_value('userinfo');
 
         $offlinequiz = new restore_path_element('offlinequiz', '/activity/offlinequiz');
@@ -72,7 +72,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             $paths[] = new restore_path_element('offlinequiz_scannedpage', '/activity/offlinequiz/scannedpages/scannedpage');
             $paths[] = new restore_path_element('offlinequiz_choice', '/activity/offlinequiz/scannedpages/scannedpage/choices/choice');
             $paths[] = new restore_path_element('offlinequiz_corner', '/activity/offlinequiz/scannedpages/scannedpage/corners/corner');
-            
+
             // Lists of participants and their scanned pages.
             $paths[] = new restore_path_element('offlinequiz_participant',
                 '/activity/offlinequiz/plists/plist/participants/participant');
@@ -105,15 +105,15 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         global $DB;
         $groupvariable = $data["group_response"]["group_variable"];
         $this->restore_question_attempt_step_worker($data, 'group_');
-        $oldquestionid = $DB->get_field('question_attempts', 'questionid', array('id' => $this->elementsoldid["group_question_attempt"]));
-        $newquestionid = $DB->get_field('question_attempts', 'questionid', array('id' => $this->elementsnewid["group_question_attempt"]));
+        $oldquestionid = $DB->get_field('question_attempts', 'questionid', ['id' => $this->elementsoldid["group_question_attempt"]]);
+        $newquestionid = $DB->get_field('question_attempts', 'questionid', ['id' => $this->elementsnewid["group_question_attempt"]]);
         if ($oldquestionid == $newquestionid) { // Duplicate.
             $stepid = $DB->get_field('question_attempt_steps',
                                 'id',
-                                array('questionattemptid' => $this->elementsnewid["group_question_attempt"])
+                                ['questionattemptid' => $this->elementsnewid["group_question_attempt"]]
                             );
             if ($stepid) {
-                $steporder = $DB->get_record('question_attempt_step_data', array('attemptstepid' => $stepid, 'name' => "_order"));
+                $steporder = $DB->get_record('question_attempt_step_data', ['attemptstepid' => $stepid, 'name' => "_order"]);
                 if ($steporder && $steporder->value == '') {
                     foreach ($groupvariable as $key => $variable) {
                         if ($variable['name'] == '_order') {
@@ -125,7 +125,7 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             }
         }
     }
-    
+
     /**
      * This method does the actual work for process_question_attempt or
      * process_{nameprefix}_question_attempt.
@@ -134,25 +134,25 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
      */
     protected function restore_question_attempt_worker($data, $nameprefix) {
         global $DB;
-        
+
         $data = (object)$data;
         $oldid = $data->id;
-        
+
         $question = $this->get_mapping('question', $data->questionid);
         $data->questionid = $question->newitemid;
-        
+
         $data->questionusageid = $this->get_new_parentid($nameprefix . 'question_usage');
-        
+
         if (!property_exists($data, 'variant')) {
             $data->variant = 1;
         }
-        
+
         if (!property_exists($data, 'maxfraction')) {
             $data->maxfraction = 1;
         }
-        
+
         $newitemid = $DB->insert_record('question_attempts', $data);
-        
+
         $this->set_mapping($nameprefix . 'question_attempt', $oldid, $newitemid);
         if (isset($question->info->qtype)) {
             $qtype = $question->info->qtype;
@@ -268,12 +268,12 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             $data->component = 'mod_offlinequiz';
             $data->questionarea = 'slot';
             // Fill in the selected version form question_version.
-            if ($entry = $DB->get_field('question_versions', 'questionbankentryid', array('questionid' => $data->questionid))) {
+            if ($entry = $DB->get_field('question_versions', 'questionbankentryid', ['questionid' => $data->questionid])) {
                 $data->questionbankentryid = $entry;
             }
             $data->version = $DB->get_field('question_versions', 'version', ['questionid' => $data->questionid]);
             $DB->insert_record('question_references', $data);
-            
+
         }
     }
 

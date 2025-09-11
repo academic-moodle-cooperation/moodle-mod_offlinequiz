@@ -18,7 +18,7 @@
  * Fallback page of /mod/offlinequiz/edit.php add random question dialog,
  * for users who do not use javascript.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -45,7 +45,7 @@ $scrollpos = optional_param('scrollpos', 0, PARAM_INT);
 
 
 // Get the course object and related bits.
-if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
+if (!$course = $DB->get_record('course', ['id' => $offlinequiz->course])) {
     throw new \moodle_exception('invalidcourseid');
 }
 
@@ -74,7 +74,7 @@ if ($returnurl) {
 } else {
     $returnurl = new moodle_url('/mod/offlinequiz/edit.php',
         ['cmid' => $cmid,
-            'groupnumber' => $offlinequiz->groupnumber
+            'groupnumber' => $offlinequiz->groupnumber,
         ]);
 }
 if ($scrollpos) {
@@ -130,12 +130,12 @@ if ($data = $mform->get_data()) {
     redirect($returnurl);
 }
 
-$mform->set_data(array(
+$mform->set_data([
     'addonpage' => $addonpage,
     'returnurl' => $returnurl,
     'cmid' => $cm->id,
     'category' => $category,
-));
+]);
 
 // Setup $PAGE.
 $streditingofflinequiz = get_string('editinga', 'moodle', get_string('modulename', 'offlinequiz'));
@@ -144,7 +144,7 @@ $PAGE->set_title($streditingofflinequiz);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-if (!$offlinequizname = $DB->get_field($cm->modname, 'name', array('id' => $cm->instance))) {
+if (!$offlinequizname = $DB->get_field($cm->modname, 'name', ['id' => $cm->instance])) {
     throw new \moodle_exception('invalidcoursemodule');
 }
 $groupletters = 'ABCDEFGHIJKL';

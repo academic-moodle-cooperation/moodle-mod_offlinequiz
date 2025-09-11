@@ -17,7 +17,7 @@
 /**
  * This script lists all the instances of offlinequiz in a particular course
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -30,10 +30,10 @@ require_once("locallib.php");
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url('/mod/offlinequiz/index.php', array('id' => $id));
+$PAGE->set_url('/mod/offlinequiz/index.php', ['id' => $id]);
 $PAGE->set_pagelayout('incourse');
 
-if (!$course = $DB->get_record('course', array('id' => $id))) {
+if (!$course = $DB->get_record('course', ['id' => $id])) {
     throw new \moodle_exception('invalidcourseid');
 }
 
@@ -42,9 +42,9 @@ require_login($course);
 $PAGE->set_pagelayout('incourse');
 
 // Log this request.
-$params = array(
-        'context' => $coursecontext
-);
+$params = [
+        'context' => $coursecontext,
+];
 $event = \mod_offlinequiz\event\course_module_instance_list_viewed::create($params);
 $event->trigger();
 
@@ -96,8 +96,8 @@ if (!$therearesome) {
 }
 
 // Configure table for displaying the list of instances.
-$headings = array(get_string('name'));
-$align = array('left');
+$headings = [get_string('name')];
+$align = ['left'];
 
 if ($showclosingheader) {
     array_push($headings, get_string('offlinequizcloses', 'offlinequiz'));
@@ -133,9 +133,9 @@ $currentsection = '';
 foreach ($offlinequizzes as $offlinequiz) {
     $cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id);
     $context = context_module::instance($cm->id);
-    $data = array();
+    $data = [];
 
-    $grades = array();
+    $grades = [];
     if ($showing == 'grades') {
         if ($gradearray = offlinequiz_get_user_grades($offlinequiz, $USER->id)) {
             $grades[$offlinequiz->id] = $gradearray[$USER->id]['rawgrade'];

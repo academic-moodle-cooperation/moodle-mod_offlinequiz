@@ -17,7 +17,7 @@
 /**
  * Offlinequiz rimport report version info
  *
- * @package       mod
+ * @package       offlinequiz_correct
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}

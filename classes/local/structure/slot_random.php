@@ -21,7 +21,7 @@ use context_module;
 /**
  * Class slot_random, represents a random question slot type.
  *
- * @package    mod_quiz
+ * @package    mod_offlinequiz
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -224,8 +224,8 @@ class slot_random {
             'other' => [
                 'quizid' => $quiz->id,
                 'slotnumber' => $this->record->slot,
-                'page' => $this->record->page
-            ]
+                'page' => $this->record->page,
+            ],
         ]);
         $event->trigger();
     }

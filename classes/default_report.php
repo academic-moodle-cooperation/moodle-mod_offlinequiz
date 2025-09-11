@@ -27,7 +27,7 @@
  * pass "id=$cm->id" or q=$offlinequiz->id", and "mode=reportname".
  *
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -100,7 +100,7 @@ abstract class default_report {
 
         return $currentgroup;
     }
-    
+
     /**
      * Route the request to the correct tab depending conditions.
      * @param object $offlinequiz the offlinequiz settings.

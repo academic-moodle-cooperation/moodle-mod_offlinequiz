@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace offlinequiz_result_import;
 
 defined('MOODLE_INTERNAL') || die();
@@ -58,7 +59,7 @@ class offlinequiz_pagenumberscanner {
     }
 
     private function find_positions(offlinequiz_result_page $page) {
-        $positions = array();
+        $positions = [];
         for ($i = 0; $i < PAGE_NUMBER_CELLS; $i++) {
             for ($j = 0; $j < PAGE_NUMBER_MEASURING_POINT_COUNT; $j++) {
                 // We measure points in the middle of the bar.

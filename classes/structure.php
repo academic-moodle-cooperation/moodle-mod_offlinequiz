@@ -17,7 +17,7 @@
 /**
  * Defines the \mod_offlinequiz\structure class.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -50,26 +50,26 @@ class structure {
      * @var \stdClass[] the questions in this offlinequiz. Contains the row from the questions
      * table, with the data from the offlinequiz_group_questions table added, and also question_categories.contextid.
      */
-    protected $questions = array();
+    protected $questions = [];
 
     /** @var \stdClass[] offlinequiz_group_questions.id =>
      * the offlinequiz_group_questions rows for this offlinequiz, agumented by sectionid. */
-    protected $slots = array();
+    protected $slots = [];
 
     /** @var \stdClass[] offlinequiz_group_questions.slot =>
      * the offlinequiz_group_questions rows for this offlinequiz, agumented by sectionid. */
-    protected $slotsinorder = array();
+    protected $slotsinorder = [];
 
     /**
      * @var \stdClass[] currently a dummy. Holds data that will match the
      * offlinequiz_sections, once it exists.
      */
-    protected $sections = array();
+    protected $sections = [];
 
     /** @var bool caches the results of can_be_edited. */
     protected $canbeedited = null;
 
-    private $warnings = array();
+    private $warnings = [];
 
     /**
      * Create an instance of this class representing an empty offlinequiz.
@@ -198,7 +198,7 @@ class structure {
             $reportlink = offlinequiz_attempt_summary_link_to_reports($this->get_offlinequiz(),
                     $this->offlinequizobj->get_cm(), $this->offlinequizobj->get_context());
             throw new \moodle_exception('cannoteditafterattempts', 'offlinequiz',
-                    new \moodle_url('/mod/offlinequiz/edit.php', array('cmid' => $this->get_cmid())), $reportlink);
+                    new \moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $this->get_cmid()]), $reportlink);
         }
     }
 
@@ -298,7 +298,7 @@ class structure {
      * @return \stdClass[] of question/slot objects.
      */
     public function get_questions_in_section($sectionid) {
-        $questions = array();
+        $questions = [];
         foreach ($this->slotsinorder as $slot) {
             if ($slot->sectionid == $sectionid) {
                 $questions[] = $this->questions[$slot->questionid];
@@ -322,12 +322,12 @@ class structure {
     public function get_edit_page_warnings() {
         global $CFG;
 
-        $warnings = array();
+        $warnings = [];
 
         if (!$this->can_be_edited()) {
             $reviewlink = new \moodle_url($CFG->wwwroot . '/mod/offlinequiz/createquiz.php',
-                    array ('q' => $this->offlinequizobj->get_offlinequiz()->id,
-                           'mode' => 'createpdfs'));
+                     ['q' => $this->offlinequizobj->get_offlinequiz()->id,
+                           'mode' => 'createpdfs']);
             $warnings[] = get_string('formsexistx', 'offlinequiz', $reviewlink->out(false));
         }
         if (offlinequiz_has_scanned_pages($this->offlinequizobj->get_offlinequizid())) {
@@ -338,7 +338,7 @@ class structure {
 
         if ($this->is_shuffled()) {
             $updateurl = new \moodle_url('/course/mod.php',
-                    array('return' => 'true', 'update' => $this->offlinequizobj->get_cmid(), 'sesskey' => sesskey()));
+                    ['return' => 'true', 'update' => $this->offlinequizobj->get_cmid(), 'sesskey' => sesskey()]);
             $updatelink = '<a href="'.$updateurl->out().'">' . get_string('updatethis', '',
                     get_string('modulename', 'offlinequiz')) . '</a>';
             $warnings[] = get_string('shufflequestionsselected', 'offlinequiz', $updatelink);
@@ -363,7 +363,7 @@ class structure {
         $offlinequiz = $this->offlinequizobj->get_offlinequiz();
 
         // Exact open and close dates for the tool-tip.
-        $dates = array();
+        $dates = [];
         if ($offlinequiz->timeopen > 0) {
             if ($timenow > $offlinequiz->timeopen) {
                 $dates[] = get_string('offlinequizopenedon', 'offlinequiz', userdate($offlinequiz->timeopen));
@@ -396,7 +396,7 @@ class structure {
             $currentstatus = get_string('offlinequizisopen', 'offlinequiz');
         }
 
-        return array($currentstatus, $explanation);
+        return [$currentstatus, $explanation];
     }
 
     /**
@@ -418,13 +418,13 @@ class structure {
                     AND qr.questionarea = 'slot' AND qr.itemid = slot.id
                  WHERE slot.offlinequizid = ?
                    AND slot.offlinegroupid = ?
-              ORDER BY slot.slot", array($offlinequiz->id, $offlinequiz->groupid));
+              ORDER BY slot.slot", [$offlinequiz->id, $offlinequiz->groupid]);
 
         $slots = $this->populate_missing_questions($slots);
 
-        $this->questions = array();
-        $this->slots = array();
-        $this->slotsinorder = array();
+        $this->questions = [];
+        $this->slots = [];
+        $this->slotsinorder = [];
         foreach ($slots as $slotdata) {
             $this->questions[$slotdata->questionid] = $slotdata;
 
@@ -449,7 +449,7 @@ class structure {
         $section->heading = '';
         $section->firstslot = 1;
         $section->shuffle = false;
-        $this->sections = array(1 => $section);
+        $this->sections = [1 => $section];
 
         $this->populate_slots_with_sectionids();
         $this->populate_question_numbers();
@@ -549,7 +549,7 @@ class structure {
         }
 
         // Work out how things are being moved.
-        $slotreorder = array();
+        $slotreorder = [];
         if ($targetslotnumber > $movingslotnumber) {
             $slotreorder[$movingslotnumber] = $targetslotnumber;
             for ($i = $movingslotnumber; $i < $targetslotnumber; $i++) {
@@ -567,7 +567,7 @@ class structure {
         // Slot has moved record new order.
         if ($slotreorder) {
             update_field_with_unique_index('offlinequiz_group_questions', 'slot', $slotreorder,
-                    array('offlinequizid' => $this->get_offlinequizid(), 'offlinegroupid' => $this->get_offlinegroupid()));
+                    ['offlinequizid' => $this->get_offlinequizid(), 'offlinegroupid' => $this->get_offlinegroupid()]);
 
         }
         // Page has changed. Record it.
@@ -576,7 +576,7 @@ class structure {
         }
         if ($movingslot->page != $page) {
             $DB->set_field('offlinequiz_group_questions', 'page', $page,
-                    array('id' => $movingslot->id));
+                    ['id' => $movingslot->id]);
         }
 
         $emptypages = $DB->get_fieldset_sql("
@@ -590,8 +590,8 @@ class structure {
                                              AND offlinegroupid = ?
                                              AND page = slot.page - 1)
               ORDER BY page - 1 DESC
-                ", array($this->get_offlinequizid(), $this->get_offlinegroupid(),
-                         $this->get_offlinequizid(), $this->get_offlinegroupid()));
+                ", [$this->get_offlinequizid(), $this->get_offlinegroupid(),
+                         $this->get_offlinequizid(), $this->get_offlinegroupid()]);
 
         foreach ($emptypages as $page) {
             $DB->execute("
@@ -600,7 +600,7 @@ class structure {
                      WHERE offlinequizid = ?
                        AND offlinegroupid = ?
                        AND page > ?
-                    ", array($this->get_offlinequizid(), $this->get_offlinegroupid(), $page));
+                    ", [$this->get_offlinequizid(), $this->get_offlinegroupid(), $page]);
         }
 
         $trans->allow_commit();
@@ -612,16 +612,16 @@ class structure {
      * @param \stdClass[] $slots (optional) array of slot objects.
      * @return \stdClass[] array of slot objects.
      */
-    public function refresh_page_numbers($offlinequiz, $slots=array()) {
+    public function refresh_page_numbers($offlinequiz, $slots=[]) {
         global $DB;
         // Get slots ordered by page then slot.
         if (!count($slots)) {
-            $slots = $DB->get_records('offlinequiz_group_questions', array('offlinequizid' => $offlinequiz->id,
-                        'offlinegroupid' => $offlinequiz->groupid), 'slot, page');
+            $slots = $DB->get_records('offlinequiz_group_questions', ['offlinequizid' => $offlinequiz->id,
+                        'offlinegroupid' => $offlinequiz->groupid], 'slot, page');
         }
 
         // Loop slots. Start Page number at 1 and increment as required.
-        $pagenumbers = array('new' => 0, 'old' => 0);
+        $pagenumbers = ['new' => 0, 'old' => 0];
 
         foreach ($slots as $slot) {
             if ($slot->page !== $pagenumbers['old']) {
@@ -652,7 +652,7 @@ class structure {
         // Record new page order.
         foreach ($slots as $slot) {
             $DB->set_field('offlinequiz_group_questions', 'page', $slot->page,
-                    array('id' => $slot->id));
+                    ['id' => $slot->id]);
         }
 
         return $slots;
@@ -668,13 +668,13 @@ class structure {
 
         $this->check_can_be_edited();
 
-        $slot = $DB->get_record('offlinequiz_group_questions', array('offlinequizid' => $offlinequiz->id,
-                'offlinegroupid' => $offlinequiz->groupid, 'slot' => $slotnumber));
+        $slot = $DB->get_record('offlinequiz_group_questions', ['offlinequizid' => $offlinequiz->id,
+                'offlinegroupid' => $offlinequiz->groupid, 'slot' => $slotnumber]);
         $maxslot = $DB->get_field_sql('SELECT MAX(slot)
                                          FROM {offlinequiz_group_questions}
                                         WHERE offlinequizid = ?
                                           AND offlinegroupid = ?',
-                     array($offlinequiz->id, $offlinequiz->groupid));
+                     [$offlinequiz->id, $offlinequiz->groupid]);
         if (!$slot) {
             return;
         }
@@ -688,15 +688,15 @@ class structure {
             $DB->delete_records('question_references', ['id' => $questionreference->id]);
         }
 
-        $DB->delete_records('offlinequiz_group_questions', array('id' => $slot->id));
+        $DB->delete_records('offlinequiz_group_questions', ['id' => $slot->id]);
         for ($i = $slot->slot + 1; $i <= $maxslot; $i++) {
             $DB->set_field('offlinequiz_group_questions', 'slot', $i - 1,
-                    array('offlinequizid' => $offlinequiz->id,
+                    ['offlinequizid' => $offlinequiz->id,
                           'offlinegroupid' => $offlinequiz->groupid,
-                                    'slot' => $i));
+                                    'slot' => $i]);
         }
 
-        $qtype = $DB->get_field('question', 'qtype', array('id' => $slot->questionid));
+        $qtype = $DB->get_field('question', 'qtype', ['id' => $slot->questionid]);
         if ($qtype === 'random') {
             // This function automatically checks if the question is in use, and won't delete if it is.
             question_delete_question($slot->questionid);
@@ -739,8 +739,8 @@ class structure {
 
         $groupids = $DB->get_fieldset_select('offlinequiz_groups', 'id',
                 'offlinequizid = :offlinequizid AND id <> :currentid',
-                array('offlinequizid' => $offlinequiz->id, 'currentid' => $currentgroupid));
-        $params = array();
+                ['offlinequizid' => $offlinequiz->id, 'currentid' => $currentgroupid]);
+        $params = [];
         if ($groupids) {
             list($gsql, $params) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, 'grp');
 
@@ -784,8 +784,8 @@ class structure {
         $this->check_can_be_edited();
 
         $offlinequizslots = $DB->get_records('offlinequiz_group_questions',
-                 array('offlinequizid' => $offlinequiz->id,
-                       'offlinegroupid' => $offlinequiz->groupid), 'slot');
+                 ['offlinequizid' => $offlinequiz->id,
+                       'offlinegroupid' => $offlinequiz->groupid], 'slot');
         $repaginate = new \mod_offlinequiz\repaginate($offlinequiz->id, $offlinequiz->groupid, $offlinequizslots);
         $repaginate->repaginate_slots($offlinequizslots[$slotid]->slot, $type);
         $slots = $this->refresh_page_numbers_and_update_db($offlinequiz);
@@ -812,7 +812,7 @@ class structure {
      * @return int[] slot numbers.
      */
     public function get_slots_in_section($sectionid) {
-        $slots = array();
+        $slots = [];
         foreach ($this->slotsinorder as $slot) {
             if ($slot->sectionid == $sectionid) {
                 $slots[] = $slot->slot;

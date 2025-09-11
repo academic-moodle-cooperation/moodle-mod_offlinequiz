@@ -17,7 +17,7 @@
 /**
  * Code for upgrading Moodle 1.9.x offlinequizzes to Moodle 2.2+
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -52,7 +52,7 @@ class offlinequiz_ilog_upgrader {
     protected $dotcounter = 0;
     /** @var progress_bar */
     protected $progressbar = null;
-    /** @var boolean */
+    /** @var bool */
     protected $doingbackup = false;
 
     protected $contextid = 0;
@@ -94,7 +94,7 @@ class offlinequiz_ilog_upgrader {
 
         echo 'starting at ' . time() . "\n";
 
-        $offlinequizzes = $DB->get_records('offlinequiz', array('needsilogupgrade' => 1));
+        $offlinequizzes = $DB->get_records('offlinequiz', ['needsilogupgrade' => 1]);
 
         if (empty($offlinequizzes)) {
             return true;
@@ -131,13 +131,13 @@ class offlinequiz_ilog_upgrader {
         $dirname = $CFG->dataroot . '/' . $offlinequiz->course . '/moddata/offlinequiz/' . $offlinequiz->id;
         $filenames = get_directory_list($dirname, 'pdfs', false, false);
         $fs = get_file_storage();
-        $filerecord = array(
+        $filerecord = [
                 'contextid' => $this->contextid,      // ID of context.
                 'component' => 'mod_offlinequiz', // Usually = table name.
                 'filearea'  => 'imagefiles',      // Usually = table name.
                 'itemid'    => 0,                 // Usually = ID of row in table.
-                'filepath'  => '/'                // Any path beginning and ending in.
-        ); // Any filename.
+                'filepath'  => '/',                // Any path beginning and ending in.
+        ]; // Any filename.
 
         foreach ($filenames as $filename) {
             $filerecord['filename'] = $filename;
@@ -153,13 +153,13 @@ class offlinequiz_ilog_upgrader {
         $dirname = $CFG->dataroot . '/' . $offlinequiz->course . '/moddata/offlinequiz/' . $offlinequiz->id . '/pdfs';
         $filenames = get_directory_list($dirname, '', false, false);
         $fs = get_file_storage();
-        $filerecord = array(
+        $filerecord = [
                 'contextid' => $this->contextid,
                 'component' => 'mod_offlinequiz',
                 'filearea'  => 'pdfs',
                 'itemid'    => 0,
-                'filepath'  => '/'
-        ); // Any filename.
+                'filepath'  => '/',
+        ]; // Any filename.
 
         foreach ($filenames as $filename) {
             $filerecord['filename'] = $filename;
@@ -173,17 +173,17 @@ class offlinequiz_ilog_upgrader {
     public function update_all_group_template_usages($offlinequiz) {
         global $DB, $CFG;
 
-        $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
+        $groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id],
                                    'number', '*', 0, $offlinequiz->numgroups);
 
         $transaction = $DB->start_delegated_transaction();
         foreach ($groups as $group) {
-            if ($attempt = $DB->get_record('offlinequiz_attempts', array('offlinequiz' => $offlinequiz->id,
-                    'groupid' => $group->number, 'needsupgradetonewqe' => 0, 'sheet' => 1))) {
+            if ($attempt = $DB->get_record('offlinequiz_attempts', ['offlinequiz' => $offlinequiz->id,
+                    'groupid' => $group->number, 'needsupgradetonewqe' => 0, 'sheet' => 1])) {
 
                     $DB->set_field('offlinequiz_groups', 'templateusageid', $attempt->uniqueid,
-                                   array('offlinequizid' => $offlinequiz->id,
-                                         'number' => $attempt->groupid));
+                                   ['offlinequizid' => $offlinequiz->id,
+                                         'number' => $attempt->groupid]);
             }
         }
         $transaction->allow_commit();
@@ -198,18 +198,18 @@ class offlinequiz_ilog_upgrader {
         // Now we have to migrate offlinequiz_attempts to offlinequiz_results because
         // we need the new result IDs for the scannedpages.
         // Get all attempts that have already been migrated to the new question engine.
-        $attempts = $DB->get_records('offlinequiz_attempts', array('offlinequiz' => $offlinequiz->id,
-                                                                   'needsupgradetonewqe' => 0, 'sheet' => 0));
-        $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
+        $attempts = $DB->get_records('offlinequiz_attempts', ['offlinequiz' => $offlinequiz->id,
+                                                                   'needsupgradetonewqe' => 0, 'sheet' => 0]);
+        $groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id],
                                    'number', '*', 0, $offlinequiz->numgroups);
         list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $groups);
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($attempts as $attempt) {
-            $group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id,
-                                                                 'number' => $attempt->groupid));
-            $attemptlog = $DB->get_record('offlinequiz_i_log', array('offlinequiz' => $offlinequiz->id,
-                                                                     'attempt' => $attempt->id, 'page' => 0));
+            $group = $DB->get_record('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id,
+                                                                 'number' => $attempt->groupid]);
+            $attemptlog = $DB->get_record('offlinequiz_i_log', ['offlinequiz' => $offlinequiz->id,
+                                                                     'attempt' => $attempt->id, 'page' => 0]);
 
             $result = new StdClass();
             $result->offlinequizid = $offlinequiz->id;
@@ -229,8 +229,8 @@ class offlinequiz_ilog_upgrader {
             $result->timestart = $attempt->timestart;
             $result->timefinish = $attempt->timefinish;
             $result->timemodified = $attempt->timemodified;
-            if (!$oldresult = $DB->get_record('offlinequiz_results', array('offlinequizid' => $result->offlinequizid,
-                                                                           'userid' => $result->userid))) {
+            if (!$oldresult = $DB->get_record('offlinequiz_results', ['offlinequizid' => $result->offlinequizid,
+                                                                           'userid' => $result->userid])) {
                 $result->id = $DB->insert_record('offlinequiz_results', $result);
             } else {
                 $result->id = $oldresult->id;
@@ -238,7 +238,7 @@ class offlinequiz_ilog_upgrader {
             }
 
             // Save the resultid, s.t. we can still reconstruct the data later.
-            $DB->set_field('offlinequiz_attempts', 'resultid', $result->id, array('id' => $attempt->id));
+            $DB->set_field('offlinequiz_attempts', 'resultid', $result->id, ['id' => $attempt->id]);
 
             if ($quba = question_engine::load_questions_usage_by_activity($result->usageid)) {
                 $quba->finish_all_questions();
@@ -246,14 +246,14 @@ class offlinequiz_ilog_upgrader {
 
                 // Get all the page logs that have contributed to the attempt.
                 if ($group->numberofpages == 1) {
-                    $pagelogs = array($attemptlog);
+                    $pagelogs = [$attemptlog];
                 } else {
                     $sql = "SELECT *
                     FROM {offlinequiz_i_log}
                     WHERE offlinequiz = :offlinequizid
                     AND attempt = :attemptid
                     AND page > 0";
-                    $params = array('offlinequizid' => $offlinequiz->id, 'attemptid' => $attempt->id);
+                    $params = ['offlinequizid' => $offlinequiz->id, 'attemptid' => $attempt->id];
                     $pagelogs = $DB->get_records_sql($sql, $params);
                 }
 
@@ -325,7 +325,7 @@ class offlinequiz_ilog_upgrader {
                                 $rawcorners[$i] = 2000;
                             }
                         }
-                        $corners = array();
+                        $corners = [];
                         $corners[0] = new oq_point($rawcorners[1], $rawcorners[2]);
                         $corners[1] = new oq_point($rawcorners[3], $rawcorners[4]);
                         $corners[2] = new oq_point($rawcorners[5], $rawcorners[6]);
@@ -337,11 +337,11 @@ class offlinequiz_ilog_upgrader {
 
             }
         }
-        $DB->set_field('offlinequiz', 'needsilogupgrade', 0, array('id' => $offlinequiz->id));
+        $DB->set_field('offlinequiz', 'needsilogupgrade', 0, ['id' => $offlinequiz->id]);
         $transaction->allow_commit();
 
         // We start a new transaction for the remaining i_log entries.
-        $otherlogs = $DB->get_records('offlinequiz_i_log', array('offlinequiz' => $offlinequiz->id, 'attempt' => 0));
+        $otherlogs = $DB->get_records('offlinequiz_i_log', ['offlinequiz' => $offlinequiz->id, 'attempt' => 0]);
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($otherlogs as $pagelog) {
@@ -376,7 +376,7 @@ class offlinequiz_ilog_upgrader {
             $rawcorners = explode(',', $pagelog->corners);
 
             if (!empty($rawcorners) && count($rawcorners) > 8) {
-                $corners = array();
+                $corners = [];
                 $corners[0] = new oq_point($rawcorners[1], $rawcorners[2]);
                 $corners[1] = new oq_point($rawcorners[3], $rawcorners[4]);
                 $corners[2] = new oq_point($rawcorners[5], $rawcorners[6]);
@@ -460,7 +460,7 @@ class offlinequiz_ilog_upgrader {
                 $error = 'unknown';
                 break;
         }
-        return array($status, $error);
+        return [$status, $error];
     }
 
 
@@ -517,7 +517,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
     protected $dotcounter = 0;
     /** @var progress_bar */
     protected $progressbar = null;
-    /** @var boolean */
+    /** @var bool */
     protected $doingbackup = false;
 
     /**
@@ -554,7 +554,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
 
                 // Ignore any quiz ids that do not acually exist.
                 if (empty($quizids)) {
-                    return array();
+                    return [];
                 }
                 list($test, $params) = $DB->get_in_or_equal($quizids);
                 return $DB->get_fieldset_sql("
@@ -585,7 +585,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         foreach ($quizids as $quizid) {
             $this->print_progress($done, $outof, $quizid);
 
-            $quiz = $DB->get_record('offlinequiz', array('id' => $quizid), '*', MUST_EXIST);
+            $quiz = $DB->get_record('offlinequiz', ['id' => $quizid], '*', MUST_EXIST);
             $this->update_all_attempts_at_quiz($quiz);
             rebuild_course_cache($quiz->course);
 
@@ -607,7 +607,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         // Wipe question loader cache.
         $this->questionloader = new offlinequiz_upgrade_question_loader($this->logger);
 
-        $params = array('offlinequizid' => $quiz->id);
+        $params = ['offlinequizid' => $quiz->id];
 
         // Actually we want all the attempts, also the ones with sheet = 1 for the group template usages.
         $where = 'offlinequiz = :offlinequizid ' . $this->get_attempts_extra_where();
@@ -651,7 +651,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
             moodle_recordset $questionsstatesrs) {
         global $OUTPUT, $DB;
 
-        $qas = array();
+        $qas = [];
         $this->logger->set_current_attempt_id($attempt->id);
         while ($qsession = $this->get_next_question_session($attempt, $questionsessionsrs)) {
             $question = $this->load_question($qsession->questionid, $quiz->id);
@@ -665,7 +665,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
             }
         }
         $this->logger->set_current_attempt_id(null);
-        $questionorder = array();
+        $questionorder = [];
 
         // For offlinequizzes we have to take the questionlist FROM the offline group or the attempt.
         $layout = $attempt->layout;
@@ -693,7 +693,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
 
     public function save_usage($preferredbehaviour, $attempt, $qas, $quizlayout) {
         global $DB, $OUTPUT;
-        $missing = array();
+        $missing = [];
 
         $layout = explode(',', $attempt->layout);
         $questionkeys = array_combine(array_values($layout), array_keys($layout));
@@ -751,13 +751,13 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
 
     protected function set_quiz_attempt_layout($qubaid, $layout) {
         global $DB;
-        $DB->set_field('offlinequiz_attempts', 'needsupgradetonewqe', 0, array('uniqueid' => $qubaid));
+        $DB->set_field('offlinequiz_attempts', 'needsupgradetonewqe', 0, ['uniqueid' => $qubaid]);
     }
 
     protected function delete_quiz_attempt($qubaid) {
         global $DB;
-        $DB->delete_records('offlinequiz_attempts', array('uniqueid' => $qubaid));
-        $DB->delete_records('question_attempts', array('id' => $qubaid));
+        $DB->delete_records('offlinequiz_attempts', ['uniqueid' => $qubaid]);
+        $DB->delete_records('question_attempts', ['id' => $qubaid]);
     }
 
 
@@ -765,7 +765,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         global $DB;
         if ($question->qtype == 'deleted') {
             $where = '(question = :questionid OR ' . $DB->sql_like('answer', ':randomid') . ') AND event = 7';
-            $params = array('questionid' => $question->id, 'randomid' => "random{$question->id}-%");
+            $params = ['questionid' => $question->id, 'randomid' => "random{$question->id}-%"];
             if ($DB->record_exists_SELECT('question_states', $where, $params)) {
                 $this->logger->log_assumption("Assuming that deleted question {$question->id} was manually graded.");
                 return 'qbehaviour_manualgraded_converter';
@@ -844,7 +844,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
 
         $newquestion = $this->load_question($newquestionid);
         $newquestion->maxmark = $maxmark;
-        return array($newquestion, $qstates);
+        return [$newquestion, $qstates];
     }
 
     public function prepare_to_restore() {
@@ -873,7 +873,7 @@ class offlinequiz_upgrade_question_loader extends question_engine_upgrade_questi
                     JOIN {offlinequiz_q_instances} qqi ON qqi.question = q.id
                     WHERE q.id = $questionid AND qqi.offlinequiz = $offlinequizid");
         } else {
-            $question = $DB->get_record('question', array('id' => $questionid));
+            $question = $DB->get_record('question', ['id' => $questionid]);
         }
 
         if (!$question) {
@@ -913,18 +913,18 @@ class offlinequiz_upgrade_question_loader extends question_engine_upgrade_questi
 function offlinequiz_remove_redundant_q_instances() {
     global $DB;
 
-    $offlinequizzes = $DB->get_records('offlinequiz', array(), 'id', 'id');
+    $offlinequizzes = $DB->get_records('offlinequiz', [], 'id', 'id');
     foreach ($offlinequizzes as $offlinequiz) {
         $transaction = $DB->start_delegated_transaction();
 
-        $qinstances = $DB->get_records('offlinequiz_q_instances', array('offlinequiz' => $offlinequiz->id), 'groupid');
+        $qinstances = $DB->get_records('offlinequiz_q_instances', ['offlinequiz' => $offlinequiz->id], 'groupid');
         // First delete them all.
-        $DB->delete_records('offlinequiz_q_instances', array('offlinequiz' => $offlinequiz->id));
+        $DB->delete_records('offlinequiz_q_instances', ['offlinequiz' => $offlinequiz->id]);
 
         // Now insert one per question.
         foreach ($qinstances as $qinstance) {
-            if (!$DB->get_record('offlinequiz_q_instances', array('offlinequiz' => $qinstance->offlinequiz,
-                                                                  'question' => $qinstance->question))) {
+            if (!$DB->get_record('offlinequiz_q_instances', ['offlinequiz' => $qinstance->offlinequiz,
+                                                                  'question' => $qinstance->question])) {
                 $qinstance->groupid = 0;
                 $DB->insert_record('offlinequiz_q_instances', $qinstance);
             }
@@ -964,7 +964,7 @@ function offlinequiz_update_form_file_names() {
         $context = context_module::instance($cm->id);
 
         $files = $fs->get_area_files($context->id, 'mod_offlinequiz', 'pdfs');
-        $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'number', '*', 0,
+        $groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id], 'number', '*', 0,
             $offlinequiz->numgroups);
         // Simply load all files in the 'pdfs' filearea in a ZIP file.
 
@@ -1008,7 +1008,7 @@ function offlinequiz_update_refresh_all_pagecounts() {
     $a->outof = $outof;
     $progressbar->update($done, $outof, get_string('pagenumberupdate', 'offlinequiz', $a));
     foreach ($groups as $group) {
-        $params = array('id' => $group->id);
+        $params = ['id' => $group->id];
         $sql = "SELECT count(*)
                 FROM   {question} q,
                        {offlinequiz_group_questions} gq
@@ -1041,7 +1041,7 @@ function offlinequiz_update_refresh_all_pagecounts() {
 
 function offlinequiz_get_number_of_columns($maxanswers) {
     $i = 1;
-    $columnlimits = array(1 => 13, 2 => 8, 3 => 6);
+    $columnlimits = [1 => 13, 2 => 8, 3 => 6];
     while (array_key_exists($i, $columnlimits) && $columnlimits[$i] > $maxanswers) {
         $i++;
     }
@@ -1109,8 +1109,8 @@ function offlinequiz_fix_question_versions() {
         $values = implode(',', $values);
         $DB->set_field('question_attempt_step_data', 'value', $values, ['id' => $value->id]);
         $DB->set_field('question_attempts', 'questionid', $record->newquestionid, ['questionid' => $record->oldquestionid, 'questionusageid' => $templateusage->get_id()]);
-   }
-   offlinequiz_fix_question_references();
+    }
+    offlinequiz_fix_question_references();
 
 }
 

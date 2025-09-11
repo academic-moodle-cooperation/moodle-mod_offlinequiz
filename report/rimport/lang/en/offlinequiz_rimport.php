@@ -17,7 +17,7 @@
 /**
  * Strings for component 'offlinequiz_rimport', language 'en'
  *
- * @package       mod
+ * @package       offlinequiz_rimport
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -30,41 +30,41 @@ $string['correcterror'] = 'Correct';
 $string['deleteselectedpages'] = 'Delete selected pages';
 $string['errorcouldnotgrab'] = 'Could not grab';
 $string['errordifferentpage'] = 'Differing page exists';
+$string['errordifferentresultexists'] = 'Different result exists';
 $string['errordoublepage'] = 'Page already exists';
 $string['errorfilenotfound'] = 'File not found';
 $string['errorfilenotimage'] = 'File is not an image or PDF doesn\'t contain an image.';
+$string['errorgifnotsupported'] = 'GIF images not supported';
 $string['errorgrouperror'] = 'Invalid group number';
-$string['erroruseridviolation'] = 'Multiple users found';
+$string['errorimagenotsupported'] = 'Image type not supported';
+$string['errorimportusernotinlist'] = 'User not in list';
 $string['errorinsecuremarkings'] = 'Inaccurate markings';
-$string['errorinvalidpagenumber'] = 'Invalid page number';
 $string['errorinvalidlistnumber'] = 'Invalid Listnumber';
+$string['errorinvalidpagenumber'] = 'Invalid page number';
+$string['errorjpgnotsupported'] = 'JPG images not supported';
 $string['errormissingpages'] = 'Pages incomplete';
 $string['errornonexistinguser'] = 'User does not exist';
 $string['errornotadjusted'] = 'Not adjusted';
 $string['errorotherresult'] = 'Different result exists';
 $string['errorpageerror'] = 'Page error';
+$string['errorpngnotsupported'] = 'PNG images not supported';
 $string['errorresultexists'] = 'Result exists';
-$string['errordifferentresultexists'] = 'Different result exists';
+$string['errortiffnotsupported'] = 'TIFF images not supported';
+$string['erroruseridviolation'] = 'Multiple users found';
 $string['errorusernotincourse'] = 'User not in course';
 $string['errorusernotinlist'] = 'User not in list';
-$string['errorimportusernotinlist'] = 'User not in list';
-$string['errorpngnotsupported'] = 'PNG images not supported';
-$string['errortiffnotsupported'] = 'TIFF images not supported';
-$string['errorjpgnotsupported'] = 'JPG images not supported';
-$string['errorgifnotsupported'] = 'GIF images not supported';
-$string['errorimagenotsupported'] = 'Image type not supported';
 $string['idnumber'] = 'ID-Number';
 $string['import'] = 'Evaluate';
-$string['importlisterror'] = 'List not detected';
 $string['importedon'] = 'Evaluated on';
 $string['importforms'] = 'Upload answer forms';
+$string['importlisterror'] = 'List not detected';
 $string['importpforms'] = 'Upload attendance lists';
 $string['newformsinqueue'] = '{$a} answer form(s) is/are pending evaluation.';
 $string['pluginname'] = 'Offlinequiz Results Import';
 $string['privacy:metadata'] = 'This plugin does not store any user related data.';
 $string['processingformsinqueue'] = '{$a} answer form(s) is/are being processed';
-$string['showpage'] = 'Show';
 $string['scanerrorlistnumber'] = 'The listnumber seems to be out of range. Please check the scanned document for barcode irregularities for the listnumber code (bottom right corner) and scan again with higher resolution if necessary!';
+$string['showpage'] = 'Show';
 $string['username'] = 'Username';
 $string['waitingforanalysis'] = 'Waiting for Analysis';
 $string['ziporimagefile'] = 'ZIP- or image-file';

@@ -17,7 +17,7 @@
 /**
  * Rest endpoint for ajax editing for paging operations on the offlinequiz structure.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -37,7 +37,7 @@ $repagtype = required_param('repag', PARAM_INT);
 
 require_sesskey();
 $offlinequizobj = offlinequiz::create($offlinequizid, $offlinegroupid);
-$group = $DB->get_record('offlinequiz_groups', array('id' => $offlinegroupid));
+$group = $DB->get_record('offlinequiz_groups', ['id' => $offlinegroupid]);
 
 require_login($offlinequizobj->get_course(), false, $offlinequizobj->get_cm());
 require_capability('mod/offlinequiz:manage', $offlinequizobj->get_context());
@@ -46,7 +46,7 @@ if (offlinequiz_has_scanned_pages($offlinequizid)) {
     $reportlink = offlinequiz_attempt_summary_link_to_reports($offlinequizobj->get_offlinequiz(),
                     $offlinequizobj->get_cm(), $offlinequizobj->get_context());
     throw new \moodle_exception('cannoteditafterattempts', 'offlinequiz',
-            new moodle_url('/mod/offlinequiz/edit.php', array('cmid' => $cmid)), $reportlink);
+            new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cmid]), $reportlink);
 }
 
 $slotnumber++;
@@ -59,5 +59,5 @@ $structure = $offlinequizobj->get_structure();
 $structure->refresh_page_numbers_and_update_db($structure->get_offlinequiz());
 
 redirect(new moodle_url('edit.php',
-    array('cmid' => $offlinequizobj->get_cmid(),
-          'groupnumber' => $group->groupnumber)));
+    ['cmid' => $offlinequizobj->get_cmid(),
+          'groupnumber' => $group->groupnumber]));

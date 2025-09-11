@@ -17,7 +17,7 @@
 /**
  * classes and functions for interpreting the scanned answer forms (image files)
  *
- * @package       mod
+ * @package       offlinequiz_rimport
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -186,7 +186,7 @@ class offlinequiz_page_scanner {
     public function init_hotspots() {
         global $CFG;
 
-        $this->hotspots = array();
+        $this->hotspots = [];
         $offlinequizconfig = get_config('offlinequiz');
 
         // Load hotspots for usernumber.
@@ -262,7 +262,7 @@ class offlinequiz_page_scanner {
         } else {
             $a = BOX_INNER_WIDTH * $this->zoomy + 2;
         }
-        $this->pattern = array();
+        $this->pattern = [];
         $width = $a / 6;                                // Calculate dimensions of the pattern.
         $halfwidth = round($a / 12);                    // Halfwidth for pattern1-4.
         $length = round($width * 2);
@@ -278,7 +278,7 @@ class offlinequiz_page_scanner {
                 }
             }
         }
-        $this->pattern1 = array();
+        $this->pattern1 = [];
         for ($i = 0; $i <= $a; $i++) {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
@@ -290,7 +290,7 @@ class offlinequiz_page_scanner {
                 }
             }
         }
-        $this->pattern2 = array();
+        $this->pattern2 = [];
         for ($i = 0; $i <= $a; $i++) {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
@@ -302,7 +302,7 @@ class offlinequiz_page_scanner {
                 }
             }
         }
-        $this->pattern3 = array();
+        $this->pattern3 = [];
         for ($i = 0; $i <= $a; $i++) {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
@@ -314,7 +314,7 @@ class offlinequiz_page_scanner {
                 }
             }
         }
-        $this->pattern4 = array();
+        $this->pattern4 = [];
         for ($i = 0; $i <= $a; $i++) {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
@@ -475,13 +475,13 @@ class offlinequiz_page_scanner {
                 return $scannedpage;
         }
 
-        $filerecord = array(
+        $filerecord = [
                 'contextid' => $this->contextid,      // ID of context.
                 'component' => 'mod_offlinequiz', // Usually = table name.
                 'filearea'  => 'imagefiles',      // Usually = table name.
                 'itemid'    => 0,                 // Usually = ID of row in table.
                 'filepath'  => '/',               // Any path beginning and ending in.
-                'filename'  => $this->filename); // Any filename.
+                'filename'  => $this->filename]; // Any filename.
 
         $storedfile = $this->save_image($filerecord, $this->sourcefile);
         $scannedpage->filename = $storedfile->get_filename();
@@ -575,7 +575,7 @@ class offlinequiz_page_scanner {
         global $CFG;
         $offlinequizconfig = get_config('offlinequiz');
 
-        $export = array();
+        $export = [];
         $factor = $width / imagesx($this->image);
 
         for ($x = 0; $x < $offlinequizconfig->ID_digits; $x++) {
@@ -597,7 +597,7 @@ class offlinequiz_page_scanner {
     public function export_hotspots_group($width) {
         global $CFG;
 
-        $export = array();
+        $export = [];
         $factor = $width / imagesx($this->image);
 
         for ($i = 0; $i <= 5; $i++) {
@@ -617,7 +617,7 @@ class offlinequiz_page_scanner {
     public function export_hotspots_answer($width) {
         global $CFG;
 
-        $export = array();
+        $export = [];
         $factor = $width / imagesx($this->image);
 
         for ($number = 0; $number < $this->questionsonpage; $number++) {
@@ -845,8 +845,8 @@ class offlinequiz_page_scanner {
 
         $numpoints = 0;
         $numblacks = 0;
-        $patternin = array();
-        $patternout = array();
+        $patternin = [];
+        $patternout = [];
 
         for ($i = 0; $i <= 4; $i++) {
             $patternin[$i] = 0;
@@ -998,13 +998,13 @@ class offlinequiz_page_scanner {
             if ($this->image = imagecreatefrompng($tempdst)) {
                 $this->sourcefile = $tempdst;
 
-                $filerecord = array(
+                $filerecord = [
                         'contextid' => $this->contextid,  // ID of context.
                         'component' => 'mod_offlinequiz', // Usually = table name.
                         'filearea'  => 'imagefiles',      // Usually = table name.
                         'itemid'    => 0,                 // Usually = ID of row in table.
                         'filepath'  => '/',               // Any path beginning and ending in.
-                        'filename'  => $this->filename . '_rotated'); // Any filename.
+                        'filename'  => $this->filename . '_rotated']; // Any filename.
 
                 $newfile = $this->save_image($filerecord, $this->sourcefile);
 
@@ -1034,13 +1034,13 @@ class offlinequiz_page_scanner {
         if ($this->image = imagecreatefrompng($tempdst)) {
             $this->sourcefile = $tempdst;
 
-            $filerecord = array(
+            $filerecord = [
                     'contextid' => $this->contextid,  // ID of context.
                     'component' => 'mod_offlinequiz', // Usually = table name.
                     'filearea'  => 'imagefiles',      // Usually = table name.
                     'itemid'    => 0,                 // Usually = ID of row in table.
                     'filepath'  => '/',               // Any path beginning and ending in.
-                    'filename'  => $this->filename . 'rotated'); // Any filename.
+                    'filename'  => $this->filename . 'rotated']; // Any filename.
 
             $newfile = $this->save_image($filerecord, $this->sourcefile);
             unlink($tempdst);
@@ -1125,10 +1125,10 @@ class offlinequiz_page_scanner {
         $min = 100;
         $max = 0;
 
-        $values = array();
+        $values = [];
 
         // Scan first line.
-        $data = array();
+        $data = [];
         for ($x = $positionx; $x <= $lastx; $x++) {
             if ($this->pixel_is_black($x, $y)) {
                 $numblacks++;
@@ -1169,7 +1169,7 @@ class offlinequiz_page_scanner {
         }
 
         // Scan second line.
-        $data = array();
+        $data = [];
         $y -= BOX_INNER_WIDTH * $this->zoomy / 4;
         for ($x = $positionx; $x <= $lastx; $x++) {
             if ($this->pixel_is_black($x, $y)) {
@@ -1211,7 +1211,7 @@ class offlinequiz_page_scanner {
         }
 
         // Scan third line.
-        $data = array();
+        $data = [];
         $y += BOX_INNER_WIDTH * $this->zoomy / 2;
         for ($x = $positionx; $x <= $lastx; $x++) {
             if ($this->pixel_is_black($x, $y)) {
@@ -1379,7 +1379,7 @@ class offlinequiz_page_scanner {
      */
     public function get_corners($width = OQ_IMAGE_WIDTH ) {
 
-        $export = array();
+        $export = [];
         $factor = $width / imagesx($this->image);
 
         $point = new oq_point(($this->upperleft->x) * $factor - 2 * $this->zoomx,
@@ -1527,7 +1527,7 @@ class offlinequiz_page_scanner {
 
         $this->move_hotspots();
 
-        if ($scannedpageid && $hotspots = $DB->get_records('offlinequiz_hotspots', array('scannedpageid' => $scannedpageid))) {
+        if ($scannedpageid && $hotspots = $DB->get_records('offlinequiz_hotspots', ['scannedpageid' => $scannedpageid])) {
             $this->restore_hotspots($hotspots);
         } else {
             $this->adjust_hotspots();
@@ -1606,7 +1606,7 @@ class offlinequiz_page_scanner {
 
         $group = 0;
 
-        $groupspots = array();
+        $groupspots = [];
         $value = 0;
 
         // Get all the group hotspot values and select the biggest value.
@@ -1696,7 +1696,7 @@ class offlinequiz_page_scanner {
     public function set_group($group) {
 
         // We compute min, max and medium values.
-        $groupspots = array();
+        $groupspots = [];
 
         $maxvalue = 0;
         $minvalue = 100;
@@ -1732,10 +1732,10 @@ class offlinequiz_page_scanner {
      * @return multitype:multitype:string
      */
     public function get_answers() {
-        $answers = array();
+        $answers = [];
 
         for ($number = 0; $number < $this->questionsonpage; $number++) {
-            $row = array();
+            $row = [];
             for ($i = 0; $i < $this->maxanswers; $i++) {
                 $spotvalue = $this->hotspot_value($this->hotspots["a-$number-$i"], false,  "a-$number-$i");
                 if ($spotvalue == 1) {

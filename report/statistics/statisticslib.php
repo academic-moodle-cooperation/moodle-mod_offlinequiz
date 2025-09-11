@@ -19,7 +19,7 @@
  *
  *
  *
- * @package       mod
+ * @package       offlinequiz_statistics
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
  * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -60,18 +60,18 @@ function mod_offlinequiz_create_common_statistics_headers(&$headers, &$columns, 
 function mod_offlinequiz_print_column_stats_name($question, $baseurl, $name, $dubiousquestion) {
     $url = null;
     if ($question->_stats->subquestion) {
-        $url = new moodle_url($baseurl, array('qid' => $question->id));
+        $url = new moodle_url($baseurl, ['qid' => $question->id]);
     } else if ($question->_stats->questionid && $question->qtype != 'random') {
-        $url = new moodle_url($baseurl, array('questionid' => $question->_stats->questionid));
+        $url = new moodle_url($baseurl, ['questionid' => $question->_stats->questionid]);
     }
 
     if ($url) {
         $name = html_writer::link($url, $name,
-            array('title' => get_string('detailedanalysis', 'offlinequiz_statistics')));
+            ['title' => get_string('detailedanalysis', 'offlinequiz_statistics')]);
     }
 
     if ($dubiousquestion) {
-        $name = html_writer::tag('div', $name, array('class' => 'dubious'));
+        $name = html_writer::tag('div', $name, ['class' => 'dubious']);
     }
     return $name;
 }

@@ -17,7 +17,7 @@
 /**
  * Define the restore_offlinequiz_activity_task
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -61,10 +61,10 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
      * processed by the link decoder
      */
     public static function define_decode_contents() {
-        $contents = array();
+        $contents = [];
 
-        $contents[] = new restore_decode_content('offlinequiz', array('intro'), 'offlinequiz');
-        $contents[] = new restore_decode_content('offlinequiz', array('pdfintro'), 'offlinequiz');
+        $contents[] = new restore_decode_content('offlinequiz', ['intro'], 'offlinequiz');
+        $contents[] = new restore_decode_content('offlinequiz', ['pdfintro'], 'offlinequiz');
 
         return $contents;
     }
@@ -74,7 +74,7 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
      * to the activity to be executed by the link decoder
      */
     public static function define_decode_rules() {
-        $rules = array();
+        $rules = [];
 
         $rules[] = new restore_decode_rule('OFFLINEQUIZVIEWBYID',
                 '/mod/offlinequiz/view.php?id=$1', 'course_module');
@@ -94,7 +94,7 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
      * of {@link restore_log_rule} objects
      */
     public static function define_restore_log_rules() {
-        $rules = array();
+        $rules = [];
 
         $rules[] = new restore_log_rule('offlinequiz', 'add',
                 'view.php?id={course_module}', '{offlinequiz}');
@@ -180,7 +180,7 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
      * activity level. All them are rules not linked to any module instance (cmid = 0)
      */
     public static function define_restore_log_rules_for_course() {
-        $rules = array();
+        $rules = [];
 
         $rules[] = new restore_log_rule('offlinequiz', 'view all', 'index.php?id={course}', null);
 

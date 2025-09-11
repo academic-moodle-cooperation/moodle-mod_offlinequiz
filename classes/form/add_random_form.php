@@ -28,7 +28,7 @@ require_once($CFG->libdir.'/formslib.php');
 /**
  * The add random questions form.
  *
- * @package   mod_quiz
+ * @package   mod_offlinequiz
  * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated Moodle 4.3 MDL-72321. This form is new generated in a modal with mod_quiz/add_random_question_form.mustache
@@ -129,7 +129,7 @@ class add_random_form extends moodleform {
             $mform->getAttribute('id'),
             $contexts->lowest()->id,
             $tops,
-            $CFG->usetags
+            $CFG->usetags,
         ]);
     }
 

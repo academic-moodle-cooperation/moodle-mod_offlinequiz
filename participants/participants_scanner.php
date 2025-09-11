@@ -13,10 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Scanner for evaluating scanned participant forms
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -42,7 +43,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
      * @see offlinequiz_page_scanner::init_hotspots()
      */
     public function init_hotspots() {
-        $this->hotspots = array();
+        $this->hotspots = [];
         // Load hotspots for the crosses.
         for ($i = 0; $i <= NUMBERS_PER_PAGE; $i++) {
             $point = new oq_point(116, 142 + 79.8 * $i);
@@ -82,7 +83,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
      */
     public function get_participants() {
 
-        $participants = array();
+        $participants = [];
         for ($i = 1; $i <= NUMBERS_PER_PAGE; $i++) {
             if (!$this->hotspots["p$i"]->blank) {
                 $participant = new stdClass();
@@ -113,7 +114,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
     public function export_hotspots_participants($width) {
         global $CFG;
 
-        $export = array();
+        $export = [];
         $factory = $width / imagesx($this->image);
 
         for ($i = 1; $i <= NUMBERS_PER_PAGE; $i++) {
@@ -135,7 +136,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
     public function export_hotspots_barcodes($width) {
         global $CFG;
 
-        $export = array();
+        $export = [];
         $factory = $width / imagesx($this->image);
 
         for ($i = 1; $i <= NUMBERS_PER_PAGE; $i++) {
@@ -155,7 +156,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
      * @return array of oq_points (upperleft, upperright, lowerleft, lowerright).
      */
     public function export_corners($width) {
-        $corners = array();
+        $corners = [];
         $factor = $width / imagesx($this->image);
         $corners[0] = new oq_point(($this->upperleft->x) * $factor - 2 * $this->zoomx,
             ($this->upperleft->y) * $factor - 2 * $this->zoomy);

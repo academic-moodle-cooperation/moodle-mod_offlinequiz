@@ -63,7 +63,7 @@ class custom_completion extends activity_custom_completion {
             'itemtype' => 'mod',
             'itemmodule' => 'offlinequiz',
             'iteminstance' => $this->cm->instance,
-            'outcomeid' => null
+            'outcomeid' => null,
         ]);
         if ($item) {
             $grades = grade_grade::fetch_users_grades($item, [$this->userid], false);
@@ -99,7 +99,7 @@ class custom_completion extends activity_custom_completion {
      */
     public static function get_defined_custom_rules(): array {
         return [
-            'completionpass'
+            'completionpass',
         ];
     }
 
@@ -110,7 +110,7 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_custom_rule_descriptions(): array {
         return [
-            'completionpass' => get_string('completiondetail:passgrade', 'mod_offlinequiz')
+            'completionpass' => get_string('completiondetail:passgrade', 'mod_offlinequiz'),
         ];
     }
 
@@ -124,7 +124,7 @@ class custom_completion extends activity_custom_completion {
             'completionview',
             'completionusegrade',
             'completionpassgrade',
-            'completionpass'
+            'completionpass',
         ];
     }
 }

@@ -17,7 +17,7 @@
 /**
  * calls the offlinequiz cron task for evaluating uploaded files
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
  * @copyright     2016 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}

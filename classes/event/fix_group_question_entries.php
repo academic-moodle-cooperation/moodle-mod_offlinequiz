@@ -1,14 +1,29 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 namespace mod_offlinequiz\event;
 
 
 defined('MOODLE_INTERNAL') || die();
 
 use core\event\course_restored;
-use \core\event\course_module_created;
+use core\event\course_module_created;
 
 class fix_group_question_entries {
-    
+
     /**
      * Event handler for course restored.
      *
@@ -19,7 +34,7 @@ class fix_group_question_entries {
         $courseid = $event->objectid;
         $offlinequizzes = $DB->get_records('offlinequiz', ['course' => $courseid]);
         foreach ($offlinequizzes as $offlinequiz) {
-            fix_group_question_entries::fix_single_offlinequiz($offlinequiz);
+            self::fix_single_offlinequiz($offlinequiz);
         }
     }
     public static function on_module_restored(course_module_created $event) {
@@ -27,12 +42,12 @@ class fix_group_question_entries {
         if($event->other['modulename'] == 'offlinequiz') {
             $cm = get_coursemodule_from_id(null, $event->objectid, 0, false, MUST_EXIST);
             $offlinequiz = $DB->get_record('offlinequiz', ['id' => $cm->instance]);
-            fix_group_question_entries::fix_single_offlinequiz($offlinequiz);
+            self::fix_single_offlinequiz($offlinequiz);
         }
     }
 
     public static function fix_single_offlinequiz($offlinequiz) {
-        global $DB,$CFG;
+        global $DB, $CFG;
         require_once($CFG->dirroot.'/mod/offlinequiz/locallib.php');
         $sql = "SELECT ogq.id as id, ogq.questionid as oldquestion, ogq.maxmark as grade, qrv.questionid as newquestion
                       FROM {offlinequiz_group_questions} ogq

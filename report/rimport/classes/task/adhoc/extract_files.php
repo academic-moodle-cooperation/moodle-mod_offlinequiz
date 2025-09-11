@@ -1,5 +1,18 @@
 <?php
-
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace offlinequiz_rimport\task\adhoc;
 
@@ -7,9 +20,10 @@ use function PHPUnit\Framework\throwException;
 
 /**
  * An example of an adhoc task.
+ * @package offlinequiz_rimport
  */
 class extract_files extends \core\task\adhoc_task {
-    
+
     public static function instance(
         int $queueid
         ): self {
@@ -19,40 +33,40 @@ class extract_files extends \core\task\adhoc_task {
         ]);
         return $task;
     }
-    
+
     /**
      * Execute the task.
      */
     public function execute() {
         global $CFG, $DB;
         $data = $this->get_custom_data();
-        $queue = $DB->get_record('offlinequiz_queue',['id' => $data->queueid]);
+        $queue = $DB->get_record('offlinequiz_queue', ['id' => $data->queueid]);
         $queue->timestart = time();
         $queue->status = 'processing';
         $cm = get_coursemodule_from_instance('offlinequiz', $queue->offlinequizid);
         $context = \context_module::instance($cm->id);
-        $DB->update_record('offlinequiz_queue',$queue);
+        $DB->update_record('offlinequiz_queue', $queue);
         try {
-            if($queuedatas = $DB->get_records('offlinequiz_queue_data',['queueid' =>$queue->id])) {
-                //This is a rerun. Just queue all the files again and we're done
-                $DB->set_field('offlinequiz_queue_data', 'status', 'new', ['queueid' =>$queue->id]);
-                $DB->set_field('offlinequiz_queue_data', 'error', '', ['queueid' =>$queue->id]);
+            if($queuedatas = $DB->get_records('offlinequiz_queue_data', ['queueid' => $queue->id])) {
+                // This is a rerun. Just queue all the files again and we're done
+                $DB->set_field('offlinequiz_queue_data', 'status', 'new', ['queueid' => $queue->id]);
+                $DB->set_field('offlinequiz_queue_data', 'error', '', ['queueid' => $queue->id]);
                 foreach ($queuedatas as $queuedata) {
                     $task = \offlinequiz_rimport\task\adhoc\scan_file::instance($queuedata->id);
-                    //Execute ASAP.
+                    // Execute ASAP.
                     $task->set_next_run_time(time());
                     \core\task\manager::queue_adhoc_task($task, true);
                 }
-                $DB->set_field('offlinequiz_queue','status','finished', ['id' => $queue->id]);
+                $DB->set_field('offlinequiz_queue', 'status', 'finished', ['id' => $queue->id]);
                 return;
             }
             $dirname = "{$CFG->dataroot}/offlinequiz/import/$queue->id";
             $importfile = "$dirname/$queue->filename";
             if(!file_exists($importfile)) {
 
-                $this->restorefile($context->id,$queue->id,$queue->filename, $importfile);
+                $this->restorefile($context->id, $queue->id, $queue->filename, $importfile);
             }
-            $files = array();
+            $files = [];
             require_once $CFG->libdir . '/filelib.php';
             $mimetype = mimeinfo('type', $importfile);
             if ($mimetype == 'application/zip') {
@@ -69,7 +83,7 @@ class extract_files extends \core\task\adhoc_task {
                         }
                     }
                     $files = get_directory_list($dirname);
-                    $files = $this->remove_original_file($files,$queue->filename);
+                    $files = $this->remove_original_file($files, $queue->filename);
                 } else {
                     $queue->status = 'error';
                     $queue->error = 'couldnotunzip';
@@ -126,9 +140,9 @@ class extract_files extends \core\task\adhoc_task {
                     $DB->update_record('offlinequiz_queue', $queue);
                     return;
                 }
-                $this->create_queuedatafile_entry($context->id,$jobfile->id, $file, "$dirname/$file");
+                $this->create_queuedatafile_entry($context->id, $jobfile->id, $file, "$dirname/$file");
                 $task = \offlinequiz_rimport\task\adhoc\scan_file::instance($jobfile->id);
-                //Execute ASAP.
+                // Execute ASAP.
                 $task->set_next_run_time(time());
                 \core\task\manager::queue_adhoc_task($task, true);
             }
@@ -164,7 +178,7 @@ class extract_files extends \core\task\adhoc_task {
             return [];
         }
         $files = get_directory_list($dirname);
-        
+
         $importfilename = substr($importfile, strrpos($importfile, '/') + 1);
         if ($unlink && count(get_directory_list($dirname)) > 1 && $key = array_search($importfilename, $files)) {
                 unlink($importfile);
@@ -177,7 +191,7 @@ class extract_files extends \core\task\adhoc_task {
         $command = "convert " . escapeshellarg(realpath($file)) . " -colorspace gray -threshold $threshold% " .  escapeshellarg(realpath($file));
         popen($command, 'r');
     }
-    
+
     private function remove_original_file($files, $original) {
         if (($key = array_search($original, $files)) !== false) {
             unset($files[$key]);
@@ -191,22 +205,22 @@ class extract_files extends \core\task\adhoc_task {
         $file = $fs->get_file_by_hash($pathhash);
         $file->copy_content_to($restorepath);
     }
-    
+
     private function create_queuedatafile_entry($contextid, $queuedataid, $filename, $pathname) {
         $fs = get_file_storage();
-        $filerecord = array(
+        $filerecord = [
             'contextid' => $contextid,      // ID of context.
             'component' => 'mod_offlinequiz', // Usually = table name.
             'filearea'  => 'queuedata',      // Usually = table name.
             'itemid'    => $queuedataid,                 // Usually = ID of row in table.
-            'filepath'  => '/'                // Any path beginning and ending in.
-        ); // Any filename.
-        
+            'filepath'  => '/',                // Any path beginning and ending in.
+        ]; // Any filename.
+
         $filerecord['filename'] = $filename;
         if (!$fs->file_exists($contextid, 'mod_offlinequiz', 'queue', $queuedataid, '/', $filename)) {
             $newfile = $fs->create_file_FROM_pathname($filerecord, $pathname);
         }
         return $newfile;
     }
-    
+
 }

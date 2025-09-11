@@ -17,7 +17,7 @@
 /**
  * Define the capabilities for offine quizzes
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -28,107 +28,107 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$capabilities = [
     // The standard capability mod/offlinequiz:addinstance.
-    'mod/offlinequiz:addinstance' => array(
+    'mod/offlinequiz:addinstance' => [
         'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
                 'editingteacher' => CAP_ALLOW,
-                'manager' => CAP_ALLOW
-        )
-    ),
+                'manager' => CAP_ALLOW,
+        ],
+    ],
 
     // Ability to see that the offline quiz exists, and the basic information
     // about it, for example the start date and time limit.
-    'mod/offlinequiz:view' => array(
+    'mod/offlinequiz:view' => [
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
+        'legacy' => [
             'guest' => CAP_ALLOW,
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 
     // Ability to attempt the offline quiz as a 'student'.
-    'mod/offlinequiz:attempt' => array(
+    'mod/offlinequiz:attempt' => [
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
-            'student' => CAP_ALLOW
-        )
-    ),
+        'legacy' => [
+            'student' => CAP_ALLOW,
+        ],
+    ],
 
     // Edit the offline quiz settings, add and remove questions.
-    'mod/offlinequiz:manage' => array(
+    'mod/offlinequiz:manage' => [
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
+        'legacy' => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 
     // Create an offline quiz.
-    'mod/offlinequiz:createofflinequiz' => array(
+    'mod/offlinequiz:createofflinequiz' => [
 
         'captype' => 'write', // Only just a write.
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
+        'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 
     // Manually grade and comment on student attempts at a question.
-    'mod/offlinequiz:grade' => array(
+    'mod/offlinequiz:grade' => [
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
+        'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 
     // View the offline quiz reports.
-    'mod/offlinequiz:viewreports' => array(
+    'mod/offlinequiz:viewreports' => [
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
+        'legacy' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 
     // Delete attempts using the overview report.
-    'mod/offlinequiz:deleteattempts' => array(
+    'mod/offlinequiz:deleteattempts' => [
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
+        'legacy' => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
+            'manager' => CAP_ALLOW,
+        ],
+    ],
     // Change the way how answer sheets are evaluated.
-    'mod/offlinequiz:changeevaluationmode' => array(
+    'mod/offlinequiz:changeevaluationmode' => [
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
-        )
-    )
-);
+        'legacy' => [
+        ],
+    ],
+];

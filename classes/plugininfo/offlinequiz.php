@@ -17,7 +17,7 @@
 /**
  * Subplugin info class.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -50,7 +50,7 @@ class offlinequiz extends base {
 
         // Do the opposite of db/install.php scripts - deregister the report.
 
-        $DB->delete_records('offlinequiz_reports', array('name' => $this->name));
+        $DB->delete_records('offlinequiz_reports', ['name' => $this->name]);
 
         parent::uninstall_cleanup();
     }

@@ -17,7 +17,7 @@
 /**
  * Upgrade script for the offlinequiz module
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -88,7 +88,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('list', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1');
 
         // Adding keys to table offlinequiz_p_list.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Launch create table for offlinequiz_p_list.
         $dbman->create_table($table);
@@ -126,7 +126,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Define index offlinequiz (not unique) to be added to offlinequiz_p_list.
         $table = new xmldb_table('offlinequiz_p_list');
         $index = new XMLDBIndex('offlinequiz');
-        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('offlinequiz'));
+        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, ['offlinequiz']);
 
         // Launch add index offlinequiz.
         if (!$dbman->index_exists($table, $index)) {
@@ -134,7 +134,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         }
 
         $index = new XMLDBIndex('list');
-        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('list'));
+        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, ['list']);
 
         // Launch add index list.
         if (!$dbman->index_exists($table, $index)) {
@@ -144,7 +144,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Define index offlinequiz (not unique) to be added to offlinequiz_participants.
         $table = new xmldb_table('offlinequiz_participants');
         $index = new XMLDBIndex('offlinequiz');
-        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('offlinequiz'));
+        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, ['offlinequiz']);
 
         // Launch add index offlinequiz.
         if (!$dbman->index_exists($table, $index)) {
@@ -152,7 +152,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         }
 
         $index = new XMLDBIndex('list');
-        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('list'));
+        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, ['list']);
 
         // Launch add index list.
         if (!$dbman->index_exists($table, $index)) {
@@ -160,7 +160,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         }
 
         $index = new XMLDBIndex('userid');
-        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('userid'));
+        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, ['userid']);
 
         // Launch add index list.
         if (!$dbman->index_exists($table, $index)) {
@@ -210,7 +210,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
         // Define index username (not unique) to be added to offlinequiz_i_log.
         $index = new XMLDBIndex('username');
-        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('username'));
+        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, ['username']);
 
         // Launch add index username.
         if (!$dbman->index_exists($table, $index)) {
@@ -275,7 +275,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
             $dirname = $CFG->dataroot . '/' . $offlinequiz->course . '/moddata/offlinequiz/' . $offlinequiz->id . '/pdfs';
             // If the answer pdf file for group 1 exists then we have created the documents.
             if (file_exists($dirname . '/answer-a.pdf')) {
-                $DB->set_field('offlinequiz', 'docscreated', 1, array('id' => $offlinequiz->id));
+                $DB->set_field('offlinequiz', 'docscreated', 1, ['id' => $offlinequiz->id]);
             }
         }
         // Offlinequiz savepoint reached.
@@ -296,20 +296,20 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('capability', XMLDB_TYPE_CHAR, '255', null, null, null, null);
 
         // Adding keys to table offlinequiz_reports.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for offlinequiz_reports.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
-        if (!$DB->get_records_sql("SELECT * FROM {offlinequiz_reports} WHERE name = 'overview'", array())) {
+        if (!$DB->get_records_sql("SELECT * FROM {offlinequiz_reports} WHERE name = 'overview'", [])) {
             $record = new stdClass();
             $record->name         = 'overview';
             $record->displayorder = '10000';
             $DB->insert_record('offlinequiz_reports', $record);
         }
-        if (!$DB->get_records_sql("SELECT * FROM {offlinequiz_reports} WHERE name = 'rimport'", array())) {
+        if (!$DB->get_records_sql("SELECT * FROM {offlinequiz_reports} WHERE name = 'rimport'", [])) {
             $record = new stdClass();
             $record->name         = 'rimport';
             $record->displayorder = '9000';
@@ -338,10 +338,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('templateusageid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table offlinequiz_groups.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table offlinequiz_groups.
-        $table->add_index('offlinequizid', XMLDB_INDEX_NOTUNIQUE, array('offlinequizid'));
+        $table->add_index('offlinequizid', XMLDB_INDEX_NOTUNIQUE, ['offlinequizid']);
 
         // Conditionally launch create table for offlinequiz_groups.
         if (!$dbman->table_exists($table)) {
@@ -368,10 +368,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('usageslot', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, null);
 
         // Adding keys to table offlinequiz_group_questions.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table offlinequiz_group_questions.
-        $table->add_index('offlinequiz', XMLDB_INDEX_NOTUNIQUE, array('offlinequizid'));
+        $table->add_index('offlinequiz', XMLDB_INDEX_NOTUNIQUE, ['offlinequizid']);
 
         // Conditionally launch create table for offlinequiz_group_questions.
         if (!$dbman->table_exists($table)) {
@@ -402,10 +402,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('info', XMLDB_TYPE_TEXT, 'medium', null, null, null, null);
 
         // Adding keys to table offlinequiz_scanned_pages.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table offlinequiz_scanned_pages.
-        $table->add_index('offlinequizid', XMLDB_INDEX_NOTUNIQUE, array('offlinequizid'));
+        $table->add_index('offlinequizid', XMLDB_INDEX_NOTUNIQUE, ['offlinequizid']);
 
         // Conditionally launch create table for offlinequiz_scanned_pages.
         if (!$dbman->table_exists($table)) {
@@ -429,10 +429,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('value', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table offlinequiz_choices.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table offlinequiz_choices.
-        $table->add_index('scannedpageid', XMLDB_INDEX_NOTUNIQUE, array('scannedpageid'));
+        $table->add_index('scannedpageid', XMLDB_INDEX_NOTUNIQUE, ['scannedpageid']);
 
         // Conditionally launch create table for offlinequiz_choices.
         if (!$dbman->table_exists($table)) {
@@ -456,7 +456,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('position', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table offlinequiz_page_corners.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for offlinequiz_page_corners.
         if (!$dbman->table_exists($table)) {
@@ -488,7 +488,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('preview', XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED, null, null, '0');
 
         // Adding keys to table offlinequiz_results.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for offlinequiz_results.
         if (!$dbman->table_exists($table)) {
@@ -514,7 +514,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('error', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
 
         // Adding keys to table offlinequiz_scanned_p_pages.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for offlinequiz_scanned_p_pages.
         if (!$dbman->table_exists($table)) {
@@ -537,7 +537,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('value', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table offlinequiz_p_choices.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for offlinequiz_p_choices.
         if (!$dbman->table_exists($table)) {
@@ -561,10 +561,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('filename', XMLDB_TYPE_CHAR, '1000', null, null, null, null);
 
         // Adding keys to table offlinequiz_p_lists.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table offlinequiz_p_lists.
-        $table->add_index('offlinequizid', XMLDB_INDEX_NOTUNIQUE, array('offlinequizid'));
+        $table->add_index('offlinequizid', XMLDB_INDEX_NOTUNIQUE, ['offlinequizid']);
 
         // Conditionally launch create table for offlinequiz_p_lists.
         if (!$dbman->table_exists($table)) {
@@ -673,7 +673,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
             $newplist->id = $DB->insert_record('offlinequiz_p_lists', $newplist);
 
             // Get all the participants linked to the old list and link them to the new list in offlinequiz_p_lists.
-            if ($oldparts = $DB->get_records('offlinequiz_participants', array('listid' => $oldplist->id))) {
+            if ($oldparts = $DB->get_records('offlinequiz_participants', ['listid' => $oldplist->id])) {
                 foreach ($oldparts as $oldpart) {
                     $oldpart->listid = $newplist->id;
                     $DB->update_record('offlinequiz_participants', $oldpart);
@@ -691,7 +691,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $sql = 'SELECT uniqueid
         FROM {offlinequiz_attempts} qa WHERE
         EXISTS (SELECT id from {quiz_attempts} where uniqueid = qa.uniqueid)';
-        $doubleids = $DB->get_fieldset_sql($sql, array());
+        $doubleids = $DB->get_fieldset_sql($sql, []);
 
         // For each double uniqueid create a new uniqueid and change the fields in the tables.
         // Offlinequiz_attempts, question_sessions and question_states.
@@ -700,17 +700,17 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
         foreach ($doubleids as $doubleid) {
             echo $doubleid . ', ';
-            if ($usage = $DB->get_record('question_usages', array('id' => $doubleid))) {
+            if ($usage = $DB->get_record('question_usages', ['id' => $doubleid])) {
                 $transaction = $DB->start_delegated_transaction();
                 unset($usage->id);
                 $usage->id = $DB->insert_record('question_usages', $usage);
 
                 $DB->set_field_select('offlinequiz_attempts', 'uniqueid', $usage->id, 'uniqueid = :oldid',
-                                      array('oldid' => $doubleid));
+                                      ['oldid' => $doubleid]);
                 $DB->set_field_select('question_states', 'attempt', $usage->id, 'attempt = :oldid',
-                                      array('oldid' => $doubleid));
+                                      ['oldid' => $doubleid]);
                 $DB->set_field_select('question_sessions', 'attemptid', $usage->id, 'attemptid = :oldid',
-                                      array('oldid' => $doubleid));
+                                      ['oldid' => $doubleid]);
                 $transaction->allow_commit();
             }
         }
@@ -725,10 +725,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         echo $OUTPUT->notification('Fixing question usages context ID', 'notifysuccess');
 
         // Update the component field if necessary.
-        $DB->set_field('question_usages', 'component', 'mod_offlinequiz', array('component' => 'offlinequiz'));
+        $DB->set_field('question_usages', 'component', 'mod_offlinequiz', ['component' => 'offlinequiz']);
 
         // Populate the contextid field.
-        $offlinequizmoduleid = $DB->get_field('modules', 'id', array('name' => 'offlinequiz'));
+        $offlinequizmoduleid = $DB->get_field('modules', 'id', ['name' => 'offlinequiz']);
         $DB->execute("
                 UPDATE {question_usages} SET contextid = (
                 SELECT ctx.id
@@ -775,7 +775,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
         $counter = 0;
         foreach ($offlinequizzes as $offlinequiz) {
-            if (!$DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id))) {
+            if (!$DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id])) {
                 echo '.';
                 $counter++;
                 flush();
@@ -785,8 +785,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                     echo $counter;
                 }
                 $transaction = $DB->start_delegated_transaction();
-                $oldgroups = $DB->get_records('offlinequiz_group', array('offlinequiz' => $offlinequiz->id), 'groupid ASC');
-                $newgroups = array();
+                $oldgroups = $DB->get_records('offlinequiz_group', ['offlinequiz' => $offlinequiz->id], 'groupid ASC');
+                $newgroups = [];
                 foreach ($oldgroups as $oldgroup) {
                     $newgroup = new StdClass();
                     $newgroup->offlinequizid = $offlinequiz->id;
@@ -795,8 +795,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                     $newgroup->timecreated = time();
                     $newgroup->timemodified = time();
                     // First we need the ID of the new group.
-                    if (!$oldid = $DB->get_field('offlinequiz_groups', 'id', array('offlinequizid' => $offlinequiz->id,
-                            'number' => $newgroup->number))) {
+                    if (!$oldid = $DB->get_field('offlinequiz_groups', 'id', ['offlinequizid' => $offlinequiz->id,
+                            'number' => $newgroup->number])) {
                             $newgroup->id = $DB->insert_record('offlinequiz_groups', $newgroup);
                     } else {
                         $newgroup->id = $oldid;
@@ -810,9 +810,9 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                         $groupquestion->offlinegroupid = $newgroup->id;
                         $groupquestion->questionid = $question;
                         $groupquestion->position = $position++;
-                        if (!$DB->get_record('offlinequiz_group_questions', array('offlinequizid' => $offlinequiz->id,
+                        if (!$DB->get_record('offlinequiz_group_questions', ['offlinequizid' => $offlinequiz->id,
                                 'offlinegroupid' => $newgroup->id,
-                                'questionid' => $question))) {
+                                'questionid' => $question])) {
                                 $DB->insert_record('offlinequiz_group_questions', $groupquestion);
                         }
                     }
@@ -1047,10 +1047,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $table->add_field('time', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table offlinequiz_hotspots.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table offlinequiz_hotspots.
-        $table->add_index('scannedpageididx', XMLDB_INDEX_NOTUNIQUE, array('scannedpageid'));
+        $table->add_index('scannedpageididx', XMLDB_INDEX_NOTUNIQUE, ['scannedpageid']);
 
         // Conditionally launch create table for offlinequiz_hotspots.
         if (!$dbman->table_exists($table)) {
@@ -1080,7 +1080,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
         // Define index offlinequiz_userid_idx (not unique) to be added to offlinequiz_results.
         $table = new xmldb_table('offlinequiz_results');
-        $index = new xmldb_index('offlinequiz_userid_idx', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+        $index = new xmldb_index('offlinequiz_userid_idx', XMLDB_INDEX_NOTUNIQUE, ['userid']);
 
         // Conditionally launch add index offlinequiz_userid_idx.
         if (!$dbman->index_exists($table, $index)) {
@@ -1154,12 +1154,12 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
             foreach ($offlinequizzes as $offlinequiz) {
                 $transaction = $DB->start_delegated_transaction();
 
-                $groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
+                $groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id],
                         'number', '*');
                 $instancesraw = $DB->get_records('offlinequiz_q_instances',
-                        array('offlinequizid' => $offlinequiz->id));
+                        ['offlinequizid' => $offlinequiz->id]);
 
-                $questioninstances = array();
+                $questioninstances = [];
                 foreach ($instancesraw as $instance) {
                     if (!array_key_exists($instance->questionid, $questioninstances)) {
                         $questioninstances[$instance->questionid] = $instance;
@@ -1168,7 +1168,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
                 foreach ($groups as $group) {
                     $groupquestions = $DB->get_records('offlinequiz_group_questions',
-                            array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id), 'position');
+                            ['offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id], 'position');
                     // For every group we start on page 1.
                     $currentpage = 1;
                     $currentslot = 1;
@@ -1176,7 +1176,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                         $needsupdate = false;
                         if ($groupquestion->questionid == 0) {
                             // We remove the old pagebreaks with questionid==0.
-                            $DB->delete_records('offlinequiz_group_questions', array('id' => $groupquestion->id));
+                            $DB->delete_records('offlinequiz_group_questions', ['id' => $groupquestion->id]);
                             $currentpage++;
                             continue;
                         }
@@ -1365,13 +1365,13 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
     if ($oldversion < 2017081102) {
         $table = new xmldb_table('offlinequiz_page_corners');
-        $index = new xmldb_index('offlinequiz_page_corners_scannedpageid_idx', XMLDB_INDEX_NOTUNIQUE, array('scannedpageid'));
+        $index = new xmldb_index('offlinequiz_page_corners_scannedpageid_idx', XMLDB_INDEX_NOTUNIQUE, ['scannedpageid']);
         // Conditionally launch add index offlinequiz_userid_idx.
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
         $table = new xmldb_table('offlinequiz_scanned_pages');
-        $index = new xmldb_index('offlinequiz_scanned_pages_resultid_idx', XMLDB_INDEX_NOTUNIQUE, array('resultid'));
+        $index = new xmldb_index('offlinequiz_scanned_pages_resultid_idx', XMLDB_INDEX_NOTUNIQUE, ['resultid']);
         // Conditionally launch add index offlinequiz_userid_idx.
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
@@ -1418,8 +1418,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     if ($oldversion < 2018112700) {
         // Define index offlinequiz_userid_idx (not unique) to be added to offlinequiz_results.
         $table = new xmldb_table('offlinequiz_choices');
-        $index1 = new xmldb_index('offlinequiz_choices_slotnumber_idx', XMLDB_INDEX_NOTUNIQUE, array('slotnumber'));
-        $index2 = new xmldb_index('offlinequiz_choices_choicenumber_idx', XMLDB_INDEX_NOTUNIQUE, array('choicenumber'));
+        $index1 = new xmldb_index('offlinequiz_choices_slotnumber_idx', XMLDB_INDEX_NOTUNIQUE, ['slotnumber']);
+        $index2 = new xmldb_index('offlinequiz_choices_choicenumber_idx', XMLDB_INDEX_NOTUNIQUE, ['choicenumber']);
 
         if (!$dbman->index_exists($table, $index1)) {
             $dbman->add_index($table, $index1);
@@ -1620,7 +1620,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         $DB->delete_records_subquery('offlinequiz_group_questions', 'id', 'rid', $subquery);
         upgrade_mod_savepoint(true, 2024012202, 'offlinequiz');
     }
-     if ($oldversion < 2024041900) {
+    if ($oldversion < 2024041900) {
         // Changing type of field participantsusage on table offlinequiz to int.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('participantsusage', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'grade');
@@ -1662,7 +1662,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Changing nullability of field status on table offlinequiz_scanned_p_pages to not null.
         $table = new xmldb_table('offlinequiz_scanned_p_pages');
         $field = new xmldb_field('status', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'time');
-        $DB->set_field('offlinequiz_scanned_p_pages', 'status', 'ok',['status' => null]);
+        $DB->set_field('offlinequiz_scanned_p_pages', 'status', 'ok', ['status' => null]);
         // Launch change of nullability for field status.
         $dbman->change_field_notnull($table, $field);
 
@@ -1686,7 +1686,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Changing type of field status on table offlinequiz_queue_data to char.
         $table = new xmldb_table('offlinequiz_queue_data');
         $field = new xmldb_field('status', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'filename');
-        $DB->set_field('offlinequiz_queue_data', 'status', 'new',['status' => null]);
+        $DB->set_field('offlinequiz_queue_data', 'status', 'new', ['status' => null]);
         // Launch change of type for field status.
         $dbman->change_field_notnull($table, $field);
 

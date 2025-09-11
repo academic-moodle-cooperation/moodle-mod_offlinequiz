@@ -17,7 +17,7 @@
 /**
  * Page for viewing scanned answer forms to students
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -33,22 +33,22 @@ require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
 $resultid = required_param('resultid', PARAM_INT);
 $pageid      = optional_param('pageid', 0, PARAM_INT);
 
-if (!$result = $DB->get_record('offlinequiz_results', array('id' => $resultid))) {
+if (!$result = $DB->get_record('offlinequiz_results', ['id' => $resultid])) {
     throw new \moodle_exception('noresult', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
-if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', array('id' => $pageid))) {
+if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', ['id' => $pageid])) {
     throw new \moodle_exception('nopage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
-if (!$offlinequiz = $DB->get_record("offlinequiz", array('id' => $result->offlinequizid))) {
+if (!$offlinequiz = $DB->get_record("offlinequiz", ['id' => $result->offlinequizid])) {
     throw new \moodle_exception('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
-if (!$course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
+if (!$course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
     throw new \moodle_exception('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
     throw new \moodle_exception('nocm', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
-if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0,
+if (!$groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id], 'groupnumber', '*', 0,
         $offlinequiz->numgroups)) {
     throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
@@ -70,7 +70,7 @@ if (!$options->sheetfeedback and !$options->gradedsheetfeedback) {
     throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
-$url = new moodle_url('/mod/offlinequiz/image.php', array('pageid' => $scannedpage->id, 'resultid' => $result->id));
+$url = new moodle_url('/mod/offlinequiz/image.php', ['pageid' => $scannedpage->id, 'resultid' => $result->id]);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('popup');
 $completion = new completion_info($course);
@@ -86,13 +86,13 @@ $offlinequizconfig = get_config('offlinequiz');
 $group = $groups[$result->offlinegroupid];
 $offlinequiz->groupid = - $group->id;
 
-list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, array($group));
+list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, [$group]);
 
 $offlinequizconfig->papergray = $offlinequiz->papergray;
 
 // Load corners from DB.
-$dbcorners = $DB->get_records('offlinequiz_page_corners', array('scannedpageid' => $scannedpage->id));
-$corners = array();
+$dbcorners = $DB->get_records('offlinequiz_page_corners', ['scannedpageid' => $scannedpage->id]);
+$corners = [];
 foreach ($dbcorners as $corner) {
     $corners[] = new oq_point($corner->x, $corner->y);
 }
@@ -123,14 +123,14 @@ $startindex = min(($pagenumber - 1) * $questionsperpage, count($slots));
 $endindex = min( $pagenumber * $questionsperpage, count($slots) );
 
 // Load the choices made before from the database. There might not be any.
-$choices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id), 'slotnumber, choicenumber');
+$choices = $DB->get_records('offlinequiz_choices', ['scannedpageid' => $scannedpage->id], 'slotnumber, choicenumber');
 
 // Choicesdata contains the choices data from the DB indexed by slotnumber and choicenumber.
-$choicesdata = array();
+$choicesdata = [];
 if (!empty($choices)) {
     foreach ($choices as $choice) {
         if (!isset($choicesdata[$choice->slotnumber]) || !is_array($choicesdata[$choice->slotnumber])) {
-            $choicesdata[$choice->slotnumber] = array();
+            $choicesdata[$choice->slotnumber] = [];
         }
         $choicesdata[$choice->slotnumber][$choice->choicenumber] = $choice;
     }
@@ -167,7 +167,7 @@ if ($sheetloaded) {
         // Load the questions.
         if (!$questions = $DB->get_records_sql($sql, $params)) {
             $viewurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/view.php',
-                    array('q' => $offlinequiz->id));
+                    ['q' => $offlinequiz->id]);
             throw new \moodle_exception('noquestionsfound', 'offlinequiz', $viewurl);
         }
         // Load the question type specific information.

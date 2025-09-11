@@ -17,7 +17,7 @@
 /**
  * calls the offlinequiz cron task for evaluating uploaded files
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
  * @copyright     2016 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -37,7 +37,7 @@ class temporary_file_deletion_task extends \core\task\scheduled_task {
     }
 
     public function execute() {
-        global $DB,$CFG;
+        global $DB, $CFG;
         // Delete old temporary files not needed any longer.
         $keepdays = get_config('offlinequiz', 'keepfilesfordays');
         $keepseconds = $keepdays * 24 * 60 * 60;
@@ -45,14 +45,14 @@ class temporary_file_deletion_task extends \core\task\scheduled_task {
         $sql = "SELECT id
               FROM {offlinequiz_queue}
              WHERE timecreated < :expiretime";
-        $params = array('expiretime' => (int) $timenow - $keepseconds);
+        $params = ['expiretime' => (int) $timenow - $keepseconds];
 
         // First we get the IDs of cronjobs older than the configured number of days.
         $jobids = $DB->get_fieldset_sql($sql, $params);
         foreach ($jobids as $jobid) {
             $dirname = null;
             // Delete all temporary files and the database entries.
-            if ($files = $DB->get_records('offlinequiz_queue_data', array('queueid' => $jobid))) {
+            if ($files = $DB->get_records('offlinequiz_queue_data', ['queueid' => $jobid])) {
                 foreach ($files as $file) {
                     if (empty($dirname)) {
                         $pathparts = pathinfo($file->filename);

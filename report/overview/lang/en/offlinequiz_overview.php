@@ -17,7 +17,7 @@
 /**
  * Strings for component 'offlinequiz_overview', language 'en'
  *
- * @package       mod
+ * @package       offlinequiz_overview
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}

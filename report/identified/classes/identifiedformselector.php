@@ -33,7 +33,7 @@ class identifiedformselector extends \moodleform {
     // Constructor.
     public function __construct($action, $customdata, $method = 'post', $target = '', $attributes = null, $editable = true) {
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable);
-    }  
+    }
     public function definition() {
         global $CFG, $DB;
         $offlinequiz = $this->_customdata['offlinequiz'];
@@ -42,10 +42,10 @@ class identifiedformselector extends \moodleform {
         FROM {offlinequiz_p_lists}
         WHERE offlinequizid = :offlinequizid
         ORDER BY name ASC";
-        $lists = $DB->get_records_sql($sql, array('offlinequizid' => $offlinequiz->id));
+        $lists = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id]);
         $groups = $DB->get_records(
             'offlinequiz_groups',
-            array('offlinequizid' => $offlinequiz->id),
+            ['offlinequizid' => $offlinequiz->id],
             'groupnumber',
             'groupnumber',
             0,
@@ -54,24 +54,24 @@ class identifiedformselector extends \moodleform {
         // Map groups to letters.
         $groupsoptions = [];
         foreach ($groups as $group) {
-            $letterstr = "ABCDEFGH"; 
-            $letter = $letterstr[$group->groupnumber-1];
+            $letterstr = "ABCDEFGH";
+            $letter = $letterstr[$group->groupnumber - 1];
             $groupsoptions[] = $letter;
-            };
-        
+        };
+
         // Map lists to list->name.
         $lists = array_map(function($list) use ($offlinequiz) {
                 $alluserids = offlinequizidentified_get_participants($offlinequiz, $list, false);
                 $accessuserids = offlinequizidentified_get_participants($offlinequiz, $list, true);
                 $numusers = count($alluserids);
                 $numaccessusers = count($accessuserids);
-                if ($numaccessusers != $numusers) {
-                    $listname = $list->name . ' (' . $numaccessusers . '/'. $numusers . ')';
-                } else {
-                    $listname = $list->name . '(' . $numusers . ')';
-                }
+            if ($numaccessusers != $numusers) {
+                $listname = $list->name . ' (' . $numaccessusers . '/'. $numusers . ')';
+            } else {
+                $listname = $list->name . '(' . $numusers . ')';
+            }
                 return $listname;
-            }, $lists);
+        }, $lists);
         $mform = $this->_form;
         $mform->addElement('hidden', 'id', $cmid);
         $mform->setType('id', PARAM_INT);
@@ -84,13 +84,13 @@ class identifiedformselector extends \moodleform {
         // Check box for nor marking group.
         $mform->addElement('checkbox', 'nogroupmark', get_string('nogroupmark', 'offlinequiz_identified'));
         $mform->setDefault('nogroupmark', 0);
-        
+
         $mform->addElement('select', 'list', get_string('participants', 'offlinequiz_identified'), $lists);
         $mform->setType('list', PARAM_INT);
         $mform->setDefault('list', 0);
         // Check box for only if access.
         // currently not used and hidden. check offlinequiz #205 for more info
-        //$mform->addElement('checkbox', 'onlyifaccess', get_string('onlyifaccess', 'offlinequiz_identified'));
+        // $mform->addElement('checkbox', 'onlyifaccess', get_string('onlyifaccess', 'offlinequiz_identified'));
         $mform->addElement('hidden', 'onlyifaccess', 0);
         $mform->setType('onlyifaccess', PARAM_INT);
         // Set list required.

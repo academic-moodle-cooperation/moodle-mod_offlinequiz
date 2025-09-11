@@ -34,7 +34,7 @@ class answer_pdf_identified extends \offlinequiz_answer_pdf {
     public $participant = null;
     public $listno = null;
 
-    public function Header(){
+    public function header() {
         global $CFG;
         // Participant data.
         $participant = $this->participant;
@@ -52,12 +52,12 @@ class answer_pdf_identified extends \offlinequiz_answer_pdf {
             $pdf->setXY(34.4,  36);
             $pdf->Cell(90, 7, ' '.offlinequiz_str_html_pdf($participant->lastname), 0, 1, 'L');
             // Print Check test.
-        
+
             $pdf->SetFont('FreeSans', '', 12);
             $pdf->SetXY(137, 34);
 
             for ($i = 0; $i < $offlinequizconfig->ID_digits; $i++) {      // Userid digits.
-                $pdf->SetXY(137 + $i*6.5, 34);
+                $pdf->SetXY(137 + $i * 6.5, 34);
                 $this->Cell(7, 7, $idnumber[$i], 0, 0, 'C');
             }
 
@@ -92,7 +92,7 @@ class answer_pdf_identified extends \offlinequiz_answer_pdf {
      * @param string $groupletter
      * @return void
      */
-    public function add_participant_answer_page( $participant, $maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter) {
+    public function add_participant_answer_page($participant, $maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter) {
         $this->set_participant($participant);
         $this->add_answer_page( $maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter);
     }

@@ -22,10 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace offlinequiz_statistics;
-use \flexible_table;
-use \html_writer;
-use \moodle_url;
-use \question_bank;
+use flexible_table;
+use html_writer;
+use moodle_url;
+use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -43,7 +43,7 @@ class statistics_table extends flexible_table {
     /** @var object the offlinequiz settings. */
     protected $offlinequiz;
 
-    /** @var integer the offlinequiz course_module id. */
+    /** @var int the offlinequiz course_module id. */
     protected $cmid;
 
     /**
@@ -67,8 +67,8 @@ class statistics_table extends flexible_table {
         $this->cmid = $cmid;
 
         // Define the table columns.
-        $columns = array();
-        $headers = array();
+        $columns = [];
+        $headers = [];
 
         $columns[] = 'number';
         $headers[] = get_string('questionnumber', 'offlinequiz_statistics');
@@ -240,7 +240,7 @@ class statistics_table extends flexible_table {
             if (!$this->is_downloading()) {
                 $negcovar = html_writer::tag('div',
                         $negcovar . $OUTPUT->help_icon('negcovar', 'offlinequiz_statistics'),
-                        array('class' => 'negcovar'));
+                        ['class' => 'negcovar']);
             }
 
             return $negcovar;
@@ -278,11 +278,11 @@ class statistics_table extends flexible_table {
         return $question->_stats->discriminationindex < 0;
     }
 
-    public function  wrap_html_start() {
+    public function wrap_html_start() {
         // Horrible Moodle 2.0 wide-content work-around.
         if (!$this->is_downloading()) {
-            echo html_writer::start_tag('div', array('id' => 'tablecontainer',
-                    'class' => 'statistics-tablecontainer'));
+            echo html_writer::start_tag('div', ['id' => 'tablecontainer',
+                    'class' => 'statistics-tablecontainer']);
         }
     }
 
@@ -299,7 +299,7 @@ class statistics_table extends flexible_table {
         global $OUTPUT;
         if ($this->is_downloadable() && !$this->is_downloading()) {
             return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'offlinequiz_statistics'),
-                    $this->baseurl->out_omit_querystring(), 'download', $this->baseurl->params() + array('everything' => 1));
+                    $this->baseurl->out_omit_querystring(), 'download', $this->baseurl->params() + ['everything' => 1]);
         } else {
             return '';
         }

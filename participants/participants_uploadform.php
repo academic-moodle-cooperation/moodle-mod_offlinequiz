@@ -13,10 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Form for uploading scanned documents in the participants_report
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -35,8 +36,8 @@ class offlinequiz_participants_upload_form extends moodleform {
         $mform = $this->_form;
         $mform->addElement('header', 'importfileupload', get_string('importpforms', 'offlinequiz_rimport'));
         $mform->addElement('filepicker', 'newfile', get_string('ziporimagefile', 'offlinequiz_rimport'), null,
-                      array('subdirs' => 0, 'accepted_types' => array('.png', '.PNG', '.zip', '.ZIP', '.tif', '.TIF',
-                      '.tiff', '.TIFF', '.jpg', '.JPG', '.jpeg', '.JPEG')));
+                      ['subdirs' => 0, 'accepted_types' => ['.png', '.PNG', '.zip', '.ZIP', '.tif', '.TIF',
+                      '.tiff', '.TIFF', '.jpg', '.JPG', '.jpeg', '.JPEG']]);
         $mform->addRule('newfile', null, 'required', null, 'client');
         // Submit button.
         $mform->addElement('submit', 'submitbutton', get_string('import', 'offlinequiz_rimport'));

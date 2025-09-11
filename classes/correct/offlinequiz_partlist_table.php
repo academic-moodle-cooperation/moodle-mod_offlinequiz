@@ -18,7 +18,7 @@
  * The file defines some subclasses that can be used when you are building
  * a report like the overview or responses report.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -27,8 +27,8 @@
  *
  **/
 namespace mod_offlinequiz\correct;
-use \html_writer;
-use \stdClass;
+use html_writer;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -43,10 +43,10 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
         echo '<a href="#" class="selectall">'. $strselectall . '</a> / ';
         echo '<a href="#" class="deselectall">' . $strselectnone . '</a> ';
         echo '&nbsp;&nbsp;';
-        $options = array('check' => get_string('checkparts', 'offlinequiz'),
-                'uncheck' => get_string('uncheckparts', 'offlinequiz'));
-        echo html_writer::select($options, 'action', '', array('' => 'choosedots'),
-                array('onchange' => 'this.form.submit(); return true;'));
+        $options = ['check' => get_string('checkparts', 'offlinequiz'),
+                'uncheck' => get_string('uncheckparts', 'offlinequiz')];
+        echo html_writer::select($options, 'action', '', ['' => 'choosedots'],
+                ['onchange' => 'this.form.submit(); return true;']);
 
         echo '<noscript id="noscriptmenuaction" style="display: inline;"><div>';
         echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
@@ -61,10 +61,10 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
     }
 
     protected function print_one_initials_bar($alpha, $current, $class, $title, $urlvar) {
-        echo html_writer::start_tag('div', array('class' => 'initialbar ' . $class)) .
+        echo html_writer::start_tag('div', ['class' => 'initialbar ' . $class]) .
         $title . ' : ';
         if ($current) {
-            echo html_writer::link($this->baseurl->out(false, array($urlvar => '')), get_string('all'));
+            echo html_writer::link($this->baseurl->out(false, [$urlvar => '']), get_string('all'));
         } else {
             echo html_writer::tag('strong', get_string('all'));
         }
@@ -74,7 +74,7 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
             if ($letter === $current) {
                 echo html_writer::tag('strong', $letter);
             } else {
-                echo html_writer::link($this->baseurl->out(false, array($urlvar => $letter)), $letter);
+                echo html_writer::link($this->baseurl->out(false, [$urlvar => $letter]), $letter);
             }
             echo '&nbsp;';
         }

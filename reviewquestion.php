@@ -18,7 +18,7 @@
  * This page prints a review of a particular question result.
  * This page is expected to only be used in a popup window.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -34,31 +34,31 @@ $slot = required_param('slot', PARAM_INT);         // Question number in usage.
 $seq = optional_param('step', null, PARAM_INT);    // Sequence number.
 
 $baseurl = new moodle_url('/mod/offlinequiz/reviewquestion.php',
-        array('resultid' => $resultid, 'slot' => $slot));
+        ['resultid' => $resultid, 'slot' => $slot]);
 $currenturl = new moodle_url($baseurl);
 if ($seq !== 0) {
     $currenturl->param('step', $seq);
 }
 $PAGE->set_url($currenturl);
 
-if (!$result = $DB->get_record('offlinequiz_results', array('id' => $resultid))) {
+if (!$result = $DB->get_record('offlinequiz_results', ['id' => $resultid])) {
     throw new \moodle_exception('result does not exist');
 }
-if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $result->offlinequizid))) {
+if (!$offlinequiz = $DB->get_record('offlinequiz', ['id' => $result->offlinequizid])) {
     throw new \moodle_exception('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
     $COURSE->id, $scannedpage->offlinequizid);
 }
-if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
+if (!$course = $DB->get_record('course', ['id' => $offlinequiz->course])) {
     throw new \moodle_exception('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
-    $COURSE->id, array('course' => $offlinequiz->course,
-         'offlinequiz' => $offlinequiz->id));
+    $COURSE->id, ['course' => $offlinequiz->course,
+         'offlinequiz' => $offlinequiz->id]);
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
     throw new \moodle_exception('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
     $COURSE->id, $offlinequiz->id);
 }
 if (!$groups = $DB->get_records('offlinequiz_groups',
-        array('offlinequizid' => $offlinequiz->id), 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
+        ['offlinequizid' => $offlinequiz->id], 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
     throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
     $COURSE->id, $scannedpage->offlinequizid);
 }

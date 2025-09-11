@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Page to edit offlinequizzes
  *
@@ -34,7 +35,7 @@
  * savechanges  Saves the order and grades for questions in the offlinequiz
  *
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -62,7 +63,7 @@ if (array_key_exists('offlinequizdeleteselected', $_POST) && $_POST['offlinequiz
 list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars) =
    offlinequiz_question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
 
-$course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $offlinequiz->course], '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 // You need mod/offlinequiz:manage in addition to question capabilities to access this page.
@@ -147,20 +148,20 @@ if ($changedversionsexist && $hasresults) {
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 // Log this visit.
-$params = array(
+$params = [
     'courseid' => $course->id,
     'context' => $contexts->lowest(),
-    'other' => array(
+    'other' => [
         'offlinequizid' => $offlinequiz->id,
-    )
-);
+    ],
+];
 $event = \mod_offlinequiz\event\edit_page_viewed::create($params);
 $event->trigger();
 
 // Process commands ============================================================.
 
 // Get the list of question ids had their check-boxes ticked.
-$selectedslots = array();
+$selectedslots = [];
 $params = (array) data_submitted();
 foreach ($params as $key => $value) {
     if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
@@ -174,7 +175,7 @@ if ($scrollpos) {
 }
 
 // Get the list of question ids had their check-boxes ticked.
-$selectedquestionids = array();
+$selectedquestionids = [];
 $params = (array) data_submitted();
 foreach ($params as $key => $value) {
     if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
@@ -209,7 +210,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
         'offlinequiz_group_questions',
         'maxmark',
         'offlinequizid = :offlinequizid AND questionid = :questionid',
-        array('offlinequizid' => $offlinequiz->id, 'questionid' => $addquestion)
+        ['offlinequizid' => $offlinequiz->id, 'questionid' => $addquestion]
     )) {
         offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, $addonpage, $maxmarks[0]);
     } else {
@@ -235,7 +236,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
                 'offlinequiz_group_questions',
                 'maxmark',
                 'offlinequizid = :offlinequizid AND questionid = :questionid',
-                array('offlinequizid' => $offlinequiz->id, 'questionid' => $key)
+                ['offlinequizid' => $offlinequiz->id, 'questionid' => $key]
             )) {
                 offlinequiz_add_offlinequiz_question($key, $offlinequiz, $addonpage, $maxmarks[0]);
             } else {
@@ -271,10 +272,10 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     $categoryid = required_param('categoryid', PARAM_INT);
     $randomcount = required_param('randomcount', PARAM_INT);
     offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount);
-    //quiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $recurse);
+    // quiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $recurse);
 
-    //quiz_delete_previews($quiz);
-    //$gradecalculator->recompute_quiz_sumgrades();
+    // quiz_delete_previews($quiz);
+    // $gradecalculator->recompute_quiz_sumgrades();
     redirect($afteractionurl);
 }
 
@@ -331,7 +332,7 @@ if ($savegrades == 'bulksavegrades' && confirm_sesskey()) {
     // Redmine 983: Upgrade sumgrades for all offlinequiz groups.
     if ($groups = $DB->get_records(
         'offlinequiz_groups',
-        array('offlinequizid' => $offlinequiz->id),
+        ['offlinequizid' => $offlinequiz->id],
         'groupnumber',
         '*',
         0,
@@ -372,13 +373,13 @@ echo $OUTPUT->header();
 
 // Initialise the JavaScript.
 $offlinequizeditconfig = new stdClass();
-$offlinequizeditconfig->url = $thispageurl->out(true, array('qbanktool' => '0'));
-$offlinequizeditconfig->dialoglisteners = array();
+$offlinequizeditconfig->url = $thispageurl->out(true, ['qbanktool' => '0']);
+$offlinequizeditconfig->dialoglisteners = [];
 $numberoflisteners = $DB->get_field_sql("
     SELECT COALESCE(MAX(page), 1)
       FROM {offlinequiz_group_questions}
      WHERE offlinequizid = ?
-       AND offlinegroupid = ?", array($offlinequiz->id, $offlinequiz->groupid));
+       AND offlinegroupid = ?", [$offlinequiz->id, $offlinequiz->groupid]);
 
 for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
     $offlinequizeditconfig->dialoglisteners[] = 'addrandomdialoglaunch_' . $pageiter;
@@ -387,10 +388,10 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
 $PAGE->requires->data_for_js('offlinequiz_edit_config', $offlinequizeditconfig);
 $PAGE->requires->js_module('core_question_engine');
 
-echo html_writer::start_tag('div', array('class' => 'mod-offlinequiz-edit-content'));
+echo html_writer::start_tag('div', ['class' => 'mod-offlinequiz-edit-content']);
 
 $letterstr = 'ABCDEFGHIJKL';
-$groupletters = array();
+$groupletters = [];
 
 for ($i = 1; $i <= $offlinequiz->numgroups; $i++) {
     $groupletters[$i] = $letterstr[$i - 1];

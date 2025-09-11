@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace offlinequiz_result_import;
 
 defined('MOODLE_INTERNAL') || die();
@@ -50,7 +51,7 @@ class offlinequiz_groupnumberscanner {
         } else {
             $number++;
             $group = $DB->get_record('offlinequiz_groups',
-                array('offlinequizid' => $page->offlinequizid, 'groupnumber' => $number ));
+                ['offlinequizid' => $page->offlinequizid, 'groupnumber' => $number ]);
             if ($group) {
                 $page->group = $group;
             } else {
@@ -61,7 +62,7 @@ class offlinequiz_groupnumberscanner {
 
 
     private function calculate_group_number_middles(offlinequiz_result_page $page) {
-        $grouppoints = array();
+        $grouppoints = [];
 
         for ($i = 0; $i < GROUP_BOXES; $i++) {
             $boxmiddlepoint = new offlinequiz_point(BOX_A_CORNER_X + BOX_SIZE / 2 + BOX_DISTANCE_X * $i,

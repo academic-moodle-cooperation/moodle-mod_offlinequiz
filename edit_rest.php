@@ -48,15 +48,15 @@ $page       = optional_param('page', '', PARAM_INT);
 
 require_sesskey();
 
-$offlinequiz = $DB->get_record('offlinequiz', array('id' => $offlinequizid), '*', MUST_EXIST);
-if ($offlinequizgroup = $DB->get_record('offlinequiz_groups', array('id' => $offlinegroupid))) {
+$offlinequiz = $DB->get_record('offlinequiz', ['id' => $offlinequizid], '*', MUST_EXIST);
+if ($offlinequizgroup = $DB->get_record('offlinequiz_groups', ['id' => $offlinegroupid])) {
     $offlinequiz->groupid = $offlinequizgroup->id;
 } else {
     throw new \moodle_exception('invalidgroupnumber', 'offlinequiz');
 }
 
 $cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $offlinequiz->course);
-$course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $offlinequiz->course], '*', MUST_EXIST);
 require_login($course, false, $cm);
 
 $offlinequizobj = new offlinequiz($offlinequiz, $cm, $course);
@@ -86,30 +86,30 @@ switch($requestmethod) {
                         require_capability('mod/offlinequiz:manage', $modcontext);
                         offlinequiz_delete_template_usages($offlinequiz);
                         $structure->move_slot($id, $previousid, $page);
-                        echo json_encode(array('visible' => true));
+                        echo json_encode(['visible' => true]);
                         break;
 
                     case 'getmaxmark':
                         require_capability('mod/offlinequiz:manage', $modcontext);
-                        $slot = $DB->get_record('offlinequiz_group_questions', array('id' => $id), '*', MUST_EXIST);
-                        echo json_encode(array('instancemaxmark'
-                                => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark)));
+                        $slot = $DB->get_record('offlinequiz_group_questions', ['id' => $id], '*', MUST_EXIST);
+                        echo json_encode(['instancemaxmark'
+                                => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark)]);
                         break;
 
                     case 'updatemaxmark':
                         require_capability('mod/offlinequiz:manage', $modcontext);
                         $slot = $structure->get_slot_by_id($id);
                         if (!is_numeric(str_replace(',', '.', $maxmark))) {
-                            $summarks = $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $offlinequizgroup->id));
-                            echo json_encode(array('instancemaxmark' =>
+                            $summarks = $DB->get_field('offlinequiz_groups', 'sumgrades', ['id' => $offlinequizgroup->id]);
+                            echo json_encode(['instancemaxmark' =>
                                              offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
-                                            'newsummarks' => offlinequiz_format_grade($offlinequiz, $summarks)));
+                                            'newsummarks' => offlinequiz_format_grade($offlinequiz, $summarks)]);
 
                             break;
                         }
                         if ($structure->update_slot_maxmark($slot, $maxmark)) {
                             // Recalculate the sumgrades for all groups.
-                            if ($groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
+                            if ($groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id],
                                 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
                                 foreach ($groups as $group) {
                                     $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
@@ -121,20 +121,20 @@ switch($requestmethod) {
                             offlinequiz_update_all_attempt_sumgrades($offlinequiz);
                             offlinequiz_update_grades($offlinequiz, 0, true);
                         }
-                        $newsummarks = $DB->get_field('offlinequiz_groups', 'sumgrades', array('id' => $offlinequizgroup->id));
-                        echo json_encode(array('instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
-                                'newsummarks' => format_float($newsummarks, $offlinequiz->decimalpoints)));
+                        $newsummarks = $DB->get_field('offlinequiz_groups', 'sumgrades', ['id' => $offlinequizgroup->id]);
+                        echo json_encode(['instancemaxmark' => offlinequiz_format_question_grade($offlinequiz, $slot->maxmark),
+                                'newsummarks' => format_float($newsummarks, $offlinequiz->decimalpoints)]);
                         break;
                     case 'updatepagebreak':
                         require_capability('mod/offlinequiz:manage', $modcontext);
                         offlinequiz_delete_template_usages($offlinequiz);
                         $slots = $structure->update_page_break($offlinequiz, $id, $value);
-                        $json = array();
+                        $json = [];
                         foreach ($slots as $slot) {
-                            $json[$slot->slot] = array('id' => $slot->id, 'slot' => $slot->slot,
-                                                            'page' => $slot->page);
+                            $json[$slot->slot] = ['id' => $slot->id, 'slot' => $slot->slot,
+                                                            'page' => $slot->page];
                         }
-                        echo json_encode(array('slots' => $json));
+                        echo json_encode(['slots' => $json]);
                         break;
                 }
                 break;
@@ -149,14 +149,14 @@ switch($requestmethod) {
             case 'resource':
                 require_capability('mod/offlinequiz:manage', $modcontext);
                 if (!$slot = $DB->get_record('offlinequiz_group_questions',
-                        array('offlinequizid' => $offlinequiz->id, 'id' => $id))) {
+                        ['offlinequizid' => $offlinequiz->id, 'id' => $id])) {
                     throw new moodle_exception('AJAX commands.php: Bad slot ID '.$id);
                 }
                 $structure->remove_slot($offlinequiz, $slot->slot);
                 offlinequiz_delete_template_usages($offlinequiz);
                 offlinequiz_update_sumgrades($offlinequiz);
-                echo json_encode(array('newsummarks' => offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades),
-                            'deleted' => true, 'newnumquestions' => $structure->get_question_count()));
+                echo json_encode(['newsummarks' => offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades),
+                            'deleted' => true, 'newnumquestions' => $structure->get_question_count()]);
                 break;
         }
         break;

@@ -18,7 +18,7 @@
  * Defines the offlinequiz module settings form.
  *
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -46,7 +46,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
         $offlinequiz = null;
         if (!empty($this->_instance)) {
-            $offlinequiz = $DB->get_record('offlinequiz', array('id' => $this->_instance));
+            $offlinequiz = $DB->get_record('offlinequiz', ['id' => $this->_instance]);
         }
 
         $mform = $this->_form;
@@ -61,7 +61,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         }
 
         // Name.
-        $mform->addElement('text', 'name', get_string('name', 'offlinequiz'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('name', 'offlinequiz'), ['size' => '64']);
 
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -73,7 +73,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         // Introduction.
         $this->standard_intro_elements();
 
-        $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), array('optional' => true));
+        $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), ['optional' => true]);
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             for ($i = 1; $i <= 6; $i++) {
                 $groupmenu[$i] = "$i";
@@ -111,7 +111,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
                 $this->_cm->id . '">' . "$CFG->wwwroot/mod/offlinequiz/tutorial.php?id=" . $this->_cm->id . '</a>');
         }
         unset($options);
-        $options = array();
+        $options = [];
         for ($i = 0; $i <= 3; $i++) {
             $options[$i] = $i;
         }
@@ -177,7 +177,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
         // ------------------------------------------------------------------------------
         if (!$offlinequiz || !$offlinequiz->docscreated) {
-            $mform->addElement('editor', 'pdfintro', get_string('pdfintro', 'offlinequiz'), array('rows' => 20),
+            $mform->addElement('editor', 'pdfintro', get_string('pdfintro', 'offlinequiz'), ['rows' => 20],
                      offlinequiz_get_editor_options($this->context));
         } else {
             $mform->addElement('static', 'pdfintro', get_string('pdfintro', 'offlinequiz'), $offlinequiz->pdfintro);
@@ -192,12 +192,12 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
            10 => 10,
            11 => 11,
            12 => 12,
-           14 => 14
+           14 => 14,
         ];
         $mform->addElement('select', 'fontsize', get_string('fontsize', 'offlinequiz'), $options, $attribs);
         $mform->setDefault('fontsize', $offlinequizconfig->defaultpdffontsize);
 
-        $options = array();
+        $options = [];
         $options[OFFLINEQUIZ_PDF_FORMAT] = 'PDF';
         $options[OFFLINEQUIZ_DOCX_FORMAT] = 'DOCX';
         $options[OFFLINEQUIZ_LATEX_FORMAT] = 'LATEX';
@@ -205,11 +205,10 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('fileformat', 'fileformat', 'offlinequiz');
         $mform->setDefault('fileformat', 0);
 
-
         $mform->addElement('selectyesno', 'showgrades', get_string("showgrades", "offlinequiz"), $attribs);
         $mform->addHelpButton('showgrades', "showgrades", "offlinequiz");
 
-        $options = array();
+        $options = [];
         $options[OFFLINEQUIZ_QUESTIONINFO_NONE] = get_string("questioninfonone", "offlinequiz");
         $options[OFFLINEQUIZ_QUESTIONINFO_QTYPE] = get_string("questioninfoqtype", "offlinequiz");
         $options[OFFLINEQUIZ_QUESTIONINFO_ANSWERS] = get_string("questioninfoanswers", "offlinequiz");
@@ -226,13 +225,13 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
         // Timeopen and timeclose.
         $mform->addElement('date_time_selector', 'timeopen', get_string("reviewopens", "offlinequiz"),
-                array('optional' => true, 'step' => 1));
+                ['optional' => true, 'step' => 1]);
         $mform->addHelpButton('timeopen', 'quizopenclose', 'offlinequiz');
 
         $mform->addElement('date_time_selector', 'timeclose', get_string("reviewcloses", "offlinequiz"),
-                array('optional' => true, 'step' => 1));
+                ['optional' => true, 'step' => 1]);
 
-        $closedoptionsgrp = array();
+        $closedoptionsgrp = [];
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'attemptclosed', '', get_string('theattempt', 'offlinequiz'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'correctnessclosed', '', get_string('whethercorrect', 'question'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'marksclosed', '', get_string('marks', 'offlinequiz'));
@@ -313,7 +312,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
                                         'mod_offlinequiz', 'pdfintro', false,
                                         offlinequiz_get_editor_options($this->context),
                                         $toform['pdfintro']);
-                $toform['pdfintro'] = array();
+                $toform['pdfintro'] = [];
                 $toform['pdfintro']['text'] = $text;
                 $toform['pdfintro']['format'] = editors_get_preferred_format();
                 $toform['pdfintro']['itemid'] = $draftitemid;
@@ -324,7 +323,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
 
             // No context yet, itemid not used.
             file_prepare_draft_area($draftitemid, null, 'mod_offlinequiz', 'pdfintro', false);
-            $toform['pdfintro'] = array();
+            $toform['pdfintro'] = [];
             $toform['pdfintro']['text'] = get_string('pdfintrotext', 'offlinequiz');
             $toform['pdfintro']['format'] = editors_get_preferred_format();
             $toform['pdfintro']['itemid'] = $draftitemid;
@@ -372,11 +371,11 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
      */
     public function add_completion_rules() {
         $mform = $this->_form;
-        $items = array();
+        $items = [];
 
-        $group = array();
+        $group = [];
         $group[] = $mform->createElement('advcheckbox', 'completionpass' . $this->get_suffix(), null, get_string('completionpass', 'offlinequiz'),
-            array('group' => 'cpass'));
+            ['group' => 'cpass']);
         $mform->disabledIf('completionpass' . $this->get_suffix(), 'completionusegrade', 'notchecked');
 
         $mform->addGroup($group, 'completionpassgroup' . $this->get_suffix(), get_string('completionpass', 'offlinequiz'), ' &nbsp; ', false);

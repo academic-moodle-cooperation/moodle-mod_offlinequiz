@@ -1,5 +1,8 @@
 {
-	"plugintypes" : {
-		"offlinequiz" : "mod/offlinequiz/report"
-	}
+    "plugintypes": {
+        "offlinequiz": "mod/offlinequiz/report"
+    },
+    "subplugintypes": {
+        "offlinequiz": "report"
+    }
 }

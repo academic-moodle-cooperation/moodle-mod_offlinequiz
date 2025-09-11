@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace offlinequiz_result_import;
 
 defined('MOODLE_INTERNAL') || die();
@@ -28,7 +29,7 @@ class offlinequiz_studentid_scanner {
 
     private $boxscanner;
 
-    public function  __construct($boxscanner) {
+    public function __construct($boxscanner) {
         $this->boxscanner = $boxscanner;
     }
 
@@ -72,7 +73,7 @@ class offlinequiz_studentid_scanner {
 
     private function calculate_student_id_middles(offlinequiz_result_page $page) {
         $iddigits = get_config('offlinequiz', 'ID_digits');
-        $studentidpoints = array();
+        $studentidpoints = [];
         for ($j = 0; $j <= 9; $j++) {
             for ($i = 0; $i < $iddigits; $i++) {
                 $boxmiddlepoint = new offlinequiz_point(

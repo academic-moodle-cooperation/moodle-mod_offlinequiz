@@ -136,7 +136,7 @@ class add_random_questions extends external_api {
                     'jointype' => custom_category_condition::JOINTYPE_DEFAULT,
                     'values' => [$categoryid],
                     'filteroptions' => ['includesubcategories' => false],
-                ]
+                ],
             ];
             // Generate default filter condition for the random question to be added in the new category.
             $filtercondition = [
@@ -175,7 +175,7 @@ class add_random_questions extends external_api {
      */
     public static function execute_returns() {
         return new external_single_structure([
-            'message' => new external_value(PARAM_TEXT, 'Message', VALUE_OPTIONAL)
+            'message' => new external_value(PARAM_TEXT, 'Message', VALUE_OPTIONAL),
         ]);
     }
 }

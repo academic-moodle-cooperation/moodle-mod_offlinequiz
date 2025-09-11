@@ -17,7 +17,7 @@
 /**
  * The mod_offlinequiz question manually graded event.
  *
- * @package    core
+ * @package    mod_offlinequiz
  * @author  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright 2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since Moodle 2.7
@@ -79,8 +79,8 @@ class question_manually_graded extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/offlinequiz/comment.php', array('resultid' => $this->other['resultid'],
-            'slot' => $this->other['slot']));
+        return new \moodle_url('/mod/offlinequiz/comment.php', ['resultid' => $this->other['resultid'],
+            'slot' => $this->other['slot']]);
     }
 
     /**

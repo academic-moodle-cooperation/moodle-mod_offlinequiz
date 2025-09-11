@@ -18,7 +18,7 @@
  * This file contains the code to analyse all the responses to a particular
  * question.
  *
- * @package       mod
+ * @package       offlinequiz_statistics
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -50,13 +50,13 @@ class response_analyser {
      * $this->responses[$subpartid][$responseclassid][$response] is an
      * object with two fields, ->count and ->fraction.
      */
-    public $responses = array();
+    public $responses = [];
 
     /**
      * @var array $this->fractions[$subpartid][$responseclassid] is an object
      * with two fields, ->responseclass and ->fraction.
      */
-    public $responseclasses = array();
+    public $responseclasses = [];
 
     /**
      * Create a new instance of this class for holding/computing the statistics
@@ -70,7 +70,7 @@ class response_analyser {
                         $questiondata);
         foreach ($this->responseclasses as $subpartid => $responseclasses) {
             foreach ($responseclasses as $responseclassid => $notused) {
-                $this->responses[$subpartid][$responseclassid] = array();
+                $this->responses[$subpartid][$responseclassid] = [];
             }
         }
     }
@@ -172,8 +172,8 @@ class response_analyser {
         global $DB;
 
         $rows = $DB->get_records('offlinequiz_q_response_stats',
-                array('offlinequizstatisticsid' => $offlinequizstatisticsid,
-                        'questionid' => $this->questiondata->id));
+                ['offlinequizstatisticsid' => $offlinequizstatisticsid,
+                        'questionid' => $this->questiondata->id]);
         if (!$rows) {
             return false;
         }

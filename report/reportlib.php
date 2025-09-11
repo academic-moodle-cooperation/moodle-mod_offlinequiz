@@ -17,7 +17,7 @@
 /**
  * Helper functions for offlinequiz reports
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -53,9 +53,8 @@ function offlinequiz_report_list($context) {
 
     $reportdirs = core_component::get_plugin_list('offlinequiz');
 
-
     // Order the reports tab in descending order of displayorder.
-    $reportcaps = array();
+    $reportcaps = [];
     foreach ($reports as $key => $report) {
         if (array_key_exists($report->name, $reportdirs)) {
             $reportcaps[$report->name] = $report->capability;
@@ -68,7 +67,7 @@ function offlinequiz_report_list($context) {
             $reportcaps[$reportname] = null;
         }
     }
-    $reportlist = array();
+    $reportlist = [];
     foreach ($reportcaps as $name => $capability) {
         if (empty($capability)) {
             $capability = 'mod/offlinequiz:viewreports';
@@ -85,7 +84,7 @@ function offlinequiz_report_unindex($datum) {
     if (!$datum) {
         return $datum;
     }
-    $datumunkeyed = array();
+    $datumunkeyed = [];
     foreach ($datum as $value) {
         if (is_array($value)) {
             $datumunkeyed = array_merge($datumunkeyed, offlinequiz_report_unindex($value));
@@ -107,7 +106,7 @@ function offlinequiz_report_get_significant_questions($offlinequiz) {
 
     $questionids = $offlinequiz->questions;
     if (empty($questionids)) {
-        return array();
+        return [];
     }
 
     list($usql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
@@ -128,7 +127,7 @@ function offlinequiz_report_get_significant_questions($offlinequiz) {
                                                  $groupsql
                                              AND q.length > 0", $params);
     // Make sure we have unique questionids. Not sure if DISTINCT in query captures all contingencies.
-    $questions = array();
+    $questions = [];
     foreach ($rawquestions as $rawquestion) {
         if (!array_key_exists($rawquestion->questionid, $questions)) {
             $question = new stdClass();
@@ -233,7 +232,7 @@ function offlinequiz_no_questions_message($offlinequiz, $cm, $context) {
     $output .= $OUTPUT->notification(get_string('noquestions', 'offlinequiz'));
     if (has_capability('mod/offlinequiz:manage', $context)) {
         $output .= $OUTPUT->single_button(new moodle_url('/mod/offlinequiz/edit.php',
-        array('cmid' => $cm->id)), get_string('editofflinequiz', 'offlinequiz'), 'get');
+        ['cmid' => $cm->id]), get_string('editofflinequiz', 'offlinequiz'), 'get');
     }
 
     return $output;

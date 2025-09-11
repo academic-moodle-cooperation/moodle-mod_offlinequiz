@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace offlinequiz_result_import;
 defined('MOODLE_INTERNAL') || die();
 
@@ -126,7 +127,7 @@ class crossfinder {
         }
     }
 
-    private function findclosest ($middle, $upper, $lower) {
+    private function findclosest($middle, $upper, $lower) {
         if ($upper && $lower) {
             if ( abs($upper - $middle) > abs($lower - $middle) ) {
                 return $lower;

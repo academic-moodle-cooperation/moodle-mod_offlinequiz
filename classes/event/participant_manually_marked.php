@@ -17,7 +17,7 @@
 /**
  * The mod_offlinequiz question manually graded event.
  *
- * @package    core
+ * @package    mod_offlinequiz
  * @author  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright 2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since Moodle 2.7
@@ -77,8 +77,8 @@ class participant_manually_marked extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/offlinequiz/participants.php', array('mode' => 'attendances',
-                'id' => $this->contextinstanceid));
+        return new \moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'attendances',
+                'id' => $this->contextinstanceid]);
     }
 
     /**

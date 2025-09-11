@@ -17,7 +17,7 @@
 /**
  * Creates the Latex forms for offlinequizzes
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -52,7 +52,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     $groupletter = strtoupper($letterstr[$group->groupnumber - 1]);
 
     $coursecontext = context_course::instance($courseid);
-    $course = $DB->get_record('course', array('id' => $courseid));
+    $course = $DB->get_record('course', ['id' => $courseid]);
 
     $title = format_text($offlinequiz->name, FORMAT_HTML);
 
@@ -68,7 +68,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
              WHERE ogq.offlinequizid = :offlinequizid
                AND ogq.offlinegroupid = :offlinegroupid
           ORDER BY ogq.slot ASC ";
-    $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
+    $params = ['offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id];
 
     // Load the questions.
     $questions = $DB->get_records_sql($sql, $params);
@@ -128,7 +128,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
         // We also have to show description questions that are not in the template.
 
         // First, compute mapping  questionid -> slotnumber.
-        $questionslots = array();
+        $questionslots = [];
         foreach ($slots as $slot) {
             $questionslots[$templateusage->get_question($slot)->id] = $slot;
         }
@@ -165,7 +165,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
         }
         $latexforquestions .= '\end{enumerate}' . "\n";
     }
-    $a = array();
+    $a = [];
     $a['latexforquestions'] = $latexforquestions;
     $a['coursename'] = offlinequiz_convert_html_to_latex($course->fullname);
     $a['groupname'] = $groupletter;
@@ -197,13 +197,13 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
             $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
 
-    $fileinfo = array(
+    $fileinfo = [
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.tex');
+            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.tex'];
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -282,7 +282,7 @@ function offlinequiz_convert_html_to_latex_tables($dom) {
         $r = 0;
         foreach ($rows as $row) {
             $r++;
-            foreach (array("td", "th") as $item) {
+            foreach (["td", "th"] as $item) {
                 $cols = $row->getElementsByTagName($item);
                 $c = 0;
                 foreach ($cols as $col) {
@@ -352,7 +352,7 @@ function offlinequiz_convert_html_to_latex($text) {
           return $tmp;
     }, $text);
     $text = strip_tags($text);
-    $conversiontable = array(
+    $conversiontable = [
         '&Amul;' => 'Ä',
         '&auml;' => 'ä',
         '&Ouml;' => 'Ö',
@@ -367,7 +367,7 @@ function offlinequiz_convert_html_to_latex($text) {
         '%' => '\%',
         '&gt;' => '>',
         '&lt;' => '<',
-        '$' => '\$');
+        '$' => '\$'];
     foreach ($conversiontable as $search => $replace) {
         $text = str_ireplace($search, $replace, $text);
     }

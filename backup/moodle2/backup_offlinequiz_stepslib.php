@@ -17,7 +17,7 @@
 /**
  * Define all the backup steps that will be used by the backup_offlinequiz_activity_task
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -37,63 +37,61 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separately.
-        $offlinequiz = new backup_nested_element('offlinequiz', array('id'), array(
+        $offlinequiz = new backup_nested_element('offlinequiz', ['id'], [
                 'name', 'intro', 'pdfintro', 'timeopen',
                 'timeclose', 'time', 'grade', 'participantsusage', 'numgroups', 'decimalpoints',
                 'review', 'questionsperpage', 'docscreated', 'shufflequestions', 'shuffleanswers',
                 'questions', 'sumgrades', 'papergray', 'fontsize', 'pdffont', 'timecreated',
                 'timemodified', 'fileformat', 'showgrades', 'showquestioninfo', 'disableimgnewlines', 'showtutorial',
-                'printstudycodefield', 'id_digits', 'experimentalevaluation', 'completionpass'));
-
-
+                'printstudycodefield', 'id_digits', 'experimentalevaluation', 'completionpass']);
 
         $groups = new backup_nested_element('groups');
-        $group = new backup_nested_element('group', array('id'), array(
+        $group = new backup_nested_element('group', ['id'], [
                 'groupnumber', 'sumgrades', 'numberofpages', 'templateusageid',
-                'questionfilename', 'answerfilename', 'correctionfilename'));
+                'questionfilename', 'answerfilename', 'correctionfilename']);
 
         $groupquestions = new backup_nested_element('groupquestions');
-        $groupquestion = new backup_nested_element('groupquestion', array('id'), array(
-                'questionid', 'position', 'page', 'slot', 'maxmark'));
+        $groupquestion = new backup_nested_element('groupquestion', ['id'], [
+                'questionid', 'position', 'page', 'slot', 'maxmark']);
 
         $results = new backup_nested_element('results');
 
-        $result = new backup_nested_element('result', array('id'), array(
+        $result = new backup_nested_element('result', ['id'], [
                 'offlinegroupid', 'userid', 'usageid', 'teacherid', 'sumgrades',
                 'attendant', 'status', 'timestart', 'timefinish', 'timemodified',
-                'preview'));
+                'preview']);
 
         $scannedpages = new backup_nested_element('scannedpages');
 
-        $scannedpage = new backup_nested_element('scannedpage', array('id'), array(
+        $scannedpage = new backup_nested_element('scannedpage', ['id'], [
                 'resultid', 'filename' , 'warningfilename', 'groupnumber', 'userkey', 'pagenumber',
-                'time', 'status', 'error', 'info'));
+                'time', 'status', 'error', 'info']);
 
         $choices = new backup_nested_element('choices');
 
-        $choice = new backup_nested_element('choice', array('id'), array(
-                'slotnumber', 'choicenumber', 'value'));
+        $choice = new backup_nested_element('choice', ['id'], [
+                'slotnumber', 'choicenumber', 'value']);
 
         $corners = new backup_nested_element('corners');
-        $corner = new backup_nested_element('corner', array('id'), array(
-                'x', 'y', 'position'));
+        $corner = new backup_nested_element('corner', ['id'], [
+                'x', 'y', 'position']);
 
         $plists = new backup_nested_element('plists');
-        $plist = new backup_nested_element('plist', array('id'), array(
-                'name', 'listnumber', 'filename'));
+        $plist = new backup_nested_element('plist', ['id'], [
+                'name', 'listnumber', 'filename']);
 
         $participants = new backup_nested_element('participants');
-        $participant = new backup_nested_element('participant', array('id'), array(
-                'userid', 'checked'));
+        $participant = new backup_nested_element('participant', ['id'], [
+                'userid', 'checked']);
 
         $scannedppages = new backup_nested_element('scannedppages');
-        $scannedppage = new backup_nested_element('scannedppage', array('id'), array(
-                'listnumber', 'filename', 'time', 'status', 'error'));
+        $scannedppage = new backup_nested_element('scannedppage', ['id'], [
+                'listnumber', 'filename', 'time', 'status', 'error']);
 
         $pchoices = new backup_nested_element('pchoices');
 
-        $pchoice = new backup_nested_element('pchoice', array('id'), array(
-                'userid', 'value'));
+        $pchoice = new backup_nested_element('pchoice', ['id'], [
+                'userid', 'value']);
 
         // This module is using questions, so produce the related question states and sessions
         // attaching them to the $result element based in 'uniqueid' matching.
@@ -108,9 +106,9 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $groupquestions->add_child($groupquestion);
 
         $this->add_question_references($groupquestion, 'mod_offlinequiz', 'slot');
-        
+
         $offlinequiz->add_child($groups);
-        
+
         // Results are children of the offlinequiz.
         $results->add_child($result);
         $offlinequiz->add_child($results);
@@ -138,16 +136,16 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $pchoices->add_child($pchoice);
 
         // Define sources.
-        $offlinequiz->set_source_table('offlinequiz', array('id' => backup::VAR_ACTIVITYID));
+        $offlinequiz->set_source_table('offlinequiz', ['id' => backup::VAR_ACTIVITYID]);
 
         $group->set_source_table('offlinequiz_groups',
-                array('offlinequizid' => backup::VAR_PARENTID));
+                ['offlinequizid' => backup::VAR_PARENTID]);
 
         $groupquestion->set_source_table('offlinequiz_group_questions',
-                array('offlinegroupid' => backup::VAR_PARENTID));
+                ['offlinegroupid' => backup::VAR_PARENTID]);
 
         $plist->set_source_table('offlinequiz_p_lists',
-                array('offlinequizid' => backup::VAR_PARENTID));
+                ['offlinequizid' => backup::VAR_PARENTID]);
 
         // All the rest of elements only happen if we are including user info.
         if ($userinfo) {
@@ -157,26 +155,26 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
                     FROM {offlinequiz_results}
                     WHERE offlinequizid = :offlinequizid
                     ',
-                    array('offlinequizid' => backup::VAR_PARENTID));
+                    ['offlinequizid' => backup::VAR_PARENTID]);
 
             $scannedpage->set_source_table('offlinequiz_scanned_pages',
-                    array('offlinequizid' => backup::VAR_PARENTID));
+                    ['offlinequizid' => backup::VAR_PARENTID]);
 
             $choice->set_source_table('offlinequiz_choices',
-                    array('scannedpageid' => backup::VAR_PARENTID));
+                    ['scannedpageid' => backup::VAR_PARENTID]);
 
             $corner->set_source_table('offlinequiz_page_corners',
-                    array('scannedpageid' => backup::VAR_PARENTID));
+                    ['scannedpageid' => backup::VAR_PARENTID]);
 
             // Add participants info only when userinfo.
             $participant->set_source_table('offlinequiz_participants',
-                    array('listid' => backup::VAR_PARENTID));
+                    ['listid' => backup::VAR_PARENTID]);
 
             $scannedppage->set_source_table('offlinequiz_scanned_p_pages',
-                    array('offlinequizid' => backup::VAR_PARENTID));
+                    ['offlinequizid' => backup::VAR_PARENTID]);
 
             $pchoice->set_source_table('offlinequiz_p_choices',
-                    array('scannedppageid' => backup::VAR_PARENTID));
+                    ['scannedppageid' => backup::VAR_PARENTID]);
 
         }
 

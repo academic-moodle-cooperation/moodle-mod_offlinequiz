@@ -17,7 +17,7 @@
 /**
  * Creates the DOCX question sheets for offlinequizzes
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -99,7 +99,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
                 }
             } else if ($block['type'] == 'image') {
                 // Retrieve the style info.
-                $style = array();
+                $style = [];
                 $style['width'] = 200;
                 $style['height'] = 100;
                 $style['align'] = 'center';
@@ -138,18 +138,18 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
  * @param string $text
  */
 function offlinequiz_convert_underline_text_docx($text) {
-    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
-    $replace = array('"', '&', '>', '<');
+    $search  = ['&quot;', '&amp;', '&gt;', '&lt;'];
+    $replace = ['"', '&', '>', '<'];
 
     // Now add the remaining text after the image tag.
     $parts = preg_split('/<span style="text-decoration: underline;">|<u>/i', $text);
     $spanu = preg_match('<span style="text-decoration: underline;">', $text); // Is it the span-underline?
-    $result = array();
+    $result = [];
 
     $firstpart = array_shift($parts);
     if (!empty($firstpart)) {
         $firstpart = strip_tags($firstpart);
-        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $firstpart));
+        $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $firstpart)];
     }
 
     foreach ($parts as $part) {
@@ -163,21 +163,21 @@ function offlinequiz_convert_underline_text_docx($text) {
         }
         $underlinetext = strip_tags(substr($part, 0, $closetagpos));
 
-        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $underlinetext), 'style' => 'uStyle');
+        $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $underlinetext), 'style' => 'uStyle'];
         if (!empty($underlineremain)) {
-            $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, strip_tags($underlineremain)));
+            $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, strip_tags($underlineremain))];
         }
     }
     return $result;
 }
 
 function offlinequiz_convert_super_text_docx($text) {
-    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
-    $replace = array('"', '&', '>', '<');
+    $search  = ['&quot;', '&amp;', '&gt;', '&lt;'];
+    $replace = ['"', '&', '>', '<'];
 
     // Now add the remaining text after the image tag.
     $parts = preg_split("/<sup>/i", $text);
-    $result = array();
+    $result = [];
 
     $firstpart = array_shift($parts);
     if (!empty($firstpart)) {
@@ -193,7 +193,7 @@ function offlinequiz_convert_super_text_docx($text) {
         }
         $supertext = strip_tags(substr($part, 0, $closetagpos));
 
-        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $supertext), 'style' => 'supStyle');
+        $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $supertext), 'style' => 'supStyle'];
         if (!empty($supertextremain)) {
             $superremainblocks = offlinequiz_convert_sub_text_docx($supertextremain);
             $result = array_merge($result, $superremainblocks);
@@ -203,12 +203,12 @@ function offlinequiz_convert_super_text_docx($text) {
 }
 
 function offlinequiz_convert_sub_text_docx($text) {
-    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
-    $replace = array('"', '&', '>', '<');
+    $search  = ['&quot;', '&amp;', '&gt;', '&lt;'];
+    $replace = ['"', '&', '>', '<'];
 
     // Now add the remaining text after the image tag.
     $parts = preg_split("/<sub>/i", $text);
-    $result = array();
+    $result = [];
 
     $firstpart = array_shift($parts);
     if (!empty($firstpart)) {
@@ -224,7 +224,7 @@ function offlinequiz_convert_sub_text_docx($text) {
         }
         $subtext = strip_tags(substr($part, 0, $closetagpos));
 
-        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $subtext), 'style' => 'subStyle');
+        $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $subtext), 'style' => 'subStyle'];
         if (!empty($subtextremain)) {
             $subremainblocks = offlinequiz_convert_bold_text_docx($subtextremain);
             $result = array_merge($result, $subremainblocks);
@@ -239,12 +239,12 @@ function offlinequiz_convert_sub_text_docx($text) {
  * @param string $text
  */
 function offlinequiz_convert_italic_text_docx($text) {
-    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
-    $replace = array('"', '&', '>', '<');
+    $search  = ['&quot;', '&amp;', '&gt;', '&lt;'];
+    $replace = ['"', '&', '>', '<'];
 
     // Now add the remaining text after the image tag.
     $parts = preg_split("/<i>|<em>/i", $text);
-    $result = array();
+    $result = [];
 
     $firstpart = array_shift($parts);
     if (!empty($firstpart)) {
@@ -262,7 +262,7 @@ function offlinequiz_convert_italic_text_docx($text) {
         }
         $italictext = strip_tags(substr($part, 0, $closetagpos));
 
-        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $italictext), 'style' => 'iStyle');
+        $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $italictext), 'style' => 'iStyle'];
         if (!empty($italicremain)) {
             $italicremainblocks = offlinequiz_convert_underline_text_docx($italicremain);
             $result = array_merge($result, $italicremainblocks);
@@ -277,12 +277,12 @@ function offlinequiz_convert_italic_text_docx($text) {
  * @param string $text
  */
 function offlinequiz_convert_bold_text_docx($text) {
-    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
-    $replace = array('"', '&', '>', '<');
+    $search  = ['&quot;', '&amp;', '&gt;', '&lt;'];
+    $replace = ['"', '&', '>', '<'];
 
     // Now add the remaining text after the image tag.
     $parts = preg_split("/<b>|<strong>/i", $text);
-    $result = array();
+    $result = [];
 
     $firstpart = array_shift($parts);
     if (!empty($firstpart)) {
@@ -300,7 +300,7 @@ function offlinequiz_convert_bold_text_docx($text) {
         }
         $boldtext = strip_tags(substr($part, 0, $closetagpos));
 
-        $result[] = array('type' => 'string', 'value' => str_ireplace($search, $replace, $boldtext), 'style' => 'bStyle');
+        $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $boldtext), 'style' => 'bStyle'];
         if (!empty($boldremain)) {
             $boldremainblocks = offlinequiz_convert_italic_text_docx($boldremain);
             $result = array_merge($result, $boldremainblocks);
@@ -317,20 +317,20 @@ function offlinequiz_convert_bold_text_docx($text) {
 function offlinequiz_convert_newline_docx($text) {
     // Now add the remaining text after the image tag.
     $parts = preg_split("!<br>|<br />!i", $text);
-    $result = array();
+    $result = [];
 
     $firstpart = array_shift($parts);
     // If the original text was only a newline, we don't have a first part.
     if (!empty($firstpart)) {
         if ($firstpart == '<br/>' || $firstpart == '<br />') {
-            $result = array(array('type' => 'newline'));
+            $result = [['type' => 'newline']];
         } else {
             $result = offlinequiz_convert_super_text_docx($firstpart);
         }
     }
 
     foreach ($parts as $part) {
-        $result[] = array('type' => 'newline');
+        $result[] = ['type' => 'newline'];
         if (!empty($part)) {
             $newlineremainblocks = offlinequiz_convert_super_text_docx($part);
             $result = array_merge($result, $newlineremainblocks);
@@ -346,7 +346,7 @@ function offlinequiz_convert_newline_docx($text) {
  * @return mixed
  */
 function offlinequiz_convert_image_docx($text) {
-    $result = array();
+    $result = [];
 
     // Remove paragraphs.
     $text = preg_replace('!<p>!i', '', $text);
@@ -387,7 +387,7 @@ function offlinequiz_convert_image_docx($text) {
                 }
             }
         }
-        $result[] = array('type' => 'image', 'value' => $imageurl, 'height' => $height, 'width' => $width, 'align' => $align);
+        $result[] = ['type' => 'image', 'value' => $imageurl, 'height' => $height, 'width' => $width, 'align' => $align];
 
         // Now add the remaining text after the image tag.
         $remaining = substr($string, strpos($string, '>') + 1);
@@ -453,43 +453,43 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     \PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);   // Escape < and other characters.
 
     // Define cell style arrays.
-    $cellstyle = array('valign' => 'center');
+    $cellstyle = ['valign' => 'center'];
 
     // Add text styles.
     // Normal style.
-    $docx->addFontStyle('nStyle', array('size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('nStyle', ['size' => $offlinequiz->fontsize]);
     // Italic style.
-    $docx->addFontStyle('iStyle', array('italic' => true, 'size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('iStyle', ['italic' => true, 'size' => $offlinequiz->fontsize]);
     // Bold style.
-    $docx->addFontStyle('bStyle', array('bold' => true, 'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('brStyle', array('bold' => true, 'align' => 'right', 'size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('bStyle', ['bold' => true, 'size' => $offlinequiz->fontsize]);
+    $docx->addFontStyle('brStyle', ['bold' => true, 'align' => 'right', 'size' => $offlinequiz->fontsize]);
     // Underline style.
-    $docx->addFontStyle('uStyle', array('underline' => 'single', 'size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('uStyle', ['underline' => 'single', 'size' => $offlinequiz->fontsize]);
 
-    $docx->addFontStyle('ibStyle', array('italic' => true, 'bold' => true, 'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('iuStyle', array('italic' => true, 'underline' => 'single',
-                                         'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('buStyle', array('bold' => true, 'underline' => 'single',
-                                         'size' => $offlinequiz->fontsize));
-    $docx->addFontStyle('ibuStyle', array('italic' => true, 'bold' => true, 'underline' => 'single',
-                                          'size' => $offlinequiz->fontsize));
+    $docx->addFontStyle('ibStyle', ['italic' => true, 'bold' => true, 'size' => $offlinequiz->fontsize]);
+    $docx->addFontStyle('iuStyle', ['italic' => true, 'underline' => 'single',
+                                         'size' => $offlinequiz->fontsize]);
+    $docx->addFontStyle('buStyle', ['bold' => true, 'underline' => 'single',
+                                         'size' => $offlinequiz->fontsize]);
+    $docx->addFontStyle('ibuStyle', ['italic' => true, 'bold' => true, 'underline' => 'single',
+                                          'size' => $offlinequiz->fontsize]);
 
-    $docx->addFontStyle('subStyle', array('size' => $offlinequiz->fontsize, 'subScript' => true));
-    $docx->addFontStyle('supStyle', array('size' => $offlinequiz->fontsize, 'superScript' => true));
+    $docx->addFontStyle('subStyle', ['size' => $offlinequiz->fontsize, 'subScript' => true]);
+    $docx->addFontStyle('supStyle', ['size' => $offlinequiz->fontsize, 'superScript' => true]);
     // Header style.
-    $docx->addFontStyle('hStyle', array('bold' => true, 'size' => $offlinequiz->fontsize + 4));
+    $docx->addFontStyle('hStyle', ['bold' => true, 'size' => $offlinequiz->fontsize + 4]);
     // Center style.
-    $docx->addParagraphStyle('cStyle', array('align' => 'center', 'spaceAfter' => 100));
-    $docx->addParagraphStyle('cStyle', array('align' => 'center', 'spaceAfter' => 100));
-    $docx->addParagraphStyle('questionTab', array(
-            'tabs' => array(
-                new \PhpOffice\PhpWord\Style\Tab('left', 360)
-            )
-    ));
+    $docx->addParagraphStyle('cStyle', ['align' => 'center', 'spaceAfter' => 100]);
+    $docx->addParagraphStyle('cStyle', ['align' => 'center', 'spaceAfter' => 100]);
+    $docx->addParagraphStyle('questionTab', [
+            'tabs' => [
+                new \PhpOffice\PhpWord\Style\Tab('left', 360),
+            ],
+    ]);
 
     // Define table style arrays.
-    $tablestyle = array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 20, 'align' => 'center');
-    $firstrowstyle = array('borderBottomSize' => 0, 'borderBottomColor' => 'FFFFFF', 'bgColor' => 'FFFFFF');
+    $tablestyle = ['borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 20, 'align' => 'center'];
+    $firstrowstyle = ['borderBottomSize' => 0, 'borderBottomColor' => 'FFFFFF', 'bgColor' => 'FFFFFF'];
     $docx->addTableStyle('tableStyle', $tablestyle, $firstrowstyle);
 
     // Define custom list item style for question answers.
@@ -497,20 +497,20 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $tabslevel1 = [new \PhpOffice\PhpWord\Style\Tab('clear', 720),
             new \PhpOffice\PhpWord\Style\Tab('num', 360)];
     $level1->setTabs($tabslevel1);
-    $indentlevel1 = new \PhpOffice\PhpWord\Style\Indentation(array(
+    $indentlevel1 = new \PhpOffice\PhpWord\Style\Indentation([
             'left' => 360,
-            'hanging' => 360
-    ));
+            'hanging' => 360,
+    ]);
     $level1->setIndentation($indentlevel1);
 
     $level2 = new \PhpOffice\PhpWord\Style\Paragraph();
     $tabslevel2 = [new \PhpOffice\PhpWord\Style\Tab('left', 720),
             new \PhpOffice\PhpWord\Style\Tab('num', 720)];
     $level2->setTabs($tabslevel2);
-    $indentlevel2 = new \PhpOffice\PhpWord\Style\Indentation(array(
+    $indentlevel2 = new \PhpOffice\PhpWord\Style\Indentation([
             'left' => 720,
-            'hanging' => 360
-    ));
+            'hanging' => 360,
+    ]);
     $level2->setIndentation($indentlevel2);
 
     // Create the section that will be used for all outputs.
@@ -531,13 +531,13 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Add a header.
     $header = $section->addHeader();
-    $header->addText($title, array('size' => 10), 'cStyle' );
-    $header->addImage($CFG->dirroot . '/mod/offlinequiz/pix/line.png', array('width' => 600, 'height' => 5, 'align' => 'center'));
+    $header->addText($title, ['size' => 10], 'cStyle' );
+    $header->addImage($CFG->dirroot . '/mod/offlinequiz/pix/line.png', ['width' => 600, 'height' => 5, 'align' => 'center']);
 
     // Add a footer.
     $footer = $section->addFooter();
-    $footer->addImage($CFG->dirroot . '/mod/offlinequiz/pix/line.png', array('width' => 600, 'height' => 5, 'align' => 'center'));
-    $footer->addPreserveText($title . '  |  ' . get_string('page') . ' ' . '{PAGE} / {NUMPAGES}', null, array('align' => 'left'));
+    $footer->addImage($CFG->dirroot . '/mod/offlinequiz/pix/line.png', ['width' => 600, 'height' => 5, 'align' => 'center']);
+    $footer->addPreserveText($title . '  |  ' . get_string('page') . ' ' . '{PAGE} / {NUMPAGES}', null, ['align' => 'left']);
 
     // Print title page.
     if (!$correction) {
@@ -583,7 +583,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
              WHERE ogq.offlinequizid = :offlinequizid
                AND ogq.offlinegroupid = :offlinegroupid
           ORDER BY ogq.slot ASC ";
-    $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
+    $params = ['offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id];
 
     // Load the questions.
     $questions = $DB->get_records_sql($sql, $params);
@@ -608,10 +608,10 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     $texfilters = offlinequiz_get_math_filters($context);
     // Create the docx question numbering. This is only created once since we number all questions from 1...n.
-    $questionnumbering = $docx->addNumberingStyle('questionnumbering', ['type' => 'multilevel', 'levels' => array(
+    $questionnumbering = $docx->addNumberingStyle('questionnumbering', ['type' => 'multilevel', 'levels' => [
         ['format' => 'decimal', 'text' => '%1)',  'left' => 10, 'hanging' => 300, 'tabPos' => 10],
         ['format' => 'lowerLetter', 'text' => '%2)', 'left' => 10, 'hanging' => 10, 'tabPos' => 250],
-    )
+    ],
     ]);
 
     // If shufflequestions has been activated we go through the questions in the order determined by
@@ -662,7 +662,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     } else { // Not shufflequestions.
 
         // We have to compute the mapping  questionid -> slotnumber.
-        $questionslots = array();
+        $questionslots = [];
         foreach ($slots as $slot) {
             $questionslots[$templateusage->get_question($slot)->id] = $slot;
         }
@@ -752,13 +752,13 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
             $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
 
-    $fileinfo = array(
+    $fileinfo = [
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.docx');
+            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.docx'];
 
     // Delete existing old files, should actually not happen.
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
@@ -791,8 +791,8 @@ function offlinequiz_str_html_docx($input) {
 
     $output = strip_tags($output);
 
-    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
-    $replace = array('"', '&', '>', '<');
+    $search  = ['&quot;', '&amp;', '&gt;', '&lt;'];
+    $replace = ['"', '&', '>', '<'];
     $result = str_ireplace($search, $replace, $output);
 
     return $result;

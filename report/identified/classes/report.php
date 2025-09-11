@@ -17,7 +17,7 @@
 /**
  * Offlinequiz identified forms generator version info
  *
- * @package       mod_offlinequiz
+ * @package       offlinequiz_identified
  * @subpackage    report_identified
  * @author        Juan Pablo de Castro <juanpablo.decastro@uva.es>
  * @copyright     2023
@@ -27,19 +27,18 @@
  **/
 namespace offlinequiz_identified;
 use mod_offlinequiz\default_report;
-use \navigation_node;
-use \moodle_url;
-use \mod_offlinequiz\constants\offlinequiz_page;
+use navigation_node;
+use moodle_url;
+use mod_offlinequiz\constants\offlinequiz_page;
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Offlinequiz identified forms generator.
  */
-class report extends default_report
-{
+class report extends default_report {
 
-    public function display($offlinequiz, $cm, $course)
-    {
+
+    public function display($offlinequiz, $cm, $course) {
         global $CFG, $OUTPUT, $PAGE, $DB;
         $context = \context_module::instance($cm->id);
         require_once($CFG->dirroot . '/mod/offlinequiz/report/identified/locallib.php');
@@ -51,11 +50,11 @@ class report extends default_report
             $resultmsg = "";
             // Form processing and displaying is done here.
             if ($fromform = $mform->get_data()) {
-                $listid = isset($fromform->list)? $fromform->list : -1;
-                $groupid = $fromform->groupnumber+1;
+                $listid = isset($fromform->list) ? $fromform->list : -1;
+                $groupid = $fromform->groupnumber + 1;
                 $nogroupmark = isset($fromform->nogroupmark);
                 $onlyifaccess = isset($fromform->onlyifaccess) ? $fromform->onlyifaccess : false;
-                $list = $DB->get_record('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id, 'id' => $listid));
+                $list = $DB->get_record('offlinequiz_p_lists', ['offlinequizid' => $offlinequiz->id, 'id' => $listid]);
                 if ($list) {
                     raise_memory_limit(MEMORY_EXTRA);
                     if (offlinequiz_create_pdf_participants_answers($offlinequiz, $course->id, $groupid, $list, $context, $nogroupmark, $onlyifaccess)) {
@@ -72,7 +71,7 @@ class report extends default_report
 
         // Set anydefault data (if any).
         $mform->set_data($toform);
-       
+
         // Display Tabs.
         $this->print_header_and_tabs($cm, $course, $offlinequiz, 'identified');
         // Display the header.
@@ -92,18 +91,18 @@ class report extends default_report
             echo $OUTPUT->single_button($url, get_string('return', 'offlinequiz_identified'), 'get');
             // Display the description.
             // Url: participants.php?q=1&mode=editlists.
-            $url = new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'editlists', 'tabs'=>'tabattendances']);
+            $url = new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'editlists', 'tabs' => 'tabattendances']);
             echo $OUTPUT->box(get_string('identifiedreport', 'offlinequiz_identified', $url->out()), 'generalbox', 'intro');
             // Display the form.
             $mform->display();
         }
         return true;
     }
-   
+
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         return $navigation;
     }
-    public function get_active_tab ($url) {
+    public function get_active_tab($url) {
         if(strpos($url, '/mod/offlinequiz/report.php') && strpos($url, 'mode=identified')) {
             return 'mod_offlinequiz_edit';
         }

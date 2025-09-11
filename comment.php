@@ -18,7 +18,7 @@
  * This page allows the teacher to enter a manual grade for a particular question.
  * This page is expected to only be used in a popup window.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -32,16 +32,16 @@ require_once('locallib.php');
 $resultid = required_param('resultid', PARAM_INT); // Result ID.
 $slot = required_param('slot', PARAM_INT); // Question number in result.
 
-$PAGE->set_url('/mod/offlinequiz/comment.php', array('resultid' => $resultid, 'slot' => $slot));
+$PAGE->set_url('/mod/offlinequiz/comment.php', ['resultid' => $resultid, 'slot' => $slot]);
 
 // Get all the data from the DB.
-if (! $result = $DB->get_record("offlinequiz_results", array("id" => $resultid))) {
+if (! $result = $DB->get_record("offlinequiz_results", ["id" => $resultid])) {
     throw new \moodle_exception("No such result ID exists");
 }
-if (! $offlinequiz = $DB->get_record("offlinequiz", array("id" => $result->offlinequizid))) {
+if (! $offlinequiz = $DB->get_record("offlinequiz", ["id" => $result->offlinequizid])) {
     throw new \moodle_exception("The offlinequiz with id $result->offlinequiz belonging to result $result is missing");
 }
-if (! $course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
+if (! $course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
     throw new \moodle_exception("The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
 }
 if (! $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
@@ -87,16 +87,16 @@ if (data_submitted() && confirm_sesskey()) {
         $DB->update_record('offlinequiz_results', $result);
 
         // Log this action.
-        $params = array(
+        $params = [
             'objectid' => $slotquestion->id,
             'courseid' => $course->id,
             'context' => context_module::instance($cm->id),
-            'other' => array(
+            'other' => [
                 'offlinequizid' => $offlinequiz->id,
                 'resultid' => $result->id,
-                'slot' => $slot
-            )
-        );
+                'slot' => $slot,
+            ],
+        ];
         $event = \mod_offlinequiz\event\question_manually_graded::create($params);
         $event->trigger();
 

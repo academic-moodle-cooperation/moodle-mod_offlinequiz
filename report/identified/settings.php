@@ -17,7 +17,7 @@
 /**
  * Administration settings definitions for the offlinequiz module.
  *
- * @package       offlinequiz
+ * @package       offlinequiz_identified
  * @subpackage    identified
  * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
  * @copyright     2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}

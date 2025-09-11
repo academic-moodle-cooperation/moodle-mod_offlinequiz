@@ -18,10 +18,10 @@ namespace mod_offlinequiz\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\metadata\collection;
+use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\contextlist;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\contextlist;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\approved_userlist;
 
@@ -36,7 +36,7 @@ class provider implements
 \core_privacy\local\request\user_preference_provider,
 // This plugin implements the userlist-provider.
 \core_privacy\local\request\core_userlist_provider {
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         $collection->link_subsystem('core_files', 'privacy:metadata:core_files');
         $collection->link_subsystem('core_question', 'privacy:metadata:core_question');
@@ -67,7 +67,7 @@ class provider implements
          'showgrades' => 'privacy:metadata:offlinequiz:showgrades',
          'showtutorial' => 'privacy:metadata:offlinequiz:showtutorial',
          'id_digits' => 'privacy:metadata:offlinequiz:id_digits',
-         'disableimgnewlines' => 'privacy:metadata:offlinequiz:disableimgnewlines'
+         'disableimgnewlines' => 'privacy:metadata:offlinequiz:disableimgnewlines',
           ],
           'privacy:metadata:offlinequiz'
           );
@@ -78,7 +78,7 @@ class provider implements
          'scannedpageid' => 'privacy:metadata:offlinequiz_choices:scannedpageid',
          'slotnumber' => 'privacy:metadata:offlinequiz_choices:slotnumber',
          'choicenumber' => 'privacy:metadata:offlinequiz_choices:choicenumber',
-         'value' => 'privacy:metadata:offlinequiz_choices:value'
+         'value' => 'privacy:metadata:offlinequiz_choices:value',
           ],
           'privacy:metadata:offlinequiz_choices'
           );
@@ -92,7 +92,7 @@ class provider implements
          'position' => 'privacy:metadata:offlinequiz_group_questions:position',
          'page' => 'privacy:metadata:offlinequiz_group_questions:page',
          'slot' => 'privacy:metadata:offlinequiz_group_questions:slot',
-         'maxmark' => 'privacy:metadata:offlinequiz_group_questions:maxmark'
+         'maxmark' => 'privacy:metadata:offlinequiz_group_questions:maxmark',
           ],
           'privacy:metadata:offlinequiz_group_questions'
           );
@@ -107,7 +107,7 @@ class provider implements
          'templateusageid' => 'privacy:metadata:offlinequiz_groups:templateusageid',
          'qestionfilename' => 'privacy:metadata:offlinequiz_groups:questionfilename',
          'answerfilename' => 'privacy:metadata:offlinequiz_groups:answerfilename',
-         'correctionfilename' => 'privacy:metadata:offlinequiz_groups:correctionfilename'
+         'correctionfilename' => 'privacy:metadata:offlinequiz_groups:correctionfilename',
           ],
           'privacy:metadata:offlinequiz_groups'
           );
@@ -120,7 +120,7 @@ class provider implements
          'x' => 'privacy:metadata:offlinequiz_hotspots:x',
          'y' => 'privacy:metadata:offlinequiz_hotspots:y',
          'blank' => 'privacy:metadata:offlinequiz_hotspots:blank',
-         'time' => 'privacy:metadata:offlinequiz_hotspots:time'
+         'time' => 'privacy:metadata:offlinequiz_hotspots:time',
           ],
           'privacy:metadata:offlinequiz_hotspots'
           );
@@ -131,7 +131,7 @@ class provider implements
          'scannedpageid' => 'privacy:metadata:offlinequiz_page_corners:scannedpageid',
          'x' => 'privacy:metadata:offlinequiz_page_corners:x',
          'y' => 'privacy:metadata:offlinequiz_page_corners:y',
-         'position' => 'privacy:metadata:offlinequiz_page_corners:position'
+         'position' => 'privacy:metadata:offlinequiz_page_corners:position',
           ],
           'privacy:metadata:offlinequiz_page_corners'
           );
@@ -141,7 +141,7 @@ class provider implements
           [
          'listid' => 'privacy:metadata:offlinequiz_participants:listid',
          'userid' => 'privacy:metadata:offlinequiz_participants:userid',
-         'checked' => 'privacy:metadata:offlinequiz_participants:checked'
+         'checked' => 'privacy:metadata:offlinequiz_participants:checked',
           ],
           'privacy:metadata:offlinequiz_participants'
           );
@@ -151,7 +151,7 @@ class provider implements
           [
          'scannedpageid' => 'privacy:metadata:offlinequiz_p_choices:scannedpageid',
          'userid' => 'privacy:metadata:offlinequiz_p_choices:userid',
-         'value' => 'privacy:metadata:offlinequiz_p_choices:value'
+         'value' => 'privacy:metadata:offlinequiz_p_choices:value',
           ],
           'privacy:metadata:offlinequiz_p_choices'
           );
@@ -162,7 +162,7 @@ class provider implements
          'offlinequizid' => 'privacy:metadata:offlinequiz_p_lists:offlinequizid',
          'name' => 'privacy:metadata:offlinequiz_p_lists:name',
          'listnumber' => 'privacy:metadata:offlinequiz_p_lists:number',
-         'filename' => 'privacy:metadata:offlinequiz_p_lists:filename'
+         'filename' => 'privacy:metadata:offlinequiz_p_lists:filename',
           ],
           'privacy:metadata:offlinequiz_p_lists'
           );
@@ -175,7 +175,7 @@ class provider implements
          'timecreated' => 'privacy:metadata:offlinequiz_queue:timecreated',
          'timestart' => 'privacy:metadata:offlinequiz_queue:timestart',
          'timefinish' => 'privacy:metadata:offlinequiz_queue:timefinish',
-         'status' => 'privacy:metadata:offlinequiz_queue:status'
+         'status' => 'privacy:metadata:offlinequiz_queue:status',
           ],
           'privacy:metadata:offlinequiz_queue'
           );
@@ -186,7 +186,7 @@ class provider implements
          'queueid' => 'privacy:metadata:offlinequiz_queue_data:queueid',
          'filename' => 'privacy:metadata:offlinequiz_queue_data:filename',
          'status' => 'privacy:metadata:offlinequiz_queue_data:status',
-         'error' => 'privacy:metadata:offlinequiz_queue_data:error'
+         'error' => 'privacy:metadata:offlinequiz_queue_data:error',
           ],
           'privacy:metadata:offlinequiz_queue_data'
           );
@@ -203,7 +203,7 @@ class provider implements
          'status' => 'privacy:metadata:offlinequiz_results:status',
          'timestart' => 'privacy:metadata:offlinequiz_results:timestart',
          'timefinish' => 'privacy:metadata:offlinequiz_results:timefinish',
-         'timemodified' => 'privacy:metadata:offlinequiz_results:timemodified'
+         'timemodified' => 'privacy:metadata:offlinequiz_results:timemodified',
           ],
           'privacy:metadata:offlinequiz_results'
           );
@@ -220,7 +220,7 @@ class provider implements
          'pagenumber' => 'privacy:metadata:offlinequiz_scanned_pages:pagenumber',
          'time' => 'privacy:metadata:offlinequiz_scanned_pages:time',
          'status' => 'privacy:metadata:offlinequiz_scanned_pages:status',
-         'error' => 'privacy:metadata:offlinequiz_scanned_pages:error'
+         'error' => 'privacy:metadata:offlinequiz_scanned_pages:error',
           ],
           'privacy:metadata:offlinequiz_scanned_pages'
           );
@@ -233,7 +233,7 @@ class provider implements
          'filename' => 'privacy:metadata:offlinequiz_scanned_p_pages:filename',
          'time' => 'privacy:metadata:offlinequiz_scanned_p_pages:time',
          'status' => 'privacy:metadata:offlinequiz_scanned_p_pages:status',
-         'error' => 'privacy:metadata:offlinequiz_scanned_p_pages:error'
+         'error' => 'privacy:metadata:offlinequiz_scanned_p_pages:error',
           ],
           'privacy:metadata:offlinequiz_scanned_p_pages'
           );
@@ -249,7 +249,7 @@ class provider implements
      * @param int $userid the userid.
      * @return contextlist the list of contexts containing user info for the user.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         global $DB;
         $columns = $DB->get_columns("user");
         $offlinequizconfig = get_config('offlinequiz');
@@ -292,7 +292,7 @@ class provider implements
           'participantsuserid'        => $userid,
           'choiceuserid'              => $userid,
           'queueuserid'               => $userid,
-          'scannedpageuserid'         => $userid
+          'scannedpageuserid'         => $userid,
         ];
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
@@ -355,7 +355,7 @@ class provider implements
                 'participantsuserid'        => $user->id,
                 'choiceuserid'              => $user->id,
                 'queueuserid'               => $user->id,
-                'scannedpageuserid'         => $user->id
+                'scannedpageuserid'         => $user->id,
         ] + $contextparams;
 
         $offlinequizes = $DB->get_records_sql($sql, $params);
@@ -617,12 +617,12 @@ class provider implements
             // A Module without course? Something that should never happen better do nothing!
             return;
         }
-        $sql= "SELECT u.*
+        $sql = "SELECT u.*
                  FROM {user} u
            INNER JOIN {role_assignments} ra ON ra.userid = u.id
            INNER JOIN {context} ct ON ct.id = ra.contextid AND ct.contextlevel = 50
                 WHERE ct.instanceid = :courseid";
-        $users = $DB->get_records_sql($sql,['courseid' => $course->id]);
+        $users = $DB->get_records_sql($sql, ['courseid' => $course->id]);
         foreach ($users as $user) {
             static::delete_data_for_user_in_offlinequiz($cm->instance, $user);
         }

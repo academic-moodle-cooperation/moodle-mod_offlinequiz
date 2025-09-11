@@ -26,19 +26,19 @@ namespace mod_offlinequiz\question\bank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class preview_action_column extends \core_question\local\bank\column_base {
-    
+
     public function get_extra_classes(): array {
         return ['iconcol'];
     }
-    
+
     public function get_title(): string {
         return '&#160;';
     }
-    
+
     public function get_name() {
         return 'previewquestionaction';
     }
-    
+
     protected function display_content($question, $rowclasses) {
         global $PAGE;
         if (!question_has_capability_on($question, 'use')) {

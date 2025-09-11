@@ -20,7 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * puts all PhpWord dependencies to the autoload from PHP
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind
  * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}

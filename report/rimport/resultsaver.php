@@ -17,7 +17,7 @@
 /**
  * The results import report for offlinequizzes
  *
- * @package       mod
+ * @package       offlinequiz_rimport
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind
  * @copyright     2017 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -47,7 +47,7 @@ class offlinequiz_resultsaver {
                 AND   p1.offlinequizid = p2.offlinequizid
                 AND   p1.userkey = p2.userkey
                 AND   (p1.status = 'ok' OR p1.status = 'submitted') ";
-        $scannedpages = $DB->get_records_sql($sql, array('scannedpageid' => $scannedpageid));
+        $scannedpages = $DB->get_records_sql($sql, ['scannedpageid' => $scannedpageid]);
         // TODO check, if page with same page and userky, but other scannedpageid exists.
 
         if (!$scannedpages || !$scannedpages[$scannedpageid]) {
@@ -71,7 +71,7 @@ class offlinequiz_resultsaver {
         // TODO what happens with differend group versions?
         $scannedpage = $scannedpages[$scannedpageid];
 
-        $conditions = array('groupnumber' => $scannedpage->groupnumber, 'offlinequizid' => $scannedpage->offlinequizid);
+        $conditions = ['groupnumber' => $scannedpage->groupnumber, 'offlinequizid' => $scannedpage->offlinequizid];
         $group = $DB->get_record('offlinequiz_groups', $conditions);
 
         $scannedpageids = array_keys($scannedpages);
@@ -138,8 +138,8 @@ class offlinequiz_resultsaver {
                        AND offlinegroupid = :offlinegroupid";
 
         $qinstances = $DB->get_records_sql($sql,
-                array('offlinequizid' => $offlinequizid,
-                        'offlinegroupid' => $groupid));
+                ['offlinequizid' => $offlinequizid,
+                        'offlinegroupid' => $groupid]);
 
         // Clone it...
         $quba = $templateusage->get_clone($qinstances);
@@ -148,7 +148,7 @@ class offlinequiz_resultsaver {
         question_engine::save_questions_usage_by_activity($quba);
 }
 
-private function results_have_same_crosses ($scannedpageid1, $scannedpageid2) {
+private function results_have_same_crosses($scannedpageid1, $scannedpageid2) {
 
     global $DB;
     $sql = "SELECT 1
@@ -177,7 +177,7 @@ private function submit_scanned_page_to_result($quba, $scannedpage) {
 
     $offlinequizconfig = get_config('offlinequiz');
 
-    $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid));
+    $result = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid]);
     $quba = question_engine::load_questions_usage_by_activity($result->usageid);
     $slots = $quba->get_slots();
     $choicesdata = $this->get_choices_data($scannedpage);
@@ -190,7 +190,7 @@ private function submit_scanned_page_to_result($quba, $scannedpage) {
         $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
         $count = 0;
-        $response = array();
+        $response = [];
 
         // Go through all answers of the slot question.
         foreach ($order as $key => $notused) {

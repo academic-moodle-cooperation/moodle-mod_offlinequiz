@@ -82,8 +82,8 @@ class docs_created extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/offlinequiz/createquiz.php', array('id' => $this->contextinstanceid,
-            'mode' => $this->other['reportname']));
+        return new \moodle_url('/mod/offlinequiz/createquiz.php', ['id' => $this->contextinstanceid,
+            'mode' => $this->other['reportname']]);
     }
 
     /**

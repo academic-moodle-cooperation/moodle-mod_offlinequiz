@@ -13,10 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * The script for correcting errors in scanned participant lists
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -35,19 +36,19 @@ $pageid     = optional_param('pageid', 0, PARAM_INT);
 $action     = optional_param('action', 'load', PARAM_TEXT);
 $listchosen = optional_param('listchosen', 0, PARAM_INT);
 
-if (!$scannedpage = $DB->get_record('offlinequiz_scanned_p_pages', array('id' => $pageid))) {
+if (!$scannedpage = $DB->get_record('offlinequiz_scanned_p_pages', ['id' => $pageid])) {
     throw new \moodle_exception('noscannedpage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, $pageid);
 }
 
-if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $scannedpage->offlinequizid))) {
+if (!$offlinequiz = $DB->get_record('offlinequiz', ['id' => $scannedpage->offlinequizid])) {
     throw new \moodle_exception('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course,
                 $scannedpage->offlinequizid);
 }
 
-if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
+if (!$course = $DB->get_record('course', ['id' => $offlinequiz->course])) {
     throw new \moodle_exception('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course,
-                array('course' => $offlinequiz->course,
-                      'offlinequiz' => $offlinequiz->id));
+                ['course' => $offlinequiz->course,
+                      'offlinequiz' => $offlinequiz->id]);
 }
 if (!$cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $course->id)) {
     throw new \moodle_exception('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, $offlinequiz->id);
@@ -65,7 +66,7 @@ $coursecontext = context_course::instance($course->id);
 require_capability('mod/offlinequiz:viewreports', $context);
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
-$url = new moodle_url('/mod/offlinequiz/participants_correct.php', array('pageid' => $scannedpage->id));
+$url = new moodle_url('/mod/offlinequiz/participants_correct.php', ['pageid' => $scannedpage->id]);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
@@ -89,7 +90,7 @@ echo "</style>\n";
 
 // Initialise a page scanner.
 $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
-$corners = array();
+$corners = [];
 $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners);
 $scanner->get_list();
 
@@ -142,7 +143,7 @@ if ($action == 'cancel') {
 
     // Initialise a new page scanner.
     $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
-    $sheetloaded = $scanner->load_stored_image($scannedpage->filename, array($upperleft, $upperright, $lowerleft, $lowerright));
+    $sheetloaded = $scanner->load_stored_image($scannedpage->filename, [$upperleft, $upperright, $lowerleft, $lowerright]);
     // The following calibrates the scanner.
     $scanner->get_list();
 
@@ -156,7 +157,7 @@ if ($action == 'cancel') {
     $scannedpage->status = 'ok';
     $scannedpage->error = '';
 
-    if ($list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid))) {
+    if ($list = $DB->get_record('offlinequiz_p_lists', ['id' => $listid])) {
         $scannedpage->listnumber = intval($list->listnumber);
     }
 
@@ -174,7 +175,7 @@ if ($action == 'cancel') {
         $scannedpage->status = 'ok';
         $scannedpage->error = '';
         $listid = required_param('listid', PARAM_INT);
-        $list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid));
+        $list = $DB->get_record('offlinequiz_p_lists', ['id' => $listid]);
         $scannedpage->listnumber = intval($list->listnumber);
         $listnumber = $list->listnumber;
 
@@ -184,7 +185,7 @@ if ($action == 'cancel') {
         // Initialise a new page scanner.
         $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
         $sheetloaded = $scanner->load_stored_image($scannedpage->filename,
-                                                   array($upperleft, $upperright, $lowerleft, $lowerright));
+                                                   [$upperleft, $upperright, $lowerleft, $lowerright]);
 
         // The following calibrates the scanner.
         $scanner->get_list();
@@ -204,7 +205,7 @@ if ($action == 'cancel') {
     $corners  = new mod_offlinequiz_corners($upperleft, $upperright, $lowerleft, $lowerright);
     $offlinequizconfig->papergray = $offlinequiz->papergray;
 
-    $cornersarray = array($upperleft, $upperright, $lowerleft, $lowerright);
+    $cornersarray = [$upperleft, $upperright, $lowerleft, $lowerright];
 
     // Create a completely new scanner and load the image with the submitted corners.
     $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
@@ -222,7 +223,7 @@ if ($action == 'cancel') {
     if (!$listid) {
         $listnumber = $scannedpage->listnumber;
     } else if (!$listchosen) {
-        $list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid));
+        $list = $DB->get_record('offlinequiz_p_lists', ['id' => $listid]);
         $scannedpage->listnumber = intval($list->listnumber);
         $listnumber = $list->listnumber;
     }
@@ -257,7 +258,7 @@ onClick=\"self.close(); return false;\"><br />";
 
         // Load the stored picture file.
         $sheetloaded = $scanner->load_stored_image($scannedpage->filename,
-                                                   array($upperleft, $upperright, $lowerleft, $lowerright));
+                                                   [$upperleft, $upperright, $lowerleft, $lowerright]);
         // The following calibrates the scanner.
         $scanner->get_list();
         $participants = $scanner->get_participants();
@@ -274,7 +275,7 @@ onClick=\"self.close(); return false;\"><br />";
     if (!$listid) {
         $listnumber = $scannedpage->listnumber;
     } else {
-        $list = $DB->get_record('offlinequiz_p_lists', array('id' => $listid));
+        $list = $DB->get_record('offlinequiz_p_lists', ['id' => $listid]);
         $scannedpage->listnumber = intval($list->listnumber);
         $scannedpage->status = 'ok';
         $scannedpage->error = '';
@@ -287,7 +288,7 @@ $scannedpage = offlinequiz_check_scanned_participants_page($offlinequiz, $scanne
 
 $listnumber = $scannedpage->listnumber;
 if ($listnumber > 0) {
-    $list = $DB->get_record('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id, 'listnumber' => $listnumber));
+    $list = $DB->get_record('offlinequiz_p_lists', ['offlinequizid' => $offlinequiz->id, 'listnumber' => $listnumber]);
 }
 
 $participants = $scanner->get_participants();
@@ -301,10 +302,10 @@ if ($action == 'update') {
     @raise_memory_limit('128M');
     set_time_limit(120);
     $OUTPUT->box_start();
-    $dbparticipants = $DB->get_records('offlinequiz_p_choices', array('scannedppageid' => $scannedpage->id));
+    $dbparticipants = $DB->get_records('offlinequiz_p_choices', ['scannedppageid' => $scannedpage->id]);
 
     // Compute the db data indexed by userid.
-    $dbdata = array();
+    $dbdata = [];
     foreach ($dbparticipants as $data) {
         $dbdata[$data->userid] = $data;
     }
@@ -329,16 +330,16 @@ if ($action == 'update') {
         if ($value == 'marked') {
             $dbdata[$userid[$key]]->value = 1;
             $DB->set_field('offlinequiz_p_choices', 'value', 1,
-                    array('scannedppageid' => $scannedpage->id, 'userid' => $userid[$key]));
+                    ['scannedppageid' => $scannedpage->id, 'userid' => $userid[$key]]);
         } else if ($value == 'empty') {
             $dbdata[$userid[$key]]->value = 0;
             $DB->set_field('offlinequiz_p_choices', 'value', 0,
-                    array('scannedppageid' => $scannedpage->id, 'userid' => $userid[$key]));
+                    ['scannedppageid' => $scannedpage->id, 'userid' => $userid[$key]]);
         } else {
             // Should not happen because we can only save the page when all checkboxes are either empty or marked.
             $dbdata[$userid[$key]]->value = -1;
             $DB->set_field('offlinequiz_p_choices', 'value', -1,
-                    array('scannedppageid' => $scannedpage->id, 'userid' => $userid[$key]));
+                    ['scannedppageid' => $scannedpage->id, 'userid' => $userid[$key]]);
             $insecuremarkings = true;
         }
     }
@@ -349,7 +350,7 @@ if ($action == 'update') {
         echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head><body>';
         if ($scannedpage->status == 'submitted') {
             echo get_string('pageimported', 'offlinequiz')."<br /><br />";
-            $DB->set_field('offlinequiz_scanned_p_pages', 'error', '', array('id' => $pageid));
+            $DB->set_field('offlinequiz_scanned_p_pages', 'error', '', ['id' => $pageid]);
         } else {
             echo get_string('couldnotimportpage', 'offlinequiz')."<br /><br />";
             $scannedpage->status = 'error';
@@ -564,7 +565,7 @@ if ($scannedpage->error == 'invalidlistnumber' && !$scanner->ontop && !$listchos
     echo "<select class=\"imagebutton\" name=\"listid\" onchange=\"set_list(this.value); true;\">\n";
 
     echo '<option value="0">'.get_string('choose').'...</option>';
-    if ($lists = $DB->get_records('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id), 'name ASC')) {
+    if ($lists = $DB->get_records('offlinequiz_p_lists', ['offlinequizid' => $offlinequiz->id], 'name ASC')) {
         foreach ($lists as $item) {
             echo '<option value="' .  $item->id . '">' . $item->name . '</option>';
         }

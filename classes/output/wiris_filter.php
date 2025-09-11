@@ -82,7 +82,7 @@ class wiris_filter extends \core_filters\text_filter {
             $text
         );
 
-        $text =  $this->subfilter->filter($text, $options);
+        $text = $this->subfilter->filter($text, $options);
 
         return $text;
     }

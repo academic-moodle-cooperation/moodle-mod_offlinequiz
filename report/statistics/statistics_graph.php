@@ -42,9 +42,9 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/reportlib.php');
  */
 function graph_get_new_colour() {
     static $colourindex = -1;
-    $colours = array('red', 'green', 'yellow', 'orange', 'purple', 'black',
+    $colours = ['red', 'green', 'yellow', 'orange', 'purple', 'black',
             'maroon', 'blue', 'ltgreen', 'navy', 'ltred', 'ltltgreen', 'ltltorange',
-            'olive', 'gray', 'ltltred', 'ltorange', 'lime', 'ltblue', 'ltltblue');
+            'olive', 'gray', 'ltltred', 'ltorange', 'lime', 'ltblue', 'ltltblue'];
 
     $colourindex = ($colourindex + 1) % count($colours);
 
@@ -56,8 +56,8 @@ $offlinequizstatisticsid = required_param('id', PARAM_INT);
 $groupnumber = optional_param('group', -1, PARAM_INT);
 
 // Load enough data to check permissions.
-$offlinequizstatistics = $DB->get_record('offlinequiz_statistics', array('id' => $offlinequizstatisticsid));
-$offlinequiz = $DB->get_record('offlinequiz', array('id' => $offlinequizstatistics->offlinequizid), '*', MUST_EXIST);
+$offlinequizstatistics = $DB->get_record('offlinequiz_statistics', ['id' => $offlinequizstatisticsid]);
+$offlinequiz = $DB->get_record('offlinequiz', ['id' => $offlinequizstatistics->offlinequizid], '*', MUST_EXIST);
 
 if ($groupnumber > 0) {
     if ($offlinegroup = offlinequiz_get_group($offlinequiz, $groupnumber)) {
@@ -74,7 +74,7 @@ if ($groupnumber > 0) {
               FROM {offlinequiz_group_questions}
              WHERE offlinequizid = :offlinequizid";
 
-    $questionids = $DB->get_fieldset_sql($sql, array('offlinequizid' => $offlinequiz->id));
+    $questionids = $DB->get_fieldset_sql($sql, ['offlinequizid' => $offlinequiz->id]);
     $offlinequiz->questions = $questionids;
 }
 
@@ -88,7 +88,7 @@ require_capability('offlinequiz/statistics:view', $modcontext);
 if (groups_get_activity_groupmode($cm)) {
     $groups = groups_get_activity_allowed_groups($cm);
 } else {
-    $groups = array();
+    $groups = [];
 }
 if ($offlinequizstatistics->groupid && !in_array($offlinequizstatistics->groupid, array_keys($groups))) {
     throw new \moodle_exception('groupnotamember', 'group');
@@ -97,7 +97,7 @@ if ($offlinequizstatistics->groupid && !in_array($offlinequizstatistics->groupid
 // Load the rest of the required data.
 $questions = offlinequiz_report_get_significant_questions($offlinequiz);
 $questionstatistics = $DB->get_records_select('offlinequiz_q_statistics',
-        'offlinequizstatisticsid = ? AND slot IS NOT NULL', array($offlinequizstatistics->id));
+        'offlinequizstatisticsid = ? AND slot IS NOT NULL', [$offlinequizstatistics->id]);
 
 // Create the graph, and set the basic options.
 $graph = new graph(800, 600);
@@ -118,22 +118,22 @@ $graph->parameter['bar_size'] = 1;
 $graph->parameter['zero_axis'] = 'grayEE';
 
 // Configure what to display.
-$fieldstoplot = array(
+$fieldstoplot = [
     'facility' => get_string('facility', 'offlinequiz_statistics'),
-    'discriminativeefficiency' => get_string('discriminative_efficiency', 'offlinequiz_statistics')
-);
-$fieldstoplotfactor = array('facility' => 100, 'discriminativeefficiency' => 1);
+    'discriminativeefficiency' => get_string('discriminative_efficiency', 'offlinequiz_statistics'),
+];
+$fieldstoplotfactor = ['facility' => 100, 'discriminativeefficiency' => 1];
 
 // Prepare the arrays to hold the data.
-$xdata = array();
+$xdata = [];
 foreach (array_keys($fieldstoplot) as $fieldtoplot) {
-    $ydata[$fieldtoplot] = array();
-    $graph->y_format[$fieldtoplot] = array(
+    $ydata[$fieldtoplot] = [];
+    $graph->y_format[$fieldtoplot] = [
         'colour' => graph_get_new_colour(),
         'bar' => 'fill',
         'shadow_offset' => 1,
-        'legend' => $fieldstoplot[$fieldtoplot]
-    );
+        'legend' => $fieldstoplot[$fieldtoplot],
+    ];
 }
 
 // Fill in the data for each question.

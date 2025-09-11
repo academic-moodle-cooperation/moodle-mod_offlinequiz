@@ -51,7 +51,7 @@ class submit_question_version extends external_api {
             [
                 'slotid' => new external_value(PARAM_INT, ''),
                 'newversion' => new external_value(PARAM_INT, ''),
-                'canbeedited' => new external_value(PARAM_BOOL, '')
+                'canbeedited' => new external_value(PARAM_BOOL, ''),
             ]
         );
     }
@@ -69,7 +69,7 @@ class submit_question_version extends external_api {
         $params = [
             'slotid' => $slotid,
             'newversion' => $newversion,
-            'canbeedited' => $canbeedited
+            'canbeedited' => $canbeedited,
         ];
         $params = self::validate_parameters(self::execute_parameters(), $params);
         $response = ['result' => false];
@@ -127,7 +127,7 @@ class submit_question_version extends external_api {
             if ($response['result']) {
                 $response['result'] = $DB->update_record('question_references', $reference);
             }
-            \offlinequiz_update_question_instance($offlinequiz,$context->id, $oldquestionid, $slotdata->maxmark, $newquestionid);
+            \offlinequiz_update_question_instance($offlinequiz, $context->id, $oldquestionid, $slotdata->maxmark, $newquestionid);
 
             if ($canbeedited) {
                 // Regenerates question usages.
@@ -148,7 +148,7 @@ class submit_question_version extends external_api {
         return new external_single_structure(
             [
                 'result' => new external_value(PARAM_BOOL, ''),
-                'answersdiffer' => new external_value(PARAM_BOOL)
+                'answersdiffer' => new external_value(PARAM_BOOL),
             ]
         );
     }

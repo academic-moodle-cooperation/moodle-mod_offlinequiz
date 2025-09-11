@@ -17,7 +17,7 @@
 /**
  * This is the settingslib for the offlinequiz admin settings
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -44,7 +44,7 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
     const AFTER_CLOSE = 0x00010;
 
     /**
-     * @var boolean|null forced checked / disabled attributes for the during time.
+     * @var bool|null forced checked / disabled attributes for the during time.
      */
     protected $duringstate;
 
@@ -54,7 +54,7 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
      * @return array
      */
     public static function fields() {
-        return array(
+        return [
                 'attempt' => get_string('theattempt', 'offlinequiz'),
                 'correctness' => get_string('whethercorrect', 'question'),
                 'marks' => get_string('marks', 'offlinequiz'),
@@ -62,8 +62,8 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
                 'generalfeedback' => get_string('generalfeedback', 'question'),
                 'rightanswer' => get_string('rightanswer', 'question'),
                 'sheet' => get_string('scannedform', 'offlinequiz'),
-                'gradedsheet' => get_string('gradedscannedform', 'offlinequiz')
-                );
+                'gradedsheet' => get_string('gradedscannedform', 'offlinequiz'),
+                ];
     }
 
     /**
@@ -88,9 +88,9 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
     }
 
     protected static function times() {
-        return array(
-                self::AFTER_CLOSE => ''
-        );
+        return [
+                self::AFTER_CLOSE => '',
+        ];
     }
 
     /**
@@ -197,7 +197,7 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
         if ($valid) {
              require_once($CFG->dirroot . "/mod/offlinequiz/locallib.php");
 
-             $matches = array();
+             $matches = [];
             if (preg_match(OFFLINEQUIZ_USER_FORMULA_REGEXP, $data, $matches)) {
                 $prefix = $matches[1];
                 $digits = intval($matches[2]);

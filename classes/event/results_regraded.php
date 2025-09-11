@@ -77,7 +77,7 @@ class results_regraded extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/offlinequiz/report.php', array('id' => $this->objectid, 'mode' => 'regrade'));
+        return new \moodle_url('/mod/offlinequiz/report.php', ['id' => $this->objectid, 'mode' => 'regrade']);
     }
 
     /**

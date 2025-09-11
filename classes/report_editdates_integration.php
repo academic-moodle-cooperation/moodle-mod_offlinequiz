@@ -29,7 +29,7 @@ class mod_offlinequiz_report_editdates_integration
 
     public function get_settings(cm_info $cm) {
         $offlinequiz = $this->mods[$cm->instance];
-        return array('time'      => new report_editdates_date_setting(
+        return ['time'      => new report_editdates_date_setting(
                                         get_string('quizdate', 'offlinequiz'),
                                         $offlinequiz->time, self::DATETIME, true, 1),
                      'timeopen'  => new report_editdates_date_setting(
@@ -37,12 +37,12 @@ class mod_offlinequiz_report_editdates_integration
                                         $offlinequiz->timeopen, self::DATETIME, true, 1),
                      'timeclose' => new report_editdates_date_setting(
                                         get_string('reviewcloses', 'offlinequiz'),
-                                        $offlinequiz->timeclose, self::DATETIME, true, 1)
-        );
+                                        $offlinequiz->timeclose, self::DATETIME, true, 1),
+        ];
     }
 
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
+        $errors = [];
         if ($dates['timeopen'] != 0 && $dates['timeclose'] != 0
                 && $dates['timeclose'] < $dates['timeopen']) {
             $errors['timeclose'] = get_string('closebeforeopen', 'offlinequiz');

@@ -17,7 +17,7 @@
 /**
  * Creates the PDF forms for offlinequizzes
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2012 University of Vienna
@@ -28,10 +28,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 class offlinequiz_html_translator {
-    private $tempfiles = array();
+    private $tempfiles = [];
 
     public function __construct() {
-        $this->tempfiles = array();
+        $this->tempfiles = [];
     }
 
     /**
@@ -61,7 +61,7 @@ class offlinequiz_html_translator {
 
             $imagetag = substr($string, 0, strpos($string, '>'));
             $attributestrings = explode(' ', $imagetag);
-            $attributes = array();
+            $attributes = [];
             foreach ($attributestrings as $attributestring) {
                 $valuepair = explode('=', $attributestring);
                 if (count($valuepair) > 1 && strlen(trim($valuepair[0])) > 0) {
@@ -115,20 +115,20 @@ class offlinequiz_html_translator {
                     $teximagefile = $CFG->dataroot . '/filter/tex/' . $parts[1];
                     if (!file_exists($teximagefile)) {
                         // Create the TeX image if it does not exist yet.
-                        $convertformat = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                                'name' => 'convertformat'));
+                        $convertformat = $DB->get_field('config_plugins', 'value', ['plugin' => 'filter_tex',
+                                'name' => 'convertformat']);
                         $md5 = str_replace(".{$convertformat}", '', $parts[1]);
-                        if ($texcache = $DB->get_record('cache_filters', array('filter' => 'tex', 'md5key' => $md5))) {
+                        if ($texcache = $DB->get_record('cache_filters', ['filter' => 'tex', 'md5key' => $md5])) {
                             if (!file_exists($CFG->dataroot . '/filter/tex')) {
                                 make_upload_directory('filter/tex');
                             }
 
                             // Try and render with latex first.
                             $latex = new latex();
-                            $density = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                                'name' => 'density'));
-                            $background = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                                'name' => 'latexbackground'));
+                            $density = $DB->get_field('config_plugins', 'value', ['plugin' => 'filter_tex',
+                                'name' => 'density']);
+                            $background = $DB->get_field('config_plugins', 'value', ['plugin' => 'filter_tex',
+                                'name' => 'latexbackground']);
                             $texexp = $texcache->rawtext; // The entities are now decoded before inserting to DB.
                             $latexpath = $latex->render($texexp, $md5, 12, $density, $background);
                             if ($latexpath) {
@@ -168,8 +168,8 @@ class offlinequiz_html_translator {
                         $imageinfo = getimagesize($file);
                         $filewidth  = $imageinfo[0];
                         $fileheight = $imageinfo[1];
-                        $pathconvert = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                                          'name' => 'pathconvert'));
+                        $pathconvert = $DB->get_field('config_plugins', 'value', ['plugin' => 'filter_tex',
+                                          'name' => 'pathconvert']);
 
                         if (file_exists($pathconvert)) {
                             $newfile = $CFG->tempdir . "/offlinequiz/" . $unique . '_c.png';

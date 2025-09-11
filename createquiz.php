@@ -18,7 +18,7 @@
  * Creates DB-entries and PDF forms for offlinequizzes
  *
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -78,13 +78,13 @@ if ($node = $PAGE->settingsnav->find('mod_offlinequiz_createquiz', navigation_no
 
 if (!$groups = $DB->get_records(
     'offlinequiz_groups',
-    array('offlinequizid' => $offlinequiz->id),
+    ['offlinequizid' => $offlinequiz->id],
     'groupnumber',
     '*',
     0,
     $offlinequiz->numgroups
 )) {
-    throw new \moodle_exception('There are no offlinequiz groups', 'mod_offlinequiz',new moodle_url('/mod/offlinequiz/edit.php', ['q' => $offlinequiz->id, 'sesskey' => sesskey()]));
+    throw new \moodle_exception('There are no offlinequiz groups', 'mod_offlinequiz', new moodle_url('/mod/offlinequiz/edit.php', ['q' => $offlinequiz->id, 'sesskey' => sesskey()]));
 }
 
 // Redmine 2131: Handle download all before any HTML output is produced.
@@ -103,11 +103,11 @@ if ($downloadall && $offlinequiz->docscreated) {
     );
 
 
-    $shortname = $DB->get_field('course', 'shortname', array('id' => $offlinequiz->course));
+    $shortname = $DB->get_field('course', 'shortname', ['id' => $offlinequiz->course]);
     $zipfilename = clean_filename($shortname . '_' . $offlinequiz->name . '_' . $timestamp . '.zip');
     $zipfilename = str_replace(' ', '_', $zipfilename);
     $tempzip = tempnam($CFG->tempdir . '/', 'offlinequizzip');
-    $filelist = array();
+    $filelist = [];
 
     $questionpath = clean_filename(get_string('questionforms', 'offlinequiz'));
     $answerpath = clean_filename(get_string('answerforms', 'offlinequiz'));
@@ -142,7 +142,7 @@ if ($forcepdfnew) {
         throw new \moodle_exception(
             'Some answer forms have already been analysed',
             'mod_offlinequiz',
-            new moodle_url('/mod/offlinequiz/createquiz.php' ,['q' => $offlinequiz->id, 'mode' => 'createpdfs', 'sesskey'=> sesskey()])
+            new moodle_url('/mod/offlinequiz/createquiz.php' , ['q' => $offlinequiz->id, 'mode' => 'createpdfs', 'sesskey' => sesskey()])
             );
     } else {
         // Redmine 2750: Always delete templates as well.
@@ -155,14 +155,14 @@ if ($forcepdfnew) {
         } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
             $doctype = 'LATEX';
         }
-        $params = array(
+        $params = [
             'context' => $context,
-            'other' => array(
+            'other' => [
                 'offlinequizid' => $offlinequiz->id,
                 'reportname' => $mode,
-                'doctype' => $doctype
-            )
-        );
+                'doctype' => $doctype,
+            ],
+        ];
         $event = \mod_offlinequiz\event\docs_deleted::create($params);
         $event->trigger();
         redirect(new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'preview']));
@@ -234,7 +234,7 @@ if ($mode == 'preview') {
             $offlinequiz = offlinequiz_delete_template_usages($offlinequiz);
             $groups = $DB->get_records(
                 'offlinequiz_groups',
-                array('offlinequizid' => $offlinequiz->id),
+                ['offlinequizid' => $offlinequiz->id],
                 'groupnumber',
                 '*',
                 0,
@@ -272,12 +272,12 @@ if ($mode == 'preview') {
         if (!$questions) {
             $url = new moodle_url(
                 $CFG->wwwroot . '/mod/offlinequiz/edit.php',
-                array('cmid' => $cm->id, 'groupnumber' => $group->groupnumber, 'noquestions' => 1)
+                ['cmid' => $cm->id, 'groupnumber' => $group->groupnumber, 'noquestions' => 1]
             );
             echo html_writer::link(
                 $url,
                 get_string('noquestionsfound', 'offlinequiz', $groupletter),
-                array('class' => 'linkbox')
+                ['class' => 'linkbox']
             );
             echo $OUTPUT->box_end();
             continue;
@@ -301,7 +301,7 @@ if ($mode == 'preview') {
         }
 
         // We need a mapping from question IDs to slots, assuming that each question occurs only once..
-        $questionslots = array();
+        $questionslots = [];
         foreach ($slots as $qid => $slot) {
             $questionslots[$templateusage->get_question($slot)->id] = $slot;
         }
@@ -324,7 +324,7 @@ if ($mode == 'preview') {
                             ' ----------------//</center>';
                     $currentpage++;
                 }
-                $order = array();
+                $order = [];
                 if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
                     $slot = $questionslots[$question->id];
                     $slotquestion = $templateusage->get_question($slot);
@@ -403,7 +403,7 @@ if ($mode == 'preview') {
     $fs = get_file_storage();
 
     // Options for the popup_action.
-    $options = array();
+    $options = [];
     $options['height'] = 1200; // Optional.
     $options['width'] = 1170; // Optional.
 
@@ -414,9 +414,9 @@ if ($mode == 'preview') {
         // Redmine 2131: Add download all link.
         $downloadallurl = new moodle_url(
             $CFG->wwwroot . '/mod/offlinequiz/createquiz.php',
-            array('q' => $offlinequiz->id,
+            ['q' => $offlinequiz->id,
         'mode' => 'createpdfs',
-        'downloadall' => 1)
+        'downloadall' => 1]
         );
         echo html_writer::start_div('downloadalllink');
         echo html_writer::link($downloadallurl->out(false), get_string('downloadallzip', 'offlinequiz'));
@@ -434,7 +434,7 @@ if ($mode == 'preview') {
                         "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey()
                     );
                 }
-                $DB->set_field('offlinequiz', 'id_digits', get_config('offlinequiz', 'ID_digits'), array('id' => $offlinequiz->id));
+                $DB->set_field('offlinequiz', 'id_digits', get_config('offlinequiz', 'ID_digits'), ['id' => $offlinequiz->id]);
 
                 if ($offlinequiz->fileformat == OFFLINEQUIZ_DOCX_FORMAT) {
                     require_once('docxlib.php');
@@ -494,7 +494,7 @@ if ($mode == 'preview') {
 
             if (!$offlinequiz->docscreated) {
                 $answerpdffile = offlinequiz_create_pdf_answer(
-                    offlinequiz_get_maxanswers($offlinequiz, array($group)),
+                    offlinequiz_get_maxanswers($offlinequiz, [$group]),
                     $templateusage,
                     $offlinequiz,
                     $group,
@@ -584,22 +584,22 @@ if ($mode == 'preview') {
             } else if ($offlinequiz->fileformat == OFFLINEQUIZ_LATEX_FORMAT) {
                 $doctype = 'LATEX';
             }
-            $params = array(
+            $params = [
                 'context' => $context,
-                'other' => array(
+                'other' => [
                         'offlinequizid' => $offlinequiz->id,
                         'reportname' => $mode,
-                        'doctype' => $doctype
-    
-                )
-            );
+                        'doctype' => $doctype,
+
+                ],
+            ];
             $event = \mod_offlinequiz\event\docs_created::create($params);
             $event->trigger();
         }
 
         // Register that we have created the documents.
         $offlinequiz->docscreated = 1;
-        $DB->set_field('offlinequiz', 'docscreated', 1, array('id' => $offlinequiz->id));
+        $DB->set_field('offlinequiz', 'docscreated', 1, ['id' => $offlinequiz->id]);
 
     }
 }

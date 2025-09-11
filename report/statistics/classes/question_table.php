@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace offlinequiz_statistics;
-use \flexible_table;
+use flexible_table;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -71,8 +71,8 @@ class question_table extends flexible_table {
         $this->set_attribute('class', 'generaltable generalbox boxaligncenter');
 
         // Define the table columns.
-        $columns = array();
-        $headers = array();
+        $columns = [];
+        $headers = [];
 
         $columns[] = 'part';
         $headers[] = '';

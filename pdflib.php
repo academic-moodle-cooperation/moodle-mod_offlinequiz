@@ -17,7 +17,7 @@
 /**
  * Creates the PDF forms for offlinequizzes
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -91,7 +91,7 @@ class offlinequiz_pdf extends pdf {
 
 }
 class offlinequiz_question_pdf extends offlinequiz_pdf {
-    private $tempfiles = array();
+    private $tempfiles = [];
 
     /**
      * (non-PHPdoc)
@@ -308,7 +308,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
     }
     /*
     * Generates the body of PDF answer form for an offlinequiz group using an optional groupletter.
-    * 
+    *
     * @param offlinequiz_answer_pdf $pdf the PDF object
     * @param int $maxanswers the maximum number of answers in all question of the offline group
     * @param question_usage_by_activity $templateusage the template question  usage for this offline group
@@ -318,10 +318,10 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
     * @param object $context the context of the offline quiz.
     * @param string $groupletter the groupletter to mark. No mark if empty.
     */
-    public function add_answer_page($maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter): void    {
+    public function add_answer_page($maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter): void {
         global $CFG, $DB, $OUTPUT, $USER;
         // Static variable for caching the questions. Useful in case of consecutive calls.
-        static $questions_cache = [];
+        static $questionscache = [];
         $pdf = $this; // Shortcut.
 
         $font = offlinequiz_get_pdffont($offlinequiz);
@@ -368,7 +368,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $slots = $templateusage->get_slots();
 
         // Check cache for questions.
-        if (empty($questions_cache[$offlinequiz->id][$group->id])) {
+        if (empty($questionscache[$offlinequiz->id][$group->id])) {
             $sql = "SELECT q.*, c.contextid, ogq.page, ogq.slot, ogq.maxmark
                     FROM {offlinequiz_group_questions} ogq
                     JOIN {question} q ON ogq.questionid = q.id
@@ -378,10 +378,10 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
                     WHERE ogq.offlinequizid = :offlinequizid
                     AND ogq.offlinegroupid = :offlinegroupid
                 ORDER BY ogq.slot ASC ";
-            $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
+            $params = ['offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id];
 
             if (!$questions = $DB->get_records_sql($sql, $params)) {
-                throw new \moodle_exception('noquestionsfound', 'offlinequiz', null,$groupletter);
+                throw new \moodle_exception('noquestionsfound', 'offlinequiz', null, $groupletter);
             }
 
             // Load the question type specific information.
@@ -389,9 +389,9 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
                 throw new \moodle_exception('Could not load question options');
             }
 
-            $questions_cache[$offlinequiz->id][$group->id] = $questions;
+            $questionscache[$offlinequiz->id][$group->id] = $questions;
         } else {
-            $questions = $questions_cache[$offlinequiz->id][$group->id];
+            $questions = $questionscache[$offlinequiz->id][$group->id];
         }
         // Counting the total number of multichoice questions in the question usage.
         $totalnumber = offlinequiz_count_multichoice_questions($templateusage);
@@ -442,7 +442,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
             for ($i = 1; $i <= count($order); $i++) {
                 // Move the boxes slightly down to align with question number.
-                $pdf->Rect($x, $y + 0.6, 3.5, 3.5, '', array('all' => array('width' => 0.2)));
+                $pdf->Rect($x, $y + 0.6, 3.5, 3.5, '', ['all' => ['width' => 0.2]]);
                 $x += 6.5;
             }
 
@@ -577,7 +577,7 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
 
     // Filter only for tex formulas.
     $questiontext = offlinequiz_apply_filters($questiontext, $texfilters);
-    
+
     if($question->questiontextformat == FORMAT_PLAIN) {
         $questiontext = s($questiontext);
     }
@@ -615,7 +615,7 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         $answertext = $question->options->answers[$answer]->answer;
         // Filter only for tex formulas.
         $answertext = offlinequiz_apply_filters($answertext, $texfilters);
-        // If the answer is in plain text, escape it.        
+        // If the answer is in plain text, escape it.
         if($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
             $answertext = s($answertext);
         }
@@ -796,7 +796,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
              WHERE ogq.offlinequizid = :offlinequizid
                AND ogq.offlinegroupid = :offlinegroupid
           ORDER BY ogq.slot ASC ";
-    $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id);
+    $params = ['offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id];
 
     // Load the questions.
     $questions = $DB->get_records_sql($sql, $params);
@@ -864,7 +864,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
         // We also have to show description questions that are not in the template.
 
         // First, compute mapping  questionid -> slotnumber.
-        $questionslots = array();
+        $questionslots = [];
         foreach ($slots as $slot) {
             $questionslots[$templateusage->get_question($slot)->id] = $slot;
         }
@@ -929,13 +929,13 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
     $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
             $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
 
-    $fileinfo = array(
+    $fileinfo = [
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.pdf');
+            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.pdf'];
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -982,13 +982,13 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
             $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
 
     $fileprefix = get_string('fileprefixanswer', 'offlinequiz');
-    $fileinfo = array(
+    $fileinfo = [
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'pdfs',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.pdf');
+            'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.pdf'];
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -1022,7 +1022,7 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
         throw new \moodle_exception("No roles with capability 'mod/offlinequiz:attempt' defined in system context");
     }
 
-    $roleids = array();
+    $roleids = [];
     foreach ($roles as $role) {
         $roleids[] = $role->id;
     }
@@ -1112,13 +1112,13 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
             $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
 
     $fileprefix = get_string('fileprefixparticipants', 'offlinequiz');
-    $fileinfo = array(
+    $fileinfo = [
             'contextid' => $context->id,
             'component' => 'mod_offlinequiz',
             'filearea' => 'participants',
             'filepath' => '/',
             'itemid' => 0,
-            'filename' => $fileprefix . '_' . $list->id . '_' . $timestamp . '.pdf');
+            'filename' => $fileprefix . '_' . $list->id . '_' . $timestamp . '.pdf'];
 
     if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -1179,7 +1179,7 @@ function offlinequiz_str_html_pdf($input, $stripalltags=true, $questionid=null, 
         foreach ($strings as $string) {
             $tags = preg_split("/<\/span>/i", $string);
             $styleinfo = explode('>', $tags[0]);
-            $style = array();
+            $style = [];
             if (stripos($styleinfo[0], 'bold')) {
                 $style[] = '[*b]';
             }
@@ -1199,17 +1199,17 @@ function offlinequiz_str_html_pdf($input, $stripalltags=true, $questionid=null, 
             }
         }
 
-        $search  = array('/<i[ ]*>(.*?)<\/i[ ]*>/smi', '/<b[ ]*>(.*?)<\/b[ ]*>/smi', '/<em[ ]*>(.*?)<\/em[ ]*>/smi',
+        $search  = ['/<i[ ]*>(.*?)<\/i[ ]*>/smi', '/<b[ ]*>(.*?)<\/b[ ]*>/smi', '/<em[ ]*>(.*?)<\/em[ ]*>/smi',
                 '/<strong[ ]*>(.*?)<\/strong[ ]*>/smi', '/<u[ ]*>(.*?)<\/u[ ]*>/smi',
-                '/<sub[ ]*>(.*?)<\/sub[ ]*>/smi', '/<sup[ ]*>(.*?)<\/sup[ ]*>/smi' );
-        $replace = array('[*i]\1[*i]', '[*b]\1[*b]', '[*i]\1[*i]',
+                '/<sub[ ]*>(.*?)<\/sub[ ]*>/smi', '/<sup[ ]*>(.*?)<\/sup[ ]*>/smi' ];
+        $replace = ['[*i]\1[*i]', '[*b]\1[*b]', '[*i]\1[*i]',
                 '[*b]\1[*b]', '[*u]\1[*u]',
-                '[*l]\1[*l]', '[*h]\1[*h]');
+                '[*l]\1[*l]', '[*h]\1[*h]'];
         $output = preg_replace($search, $replace, $output);
     }
     $output = strip_tags($output);
-    $search  = array('&quot;', '&amp;', '&gt;', '&lt;');
-    $replace = array('"', '&', '>', '<');
+    $search  = ['&quot;', '&amp;', '&gt;', '&lt;'];
+    $replace = ['"', '&', '>', '<'];
     $result = str_ireplace($search, $replace, $output);
 
     return $result;

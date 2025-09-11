@@ -17,7 +17,7 @@
 /**
  * The results import report for offlinequizzes
  *
- * @package       mod
+ * @package       offlinequiz_rimport
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind
  * @copyright     2017 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -67,7 +67,7 @@ class offlinequiz_page_saver {
     protected function save_choices(offlinequiz_result_page $page) {
         global $DB;
         if ($page && $page->scannedpageid) {
-            $conditions = array("scannedpageid" => $page->scannedpageid);
+            $conditions = ["scannedpageid" => $page->scannedpageid];
             $DB->delete_records("offlinequiz_choices", $conditions);
             $rows = $this->get_results_for_db($page);
             $DB->insert_records("offlinequiz_choices", $rows);
@@ -77,7 +77,7 @@ class offlinequiz_page_saver {
     private function get_results_for_db(offlinequiz_result_page $page) {
          $answers = $page->answers;
          $startnumber = $page->startanswer;
-         $rows = array();
+         $rows = [];
          $k = 0;
         for ($i = 0; $i < count($answers); $i++) {
             for ($j = 0; $j < count($answers[$i]); $j++) {
@@ -99,7 +99,7 @@ class offlinequiz_page_saver {
         if ($page->status) {
 
             global $DB;
-            $conditions = array('id' => $page->scannedpageid);
+            $conditions = ['id' => $page->scannedpageid];
             $scannedpage = $DB->get_record('offlinequiz_scanned_pages', $conditions);
             if ($scannedpage) {
                 if ($page->status != PAGE_STATUS_OK && $page->status != PAGE_STATUS_SUBMITTED) {
@@ -121,7 +121,7 @@ class offlinequiz_page_saver {
                 $studentnumber .= $zipher;
             }
             global $DB;
-            $conditions = array('id' => $page->scannedpageid);
+            $conditions = ['id' => $page->scannedpageid];
             $DB->set_field('offlinequiz_scanned_pages', 'userkey', $studentnumber, $conditions);
 
         }
@@ -131,7 +131,7 @@ class offlinequiz_page_saver {
     protected function save_pagenumber(offlinequiz_result_page $page) {
         if ($page->pagenumber) {
             global $DB;
-            $conditions = array('id' => $page->scannedpageid);
+            $conditions = ['id' => $page->scannedpageid];
             $DB->set_field('offlinequiz_scanned_pages', 'pagenumber', $page->pagenumber, $conditions);
         }
     }
@@ -139,7 +139,7 @@ class offlinequiz_page_saver {
     protected function save_group_number(offlinequiz_result_page $page) {
         if ($page->group->id) {
             global $DB;
-            $conditions = array('id' => $page->scannedpageid);
+            $conditions = ['id' => $page->scannedpageid];
             $DB->set_field('offlinequiz_scanned_pages', 'groupnumber', $page->group->id, $conditions);
 
         }
@@ -147,7 +147,7 @@ class offlinequiz_page_saver {
 
     protected function save_page_corners(offlinequiz_result_page $page) {
         global $DB;
-        $conditions = array("scannedpageid" => $page->scannedpageid);
+        $conditions = ["scannedpageid" => $page->scannedpageid];
         $corners = $DB->get_records("offlinequiz_page_corners", $conditions);
         if ($corners) {
             foreach ($corners as $corner) {

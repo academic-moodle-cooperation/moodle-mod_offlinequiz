@@ -17,7 +17,7 @@
 /**
  * Result review download page
  *
- * @package       mod
+ * @package       offlinequiz_overview
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
  * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -39,10 +39,10 @@ class html_download {
 
     public function __construct($offlinequizid) {
         global $DB;
-        if (!$offlinequiz = $DB->get_record("offlinequiz", array("id" => $offlinequizid))) {
+        if (!$offlinequiz = $DB->get_record("offlinequiz", ["id" => $offlinequizid])) {
             throw new \moodle_exception("The offlinequiz with id $offlinequizid belonging to result $result is missing");
         }
-        $this->offlinequiz = $offlinequiz;        if (!$course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
+        $this->offlinequiz = $offlinequiz;        if (!$course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
             throw new \moodle_exception(
              "The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
         }
@@ -89,11 +89,11 @@ class html_download {
 
         $resultids = $this->get_result_ids($userids);
         foreach ($resultids as $resultid) {
-            if (!$result = $DB->get_record("offlinequiz_results", array("id" => $resultid))) {
+            if (!$result = $DB->get_record("offlinequiz_results", ["id" => $resultid])) {
                 throw new \moodle_exception("The offlinequiz result with id $resultid is missing");
 
             }
-            if (!$group = $DB->get_record("offlinequiz_groups", array('id' => $result->offlinegroupid))) {
+            if (!$group = $DB->get_record("offlinequiz_groups", ['id' => $result->offlinegroupid])) {
                 throw new \moodle_exception("The offlinequiz group belonging to result $result is missing");
             }
             $grade = offlinequiz_rescale_grade($result->sumgrades, $this->offlinequiz, $group);
@@ -108,14 +108,14 @@ class html_download {
 
             $table = new \html_table();
             $table->attributes['class'] = 'generaltable offlinequizreviewsummary';
-            $table->align  = array("right", "left");
-            $student = $DB->get_record('user', array('id' => $result->userid));
+            $table->align  = ["right", "left"];
+            $student = $DB->get_record('user', ['id' => $result->userid]);
             $picture = $OUTPUT->user_picture($student);
-            $table->data[] = array($picture, '<a href="'.$CFG->wwwroot.'/user/view.php?id=' . $student->id .
-              '&amp;course=' . $this->course->id . '">' . fullname($student, true) . ' ('.$student->username.')</a>');
-            $table->data[] = array(get_string('group') . ':', $letterstr[$group->groupnumber]);
+            $table->data[] = [$picture, '<a href="'.$CFG->wwwroot.'/user/view.php?id=' . $student->id .
+              '&amp;course=' . $this->course->id . '">' . fullname($student, true) . ' ('.$student->username.')</a>'];
+            $table->data[] = [get_string('group') . ':', $letterstr[$group->groupnumber]];
             if (!empty($this->offlinequiz->time)) {
-                   $table->data[] = array(get_string('quizdate', 'offlinequiz').':', userdate($this->offlinequiz->time));
+                   $table->data[] = [get_string('quizdate', 'offlinequiz').':', userdate($this->offlinequiz->time)];
             }
 
             // If the student is allowed to see his score.
@@ -125,12 +125,12 @@ class html_download {
                     $resultmark = format_float($result->sumgrades, $this->offlinequiz->decimalpoints);
                     $maxmark = format_float($group->sumgrades, $this->offlinequiz->decimalpoints);
                     $percentage = format_float(($result->sumgrades * 100.0 / $group->sumgrades), $this->offlinequiz->decimalpoints);
-                    $table->data[] = array($strscore . ':', $resultmark . '/' . $maxmark . ' (' . $percentage . '%)');
+                    $table->data[] = [$strscore . ':', $resultmark . '/' . $maxmark . ' (' . $percentage . '%)'];
 
                     $a = new \stdClass;
                     $a->grade = format_float(preg_replace('/,/i', '.', $grade), $this->offlinequiz->decimalpoints);
                     $a->maxgrade = format_float($this->offlinequiz->grade, $this->offlinequiz->decimalpoints);
-                    $table->data[] = array($strgrade . ':', get_string('outof', 'offlinequiz', $a));
+                    $table->data[] = [$strgrade . ':', get_string('outof', 'offlinequiz', $a)];
                 }
             }
 

@@ -13,10 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Defines the list form for participant lists
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -56,7 +57,7 @@ class offlinequiz_participantslistform extends moodleform {
         $mform->addElement('hidden', 'q', $this->offlinequiz);
         $mform->setType('q', PARAM_INT);
 
-        $mform->addElement('text', 'name', get_string('name'), array('size' => '40', 'maxlength' => '255'));
+        $mform->addElement('text', 'name', get_string('name'), ['size' => '40', 'maxlength' => '255']);
         $mform->setType('name', PARAM_TEXT);
 
         $this->add_action_buttons(false, get_string('submit'));

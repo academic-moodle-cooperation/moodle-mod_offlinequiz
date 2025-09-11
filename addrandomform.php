@@ -17,7 +17,7 @@
 /**
  * Defines the Moodle forum used to add random questions to the offlinequiz.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -50,7 +50,7 @@ class offlinequiz_add_random_form extends moodleform {
                 get_string('addrandomfromcategory', 'offlinequiz'));
 
         $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
-                array('contexts' => $usablecontexts, 'top' => false));
+                ['contexts' => $usablecontexts, 'top' => false]);
         $mform->setDefault('category', $this->_customdata['cat']);
 
         $mform->addElement('checkbox', 'includesubcategories', '', get_string('recurse', 'offlinequiz'));
@@ -92,7 +92,7 @@ class offlinequiz_add_random_form extends moodleform {
      */
     private function get_number_of_questions_to_add_choices() {
         $maxrand = 100;
-        $randomcount = array();
+        $randomcount = [];
         for ($i = 1; $i <= min(10, $maxrand); $i++) {
             $randomcount[$i] = $i;
         }

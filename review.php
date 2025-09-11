@@ -17,7 +17,7 @@
 /**
  * Result review page
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -33,20 +33,20 @@ $resultid = required_param('resultid', PARAM_INT);    // A particular result ID 
 $page = optional_param('page', 0, PARAM_INT);         // The required page.
 $showall = optional_param('showall', 0, PARAM_BOOL);  // Not used at the moment.
 
-if (!$result = $DB->get_record("offlinequiz_results", array("id" => $resultid))) {
+if (!$result = $DB->get_record("offlinequiz_results", ["id" => $resultid])) {
     throw new \moodle_exception("No such result ID exists");
 }
-if (!$offlinequiz = $DB->get_record("offlinequiz", array("id" => $result->offlinequizid))) {
+if (!$offlinequiz = $DB->get_record("offlinequiz", ["id" => $result->offlinequizid])) {
     throw new \moodle_exception("The offlinequiz with id $result->offlinequiz belonging to result $result is missing");
 }
 
 $offlinequiz->optionflags = 0;
 $offlinequiz->penaltyscheme = 0;
 
-if (!$group = $DB->get_record("offlinequiz_groups", array('id' => $result->offlinegroupid))) {
+if (!$group = $DB->get_record("offlinequiz_groups", ['id' => $result->offlinegroupid])) {
     throw new \moodle_exception("The offlinequiz group belonging to result $result is miss1ing");
 }
-if (!$course = $DB->get_record("course", array('id' => $offlinequiz->course))) {
+if (!$course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
     throw new \moodle_exception("The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
@@ -91,7 +91,7 @@ $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
 // Setup the page and print the page header.
-$url = new moodle_url('/mod/offlinequiz/review.php', array('resultid' => $resultid, 'page' => $page));
+$url = new moodle_url('/mod/offlinequiz/review.php', ['resultid' => $resultid, 'page' => $page]);
 $PAGE->set_url($url);
 $PAGE->set_title(format_string($offlinequiz->name));
 $PAGE->set_heading($course->fullname);
@@ -119,17 +119,17 @@ $timelimit = 0;
 
 $table = new html_table();
 $table->attributes['class'] = 'generaltable offlinequizreviewsummary';
-$table->align  = array("right", "left");
+$table->align  = ["right", "left"];
 if ($result->userid <> $USER->id) {
-    $student = $DB->get_record('user', array('id' => $result->userid));
+    $student = $DB->get_record('user', ['id' => $result->userid]);
     $picture = $OUTPUT->user_picture($student);
-    $table->data[] = array($picture, '<a href="'.$CFG->wwwroot.'/user/view.php?id=' . $student->id .
-            '&amp;course=' . $course->id . '">' . fullname($student, true) . ' ('.$student->username.')</a>');
+    $table->data[] = [$picture, '<a href="'.$CFG->wwwroot.'/user/view.php?id=' . $student->id .
+            '&amp;course=' . $course->id . '">' . fullname($student, true) . ' ('.$student->username.')</a>'];
 }
 
-$table->data[] = array(get_string('group') . ':', $letterstr[$group->groupnumber]);
+$table->data[] = [get_string('group') . ':', $letterstr[$group->groupnumber]];
 if (!empty($offlinequiz->time)) {
-    $table->data[] = array(get_string('quizdate', 'offlinequiz').':', userdate($offlinequiz->time));
+    $table->data[] = [get_string('quizdate', 'offlinequiz').':', userdate($offlinequiz->time)];
 }
 
 // If the student is allowed to see his score.
@@ -139,7 +139,7 @@ if ($options->marks != question_display_options::HIDDEN) {
         $resultmark = format_float($result->sumgrades, $offlinequiz->decimalpoints);
         $maxmark = format_float($group->sumgrades, $offlinequiz->decimalpoints);
         $percentage = format_float(($result->sumgrades * 100.0 / $group->sumgrades), $offlinequiz->decimalpoints);
-        $table->data[] = array($strscore . ':', $resultmark . '/' . $maxmark . ' (' . $percentage . '%)');
+        $table->data[] = [$strscore . ':', $resultmark . '/' . $maxmark . ' (' . $percentage . '%)'];
 
         $a = new stdClass;
         if (is_numeric(preg_replace('/,/i', '.', $grade))) {
@@ -148,7 +148,7 @@ if ($options->marks != question_display_options::HIDDEN) {
             $a->grade = $grade;
         }
         $a->maxgrade = format_float($offlinequiz->grade, $offlinequiz->decimalpoints);
-        $table->data[] = array($strgrade . ':', get_string('outof', 'offlinequiz', $a));
+        $table->data[] = [$strgrade . ':', get_string('outof', 'offlinequiz', $a)];
     }
 }
 
@@ -162,14 +162,14 @@ if ($isteacher or ($options->sheetfeedback == question_display_options::VISIBLE)
     if ($result->userid == $USER->id) {
         $user = $USER;
     } else {
-        $user = $DB->get_record('user', array('id' => $result->userid));
+        $user = $DB->get_record('user', ['id' => $result->userid]);
     }
     $userkey = $user->{$offlinequizconfig->ID_field};
 
-    $scannedpages = $DB->get_records('offlinequiz_scanned_pages', array('resultid' => $result->id), 'pagenumber ASC');
+    $scannedpages = $DB->get_records('offlinequiz_scanned_pages', ['resultid' => $result->id], 'pagenumber ASC');
 
     // Options for the popup_action.
-    $popupoptions = array();
+    $popupoptions = [];
     $popupoptions['height'] = 1200;
     $popupoptions['width'] = 1170;
     $popupoptions['resizable'] = false;
@@ -207,7 +207,7 @@ if ($isteacher or ($options->sheetfeedback == question_display_options::VISIBLE)
             echo '<div class="linkbox">';
             if ($isteacher) {
                 $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/correct.php',
-                        array('pageid' => $scannedpage->id, 'overwrite' => 1));
+                        ['pageid' => $scannedpage->id, 'overwrite' => 1]);
                 echo $OUTPUT->action_link($url,  get_string('editscannedform', 'offlinequiz') .
                         ' (' . get_string('page').' '.$i++ . ')',
                         new popup_action('click', $url, 'correct' . $scannedpage->id, $popupoptions));
@@ -215,7 +215,7 @@ if ($isteacher or ($options->sheetfeedback == question_display_options::VISIBLE)
                 echo '<br/>';
             } else {
                 $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/image.php',
-                        array('resultid' => $result->id, 'pageid' => $scannedpage->id));
+                        ['resultid' => $result->id, 'pageid' => $scannedpage->id]);
                 echo $OUTPUT->action_link($url,  get_string('linktoscannedform', 'offlinequiz') .
                         ' (' . get_string('page').' '.$i++ . ')',
                         new popup_action('click', $url, 'image' . $scannedpage->id, $popupoptions));
@@ -254,15 +254,15 @@ if ($options->attempt == question_display_options::VISIBLE || $isteacher) {
 }
 
 // Trigger an event for this review.
-$params = array(
+$params = [
     'objectid' => $result->id,
     'relateduserid' => $result->userid,
     'courseid' => $course->id,
     'context' => context_module::instance($cm->id),
-    'other' => array(
-        'offlinequizid' => $offlinequiz->id
-    )
-);
+    'other' => [
+        'offlinequizid' => $offlinequiz->id,
+    ],
+];
 $event = \mod_offlinequiz\event\attempt_reviewed::create($params);
 $event->add_record_snapshot('offlinequiz_results', $result);
 $event->trigger();

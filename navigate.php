@@ -47,7 +47,7 @@ foreach ($subplugins as $subplugin => $subpluginpath) {
     }
     $askedroute = $reportclass->route($offlinequiz, $cm, $course, $tab);
     if ($askedroute) {
-        $newurl =  $navigation->find($askedroute, null)->action();
+        $newurl = $navigation->find($askedroute, null)->action();
         break;
     }
 }
@@ -70,7 +70,7 @@ if ($newurl == '') {
         $needscorrections = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
         if ($needscorrections) {
             $newurl = $navigation->find('tabofflinequizupload', null)->action();
-    
+
         } else if ($hasresults) {
             $newurl = $navigation->find('tabresultsoverview', null)->action();
         } else {
@@ -90,7 +90,7 @@ if ($newurl == '') {
                  WHERE opl.offlinequizid = :id
                    AND ospp.status = 'error'";
         $needscorrection = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
-    
+
         $sql = "SELECT count(*)
                   FROM {offlinequiz_p_lists} opl
                   JOIN {offlinequiz_scanned_p_pages} ospp ON opl.id = ospp.listnumber
@@ -117,6 +117,6 @@ if ($newurl == '') {
             $newurl = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id,
                                                                          'tab' => 'forms']);
         }
-}
+    }
 }
 redirect($newurl);

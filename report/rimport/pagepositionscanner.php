@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace offlinequiz_result_import;
 
 defined('MOODLE_INTERNAL') || die();
@@ -48,7 +49,7 @@ class offlinequiz_pagepositionscanner {
         "upperleft" => new offlinequiz_point(CORNER_SPACE_LEFT * $zoomfactorx, CORNER_SPACE_TOP * $zoomfactory, false),
         "upperright" => new offlinequiz_point((A4_WIDTH - CORNER_SPACE_RIGHT) * $zoomfactorx, CORNER_SPACE_TOP * $zoomfactory, false),
         "lowerright" => new offlinequiz_point((A4_WIDTH - CORNER_SPACE_RIGHT) * $zoomfactorx, (A4_HEIGHT - CORNER_SPACE_BOTTOM) * $zoomfactory, false),
-        "lowerleft" => new offlinequiz_point(CORNER_SPACE_LEFT * $zoomfactorx, (A4_HEIGHT - CORNER_SPACE_BOTTOM) * $zoomfactory, false)
+        "lowerleft" => new offlinequiz_point(CORNER_SPACE_LEFT * $zoomfactorx, (A4_HEIGHT - CORNER_SPACE_BOTTOM) * $zoomfactory, false),
         ];
 
         $this->page->positionproperties["upperright"] = $this->findcross("upperright");
@@ -70,7 +71,7 @@ class offlinequiz_pagepositionscanner {
         $this->page->status = PAGE_STATUS_OK;
     }
 
-    private function calculatepositions (offlinequiz_point $leftpoint, offlinequiz_point $rightpoint) {
+    private function calculatepositions(offlinequiz_point $leftpoint, offlinequiz_point $rightpoint) {
         $diagvector = new offlinequiz_point($rightpoint->getx() - $leftpoint->getx(), $rightpoint->gety() - $leftpoint->gety(), 0);
         $diagzoomfactor = $diagvector->getdistance() / DIAGONAL_LENGTH;
         $this->page->scanproperties->zoomfactorx = $diagzoomfactor * $this->page->scanproperties->zoomfactorx * $this->page->scanproperties->zoomfactory;

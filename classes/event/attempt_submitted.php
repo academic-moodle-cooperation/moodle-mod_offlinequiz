@@ -77,7 +77,7 @@ class attempt_submitted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/offlinequiz/review.php', array('attempt' => $this->objectid));
+        return new \moodle_url('/mod/offlinequiz/review.php', ['attempt' => $this->objectid]);
     }
 
     /**

@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 namespace offlinequiz_rimport\task\adhoc;
 
 require_once ($CFG->dirroot . '/mod/offlinequiz/lib.php');
@@ -8,41 +23,40 @@ require_once ($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
 
 /**
  * An example of an adhoc task.
+ * @package offlinequiz_rimport
  */
-class scan_file extends \core\task\adhoc_task
-{
+class scan_file extends \core\task\adhoc_task {
 
-    public static function instance(int $queuedataid): self
-    {
+
+    public static function instance(int $queuedataid): self {
         $task = new self();
         $task->set_custom_data((object) [
-            'queuedataid' => $queuedataid
+            'queuedataid' => $queuedataid,
         ]);
         return $task;
     }
 
-    public function execute()
-    {
+    public function execute() {
         global $DB, $CFG;
         $data = $this->get_custom_data();
         $queuedata = $DB->get_record('offlinequiz_queue_data', [
-            'id' => $data->queuedataid
+            'id' => $data->queuedataid,
         ]);
         $queue = $DB->get_record('offlinequiz_queue', [
-            'id' => $queuedata->queueid
+            'id' => $queuedata->queueid,
         ]);
         $queuedata->timestart = time();
         $queuedata->status = 'processing';
         $DB->update_record('offlinequiz_queue_data', $queuedata);
         // Set up the context for this job.
-        if (! $offlinequiz = $DB->get_record('offlinequiz', array(
-            'id' => $queue->offlinequizid
-        ))) {
+        if (! $offlinequiz = $DB->get_record('offlinequiz', [
+            'id' => $queue->offlinequizid,
+        ])) {
             $this->log_error($queuedata, 'offlinequiznotfound');
         }
-        if (! $course = $DB->get_record('course', array(
-            'id' => $offlinequiz->course
-        ))) {
+        if (! $course = $DB->get_record('course', [
+            'id' => $offlinequiz->course,
+        ])) {
             $this->log_error($queuedata, 'coursenotfound');
         }
 
@@ -56,15 +70,15 @@ class scan_file extends \core\task\adhoc_task
             $this->log_error($queuedata, 'coursecontextnotfound');
         }
         if (! $groups = $DB->get_records('offlinequiz_groups', [
-            'offlinequizid' => $offlinequiz->id
+            'offlinequizid' => $offlinequiz->id,
         ], 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
             $this->log_error($queuedata, 'nogroupsfound');
         }
         $dirname = "{$CFG->dataroot}/offlinequiz/import/$queue->id";
         $importfile = "$dirname/$queuedata->filename";
         if(!file_exists($importfile)) {
-            
-            $this->restorefile($context->id,$queue->id,$queue->filename, $importfile);
+
+            $this->restorefile($context->id, $queue->id, $queue->filename, $importfile);
         }
         list ($maxquestions, $maxanswers, $formtype, $questionsperpage) = \offlinequiz_get_question_numbers($offlinequiz, $groups);
 
@@ -77,7 +91,7 @@ class scan_file extends \core\task\adhoc_task
                 // Try to load the image file.
                 echo 'job ' . $queue->id . ': evaluating ' . $queuedata->filename . "\n";
                 $scannedpage = $scanner->load_image("$dirname/$queuedata->filename");
-                $scannedpage->id = $DB->get_field('offlinequiz_scanned_pages', 'id', ['queuedataid' => $queuedata->id],IGNORE_MISSING);
+                $scannedpage->id = $DB->get_field('offlinequiz_scanned_pages', 'id', ['queuedataid' => $queuedata->id], IGNORE_MISSING);
                 if ($scannedpage->status == 'ok') {
                     echo 'job ' . $queue->id . ': image loaded ' . $scannedpage->filename . "\n";
                 } else if ($scannedpage->error == 'filenotfound') {
@@ -120,16 +134,16 @@ class scan_file extends \core\task\adhoc_task
 
                 if ($scannedpage->status == 'ok' || $scannedpage->status == 'submitted' || $scannedpage->status == 'suspended' || $scannedpage->error == 'missingpages') {
                     // Mark the file as processed.
-                    $DB->set_field('offlinequiz_queue_data', 'status', 'processed', array(
-                        'id' => $queuedata->id
-                    ));
+                    $DB->set_field('offlinequiz_queue_data', 'status', 'processed', [
+                        'id' => $queuedata->id,
+                    ]);
                 } else {
-                    $DB->set_field('offlinequiz_queue_data', 'status', 'error', array(
-                        'id' => $queuedata->id
-                    ));
-                    $DB->set_field('offlinequiz_queue_data', 'error', $scannedpage->error, array(
-                        'id' => $queuedata->id
-                    ));
+                    $DB->set_field('offlinequiz_queue_data', 'status', 'error', [
+                        'id' => $queuedata->id,
+                    ]);
+                    $DB->set_field('offlinequiz_queue_data', 'error', $scannedpage->error, [
+                        'id' => $queuedata->id,
+                    ]);
                 }
             } else {
                 $contextid = 0;
@@ -140,15 +154,15 @@ class scan_file extends \core\task\adhoc_task
             $this->send_notifications($queue->id);
         } catch (\Exception $e) {
             echo 'job ' . $queue->id . ': ' . $e->getMessage() . "\n";
-            $DB->set_field('offlinequiz_queue_data', 'status', 'error', array(
-                'id' => $queuedata->id
-            ));
-            $DB->set_field('offlinequiz_queue_data', 'error', 'couldnotgrab', array(
-                'id' => $queuedata->id
-            ));
-            $DB->set_field('offlinequiz_queue_data', 'info', $e->getMessage(), array(
-                'id' => $queuedata->id
-            ));
+            $DB->set_field('offlinequiz_queue_data', 'status', 'error', [
+                'id' => $queuedata->id,
+            ]);
+            $DB->set_field('offlinequiz_queue_data', 'error', 'couldnotgrab', [
+                'id' => $queuedata->id,
+            ]);
+            $DB->set_field('offlinequiz_queue_data', 'info', $e->getMessage(), [
+                'id' => $queuedata->id,
+            ]);
             $scannedpage->status = 'error';
             $scannedpage->error = 'couldnotgrab';
             if ($scannedpage->id) {
@@ -159,26 +173,24 @@ class scan_file extends \core\task\adhoc_task
             $this->send_notifications($queue->id);
         }
 
-        
     }
-    
+
     private function send_notifications($queueid) {
         $task = \offlinequiz_rimport\task\adhoc\send_notifications::instance($queueid);
-        //Execute ASAP.
+        // Execute ASAP.
         $task->set_next_run_time(time());
         \core\task\manager::queue_adhoc_task($task, true);
     }
-    
+
     private function restorefile($contextid, $queuedataid, $filename, $restorepath) {
         $fs = get_file_storage();
-        
+
         $pathhash = $fs->get_pathname_hash($contextid, 'mod_offlinequiz', 'queuedata', $queuedataid, '/', $filename);
         $file = $fs->get_file_by_hash($pathhash);
         $file->copy_content_to($restorepath);
     }
 
-    private function log_error($queuedata, $errorcode)
-    {
+    private function log_error($queuedata, $errorcode) {
         global $DB;
         $queuedata->status = 'error';
         $queuedata->error = $errorcode;

@@ -13,10 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Installs the cron-tasks for this plugin
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
  * @copyright     2016 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -26,32 +27,32 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$tasks = array(
-    array(
+$tasks = [
+    [
         'classname' => 'mod_offlinequiz\task\page_evaluation_task',
         'blocking' => 0,
         'minute' => '*/10',
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'
-    ),
-    array(
+        'month' => '*',
+    ],
+    [
         'classname' => 'mod_offlinequiz\task\hotspot_deletion_task',
         'blocking' => 0,
         'minute' => '17',
         'hour' => '4',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'
-    ),
-    array(
+        'month' => '*',
+    ],
+    [
         'classname' => 'mod_offlinequiz\task\temporary_file_deletion_task',
         'blocking' => 0,
         'minute' => '22',
         'hour' => '4',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'
-    )
-);
+        'month' => '*',
+    ],
+];

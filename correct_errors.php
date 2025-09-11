@@ -17,7 +17,7 @@
 /**
  * Displays the info page of offline quizzes
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind
  * @copyright     2022 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}

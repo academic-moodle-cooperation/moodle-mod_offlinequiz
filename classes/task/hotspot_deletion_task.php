@@ -17,7 +17,7 @@
 /**
  * calls the offlinequiz cron task for evaluating uploaded files
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
  * @copyright     2016 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -45,7 +45,7 @@ class hotspot_deletion_task extends \core\task\scheduled_task {
         $sql = "SELECT DISTINCT(scannedpageid)
               FROM {offlinequiz_hotspots}
              WHERE time < :expiretime";
-        $params = array('expiretime' => (int) $timenow - 604800);
+        $params = ['expiretime' => (int) $timenow - 604800];
 
         // First we get the different IDs.
         $ids = $DB->get_fieldset_sql($sql, $params);

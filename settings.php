@@ -17,7 +17,7 @@
 /**
  * Administration settings definitions for the offlinequiz module.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -72,9 +72,9 @@ if ($ADMIN->fulltree) {
             10 => 10,
             11 => 11,
             12 => 12,
-            14 => 14
+            14 => 14,
         ];
-        
+
     $settings->add(new admin_setting_configselect('offlinequiz/defaultpdffontsize',
         get_string('defaultpdffontsize', 'offlinequiz'), get_string('defaultpdffontsize_help', 'offlinequiz'),
         10, $options));
@@ -128,7 +128,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('gradingheading',
             get_string('gradingoptionsheading', 'offlinequiz'), ''));
 
-    $options = array();
+    $options = [];
     for ($i = 0; $i <= 3; $i++) {
         $options[$i] = $i;
     }
@@ -139,7 +139,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('scanningheading',
             get_string('scanningoptionsheading', 'offlinequiz'), ''));
 
-    $options = array();
+    $options = [];
     $options[610] = get_string("darkgray", "offlinequiz");
     $options[640] = get_string("lightgray", "offlinequiz");
     $options[670] = get_string("standard", "offlinequiz");
@@ -159,8 +159,8 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('offlinequiz/oneclickenrol', get_string('oneclickenrol', 'offlinequiz'),
             get_string('oneclickenroldesc', 'offlinequiz'), 0));
 
-    $studentroles = $DB->get_records('role', array('archetype' => 'student'), 'sortorder');
-    $options = array();
+    $studentroles = $DB->get_records('role', ['archetype' => 'student'], 'sortorder');
+    $options = [];
     $default = null;
     foreach ($studentroles as $role) {
         if ($role->name) {
@@ -196,7 +196,7 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_configcheckbox('offlinequiz/wirismathfilter_enabled',
             get_string('wirismathenabled', 'offlinequiz'), get_string('wirismathenabled_help', 'offlinequiz'), 0));
     }
-    
+
     $subplugins = core_component::get_plugin_list('offlinequiz');
     foreach ($subplugins as $subpluginname => $subpluginpath) {
         $settingspath = $subpluginpath . '/settings.php';

@@ -17,7 +17,7 @@
 /**
  * Defines the editing form for random questions.
  *
- * @package    mod_quiz
+ * @package    mod_offlinequiz
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

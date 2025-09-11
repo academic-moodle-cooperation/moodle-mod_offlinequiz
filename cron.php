@@ -17,7 +17,7 @@
 /**
  * The cron script called by a separate cron job to take load from the user frontend
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -54,7 +54,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
                      FROM {offlinequiz_queue}
                     WHERE status = 'processing'
                       AND timestart > :expiretime";
-    $runningjobs = $DB->count_records_sql($runningsql, array('expiretime' => (int) $expiretime));
+    $runningjobs = $DB->count_records_sql($runningsql, ['expiretime' => (int) $expiretime]);
 
     if ($runningjobs >= OFFLINEQUIZ_MAX_CRON_JOBS) {
         echo "Too many jobs running! Exiting!";
@@ -63,7 +63,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 
     // TODO do this properly. Just for testing.
     $sql = "SELECT * FROM {offlinequiz_queue} WHERE status = 'new'";
-    $params = array();
+    $params = [];
     if ($jobid) {
         $sql .= ' AND id = :jobid ';
         $params['jobid'] = $jobid;
@@ -90,11 +90,11 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
     foreach ($jobs as $job) {
         // Check whether the status is still 'new' (might have been changed by other cronjob).
         $transaction = $DB->start_delegated_transaction();
-        $status = $DB->get_field('offlinequiz_queue', 'status', array('id' => $job->id));
+        $status = $DB->get_field('offlinequiz_queue', 'status', ['id' => $job->id]);
         if ($status == 'new') {
-            $DB->set_field('offlinequiz_queue', 'status', 'processing', array('id' => $job->id));
+            $DB->set_field('offlinequiz_queue', 'status', 'processing', ['id' => $job->id]);
             $job->timestart = time();
-            $DB->set_field('offlinequiz_queue', 'timestart', $job->timestart, array('id' => $job->id));
+            $DB->set_field('offlinequiz_queue', 'timestart', $job->timestart, ['id' => $job->id]);
             $alreadydone = false;
         } else {
             $alreadydone = true;
@@ -104,31 +104,31 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
         // If the job is still new, process it!
         if (!$alreadydone) {
             // Set up the context for this job.
-            if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $job->offlinequizid))) {
-                $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
-                $DB->set_field('offlinequiz_queue', 'info', 'offlinequiz not found', array('id' => $job->id));
+            if (!$offlinequiz = $DB->get_record('offlinequiz', ['id' => $job->offlinequizid])) {
+                $DB->set_field('offlinequiz_queue', 'status', 'error', ['id' => $job->id]);
+                $DB->set_field('offlinequiz_queue', 'info', 'offlinequiz not found', ['id' => $job->id]);
                 continue;
             }
-            if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
-                $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
-                $DB->set_field('offlinequiz_queue', 'info', 'course not found', array('id' => $job->id));
+            if (!$course = $DB->get_record('course', ['id' => $offlinequiz->course])) {
+                $DB->set_field('offlinequiz_queue', 'status', 'error', ['id' => $job->id]);
+                $DB->set_field('offlinequiz_queue', 'info', 'course not found', ['id' => $job->id]);
                 continue;
             }
 
             if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-                $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
-                $DB->set_field('offlinequiz_queue', 'info', 'course module found', array('id' => $job->id));
+                $DB->set_field('offlinequiz_queue', 'status', 'error', ['id' => $job->id]);
+                $DB->set_field('offlinequiz_queue', 'info', 'course module found', ['id' => $job->id]);
                 continue;
             }
             if (!$context = context_module::instance($cm->id)) {
-                $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
-                $DB->set_field('offlinequiz_queue', 'info', 'context not found', array('id' => $job->id));
+                $DB->set_field('offlinequiz_queue', 'status', 'error', ['id' => $job->id]);
+                $DB->set_field('offlinequiz_queue', 'info', 'context not found', ['id' => $job->id]);
                 continue;
             }
-            if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id),
+            if (!$groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id],
                     'groupnumber', '*', 0, $offlinequiz->numgroups)) {
-                $DB->set_field('offlinequiz_queue', 'status', 'error', array('id' => $job->id));
-                $DB->set_field('offlinequiz_queue', 'info', 'no offlinequiz groups found', array('id' => $job->id));
+                $DB->set_field('offlinequiz_queue', 'status', 'error', ['id' => $job->id]);
+                $DB->set_field('offlinequiz_queue', 'info', 'no offlinequiz groups found', ['id' => $job->id]);
                 continue;
             }
             $coursecontext = context_course::instance($course->id);
@@ -138,7 +138,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
                       FROM {offlinequiz_queue_data}
                      WHERE queueid = :queueid
                        AND status = 'new'",
-                    array('queueid' => $job->id));
+                    ['queueid' => $job->id]);
 
             list($maxquestions, $maxanswers, $formtype, $questionsperpage) =
                 offlinequiz_get_question_numbers($offlinequiz, $groups);
@@ -148,7 +148,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
             foreach ($jobdata as $data) {
                 $starttime = time();
 
-                $DB->set_field('offlinequiz_queue_data', 'status', 'processing', array('id' => $data->id));
+                $DB->set_field('offlinequiz_queue_data', 'status', 'processing', ['id' => $data->id]);
 
                 // We remember the directory name to be able to remove it later.
                 if (empty($dirname)) {
@@ -212,10 +212,10 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
                         if ($scannedpage->status == 'ok' || $scannedpage->status == 'submitted'
                                 || $scannedpage->status == 'suspended' || $scannedpage->error == 'missingpages') {
                             // Mark the file as processed.
-                            $DB->set_field('offlinequiz_queue_data', 'status', 'processed', array('id' => $data->id));
+                            $DB->set_field('offlinequiz_queue_data', 'status', 'processed', ['id' => $data->id]);
                         } else {
-                            $DB->set_field('offlinequiz_queue_data', 'status', 'error', array('id' => $data->id));
-                            $DB->set_field('offlinequiz_queue_data', 'error', $scannedpage->error, array('id' => $data->id));
+                            $DB->set_field('offlinequiz_queue_data', 'status', 'error', ['id' => $data->id]);
+                            $DB->set_field('offlinequiz_queue_data', 'error', $scannedpage->error, ['id' => $data->id]);
                         }
                         if ($scannedpage->error == 'doublepage') {
                             $doubleentry++;
@@ -229,9 +229,9 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 
                 } catch (Exception $e) {
                     echo 'job ' . $job->id . ': ' . $e->getMessage() . "\n";
-                    $DB->set_field('offlinequiz_queue_data', 'status', 'error', array('id' => $data->id));
-                    $DB->set_field('offlinequiz_queue_data', 'error', 'couldnotgrab', array('id' => $data->id));
-                    $DB->set_field('offlinequiz_queue_data', 'info', $e->getMessage(), array('id' => $data->id));
+                    $DB->set_field('offlinequiz_queue_data', 'status', 'error', ['id' => $data->id]);
+                    $DB->set_field('offlinequiz_queue_data', 'error', 'couldnotgrab', ['id' => $data->id]);
+                    $DB->set_field('offlinequiz_queue_data', 'info', $e->getMessage(), ['id' => $data->id]);
                     $scannedpage->status = 'error';
                     $scannedpage->error = 'couldnotgrab';
                     if ($scannedpage->id) {
@@ -245,13 +245,13 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
             offlinequiz_update_grades($offlinequiz);
 
             $job->timefinish = time();
-            $DB->set_field('offlinequiz_queue', 'timefinish', $job->timefinish, array('id' => $job->id));
+            $DB->set_field('offlinequiz_queue', 'timefinish', $job->timefinish, ['id' => $job->id]);
             $job->status = 'finished';
-            $DB->set_field('offlinequiz_queue', 'status', 'finished', array('id' => $job->id));
+            $DB->set_field('offlinequiz_queue', 'status', 'finished', ['id' => $job->id]);
 
             echo date('Y-m-d-H:i') . ": Import queue with id $job->id imported.\n\n";
 
-            if ($user = $DB->get_record('user',  array('id' => $job->importuserid))) {
+            if ($user = $DB->get_record('user',  ['id' => $job->importuserid])) {
                 $mailtext = get_string('importisfinished', 'offlinequiz', format_text($offlinequiz->name, FORMAT_PLAIN));
 
                 // How many pages have been imported successfully.
@@ -259,7 +259,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
                                FROM {offlinequiz_queue_data}
                               WHERE queueid = :queueid
                                 AND status = 'processed'";
-                $params = array('queueid' => $job->id);
+                $params = ['queueid' => $job->id];
 
                 $mailtext .= "\n\n". get_string('importnumberpages', 'offlinequiz', $DB->count_records_sql($countsql, $params));
 
@@ -297,7 +297,7 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 } // End function.
 
 require_once($CFG->libdir . '/clilib.php');
-list($options, $unrecognized) = cli_get_params(array('cli' => false), array('h' => 'help'));
+list($options, $unrecognized) = cli_get_params(['cli' => false], ['h' => 'help']);
 
 if (array_key_exists('cli', $options) && $options['cli']) {
     echo date('Y-m-d-H:i') . ': ';

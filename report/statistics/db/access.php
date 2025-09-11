@@ -24,15 +24,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'offlinequiz/statistics:view' => array(
+$capabilities = [
+    'offlinequiz/statistics:view' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' => 'mod/offlinequiz:viewreports'
-    )
-);
+            'manager' => CAP_ALLOW,
+        ],
+        'clonepermissionsfrom' => 'mod/offlinequiz:viewreports',
+    ],
+];

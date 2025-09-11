@@ -17,7 +17,7 @@
 /**
  * Standard plugin entry points of the offlinequiz statistics report.
  *
- * @package       mod
+ * @package       offlinequiz_statistics
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param array $options additional options affecting the file serving
  */
 function offlinequiz_statistics_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload,
-                                                                array $options = array()) {
+                                                                array $options = []) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
@@ -63,7 +63,7 @@ function offlinequiz_statistics_cron() {
 
     $expiretime = time() - 5 * HOURSECS;
     $todelete = $DB->get_records_select_menu('offlinequiz_statistics',
-            'timemodified < ?', array($expiretime), '', 'id, 1');
+            'timemodified < ?', [$expiretime], '', 'id, 1');
 
     if (!$todelete) {
         return true;

@@ -17,7 +17,7 @@
 /**
  * The manual correction interface for offlinequizzes
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -39,23 +39,23 @@ $overwrite     = optional_param('overwrite', 0, PARAM_INT);
 $action        = optional_param('action', 'load', PARAM_TEXT);
 $userchanged   = optional_param('userchanged', 0, PARAM_INT);
 
-if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', array('id' => $scannedpageid))) {
+if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', ['id' => $scannedpageid])) {
     throw new \moodle_exception('noscannedpage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpageid);
 }
 
-if (!$offlinequiz = $DB->get_record('offlinequiz', array('id' => $scannedpage->offlinequizid))) {
+if (!$offlinequiz = $DB->get_record('offlinequiz', ['id' => $scannedpage->offlinequizid])) {
     throw new \moodle_exception('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
-if (!$course = $DB->get_record('course', array('id' => $offlinequiz->course))) {
+if (!$course = $DB->get_record('course', ['id' => $offlinequiz->course])) {
     throw new \moodle_exception('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
-        array('course' => $offlinequiz->course,
-         'offlinequiz' => $offlinequiz->id));
+        ['course' => $offlinequiz->course,
+         'offlinequiz' => $offlinequiz->id]);
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
     throw new \moodle_exception('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
 }
-if (!$groups = $DB->get_records('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id), 'groupnumber',
+if (!$groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id], 'groupnumber',
         '*', 0, $offlinequiz->numgroups)) {
     throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
@@ -68,7 +68,7 @@ require_capability('mod/offlinequiz:viewreports', $context);
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-$url = new moodle_url('/mod/offlinequiz/correct.php', array('pageid' => $scannedpage->id));
+$url = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $scannedpage->id]);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
@@ -78,14 +78,14 @@ $offlinequizconfig = get_config('offlinequiz');
 // Determine the maxanswers and maxquestions for the scannedpage.
 $selectedgroups = $groups;
 if ($overwrite && $scannedpage->resultid) {
-    $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid));
-    $resultgroup = $DB->get_record('offlinequiz_groups', array('id' => $result->offlinegroupid));
-    $selectedgroups = array($resultgroup);
+    $result = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid]);
+    $resultgroup = $DB->get_record('offlinequiz_groups', ['id' => $result->offlinegroupid]);
+    $selectedgroups = [$resultgroup];
 }
 list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, $selectedgroups);
 
 // Get the corners either from the request parameters of from the offlinequiz_page_corners table.
-$corners = array();
+$corners = [];
 $nodbcorners = false;
 
 if ($action == 'rotate') {
@@ -100,7 +100,7 @@ if ($action == 'rotate') {
     $corners[2] = new oq_point(required_param('c-2-x', PARAM_INT) + 7, required_param('c-2-y', PARAM_INT) + 7);
     $corners[3] = new oq_point(required_param('c-3-x', PARAM_INT) + 7, required_param('c-3-y', PARAM_INT) + 7);
     offlinequiz_save_page_corners($scannedpage, $corners);
-} else if ($dbcorners = $DB->get_records('offlinequiz_page_corners', array('scannedpageid' => $scannedpage->id), 'position')) {
+} else if ($dbcorners = $DB->get_records('offlinequiz_page_corners', ['scannedpageid' => $scannedpage->id], 'position')) {
     foreach ($dbcorners as $corner) {
         $corners[] = new oq_point($corner->x, $corner->y);
     }
@@ -120,7 +120,7 @@ $scanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestion
 if (property_exists($scannedpage, 'id')) {
     // If we re-adjust, rotate, or changed the user we have to delete the stored hotspots.
     if ($action == 'readjust' || $action == 'rotate' || $action == 'checkuser') {
-        $DB->delete_records('offlinequiz_hotspots', array('scannedpageid' => $scannedpage->id));
+        $DB->delete_records('offlinequiz_hotspots', ['scannedpageid' => $scannedpage->id]);
     }
     // Load the stored image and the hotspots from the DB if they have not been deleted.
     $sheetloaded = $scanner->load_stored_image($scannedpage->filename, $corners, $scannedpage->id);
@@ -221,10 +221,10 @@ onClick=\"self.close(); return false;\"><br />";
 
     // Maybe old errors have been fixed.
     $scannedpage->status = 'ok';
-    $DB->set_field('offlinequiz_scanned_pages', 'status', 'ok', array('id' => $scannedpage->id));
+    $DB->set_field('offlinequiz_scanned_pages', 'status', 'ok', ['id' => $scannedpage->id]);
     $scannedpage->error = '';
-    $DB->set_field('offlinequiz_scanned_pages', 'error', '', array('id' => $scannedpage->id));
-    $DB->set_field('offlinequiz_queue_data','status','processed', ['id' => $scannedpage->queuedataid]);
+    $DB->set_field('offlinequiz_scanned_pages', 'error', '', ['id' => $scannedpage->id]);
+    $DB->set_field('offlinequiz_queue_data', 'status', 'processed', ['id' => $scannedpage->queuedataid]);
 
     $groupnumber = required_param('groupnumber', PARAM_TEXT);
     $groupnumber = intval($groupnumber);
@@ -234,9 +234,9 @@ onClick=\"self.close(); return false;\"><br />";
     // O=======================================================.
     // O Adjust the maxanswers of the scanner according to the offlinequiz group
     // O=======================================================.
-    if ($newgroup = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id,
-        'groupnumber' => $groupnumber))) {
-        $maxanswers = offlinequiz_get_maxanswers($offlinequiz, array($newgroup));
+    if ($newgroup = $DB->get_record('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id,
+        'groupnumber' => $groupnumber])) {
+        $maxanswers = offlinequiz_get_maxanswers($offlinequiz, [$newgroup]);
         $scannedpage = $scanner->set_maxanswers($maxanswers, $scannedpage);
     }
 
@@ -247,7 +247,7 @@ onClick=\"self.close(); return false;\"><br />";
     $userkey = $offlinequizconfig->ID_prefix . $usernumber . $offlinequizconfig->ID_postfix;
     if ($usernumber == substr($xes, 0, $offlinequizconfig->ID_digits)) {
         $scannedpage->userkey = null;
-        $DB->set_field('offlinequiz_scanned_pages', 'userkey', null, array('id' => $scannedpage->id));
+        $DB->set_field('offlinequiz_scanned_pages', 'userkey', null, ['id' => $scannedpage->id]);
     } else {
         $scannedpage->userkey = $userkey;
     }
@@ -318,10 +318,10 @@ onClick=\"self.close(); return false;\"><br />";
         // Don't delete the choices stored in the DB.
 
         // Delete the old result and create a new one.
-        if ($scannedpage->resultid && $oldresult = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid))) {
+        if ($scannedpage->resultid && $oldresult = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid])) {
             $oldresultid = $scannedpage->resultid;
             $scannedpage->resultid = 0;
-            $DB->set_field('offlinequiz_scanned_pages', 'resultid', 0, array('id' => $scannedpage->id));
+            $DB->set_field('offlinequiz_scanned_pages', 'resultid', 0, ['id' => $scannedpage->id]);
         }
 
         // This should create a new result and set the resultid field of the scannedpage.
@@ -336,31 +336,31 @@ onClick=\"self.close(); return false;\"><br />";
                        AND resultid = :resultid
                        AND status = 'submitted'
                        AND id <> :currentpageid";
-            $params = array('offlinequizid' => $scannedpage->offlinequizid, 'resultid' => $oldresultid,
-                     'currentpageid' => $scannedpage->id);
+            $params = ['offlinequizid' => $scannedpage->offlinequizid, 'resultid' => $oldresultid,
+                     'currentpageid' => $scannedpage->id];
 
             if ($oldpages = $DB->get_records_sql($sql, $params)) {
 
                 // Load the new result and the quba slots.
-                $newresult = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid));
+                $newresult = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid]);
                 $quba = question_engine::load_questions_usage_by_activity($newresult->usageid);
                 $pageslots = $quba->get_slots();
 
                 foreach ($oldpages as $page) {
                     $page->resultid = $scannedpage->resultid;
-                    $DB->set_field('offlinequiz_scanned_pages', 'resultid', $scannedpage->resultid, array('id' => $page->id));
+                    $DB->set_field('offlinequiz_scanned_pages', 'resultid', $scannedpage->resultid, ['id' => $page->id]);
 
                     // Load the choices made before from the database. This might be empty.
-                    $pagechoices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $page->id),
+                    $pagechoices = $DB->get_records('offlinequiz_choices', ['scannedpageid' => $page->id],
                             'slotnumber, choicenumber');
 
                     // Choicesdata contains the choices data from the DB indexed by slotnumber and choicenumber.
-                    $pagechoicesdata = array();
+                    $pagechoicesdata = [];
                     if (!empty($pagechoices)) {
                         foreach ($pagechoices as $pagechoice) {
                             if (!isset($pagechoicesdata[$pagechoice->slotnumber]) ||
                                 !is_array($pagechoicesdata[$pagechoice->slotnumber])) {
-                                $pagechoicesdata[$pagechoice->slotnumber] = array();
+                                $pagechoicesdata[$pagechoice->slotnumber] = [];
                             }
                             $pagechoicesdata[$pagechoice->slotnumber][$pagechoice->choicenumber] = $pagechoice;
                         }
@@ -446,7 +446,7 @@ onClick=\"self.close(); return false;\"><br />";
         // Create a completely new scanner.
         $scanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
 
-        $sheetloaded = $scanner->load_stored_image($scannedpage->filename, array());
+        $sheetloaded = $scanner->load_stored_image($scannedpage->filename, []);
 
         if ($sheetloaded && !$overwrite) {
             $scannedpage = offlinequiz_check_scanned_page($offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext);
@@ -562,7 +562,7 @@ onClick=\"self.close(); return false;\"><br />";
     // Check that the user has the permission to manual enrol.
     require_capability('enrol/manual:enrol', $coursecontext);
 
-    $userid = $DB->get_field('user', 'id', array($offlinequizconfig->ID_field => $scannedpage->userkey), MUST_EXIST);
+    $userid = $DB->get_field('user', 'id', [$offlinequizconfig->ID_field => $scannedpage->userkey], MUST_EXIST);
 
     // Get the manual enrolment plugin.
     $enrol = enrol_get_plugin('manual');
@@ -572,9 +572,9 @@ onClick=\"self.close(); return false;\"><br />";
 
     if (!is_enrolled($coursecontext, $userid)) {
         // Now we need the correct instance of the manual enrolment plugin.
-        if (!$instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'), '*', IGNORE_MISSING)) {
+        if (!$instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual'], '*', IGNORE_MISSING)) {
             if ($instanceid = $enrol->add_default_instance($course)) {
-                $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+                $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual'], '*', MUST_EXIST);
             }
         }
 
@@ -591,17 +591,17 @@ onClick=\"self.close(); return false;\"><br />";
                AND error = 'usernotincourse'
                AND userkey = :currentuserkey
                AND id <> :currentpageid";
-    $params = array('offlinequizid' => $offlinequiz->id,
+    $params = ['offlinequizid' => $offlinequiz->id,
             'currentuserkey' => $scannedpage->userkey,
-            'currentpageid' => $scannedpage->id);
+            'currentpageid' => $scannedpage->id];
 
     $otherpages = $DB->get_records_sql($sql, $params);
     foreach ($otherpages as $otherpage) {
         $otherpage->status = 'ok';
         $otherpage->error = '';
         $tempscanner = new offlinequiz_page_scanner($offlinequiz, $context->id, $maxquestions, $maxanswers);
-        $tempcorners = array();
-        if ($dbcorners = $DB->get_records('offlinequiz_page_corners', array('scannedpageid' => $otherpage->id), 'position')) {
+        $tempcorners = [];
+        if ($dbcorners = $DB->get_records('offlinequiz_page_corners', ['scannedpageid' => $otherpage->id], 'position')) {
             foreach ($dbcorners as $corner) {
                 $tempcorners[] = new oq_point($corner->x, $corner->y);
             }
@@ -641,7 +641,7 @@ onClick=\"self.close(); return false;\"><br />";
 }
 
 // We count the old choices to decide whether to process the page again.
-$oldchoices = $DB->count_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id));
+$oldchoices = $DB->count_records('offlinequiz_choices', ['scannedpageid' => $scannedpage->id]);
 
 // If we have an OK page and the action was checkuser, setpage, etc. we should process the page.
 if (($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') && ($action == 'readjust' ||
@@ -653,14 +653,14 @@ if (($scannedpage->status == 'ok' || $scannedpage->status == 'suspended') && ($a
 }
 
 // Load the choices made before from the database. This might be empty.
-$choices = $DB->get_records('offlinequiz_choices', array('scannedpageid' => $scannedpage->id), 'slotnumber, choicenumber');
+$choices = $DB->get_records('offlinequiz_choices', ['scannedpageid' => $scannedpage->id], 'slotnumber, choicenumber');
 
 // Choicesdata contains the choices data from the DB indexed by slotnumber and choicenumber.
-$choicesdata = array();
+$choicesdata = [];
 if (!empty($choices)) {
     foreach ($choices as $choice) {
         if (!isset($choicesdata[$choice->slotnumber]) || !is_array($choicesdata[$choice->slotnumber])) {
-            $choicesdata[$choice->slotnumber] = array();
+            $choicesdata[$choice->slotnumber] = [];
         }
         $choicesdata[$choice->slotnumber][$choice->choicenumber] = $choice;
     }
@@ -668,8 +668,8 @@ if (!empty($choices)) {
 
 // Retrieve the offlinequiz group.
 if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz->numgroups) {
-    if (!$group = $DB->get_record('offlinequiz_groups', array('offlinequizid' => $offlinequiz->id,
-        'groupnumber' => $groupnumber))) {
+    if (!$group = $DB->get_record('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id,
+        'groupnumber' => $groupnumber])) {
         throw new \moodle_exception('nogroup', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
     }
 } else {
@@ -679,7 +679,7 @@ if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz
 // Check whether the user exists in Moodle.
 $user = null;
 $useridcount = 0;
-$userarray = $DB->get_records('user', array($offlinequizconfig->ID_field => $userkey));
+$userarray = $DB->get_records('user', [$offlinequizconfig->ID_field => $userkey]);
 
 // Multiple users with the same id are possible so we have to check if that's the case.
 foreach ($userarray as $userelement) {
@@ -704,7 +704,7 @@ foreach ($userarray as $userelement) {
 $result = null;
 
 if ($group && $user && property_exists($scannedpage, 'resultid') &&
-    $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid))) {
+    $result = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid])) {
     $quba = question_engine::load_questions_usage_by_activity($result->usageid);
     $slots = $quba->get_slots();
 
@@ -717,7 +717,7 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
     if ($action == 'update') {
         echo $OUTPUT->heading(get_string('resultimport', 'offlinequiz'));
 
-        $changed = array();
+        $changed = [];
         $questioncounter = 0;
         $unknown = false;
         // If we have the result slots, we update the choicesdata with the data sent by the user.
@@ -732,14 +732,14 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
                         $unknown = true;
                     }
                     if ($choicesdata[$slot][$key]->value != $rawitemdata[$slot . '-' . $key]) {
-                        $changed[] = array('question' => $questioncounter,
-                                'answer' => $key);
+                        $changed[] = ['question' => $questioncounter,
+                                'answer' => $key];
                     }
                     if (is_array($choicesdata[$slot]) && is_object($choicesdata[$slot][$key])) {
                         // Remember the changed fields in case we want to display them to the user.
                         $choicesdata[$slot][$key]->value = $rawitemdata[$slot . '-' . $key];
                         $DB->set_field('offlinequiz_choices', 'value', $choicesdata[$slot][$key]->value,
-                                array('id' => $choicesdata[$slot][$key]->id));
+                                ['id' => $choicesdata[$slot][$key]->id]);
                     } else {
                         $choice = new stdClass();
                         $choice->scannedpageid = $scannedpage->id;
@@ -749,7 +749,7 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
                         $choice->id = $DB->insert_record('offlinequiz_choices', $choice);
 
                         if (!isset($choicesdata[$choice->slotnumber]) || !is_array($choicesdata[$choice->slotnumber])) {
-                            $choicesdata[$choice->slotnumber] = array();
+                            $choicesdata[$choice->slotnumber] = [];
                         }
                         $choicesdata[$slot][$key] = $choice;
                     }
@@ -767,13 +767,13 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
                     $group->groupnumber,
                     $changed);
 
-            $filerecord = array(
+            $filerecord = [
                     'contextid' => $context->id,
                     'component' => 'mod_offlinequiz',
                     'filearea'  => 'imagefiles',
                     'itemid'    => 0,
                     'filepath'  => '/',
-                    'filename'  => $scanner->filename . '_warning');
+                    'filename'  => $scanner->filename . '_warning'];
 
             // Create a unique temp dir.
             $unique = str_replace('.', '', microtime(true) . rand(0, 100000));
@@ -787,7 +787,7 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
             $scannedpage->warningfilename = $newfile->get_filename();
 
             $DB->set_field('offlinequiz_scanned_pages', 'warningfilename', $newfile->get_filename(),
-                    array('id' => $scannedpage->id));
+                    ['id' => $scannedpage->id]);
 
             unlink($warningpathname);
             remove_dir($dirname);
@@ -796,7 +796,7 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
         if (!$unknown) {
             $scannedpage = offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdata, $startindex, $endindex);
             if ($scannedpage->status == 'submitted') {
-                $result = $DB->get_record('offlinequiz_results', array('id' => $scannedpage->resultid));
+                $result = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid]);
                 echo '<p>';
                 if (offlinequiz_check_result_completed($offlinequiz, $group, $result)) {
                     echo  get_string('userimported', 'offlinequiz', fullname($user) . " (" .
@@ -835,7 +835,7 @@ if ($group && $user && property_exists($scannedpage, 'resultid') &&
     }
 }
 
-$itemdata = array();
+$itemdata = [];
 // Itemdata contains the values of the HTML inputs indexed by slotnumber and choicenumber.
 // Itemdata is always set, even if we don't have any choices data in the DB.
 if (!empty($slots)) {
@@ -847,7 +847,7 @@ if (!empty($slots)) {
     for ($slotindex = $startindex; $slotindex < $endindex; $slotindex++) {
         $slot = $slots[$slotindex];
         if (!isset($itemdata[$slot]) || !is_array($itemdata[$slot])) {
-            $itemdata[$slot] = array();
+            $itemdata[$slot] = [];
         }
         $slotquestion = $quba->get_question($slot);
         $attempt = $quba->get_question_attempt($slot);

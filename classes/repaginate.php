@@ -17,7 +17,7 @@
 /**
  * Defines the offlinequiz repaginate class.
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -63,12 +63,12 @@ class repaginate {
         $this->offlinequizid = $offlinequizid;
         $this->offlinegroupid = $offlinegroupid;
         if (!$this->offlinequizid) {
-            $this->slots = array();
+            $this->slots = [];
         }
         if (!$slots) {
             $this->slots = $DB->get_records('offlinequiz_group_questions',
-                    array('offlinequizid' => $this->offlinequizid,
-                          'offlinegroupid' => $this->offlinegroupid), 'slot');
+                    ['offlinequizid' => $this->offlinequizid,
+                          'offlinegroupid' => $this->offlinegroupid], 'slot');
         } else {
             $this->slots = $slots;
         }
@@ -108,9 +108,9 @@ class repaginate {
      */
     protected function get_slots_by_slot_number($slots) {
         if (!$slots) {
-            return array();
+            return [];
         }
-        $newslots = array();
+        $newslots = [];
         foreach ($slots as $slot) {
             $newslots[$slot->slot] = $slot;
         }
@@ -124,9 +124,9 @@ class repaginate {
      */
     protected function get_slots_by_slotid($slots) {
         if (!$slots) {
-            return array();
+            return [];
         }
-        $newslots = array();
+        $newslots = [];
         foreach ($slots as $slot) {
             $newslots[$slot->id] = $slot;
         }
@@ -141,10 +141,10 @@ class repaginate {
     public function repaginate_slots($nextslotnumber, $type) {
         global $DB;
         $this->slots = $DB->get_records('offlinequiz_group_questions',
-                array('offlinequizid' => $this->offlinequizid,
-                      'offlinegroupid' => $this->offlinegroupid), 'slot');
+                ['offlinequizid' => $this->offlinequizid,
+                      'offlinegroupid' => $this->offlinegroupid], 'slot');
         $nextslot = null;
-        $newslots = array();
+        $newslots = [];
         foreach ($this->slots as $slot) {
             if ($slot->slot < $nextslotnumber) {
                 $newslots[$slot->id] = $slot;
@@ -194,7 +194,7 @@ class repaginate {
      */
     public function repaginate_n_question_per_page($slots, $number) {
         $slots = $this->get_slots_by_slot_number($slots);
-        $newslots = array();
+        $newslots = [];
         $count = 0;
         $page = 1;
         foreach ($slots as $key => $slot) {
@@ -222,7 +222,7 @@ class repaginate {
         if (!$offlinequizslots) {
             return null;
         }
-        $newslots = array();
+        $newslots = [];
         foreach ($offlinequizslots as $slot) {
             if ($type == self::LINK) {
                 if ($slot->slot <= $slotfrom) {

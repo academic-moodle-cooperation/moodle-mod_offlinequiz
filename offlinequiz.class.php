@@ -17,7 +17,7 @@
 /**
  * Class for offlinequizzes
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -87,7 +87,7 @@ class offlinequiz {
 
         $offlinequiz = offlinequiz_access_manager::load_offlinequiz_and_settings($offlinequizid);
         $offlinequiz->groupid = $offlinegroupid;
-        $course = $DB->get_record('course', array('id' => $offlinequiz->course), '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $offlinequiz->course], '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $course->id, false, MUST_EXIST);
 
         // Update offlinequiz with override information.
@@ -109,8 +109,8 @@ class offlinequiz {
                 '{offlinequiz_group_questions} slot ON slot.offlinequizid = :offlinequizid
                   AND slot.offlinegroupid = :offlinegroupid
                   AND q.id = slot.questionid',
-                array('offlinequizid' => $this->offlinequiz->id,
-                      'offlinegroupid' => $this->offlinequiz->groupid),
+                ['offlinequizid' => $this->offlinequiz->id,
+                      'offlinegroupid' => $this->offlinequiz->groupid],
                  'slot.slot');
     }
 
@@ -127,7 +127,7 @@ class offlinequiz {
         if (is_null($questionids)) {
             $questionids = array_keys($this->questions);
         }
-        $questionstoprocess = array();
+        $questionstoprocess = [];
         foreach ($questionids as $id) {
             if (array_key_exists($id, $this->questions)) {
                 $questionstoprocess[$id] = $this->questions[$id];
@@ -236,7 +236,7 @@ class offlinequiz {
         if (is_null($questionids)) {
             $questionids = array_keys($this->questions);
         }
-        $questions = array();
+        $questions = [];
         foreach ($questionids as $id) {
             if (!array_key_exists($id, $this->questions)) {
                 throw new moodle_exception('cannotstartmissingquestion', 'offlinequiz', $this->view_url());
@@ -309,7 +309,7 @@ class offlinequiz {
      * @return string the URL of this offlinequiz's edit page. Needs to be POSTed to with a cmid parameter.
      */
     public function start_attempt_url($page = 0) {
-        $params = array('cmid' => $this->cm->id, 'sesskey' => sesskey());
+        $params = ['cmid' => $this->cm->id, 'sesskey' => sesskey()];
         if ($page) {
             $params['page'] = $page;
         }
@@ -321,7 +321,7 @@ class offlinequiz {
      * @return string the URL of the review of that attempt.
      */
     public function review_url($attemptid) {
-        return new moodle_url('/mod/offlinequiz/review.php', array('attempt' => $attemptid));
+        return new moodle_url('/mod/offlinequiz/review.php', ['attempt' => $attemptid]);
     }
 
     /**
@@ -329,7 +329,7 @@ class offlinequiz {
      * @return string the URL of the review of that attempt.
      */
     public function summary_url($attemptid) {
-        return new moodle_url('/mod/offlinequiz/summary.php', array('attempt' => $attemptid));
+        return new moodle_url('/mod/offlinequiz/summary.php', ['attempt' => $attemptid]);
     }
 
     // Bits of content.

@@ -13,10 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Defines the report class for participant lists
  *
- * @package       mod
+ * @package       mod_offlinequiz
  * @subpackage    offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
@@ -47,11 +48,11 @@ class participants_report {
                       WHERE status = 'error'
                         AND offlinequizid = :offlinequizid";
 
-        $params = array('offlinequizid' => $offlinequiz->id);
-        $cparams = array('offlinequizid' => $offlinequiz->id);
+        $params = ['offlinequizid' => $offlinequiz->id];
+        $cparams = ['offlinequizid' => $offlinequiz->id];
 
-        $tableparams = array('q' => $offlinequiz->id, 'mode' => 'upload', 'pagesize' => $pagesize, 'action' => 'delete',
-                'strreallydel' => addslashes(get_string('deletepagecheck', 'offlinequiz')));
+        $tableparams = ['q' => $offlinequiz->id, 'mode' => 'upload', 'pagesize' => $pagesize, 'action' => 'delete',
+                'strreallydel' => addslashes(get_string('deletepagecheck', 'offlinequiz'))];
         $table = new offlinequiz_selectall_table('mod-offlinequiz-participants-error', 'participants.php', $tableparams);
 
         // Add extra limits due to initials bar.
@@ -72,12 +73,12 @@ class participants_report {
         }
 
         // Define table columns.
-        $tablecolumns = array('checkbox', 'time' , 'error', 'scan');
-        $tableheaders = array('', get_string('importedon', 'offlinequiz_rimport'), get_string('error'), '');
+        $tablecolumns = ['checkbox', 'time' , 'error', 'scan'];
+        $tableheaders = ['', get_string('importedon', 'offlinequiz_rimport'), get_string('error'), ''];
 
         $table->define_columns($tablecolumns);
         $table->define_headers($tableheaders);
-        $baseurl = new moodle_url('/mod/offlinequiz/participants.php', array('q' => $offlinequiz->id, 'mode' => 'upload'));
+        $baseurl = new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id, 'mode' => 'upload']);
         $table->define_baseurl($baseurl);
 
         $table->sortable(true);
@@ -100,7 +101,7 @@ class participants_report {
         }
 
         // Options for the popup_action.
-        $options = array();
+        $options = [];
         $options['height'] = 1200; // Optional.
         $options['width'] = 1170; // Optional.
         $options['resizable'] = false;
@@ -116,12 +117,12 @@ class participants_report {
             if (!empty($page->error)) {
                 $errorstr = get_string('error' . $page->error, 'offlinequiz_rimport');
             }
-            $row = array(
+            $row = [
                     '<input type="checkbox" name="pageid[]" value="' . $page->id . '"  class="select-multiple-checkbox" />',
                     userdate($page->time, $strtimeformat),
                     $errorstr,
-                    $actionlink
-                    );
+                    $actionlink,
+                    ];
             $table->add_data($row);
             $counter++;
         }
