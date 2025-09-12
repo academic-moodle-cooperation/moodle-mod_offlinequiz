@@ -43,11 +43,13 @@ $action        = optional_param('action', 'load', PARAM_TEXT);
 $userchanged   = optional_param('userchanged', 0, PARAM_INT);
 
 if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', ['id' => $scannedpageid])) {
-    throw new moodle_exception('noscannedpage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpageid);
+    throw new moodle_exception('noscannedpage', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpageid);
 }
 
 if (!$offlinequiz = $DB->get_record('offlinequiz', ['id' => $scannedpage->offlinequizid])) {
-    throw new moodle_exception('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new moodle_exception('noofflinequiz', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
 if (!$course = $DB->get_record('course', ['id' => $offlinequiz->course])) {
@@ -60,7 +62,8 @@ if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $cour
 }
 if (!$groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id], 'groupnumber',
         '*', 0, $offlinequiz->numgroups)) {
-    throw new moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new moodle_exception('nogroups', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
 require_login($course->id, false, $cm);
@@ -386,7 +389,6 @@ onClick=\"self.close(); return false;\"><br />";
                 $DB->set_field('offlinequiz_queue_data', 'status', 'error', ['id' => $scannedpage->queuedataid]);
             }
         }
-        // TODO we have to figure out what to do with the other pages in case of a multipage test.
     }
 
     if (!$overwrite) {
@@ -669,7 +671,8 @@ if (!empty($choices)) {
 if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz->numgroups) {
     if (!$group = $DB->get_record('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id,
         'groupnumber' => $groupnumber])) {
-        throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
+        throw new \moodle_exception('nogroups', 'offlinequiz',
+             $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
     }
 } else {
     $group = null;

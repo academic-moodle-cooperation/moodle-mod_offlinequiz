@@ -68,7 +68,10 @@ class structure {
 
     /** @var bool caches the results of can_be_edited. */
     protected $canbeedited = null;
-
+    /**
+     * warnings if this offlinequiz
+     * @var array
+     */
     private $warnings = [];
 
     /**
@@ -792,7 +795,11 @@ class structure {
 
         return $slots;
     }
-
+    /**
+     * Add a warning to offlinequiz
+     * @param mixed $string
+     * @return void
+     */
     public function add_warning($string) {
         $this->warnings[] = $string;
     }

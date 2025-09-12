@@ -23,14 +23,34 @@ define('BOX_DISTANCE_X', '95.7');
 define('BOX_A_CORNER_X', 288);
 define('BOX_A_CORNER_Y', 455);
 define('GROUP_BOXES', 6);
+/**
+ * scans a page for the group number
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
+ * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.7
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class offlinequiz_groupnumberscanner {
 
+    /**
+     * boxscanner
+     * @var \stdClass
+     */
     private $boxscanner;
-
+    /**
+     * constructor
+     * @param $boxscanner
+     */
     public function __construct($boxscanner) {
         $this->boxscanner = $boxscanner;
     }
-    // Read the group number of the page.
+    /**
+     *  Read the group number of the page.
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return void
+     */
     public function scan_group_number(offlinequiz_result_page $page) {
         global $DB;
         // Find the guessed middles of all group question boxes.
@@ -60,7 +80,11 @@ class offlinequiz_groupnumberscanner {
         }
     }
 
-
+    /**
+     * calculate middle places of the boxes
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return offlinequiz_point[]
+     */
     private function calculate_group_number_middles(offlinequiz_result_page $page) {
         $grouppoints = [];
 

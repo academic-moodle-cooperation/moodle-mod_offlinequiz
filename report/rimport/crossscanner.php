@@ -144,6 +144,14 @@ class crossfinder {
 }
 
 class simple_cross_scanner {
+    /**
+     * constructor
+     * @param offlinequiz_result_page $page
+     * @return void
+     */
+    public function __construct($page) {
+        return;
+    }
 
     public function findcross(\Imagick $image, offlinequiz_point $upperleft, offlinequiz_point $lowerright) {
         $geometry = $image->getimagegeometry();

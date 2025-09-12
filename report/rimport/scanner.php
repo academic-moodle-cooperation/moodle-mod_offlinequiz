@@ -59,7 +59,7 @@ class oq_point {
     public $y;
     /**
      * if this point is blank or not
-     * @var boolean
+     * @var bool
      */
     public $blank;
     /**
@@ -67,6 +67,10 @@ class oq_point {
      * @var stdClass
      */
     public $scannedpageid;
+    /**
+     * position of this point
+     * @var stdClass
+     */
     public $position;
 
     /**
@@ -161,12 +165,12 @@ class offlinequiz_page_scanner {
     public $iddigits;
     /**
      *
-     * @var int|unknown_type maximum amount of answers on this page
+     * @var int maximum amount of answers on this page
      */
     public $maxanswers;
     /**
      *
-     * @var unknown_type maximum amount of questions for this offlinequiz
+     * @var int maximum amount of questions for this offlinequiz
      */
     public $maxquestions;
     /**
@@ -441,7 +445,7 @@ class offlinequiz_page_scanner {
         for ($i = 0; $i <= $a; $i++) {                          // XXXXX.
             $start = $i - $width;                               // XXXXXX    a=dimension of square.
             for ($j = 0; $j <= $length; $j++) {                 // XXXXXXX.
-                if ($start + $j >= 0 and $start + $j <= $a) {   // XXXXXXXX  length=8.
+                if ($start + $j >= 0 && $start + $j <= $a) {   // XXXXXXXX  length=8.
                     // This creates the line from upper left to lower right corner.
                     $this->pattern[round($start + $j)][$i] = 1;
                     // This creates the line from upper right to lower left corner.
@@ -453,10 +457,10 @@ class offlinequiz_page_scanner {
         for ($i = 0; $i <= $a; $i++) {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
-                if ($i + $j + $halfwidth <= $a and $i + $j + $halfwidth >= 0) {
+                if ($i + $j + $halfwidth <= $a && $i + $j + $halfwidth >= 0) {
                     $this->pattern1[round($i + $j + $halfwidth)][$i] = 1;
                 }
-                if ($start + $j <= $a and $start + $j >= 0) {
+                if ($start + $j <= $a && $start + $j >= 0) {
                     $this->pattern1[round($start + $j)][round($a - $i)] = 1;
                 }
             }
@@ -465,10 +469,10 @@ class offlinequiz_page_scanner {
         for ($i = 0; $i <= $a; $i++) {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
-                if ($j + $start - $width <= $a and $j + $start - $width >= 0) {
+                if ($j + $start - $width <= $a && $j + $start - $width >= 0) {
                     $this->pattern2[round($j + $start - $width)][$i] = 1;
                 }
-                if ($start + $j <= $a and $start + $j >= 0) {
+                if ($start + $j <= $a && $start + $j >= 0) {
                     $this->pattern2[round($start + $j)][round($a - $i)] = 1;
                 }
             }
@@ -477,10 +481,10 @@ class offlinequiz_page_scanner {
         for ($i = 0; $i <= $a; $i++) {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
-                if ($start + $j <= $a and $start + $j >= 0) {
+                if ($start + $j <= $a && $start + $j >= 0) {
                     $this->pattern3[round($start + $j)][$i] = 1;
                 }
-                if ($i + $j + $halfwidth <= $a and $i + $j + $halfwidth >= 0) {
+                if ($i + $j + $halfwidth <= $a && $i + $j + $halfwidth >= 0) {
                     $this->pattern3[round($i + $j + $halfwidth)][round($a - $i)] = 1;
                 }
             }
@@ -489,10 +493,10 @@ class offlinequiz_page_scanner {
         for ($i = 0; $i <= $a; $i++) {
             $start = $i - $width;
             for ($j = 0; $j <= $length; $j++) {
-                if ($start + $j <= $a and $start + $j >= 0) {
+                if ($start + $j <= $a && $start + $j >= 0) {
                     $this->pattern4[round($start + $j)][$i] = 1;
                 }
-                if ($j + $start - $width <= $a and $j + $start - $width >= 0) {
+                if ($j + $start - $width <= $a && $j + $start - $width >= 0) {
                     $this->pattern4[round($j + $start - $width)][round($a - $i)] = 1;
                 }
             }
@@ -532,7 +536,7 @@ class offlinequiz_page_scanner {
         }
 
         $imageinfo = getimagesize($file);
-        if(!$imageinfo || !$imageinfo['0']) {
+        if (!$imageinfo || !$imageinfo['0']) {
             $scannedpage->status = 'error';
             $scannedpage->error = 'filenotimage';
             $scannedpage->filename = $this->filename;
@@ -782,7 +786,7 @@ class offlinequiz_page_scanner {
     /**
      * Returns absolute positions for answer hotspots.
      *
-     * @param unknown_type $width
+     * @param int $width
      * @return multitype:oq_point
      */
     public function export_hotspots_answer($width) {
@@ -897,8 +901,8 @@ class offlinequiz_page_scanner {
     /**
      * Sets the page number of this scanner. This has to be used if the user actively chooses a page number.
      *
-     * @param unknown_type $page
-     * @return number|Ambigous <number, unknown, boolean, string>
+     * @param int $page
+     * @return int
      */
     public function set_page($page) {
         $this->page = $page;
@@ -1070,9 +1074,9 @@ class offlinequiz_page_scanner {
         if ($percent >= $this->uppertrigger) {
             return 2;
         } else if ($percent >= $this->upperwarning) {
-            if ($patternout[0] == 0 or $patternout[1] == 0
-               or $patternout[2] == 0 or $patternout[3] == 0
-               or $patternout[4] == 0) {
+            if ($patternout[0] == 0 || $patternout[1] == 0
+               || $patternout[2] == 0 || $patternout[3] == 0
+               || $patternout[4] == 0) {
                 return 1;
             }
             $patternfactor = $patternin[0] / $patternout[0];
@@ -1086,7 +1090,7 @@ class offlinequiz_page_scanner {
                 return 1;
             } else if ($patternfactor2 > 2.8) {
                  return 1;
-            } else if ($patternfactor < 1.4 or $patternfactor2 < 1.7) {
+            } else if ($patternfactor < 1.4 || $patternfactor2 < 1.7) {
                 return 2;
             } else {
                 return 3;
@@ -1267,7 +1271,7 @@ class offlinequiz_page_scanner {
     public function pixel_is_black($x, $y) {
         global $CFG;
 
-        if (round($x) >= imagesx($this->image) or round($y) >= imagesy($this->image)) { // Point is out of range.
+        if (round($x) >= imagesx($this->image) || round($y) >= imagesy($this->image)) { // Point is out of range.
             return false;
         }
         $rgb = imagecolorsforindex($this->image, imagecolorat($this->image, round($x), round($y)));
@@ -1450,7 +1454,7 @@ class offlinequiz_page_scanner {
         $i = 0;
         $numtofind = round(MIN_BORDER * $this->zoomx);
         $found = false;
-        while (!$found and $i < MAX_BORDER * $this->zoomx) {   // Searching for first white in upper left corner.
+        while (!$found && $i < MAX_BORDER * $this->zoomx) {   // Searching for first white in upper left corner.
             if (!$this->pixel_is_black($xstart + $xfactor * $i, $ystart + $yfactor * $i)) {
                 $numtofind -= 1;
             }
@@ -1465,7 +1469,7 @@ class offlinequiz_page_scanner {
         $found = false;
         // Number of lines that have to be found (otherwise it is just the shit of a fly).
         $numtofind = round(CROSS_WIDTH * $this->zoomy / 2);
-        while (!$found and $i < CORNER_SPOT_WIDTH_VERTICAL * $this->zoomy) {  // Scanning for cross verticaly.
+        while (!$found && $i < CORNER_SPOT_WIDTH_VERTICAL * $this->zoomy) {  // Scanning for cross verticaly.
             $i++;
             $whiteline = true;
             for ($j = 0; $j < CORNER_SPOT_WIDTH_HORIZONTAL * $this->zoomx; $j++) {
@@ -1486,7 +1490,7 @@ class offlinequiz_page_scanner {
         $i = 0;
         $found = false;
         $numtofind = round(CROSS_WIDTH * $this->zoomx / 2);
-        while (!$found and $i < CORNER_SPOT_WIDTH_HORIZONTAL * $this->zoomx) {  // Scanning for cross horizontal.
+        while (!$found && $i < CORNER_SPOT_WIDTH_HORIZONTAL * $this->zoomx) {  // Scanning for cross horizontal.
             $i++;
             $whiteline = true;
             for ($j = 0; $j < CORNER_SPOT_WIDTH_VERTICAL * $this->zoomy; $j++) {
@@ -1504,7 +1508,7 @@ class offlinequiz_page_scanner {
                 $x = $xstart + $xfactor * $i;
             }
         }
-        if (!isset($x) or !isset($y)) {
+        if (!isset($x) || !isset($y)) {
             return false;
         }
         return new oq_point($x, $y);
@@ -1586,7 +1590,7 @@ class offlinequiz_page_scanner {
 
         if (imagesx($this->image) > imagesy($this->image)) {  // Flip image if landscape orientation.
             // Downsize large pictures first if it is not send from correct.php (width != 0).
-            if (imagesy($this->image) > 3000 and empty($width)) {
+            if (imagesy($this->image) > 3000 && empty($width)) {
                 $dest = imagecreatetruecolor(A3_HEIGHT, A3_WIDTH);
                 imagecopyresampled($dest, $this->image, 0, 0, 0, 0, A3_HEIGHT, A3_WIDTH,
                 imagesy($this->image), imagesx($this->image));
@@ -1598,7 +1602,7 @@ class offlinequiz_page_scanner {
             $this->zoomy = imagesy($this->image) / A3_HEIGHT;
         } else {
             // Downsize large pictures if it is not send from correct.php (width != 0).
-            if (imagesx($this->image) > 3000 and empty($width)) {
+            if (imagesx($this->image) > 3000 && empty($width)) {
                 $dest = imagecreatetruecolor(A3_WIDTH, A3_HEIGHT);
                 imagecopyresampled($dest, $this->image, 0, 0, 0, 0, A3_WIDTH, A3_HEIGHT,
                 imagesx($this->image), imagesy($this->image));
@@ -1679,7 +1683,7 @@ class offlinequiz_page_scanner {
 
         // Now set angle and exact zoom factors.
         // Avoid division by zero.
-        if ($this->upperright->x == $this->upperleft->x or $this->lowerleft->y == $this->upperleft->y) {
+        if ($this->upperright->x == $this->upperleft->x || $this->lowerleft->y == $this->upperleft->y) {
             $this->alpha = 0;
         } else {
             $alpha1 = rad2deg(atan(($this->upperright->y - $this->upperleft->y) / ($this->upperright->x - $this->upperleft->x)));
@@ -1747,7 +1751,7 @@ class offlinequiz_page_scanner {
                     $this->insecure = true;
                 }
             }
-            if ($found > 1 or $insecure) {
+            if ($found > 1 || $insecure) {
                 $value = 'X';              // If we get more than one value, set it to X.
                 $this->insecure = true;
             }
@@ -1793,7 +1797,7 @@ class offlinequiz_page_scanner {
         // and look for another hotspot with the second biggest percentage of black pixels.
         $value = 0;
         for ($i = 0; $i <= 5; $i++) {
-            if ($i != $group and $groupspots[$i] > $value) {
+            if ($i != $group && $groupspots[$i] > $value) {
                 $value = $groupspots[$i];
             }
         }
@@ -1816,7 +1820,11 @@ class offlinequiz_page_scanner {
         $group++;
         return $group;
     }
-
+    /**
+     * set maxanswers.
+     * @param mixed $maxanswers
+     * @param mixed $scannedpage
+     */
     public function set_maxanswers($maxanswers, $scannedpage) {
         if ($maxanswers > 26) {
             $maxanswers = 26; // There won't be more than 26 answers or 96 questions on the sheet.
@@ -1862,7 +1870,7 @@ class offlinequiz_page_scanner {
     /**
      * Sets the group number to the one chosen by the user and calibrates correctly.
      *
-     * @param unknown_type $group
+     * @param int $group
      */
     public function set_group(int $group) {
 
@@ -1900,7 +1908,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Returns the answers as recognised on the answer form.
-     * @return multitype:multitype:string
+     * @return array:int
      */
     public function get_answers() {
         $answers = [];

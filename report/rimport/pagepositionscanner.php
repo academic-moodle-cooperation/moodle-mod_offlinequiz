@@ -25,11 +25,31 @@ define("CORNER_SEARCH_AREA_START_SIZE", 50);
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/positionslib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/crossscanner.php');
+/**
+ * scans a page for the position and scaling factors
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
+ * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.7
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class offlinequiz_pagepositionscanner {
 
+    /**
+     * expected positions where the page is
+     * @var array
+     */
     private $expectedcrosspositions;
+    /**
+     * scanned page
+     * @var \offlinequiz_result_import\offlinequiz_result_page
+     */
     private $page;
-
+    /**
+     * Constructor
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     */
     public function __construct(offlinequiz_result_page $page) {
         $this->page = $page;
         if (!$this->page->scanproperties) {
@@ -38,7 +58,10 @@ class offlinequiz_pagepositionscanner {
         $this->page->scanproperties->geometry = $this->page->image->getImageGeometry();
 
     }
-
+    /**
+     * scan the positions of this page
+     * @return void
+     */
     public function scanposition() {
         $geometry = $this->page->scanproperties->geometry;
         $this->page->scanproperties->zoomfactorx = $geometry['width'] / A4_WIDTH;
@@ -46,10 +69,14 @@ class offlinequiz_pagepositionscanner {
         $zoomfactorx = $this->page->scanproperties->zoomfactorx;
         $zoomfactory = $this->page->scanproperties->zoomfactory;
         $this->expectedcrosspositions = [
-        "upperleft" => new offlinequiz_point(CORNER_SPACE_LEFT * $zoomfactorx, CORNER_SPACE_TOP * $zoomfactory, false),
-        "upperright" => new offlinequiz_point((A4_WIDTH - CORNER_SPACE_RIGHT) * $zoomfactorx, CORNER_SPACE_TOP * $zoomfactory, false),
-        "lowerright" => new offlinequiz_point((A4_WIDTH - CORNER_SPACE_RIGHT) * $zoomfactorx, (A4_HEIGHT - CORNER_SPACE_BOTTOM) * $zoomfactory, false),
-        "lowerleft" => new offlinequiz_point(CORNER_SPACE_LEFT * $zoomfactorx, (A4_HEIGHT - CORNER_SPACE_BOTTOM) * $zoomfactory, false),
+        "upperleft" => new offlinequiz_point(CORNER_SPACE_LEFT * $zoomfactorx,
+            CORNER_SPACE_TOP * $zoomfactory, false),
+        "upperright" => new offlinequiz_point((A4_WIDTH - CORNER_SPACE_RIGHT) * $zoomfactorx,
+             CORNER_SPACE_TOP * $zoomfactory, false),
+        "lowerright" => new offlinequiz_point((A4_WIDTH - CORNER_SPACE_RIGHT) * $zoomfactorx,
+            (A4_HEIGHT - CORNER_SPACE_BOTTOM) * $zoomfactory, false),
+        "lowerleft" => new offlinequiz_point(CORNER_SPACE_LEFT * $zoomfactorx,
+             (A4_HEIGHT - CORNER_SPACE_BOTTOM) * $zoomfactory, false),
         ];
 
         $this->page->positionproperties["upperright"] = $this->findcross("upperright");
@@ -62,36 +89,50 @@ class offlinequiz_pagepositionscanner {
         $lowerleft = $this->page->positionproperties["lowerleft"];
         $lowerright = $this->page->positionproperties["lowerright"];
 
-        $horizontaldiff = new offlinequiz_point($upperright->getx() - $upperleft->getx(), $upperright->gety() - $upperleft->gety(), 1);
-        $verticaldiff = new offlinequiz_point($upperright->getx() - $lowerright->getx(), $upperright->gety() - $lowerright->gety(), 1);
+        $horizontaldiff = new offlinequiz_point($upperright->getx() - $upperleft->getx(),
+         $upperright->gety() - $upperleft->gety(), 1);
+        $verticaldiff = new offlinequiz_point($upperright->getx() - $lowerright->getx(),
+         $upperright->gety() - $lowerright->gety(), 1);
         $this->page->scanproperties->zoomfactorx = $horizontaldiff->getdistance() / LAYER_WIDTH;
         $this->page->scanproperties->zoomfactory = $verticaldiff->getdistance() / LAYER_HEIGHT;
 
         $this->page->positionproperties["pageangle"] = calculatepointangle($horizontaldiff);
         $this->page->status = PAGE_STATUS_OK;
     }
-
+    /**
+     * calculate the positions of a point
+     * @param \offlinequiz_result_import\offlinequiz_point $leftpoint
+     * @param \offlinequiz_result_import\offlinequiz_point $rightpoint
+     * @return void
+     */
     private function calculatepositions(offlinequiz_point $leftpoint, offlinequiz_point $rightpoint) {
         $diagvector = new offlinequiz_point($rightpoint->getx() - $leftpoint->getx(), $rightpoint->gety() - $leftpoint->gety(), 0);
         $diagzoomfactor = $diagvector->getdistance() / DIAGONAL_LENGTH;
-        $this->page->scanproperties->zoomfactorx = $diagzoomfactor * $this->page->scanproperties->zoomfactorx * $this->page->scanproperties->zoomfactory;
-        $this->page->scanproperties->zoomfactory = $diagzoomfactor * $this->page->scanproperties->zoomfactory * $this->page->scanproperties->zoomfactorx;
+        $this->page->scanproperties->zoomfactorx =
+            $diagzoomfactor * $this->page->scanproperties->zoomfactorx * $this->page->scanproperties->zoomfactory;
+        $this->page->scanproperties->zoomfactory =
+            $diagzoomfactor * $this->page->scanproperties->zoomfactory * $this->page->scanproperties->zoomfactorx;
         if ($leftpoint->gety() > $rightpoint->gety()) {
             $lowerleft = $leftpoint;
             $upperright = $rightpoint;
-            $lowerright = calculatepoint( $lowerleft , $upperright , getdiagonalangle(), LAYER_WIDTH * $this->page->scanproperties->zoomfactorx);
-            $upperleft = calculatepoint( $upperright , $lowerleft, getdiagonalangle() , -LAYER_WIDTH * $this->page->scanproperties->zoomfactorx);
+            $lowerright = calculatepoint( $lowerleft , $upperright ,
+                getdiagonalangle(), LAYER_WIDTH * $this->page->scanproperties->zoomfactorx);
+            $upperleft = calculatepoint( $upperright , $lowerleft,
+                getdiagonalangle() , -LAYER_WIDTH * $this->page->scanproperties->zoomfactorx);
 
         } else {
             $lowerright = $rightpoint;
             $upperleft = $leftpoint;
-            $lowerleft = calculatepoint($upperleft, $lowerright, getdiagonalangle() , LAYER_HEIGHT * $this->page->scanproperties->zoomfactory);
-            $upperright = calculatepoint($lowerright, $upperleft , -getdiagonalangle() , LAYER_HEIGHT * $this->page->scanproperties->zoomfactory);
+            $lowerleft = calculatepoint($upperleft, $lowerright,
+                getdiagonalangle() , LAYER_HEIGHT * $this->page->scanproperties->zoomfactory);
+            $upperright = calculatepoint($lowerright, $upperleft ,
+                -getdiagonalangle() , LAYER_HEIGHT * $this->page->scanproperties->zoomfactory);
         }
 
-        // TODO Find a good way for finding ontop.
+        // Find a good way for finding ontop.
 
-        $horizontaldiff = new offlinequiz_point($upperright->getx() - $upperleft->getx(), $upperright->gety() - $upperleft->gety(), 1);
+        $horizontaldiff = new offlinequiz_point($upperright->getx() - $upperleft->getx(),
+            $upperright->gety() - $upperleft->gety(), 1);
         $this->page->positionproperties["upperright"] = $upperright;
         $this->page->positionproperties["lowerright"] = $lowerright;
         $this->page->positionproperties["upperleft"] = $upperleft;
@@ -100,7 +141,12 @@ class offlinequiz_pagepositionscanner {
         $this->page->status = PAGE_STATUS_OK;
 
     }
-
+    /**
+     * find a cross in a certain corner
+     * @param string $cornername
+     * @throws \coding_exception
+     * @return offlinequiz_point
+     */
     private function findcross($cornername) {
         $image = $this->page->image;
         if (!$image) {
@@ -112,14 +158,17 @@ class offlinequiz_pagepositionscanner {
         $zoomfactor = $this->page->scanproperties->zoomfactory;
 
         if ($cornername == "upperleft") {
-            $startpoint = new offlinequiz_point(CORNER_SEARCH_AREA_START_SIZE * $zoomfactor, $zoomfactor * CORNER_SEARCH_AREA_START_SIZE, 0);
+            $startpoint = new offlinequiz_point(CORNER_SEARCH_AREA_START_SIZE * $zoomfactor,
+                $zoomfactor * CORNER_SEARCH_AREA_START_SIZE, 0);
         } else if ($cornername == "lowerleft") {
-            $startpoint = new offlinequiz_point($zoomfactor * CORNER_SEARCH_AREA_START_SIZE, $geometry['height'] - $zoomfactor * CORNER_SEARCH_AREA_START_SIZE, 0);
+            $startpoint = new offlinequiz_point($zoomfactor * CORNER_SEARCH_AREA_START_SIZE,
+                $geometry['height'] - $zoomfactor * CORNER_SEARCH_AREA_START_SIZE, 0);
         } else if ($cornername == "lowerright") {
             $startpoint = new offlinequiz_point($geometry['width'] - $zoomfactor * CORNER_SEARCH_AREA_START_SIZE,
                 $geometry['height'] - $zoomfactor * CORNER_SEARCH_AREA_START_SIZE, 0);
         } else if ($cornername == "upperright") {
-            $startpoint = new offlinequiz_point($geometry['width'] - $zoomfactor * CORNER_SEARCH_AREA_START_SIZE, $zoomfactor * CORNER_SEARCH_AREA_START_SIZE, 0);
+            $startpoint = new offlinequiz_point($geometry['width'] - $zoomfactor * CORNER_SEARCH_AREA_START_SIZE,
+                $zoomfactor * CORNER_SEARCH_AREA_START_SIZE, 0);
         }
         $result = $crossscanner->findcross($this->page->image, $startpoint, $startpoint);
         return $result;

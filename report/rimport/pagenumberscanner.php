@@ -31,11 +31,23 @@ define('PAGE_NUMBER_WIDTH', 181);
 define('PAGE_NUMBER_CELLS', 26);
 define('PAGE_NUMBER_CELL_WIDTH', PAGE_NUMBER_WIDTH / PAGE_NUMBER_CELLS);
 define('PAGE_NUMBER_MEASURING_POINT_COUNT', 5);
+/**
+ * scans a page for the page number
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
+ * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.7
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class offlinequiz_pagenumberscanner {
 
-    // The Page number box is a binary encoded page number.
+    /**
+     * The Page number box is a binary encoded page number.
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return void
+     */
     public function scan_page_number(offlinequiz_result_page $page) {
-        // TODO
         $page->pagenumber = 1;
         return;
         $result = 0;
@@ -57,7 +69,11 @@ class offlinequiz_pagenumberscanner {
         }
         $page->pagenumber = $result;
     }
-
+    /**
+     * find the positions of this page
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return offlinequiz_point[][]
+     */
     private function find_positions(offlinequiz_result_page $page) {
         $positions = [];
         for ($i = 0; $i < PAGE_NUMBER_CELLS; $i++) {

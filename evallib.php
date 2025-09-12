@@ -44,7 +44,7 @@ require_once($CFG->libdir . '/filelib.php');
  * @param bool $autorotate
  * @param bool $recheckresult
  * @param bool $ignoremaxanswers
- * @return array|string Errorcodes
+ * @return stdClass|string Errorcodes
  * @throws coding_exception
  * @throws dml_exception
  */
@@ -407,7 +407,7 @@ function offlinequiz_process_scanned_page($offlinequiz, offlinequiz_page_scanner
             }
         } // End for (slot...
 
-        if ((!$insecuremarkings) and $submit) {
+        if ((!$insecuremarkings) && $submit) {
             $scannedpage = offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdata, $startindex, $endindex);
             if ($scannedpage->status == 'submitted') {
                 offlinequiz_check_result_completed($offlinequiz, $group, $result);
@@ -507,19 +507,19 @@ function offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdat
  * If so, we have to create a new result using the new group's question usage template.
  * Also checks whether the new and the old result differ in terms of markings.
  *
- * @param unknown_type $offlinequiz
- * @param unknown_type $scanner
- * @param unknown_type $scannedpage
- * @param unknown_type $coursecontext
- * @param unknown_type $questionsperpage
- * @param unknown_type $offlinequizconfig
+ * @param stdClass $offlinequiz
+ * @param offlinequiz_page_scanner $scanner
+ * @param stdClass $scannedpage
+ * @param context_course $coursecontext
+ * @param int $questionsperpage
+ * @param stdClass $offlinequizconfig
  * @return object The updated scanned page
  */
 function offlinequiz_check_for_changed_groupnumber($offlinequiz, $scanner, $scannedpage, $coursecontext,
                                                    $questionsperpage, $offlinequizconfig) {
     global $DB, $USER;
 
-    if (property_exists($scannedpage, 'resultid') and $scannedpage->resultid) {
+    if (property_exists($scannedpage, 'resultid') && $scannedpage->resultid) {
         if ($result = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid])) {
             if ($oldgroup = $DB->get_record('offlinequiz_groups', ['id' => $result->offlinegroupid])) {
                 if (intval($oldgroup->groupnumber) > 0 && (intval($oldgroup->groupnumber) != $scannedpage->groupnumber)) {
@@ -548,19 +548,24 @@ function offlinequiz_check_for_changed_groupnumber($offlinequiz, $scanner, $scan
                 }
             }
         } else {
+            $oldresultid = $scannedpage->resultid;
             unset($scannedpage->resultid);
             $DB->set_field('offlinequiz_scanned_pages', 'resultid', 0, ['id' => $scannedpage->id]);
-
-            if (!$DB->get_record('offlinequiz_scanned_pages', ['resultid' => $oldresultid])) {
-
-                // Delete the result.
-                $DB->delete_records('offlinequiz_results', ['id' => $resultid]);
-            }
+            $DB->delete_records('offlinequiz_results', ['id' => $oldresultid]);
         }
     }
     return $scannedpage;
 }
-
+/**
+ * Reprocess the scanned page.
+ * @param stdClass $offlinequiz
+ * @param offlinequiz_page_scanner $scanner
+ * @param int $oldresultid
+ * @param stdClass $scannedpage
+ * @param context_course $coursecontext
+ * @param int $questionsperpage
+ * @return void
+ */
 function offlinequiz_reprocess_scannedpage($offlinequiz, $scanner, $oldresultid, $scannedpage, $coursecontext, $questionsperpage) {
     global $USER;
 
@@ -748,8 +753,8 @@ function offlinequiz_check_different_result($scannedpage) {
  * Calculate the characteristic numbers for an offlinequiz, i.e. maximum number of questions, maximum number of answers,
  * number of columns on the answer form and the maximum number of questions on each page.
  *
- * @param unknown_type $offlinequiz
- * @param unknown_type $groups
+ * @param stdClass $offlinequiz
+ * @param array $groups
  */
 function offlinequiz_get_question_numbers($offlinequiz, array $groups) {
     $maxquestions = offlinequiz_get_maxquestions($offlinequiz, $groups);

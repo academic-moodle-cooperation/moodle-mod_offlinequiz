@@ -51,17 +51,17 @@ $usernumber = substr($USER->{$offlinequizconfig->ID_field}, strlen($offlinequizc
 $generatedusernumber = false;
 if (!intval($usernumber)) {
     // The user doesn't have an idnumber, let's generate a random one.
-    if(property_exists($SESSION, 'offlinequiztutorialusernumber')) {
+    if (property_exists($SESSION, 'offlinequiztutorialusernumber')) {
         $usernumber = $SESSION->offlinequiztutorialusernumber;
     } else {
         $usernumber = random_int(0, str_repeat('9', $offlinequizconfig->ID_digits)) . '';
-        while(strlen($usernumber) < $offlinequizconfig->ID_digits) {
+        while (strlen($usernumber) < $offlinequizconfig->ID_digits) {
             $usernumber = '0' . $usernumber;
         }
         $SESSION->offlinequiztutorialusernumber = $usernumber;
     }
     $generatedusernumber = true;
-} else if(strlen($usernumber) < $offlinequizconfig->ID_digits) {
+} else if (strlen($usernumber) < $offlinequizconfig->ID_digits) {
     $usernumber = substr(round($usernumber) . '0000000000000000000', 0, $offlinequizconfig->ID_digits);
 }
 $unarray = [];
@@ -86,10 +86,10 @@ if ($answer) {
     $a = [ 'correctusernumber' => $usernumber,
         'selectedusernumber' => $answer];
 
-    if($page < 4) {
+    if ($page < 4) {
         $feedbackstring = get_string('tutorial:feedback:' . $page . ':' . $answer, 'offlinequiz');
     } else {
-        if($correctanswers[$page] == $answer) {
+        if ($correctanswers[$page] == $answer) {
             $feedbackstring = get_string('tutorial:feedback:4:1', 'offlinequiz');
         } else {
             $feedbackstring = get_string('tutorial:feedback:4:0', 'offlinequiz', $a);
@@ -98,7 +98,7 @@ if ($answer) {
     if ($correctanswers[$page] == $answer) {
         $feedbackstring = '<b>' . get_string('tutorial:feedback:correct', 'offlinequiz') . ' ' . $feedbackstring;
         $notification = $OUTPUT->notification($feedbackstring, 'notifysuccess');
-        // The user guessed right, we show him the next page
+        // The user guessed right, we show him the next page.
         $page = $page + 1;
     } else {
         $feedbackstring = '<b>' . get_string('tutorial:feedback:wrong', 'offlinequiz') . '</b> ' . $feedbackstring;
@@ -118,7 +118,7 @@ $templatedata = [
 ];
 
 
-// Output of file
+// Output of file.
 // ---------------------------------
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_pagetype('mod-offlinequiz-tutorial');

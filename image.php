@@ -34,39 +34,45 @@ $resultid = required_param('resultid', PARAM_INT);
 $pageid      = optional_param('pageid', 0, PARAM_INT);
 
 if (!$result = $DB->get_record('offlinequiz_results', ['id' => $resultid])) {
-    throw new \moodle_exception('noresult', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noresult', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', ['id' => $pageid])) {
-    throw new \moodle_exception('nopage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('nopage', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$offlinequiz = $DB->get_record("offlinequiz", ['id' => $result->offlinequizid])) {
-    throw new \moodle_exception('noofflinequiz', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noofflinequiz', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
-    throw new \moodle_exception('nocourse', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('nocourse', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-    throw new \moodle_exception('nocm', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('nocm', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 if (!$groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id], 'groupnumber', '*', 0,
         $offlinequiz->numgroups)) {
-    throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('nogroups', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
 require_login($course->id, false, $cm);
 $context = context_module::instance($cm->id);
 
-if (!has_capability('mod/offlinequiz:viewreports', $context) and !has_capability('mod/offlinequiz:attempt', $context)) {
+if (!has_capability('mod/offlinequiz:viewreports', $context) && !has_capability('mod/offlinequiz:attempt', $context)) {
     throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
-if (!has_capability('mod/offlinequiz:viewreports', $context) and $result->userid != $USER->id) {
+if (!has_capability('mod/offlinequiz:viewreports', $context) && $result->userid != $USER->id) {
     throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
 $options = offlinequiz_get_review_options($offlinequiz, $result, $context);
 
-if (!$options->sheetfeedback and !$options->gradedsheetfeedback) {
+if (!$options->sheetfeedback && !$options->gradedsheetfeedback) {
     throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
 }
 
@@ -190,21 +196,21 @@ if ($sheetloaded) {
                 $index = explode('-', $key);
                 $questionid = $slotquestion->id;
 
-                if ($answers[$answerid]->fraction > 0 and $choicesdata[$slot][$key]->value == 1) {
+                if ($answers[$answerid]->fraction > 0 && $choicesdata[$slot][$key]->value == 1) {
                     // The student crossed a correct answer.
                     echo "<img title=\"".get_string('question') . ' ' .
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
                             "\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\" border=\"0\"" .
                             " id=\"a-$slotindex-$key\" style=\"position:absolute; top:" .
                             $hotspot->y."px; left:".$hotspot->x."px;\">";
-                } else if ($answers[$answerid]->fraction > 0 and $choicesdata[$slot][$key]->value == 0) {
+                } else if ($answers[$answerid]->fraction > 0 && $choicesdata[$slot][$key]->value == 0) {
                     // The student did not cross a correct answer.
                     echo "<img title=\"".get_string('question') . ' ' .
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
                             "\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/missing.png\" border=\"0\"" .
                             " id=\"a-$slotindex-$key\" style=\"position:absolute; top:".
                             ($hotspot->y - 2) . "px; left:".($hotspot->x - 2)."px;\">";
-                } else if ($answers[$answerid]->fraction <= 0 and $choicesdata[$slot][$key]->value == 1) {
+                } else if ($answers[$answerid]->fraction <= 0 && $choicesdata[$slot][$key]->value == 1) {
                     // The student crossed an answer that is wrong.
                     echo "<img title=\"".get_string('question') . ' ' .
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .

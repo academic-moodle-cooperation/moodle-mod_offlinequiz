@@ -159,19 +159,13 @@ class add_random_questions extends external_api {
         offlinequiz_delete_template_usages($quiz);
         offlinequiz_update_sumgrades($quiz);
 
-        /*$settings = quiz_settings::create_for_cmid($cmid);
-        $structure = structure::create_for_quiz($settings);
-        $structure->add_random_questions($addonpage, $randomcount, $filtercondition);
-        quiz_delete_previews($quiz);
-        quiz_settings::create($quiz->id)->get_grade_calculator()->recompute_quiz_sumgrades();*/
-
         return ['message' => get_string('addarandomquestion_success', 'mod_quiz')];
     }
 
     /**
      * Returns description of method result value.
      *
-     * @return external_value
+     * @return external_single_structure
      */
     public static function execute_returns() {
         return new external_single_structure([
