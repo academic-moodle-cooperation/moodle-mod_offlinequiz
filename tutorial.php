@@ -44,7 +44,7 @@ $page = optional_param('page', 1, PARAM_INT);
 $answer = optional_param('answer', 0, PARAM_TEXT);
 $thisurl = new moodle_url('/mod/offlinequiz/tutorial.php', ['page' => $page, 'answer' => $answer, 'id' => $id]);
 
-offlinequiz_load_useridentification();
+
 $offlinequizconfig = get_config('offlinequiz');
 
 $usernumber = substr($USER->{$offlinequizconfig->ID_field}, strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
@@ -119,7 +119,6 @@ $templatedata = [
 
 
 // Output of file.
-// ---------------------------------
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_pagetype('mod-offlinequiz-tutorial');
 $PAGE->activityheader->disable();

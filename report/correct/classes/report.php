@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace offlinequiz_correct;
+use context_module;
+use navigation_node;
+use moodle_url;
+use popup_action;
+use DateTime;
+use pix_icon;
+use mod_offlinequiz\default_report;
+use mod_offlinequiz\correct\offlinequiz_selectall_table;
 /**
  * The results import report for offlinequizzes
  *
@@ -25,26 +34,26 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
-namespace offlinequiz_correct;
-use context_module;
-use navigation_node;
-use moodle_url;
-use popup_action;
-use DateTime;
-use pix_icon;
-use mod_offlinequiz\default_report;
-use mod_offlinequiz\correct\offlinequiz_selectall_table;
-
-defined('MOODLE_INTERNAL') || die();
-
 class report extends default_report {
-    var $context;
-    static $users = [];
 
+    /**
+     * offlinequiz context
+     * @var \context_module
+     */
+    public $context;
+    /**
+     * list of users for this report
+     * @var array
+     */
+    public static $users = [];
+    /**
+     * print the error report for this offlinequiz
+     * @param \stdClass $offlinequiz
+     * @return void
+     */
     private function print_error_report($offlinequiz) {
         global $CFG, $DB, $OUTPUT;
 
-        offlinequiz_load_useridentification();
         $offlinequizconfig = get_config('offlinequiz');
 
         $nologs = optional_param('nologs', 0, PARAM_INT);
@@ -147,7 +156,7 @@ class report extends default_report {
 
             $groupstr = '?';
             $groupnumber = $page->groupnumber;
-            if ($groupnumber > 0 and $groupnumber <= $offlinequiz->numgroups) {
+            if ($groupnumber > 0 && $groupnumber <= $offlinequiz->numgroups) {
                 $groupstr = $letterstr[$page->groupnumber - 1];
             }
 
@@ -194,18 +203,18 @@ class report extends default_report {
         if ($action == 'download') {
             $queueid = optional_param('queueid', 0, PARAM_INT);
             $queuedataid = optional_param('queuedataid', 0, PARAM_INT);
-            if($queueid) {
+            if ($queueid) {
                 $queue = $DB->get_record('offlinequiz_queue', ['id' => $queueid]);
-                if($queue->offlinequizid == $offlinequiz->id) {
+                if ($queue->offlinequizid == $offlinequiz->id) {
                     $path = "$CFG->dataroot/offlinequiz/import/$queueid/$queue->filename";
                     send_file($path, $queue->filename);
                     die();
                 }
-            } else if($queuedataid) {
+            } else if ($queuedataid) {
                 $queuedata = $DB->get_record('offlinequiz_queue_data', ['id' => $queuedataid]);
-                if($queuedata) {
+                if ($queuedata) {
                     $queue = $DB->get_record('offlinequiz_queue', ['id' => $queuedata->queueid]);
-                    if($queue->offlinequizid == $offlinequiz->id) {
+                    if ($queue->offlinequizid == $offlinequiz->id) {
                         $filename = pathinfo($queuedata->filename)['basename'];
                         $path = "$CFG->dataroot/offlinequiz/import/$queuedata->queueid/$filename";
                         send_file($path, $filename);
@@ -271,14 +280,18 @@ class report extends default_report {
                 } else {
                     throw new \moodle_exception('invalidsesskey');
                 }
-                break;
             default:
                 // Print the table with answer forms that need correction.
                 $this->print_error_report($offlinequiz);
         }
         $this->display_uploaded_files($offlinequiz, $cm);
     }
-
+    /**
+     * display of all uploaded files in this offlinequiz
+     * @param mixed $offlinequiz
+     * @param mixed $cm
+     * @return void
+     */
     private function display_uploaded_files($offlinequiz, $cm) {
         global $DB, $OUTPUT;
         $queues = $DB->get_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id], 'timecreated DESC');
@@ -290,7 +303,7 @@ class report extends default_report {
                  WHERE q.offlinequizid = :offlinequizid";
         $queuefiles = $DB->get_records_sql($sql, ['offlinequizid' => $offlinequiz->id]);
         $queuefilesmatrix = [];
-        if($queuefiles) {
+        if ($queuefiles) {
             foreach ($queuefiles as $queuefile) {
                 if ($queuefile->queuedataid) {
                     if (!array_key_exists($queuefile->queueid, $queuefilesmatrix)) {
@@ -300,34 +313,34 @@ class report extends default_report {
                 }
             }
         }
-        if($queues) {
+        if ($queues) {
             $context = [];
             $context['queues'] = 0;
             $elements = [];
-            foreach($queues as $queue) {
+            foreach ($queues as $queue) {
                 $element = [];
 
                 $element['importedby'] = $this->get_user_name($queue->importuserid);
-                $importedbylink = new \moodle_url('/user/view.php', ['id' => $queue->importuserid, 'course' => $offlinequiz->course]);
+                $importedbylink = new moodle_url('/user/view.php', ['id' => $queue->importuserid, 'course' => $offlinequiz->course]);
                 $element['importedbylink'] = $importedbylink->out();
-                $link = new \moodle_url('/mod/offlinequiz/report.php',
+                $link = new moodle_url('/mod/offlinequiz/report.php',
                     ['action' => 'download', 'mode' => 'correct', 'queueid' => $queue->id, 'id' => $cm->id]);
                 $element['downloadlink'] = $link->out();
                 $element['documentname'] = $queue->filename;
                 $element['queueid'] = $queue->id;
-                if(key_exists($queue->id, $queuefilesmatrix)) {
-                    $element['numberofpages'] = sizeof($queuefilesmatrix[$queue->id]);
+                if (key_exists($queue->id, $queuefilesmatrix)) {
+                    $element['numberofpages'] = count($queuefilesmatrix[$queue->id]);
                 }
                 $date = new DateTime();
                 $date->setTimestamp(intval($queue->timecreated));
                 $element['importdate'] = userdate($date->getTimestamp());
-                if($queue->timestart) {
+                if ($queue->timestart) {
                     $date->setTimestamp(intval($queue->timestart));
                     $element['starttime'] = userdate($date->getTimestamp());
                 } else {
                     $element['starttime'] = get_string('queuenotstarted', 'offlinequiz');
                 }
-                if($queue->timefinish) {
+                if ($queue->timefinish) {
                     $date->setTimestamp(intval($queue->timefinish));
                     $element['finishtime'] = userdate($date->getTimestamp());
                 } else {
@@ -340,14 +353,14 @@ class report extends default_report {
                 $element['queuestatuserror'] = false;
                 $element['queuestatusprocessing'] = false;
                 $element['queuestatusnotstarted'] = false;
-                if(!$queue->timestart) {
+                if (!$queue->timestart) {
                     $element['queuestatusnotstarted'] = true;
-                } else if($this->queuehaserrors($queue)) {
+                } else if ($this->queuehaserrors($queue)) {
                     $element['queuestatuserror'] = true;
-                    if($queue->error) {
+                    if ($queue->error) {
                         $element['queueerror'] = get_string($queue->error, 'offlinequiz');
                     }
-                } else if(!$queue->timefinish) {
+                } else if (!$queue->timefinish) {
                     $element['queuestatusprocessing'] = true;
                 } else {
                     $element['queuestatusdone'] = true;
@@ -363,7 +376,14 @@ class report extends default_report {
         }
     }
 
-
+    /**
+     * page content of this report
+     * @param mixed $cm
+     * @param mixed $offlinequiz
+     * @param mixed $queueid
+     * @param mixed $queuepagematrix
+     * @return bool|string
+     */
     public function get_page_content($cm, $offlinequiz, $queueid = 0, $queuepagematrix = []) {
         $offlinequizconfig = get_config('offlinequiz');
         global $OUTPUT, $DB;
@@ -372,33 +392,34 @@ class report extends default_report {
         $options['width'] = 1170; // Optional.
         $options['resizable'] = false;
         $rendered = '';
-        if($queueid && array_key_exists($queueid, $queuepagematrix)) {
+        if ($queueid && array_key_exists($queueid, $queuepagematrix)) {
             $context = [];
             $context['files'] = [];
 
-            foreach($queuepagematrix[$queueid] as $queuedataid => $page) {
+            foreach ($queuepagematrix[$queueid] as $queuedataid => $page) {
                 $filecontext = [];
                 $filecontext['filename'] = substr($page->filename, strrpos($page->filename, '/') + 1);
-                $filecontext['fileurl'] = new moodle_url('/mod/offlinequiz/report.php', ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]);
-                if($page->scannedpageid) {
+                $filecontext['fileurl'] = new moodle_url('/mod/offlinequiz/report.php',
+                    ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]);
+                if ($page->scannedpageid) {
                     $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
-                    $filecontext['editurl'] = $OUTPUT->action_link($editurl, new pix_icon('t/edit', get_string('queuefilecorrectionhovertext', 'offlinequiz')) , new popup_action('click', $editurl, 'correct' .
+                    $filecontext['editurl'] = $OUTPUT->action_link($editurl, new pix_icon('t/edit', get_string('queuefilecorrectionhovertext', 'offlinequiz'))->export_for_pix() , new popup_action('click', $editurl, 'correct' .
                         $page->scannedpageid, $options));
                 }
                 $filecontext['statusmessage'] = get_string('queuefilestatusmessage_' . $page->status, 'offlinequiz');
-                if($page->status == 'OK'  || $page->status == 'error' || $page->status == 'submitted') {
+                if ($page->status == 'OK'  || $page->status == 'error' || $page->status == 'submitted') {
                     $filecontext['evaluated'] = true;
                 }
-                if($page->status == 'OK' || $page->status == 'submitted' || $page->status == 'missingpages' || $page->status == 'processed') {
+                if ($page->status == 'OK' || $page->status == 'submitted' || $page->status == 'missingpages' || $page->status == 'processed') {
                     $filecontext['filestatusdone'] = true;
-                } else if($page->status == 'error') {
+                } else if ($page->status == 'error') {
                     $filecontext['filestatuserror'] = true;
-                } else if($page->status == 'new'){
+                } else if ($page->status == 'new') {
                     $filecontext['filestatusnotstarted'] = true;
                 } else {
                     $filecontext['filestatusprocessing'] = true;
                 }
-                if($page->status == 'error' && $page->error) {
+                if ($page->status == 'error' && $page->error) {
                     $filecontext['statusmessage'] = get_string('error' . $page->error, 'offlinequiz_rimport');
                 } else if (!empty($page->userkey) && $page->userkey) {
                     $user = offlinequiz_get_user_by_userkey($offlinequiz, $page->userkey);
@@ -411,28 +432,42 @@ class report extends default_report {
         return $rendered;
     }
 
-
+    /**
+     * check if the queue has errors
+     * @param mixed $queue
+     * @return bool
+     */
     private function queuehaserrors($queue) {
         global $DB;
-        if($queue->status == 'error') {
+        if ($queue->status == 'error') {
             return true;
         }
-        if($DB->record_exists('offlinequiz_queue_data', ['queueid' => $queue->id, 'status' => 'error'])) {
+        if ($DB->record_exists('offlinequiz_queue_data', ['queueid' => $queue->id, 'status' => 'error'])) {
             return true;
         }
         return false;
     }
-
+    /**
+     * get the user name to a user
+     * @param mixed $userid
+     * @return mixed|string
+     */
     public function get_user_name($userid) {
         global $DB;
-        if(!array_key_exists($userid, $this::$users)) {
+        if (!array_key_exists($userid, $this::$users)) {
             $user = $DB->get_record('user', ['id' => $userid]);
             $this::$users[$userid] = fullname($user);
         }
         return $this::$users[$userid];
     }
 
-    // Add navigation nodes to mod_offlinequiz_result.
+    /**
+     * Add navigation nodes to mod_offlinequiz_result.
+     * @param \navigation_node $navigation
+     * @param mixed $cm
+     * @param mixed $offlinequiz
+     * @return navigation_node
+     */
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         // TODO: Move string to subplugin.
         $navnode = navigation_node::create(text: get_string('tabofflinequizcorrect', 'offlinequiz'),
@@ -443,9 +478,17 @@ class report extends default_report {
         $parentnode->add_node($navnode);
         return $navigation;
     }
+    /**
+     * get title of report
+     * @return string
+     */
     public function get_report_title(): string {
         return get_string('correct', 'offlinequiz');
     }
+    /**
+     * get the navigation key for this report
+     * @return string
+     */
     public function get_navigation_key(): string {
         return 'tabofflinequizcorrect';
     }

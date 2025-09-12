@@ -77,7 +77,8 @@ if (!has_capability('mod/offlinequiz:viewreports', $context) && ($USER->id != $r
 }
 
 if ($result->status != 'complete') {
-    throw new \moodle_exception('resultnotcomplete', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
+    throw new \moodle_exception('resultnotcomplete',
+        'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
 }
 
 $options = offlinequiz_get_review_options($offlinequiz, $result, $context);

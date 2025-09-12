@@ -61,7 +61,6 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
         return;
     }
 
-    // TODO do this properly. Just for testing.
     $sql = "SELECT * FROM {offlinequiz_queue} WHERE status = 'new'";
     $params = [];
     if ($jobid) {

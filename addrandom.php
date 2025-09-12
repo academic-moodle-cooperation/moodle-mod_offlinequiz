@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
 list($thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars)
 = offlinequiz_question_edit_setup('editq', '/mod/offlinequiz/addrandom.php', true);
 $groupnumber = $pagevars['groupnumber'];
-// These params are only passed from page request to request while we stay on
+// These params are only passed from page request to request while we stay on.
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $addonpage = optional_param('addonpage', 0, PARAM_INT);
 $category = optional_param('category', 0, PARAM_INT);

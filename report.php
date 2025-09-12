@@ -91,7 +91,7 @@ if ($mode == '') {
 } else if (!in_array($mode, $reportlist)) {
     throw new \moodle_exception('erroraccessingreport', 'offlinequiz');
 }
-// // Open the selected offlinequiz report and display it.
+// Open the selected offlinequiz report and display it.
 $report = offlinequiz_instantiate_report_class($mode);
 // Display the report.
 $report->display($offlinequiz, $cm, $course);

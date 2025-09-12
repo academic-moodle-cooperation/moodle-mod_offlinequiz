@@ -48,7 +48,7 @@ if ($ADMIN->fulltree) {
     // Fontfamily.
     require_once($CFG->dirroot . '/lib/pdflib.php');
     $pdf = new pdf();
-    if($pdf) {
+    if ($pdf) {
         $fontfamilies = $pdf->get_font_families();
     } else {
         $fontfamilies = [];
@@ -56,7 +56,7 @@ if ($ADMIN->fulltree) {
     }
     $options = [];
     foreach ($fontfamilies as $name => $values) {
-        if(get_string_manager()->string_exists('fontfamily' . $name, 'offlinequiz') ) {
+        if (get_string_manager()->string_exists('fontfamily' . $name, 'offlinequiz') ) {
             $options[$name] = get_string('fontfamily' . $name, 'offlinequiz');
         } else {
             $options[$name] = $name;
@@ -98,7 +98,8 @@ if ($ADMIN->fulltree) {
             get_string('showcopyrightdesc', 'offlinequiz'), 1));
 
     // Admin setting to set if participant usage is possible.
-    $settings->add(new admin_setting_configcheckbox('offlinequiz/defaultparticipantsusage', get_string('defaultparticipantsusage', 'offlinequiz'),
+    $settings->add(new admin_setting_configcheckbox('offlinequiz/defaultparticipantsusage',
+            get_string('defaultparticipantsusage', 'offlinequiz'),
             get_string('defaultparticipantsusagedesc', 'offlinequiz'), 1));
 
     // Disable newlines around images.
