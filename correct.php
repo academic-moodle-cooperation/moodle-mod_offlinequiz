@@ -216,9 +216,6 @@ if ($action == 'cancel') {
 
     if (!confirm_sesskey()) {
         throw new \moodle_exception('invalidsesskey');
-        echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
-onClick=\"self.close(); return false;\"><br />";
-        die;
     }
 
     // Maybe old errors have been fixed.
@@ -672,7 +669,7 @@ if (!empty($choices)) {
 if (is_numeric($groupnumber) && $groupnumber > 0 && $groupnumber <= $offlinequiz->numgroups) {
     if (!$group = $DB->get_record('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id,
         'groupnumber' => $groupnumber])) {
-        throw new \moodle_exception('nogroup', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
+        throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
     }
 } else {
     $group = null;
@@ -1017,7 +1014,7 @@ echo '<img id="scannedimage" name="formimage" src="' . $imageurl . '"
 // Print user name, number, and the page number.
 echo "<div style=\"position:absolute; top: 20px; left: 130px\">\n";
 
-if ($user && $user->firstname != '' and $user->lastname != '') {
+if ($user && $user->firstname != '' && $user->lastname != '') {
     echo "<strong style=\"color: green\">" . fullname($user) . " (" . $userkey . ")</strong>\n";
 } else if (!empty($userkey)) {
     echo "<strong style=\"color: red\">" . get_string('userdoesnotexist', 'offlinequiz', $userkey) . "</strong>\n";
@@ -1179,7 +1176,7 @@ if ($sheetloaded) {
             echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/blue.gif\" border=\"0\" id=\"u$x$y\" title=\"" . $y .
             "\" style=\"position:absolute; top:".$hotspot->y."px; left:".
             $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_userid(this, $x, $y)\">";
-        } else if (!empty($usernumber) and substr($usernumber, $x, 1) == $y) {
+        } else if (!empty($usernumber) && substr($usernumber, $x, 1) == $y) {
             echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\" border=\"0\" id=\"u$x$y\" title=\"" . $y .
             "\" style=\"position:absolute; top:".$hotspot->y."px; left:".
             $hotspot->x."px; cursor:pointer; z-index: 100;\" onClick=\"set_userid(this, $x, $y)\">";

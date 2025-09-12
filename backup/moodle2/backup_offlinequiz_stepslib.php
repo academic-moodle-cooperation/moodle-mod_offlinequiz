@@ -28,9 +28,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
+/**
+ * Step for backuping offlinequiz.
+ */
 class backup_offlinequiz_activity_structure_step extends backup_questions_activity_structure_step {
-
+    /**
+     * define structure of offlinequiz backup
+     * @return backup_nested_element
+     */
     protected function define_structure() {
 
         // To know if we are including userinfo.

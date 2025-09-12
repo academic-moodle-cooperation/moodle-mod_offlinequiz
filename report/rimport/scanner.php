@@ -47,17 +47,33 @@ define("BOX_INNER_WIDTH", "28");               // Inner width of the little boxe
  *
  */
 class oq_point {
+    /**
+     * x value of this oq_point
+     * @var int
+     */
     public $x;
+    /**
+     * y value of this oq_point
+     * @var int
+     */
     public $y;
+    /**
+     * if this point is blank or not
+     * @var boolean
+     */
     public $blank;
+    /**
+     * scannedpageid this oq_point belongs to
+     * @var stdClass
+     */
     public $scannedpageid;
     public $position;
 
     /**
      * Constructor
      *
-     * @param unknown_type $x
-     * @param unknown_type $y
+     * @param int $x
+     * @param int $y
      * @param unknown_type $blank
      */
     public function __construct($x=0, $y=0, $blank = true) {
@@ -195,7 +211,7 @@ class offlinequiz_page_scanner {
     public $alpha;
     /**
      *
-     * @var mixed object of the hotspots. We store all the points in this array. This makes it easy to rotate them all together.
+     * @var array object of the hotspots. We store all the points in this array. This makes it easy to rotate them all together.
      */
     public $hotspots;
     /**
@@ -749,7 +765,7 @@ class offlinequiz_page_scanner {
      * @param unknown_type $width
      * @return multitype:oq_point
      */
-    public function export_hotspots_group($width) {
+    public function export_hotspots_group(int $width) {
         global $CFG;
 
         $export = [];
@@ -1848,7 +1864,7 @@ class offlinequiz_page_scanner {
      *
      * @param unknown_type $group
      */
-    public function set_group($group) {
+    public function set_group(int $group) {
 
         // We compute min, max and medium values.
         $groupspots = [];

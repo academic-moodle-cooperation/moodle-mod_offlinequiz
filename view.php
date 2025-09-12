@@ -383,7 +383,7 @@ $downloadattendance['text'] = get_string('tabdownloadparticipantsforms', 'offlin
 
 $uploadattendance = [];
 $uploadattendance['collapsible'] = false;
-if($downloadattendance['status'] != STATUS_DONE) {
+if ($downloadattendance['status'] != STATUS_DONE) {
     $uploadattendance['status'] = STATUS_OPEN;
 } else if ($status['missingattendanceresults']) {
     $uploadattendance['status'] = STATUS_NEXT;

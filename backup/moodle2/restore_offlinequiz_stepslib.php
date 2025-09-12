@@ -35,10 +35,19 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_offlinequiz_activity_structure_step extends restore_questions_activity_structure_step {
-
+    /**
+     * placeholder value for the current offlinequiz_results entry being processed
+     * @var stdClass
+     */
     private $currentofflinequizresult = null;
+    /**
+     * placeholder value for the current offlinequiz_groups entry being processed
+     * @var stdClass
+     */
     private $currentofflinegroup = null;
-
+    /**
+     * Define the structure of the restore.
+     */
     protected function define_structure() {
 
         $paths = [];

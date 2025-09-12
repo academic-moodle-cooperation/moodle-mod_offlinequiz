@@ -50,7 +50,6 @@ class backup_offlinequiz_activity_task extends backup_activity_task {
 
         // Note: Following  steps must be present
         // in all the activities using question banks (only offlinequiz for now).
-        // TODO: Specialise these step to a new subclass of backup_activity_task.
 
         // Process all the annotated questions to calculate the question
         // categories needing to be included in backup for this activity

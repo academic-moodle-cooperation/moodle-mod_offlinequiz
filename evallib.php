@@ -323,11 +323,11 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
  * Stores the choices made on a scanned page in the table offlinequiz_choices. If there are no insecure markings
  * the page is also submitted, i.e. the answers are processed by the question usage by activiy (quba).
  *
- * @param unknown_type $offlinequiz
- * @param unknown_type $scanner
- * @param unknown_type $scannedpage
- * @param unknown_type $teacherid
- * @param unknown_type $coursecontext
+ * @param stdClass $offlinequiz
+ * @param offlinequiz_page_scanner $scanner
+ * @param stdClass $scannedpage
+ * @param int $teacherid
+ * @param context_course $coursecontext
  */
 function offlinequiz_process_scanned_page($offlinequiz, offlinequiz_page_scanner $scanner, $scannedpage,
                                           $teacherid, $questionsperpage, $coursecontext, $submit = false) {
@@ -579,13 +579,13 @@ function offlinequiz_reprocess_scannedpage($offlinequiz, $scanner, $oldresultid,
  * using the new user ID.
  * Also checks whether the new and the old result differ in terms of markings.
  *
- * @param unknown_type $offlinequiz
- * @param unknown_type $scanner
- * @param unknown_type $scannedpage
- * @param unknown_type $coursecontext
- * @param unknown_type $questionsperpage
- * @param unknown_type $offlinequizconfig
- * @return Ambigous <unknown_type, multitype:unknown_type offlinequiz_page_scanner >
+ * @param stdClass $offlinequiz
+ * @param offlinequiz_page_scanner $scanner
+ * @param stdClass $scannedpage
+ * @param context_course $coursecontext
+ * @param int $questionsperpage
+ * @param stdClass $offlinequizconfig
+ * @return stdClass
  */
 function offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage,
                                             $coursecontext, $questionsperpage, $offlinequizconfig) {
@@ -751,7 +751,7 @@ function offlinequiz_check_different_result($scannedpage) {
  * @param unknown_type $offlinequiz
  * @param unknown_type $groups
  */
-function offlinequiz_get_question_numbers($offlinequiz, $groups) {
+function offlinequiz_get_question_numbers($offlinequiz, array $groups) {
     $maxquestions = offlinequiz_get_maxquestions($offlinequiz, $groups);
     $maxanswers = offlinequiz_get_maxanswers($offlinequiz, $groups);
 
@@ -791,11 +791,11 @@ function offlinequiz_get_question_numbers($offlinequiz, $groups) {
 /**
  * Checks  groupnumber, userkey, and pagenumber of a scanned list of participants page
  *
- * @param unknown_type $offlinequiz
+ * @param stdClass $offlinequiz
  * @param offlinequiz_page_scanner $scanner
- * @param unknown_type $scannedpage
- * @param unknown_type $teacherid
- * @param unknown_type $coursecontext
+ * @param stdClass $scannedpage
+ * @param int $teacherid
+ * @param context_course $coursecontext
  * @return array|object Errors
  * @throws dml_exception
  */
@@ -912,12 +912,12 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
 /**
  * Processes the markings on a scanned list of paritipants page
  *
- * @param unknown_type $offlinequiz
+ * @param stdClass $offlinequiz
  * @param offlinequiz_participants_scanner $scanner
- * @param unknown_type $scannedpage
- * @param unknown_type $teacherid
- * @param unknown_type $coursecontext
- * @return unknown
+ * @param stdClass $scannedpage
+ * @param int $teacherid
+ * @param context_course $coursecontext
+ * @return stdClass the resulting scannedpage
  * @throws dml_exception
  */
 function offlinequiz_process_scanned_participants_page($offlinequiz, offlinequiz_participants_scanner $scanner,
@@ -1005,10 +1005,10 @@ function offlinequiz_process_scanned_participants_page($offlinequiz, offlinequiz
  * Submits the markings on a scanned list of participants page, i.e. sets 'checked' field of the users
  * according to the markings.
  *
- * @param unknown_type $offlinequiz
- * @param unknown_type $scannedpage
- * @param unknown_type $choicesdata
- * @return unknown_type
+ * @param stdClass $offlinequiz
+ * @param stdClass $scannedpage
+ * @param stdClass $choicesdata
+ * @return stdClass
  * @throws dml_exception
  * @throws moodle_exception
  */
