@@ -30,8 +30,14 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * upload form for answers
+ */
 class offlinequiz_upload_form extends moodleform {
-
+    /**
+     * definition of this form
+     * @return void
+     */
     public function definition() {
         $mform = $this->_form;
         // -------------------------------------------------------------------------------

@@ -35,10 +35,31 @@ define('RESULT_STATUS_ERROR', 'error');
 define('RESULT_STATUS_RESULT_ALREADY_EXISTS_FOR_OTHER_GRUOP', 'resultfordifferentgroups');
 define('RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_SAME_CROSSES', 'sameresultexists');
 define('RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_OTHER_CROSSES', 'otherresultexists');
-
+/**
+ * saves results in the database
+ *
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind
+ * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.7
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ **/
 class offlinequiz_resultsaver {
+    /**
+     * result with the same scannedpageid
+     * @var bool
+     */
+    private $resultwithsame;
 
-
+    /**
+     * inserts a result in the offlinequiz db
+     * @param mixed $scannedpageid
+     * @param mixed $teacherid
+     * @throws \coding_exception
+     * @return void
+     */
     public function create_or_update_result_in_db($scannedpageid, $teacherid) {
 
         global $DB;
@@ -48,7 +69,7 @@ class offlinequiz_resultsaver {
                 AND   p1.userkey = p2.userkey
                 AND   (p1.status = 'ok' OR p1.status = 'submitted') ";
         $scannedpages = $DB->get_records_sql($sql, ['scannedpageid' => $scannedpageid]);
-        // TODO check, if page with same page and userky, but other scannedpageid exists.
+        // TO DO check, if page with same page and userky, but other scannedpageid exists.
 
         if (!$scannedpages || !$scannedpages[$scannedpageid]) {
             throw new \coding_exception('A scannedpage can not be updated if it has errors');
@@ -57,7 +78,7 @@ class offlinequiz_resultsaver {
         if ($resulterror) {
             self::save_page_status($scannedpageid, 'error', $resulterror);
         }
-        if ($this->result_with_same_) {
+        if ($this->resultwithsame) {
             $groupnumber = 0;
         }
         foreach ($scannedpages as $scannedpage) {
@@ -68,7 +89,7 @@ class offlinequiz_resultsaver {
             }
 
         }
-        // TODO what happens with differend group versions?
+        // TO DO what happens with differend group versions?
         $scannedpage = $scannedpages[$scannedpageid];
 
         $conditions = ['groupnumber' => $scannedpage->groupnumber, 'offlinequizid' => $scannedpage->offlinequizid];
@@ -82,11 +103,12 @@ class offlinequiz_resultsaver {
         $resultid = self::get_result_id($scannedpages);
         if ($resultid) {
             $result = $DB->get_record('offlinequiz_results', ['id' => $resultid]);
-            $quba = question_engine::load_questions_usage_by_activity($result->usageid);
+            $quba = \question_engine::load_questions_usage_by_activity($result->usageid);
         } else {
             $result = new \stdClass();
             $result->offlinequizid = $scannedpage->offlinequizid;
             $result->userid = self::get_userid_by_userkey($scannedpage->userkey);
+            // To do clone stuff.
             $quba = $this->clone_template_usage($scannedpage->offlinequizid, $group->id);
             $result->usageid = $quba->id;
             $result->status = 'partial';
@@ -100,10 +122,14 @@ class offlinequiz_resultsaver {
         foreach ($scannedpages as $scannedpage) {
             $this->submit_scanned_page_to_result($quba, $scannedpage);
         }
-        question_engine::save_questions_usage_by_activity($quba);
+        \question_engine::save_questions_usage_by_activity($quba);
 
     }
-
+    /**
+     * get if result exists errors
+     * @param mixed $scannedpageid
+     * @return string
+     */
     private function get_result_exists_errors($scannedpageid) {
         global $DB;
         $sql = "SELECT page2.*
@@ -117,16 +143,22 @@ class offlinequiz_resultsaver {
                     AND   page1.offlinequizid = page2.offlinequizid";
         $otherresults = $DB->get_records_sql($sql, ['scannedpageid' => $scannedpageid]);
         if (!$otherresults) {
-            return;
+            return '';
         }
         if ($this->results_have_same_crosses($scannedpageid, $otherresults[0]->id)) {
             return RESULT_STATUS_RESULT_ALREADY_EXISTS_WITH_SAME_CROSSES;
         }
+        return '';
     }
 
     /**
-     *
-     */private function clone_template_usage($offlinequizid, $groupid) {
+     * clone the template usage
+     * @param mixed $offlinequizid
+     * @param mixed $groupid
+     */
+    private function clone_template_usage($offlinequizid, $groupid) {
+        global $DB;
+        $group = $DB->get_record('offlinequiz_groups', ['id' => $groupid]);
         // There is no result. First we have to clone the template question usage of the offline group.
         // We have to use our own loading function in order to get the right class.
         $templateusage = offlinequiz_load_questions_usage_by_activity($group->templateusageid);
@@ -141,26 +173,32 @@ class offlinequiz_resultsaver {
                 ['offlinequizid' => $offlinequizid,
                         'offlinegroupid' => $groupid]);
 
-        // Clone it...
+        // Clone the templateusage.
         $quba = $templateusage->get_clone($qinstances);
 
         // And save it. The clone contains the same question in the same order and the same order of the answers.
-        question_engine::save_questions_usage_by_activity($quba);
-}
+        \question_engine::save_questions_usage_by_activity($quba);
+        return $quba;
+    }
+    /**
+     * check if 2 results have the same choices
+     * @param mixed $scannedpageid1
+     * @param mixed $scannedpageid2
+     * @return int
+     */
+    private function results_have_same_crosses($scannedpageid1, $scannedpageid2) {
 
-private function results_have_same_crosses($scannedpageid1, $scannedpageid2) {
-
-    global $DB;
-    $sql = "SELECT 1
-                 FROM   {offlinequiz_choices} c1,
-                        {offlinequiz_choices} c2
-                 WHERE  c1.scannedpageid = :scannedpageid1
-                        AND c2.scannedpageid = :scannedpageid2
-                        AND c1.slotnumber = c2.slotnumber
-                        AND c1.choicenumber = c2.choicenumber
-                        AND c1.value <> c2.value";
-    return $DB->count_records_sql($sql, ['scannedpageid1' => $scannedpageid1, 'scannedpageid1' => $scannedpageid2]);
-}
+        global $DB;
+        $sql = "SELECT 1
+                    FROM   {offlinequiz_choices} c1,
+                            {offlinequiz_choices} c2
+                    WHERE  c1.scannedpageid = :scannedpageid1
+                            AND c2.scannedpageid = :scannedpageid2
+                            AND c1.slotnumber = c2.slotnumber
+                            AND c1.choicenumber = c2.choicenumber
+                            AND c1.value <> c2.value";
+        return $DB->count_records_sql($sql, ['scannedpageid1' => $scannedpageid1, 'scannedpageid2' => $scannedpageid2]);
+    }
 
     /**
      *
@@ -172,93 +210,105 @@ private function results_have_same_crosses($scannedpageid1, $scannedpageid2) {
      * @param int $startindex
      * @param int $endindex
      */
-private function submit_scanned_page_to_result($quba, $scannedpage) {
-    global $DB;
+    private function submit_scanned_page_to_result($quba, $scannedpage) {
+        global $DB;
 
-    $offlinequizconfig = get_config('offlinequiz');
+        $offlinequizconfig = get_config('offlinequiz');
 
-    $result = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid]);
-    $quba = question_engine::load_questions_usage_by_activity($result->usageid);
-    $slots = $quba->get_slots();
-    $choicesdata = $this->get_choices_data($scannedpage);
+        $result = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid]);
+        $quba = \question_engine::load_questions_usage_by_activity($result->usageid);
+        $slots = $quba->get_slots();
+        $choicesdata = $this->get_choices_data($scannedpage);
+        // To do: check if this works.
+        for ($slotindex = array_key_first($slots); $slotindex < array_key_last($slots); $slotindex++) {
 
-    for ($slotindex = $startindex; $slotindex < $endindex; $slotindex++) {
+            $slot = $slots[$slotindex];
+            $slotquestion = $quba->get_question($slot);
+            $attempt = $quba->get_question_attempt($slot);
+            $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
-        $slot = $slots[$slotindex];
-        $slotquestion = $quba->get_question($slot);
-        $attempt = $quba->get_question_attempt($slot);
-        $order = $slotquestion->get_order($attempt);  // Order of the answers.
+            $count = 0;
+            $response = [];
 
-        $count = 0;
-        $response = [];
-
-        // Go through all answers of the slot question.
-        foreach ($order as $key => $notused) {
-            // Check what the scanner recognised.
-            if ($choicesdata[$slot][$key]->value == 1) {
-                // Also fill the response array s.t. we can grade later if possible.
-                if ($slotquestion instanceof qtype_multichoice_single_question) {
-                    $response['answer'] = $key;
-                    // In case of singlechoice we count the crosses.
-                    // If more than 1 cross have been made, we don't submit the response.
-                    $count++;
-                } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
-                    $response['choice' . $key] = 1;
-                }
-            } else if ($choicesdata[$slot][$key]->value == 0) {
-                if ($slotquestion instanceof qtype_multichoice_multi_question) {
-                    $response['choice' . $key] = 0;
+            // Go through all answers of the slot question.
+            foreach ($order as $key => $notused) {
+                // Check what the scanner recognised.
+                if ($choicesdata[$slot][$key]->value == 1) {
+                    // Also fill the response array s.t. we can grade later if possible.
+                    if ($slotquestion instanceof qtype_multichoice_single_question) {
+                        $response['answer'] = $key;
+                        // In case of singlechoice we count the crosses.
+                        // If more than 1 cross have been made, we don't submit the response.
+                        $count++;
+                    } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
+                        $response['choice' . $key] = 1;
+                    }
+                } else if ($choicesdata[$slot][$key]->value == 0) {
+                    if ($slotquestion instanceof qtype_multichoice_multi_question) {
+                        $response['choice' . $key] = 0;
+                    }
                 }
             }
-        }
 
-        // We can submit the response and finish the attempt for this question.
-        if ($slotquestion instanceof qtype_multichoice_single_question) {
-            // We only submit the response of at most 1 cross has been made.
-            if ($count <= 1) {
+            // We can submit the response and finish the attempt for this question.
+            if ($slotquestion instanceof qtype_multichoice_single_question) {
+                // We only submit the response of at most 1 cross has been made.
+                if ($count <= 1) {
+                    $quba->process_action($slot, $response);
+                    $quba->finish_question($slot, time());
+                }
+            } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
                 $quba->process_action($slot, $response);
                 $quba->finish_question($slot, time());
             }
-        } else if ($slotquestion instanceof qtype_multichoice_multi_question) {
-            $quba->process_action($slot, $response);
-            $quba->finish_question($slot, time());
-        }
-    } // End of for slotindex...
+        } // End of for slotindex...
 
-    $scannedpage->status = 'submitted';
-    $scannedpage->error = 'missingpages';
-    $scannedpage->time = time();
+        $scannedpage->status = 'submitted';
+        $scannedpage->error = 'missingpages';
+        $scannedpage->time = time();
 
-    $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
+        $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
 
-    return $scannedpage;
-}
-
-
-
-private static function get_result_id($scannedpages) {
-    foreach ($scannedpages as $currentpage) {
-        if (!empty($currentpage->resultid)) {
-            return $currentpage->resultid;
-        }
+        return $scannedpage;
     }
-    return 0;
-}
 
-private static function get_userid_by_userkey($userkey) {
-    global $DB;
-    $offlinequizconfig = get_config('offlinequiz');
-    // TODO prefix and suffix.
-    return $DB->get_field('user', 'id', [$offlinequizconfig->ID_field => $userkey]);
-}
 
-private static function save_page_status($scannedpageid, $status, $error) {
-    global $DB;
-    $sql = "UPDATE {offlinequiz_scanned_pages} SET status = :status, error = :error
-                WHERE id=:scannedpageid";
-    $params = ['scannedpageid' => $scannedpageid, 'status' => $status, 'error' => $error];
-    $DB->execute($sql, $params);
+    /**
+     * Get the result ID if a set of scannedpages
+     * @param mixed $scannedpages
+     */
+    private static function get_result_id($scannedpages) {
+        foreach ($scannedpages as $currentpage) {
+            if (!empty($currentpage->resultid)) {
+                return $currentpage->resultid;
+            }
+        }
+        return 0;
+    }
+    /**
+     * Get the userid via userkey
+     * @param mixed $userkey
+     */
+    private static function get_userid_by_userkey($userkey) {
+        global $DB;
+        $offlinequizconfig = get_config('offlinequiz');
+        // TO DO prefix and suffix.
+        return $DB->get_field('user', 'id', [$offlinequizconfig->ID_field => $userkey]);
+    }
+    /**
+     * save the page status to the database
+     * @param mixed $scannedpageid
+     * @param mixed $status
+     * @param mixed $error
+     * @return void
+     */
+    private static function save_page_status($scannedpageid, $status, $error) {
+        global $DB;
+        $sql = "UPDATE {offlinequiz_scanned_pages} SET status = :status, error = :error
+                    WHERE id=:scannedpageid";
+        $params = ['scannedpageid' => $scannedpageid, 'status' => $status, 'error' => $error];
+        $DB->execute($sql, $params);
 
-}
+    }
 
 }

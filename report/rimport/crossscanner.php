@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
+// This file is part of offlinequiz_rimport - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,6 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * classes for crosscanners
+ *
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.8+
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace offlinequiz_result_import;
 defined('MOODLE_INTERNAL') || die();
 
@@ -23,6 +34,17 @@ define('SIMPLE_CROSSFINDER_MARGIN', 200);
 define('CROSS_SEARCH_MARGIN', 5);
 define('ALIGNMENTCROSSBOUNDRY', 3);
 define('CROSSTHICKNESS', 2);
+/**
+ * form for uploading scanned documents in the rimport report
+ *
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind
+ * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.7
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ **/
 class crossfinder {
 
     /**
@@ -126,7 +148,12 @@ class crossfinder {
             return $middle;
         }
     }
-
+    /**
+     * find closest point
+     * @param mixed $middle
+     * @param mixed $upper
+     * @param mixed $lower
+     */
     private function findclosest($middle, $upper, $lower) {
         if ($upper && $lower) {
             if ( abs($upper - $middle) > abs($lower - $middle) ) {
@@ -142,7 +169,17 @@ class crossfinder {
         return 0;
     }
 }
-
+/**
+ * simple cross scanner
+ *
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind
+ * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.7
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ **/
 class simple_cross_scanner {
     /**
      * constructor
@@ -152,7 +189,13 @@ class simple_cross_scanner {
     public function __construct($page) {
         return;
     }
-
+    /**
+     * find cross
+     * @param \Imagick $image
+     * @param \offlinequiz_result_import\offlinequiz_point $upperleft
+     * @param \offlinequiz_result_import\offlinequiz_point $lowerright
+     * @return offlinequiz_point
+     */
     public function findcross(\Imagick $image, offlinequiz_point $upperleft, offlinequiz_point $lowerright) {
         $geometry = $image->getimagegeometry();
         $downwards = ($geometry["height"]) / 2 > $upperleft->y;
@@ -323,7 +366,7 @@ class simple_cross_scanner {
                 }
             }
         }
-        // TODO Fehlerbehandlung.
+        // To do: Fehlerbehandlung.
         return new offlinequiz_point($pointx, $pointy, 1);
 
     }

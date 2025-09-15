@@ -29,10 +29,16 @@ namespace offlinequiz_result_import;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
-
+/**
+ * saves page to the database
+ */
 class offlinequiz_page_saver {
 
-
+    /**
+     * save page information in the database
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return void
+     */
     public function save_page_information(offlinequiz_result_page $page) {
         global $DB;
         if (!$page->scannedpageid) {
@@ -43,7 +49,7 @@ class offlinequiz_page_saver {
             $scannedpage->time = time();
             $scannedpage->id = $DB->insert_record('offlinequiz_scanned_pages', $scannedpage);
             $page->scannedpageid = $scannedpage->id;
-            // TODO Warningfilename und info aus der Tabelle rausnehmen.
+            // TO DO Warningfilename und info aus der Tabelle rausnehmen.
         }
 
         $this->save_page_corners($page);
@@ -63,7 +69,11 @@ class offlinequiz_page_saver {
         $this->save_status($page);
 
     }
-
+    /**
+     * save the choices
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return void
+     */
     protected function save_choices(offlinequiz_result_page $page) {
         global $DB;
         if ($page && $page->scannedpageid) {
@@ -73,7 +83,11 @@ class offlinequiz_page_saver {
             $DB->insert_records("offlinequiz_choices", $rows);
         }
     }
-
+    /**
+     * get the results in the db.
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return \stdClass[]
+     */
     private function get_results_for_db(offlinequiz_result_page $page) {
          $answers = $page->answers;
          $startnumber = $page->startanswer;
@@ -94,7 +108,11 @@ class offlinequiz_page_saver {
          return $rows;
     }
 
-
+    /**
+     * save status of a page
+     * @param mixed $page
+     * @return void
+     */
     private function save_status($page) {
         if ($page->status) {
 
@@ -113,7 +131,11 @@ class offlinequiz_page_saver {
 
         }
     }
-
+    /**
+     * Save the user id
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return void
+     */
     private function save_user_id(offlinequiz_result_page $page) {
         if ($page->studentidziphers) {
             $studentnumber = '';
@@ -127,7 +149,11 @@ class offlinequiz_page_saver {
         }
 
     }
-
+    /**
+     * save page number to the database
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return void
+     */
     protected function save_pagenumber(offlinequiz_result_page $page) {
         if ($page->pagenumber) {
             global $DB;
@@ -135,7 +161,11 @@ class offlinequiz_page_saver {
             $DB->set_field('offlinequiz_scanned_pages', 'pagenumber', $page->pagenumber, $conditions);
         }
     }
-
+    /**
+     * save the group number in the database
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return void
+     */
     protected function save_group_number(offlinequiz_result_page $page) {
         if ($page->group->id) {
             global $DB;
@@ -144,7 +174,11 @@ class offlinequiz_page_saver {
 
         }
     }
-
+    /**
+     * save the page corners in the database
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return void
+     */
     protected function save_page_corners(offlinequiz_result_page $page) {
         global $DB;
         $conditions = ["scannedpageid" => $page->scannedpageid];
@@ -166,7 +200,12 @@ class offlinequiz_page_saver {
             }
         }
     }
-
+    /**
+     * update a corner in the database
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @param mixed $corner
+     * @return void
+     */
     private function update_corner(offlinequiz_result_page $page, $corner) {
         global $DB;
         $cornername = $this->get_fitting_corner_name($corner->position);
@@ -175,7 +214,11 @@ class offlinequiz_page_saver {
         $corner->y = round($point->gety());
         $DB->update_record("offlinequiz_page_corners", $corner);
     }
-
+    /**
+     * get the fitting cornernumber of a corner
+     * @param mixed $cornernumber
+     * @return string
+     */
     private function get_fitting_corner_name($cornernumber) {
         if ($cornernumber == 0 ) {
             return "upperleft";
