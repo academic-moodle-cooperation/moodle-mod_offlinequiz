@@ -19,11 +19,22 @@ namespace offlinequiz_rimport\task\adhoc;
 use function PHPUnit\Framework\throwException;
 
 /**
- * An example of an adhoc task.
- * @package offlinequiz_rimport
+ * The results import report for offlinequizzes
+ *
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind
+ * @copyright     2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 5.0
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
  */
 class extract_files extends \core\task\adhoc_task {
-
+    /**
+     * constructor
+     * @param int $queueid
+     * @return extract_files
+     */
     public static function instance(
         int $queueid
         ): self {
@@ -47,7 +58,7 @@ class extract_files extends \core\task\adhoc_task {
         $context = \context_module::instance($cm->id);
         $DB->update_record('offlinequiz_queue', $queue);
         try {
-            if($queuedatas = $DB->get_records('offlinequiz_queue_data', ['queueid' => $queue->id])) {
+            if ($queuedatas = $DB->get_records('offlinequiz_queue_data', ['queueid' => $queue->id])) {
                 // This is a rerun. Just queue all the files again and we're done
                 $DB->set_field('offlinequiz_queue_data', 'status', 'new', ['queueid' => $queue->id]);
                 $DB->set_field('offlinequiz_queue_data', 'error', '', ['queueid' => $queue->id]);
@@ -62,12 +73,12 @@ class extract_files extends \core\task\adhoc_task {
             }
             $dirname = "{$CFG->dataroot}/offlinequiz/import/$queue->id";
             $importfile = "$dirname/$queue->filename";
-            if(!file_exists($importfile)) {
+            if (!file_exists($importfile)) {
 
                 $this->restorefile($context->id, $queue->id, $queue->filename, $importfile);
             }
             $files = [];
-            require_once $CFG->libdir . '/filelib.php';
+            require_once($CFG->libdir . '/filelib.php');
             $mimetype = mimeinfo('type', $importfile);
             if ($mimetype == 'application/zip') {
                 $fp = get_file_packer('application/zip');
@@ -77,7 +88,7 @@ class extract_files extends \core\task\adhoc_task {
                     foreach ($files as $file) {
                         $mimetype = \mimeinfo('type', $file);
                         if ($mimetype == 'application/pdf') {
-                            if(!$this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file, $queue, true)) {
+                            if (!$this->extract_pdf_to_tiff($dirname, $dirname . '/' . $file, $queue, true)) {
                                 return;
                             }
                         }
@@ -101,7 +112,7 @@ class extract_files extends \core\task\adhoc_task {
                     fread($handle, 1);
                 }
                 $result = pclose($handle);
-                if($result) {
+                if ($result) {
                     $queue->status = 'error';
                     $queue->error = 'couldnotextracttiff';
                     $queue->timefinish = time();
@@ -111,7 +122,7 @@ class extract_files extends \core\task\adhoc_task {
                 $files = get_directory_list($dirname);
                 $files = $this->remove_original_file($files, $queue->filename);
             } else if ($mimetype == 'application/pdf') {
-                if(!$files = $this->extract_pdf_to_tiff ( $dirname, $importfile, $queue)) {
+                if (!$files = $this->extract_pdf_to_tiff ( $dirname, $importfile, $queue)) {
                     return;
                 }
             } else if (preg_match('/^image/' , $mimetype)) {
@@ -148,7 +159,7 @@ class extract_files extends \core\task\adhoc_task {
             }
         } catch (\exception $e) {
             // Just in case if there is an error and it's still processing write that into the queue.
-            if($queue->status == 'processing') {
+            if ($queue->status == 'processing') {
                 $queue->status = 'error';
                 $queue->error = 'couldnotextractpages';
                 $DB->update_record('offlinequiz_queue', $queue);
@@ -157,8 +168,9 @@ class extract_files extends \core\task\adhoc_task {
     }
 
     /**
-     * @param dirname
-     * @param importfile
+     * extract the pdf to a tiff
+     * @param string dirname
+     * @param string importfile
      */
     private function extract_pdf_to_tiff($dirname, $importfile, $queue, $unlink = false) {
         global $DB;
@@ -170,7 +182,7 @@ class extract_files extends \core\task\adhoc_task {
             fread($handle, 1);
         }
         $returncode = pclose($handle);
-        if($returncode) {
+        if ($returncode) {
             $queue->status = 'error';
             $queue->error = 'couldnotextractpdf';
             $queue->timefinish = time();
@@ -186,18 +198,35 @@ class extract_files extends \core\task\adhoc_task {
         $files = $this->remove_original_file($files, $queue->filename);
         return $files;
     }
-
+    /**
+     * convert an image to black and white with the provided threshhold
+     * @param mixed $file
+     * @param mixed $threshold
+     * @return void
+     */
     private function convert_black_white($file, $threshold) {
         $command = "convert " . escapeshellarg(realpath($file)) . " -colorspace gray -threshold $threshold% " .  escapeshellarg(realpath($file));
         popen($command, 'r');
     }
-
+    /**
+     * remove original file from the list of files
+     * @param mixed $files
+     * @param mixed $original
+     */
     private function remove_original_file($files, $original) {
         if (($key = array_search($original, $files)) !== false) {
             unset($files[$key]);
         }
         return $files;
     }
+    /**
+     * restore files to the path they are needed in
+     * @param mixed $contextid
+     * @param mixed $queueid
+     * @param mixed $filename
+     * @param mixed $restorepath
+     * @return void
+     */
     private function restorefile($contextid, $queueid, $filename, $restorepath) {
         $fs = get_file_storage();
 
@@ -205,7 +234,14 @@ class extract_files extends \core\task\adhoc_task {
         $file = $fs->get_file_by_hash($pathhash);
         $file->copy_content_to($restorepath);
     }
-
+    /**
+     * insert queuedata entry in the database
+     * @param mixed $contextid
+     * @param mixed $queuedataid
+     * @param mixed $filename
+     * @param mixed $pathname
+     * @return \stored_file
+     */
     private function create_queuedatafile_entry($contextid, $queuedataid, $filename, $pathname) {
         $fs = get_file_storage();
         $filerecord = [
