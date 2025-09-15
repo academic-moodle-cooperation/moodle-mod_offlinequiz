@@ -31,19 +31,37 @@ namespace mod_offlinequiz\correct;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
-
+/**
+ * select all table
+ */
 class offlinequiz_selectall_table extends \flexible_table {
-
+    /**
+     * the script of the report to be used
+     * @var mixed
+     */
     protected $reportscript;
+    /**
+     * array of params
+     * @var array
+     */
     protected $params;
 
-
+    /**
+     * constructor
+     * @param mixed $uniqueid
+     * @param mixed $reportscript
+     * @param mixed $params
+     */
     public function __construct($uniqueid, $reportscript, $params) {
         parent::__construct($uniqueid);
         $this->reportscript = $reportscript;
         $this->params = $params;
     }
 
+    /**
+     * before html of the report
+     * @return void
+     */
     public function wrap_html_start() {
 
         echo '<div id="tablecontainer" class="centerbox">';
@@ -58,6 +76,10 @@ class offlinequiz_selectall_table extends \flexible_table {
         echo '  <center>';
     }
 
+    /**
+     * after html of this table
+     * @return void
+     */
     public function wrap_html_finish() {
         $strselectall = get_string('selectall', 'offlinequiz');
         $strselectnone = get_string('selectnone', 'offlinequiz');

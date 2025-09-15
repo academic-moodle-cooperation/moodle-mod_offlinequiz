@@ -32,8 +32,14 @@ use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * participants list table
+ */
 class offlinequiz_partlist_table extends offlinequiz_selectall_table {
-
+    /**
+     * the html after the table
+     * @return void
+     */
     public function wrap_html_finish() {
         $strselectall = get_string('selectall', 'offlinequiz');
         $strselectnone = get_string('selectnone', 'offlinequiz');
@@ -59,7 +65,15 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
         echo '</form></div>';
 
     }
-
+    /**
+     * the initials bar
+     * @param mixed $alpha
+     * @param mixed $current
+     * @param mixed $class
+     * @param mixed $title
+     * @param mixed $urlvar
+     * @return void
+     */
     protected function print_one_initials_bar($alpha, $current, $class, $title, $urlvar) {
         echo html_writer::start_tag('div', ['class' => 'initialbar ' . $class]) .
         $title . ' : ';

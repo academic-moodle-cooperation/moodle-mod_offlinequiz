@@ -37,9 +37,20 @@ require_once($CFG->dirroot . '/mod/offlinequiz/pdflib.php');
  * Generator of answer forms with participant identification.
  */
 class offlinequiz_answer_pdf_identified extends offlinequiz_answer_pdf {
+    /**
+     * student
+     * @var stdClass
+     */
     public $participant = null;
+    /**
+     * id of the list
+     * @var int
+     */
     public $listno = null;
-
+    /**
+     * print the header of this pdf
+     * @return void
+     */
     public function header() {
         global $CFG, $DB;
         // participant data.
@@ -85,6 +96,14 @@ class offlinequiz_answer_pdf_identified extends offlinequiz_answer_pdf {
     }
 }
 
+/**
+ * get all participants of an offlinequiz
+ * @param mixed $offlinequiz
+ * @param mixed $list
+ * @param mixed $onlyifaccess
+ * @throws \moodle_exception
+ * @return array
+ */
 function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifaccess = false) {
     global $CFG, $DB;
     $coursemodule = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id);
@@ -155,10 +174,10 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
 /**
  * Creates a PDF document for a list of participants
  *
- * @param unknown_type $offlinequiz
+ * @param stdClass $offlinequiz
  * @param int $courseid
- * @param unknown_type $list
- * @param unknown_type $context
+ * @param stdClass $list
+ * @param context_module $context
  * @return boolean
  */
 function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $groupnumber, $list, $context, $nogroupmark=false, $onlyifaccess = false) {
@@ -179,7 +198,7 @@ function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $g
     $pdf->SetMargins(15, 25, 15);
     $pdf->SetAutoPageBreak(true, 20);
 
-    if ($nogroupmark == true){
+    if ($nogroupmark == true) {
         $groupletter = '';
     } else {
         $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -200,7 +219,8 @@ function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $g
     }
 
     foreach ($participants as $participant) {
-        $pdf->add_participant_answer_page( $participant, $maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter);
+        $pdf->add_participant_answer_page( $participant, $maxanswers, $templateusage, $offlinequiz,
+            $group, $courseid, $context, $groupletter);
     }
 
     $pdf->Output("{$offlinequiz->name}_{$list->name}.pdf", 'D');

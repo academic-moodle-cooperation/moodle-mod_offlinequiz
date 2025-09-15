@@ -14,10 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * privacy provider for offlinequiz_overview
+ *
+ * @package       offlinequiz_overview
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
+ * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.7
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace offlinequiz_overview\privacy;
 
 defined('MOODLE_INTERNAL') || die();
-
+/**
+ * privacy null provider
+ */
 class provider implements
 // This plugin does not store any personal user data.
 \core_privacy\local\metadata\null_provider {

@@ -25,8 +25,18 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_offlinequiz\output;
-
+/**
+ * the action api
+ */
 class action_api {
+    /**
+     * insert actions of all subplugins
+     * @param mixed $sourceplugin
+     * @param mixed $sourcepage
+     * @param mixed $cm
+     * @param mixed $offlinequiz
+     * @return string
+     */
     public static function insert_all_actions($sourceplugin, $sourcepage , $cm, $offlinequiz) {
         $subplugins = \core_component::get_plugin_list('offlinequiz');
         $html = '';

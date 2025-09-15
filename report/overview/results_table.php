@@ -29,25 +29,49 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
-
+/**
+ * the table for the results
+ */
 class offlinequiz_results_table extends flexible_table {
-
+    /**
+     * offlinequiz db entry
+     * @var stdClass
+     */
     protected $offlinequiz;
+    /**
+     * if there are no results
+     * @var int
+     */
     protected $noresults;
+    /**
+     * size of the page
+     * @var int
+     */
     protected $psize;
 
+    /**
+     * constructor
+     * @param mixed $uniqueid
+     * @param mixed $params
+     */
     public function __construct($uniqueid, $params) {
         parent::__construct($uniqueid);
         $this->offlinequiz = $params['offlinequiz'];
         $this->noresults = $params['noresults'];
         $this->psize = $params['pagesize'];
     }
-
+    /**
+     * what to print if there is nothing to display
+     * @return void
+     */
     public function print_nothing_to_display() {
         global $OUTPUT;
         return;
     }
-
+    /**
+     * the html before the table
+     * @return void
+     */
     public function wrap_html_start() {
         $strreallydel  = addslashes(get_string('deleteresultcheck', 'offlinequiz'));
         echo '<div id="tablecontainer" class="centerbox">';
@@ -61,7 +85,10 @@ class offlinequiz_results_table extends flexible_table {
         echo '  <input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         echo '  <center>';
     }
-
+    /**
+     * the html after the table
+     * @return void
+     */
     public function wrap_html_finish() {
         $strselectall = get_string('selectall', 'offlinequiz');
         $strselectnone = get_string('selectnone', 'offlinequiz');
@@ -78,7 +105,15 @@ class offlinequiz_results_table extends flexible_table {
         echo ' </div>';
         echo '</form></div>';
     }
-
+    /**
+     * print the bar for the initials
+     * @param mixed $alpha
+     * @param mixed $current
+     * @param mixed $class
+     * @param mixed $title
+     * @param mixed $urlvar
+     * @return void
+     */
     protected function print_one_initials_bar($alpha, $current, $class, $title, $urlvar) {
         echo html_writer::start_tag('div', ['class' => 'initialbar linkbox ' . $class]) .
         $title . ' : ';

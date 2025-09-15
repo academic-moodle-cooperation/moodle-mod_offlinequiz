@@ -44,6 +44,9 @@ require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/overview/results_table.php');
 require_once($CFG->libdir . '/gradelib.php');
 
+/**
+ * Report for the results overview
+ */
 class report extends default_report {
 
     /**
@@ -94,7 +97,6 @@ class report extends default_report {
         }
         $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-        offlinequiz_load_useridentification();
         $offlinequizconfig = get_config('offlinequiz');
 
         $context = context_module::instance($cm->id);
@@ -562,7 +564,7 @@ class report extends default_report {
 
                 if (!$download) {
                     $table->add_data($row);
-                } else if ($download == 'Excel' or $download == 'ODS') {
+                } else if ($download == 'Excel' || $download == 'ODS') {
                     $colnum = 0;
                     foreach ($row as $item) {
                         $myxls->write($rownum, $colnum, $item, $formats['format']);
@@ -701,7 +703,7 @@ class report extends default_report {
         $options[] = get_string('allstudents', 'offlinequiz');
         $options[] = get_string('allresults', 'offlinequiz');
 
-        echo html_writer::select($options, 'noresults', $noresults, '');
+        echo html_writer::select($options, 'noresults', $noresults, null);
         echo '</td></tr>';
         echo '<tr><td colspan="2" align="center">';
         echo '<button type="submit" class="btn btn-secondary"> ' . get_string('go') . '</button>';
@@ -713,7 +715,14 @@ class report extends default_report {
 
         return true;
     }
-
+    /**
+     * get the grade for a result
+     * @param mixed $context
+     * @param mixed $courseid
+     * @param mixed $offlinequizid
+     * @param mixed $userid
+     * @return string
+     */
     private function get_grade($context, $courseid, $offlinequizid, $userid) {
         $gradinginfo = grade_get_grades($courseid, 'mod', 'offlinequiz', $offlinequizid, $userid);
         $gradeitem = $gradinginfo->items[0];
@@ -724,7 +733,13 @@ class report extends default_report {
             return '-';
         }
     }
-
+    /**
+     * get the letter of a grade
+     * @param mixed $letters
+     * @param mixed $gradeitem
+     * @param mixed $userid
+     * @return string
+     */
     private function get_gradeletter($letters, $gradeitem, $userid) {
         if (!$gradeitem) {
             return '-';
@@ -743,10 +758,18 @@ class report extends default_report {
                 return format_string($letter);
             }
         }
+        return '-';
     }
-       // Add navigation nodes to mod_offlinequiz_result.
+
+    /**
+     * Add navigation nodes to mod_offlinequiz_result
+     * @param \navigation_node $navigation
+     * @param mixed $cm
+     * @param mixed $offlinequiz
+     * @return navigation_node
+     */
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
-        // TODO: Move strings to subplugin.
+        // TO DO: Move strings to subplugin.
         $navnode = navigation_node::create(text: get_string('tabresultsoverview', 'offlinequiz'),
                                         action:  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview']),
                                         key: $this->get_navigation_key());
@@ -755,27 +778,36 @@ class report extends default_report {
         $parentnode->add_node($navnode);
         return $navigation;
     }
+    /**
+     * the title of this report
+     * @return string
+     */
     public function get_report_title(): string {
         return get_string('results', 'offlinequiz');
     }
+    /**
+     * the navigation key of this report
+     * @return string
+     */
     public function get_navigation_key(): string {
         return 'tabresultsoverview';
     }
+    /**
+     * the route tab
+     * @param mixed $offlinequiz
+     * @param mixed $cm
+     * @param mixed $course
+     * @param mixed $tab
+     * @return bool|string
+     */
     public function route($offlinequiz, $cm, $course, $tab): string|false {
         global $DB;
-        if ($tab == 'mod_offlinequiz_results') { // TODO: Move to plugin Route tab..
+        if ($tab == 'mod_offlinequiz_results') { // TO DO: Move to plugin Route tab..
             $hasresults = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
-            // JPC: $needscorrections = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
-            // if ($needscorrections) {
-            // $newurl = $navigation->find('tabofflinequizupload', null)->action();
 
-            // } else
             if ($hasresults) {
                 return 'tabresultsoverview';
             }
-            // else {
-            // $newurl = $navigation->find('tabofflinequizupload', null)->action();
-            // }
         }
         return false;
     }

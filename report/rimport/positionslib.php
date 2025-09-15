@@ -14,6 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * The results import report for offlinequizzes
+ *
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind
+ * @copyright     2017 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.4
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ */
+
 namespace offlinequiz_result_import;
 
 defined('MOODLE_INTERNAL') || die();
@@ -34,14 +46,25 @@ define("CORNER_SPACE_BOTTOM", "120.5");            // The space between the bott
  *
  */
 define("DIAGONAL_LENGTH", sqrt(pow(LAYER_WIDTH, 2) + pow(LAYER_HEIGHT, 2)) );
-
+/**
+ * calculate without adjustment
+ * @param mixed $imagegeometry
+ * @param \offlinequiz_result_import\offlinequiz_point $point
+ * @return offlinequiz_point
+ */
 function calculatewithoutadjustment($imagegeometry, offlinequiz_point $point ) {
 
      $xpercentage = $point->getx() / A4_WIDTH;
      $ypercentage = $point->gety() / A4_HEIGHT;
      return new offlinequiz_point($xpercentage * $imagegeometry['width'], $ypercentage * $imagegeometry['height'], false);
 }
-
+/**
+ * add with adjustment
+ * @param \offlinequiz_result_import\offlinequiz_result_page $page
+ * @param \offlinequiz_result_import\offlinequiz_point $initialpoint
+ * @param \offlinequiz_result_import\offlinequiz_point $toadd
+ * @return offlinequiz_point
+ */
 function add_with_adjustment(offlinequiz_result_page $page, offlinequiz_point $initialpoint, offlinequiz_point $toadd) {
     $pointangle = calculatepointangle($toadd);
     $pageangle = $page->positionproperties["pageangle"];
@@ -53,18 +76,33 @@ function add_with_adjustment(offlinequiz_result_page $page, offlinequiz_point $i
     $y = $initialpoint->gety() + sin($pageangle + $pointangle) * $pointlength * $zoomfactory;
     return new offlinequiz_point($x, $y, 1);
 }
-
+/**
+ * add without adjustment
+ * @param \offlinequiz_result_import\offlinequiz_point $point
+ * @param mixed $addx
+ * @param mixed $addy
+ * @param mixed $mode
+ * @return offlinequiz_point
+ */
 function add(offlinequiz_point $point, $addx, $addy, $mode) {
     return new offlinequiz_point($point->getx() + $addx, $point->gety() + $addy, $mode);
 }
-/*
+/**
  * Returns the angle between the horizontal and the diagonal of the layer-rectangle.
+ * @return float
  */
 function getdiagonalangle() {
     return asin(LAYER_HEIGHT / DIAGONAL_LENGTH);
 
 }
-
+/**
+ * calculate the point of an with a vector
+ * @param \offlinequiz_result_import\offlinequiz_point $initialpoint
+ * @param \offlinequiz_result_import\offlinequiz_point $directionpoint
+ * @param mixed $anglechange
+ * @param mixed $length
+ * @return offlinequiz_point
+ */
 function calculatepoint(offlinequiz_point $initialpoint, offlinequiz_point $directionpoint, $anglechange, $length) {
 
     $realdirection = new offlinequiz_point($directionpoint->getx() - $initialpoint->getx(),
@@ -76,7 +114,11 @@ function calculatepoint(offlinequiz_point $initialpoint, offlinequiz_point $dire
     $resulty = $initialpoint->gety() + sin($addeddirectionangle * $length);
     return new offlinequiz_point( $resultx, $resulty, $initialpoint->isfound() && $directionpoint->isfound());
 }
-
+/**
+ * calculate the angle of a point
+ * @param \offlinequiz_result_import\offlinequiz_point $point
+ * @return float
+ */
 function calculatepointangle(offlinequiz_point $point) {
     if ($point->gety() > 0 || $point->getx() > 0) {
         return atan($point->gety() / $point->getx());
@@ -84,10 +126,20 @@ function calculatepointangle(offlinequiz_point $point) {
         return M_PI + atan($point->gety() / $point->getx());
     }
 }
-
+/**
+ * calculate the length of a point
+ * @param \offlinequiz_result_import\offlinequiz_point $point
+ * @return float
+ */
 function calculatepointlength(offlinequiz_point $point) {
     return sqrt(pow($point->getx(), 2) + pow($point->gety(), 2));
 }
+/**
+ * calculate a point relative to a corner
+ * @param \offlinequiz_result_import\offlinequiz_result_page $page
+ * @param \offlinequiz_result_import\offlinequiz_point $point
+ * @return offlinequiz_point
+ */
 function calculate_point_relative_to_corner(offlinequiz_result_page $page, offlinequiz_point $point) {
 
     $upperleft = $page->positionproperties["upperleft"];

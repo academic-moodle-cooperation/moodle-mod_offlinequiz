@@ -83,7 +83,7 @@ class report extends default_report {
             // Work out if this is an uploaded file
             // or one from the filesarea.
             $realfilename = $importform->get_new_filename('newfile');
-            // escape filename for security reasons
+            // Escape filename for security reasons.
             $realfilename = preg_replace('/[^A-Za-z0-9\-\_\.]/', '_', $realfilename);;
             // Create a new queue job.
             $job = new stdClass();

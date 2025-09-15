@@ -89,8 +89,6 @@ class edit_renderer extends \plugin_renderer_base {
         $templatecontext = $this->add_to_group_button($structure, $offlinequiz,  $pageurl, $templatecontext);
         $output = $this->render_from_template('mod_offlinequiz/edit_buttons', $templatecontext);
         // Start form for question checkboxes.
-        // $output .= $this->remove_selected_button($structure, $offlinequiz,  $pageurl);
-        // $output .= $this->select_all_links($structure);
 
         // Show the questions organised into sections and pages.
         $output .= $this->start_section_list();
@@ -101,10 +99,10 @@ class edit_renderer extends \plugin_renderer_base {
             $output .= $this->start_section($section);
             $output .= $this->questions_in_section($structure, $section, $contexts, $pagevars, $pageurl);
             if ($section === $lastsection) {
-                $output .= \html_writer::start_div('last-add-menu');
+                $output .= html_writer::start_div('last-add-menu');
                 $output .= html_writer::tag('span', $this->add_menu_actions($structure, 0,
                         $pageurl, $contexts, $pagevars), ['class' => 'add-menu-outer']);
-                $output .= \html_writer::end_div();
+                $output .= html_writer::end_div();
             }
             $output .= $this->end_section();
         }
@@ -139,14 +137,26 @@ class edit_renderer extends \plugin_renderer_base {
         }
 
         echo $output;
+        return '';
     }
-
+    /**
+     * Start to add group form values
+     * @param mixed $offlinequiz
+     * @param mixed $pageurl
+     * @param mixed $templatecontext
+     */
     private function start_add_to_group_form_values($offlinequiz, $pageurl, $templatecontext) {
         $templatecontext['addtogroupformurl'] = $pageurl->out();
         $templatecontext['offlinegroupid'] = $offlinequiz->groupid;
         return $templatecontext;
     }
-
+    /**
+     * summary to add a group button
+     * @param mixed $structure
+     * @param mixed $offlinequiz
+     * @param mixed $pageurl
+     * @param mixed $templatecontext
+     */
     private function add_to_group_button($structure, $offlinequiz, $pageurl, $templatecontext) {
         // Compute the offlinequiz group letters.
         $letterstr = 'ABCDEFGHIJKL';
@@ -164,13 +174,21 @@ class edit_renderer extends \plugin_renderer_base {
         $templatecontext['addtogroupdisabled'] = !$structure->can_be_edited();
         return $templatecontext;
     }
-
+    /**
+     * end of the form
+     * @return string
+     */
     private function end_add_to_group_form() {
 
         $output = '</form>';
         return $output;
     }
-
+    /**
+     * before the grading form
+     * @param mixed $offlinequiz
+     * @param mixed $pageurl
+     * @return string
+     */
     private function start_grading_form($offlinequiz, $pageurl) {
         $output = '';
         $output .= '<form method="post" action="edit.php" class="offlinequizbulkgradesform">';
@@ -179,7 +197,10 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= '<input type="hidden" name="savegrades" value="bulksavegrades" />';
         return $output;
     }
-
+    /**
+     * after the grading form
+     * @return string
+     */
     private function end_grading_form() {
 
         $output = '<center><input type="submit" class="bulksubmitbutton btn btn-primary" value="' .
@@ -190,7 +211,7 @@ class edit_renderer extends \plugin_renderer_base {
 
     /**
      *
-     * @param unknown $offlinequiz
+     * @param \stdClass $offlinequiz
      * @return string
      */
     public function offlinequiz_group_selector_values($offlinequiz, $cm, $templatecontext) {
@@ -230,7 +251,7 @@ class edit_renderer extends \plugin_renderer_base {
         foreach ($warnings as $warning) {
             $templatewarnings[] = ['text' => $warning, 'more' => true];
         }
-        if($templatewarnings) {
+        if ($templatewarnings) {
             $lastkey = array_key_last($templatewarnings);
             $templatewarnings[$lastkey]['more'] = false;
         }
@@ -331,7 +352,11 @@ class edit_renderer extends \plugin_renderer_base {
         return html_writer::div($formcontent, '', ['id' => 'repaginatedialog']);
     }
 
-
+    /**
+     * select all links on top of the page
+     * @param mixed $structure
+     * @return string
+     */
     private function select_all_links($structure) {
         $output = '';
 
@@ -359,7 +384,11 @@ class edit_renderer extends \plugin_renderer_base {
         }
         return $output;
     }
-
+    /**
+     * print remove selected button
+     * @param mixed $structure
+     * @return string
+     */
     private function remove_selected_button($structure) {
         $containeroptions = [
                 'class'  => 'removeselected',
@@ -475,7 +504,7 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param \stdClass $section information about the section.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
@@ -496,7 +525,7 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param int $slot data from the question and offlinequiz_slots tables.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
@@ -529,7 +558,7 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param \stdClass $question data from the question and offlinequiz_slots tables.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
@@ -813,7 +842,11 @@ class edit_renderer extends \plugin_renderer_base {
         return $output;
     }
 
-
+    /**
+     * the checkbox for a question
+     * @param mixed $question
+     * @return string
+     */
     private function question_checkbox($question) {
          $checkbox = '<input class="select-multiple-checkbox" '.
              'id="s' . $question->id . '" type="checkbox" ' .
@@ -1003,7 +1036,7 @@ class edit_renderer extends \plugin_renderer_base {
                 'cmid' => $structure->get_cmid(),
                 'cat' => $question->category . ',' . $question->contextid,
                 'recurse' => !empty($question->questiontext)]);
-        $qbanklink = ' ' . \html_writer::link($qbankurl,
+        $qbanklink = ' ' . html_writer::link($qbankurl,
                 get_string('seequestions', 'offlinequiz'), ['class' => 'mod_offlinequiz_random_qbank_link']);
 
         return html_writer::link($editurl, $icon . $editicon, ['title' => $configuretitle]) .
@@ -1049,7 +1082,7 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      * Renders the question chooser.
      *
-     * @param mod_offlinequiz\output\question_chooser Chooser
+     * @param question_chooser Chooser
      * @return string
      */
     public function render_question_chooser(question_chooser $chooser) {
@@ -1061,7 +1094,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function question_chooser() {
-        $chooser = \mod_offlinequiz\output\question_chooser::get($this->page->course, [], null);
+        $chooser = question_chooser::get($this->page->course, [], null);
         $container = html_writer::div($this->render($chooser), '', ['id' => 'qtypechoicecontainer']);
         return html_writer::div($container, 'createnewquestion');
     }
@@ -1080,7 +1113,7 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      * Return random question form.
      * @param \moodle_url $thispageurl the canonical URL of this page.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @return string HTML to output.
      */
@@ -1214,7 +1247,7 @@ class edit_renderer extends \plugin_renderer_base {
      * HTML for a page, with ids stripped, so it can be used as a javascript template.
      *
      * @param structure $structure object containing the structure of the offlinequiz.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML for a new page.

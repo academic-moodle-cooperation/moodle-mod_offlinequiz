@@ -105,6 +105,7 @@ $string['configpapergray'] = 'white-value of paper, which is used for the evalua
 $string['configshuffleanswers'] = 'Shuffle answers';
 $string['configshufflequestions'] = 'If you enable this option, then the order of questions in the offline quiz groups will be randomly shuffled each time you re-create the preview in the "Create forms" tab.';
 $string['configshufflewithin'] = 'If you enable this option, the answers of multiple choice questions are shuffled separately for each offline quiz group.';
+$string['configurerandomquestion'] = 'Configure random questions';
 $string['configuseridentification'] = 'A formula describing the user identification. This formula is used to assign answer forms to users in the system. The left hand side of the equation defines the number of digits (integer only, up to 10 digits). The right hand side of the equation must denote a field in the user table of Moodle (e.g. id, idnumber, phone1).
 In addition, the equation can also deal with prefix and suffix which is added to the marked digits (e.g. "a[7]=username" or "b[5]cd=username"). These concatenations of strings and numbers denote the value of the used field in the user table, that is used for user identification.';
 $string['confirmremovequestion'] = 'Are you sure you want to remove this {$a} question?';
@@ -871,6 +872,7 @@ $string['scannerpdfstext'] = 'Download the following empty forms if you want to 
 $string['scanningoptionsheading'] = 'Scanning options';
 $string['score'] = 'Score';
 $string['search:activity'] = 'Offline quiz - activity information';
+$string['seequestions'] = 'See Questions';
 $string['select'] = 'Select';
 $string['selectagroup'] = 'Select a group';
 $string['selectall'] = 'Select all';

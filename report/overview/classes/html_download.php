@@ -15,32 +15,58 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Result review download page
+ * The results overview report for offlinequizzes
  *
- * @package       offlinequiz_overview
- * @subpackage    offlinequiz
- * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
- * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @since         Moodle 3.7
- * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package offlinequiz_overview
+ * @subpackage offlinequiz
+ * @author Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright 2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since Moodle 2.1
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ *
  */
 
 namespace offlinequiz_overview;
 
+defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
 
+/**
+ * the html download
+ */
 class html_download {
-
+    /**
+     * offlinequiz db entry
+     * @var \stdClass
+     */
     private $offlinequiz;
+    /**
+     * Course
+     * @var \stdClass
+     */
     private $course;
+    /**
+     * course module
+     * @var \stdClass
+     */
     private $cm;
+    /**
+     * context of this offlinequiz
+     * @var \context_module
+     */
     private $context;
 
+    /**
+     * construct the offlinequiz
+     * @param mixed $offlinequizid
+     * @throws \moodle_exception
+     */
     public function __construct($offlinequizid) {
         global $DB;
         if (!$offlinequiz = $DB->get_record("offlinequiz", ["id" => $offlinequizid])) {
-            throw new \moodle_exception("The offlinequiz with id $offlinequizid belonging to result $result is missing");
+            throw new \moodle_exception("The offlinequiz with id $offlinequizid belonging to result is missing");
         }
         $this->offlinequiz = $offlinequiz;        if (!$course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
             throw new \moodle_exception(
@@ -54,7 +80,12 @@ class html_download {
         $this->context = \context_module::instance($cm->id);
     }
 
-
+    /**
+     * print the html
+     * @param mixed $userids
+     * @throws \moodle_exception
+     * @return void
+     */
     public function printhtml($userids = null) {
         global $DB, $PAGE, $OUTPUT, $CFG;
         if (!$userids) {
@@ -70,7 +101,7 @@ class html_download {
         $isteacher = has_capability('mod/offlinequiz:viewreports', $this->context);
         if (!$isteacher) {
             // This view is only allowed for teachers who are allowed to see the review
-            redirect('../view.php?q=' . $offlinequiz->id, get_string("noreview", "offlinequiz"));
+            redirect('../view.php?q=' . $this->offlinequiz->id, get_string("noreview", "offlinequiz"));
             return;
         }
         $letterstr = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -84,7 +115,6 @@ class html_download {
         echo $OUTPUT->heading(format_string($this->offlinequiz->name));
         // Load the module's global config.
         echo '<div id="page-mod-offlinequiz-print-html">';
-        offlinequiz_load_useridentification();
         $offlinequizconfig = get_config('offlinequiz');
 
         $resultids = $this->get_result_ids($userids);
@@ -158,7 +188,11 @@ class html_download {
         }
         echo '</div>';
     }
-
+    /**
+     * get the result ids for given users of this offlinequiz
+     * @param mixed $userids
+     * @return array
+     */
     private function get_result_ids($userids) {
         global $DB;
         if ($userids) {
