@@ -15,9 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace offlinequiz_rimport\privacy;
-
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * file extractor for offlinequiz
+ *
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind
+ * @copyright     2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 5.0
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ */
 class provider implements
 // This plugin does not store any personal user data.
 \core_privacy\local\metadata\null_provider {

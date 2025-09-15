@@ -28,19 +28,69 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/boxscanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/pagesaver.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/resultsaver.php');
 
-
+/**
+ * The new result engine of this offlinequiz
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
+ * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.7
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class offlinequiz_result_engine {
-
+    /**
+     * the id of the offlinequiz
+     * @var int
+     */
     public $offlinequizid;
+    /**
+     * the context id
+     * @var int
+     */
     public $contextid;
+    /**
+     * the scanner for the page position
+     * @var offlinequiz_pagepositionscanner
+     */
     private $pagepositionscanner;
+    /**
+     * the scanner for the pagenumber
+     * @var offlinequiz_pagenumberscanner
+     */
     private $pagenumberscanner;
+    /**
+     * Groupnumberscanner
+     * @var offlinequiz_groupnumberscanner
+     */
     private $groupnumberscanner;
+    /**
+     * studentid scanner
+     * @var offlinequiz_studentid_scanner
+     */
     private $studentidscanner;
+    /**
+     * resultscanner
+     * @var offlinequiz_resultscanner
+     */
     private $resultscanner;
+    /**
+     * pageobject
+     * @var \mod_offlinequiz\constants\offlinequiz_page
+     */
     private $page;
+    /**
+     * pagesaver
+     * @var offlinequiz_page_saver
+     */
     private $pagesaver;
 
+    /**
+     * constructor
+     * @param \stdClass $offlinequiz
+     * @param int $contextid
+     * @param string $filepath
+     * @param int $scannedpageid
+     */
     public function __construct($offlinequiz, $contextid, $filepath, $scannedpageid) {
 
         $boxscanner = new weighted_diagonal_box_scanner();
@@ -57,7 +107,10 @@ class offlinequiz_result_engine {
         $this->resultsaver = new offlinequiz_resultsaver();
     }
 
-
+    /**
+     * scan a page
+     * @return \mod_offlinequiz\constants\offlinequiz_page
+     */
     public function scanpage() {
         $this->pagepositionscanner->scanposition();
         if (!($this->page->status == PAGE_STATUS_OK)) {
@@ -83,7 +136,11 @@ class offlinequiz_result_engine {
         return $this->page;
 
     }
-
+    /**
+     * save a page into the database
+     * @param mixed $teacherid
+     * @return void
+     */
     public function save_page($teacherid) {
         $this->pagesaver->save_page_information($this->page);
         global $DB;

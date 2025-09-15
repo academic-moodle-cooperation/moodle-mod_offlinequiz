@@ -27,6 +27,7 @@
  **/
 $string['addingfilestoqueue'] = 'Answer forms have been added to the evaluation queue. A notification will be sent to you after the data has been processed.';
 $string['correcterror'] = 'Correct';
+$string['couldnotcreatejob'] = 'Could not create adhoc task.';
 $string['deleteselectedpages'] = 'Delete selected pages';
 $string['errorcouldnotgrab'] = 'Could not grab';
 $string['errordifferentpage'] = 'Differing page exists';

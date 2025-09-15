@@ -30,14 +30,34 @@ define('ANSWERS_BOX_DISTANCE_X_NEW_COLUMN', [1 => 0, 2 => 906, 3 => 582, 4 => 45
 define('ANSWERS_BOX_DISTANCE_Y_NORMAL', 65);
 define('ANSWERS_BOX_DISTANCE_Y_NEW_BLOCK', 564.6);
 define('ANSWERS_BOX_SIZE', 35);
+/**
+ * scans a page for the crosses
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
+ * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.7
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class offlinequiz_resultscanner {
+    /**
+     * the boxscanner of this resultscanner
+     * @var weighted_diagonal_box_scanner
+     */
     private $boxscanner;
-
+    /**
+     * constructor
+     * @param mixed $boxscanner
+     */
     public function __construct($boxscanner) {
         $this->boxscanner = $boxscanner;
     }
 
-    // Scans the results of a page.
+    /**
+     * scans the result of a page
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @return void
+     */
     public function scanresults(offlinequiz_result_page $page) {
         // Firstly load the questions.
         $quba = \question_engine::load_questions_usage_by_activity($page->group->templateusageid);
@@ -75,7 +95,10 @@ class offlinequiz_resultscanner {
         }
 
     }
-
+    /**
+     * get the max answers for this page
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     */
     private function get_max_answers(offlinequiz_result_page $page) {
         global $DB;
         // Finds the maximal number of answers for a offlinequizgroup.
@@ -91,7 +114,11 @@ class offlinequiz_resultscanner {
         return $DB->get_field_sql($sql, ['groupid' => $page->group->id]);
 
     }
-
+    /**
+     * get the maximum answer counts for a group
+     * @param mixed $groupid
+     * @return array
+     */
     private function get_answer_counts($groupid) {
         global $DB;
         $sql = "SELECT qa.question as questionid, count(*) as count
@@ -105,7 +132,11 @@ class offlinequiz_resultscanner {
         return $DB->get_records_sql($sql, ['groupid' => $groupid]);
 
     }
-
+    /**
+     * get the number of columns an answer has
+     * @param mixed $maxanswers
+     * @return int
+     */
     private function get_number_of_columns($maxanswers) {
         $i = 1;
         $columnlimits = ANSWERS_COLUMNS_PER_PAGE_LIMITS;
@@ -114,11 +145,20 @@ class offlinequiz_resultscanner {
         }
         return $i;
     }
-
+    /**
+     * get the number of questions per page for a certain amount of columns
+     * @param mixed $columns
+     * @return float|int
+     */
     private function get_questions_per_page($columns) {
         return $columns * ANSWERS_MAX_QUESTIONS_PER_COLUMN;
     }
-
+    /**
+     * get the numbers of question cells
+     * @param mixed $startingnumber
+     * @param mixed $slotnumber
+     * @return array<float|int>
+     */
     private function get_question_cell($startingnumber, $slotnumber) {
         $numberonsheet = $slotnumber - $startingnumber;
         $position['column'] = floor(($numberonsheet) / ANSWERS_MAX_QUESTIONS_PER_COLUMN);
@@ -127,7 +167,15 @@ class offlinequiz_resultscanner {
         $position['blockposition'] = $numberincolumn - $position['block'] * ANSWERS_BLOCK_SIZE;
         return $position;
     }
-
+    /**
+     * calculate the result of a page
+     * @param \offlinequiz_result_import\offlinequiz_result_page $page
+     * @param mixed $columndistance
+     * @param mixed $position
+     * @param mixed $questiononpage
+     * @param mixed $answercount
+     * @return void
+     */
     private function calculate_result(offlinequiz_result_page $page, $columndistance, $position, $questiononpage, $answercount) {
         for ($i = 0; $i < $answercount; $i++) {
             $expectedx = ANSWERS_DISTANCE_X + ($columndistance * $position['column'])

@@ -19,7 +19,7 @@ namespace offlinequiz_rimport\task\adhoc;
 use function PHPUnit\Framework\throwException;
 
 /**
- * The results import report for offlinequizzes
+ * file extractor for offlinequiz
  *
  * @package       offlinequiz_rimport
  * @subpackage    offlinequiz
@@ -59,7 +59,7 @@ class extract_files extends \core\task\adhoc_task {
         $DB->update_record('offlinequiz_queue', $queue);
         try {
             if ($queuedatas = $DB->get_records('offlinequiz_queue_data', ['queueid' => $queue->id])) {
-                // This is a rerun. Just queue all the files again and we're done
+                // This is a rerun. Just queue all the files again and we're done.
                 $DB->set_field('offlinequiz_queue_data', 'status', 'new', ['queueid' => $queue->id]);
                 $DB->set_field('offlinequiz_queue_data', 'error', '', ['queueid' => $queue->id]);
                 foreach ($queuedatas as $queuedata) {
@@ -205,7 +205,8 @@ class extract_files extends \core\task\adhoc_task {
      * @return void
      */
     private function convert_black_white($file, $threshold) {
-        $command = "convert " . escapeshellarg(realpath($file)) . " -colorspace gray -threshold $threshold% " .  escapeshellarg(realpath($file));
+        $command = "convert " . escapeshellarg(realpath($file)) .
+            " -colorspace gray -threshold $threshold% " .  escapeshellarg(realpath($file));
         popen($command, 'r');
     }
     /**

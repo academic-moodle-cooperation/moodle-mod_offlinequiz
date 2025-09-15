@@ -38,8 +38,14 @@ use stdClass;
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/upload_form.php');
 require_once($CFG->libdir . '/filelib.php');
 
+/**
+ * Report for import upload of files to offline quiz
+ */
 class report extends default_report {
-
+    /**
+     * module context
+     * @var context_module
+     */
     public $context;
     /**
      * (non-PHPdoc)
@@ -80,7 +86,7 @@ class report extends default_report {
             // escape filename for security reasons
             $realfilename = preg_replace('/[^A-Za-z0-9\-\_\.]/', '_', $realfilename);;
             // Create a new queue job.
-            $job = new \stdClass();
+            $job = new stdClass();
             $job->offlinequizid = $offlinequiz->id;
             $job->importuserid = $USER->id;
             $job->timecreated = time();
@@ -102,7 +108,7 @@ class report extends default_report {
                 $job->error = 'uploadproblem';
                 $job->filename = $realfilename;
                 $DB->update_record('offlinequiz_queue', $job);
-                throw new \moodle_exception('uploadproblem');
+                throw new moodle_exception('uploadproblem');
             }
             $filesentry = $this->create_file_entry($realfilename, $importfile, $job->id);
             $task = \offlinequiz_rimport\task\adhoc\extract_files::instance($job->id);
@@ -158,16 +164,21 @@ class report extends default_report {
 
                         redirect($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id . '&amp;mode=rimport');
                     } else {
-                        throw new \moodle_exception('invalidsesskey');
+                        throw new moodle_exception('invalidsesskey');
                     }
-                    break;
                 default:
                     // Display the upload form.
                     $importform->display();
             }
         }
     }
-
+    /**
+     * create file entry in database
+     * @param mixed $filename
+     * @param mixed $pathname
+     * @param mixed $jobid
+     * @return \stored_file
+     */
     private function create_file_entry($filename, $pathname, $jobid) {
         $fs = get_file_storage();
         $filerecord = [
@@ -185,22 +196,35 @@ class report extends default_report {
         return $newfile;
     }
 
-
-    // Add navigation nodes to mod_offlinequiz_result.
+    /**
+     * Add navigation nodes to mod_offlinequiz_result
+     * @param \navigation_node $navigation
+     * @param mixed $cm
+     * @param mixed $offlinequiz
+     * @return navigation_node
+     */
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         $parentnode = $navigation->get('mod_offlinequiz_results');
-        if($parentnode) {
-            $newnode = \navigation_node::create(text: get_string('importforms', 'offlinequiz_rimport'),
-                action:  new \moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport']),
+        if ($parentnode) {
+            $newnode = navigation_node::create(text: get_string('importforms', 'offlinequiz_rimport'),
+                action:  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport']),
                 key: $this->get_navigation_key());
             // Now include as a the first item.
             $parentnode->add_node($newnode, 'tabofflinequizcorrect');
         }
         return $navigation;
     }
+    /**
+     * return report title name
+     * @return string
+     */
     public function get_report_title(): string {
         return get_string('resultimport', 'offlinequiz');
     }
+    /**
+     * get the key name for the navigation
+     * @return string
+     */
     public function get_navigation_key(): string {
         return 'tabofflinequizupload';
     }

@@ -17,10 +17,22 @@
 namespace offlinequiz_rimport\task\adhoc;
 
 /**
- * An example of an adhoc task.
- * @package offlinequiz_rimport
+ * The results import report for offlinequizzes
+ *
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind
+ * @copyright     2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 5.0
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
  */
 class send_notifications extends \core\task\adhoc_task {
+    /**
+     * Summary of instance
+     * @param int $queueid
+     * @return send_notifications
+     */
     public static function instance(int $queueid): self {
         $task = new self();
         $task->set_custom_data((object) [
@@ -28,6 +40,10 @@ class send_notifications extends \core\task\adhoc_task {
         ]);
         return $task;
     }
+    /**
+     * execute cron
+     * @return void
+     */
     public function execute() {
         global $DB;
         $data = $this->get_custom_data();
@@ -73,9 +89,11 @@ class send_notifications extends \core\task\adhoc_task {
                                JOIN {offlinequiz_scanned_pages} osp ON osp.queuedataid = oqd.id
                               WHERE oqd.queueid = :queueid
                                 AND osp.error = 'doublepage'";
-                $mailtext .= "\n" . get_string('importnumberexisting', 'offlinequiz', $DB->count_records_sql($countsql, ['queueid' => $queue->id]));
+                $mailtext .= "\n" . get_string('importnumberexisting', 'offlinequiz',
+                 $DB->count_records_sql($countsql, ['queueid' => $queue->id]));
 
-                $linkoverview = new \moodle_url('/mod/offlinequiz/report.php', ['q' => $queue->offlinequizid, 'mode' => 'overview']);
+                $linkoverview = new \moodle_url('/mod/offlinequiz/report.php',
+                     ['q' => $queue->offlinequizid, 'mode' => 'overview']);
                 $mailtext .= "\n\n" . get_string('importlinkresults', 'offlinequiz', $linkoverview);
 
                 $linkupload = new \moodle_url('/mod/offlinequiz/report.php', ['q' => $queue->offlinequizid, 'mode' => 'rimport']);

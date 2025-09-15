@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * boxscanners
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.8+
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace offlinequiz_result_import;
 
 defined('MOODLE_INTERNAL') || die();
@@ -26,8 +35,14 @@ define("CROSS_FOUND_UPPER_LIMIT", 0.50);
 define("WEIGHTEDVALUE_LOWER_LIMIT", 0.8);
 define("WEIGHTEDVALUE_UPPER_LIMIT", 0.9);
 define("NORMAL_DISTRIBUTION_VARIANCE", 0.1);
+/**
+ * Summary of pixelcountboxscanner
+ */
 class pixelcountboxscanner {
-
+    /**
+     * number of pixels
+     * @var int
+     */
     private static $count = 0;
 
     /**
@@ -75,7 +90,10 @@ class pixelcountboxscanner {
             return 0;
         }
     }
-
+    /**
+     * return the black/white value of an image
+     * @param \Imagick $image
+     */
     private function get_image_black_value(\Imagick $image) {
         $histo = $image->getimagehistogram();
         foreach ($histo as $h) {
@@ -87,8 +105,14 @@ class pixelcountboxscanner {
         return 0;
     }
 }
-
+/**
+ * weighted diagonal box scanner. Works by weighing the pixels on closer to the diagonals of the box higher
+ */
 class weighted_diagonal_box_scanner {
+    /**
+     * amount of pixels counted
+     * @var int
+     */
     private static $count = 0;
 
     /**
@@ -143,7 +167,11 @@ class weighted_diagonal_box_scanner {
         }
 
     }
-
+    /**
+     * remove the edges of a box
+     * @param \Imagick $image
+     * @return void
+     */
     private function remove_edges(\Imagick $image) {
         $geometry = $image->getimagegeometry();
         $maxx = 0;
@@ -193,7 +221,10 @@ class weighted_diagonal_box_scanner {
         }
         $image->drawImage($draw);
     }
-
+    /**
+     * get the black value of an image
+     * @param \Imagick $image
+     */
     private function get_image_black_value(\Imagick $image) {
         $histo = $image->getimagehistogram();
         foreach ($histo as $h) {
@@ -204,7 +235,11 @@ class weighted_diagonal_box_scanner {
         }
         return 0;
     }
-
+    /**
+     * get the black value of the diagonal of an image
+     * @param \Imagick $image
+     * @return float|int
+     */
     private function get_box_diag_up_black_value(\Imagick $image) {
         $geometry = $image->getimagegeometry();
         $dots = $geometry["width"] * $geometry["height"];
@@ -218,7 +253,11 @@ class weighted_diagonal_box_scanner {
         }
         return $totaldiagblackvalue / $dots;
     }
-
+    /**
+     * get the diagonal downwards as a value
+     * @param \Imagick $image
+     * @return float|int
+     */
     private function get_box_diag_down_black_value(\Imagick $image) {
         $geometry = $image->getimagegeometry();
         $dots = $geometry["width"] * $geometry["height"];
@@ -232,18 +271,41 @@ class weighted_diagonal_box_scanner {
         }
         return $totaldiagblackvalue / $dots;
     }
-
+    /**
+     * get the upwards weighted diagonal as a value
+     * @param mixed $i
+     * @param mixed $j
+     * @param mixed $width
+     * @param mixed $height
+     * @return float|int
+     */
     private function get_diag_up_value($i, $j, $width, $height) {
         $distance = $this->get_diag_up_distance($i, $j, $width, $height);
-        return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI) * pow(M_E, (-1 / 2) * pow($distance / NORMAL_DISTRIBUTION_VARIANCE, 2));
+        return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI)
+                     * pow(M_E, (-1 / 2) * pow($distance / NORMAL_DISTRIBUTION_VARIANCE, 2));
     }
-
+    /**
+     * get the downwards weighted diagonal as a value
+     * @param mixed $i
+     * @param mixed $j
+     * @param mixed $width
+     * @param mixed $height
+     * @return float|int
+     */
     private function get_diag_down_value($i, $j, $width, $height) {
         $distance = $this->get_diag_down_distance($i, $j, $width, $height);
         // Normal distribution.
-        return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI) * pow(M_E, (-1 / 2) * pow($distance / NORMAL_DISTRIBUTION_VARIANCE, 2));
+        return 1 / (NORMAL_DISTRIBUTION_VARIANCE * 2 * M_PI)
+                    * pow(M_E, (-1 / 2) * pow($distance / NORMAL_DISTRIBUTION_VARIANCE, 2));
     }
-
+    /**
+     * get the diagonal upwards distance of a pixel
+     * @param mixed $i
+     * @param mixed $j
+     * @param mixed $width
+     * @param mixed $height
+     * @return float|int
+     */
     private function get_diag_up_distance($i, $j, $width, $height) {
         // The linear functions for the cross, the shift is 0 for downwards, $height for upwards.
         $gradiantupwardsdiag = -$height / $width;
@@ -259,6 +321,14 @@ class weighted_diagonal_box_scanner {
 
         return $distanceupwards / sqrt($width * $height);
     }
+    /**
+     * get the diagonal downwards distance of a pixel
+     * @param mixed $i
+     * @param mixed $j
+     * @param mixed $width
+     * @param mixed $height
+     * @return float|int
+     */
     private function get_diag_down_distance($i, $j, $width, $height) {
         // The linear functions for the cross, the shift is 0 for downwards, $height for upwards.
         $gradiantdiag = $height / $width;

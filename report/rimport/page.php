@@ -16,7 +16,6 @@
 
 namespace offlinequiz_result_import;
 
-defined('MOODLE_INTERNAL') || die();
 define('PAGE_STATUS_OK', 'ok');
 define('PAGE_STATUS_ALIGNMENT_ERROR', 'notadjusted');
 define('PAGE_STATUS_GROUP_ERROR', 'grouperror');
@@ -24,27 +23,103 @@ define('PAGE_STATUS_STUDENT_ID_ERROR', 'studentiderror');
 define('PAGE_STATUS_PAGE_NUMBER_ERROR', 'pagenumbererror');
 define('PAGE_STATUS_SUBMITTED', 'submitted');
 define('PAGE_STATUS_INSECURE_RESULT', 'PAGE_STATUS_INSECURE_RESULT');
+/**
+ * scans a page for the group number
+ * @package       offlinequiz_rimport
+ * @subpackage    offlinequiz
+ * @author        Thomas Wedekind <Thomas.Wedekind@univie.ac.at>
+ * @copyright     2019 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 3.7
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class offlinequiz_result_page {
 
-
+    /**
+     * page number of this page
+     * @var int
+     */
     public $pagenumber;
+    /**
+     * answers of this page
+     * @var array
+     */
     public $answers;
+    /**
+     * first answer in this page
+     * @var int
+     */
     public $startanswer;
+    /**
+     * id of the result entry
+     * @var int
+     */
     public $resultid;
+    /**
+     * expected studentidpositions
+     * @var array
+     */
     public $expectedstudentidpositions;
+    /**
+     * Expected group number positions
+     * @var array
+     */
     public $expectedgroupnumberpositions;
+    /**
+     * group entry in database
+     * @var \stdClass
+     */
     public $group;
+    /**
+     * image of this page
+     * @var \Imagick
+     */
     public $image;
+    /**
+     * scanproperties
+     * @var \stdClass
+     */
     public $scanproperties;
+    /**
+     * scannedpage id entry
+     * @var int
+     */
     public $scannedpageid;
+    /**
+     * positionproperties
+     * @var \stdClass
+     */
     public $positionproperties;
+    /**
+     * offlinequizid
+     * @var int
+     */
     public $offlinequizid;
+    /**
+     * status
+     * @var string
+     */
     public $status;
+    /**
+     * studentid ziphers
+     * @var array
+     */
     public $studentidziphers;
+    /**
+     * id of the teacher
+     * @var int
+     */
     public $teacherid;
+    /**
+     * id of the user
+     * @var int
+     */
     public $userid;
 
-
+    /**
+     * constructor
+     * @param mixed $imagick
+     * @param mixed $offlinequizid
+     */
     public function __construct($imagick, $offlinequizid) {
         $imagick->quantizeimage(2, \Imagick::COLORSPACE_GRAY, 0, false, false);
         $this->image = $imagick;

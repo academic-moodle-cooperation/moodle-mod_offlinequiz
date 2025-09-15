@@ -26,7 +26,20 @@
  */
 namespace mod_offlinequiz\constants;
 
+/**
+ * the page of an offline quiz
+ */
 class offlinequiz_page {
+    /**
+     * URL of create pdfs
+     * @var string
+     */
     public const CREATEQUIZ_CREATEPDFS = 'createquiz.php&mode=createpdfs';
+
+    /**
+     * status
+     * @var string
+     */
+    public string $status;
 
 }
