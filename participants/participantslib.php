@@ -34,11 +34,33 @@ defined('MOODLE_INTERNAL') || die();
  *
  */
 class mod_offlinequiz_corners {
+    /**
+     * upperleft corner
+     * @var mod_offlinequiz_corners
+     */
     private $_upperleft;
+    /**
+     * upper right corner
+     * @var mod_offlinequiz_corners
+     */
     private $_upperright;
+    /**
+     * lowerleft
+     * @var mod_offlinequiz_corners
+     */
     private $_lowerleft;
+    /**
+     * lower right
+     * @var mod_offlinequiz_corners
+     */
     private $_lowerright;
-
+    /**
+     * constructor
+     * @param mixed $upperleft
+     * @param mixed $upperright
+     * @param mixed $lowerleft
+     * @param mixed $lowerright
+     */
     public function __construct($upperleft, $upperright, $lowerleft, $lowerright) {
         $this->_upperleft = $upperleft;
         $this->_upperright = $upperright;

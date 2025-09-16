@@ -15,7 +15,17 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Define the events for offinequiz
+ *
+ * @package       mod_offlinequiz
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.2+
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ **/
 $observers = [
     [
         'eventname'   => '\core\event\course_restored',

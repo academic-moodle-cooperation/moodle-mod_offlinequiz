@@ -68,9 +68,9 @@ if (!$isteacher) {
     }
     // If not even responses or scanner feedback are to be shown in review then we
     // don't allow any review.
-    if ($options->attempt == question_display_options::HIDDEN and
-            $options->marks < question_display_options::MAX_ONLY and
-            $options->sheetfeedback == question_display_options::HIDDEN and
+    if ($options->attempt == question_display_options::HIDDEN &&
+            $options->marks < question_display_options::MAX_ONLY &&
+            $options->sheetfeedback == question_display_options::HIDDEN &&
             $options->gradedsheetfeedback == question_display_options::HIDDEN) {
         redirect('view.php?q=' . $offlinequiz->id);
     }
@@ -107,7 +107,6 @@ if ($isteacher) {
 }
 
 // Load the module's global config.
-offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 
 echo $OUTPUT->heading(get_string('reviewofresult', 'offlinequiz'));
@@ -134,7 +133,7 @@ if (!empty($offlinequiz->time)) {
 
 // If the student is allowed to see his score.
 if ($options->marks != question_display_options::HIDDEN) {
-    if ($offlinequiz->grade and $group->sumgrades) {
+    if ($offlinequiz->grade && $group->sumgrades) {
 
         $resultmark = format_float($result->sumgrades, $offlinequiz->decimalpoints);
         $maxmark = format_float($group->sumgrades, $offlinequiz->decimalpoints);
@@ -157,7 +156,7 @@ echo html_writer::table($table);
 // --------------------------------------
 // Print buttons to the scanned pages.
 // --------------------------------------
-if ($isteacher or ($options->sheetfeedback == question_display_options::VISIBLE) or
+if ($isteacher || ($options->sheetfeedback == question_display_options::VISIBLE) ||
         ($options->gradedsheetfeedback == question_display_options::VISIBLE)) {
     if ($result->userid == $USER->id) {
         $user = $USER;
@@ -225,7 +224,7 @@ if ($isteacher or ($options->sheetfeedback == question_display_options::VISIBLE)
     }
 }
 
-if (!$isteacher and $options->attempt == question_display_options::HIDDEN) {
+if (!$isteacher && $options->attempt == question_display_options::HIDDEN) {
     echo $OUTPUT->footer();
     die();
 }

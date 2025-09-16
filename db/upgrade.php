@@ -26,9 +26,11 @@
  *
  **/
 
-defined('MOODLE_INTERNAL') || die();
-
-
+/**
+ * upgrade function for offlinequiz
+ * @param mixed $oldversion
+ * @return bool
+ */
 function xmldb_offlinequiz_upgrade($oldversion = 0) {
     global $CFG, $THEME, $DB, $OUTPUT;
 
@@ -246,11 +248,8 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2011081700, 'offlinequiz');
     }
 
-    // ------------------------------------------------------
     // UPGRADE for Moodle 2.0 module starts here.
-    // ------------------------------------------------------
     // First we do the changes to the main table 'offlinequiz'.
-    // ------------------------------------------------------
     if ($oldversion < 2012010100) {
 
         // Define field docscreated to be added to offlinequiz.
@@ -575,9 +574,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2012011000, 'offlinequiz');
     }
 
-    // ------------------------------------------------------
     // New we rename fields in old tables.
-    // ------------------------------------------------------
 
     // Rename fields in offlinequiz_queue table.
     if ($oldversion < 2012020100) {
@@ -717,9 +714,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2012020410, 'offlinequiz');
     }
 
-    // -----------------------------------------------------
     // Update the contextid field in question_usages (compare lib/db/upgrade.php lines 6108 following).
-    // -----------------------------------------------------
     if ($oldversion < 2012020500) {
 
         echo $OUTPUT->notification('Fixing question usages context ID', 'notifysuccess');
@@ -750,9 +745,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2012020500, 'offlinequiz');
     }
 
-    // -----------------------------------------------------
     // Now we migrate data from the old to the new tables.
-    // -----------------------------------------------------
 
     // We have to delete redundant question instances from offlinequizzes because they are incompatible with the new code.
     if ($oldversion < 2012030100) {
@@ -1770,15 +1763,15 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
     if ($oldversion < 2025062600) {
 
-        // Name of the plugin you want to uninstall
+        // Name of the plugin you want to uninstall.
         $plugincomponent = 'offlinequiz_regrade';
 
-        // Check if plugin is installed
+        // Check if plugin is installed.
         if (core_plugin_manager::instance()->get_plugin_info($plugincomponent)) {
             uninstall_plugin('offlinequiz', 'regrade');
         }
 
-        // Always upgrade the savepoint
+        // Always upgrade the savepoint.
         upgrade_mod_savepoint(true, 2025062600, 'offlinequiz');
     }
     if ($oldversion < 2015092501.01) {

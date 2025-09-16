@@ -29,9 +29,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
-
+/**
+ * upload participants list form
+ */
 class offlinequiz_participants_upload_form extends moodleform {
-
+    /**
+     * definition
+     * @return void
+     */
     public function definition() {
         $mform = $this->_form;
         $mform->addElement('header', 'importfileupload', get_string('importpforms', 'offlinequiz_rimport'));

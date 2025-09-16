@@ -26,8 +26,9 @@
  */
 use mod_offlinequiz\correct\offlinequiz_selectall_table;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Summary of participants_report
+ */
 class participants_report {
     /**
      * Print table with import errors.

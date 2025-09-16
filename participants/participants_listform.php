@@ -28,18 +28,34 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
-
+/**
+ * prints the form for the participants lists edit
+ */
 class offlinequiz_participantslistform extends moodleform {
-
+    /**
+     * offlinequiz class
+     * @var stdClass
+     */
     private $offlinequiz;
+    /**
+     * label of the button
+     * @var string
+     */
     private $label;
-
+    /**
+     * constructor
+     * @param mixed $offlinequiz
+     * @param mixed $buttonlabel
+     */
     public function __construct($offlinequiz, $buttonlabel) {
         $this->offlinequiz = $offlinequiz;
         $this->label = $buttonlabel;
         parent::__construct('participants.php');
     }
-
+    /**
+     * definition of the form
+     * @return void
+     */
     public function definition() {
         $mform =& $this->_form;
 

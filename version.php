@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * version phg for offlinequiz
  * @package   mod_offlinequiz
  * @author    Thomas Wedekind
  * @author    Juergen Zimmer

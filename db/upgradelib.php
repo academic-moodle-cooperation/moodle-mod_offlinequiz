@@ -42,7 +42,6 @@ require_once($CFG->dirroot . '/question/engine/upgrade/upgradelib.php');
  * structure to the new question engine.
  *
  */
-
 class offlinequiz_ilog_upgrader {
     /** @var offlinequiz_upgrade_question_loader */
     protected $questionloader;
@@ -54,7 +53,10 @@ class offlinequiz_ilog_upgrader {
     protected $progressbar = null;
     /** @var bool */
     protected $doingbackup = false;
-
+    /**
+     * context id
+     * @var int
+     */
     protected $contextid = 0;
 
     /**
@@ -76,7 +78,10 @@ class offlinequiz_ilog_upgrader {
         $a->info = $offlinequizid;
         $this->progressbar->update($done, $outof, get_string('upgradingilogs', 'offlinequiz', $a));
     }
-
+    /**
+     * prevent timeout
+     * @return void
+     */
     protected function prevent_timeout() {
         set_time_limit(300);
         if ($this->doingbackup) {
@@ -89,6 +94,10 @@ class offlinequiz_ilog_upgrader {
         }
     }
 
+    /**
+     * convert all offlinequiz attempts
+     * @return bool
+     */
     public function convert_all_offlinequiz_attempts() {
         global $DB;
 
@@ -123,7 +132,11 @@ class offlinequiz_ilog_upgrader {
         echo 'finished at ' . time() . "\n";
         return true;
     }
-
+    /**
+     * update all files
+     * @param mixed $offlinequiz
+     * @return void
+     */
     public function update_all_files($offlinequiz) {
         global $DB, $CFG;
 
@@ -169,7 +182,11 @@ class offlinequiz_ilog_upgrader {
             }
         }
     }
-
+    /**
+     * update all group template usages
+     * @param mixed $offlinequiz
+     * @return bool
+     */
     public function update_all_group_template_usages($offlinequiz) {
         global $DB, $CFG;
 
@@ -189,7 +206,11 @@ class offlinequiz_ilog_upgrader {
         $transaction->allow_commit();
         return true;
     }
-
+    /**
+     * update_all_results_and_logs
+     * @param mixed $offlinequiz
+     * @return bool
+     */
     public function update_all_results_and_logs($offlinequiz) {
         global $DB, $CFG;
 
@@ -477,18 +498,30 @@ class offlinequiz_ilog_upgrader {
             return '';
         }
     }
-
+    /**
+     * get username of rawdata
+     * @param mixed $rawdata
+     * @return string
+     */
     public function get_user_name($rawdata) {
         $dataarray = explode (",", $rawdata);
         return array_shift($dataarray);
     }
-
+    /**
+     * get group out of raw data
+     * @param mixed $rawdata
+     * @return string
+     */
     public function get_group($rawdata) {
         $dataarray = explode (",", $rawdata);
         array_shift($dataarray);
         return array_shift($dataarray);
     }
-
+    /**
+     * get item data
+     * @param mixed $rawdata
+     * @return string
+     */
     public function get_item_data($rawdata) {
         $dataarray = explode (",", $rawdata);
         $pos = count($dataarray) - 1;
@@ -539,7 +572,10 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         $a->info = $offlinequizid;
         $this->progressbar->update($done, $outof, get_string('upgradingofflinequizattempts', 'offlinequiz', $a));
     }
-
+    /**
+     * get quiz ids
+     * @return array
+     */
     protected function get_quiz_ids() {
         global $CFG, $DB;
 
@@ -568,7 +604,10 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         // Otherwise, upgrade all attempts.
         return $DB->get_fieldset_sql('SELECT id FROM {offlinequiz} ORDER BY id');
     }
-
+    /**
+     * convert all quiz attempts
+     * @return bool
+     */
     public function convert_all_quiz_attempts() {
         global $DB;
 
@@ -596,11 +635,18 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         $this->logger = null;
         echo 'finshed at ' . time() . "\n";
     }
-
+    /**
+     * get attempts extra where
+     * @return string
+     */
     public function get_attempts_extra_where() {
         return ' AND needsupgradetonewqe = 1';
     }
-
+    /**
+     * update all attempts at quiz
+     * @param mixed $quiz
+     * @return void
+     */
     public function update_all_attempts_at_quiz($quiz) {
         global $DB;
 
@@ -646,7 +692,13 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         $questionsstatesrs->close();
 
     }
-
+    /**
+     * convert quiz attempt
+     * @param mixed $quiz
+     * @param mixed $attempt
+     * @param moodle_recordset $questionsessionsrs
+     * @param moodle_recordset $questionsstatesrs
+     */
     protected function convert_quiz_attempt($quiz, $attempt, moodle_recordset $questionsessionsrs,
             moodle_recordset $questionsstatesrs) {
         global $OUTPUT, $DB;
@@ -690,7 +742,14 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         }
         return $this->save_usage('deferredfeedback', $attempt, $qas, $layout);
     }
-
+    /**
+     * save usage
+     * @param mixed $preferredbehaviour
+     * @param mixed $attempt
+     * @param mixed $qas
+     * @param mixed $quizlayout
+     * @return void
+     */
     public function save_usage($preferredbehaviour, $attempt, $qas, $quizlayout) {
         global $DB, $OUTPUT;
         $missing = [];
@@ -748,19 +807,34 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         }
     }
 
-
+    /**
+     * set quiz attempt layout
+     * @param mixed $qubaid
+     * @param mixed $layout
+     * @return void
+     */
     protected function set_quiz_attempt_layout($qubaid, $layout) {
         global $DB;
         $DB->set_field('offlinequiz_attempts', 'needsupgradetonewqe', 0, ['uniqueid' => $qubaid]);
     }
-
+    /**
+     * delete quiz attempts
+     * @param mixed $qubaid
+     * @return void
+     */
     protected function delete_quiz_attempt($qubaid) {
         global $DB;
         $DB->delete_records('offlinequiz_attempts', ['uniqueid' => $qubaid]);
         $DB->delete_records('question_attempts', ['id' => $qubaid]);
     }
 
-
+    /**
+     * get converter class name
+     * @param mixed $question
+     * @param mixed $quiz
+     * @param mixed $qsessionid
+     * @return string
+     */
     protected function get_converter_class_name($question, $quiz, $qsessionid) {
         global $DB;
         if ($question->qtype == 'deleted') {
@@ -776,7 +850,13 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
             return 'qbehaviour_deferredfeedback_converter';
         }
     }
-
+    /**
+     * supply_missing_question_attempt
+     * @param mixed $quiz
+     * @param mixed $attempt
+     * @param mixed $question
+     * @throws \coding_exception
+     */
     public function supply_missing_question_attempt($quiz, $attempt, $question) {
         if ($question->qtype == 'random') {
             throw new coding_exception("Cannot supply a missing qsession for question
@@ -791,7 +871,10 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         $qbehaviourupdater->discard();
         return $qa;
     }
-
+    /**
+     * prevent timeout
+     * @return void
+     */
     protected function prevent_timeout() {
         set_time_limit(300);
         if ($this->doingbackup) {
@@ -803,7 +886,14 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
             echo '<br />' . "\n";
         }
     }
-
+    /**
+     * convert question attempt
+     * @param mixed $quiz
+     * @param mixed $attempt
+     * @param mixed $question
+     * @param mixed $qsession
+     * @param mixed $qstates
+     */
     public function convert_question_attempt($quiz, $attempt, $question, $qsession, $qstates) {
         $this->prevent_timeout();
         $quiz->attemptonlast = false;
@@ -815,7 +905,13 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         $qbehaviourupdater->discard();
         return $qa;
     }
-
+    /**
+     * decode random attempt
+     * @param mixed $qstates
+     * @param mixed $maxmark
+     * @throws \coding_exception
+     * @return array
+     */
     protected function decode_random_attempt($qstates, $maxmark) {
         $realquestionid = null;
         foreach ($qstates as $i => $state) {
@@ -846,7 +942,10 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
         $newquestion->maxmark = $maxmark;
         return [$newquestion, $qstates];
     }
-
+    /**
+     * prepare to restore
+     * @return void
+     */
     public function prepare_to_restore() {
         $this->doingbackup = true; // Prevent printing of dots to stop timeout on upgrade.
         $this->logger = new dummy_question_engine_assumption_logger();
@@ -862,7 +961,11 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_upgrade_question_loader extends question_engine_upgrade_question_loader {
-
+    /**
+     * load question
+     * @param mixed $questionid
+     * @param mixed $offlinequizid
+     */
     protected function load_question($questionid, $offlinequizid) {
         global $DB;
 
@@ -992,6 +1095,10 @@ function offlinequiz_update_form_file_names() {
     }
 }
 
+/**
+ * update refresh all pagecounts
+ * @return void
+ */
 function offlinequiz_update_refresh_all_pagecounts() {
     global $DB;
     $groups = $DB->get_records('offlinequiz_groups');
@@ -1038,7 +1145,11 @@ function offlinequiz_update_refresh_all_pagecounts() {
         $progressbar->update($done, $outof, get_string('pagenumberupdate', 'offlinequiz', $a));
     }
 }
-
+/**
+ * get number of columns
+ * @param mixed $maxanswers
+ * @return int
+ */
 function offlinequiz_get_number_of_columns($maxanswers) {
     $i = 1;
     $columnlimits = [1 => 13, 2 => 8, 3 => 6];
@@ -1047,11 +1158,19 @@ function offlinequiz_get_number_of_columns($maxanswers) {
     }
     return $i;
 }
-
+/**
+ * get number of pages
+ * @param mixed $questions
+ * @param mixed $columns
+ * @return float
+ */
 function offlinequiz_get_number_of_pages($questions, $columns) {
     return ceil($questions / $columns / 24);
 }
-
+/**
+ * offlinequiz fix question versions
+ * @return void
+ */
 function offlinequiz_fix_question_versions() {
     global $DB;
     // first set all
@@ -1113,7 +1232,10 @@ function offlinequiz_fix_question_versions() {
     offlinequiz_fix_question_references();
 
 }
-
+/**
+ * fix question references
+ * @return void
+ */
 function offlinequiz_fix_question_references() {
     global $DB;
     $sql = "SELECT ogq.id itemid, c.id usingcontextid, 'mod_offlinequiz' component, 'slot' questionarea,  qv.questionbankentryid questionbankentryid, qv.version \"version\"

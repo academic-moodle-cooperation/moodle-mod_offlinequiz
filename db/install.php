@@ -26,9 +26,6 @@
  *
  **/
 
-defined('MOODLE_INTERNAL') || die();
-
-
 /**
  * Code run after the offlinequiz module database tables have been created.
  */
