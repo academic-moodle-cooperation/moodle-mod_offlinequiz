@@ -27,14 +27,15 @@ variables:
     - eval $(failed setup-command)
   script:
     - moodle-plugin-ci phplint || failed
+    - moodle-plugin-ci phpcpd || true
     - moodle-plugin-ci phpmd || failed
-    - moodle-plugin-ci phpcs
-    - moodle-plugin-ci validate || true
-    - moodle-plugin-ci savepoints
-    - moodle-plugin-ci mustache
-    - moodle-plugin-ci grunt
-    - moodle-plugin-ci phpdoc
-    - moodle-plugin-ci phpunit
+    - moodle-plugin-ci phpcs || failed
+    - moodle-plugin-ci validate || failed
+    - moodle-plugin-ci savepoints || failed
+    - moodle-plugin-ci mustache || failed
+    - moodle-plugin-ci grunt || failed
+    - moodle-plugin-ci phpdoc || failed
+    - moodle-plugin-ci phpunit || failed
     - moodle-plugin-ci behat --profile chrome
     - failed result
   after_script:
