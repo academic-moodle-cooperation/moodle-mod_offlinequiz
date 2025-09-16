@@ -132,6 +132,7 @@ class edit_renderer extends \plugin_renderer_base {
                 $pageurl->out_as_local_url(true),
                 $pageurl->param('cmid'),
                 \core\plugininfo\qbank::is_plugin_enabled(\qbank_managecategories\helper::PLUGINNAME),
+                $offlinequiz->groupnumber,
             ]);
             // Include the question chooser.
             $output .= $this->question_chooser();
