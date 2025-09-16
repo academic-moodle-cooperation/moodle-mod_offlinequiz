@@ -37,9 +37,14 @@
  **/
 namespace mod_offlinequiz;
 use navigation_node;
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * default report for all offlinequiz_plugins
+ */
 abstract class default_report {
+    /**
+     * no groups allowed in this context
+     * @var int
+     */
     const NO_GROUPS_ALLOWED = -2;
 
     /**
@@ -55,6 +60,10 @@ abstract class default_report {
      * TODO: move static structure from offlinequiz_get_tabs_object into this function implementations.
      */
     abstract public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node;
+    /**
+     * get the name of the offlinequiz report
+     * @return void
+     */
     abstract public function get_report_title(): string;
     /**
      * Navigation key is used to identify this plugin in tabs and other places.
@@ -86,7 +95,7 @@ abstract class default_report {
      *
      * @param object $cm the course_module information.
      * @param object $coures the course settings.
-     * @param context $context the offlinequiz context.
+     * @param \context $context the offlinequiz context.
      * @return int the current group id, if applicable. 0 for all users,
      *      NO_GROUPS_ALLOWED if the user cannot see any group.
      */

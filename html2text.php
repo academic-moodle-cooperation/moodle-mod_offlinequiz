@@ -27,9 +27,18 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * extracts the text from the html
+ */
 class offlinequiz_html_translator {
+    /**
+     * temporary files
+     * @var array
+     */
     private $tempfiles = [];
-
+    /**
+     * constructor
+     */
     public function __construct() {
         $this->tempfiles = [];
     }
@@ -219,7 +228,7 @@ class offlinequiz_html_translator {
                         $this->tempfiles[] = $file;
 
                         // In answer texts we want a line break to avoid the picture going above the line.
-                        if ($filearea == 'answer' and $disableimgnewlines == 0) {
+                        if ($filearea == 'answer' && $disableimgnewlines == 0) {
                             $output .= '<br/>';
                         }
                         $img = file_get_contents(

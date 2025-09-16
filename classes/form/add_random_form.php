@@ -32,7 +32,6 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated Moodle 4.3 MDL-72321. This form is new generated in a modal with mod_quiz/add_random_question_form.mustache
- * @todo Final deprecation in Moodle 4.7 MDL-78091
  */
 class add_random_form extends moodleform {
 
@@ -41,7 +40,6 @@ class add_random_form extends moodleform {
      *
      * @return void
      * @deprecated Moodle 4.3 MDL-72321
-     * @todo Final deprecation in Moodle 4.7 MDL-78091
      */
     protected function definition() {
         debugging(
@@ -83,11 +81,6 @@ class add_random_form extends moodleform {
             $mform->addHelpButton('fromtags', 'randomquestiontags', 'mod_quiz');
         }
 
-        // TODO: in the past, the drop-down used to only show sensible choices for
-        // number of questions to add. That is, if the currently selected filter
-        // only matched 9 questions (not already in the quiz), then the drop-down would
-        // only offer choices 1..9. This nice UI hint got lost when the UI became Ajax-y.
-        // We should add it back.
         $mform->addElement('select', 'numbertoadd', get_string('randomnumber', 'quiz'),
             $this->get_number_of_questions_to_add_choices());
 
@@ -140,7 +133,6 @@ class add_random_form extends moodleform {
      * @param array $files
      * @return array
      * @deprecated Moodle 4.3 MDL-72321
-     * @todo Final deprecation in Moodle 4.7 MDL-78091
      */
     public function validation($fromform, $files) {
         debugging(

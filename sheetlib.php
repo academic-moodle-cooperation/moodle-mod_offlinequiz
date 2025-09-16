@@ -14,8 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * This is the settingslib for the offlinequiz admin settings
+ *
+ * @package       mod_offlinequiz
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.2+
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+defined('MOODLE_INTERNAL') || die();
+/**
+ * analyze the sheet lib headers
+ * @param mixed $workbook
+ * @return array<array|mixed>
+ */
 function offlinequiz_sheetlib_initialize_headers($workbook) {
     // Creating the first worksheet.
     $sheettitle = get_string('reportoverview', 'offlinequiz');

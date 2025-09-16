@@ -37,7 +37,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 class report extends default_report {
 
-
+    /**
+     * display the report
+     * @param mixed $offlinequiz
+     * @param mixed $cm
+     * @param mixed $course
+     * @return bool
+     */
     public function display($offlinequiz, $cm, $course) {
         global $CFG, $OUTPUT, $PAGE, $DB;
         $context = \context_module::instance($cm->id);
@@ -99,26 +105,55 @@ class report extends default_report {
         return true;
     }
 
+    /**
+     * add to navigation
+     * @param \navigation_node $navigation
+     * @param mixed $cm
+     * @param mixed $offlinequiz
+     * @return navigation_node
+     */
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         return $navigation;
     }
+    /**
+     * get active tab for a given url
+     * @param mixed $url
+     * @return string
+     */
     public function get_active_tab($url) {
-        if(strpos($url, '/mod/offlinequiz/report.php') && strpos($url, 'mode=identified')) {
+        if (strpos($url, '/mod/offlinequiz/report.php') && strpos($url, 'mode=identified')) {
             return 'mod_offlinequiz_edit';
         }
+        return '';
     }
+    /**
+     * get the report title
+     * @return string
+     */
     public function get_report_title(): string {
         return get_string('pluginname', 'offlinequiz_identified');
     }
+    /**
+     * get the key for the navigation
+     * @return string
+     */
     public function get_navigation_key(): string {
         return 'tab_identifiedforms';
     }
+    /**
+     * get html of all actions
+     * @param mixed $sourceplugin
+     * @param mixed $sourcepage
+     * @param mixed $cm
+     * @param mixed $offlinequiz
+     * @return string
+     */
     public function get_actions_html($sourceplugin, $sourcepage, $cm, $offlinequiz) {
         global $OUTPUT;
         $html = '';
-        if(get_config('offlinequiz_identified', 'enableidentified')) {
-            if($sourceplugin == 'offlinequiz' && $sourcepage == offlinequiz_page::CREATEQUIZ_CREATEPDFS && $offlinequiz->docscreated == 1) {
-                $url = new \moodle_url('/mod/offlinequiz/report.php', ['mode' => 'identified', 'q' => $offlinequiz->id]);
+        if (get_config('offlinequiz_identified', 'enableidentified')) {
+            if ($sourceplugin == 'offlinequiz' && $sourcepage == offlinequiz_page::CREATEQUIZ_CREATEPDFS && $offlinequiz->docscreated == 1) {
+                $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'identified', 'q' => $offlinequiz->id]);
                 $html = $OUTPUT->single_button($url, get_string('identified', 'offlinequiz_identified'), 'get');
             }
         }

@@ -29,24 +29,41 @@ class add_action_column extends \core_question\local\bank\column_base {
 
     /** @var string caches a lang string used repeatedly. */
     protected $stradd;
-
+    /**
+     * initialize
+     * @return void
+     */
     public function init(): void {
         parent::init();
         $this->stradd = get_string('addtoofflinequiz', 'offlinequiz');
     }
-
+    /**
+     * get extra classes for this column
+     * @return string[]
+     */
     public function get_extra_classes(): array {
         return ['iconcol'];
     }
-
+    /**
+     * get title of this column
+     * @return string
+     */
     public function get_title(): string {
         return '&#160;';
     }
-
+    /**
+     * get name of this column
+     * @return string
+     */
     public function get_name() {
         return 'addtoofflinequizaction';
     }
-
+    /**
+     * get displaycontent of this question
+     * @param mixed $question
+     * @param mixed $rowclasses
+     * @return void
+     */
     protected function display_content($question, $rowclasses) {
         global $OUTPUT;
         if (!question_has_capability_on($question, 'use') || $this->qbank->offlinequiz_contains($question->id)) {
@@ -60,7 +77,10 @@ class add_action_column extends \core_question\local\bank\column_base {
             new \pix_icon('t/add', $this->stradd));
         echo $OUTPUT->render($link);
     }
-
+    /**
+     * get default width of this column
+     * @return int
+     */
     public function get_default_width(): int {
         return 16;
     }

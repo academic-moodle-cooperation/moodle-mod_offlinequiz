@@ -29,13 +29,22 @@ namespace mod_offlinequiz\task;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/offlinequiz/cron.php');
-
+/**
+ * Deletes all temporary files from the offline quiz folder
+ */
 class temporary_file_deletion_task extends \core\task\scheduled_task {
+    /**
+     * get name of the task
+     * @return string
+     */
     public function get_name() {
         // Shown in admin screens.
         return get_string('temporaryfiledeletiontask', 'mod_offlinequiz');
     }
-
+    /**
+     * execute the task
+     * @return void
+     */
     public function execute() {
         global $DB, $CFG;
         // Delete old temporary files not needed any longer.
@@ -62,10 +71,10 @@ class temporary_file_deletion_task extends \core\task\scheduled_task {
                     }
                 }
             }
-            if(empty($dirname)) {
+            if (empty($dirname)) {
                 $dirname = "$CFG->dataroot/offlinequiz/import/$jobid/";
             }
-            if(is_dir($dirname)) {
+            if (is_dir($dirname)) {
                 // Remove the temporary directory.
                 echo "Removing dir " . $dirname . "\n";
                 remove_dir($dirname);

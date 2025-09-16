@@ -26,6 +26,8 @@
 
 namespace mod_offlinequiz\question\bank;
 
+use core_question\local\bank\question_edit_contexts;
+
 defined('MOODLE_INTERNAL') || die();
 
 use core\output\datafilter;
@@ -70,7 +72,7 @@ class custom_view extends \core_question\local\bank\view {
 
     /**
      * Constructor
-     * @param \question_edit_contexts $contexts
+     * @param question_edit_contexts $contexts
      * @param \moodle_url $pageurl
      * @param \stdClass $course course settings
      * @param \stdClass $cm activity settings.
@@ -101,7 +103,7 @@ class custom_view extends \core_question\local\bank\view {
         [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
         $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $extraparams['groupid']);
         $this->offlinequiz->questionbankentries = offlinequiz_get_group_questionbankentry_ids($this->offlinequiz, $extraparams['groupid']);
-        if($extraparams['groupid']) {
+        if ($extraparams['groupid']) {
             $groupnumber = $DB->get_field('offlinequiz_groups', 'groupnumber', ['id' => $extraparams['groupid']]);
             $this->groupnumber = $groupnumber;
         }
@@ -127,7 +129,10 @@ class custom_view extends \core_question\local\bank\view {
     protected function get_plugin_controls(\core\context $context, int $categoryid): string {
         return '';
     }
-
+    /**
+     * get qbank plugins
+     * @return array
+     */
     protected function get_question_bank_plugins(): array {
         $questionbankclasscolumns = [];
         $customviewcolumns = [
@@ -156,7 +161,10 @@ class custom_view extends \core_question\local\bank\view {
     protected function heading_column(): string {
         return 'mod_offlinequiz\\question\\bank\\question_name_text_column';
     }
-
+    /**
+     * default sort
+     * @return array
+     */
     protected function default_sort(): array {
         // Using the extended class for quiz specific sort.
         return [
@@ -322,6 +330,10 @@ class custom_view extends \core_question\local\bank\view {
         }
     }
 
+    /**
+     * add standard search conditions
+     * @return void
+     */
     public function add_standard_search_conditions(): void {
         foreach ($this->plugins as $componentname => $plugin) {
             if (\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
@@ -348,7 +360,11 @@ class custom_view extends \core_question\local\bank\view {
     public function get_offlinequiz() {
         return $this->offlinequiz;
     }
-
+    /**
+     * get if offlinequiz contains a question id
+     * @param mixed $questionid
+     * @return bool
+     */
     public function offlinequiz_contains($questionid) {
         global $DB;
         $questionbankentryid = $DB->get_field('question_versions', 'questionbankentryid', ['questionid' => $questionid]);

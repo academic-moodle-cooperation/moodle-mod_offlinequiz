@@ -27,15 +27,25 @@ use core_privacy\local\request\approved_userlist;
 
 require_once($CFG->libdir . '/questionlib.php');
 
+/**
+ *
+ * @package    mod_offlinequiz
+ * @subpackage privacy
+ * @author Thomas Wedekind
+ * @copyright  2017 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements
-// This plugin has data.
 \core_privacy\local\metadata\provider,
 
-// This plugin currently implements the original plugin\provider interface.
 \core_privacy\local\request\plugin\provider,
 \core_privacy\local\request\user_preference_provider,
-// This plugin implements the userlist-provider.
 \core_privacy\local\request\core_userlist_provider {
+    /**
+     * get metadata for offlinequiz
+     * @param \core_privacy\local\metadata\collection $collection
+     * @return collection
+     */
     public static function get_metadata(collection $collection): collection {
 
         $collection->link_subsystem('core_files', 'privacy:metadata:core_files');
@@ -363,7 +373,11 @@ class provider implements
             static::export_offlinequiz($offlinequiz->offlinequizid, \context::instance_by_id($offlinequiz->contextid), $user->id);
         }
     }
-
+    /**
+     * get users in this context for offlinequiz
+     * @param \core_privacy\local\request\userlist $userlist
+     * @return void
+     */
     public static function get_users_in_context(userlist $userlist) {
         global $DB;
         $sql = "SELECT DISTINCT c.id contextid, cm.instance offlinequizid
@@ -417,16 +431,28 @@ class provider implements
         list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         list($listidsql, $listidparams) = $DB->get_in_or_equal($listids, SQL_PARAMS_NAMED);
 
-        $params = listidparams + $userparams;
+        $params = $listidparams + $userparams;
         // Remove data from role_assignments.
         $DB->delete_records_select('offlinequiz_participants',
         "listid {$listidsql} AND userid {$usersql}", $params);
     }
-
+    /**
+     * export a single offlinequiz
+     * @param mixed $offlinequizid
+     * @param mixed $context
+     * @param mixed $userid
+     * @return void
+     */
     private static function export_offlinequiz($offlinequizid, $context, $userid) {
             static::export_student_data($offlinequizid, $context, $userid);
     }
-
+    /**
+     * export the student data
+     * @param mixed $offlinequizid
+     * @param mixed $context
+     * @param mixed $userid
+     * @return void
+     */
     private static function export_student_data($offlinequizid, $context, $userid) {
         global $DB;
         $offlinequizconfig = get_config('offlinequiz');
@@ -474,14 +500,18 @@ class provider implements
         foreach ($offlinequizpreferences as $key => $preference) {
             $value = get_user_preferences($key, null, $userid);
             if ($preference['bool']) {
-                $value = transform::yesno($value);
+                $value = \core_privacy\local\request\transform::yesno($value);
             }
             if (isset($value)) {
                 writer::with_context($context)->export_user_preference('mod_offlinequiz', $key, $value, $preference['string']);
             }
         }
     }
-
+    /**
+     * get scanned page objects for the participants lists
+     * @param mixed $pchoices
+     * @return \stdClass[]
+     */
     private static function get_scanned_p_page_objects($pchoices) {
         global $DB;
 
@@ -497,9 +527,13 @@ class provider implements
         }
         return $scannedpages;
     }
-
+    /**
+     * export result object
+     * @param mixed $results
+     * @return array
+     */
     private static function get_results($results) {
-        $results = [];
+        $exportobjects = [];
         foreach ($results as $result) {
             $exportobject = new \stdClass();
             $exportobject->group = static::get_group_name_by_result($result);
@@ -509,11 +543,15 @@ class provider implements
             $exportobject->timestart = $result->timestart;
             $exportobject->timefinish = $result->timefinish;
             $exportobject->timemodified = $result->timemodified;
-            $results[] = $exportobject;
+            $exportobjects[] = $exportobject;
         }
         return $results;
     }
-
+    /**
+     * get group name if a result
+     * @param mixed $result
+     * @return string
+     */
     private static function get_group_name_by_result($result) {
         global $DB;
         $sql = "SELECT g.groupnumber
@@ -525,6 +563,12 @@ class provider implements
         return static::get_group_letter($groupnumber);
     }
 
+    /**
+     * export scanned page object
+     * @param mixed $context
+     * @param mixed $scannedpages
+     * @return \stdClass[]
+     */
     private static function get_scanned_pages_objects($context, $scannedpages) {
         $scannedpageobjects = [];
         foreach ($scannedpages as $scannedpage) {
@@ -534,6 +578,12 @@ class provider implements
         return $scannedpageobjects;
     }
 
+    /**
+     * export file
+     * @param mixed $context
+     * @param mixed $scannedpage
+     * @return void
+     */
     private static function export_file($context, $scannedpage) {
         $fs = get_file_storage();
         if ( $imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename)) {
@@ -544,6 +594,11 @@ class provider implements
         }
     }
 
+    /**
+     * export scanned page object
+     * @param mixed $scannedpage
+     * @return \stdClass
+     */
     private static function get_scanned_page_object($scannedpage) {
         $exportscannedpage = new \stdClass();
         $exportscannedpage->id = $scannedpage->id;
@@ -552,12 +607,21 @@ class provider implements
         $exportscannedpage->pagecorners = static::get_page_corners($scannedpage->id);
         return $exportscannedpage;
     }
-
+    /**
+     * export page corners
+     * @param mixed $scannedpageid
+     * @return array
+     */
     private static function get_page_corners($scannedpageid) {
         global $DB;
         return $DB->get_records("offlinequiz_page_corners", ["scannedpageid" => $scannedpageid]);
     }
-
+    /**
+     * export group
+     * @param mixed $offlinequizid
+     * @param mixed $groupnumber
+     * @return \stdClass
+     */
     private static function get_group($offlinequizid, $groupnumber) {
         global $DB;
 
@@ -570,27 +634,25 @@ class provider implements
         $exportgroup->correctionfilename = $group->correctionfilename;
         return $exportgroup;
     }
-
+    /**
+     * get the group letter id
+     * @param mixed $groupnumber
+     * @return string
+     */
     private static function get_group_letter($groupnumber) {
         switch ($groupnumber) {
             case 1:
              return "A";
-             break;
             case 2:
              return "B";
-             break;
             case 3:
              return "C";
-             break;
             case 4:
              return "D";
-             break;
             case 5:
              return "E";
-             break;
             case 6:
              return "F";
-             break;
             default:
              return "none";
         }
@@ -599,7 +661,7 @@ class provider implements
     /**
      * Delete all data for all users in the specified context.
      *
-     * @param   context $context The specific context to delete data for.
+     * @param   \context $context The specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;

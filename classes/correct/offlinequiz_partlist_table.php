@@ -30,7 +30,6 @@ namespace mod_offlinequiz\correct;
 use html_writer;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * participants list table

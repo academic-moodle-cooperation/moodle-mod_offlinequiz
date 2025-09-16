@@ -18,8 +18,6 @@ namespace mod_offlinequiz\question\bank;
 
 use core_question\local\bank\question_version_status;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Helper class for question bank and its associated data.
  *

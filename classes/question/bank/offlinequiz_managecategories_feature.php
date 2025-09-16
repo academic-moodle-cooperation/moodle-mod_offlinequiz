@@ -31,7 +31,12 @@ use mod_offlinequiz\question\bank\filter\custom_category_condition;
  */
 class offlinequiz_managecategories_feature extends \qbank_managecategories\plugin_feature {
 
-    public function get_question_filters(view $qbank = null): array {
+    /**
+     * get question filters
+     * @param \core_question\local\bank\view|null $qbank
+     * @return custom_category_condition[]
+     */
+    public function get_question_filters(?view $qbank = null): array {
         return [
             new custom_category_condition($qbank),
         ];

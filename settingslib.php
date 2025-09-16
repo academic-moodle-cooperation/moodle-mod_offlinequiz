@@ -39,8 +39,20 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
      * again, copied for performance reasons.
      */
     const DURING = 0x10000;
+    /**
+     * immediately after the offlinequiz
+     * @var int
+     */
     const IMMEDIATELY_AFTER = 0x01000;
+    /**
+     * later while the offlinequiz is still open
+     * @var int
+     */
     const LATER_WHILE_OPEN = 0x00100;
+    /**
+     * after the offlinequiz was closed
+     * @var int
+     */
     const AFTER_CLOSE = 0x00010;
 
     /**
@@ -68,11 +80,11 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
 
     /**
      *
-     * @param unknown_type $name
-     * @param unknown_type $visiblename
-     * @param unknown_type $description
-     * @param unknown_type $defaultsetting
-     * @param unknown_type $duringstate
+     * @param string $name
+     * @param string $visiblename
+     * @param string $description
+     * @param string $defaultsetting
+     * @param string $duringstate
      */
     public function __construct($name, $visiblename, $description,
             $defaultsetting, $duringstate = null) {
@@ -81,12 +93,16 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
     }
 
     /**
+     * returns all on
      * @return int all times.
      */
     public static function all_on() {
         return self::AFTER_CLOSE;
     }
-
+    /**
+     * summary of times
+     * @return string[]
+     */
     protected static function times() {
         return [
                 self::AFTER_CLOSE => '',
@@ -95,7 +111,7 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
 
     /**
      *
-     * @param unknown_type $data
+     * @param array $data
      */
     protected function normalise_data($data) {
         $times = self::times();
@@ -171,6 +187,11 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
  *
  */
 class admin_setting_configtext_user_formula extends admin_setting_configtext {
+    /**
+     * validate the configtext of a user formula
+     * @param mixed $data
+     * @return bool|string
+     */
     public function validate($data) {
         global $DB, $CFG;
 
@@ -225,5 +246,6 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
                 return get_string('invalidformula', 'offlinequiz');
             }
         }
+        return '';
     }
 }

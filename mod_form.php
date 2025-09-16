@@ -38,7 +38,10 @@ require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_offlinequiz_mod_form extends moodleform_mod {
-
+    /**
+     * definition of the form
+     * @return void
+     */
     protected function definition() {
         global $COURSE, $CFG, $DB, $PAGE;
 
@@ -105,7 +108,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         // Option for show tutorial.
         $mform->addElement('selectyesno', 'showtutorial', get_string("showtutorial", "offlinequiz"));
         $mform->addHelpButton('showtutorial', "showtutorial", "offlinequiz");
-        if($this->_cm) {
+        if ($this->_cm) {
             $mform->addElement('static', 'showtutorialdescription', '', get_string("showtutorialdescription", "offlinequiz") .
                 '<br/><a href="'.$CFG->wwwroot.'/mod/offlinequiz/tutorial.php?id=' .
                 $this->_cm->id . '">' . "$CFG->wwwroot/mod/offlinequiz/tutorial.php?id=" . $this->_cm->id . '</a>');
@@ -144,7 +147,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'layouthdr', get_string('formsheetsettings', 'offlinequiz'));
         require_once($CFG->dirroot . '/lib/pdflib.php');
         $pdf = new pdf();
-        if($pdf) {
+        if ($pdf) {
             $fontfamilies = $pdf->get_font_families();
         } else {
             $fontfamilies = [];
@@ -152,7 +155,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         }
         $options = [];
         foreach ($fontfamilies as $name => $values) {
-            if(get_string_manager()->string_exists('fontfamily' . $name, 'offlinequiz') ) {
+            if (get_string_manager()->string_exists('fontfamily' . $name, 'offlinequiz') ) {
                 $options[$name] = get_string('fontfamily' . $name, 'offlinequiz');
             } else {
                 $options[$name] = $name;
@@ -322,7 +325,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $draftitemid = file_get_submitted_draft_itemid('pdfintro');
 
             // No context yet, itemid not used.
-            file_prepare_draft_area($draftitemid, null, 'mod_offlinequiz', 'pdfintro', false);
+            file_prepare_draft_area($draftitemid, 0, 'mod_offlinequiz', 'pdfintro', false);
             $toform['pdfintro'] = [];
             $toform['pdfintro']['text'] = get_string('pdfintrotext', 'offlinequiz');
             $toform['pdfintro']['format'] = editors_get_preferred_format();

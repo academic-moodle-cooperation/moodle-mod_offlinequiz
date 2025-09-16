@@ -26,11 +26,19 @@ namespace mod_offlinequiz\question\bank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_name_text_column extends question_name_column {
-
+    /**
+     * get question name column name
+     * @return string
+     */
     public function get_name(): string {
         return 'questionnametext';
     }
-
+    /**
+     * display content of column
+     * @param mixed $question
+     * @param mixed $rowclasses
+     * @return void
+     */
     protected function display_content($question, $rowclasses): void {
         $attributes = $this->qbank->offlinequiz_contains($question->id) ? ['class' => 'greyed'] : [];
         echo \html_writer::start_tag('div', $attributes);
@@ -44,7 +52,10 @@ class question_name_text_column extends question_name_column {
         }
         echo \html_writer::end_tag('div');
     }
-
+    /**
+     * get required fields of this function
+     * @return string[]
+     */
     public function get_required_fields(): array {
         $fields = parent::get_required_fields();
         $fields[] = 'q.questiontext';
@@ -53,11 +64,19 @@ class question_name_text_column extends question_name_column {
         return $fields;
     }
 
+    /**
+     * load additional data
+     * @param array $questions
+     * @return void
+     */
     public function load_additional_data(array $questions) {
         parent::load_additional_data($questions);
         parent::load_question_tags($questions);
     }
-
+    /**
+     * get default width of this column
+     * @return int
+     */
     public function get_default_width(): int {
         return 540;
     }

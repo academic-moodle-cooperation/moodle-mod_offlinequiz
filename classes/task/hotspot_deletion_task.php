@@ -29,13 +29,22 @@ namespace mod_offlinequiz\task;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/offlinequiz/cron.php');
-
+/**
+ * deletion of temporary offlinequiz hotspots
+ */
 class hotspot_deletion_task extends \core\task\scheduled_task {
+    /**
+     * get name of the task
+     * @return string
+     */
     public function get_name() {
         // Shown in admin screens.
         return get_string('hotspotdeletiontask', 'mod_offlinequiz');
     }
-
+    /**
+     * execute the cron task
+     * @return void
+     */
     public function execute() {
         global $DB;
         // Remove all saved hotspot data that is older than 7 days.

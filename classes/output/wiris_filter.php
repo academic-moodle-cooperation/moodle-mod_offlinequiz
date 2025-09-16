@@ -42,13 +42,17 @@ if (!class_exists('filter_wiris\text_filter')) {
 // Import PHP 'subfilter'.
 use filter_wiris\subfilters\filter_wiris_php;
 
-require_once("$CFG->dirroot/filter/wiris/subfilters/php.php");
+require_once($CFG->dirroot . "/filter/wiris/subfilters/php.php");
 
 /**
  * Class wiris_filter
  * This class extends the moodle_text_filter and provides a method to filter text using the Wiris filter.
  */
 class wiris_filter extends \core_filters\text_filter {
+    /**
+     * wiris subfilter
+     * @var filter_wiris_php
+     */
     private $subfilter;
     /**
      * Constructor for the wiris_filter class.

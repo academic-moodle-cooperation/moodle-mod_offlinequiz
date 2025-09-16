@@ -25,8 +25,6 @@
  */
 namespace mod_offlinequiz\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_offlinequiz attempt deleted event class.
  *

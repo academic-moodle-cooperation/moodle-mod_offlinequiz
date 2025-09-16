@@ -70,13 +70,13 @@ $url = new moodle_url('/mod/offlinequiz/participants_correct.php', ['pageid' => 
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
-offlinequiz_load_useridentification();
+
 $offlinequizconfig = get_config('offlinequiz');
 
 $offlinequiz->penaltyscheme = 0;
 $offlinequiz->timelimit = 0;
 $offlinequiz->timeclose = 0;
-offlinequiz_load_useridentification();
+
 
 $list = null;
 
@@ -232,9 +232,6 @@ if ($action == 'cancel') {
 } else if ($action == 'rotate') {
     if (!confirm_sesskey()) {
         throw new \moodle_exception('invalidsesskey');
-        echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
-onClick=\"self.close(); return false;\"><br />";
-        die;
     }
 
     $upperleft = new oq_point(853 - required_param('c-3-x', PARAM_INT), 1208 - required_param('c-3-y', PARAM_INT));
@@ -266,9 +263,6 @@ onClick=\"self.close(); return false;\"><br />";
 } else if ($action == 'setpage') {
     if (!confirm_sesskey()) {
         throw new \moodle_exception('invalidsesskey');
-        echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
-onClick=\"self.close(); return false;\"><br />";
-        die;
     }
 
     $listid = required_param('listid', PARAM_INT);

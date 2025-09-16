@@ -26,8 +26,12 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * get infostring of a question
+ * @param mixed $offlinequiz
+ * @param mixed $question
+ * @return string|null
+ */
 function offlinequiz_get_question_infostring($offlinequiz, $question) {
     if ($offlinequiz->showgrades || $offlinequiz->showquestioninfo) {
         $infostr = '(';
@@ -53,7 +57,12 @@ function offlinequiz_get_question_infostring($offlinequiz, $question) {
     }
     return null;
 }
-
+/**
+ * get the question info of a question
+ * @param mixed $offlinequiz
+ * @param mixed $question
+ * @return string|null
+ */
 function offlinequiz_get_questioninfo($offlinequiz, $question) {
     if ($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_QTYPE) {
         if ($question->qtype == 'multichoice') {
@@ -79,7 +88,11 @@ function offlinequiz_get_questioninfo($offlinequiz, $question) {
         return null;
     }
 }
-
+/**
+ * get the amount of correct answers
+ * @param mixed $question
+ * @return int
+ */
 function offlinequiz_get_amount_correct_answers($question) {
     $answers = $question->options->answers;
     $amount = 0;

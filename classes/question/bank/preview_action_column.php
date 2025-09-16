@@ -26,19 +26,33 @@ namespace mod_offlinequiz\question\bank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class preview_action_column extends \core_question\local\bank\column_base {
-
+    /**
+     * get extra classes for this column
+     * @return string[]
+     */
     public function get_extra_classes(): array {
         return ['iconcol'];
     }
-
+    /**
+     * get title of this column
+     * @return string
+     */
     public function get_title(): string {
         return '&#160;';
     }
-
+    /**
+     * get name of the column
+     * @return string
+     */
     public function get_name() {
         return 'previewquestionaction';
     }
-
+    /**
+     * get content of the column
+     * @param mixed $question
+     * @param mixed $rowclasses
+     * @return void
+     */
     protected function display_content($question, $rowclasses) {
         global $PAGE;
         if (!question_has_capability_on($question, 'use')) {
@@ -47,7 +61,10 @@ class preview_action_column extends \core_question\local\bank\column_base {
         $editrenderer = $PAGE->get_renderer('offlinequiz', 'edit');
         echo $editrenderer->question_preview_icon($this->qbank->get_offlinequiz(), $question);
     }
-
+    /**
+     * get default width of this column
+     * @return int
+     */
     public function get_default_width(): int {
         return 30;
     }

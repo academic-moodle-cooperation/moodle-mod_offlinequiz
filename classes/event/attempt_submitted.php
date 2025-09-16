@@ -24,7 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_offlinequiz\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The mod_offlinequiz attempt submitted event class.

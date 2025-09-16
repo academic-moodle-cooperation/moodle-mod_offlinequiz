@@ -596,7 +596,7 @@ function offlinequiz_check_for_changed_user($offlinequiz, $scanner, $scannedpage
                                             $coursecontext, $questionsperpage, $offlinequizconfig) {
     global $DB, $USER;
 
-    if (property_exists($scannedpage, 'resultid') and $scannedpage->resultid) {
+    if (property_exists($scannedpage, 'resultid') && $scannedpage->resultid) {
         if ($result = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid])) {
             if ($newuser = $DB->get_record('user', [$offlinequizconfig->ID_field => $scannedpage->userkey])) {
                 if ($newuser->id != $result->userid) {
@@ -1012,7 +1012,7 @@ function offlinequiz_process_scanned_participants_page($offlinequiz, offlinequiz
  *
  * @param stdClass $offlinequiz
  * @param stdClass $scannedpage
- * @param stdClass $choicesdata
+ * @param array $choicesdata
  * @return stdClass
  * @throws dml_exception
  * @throws moodle_exception

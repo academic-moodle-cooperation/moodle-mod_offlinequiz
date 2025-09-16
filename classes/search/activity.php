@@ -25,8 +25,6 @@
 
 namespace mod_offlinequiz\search;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Search area for mod_offlinequiz activities.
  *
@@ -47,7 +45,7 @@ class activity extends \core_search\base_activity {
     /**
      * Add the attached description files.
      *
-     * @param document $document The current document
+     * @param  $document The current document
      * @return null
      */
     public function attach_files($document) {

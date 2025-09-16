@@ -171,6 +171,11 @@ function offlinequiz_convert_underline_text_docx($text) {
     return $result;
 }
 
+/**
+ * convert text to docx
+ * @param mixed $text
+ * @return array<array|array{type: string, value: array|string>}
+ */
 function offlinequiz_convert_super_text_docx($text) {
     $search  = ['&quot;', '&amp;', '&gt;', '&lt;'];
     $replace = ['"', '&', '>', '<'];
@@ -201,7 +206,11 @@ function offlinequiz_convert_super_text_docx($text) {
     }
     return $result;
 }
-
+/**
+ * convert text to sub_docx
+ * @param mixed $text
+ * @return array<array|array{type: string, value: array|string>}
+ */
 function offlinequiz_convert_sub_text_docx($text) {
     $search  = ['&quot;', '&amp;', '&gt;', '&lt;'];
     $replace = ['"', '&', '>', '<'];
@@ -398,7 +407,20 @@ function offlinequiz_convert_image_docx($text) {
     }
     return $result;
 }
-
+/**
+ * print the answers docx of an offlinequiz
+ * @param mixed $templateusage
+ * @param mixed $slot
+ * @param mixed $slotquestion
+ * @param mixed $question
+ * @param mixed $texfilters
+ * @param mixed $offlinequiz
+ * @param mixed $trans
+ * @param mixed $section
+ * @param mixed $answernumbering
+ * @param mixed $level2
+ * @return void
+ */
 function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
       $texfilters, $offlinequiz, $trans, $section, $answernumbering, $level2) {
     $attempt = $templateusage->get_question_attempt($slot);

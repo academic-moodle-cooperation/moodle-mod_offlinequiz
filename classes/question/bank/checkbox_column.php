@@ -27,6 +27,12 @@ use core\output\checkbox_toggleall;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class checkbox_column extends \core_question\local\bank\checkbox_column {
+    /**
+     * display content of this question
+     * @param mixed $question
+     * @param mixed $rowclasses
+     * @return void
+     */
     protected function display_content($question, $rowclasses): void {
         if ($this->qbank->offlinequiz_contains($question->id)) {
             echo '<input type="checkbox" disabled="disabled" class="select-multiple-checkbox" checked="true" />';

@@ -708,7 +708,6 @@ class edit_renderer extends \plugin_renderer_base {
             'groupnumber' => $pageurl->get_param('groupnumber'),
         ];
         $url = new \moodle_url('/mod/offlinequiz/edit.php', $params);
-        // $url = new \moodle_url('/mod/offlinequiz/addrandom.php', $params);
         $icon = new \pix_icon('t/add', $str->addarandomquestion, 'moodle', ['class' => 'iconsmall', 'title' => '']);
         $attributes = ['class' => 'cm-edit-action addarandomquestion', 'data-action' => 'addarandomquestion'];
         $title = get_string('addrandomquestiontopage', 'offlinequiz', $page);

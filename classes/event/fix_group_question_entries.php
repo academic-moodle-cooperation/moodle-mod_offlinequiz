@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * event to fix group question entries
+ *
+ * @package    mod_offlinequiz
+ * @author  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright 2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since Moodle 2.7
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_offlinequiz\event;
 
 
@@ -21,7 +31,9 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\event\course_restored;
 use core\event\course_module_created;
-
+/**
+ * fix group question entries
+ */
 class fix_group_question_entries {
 
     /**
@@ -37,15 +49,24 @@ class fix_group_question_entries {
             self::fix_single_offlinequiz($offlinequiz);
         }
     }
+    /**
+     * if the module is restored
+     * @param \core\event\course_module_created $event
+     * @return void
+     */
     public static function on_module_restored(course_module_created $event) {
         global $DB;
-        if($event->other['modulename'] == 'offlinequiz') {
+        if ($event->other['modulename'] == 'offlinequiz') {
             $cm = get_coursemodule_from_id(null, $event->objectid, 0, false, MUST_EXIST);
             $offlinequiz = $DB->get_record('offlinequiz', ['id' => $cm->instance]);
             self::fix_single_offlinequiz($offlinequiz);
         }
     }
-
+    /**
+     * fix single event
+     * @param mixed $offlinequiz
+     * @return void
+     */
     public static function fix_single_offlinequiz($offlinequiz) {
         global $DB, $CFG;
         require_once($CFG->dirroot.'/mod/offlinequiz/locallib.php');
@@ -69,8 +90,9 @@ class fix_group_question_entries {
                JOIN {modules} m on cm.module = m.id and m.name = 'offlinequiz'
                where cm.instance = :offlinequizid";
         $contextid = $DB->get_field_sql($sql, ['offlinequizid' => $offlinequiz->id]);
-        foreach ($tofix as $groupquestion)  {
-            offlinequiz_update_question_instance($offlinequiz, $contextid, $groupquestion->oldquestion, $groupquestion->grade, $groupquestion->newquestion);
+        foreach ($tofix as $groupquestion) {
+            offlinequiz_update_question_instance($offlinequiz, $contextid,
+            $groupquestion->oldquestion, $groupquestion->grade, $groupquestion->newquestion);
         }
     }
 }

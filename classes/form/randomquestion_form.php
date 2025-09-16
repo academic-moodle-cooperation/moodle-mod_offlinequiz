@@ -81,7 +81,11 @@ class randomquestion_form extends \moodleform {
         $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->closeHeaderBefore('buttonar');
     }
-
+    /**
+     * set data to default values
+     * @param mixed $defaultvalues
+     * @return void
+     */
     public function set_data($defaultvalues) {
         $mform = $this->_form;
 

@@ -26,8 +26,6 @@
 
 namespace mod_offlinequiz\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_offlinequiz edit page viewed event class.
  *

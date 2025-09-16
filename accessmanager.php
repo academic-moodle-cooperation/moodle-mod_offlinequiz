@@ -89,7 +89,8 @@ class offlinequiz_access_manager {
     }
 
     /**
-     * @return array of all the installed rule class names.
+     * get array of of all the installed rule class names.
+     * @return array
      */
     protected static function get_rule_classes() {
         return core_component::get_plugin_list_with_class('offlinequizaccess', '', 'rule.php');
@@ -118,7 +119,7 @@ class offlinequiz_access_manager {
      * @return array key => lang string.
      */
     public static function get_browser_security_choices() {
-        $options = ['-' => get_string('none', 'offlinequiz')];
+        $options = ['-' => get_string('none')];
         foreach (self::get_rule_classes() as $rule) {
             $options += $rule::get_browser_security_choices();
         }
@@ -269,8 +270,9 @@ class offlinequiz_access_manager {
     }
 
     /**
-     * @return array the class names of all the active rules. Mainly useful for
+     * get the class names of all the active rules. Mainly useful for
      * debugging.
+     * @return array
      */
     public function get_active_rule_names() {
         $classnames = [];
@@ -348,6 +350,7 @@ class offlinequiz_access_manager {
     }
 
     /**
+     * get wether the preflight check is required
      * @param int|null $attemptid the id of the current attempt, if there is one,
      *      otherwise null.
      * @return bool whether a check is required before the user starts/continues
@@ -454,7 +457,8 @@ class offlinequiz_access_manager {
     }
 
     /**
-     * @return bolean if this offlinequiz should only be shown to students in a popup window.
+     * if this offlinequiz should only be shown to students in a popup window.
+     * @return bool
      */
     public function attempt_must_be_in_popup() {
         foreach ($this->rules as $rule) {
@@ -466,8 +470,9 @@ class offlinequiz_access_manager {
     }
 
     /**
-     * @return array any options that are required for showing the attempt page
+     * if any options that are required for showing the attempt page
      *      in a popup window.
+     * @return array
      */
     public function get_popup_options() {
         $options = [];
@@ -483,7 +488,7 @@ class offlinequiz_access_manager {
      *
      * This method does not return;
      *
-     * @param mod_offlinequiz_renderer $output the offlinequiz renderer.
+     * @param  $output the offlinequiz renderer.
      * @param string $message optional message to output while redirecting.
      */
     public function back_to_view_page($output, $message = '') {
@@ -512,7 +517,7 @@ class offlinequiz_access_manager {
 
         $when = offlinequiz_attempt_state($this->offlinequizobj->get_offlinequiz(), $attempt);
         $reviewoptions = mod_offlinequiz_display_options::make_from_offlinequiz(
-                $this->offlinequizobj->get_offlinequiz(), $when);
+                $this->offlinequizobj->get_offlinequiz());
 
         if (!$reviewoptions->attempt) {
             return $output->no_review_message($this->offlinequizobj->cannot_review_message($when, true));

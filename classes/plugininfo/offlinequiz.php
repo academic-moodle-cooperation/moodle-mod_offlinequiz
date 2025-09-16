@@ -30,9 +30,14 @@ namespace mod_offlinequiz\plugininfo;
 use core\plugininfo\base;
 
 defined('MOODLE_INTERNAL') || die();
-
-
+/**
+ * Summary of offlinequiz
+ */
 class offlinequiz extends base {
+    /**
+     * is uninstall allowed at the moment
+     * @return bool
+     */
     public function is_uninstall_allowed() {
         return true;
     }
@@ -43,7 +48,6 @@ class offlinequiz extends base {
      * This is intended for disabling of plugin, some DB table purging, etc.
      *
      * NOTE: to be called from uninstall_plugin() only.
-     * @private
      */
     public function uninstall_cleanup() {
         global $DB;

@@ -26,7 +26,6 @@
  */
 
 namespace mod_offlinequiz;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The repaginate class will rearrange questions in pages.
@@ -56,7 +55,7 @@ class repaginate {
      * Constructor.
      * @param int $offlinequizid the ID of the offlinequiz being manipulated.
      * @param int $offlinequizid the ID of the offlinequiz group being manipulated.
-     * @param stdClass[] $slots the offlinequiz_group_questions for that offlinequiz.
+     * @param \stdClass[] $slots the offlinequiz_group_questions for that offlinequiz.
      */
     public function __construct($offlinequizid = 0, $offlinegroupid = 0, $slots = null) {
         global $DB;
@@ -76,9 +75,9 @@ class repaginate {
 
     /**
      * Repaginate a given slot with the given pagenumber.
-     * @param stdClass $slot
+     * @param \stdClass $slot
      * @param int $newpagenumber
-     * @return stdClass
+     * @return \stdClass
      */
     protected function repaginate_this_slot($slot, $newpagenumber) {
         $newslot = clone($slot);
@@ -87,10 +86,9 @@ class repaginate {
     }
 
     /**
-     * Return current slot object.
-     * @param array $slots
-     * @param int $slotnumber
-     * @return stdClass $slot
+     * Summary of get_this_slot
+     * @param mixed $slots
+     * @param mixed $slotnumber
      */
     protected function get_this_slot($slots, $slotnumber) {
         foreach ($slots as $key => $slot) {
@@ -103,8 +101,8 @@ class repaginate {
 
     /**
      * Return array of slots with slot number as key
-     * @param stdClass[] $slots
-     * @return stdClass[]
+     * @param \stdClass[] $slots
+     * @return \stdClass[]
      */
     protected function get_slots_by_slot_number($slots) {
         if (!$slots) {
@@ -119,8 +117,8 @@ class repaginate {
 
     /**
      * Return array of slots with slot id as key
-     * @param stdClass[] $slots
-     * @return stdClass[]
+     * @param \stdClass[] $slots
+     * @return \stdClass[]
      */
     protected function get_slots_by_slotid($slots) {
         if (!$slots) {
@@ -168,7 +166,7 @@ class repaginate {
      * Repaginate next slot and return the modified slot object
      * @param int $nextslotnumber
      * @param int $type repaginate::LINK or repaginate::UNLINK.
-     * @return stdClass|null
+     * @return \stdClass|null
      */
     public function repaginate_next_slot($nextslotnumber, $type) {
         $currentslotnumber = $nextslotnumber - 1;
@@ -188,9 +186,9 @@ class repaginate {
 
     /**
      * Return the slots with the new pagination, regardless of current pagination.
-     * @param stdClass[] $slots the slots to repaginate.
+     * @param \stdClass[] $slots the slots to repaginate.
      * @param int $number number of question per page
-     * @return stdClass[] the updated slots.
+     * @return \stdClass[] the updated slots.
      */
     public function repaginate_n_question_per_page($slots, $number) {
         $slots = $this->get_slots_by_slot_number($slots);
@@ -211,11 +209,11 @@ class repaginate {
 
     /**
      * Repaginate the rest.
-     * @param stdClass[] $offlinequizslots
+     * @param \stdClass[] $offlinequizslots
      * @param int $slotfrom
      * @param int $type
      * @param bool $dbupdate
-     * @return stdClass[]
+     * @return \stdClass[]|null
      */
     public function repaginate_the_rest($offlinequizslots, $slotfrom, $type, $dbupdate = true) {
         global $DB;

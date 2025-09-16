@@ -362,7 +362,7 @@ function get_course_objects($id, $q) {
  * Load a {@link question_usage_by_activity} from the database, including
  * all its {@link question_attempt}s and all their steps.
  * @param int $qubaid the id of the usage to load.
- * @param question_usage_by_activity the usage that was loaded.
+ * @param offlinequiz_question_usage_by_activity the usage that was loaded.
  */
 function offlinequiz_load_questions_usage_by_activity($qubaid) {
     global $DB;

@@ -140,6 +140,7 @@ $string['couldnotextractpages'] = 'Error while extracting pages from the uploade
 $string['couldnotextractpdf'] = 'Error while converting pdf to single images. Please try a smaller document or contact your administrator.';
 $string['couldnotextracttiff'] = 'Error while converting tiff to single images. Please try a smaller document or contact your local administrator.';
 $string['couldnotgrab'] = 'Could not grab image {$a}';
+$string['couldnotimportpage'] = 'Could not import the page';
 $string['couldnotinsertjobs'] = 'Error with the database while extracting pages';
 $string['couldnotregister'] = 'Could not register user {$a}';
 $string['createcategoryandaddrandomquestion'] = 'Create category and add random question';
@@ -522,8 +523,6 @@ $string['pdfsdeletedforgroup'] = 'Forms for group {$a} deleted';
 $string['pearlywhite'] = 'Pearly white';
 $string['pluginadministration'] = 'Offline quiz administration';
 $string['pluginname'] = 'Offline quiz';
-
-$string['configshufflewithin'] = 'If you enable this option, then the parts making up the individual questions will be randomly shuffled when the question- and answer-forms are created.';
 $string['point'] = 'point';
 $string['preparation'] = '1. Preparation';
 $string['present'] = 'Present';

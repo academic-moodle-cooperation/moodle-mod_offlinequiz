@@ -29,13 +29,22 @@ namespace mod_offlinequiz\task;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/offlinequiz/cron.php');
-
+/**
+ * the page evaluation task (deprecated)
+ */
 class page_evaluation_task extends \core\task\scheduled_task {
+    /**
+     * get name of the task
+     * @return string
+     */
     public function get_name() {
         // Shown in admin screens.
         return get_string('pageevaluationtask', 'mod_offlinequiz');
     }
-
+    /**
+     * execute the task
+     * @return void
+     */
     public function execute() {
         \offlinequiz_evaluation_cron();
     }

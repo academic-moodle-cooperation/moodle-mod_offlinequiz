@@ -31,15 +31,25 @@ class question_name_column extends \core_question\local\bank\column_base {
      * @var null $checkboxespresent
      */
     protected $checkboxespresent = null;
-
+    /**
+     * get name of the question name column
+     * @return string
+     */
     public function get_name(): string {
         return 'questionname';
     }
-
+    /**
+     * get title of the question name column
+     * @return string
+     */
     public function get_title(): string {
         return get_string('question');
     }
-
+    /**
+     * get label for the question
+     * @param mixed $question
+     * @return string
+     */
     protected function label_for($question): string {
         if (is_null($this->checkboxespresent)) {
             $this->checkboxespresent = $this->qbank->has_column('core_question\local\bank\checkbox_column');
@@ -50,7 +60,12 @@ class question_name_column extends \core_question\local\bank\column_base {
             return '';
         }
     }
-
+    /**
+     * get displaycontent of the question
+     * @param mixed $question
+     * @param mixed $rowclasses
+     * @return void
+     */
     protected function display_content($question, $rowclasses): void {
         $labelfor = $this->label_for($question);
         if ($labelfor) {
@@ -61,11 +76,17 @@ class question_name_column extends \core_question\local\bank\column_base {
             echo \html_writer::end_tag('label');
         }
     }
-
+    /**
+     * get required question fields for this question name column
+     * @return string[]
+     */
     public function get_required_fields(): array {
         return ['q.id', 'q.name'];
     }
-
+    /**
+     * is the questionname sortable
+     * @return string
+     */
     public function is_sortable() {
         return 'q.name';
     }

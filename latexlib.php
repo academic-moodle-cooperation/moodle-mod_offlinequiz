@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
  * @param int $courseid the ID of the Moodle course
  * @param object $context the context of the offline quiz.
  * @param boolean correction if true the correction form is generated.
- * @return stored_file instance, the generated PDF file.
+ * @return stored_file|null instance, the generated PDF file.
  */
 function offlinequiz_create_latex_question(question_usage_by_activity $templateusage, $offlinequiz, $group,
                                          $courseid, $context, $correction = false) {
@@ -76,7 +76,7 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
         echo $OUTPUT->box_start();
         echo $OUTPUT->error_text(get_string('noquestionsfound', 'offlinequiz', $groupletter));
         echo $OUTPUT->box_end();
-        return;
+        return null;
     }
 
     // Load the question type specific information.
@@ -215,13 +215,25 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
     return $file;
 }
 
+/**
+ * convert html to latex
+ * @param mixed $dom
+ * @param mixed $tag
+ * @param mixed $pre
+ * @param mixed $post
+ * @return void
+ */
 function offlinequiz_convert_html_to_latex_tagreplace($dom, $tag, $pre, $post) {
     $elements = $dom->getElementsByTagName($tag);
     foreach ($elements as $element) {
         offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element);
     }
 }
-
+/**
+ * convert to latex paragraphs
+ * @param mixed $dom
+ * @return void
+ */
 function offlinequiz_convert_html_to_latex_paragraph($dom) {
     $elements = $dom->getElementsByTagName('p');
     foreach ($elements as $element) {
@@ -242,7 +254,11 @@ function offlinequiz_convert_html_to_latex_paragraph($dom) {
         offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element);
     }
 }
-
+/**
+ * convert latex html to latex span
+ * @param mixed $dom
+ * @return void
+ */
 function offlinequiz_convert_html_to_latex_span($dom) {
     $elements = $dom->getElementsByTagName('span');
     foreach ($elements as $element) {
@@ -260,14 +276,18 @@ function offlinequiz_convert_html_to_latex_span($dom) {
         offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element);
     }
 }
-
+/**
+ * convert html to latex tables
+ * @param mixed $dom
+ * @return void
+ */
 function offlinequiz_convert_html_to_latex_tables($dom) {
     $elements = $dom->getElementsByTagName('table');
     foreach ($elements as $element) {
         $pre = '\begin{tabular}';
         $post = '\end{tabular}';
         $caption = $element->getElementsByTagName('caption')->item(0);
-        if ( $caption and $caption->nodeValue !== '' ) {
+        if ( $caption && $caption->nodeValue !== '' ) {
             $style = $caption->getAttribute("style");
             if ( strpos($style, 'caption-side: bottom') !== false ) {
                 $post .= "\n" . "{\large " . $caption->nodeValue . "}\n\n";
@@ -302,7 +322,14 @@ function offlinequiz_convert_html_to_latex_tables($dom) {
         offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element);
     }
 }
-
+/**
+ * convert html to latex via single tag replace
+ * @param mixed $dom
+ * @param mixed $pre
+ * @param mixed $post
+ * @param mixed $element
+ * @return void
+ */
 function offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element) {
     $prenode = $dom->createTextNode($pre);
     $postnode = $dom->createTextNode($post);
@@ -345,7 +372,7 @@ function offlinequiz_convert_html_to_latex($text) {
     // Replace "&amp;" by "&" in math mode.
     $text = preg_replace_callback('/(\\\\[\(\[])(.*?)(\\\\[\)\]])/s', function ($m) {
           $tmp = str_replace('&amp;', '&', $m[2]);
-        if ( !(strpos($tmp, '\begin{align}') !== false or strpos($tmp, '\begin{align*}') !== false or strpos($tmp,
+        if ( !(strpos($tmp, '\begin{align}') !== false || strpos($tmp, '\begin{align*}') !== false || strpos($tmp,
                  '\begin{eqnarray') !== false) ) {
               $tmp = $m[1] . $tmp . $m[3];
         }
@@ -377,8 +404,8 @@ function offlinequiz_convert_html_to_latex($text) {
 /**
  * Return the LaTeX representation of an answer.
  *
- * @param unknown $question
- * @param unknown $answer
+ * @param stdClass $question
+ * @param string $answer
  * @return string
  */
 function offlinequiz_get_answer_latex($question, $answer) {
