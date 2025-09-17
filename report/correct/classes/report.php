@@ -296,7 +296,8 @@ class report extends default_report {
         global $DB, $OUTPUT;
         $queues = $DB->get_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id], 'timecreated DESC');
 
-        $sql = "SELECT qd.id queuedataid, q.id queueid, qd.status status, qd.filename filename, sp.id scannedpageid, sp.error error, sp.userkey userkey
+        $sql = "SELECT qd.id queuedataid, q.id queueid, qd.status status, qd.filename filename, sp.id scannedpageid,
+                       sp.error error, sp.userkey userkey
                   FROM {offlinequiz_queue} q
                   JOIN {offlinequiz_queue_data} qd on q.id = qd.queueid
              LEFT JOIN {offlinequiz_scanned_pages} sp ON sp.queuedataid = qd.id
@@ -321,7 +322,8 @@ class report extends default_report {
                 $element = [];
 
                 $element['importedby'] = $this->get_user_name($queue->importuserid);
-                $importedbylink = new moodle_url('/user/view.php', ['id' => $queue->importuserid, 'course' => $offlinequiz->course]);
+                $importedbylink = new moodle_url('/user/view.php',
+                    ['id' => $queue->importuserid, 'course' => $offlinequiz->course]);
                 $element['importedbylink'] = $importedbylink->out();
                 $link = new moodle_url('/mod/offlinequiz/report.php',
                     ['action' => 'download', 'mode' => 'correct', 'queueid' => $queue->id, 'id' => $cm->id]);
@@ -346,7 +348,8 @@ class report extends default_report {
                 } else {
                     $element['finishtime'] = get_string('queuenotfinished', 'offlinequiz');
                 }
-                $element['expandedcontent'] = $this->get_page_content($cm, $offlinequiz, $queue->id, $queuefilesmatrix);
+                $element['expandedcontent'] =
+                    $this->get_page_content($cm, $offlinequiz, $queue->id, $queuefilesmatrix);
                 $element['collapsible'] = true;
 
                 $element['queuestatusdone'] = false;
@@ -368,7 +371,7 @@ class report extends default_report {
                 $elements[] = $element;
             }
             $context['queues'] = $elements;
-            $link = new \moodle_url('/mod/offlinequiz/report.php',
+            $link = new moodle_url('/mod/offlinequiz/report.php',
                 ['mode' => 'rimport',  'id' => $cm->id]);
             $context['uploadfurtherfileslink'] = $link->out();
             $rendered = $OUTPUT->render_from_template('mod_offlinequiz/correct_queue_list', $context);
@@ -403,14 +406,20 @@ class report extends default_report {
                     ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]);
                 if ($page->scannedpageid) {
                     $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
-                    $filecontext['editurl'] = $OUTPUT->action_link($editurl, new pix_icon('t/edit', get_string('queuefilecorrectionhovertext', 'offlinequiz'))->export_for_pix() , new popup_action('click', $editurl, 'correct' .
+                    $filecontext['editurl'] = $OUTPUT->action_link($editurl,
+                    new pix_icon('t/edit',
+                        get_string('queuefilecorrectionhovertext', 'offlinequiz')
+                          )->export_for_pix() , new popup_action('click', $editurl, 'correct' .
                         $page->scannedpageid, $options));
                 }
                 $filecontext['statusmessage'] = get_string('queuefilestatusmessage_' . $page->status, 'offlinequiz');
                 if ($page->status == 'OK'  || $page->status == 'error' || $page->status == 'submitted') {
                     $filecontext['evaluated'] = true;
                 }
-                if ($page->status == 'OK' || $page->status == 'submitted' || $page->status == 'missingpages' || $page->status == 'processed') {
+                if ($page->status == 'OK'
+                    || $page->status == 'submitted'
+                    || $page->status == 'missingpages'
+                    || $page->status == 'processed') {
                     $filecontext['filestatusdone'] = true;
                 } else if ($page->status == 'error') {
                     $filecontext['filestatuserror'] = true;
@@ -469,9 +478,10 @@ class report extends default_report {
      * @return navigation_node
      */
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
-        // TODO: Move string to subplugin.
+        // TO DO: Move string to subplugin.
         $navnode = navigation_node::create(text: get_string('tabofflinequizcorrect', 'offlinequiz'),
-                                        action: new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'correct']),
+                                        action: new moodle_url('/mod/offlinequiz/report.php',
+                                            ['q' => $offlinequiz->id, 'mode' => 'correct']),
                                         key: $this->get_navigation_key());
 
         $parentnode = $navigation->get('mod_offlinequiz_results');

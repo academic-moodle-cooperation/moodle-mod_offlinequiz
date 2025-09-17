@@ -26,8 +26,6 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace offlinequiz_statistics;
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * This class can store and compute the analysis of the responses to a particular
@@ -38,6 +36,10 @@ defined('MOODLE_INTERNAL') || die();
 class response_analyser {
     /** @var object the data from the database that defines the question. */
     protected $questiondata;
+    /**
+     * if this response is already loaded
+     * @var bool
+     */
     protected $loaded = false;
 
     /**
@@ -76,15 +78,17 @@ class response_analyser {
     }
 
     /**
-     * @return bool whether this analysis has more than one subpart.
+     *  whether this analysis has more than one subpart.
+     * @return bool
      */
     public function has_subparts() {
         return count($this->responseclasses) > 1;
     }
 
     /**
-     * @return bool whether this analysis has (a subpart with) more than one
+     * whether this analysis has (a subpart with) more than one
      *      response class.
+     * @return bool
      */
     public function has_response_classes() {
         foreach ($this->responseclasses as $partclasses) {
@@ -96,9 +100,10 @@ class response_analyser {
     }
 
     /**
-     * @return bool whether this analysis has a response class more than one
+     * whether this analysis has a response class more than one
      *      different acutal response, or if the actual response is different from
      *      the model response.
+     * @return bool
      */
     public function has_actual_responses() {
         foreach ($this->responseclasses as $subpartid => $partclasses) {

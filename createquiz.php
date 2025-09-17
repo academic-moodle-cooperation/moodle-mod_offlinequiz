@@ -58,7 +58,6 @@ if (!has_capability('mod/offlinequiz:createofflinequiz', $context)) {
 }
 
 // If not in all group questions have been set up yet redirect to edit.php.
-offlinequiz_load_useridentification();
 
 $strpreview = get_string('createquiz', 'offlinequiz');
 $strofflinequizzes = get_string("modulenameplural", "offlinequiz");
@@ -68,7 +67,7 @@ $PAGE->set_url(new moodle_url('/mod/offlinequiz/createquiz.php', ['id' => $cm->i
 $PAGE->set_title($strpreview);
 $PAGE->activityheader->disable();
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('report'); // Or 'admin'.
+$PAGE->set_pagelayout('report');
 $PAGE->set_cacheable(true);
 $PAGE->force_settings_menu(true);
 
@@ -84,7 +83,8 @@ if (!$groups = $DB->get_records(
     0,
     $offlinequiz->numgroups
 )) {
-    throw new \moodle_exception('There are no offlinequiz groups', 'mod_offlinequiz', new moodle_url('/mod/offlinequiz/edit.php', ['q' => $offlinequiz->id, 'sesskey' => sesskey()]));
+    throw new \moodle_exception('There are no offlinequiz groups', 'mod_offlinequiz',
+         new moodle_url('/mod/offlinequiz/edit.php', ['q' => $offlinequiz->id, 'sesskey' => sesskey()]));
 }
 
 // Redmine 2131: Handle download all before any HTML output is produced.
@@ -142,7 +142,8 @@ if ($forcepdfnew) {
         throw new \moodle_exception(
             'Some answer forms have already been analysed',
             'mod_offlinequiz',
-            new moodle_url('/mod/offlinequiz/createquiz.php' , ['q' => $offlinequiz->id, 'mode' => 'createpdfs', 'sesskey' => sesskey()])
+            new moodle_url('/mod/offlinequiz/createquiz.php' ,
+            ['q' => $offlinequiz->id, 'mode' => 'createpdfs', 'sesskey' => sesskey()])
             );
     } else {
         // Redmine 2750: Always delete templates as well.
@@ -367,7 +368,8 @@ if ($mode == 'preview') {
 
     $url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id]);
     echo $OUTPUT->single_button($url, get_string('backtopreview', 'offlinequiz'), 'get');
-    echo \mod_offlinequiz\output\action_api::insert_all_actions('offlinequiz', offlinequiz_page::CREATEQUIZ_CREATEPDFS, $cm, $offlinequiz);
+    echo \mod_offlinequiz\output\action_api::insert_all_actions('offlinequiz', offlinequiz_page::CREATEQUIZ_CREATEPDFS,
+        $cm, $offlinequiz);
 
     // Print buttons for delete/recreate iff there are no scanned pages yet.
     if (!$hasscannedpages) {

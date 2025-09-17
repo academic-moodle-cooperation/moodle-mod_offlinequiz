@@ -26,7 +26,13 @@
  * @since         Moodle 3.8+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
+/**
+ * create common statistics in the database
+ * @param mixed $headers
+ * @param mixed $columns
+ * @param mixed $s
+ * @return void
+ */
 function mod_offlinequiz_create_common_statistics_headers(&$headers, &$columns, $s) {
     $columns[] = 's';
     $headers[] = get_string('attempts', 'offlinequiz_statistics');
@@ -56,7 +62,13 @@ function mod_offlinequiz_create_common_statistics_headers(&$headers, &$columns, 
     $columns[] = 'wrong';
     $headers[] = get_string('wrong', 'offlinequiz_statistics');
 }
-
+/**
+ * print the columns stat name
+ * @param mixed $question
+ * @param mixed $baseurl
+ * @param mixed $name
+ * @param mixed $dubiousquestion
+ */
 function mod_offlinequiz_print_column_stats_name($question, $baseurl, $name, $dubiousquestion) {
     $url = null;
     if ($question->_stats->subquestion) {

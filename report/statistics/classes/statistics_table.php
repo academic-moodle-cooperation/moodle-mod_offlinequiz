@@ -134,7 +134,7 @@ class statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_icon($question) {
-        return print_question_icon($question, true);
+        return print_question_icon($question);
     }
 
     /**
@@ -278,6 +278,10 @@ class statistics_table extends flexible_table {
         return $question->_stats->discriminationindex < 0;
     }
 
+    /**
+     * before the table
+     * @return void
+     */
     public function wrap_html_start() {
         // Horrible Moodle 2.0 wide-content work-around.
         if (!$this->is_downloading()) {
@@ -286,6 +290,10 @@ class statistics_table extends flexible_table {
         }
     }
 
+    /**
+     * after the table
+     * @return void
+     */
     public function wrap_html_finish() {
         if (!$this->is_downloading()) {
             echo html_writer::end_tag('div');

@@ -22,9 +22,6 @@
  */
 
 
-defined('MOODLE_INTERNAL') || die();
-
-
 /**
  * Post-install script
  */
@@ -40,7 +37,5 @@ function xmldb_offlinequiz_statistics_install() {
 
     if ($dbman->table_exists('offlinequiz_reports')) {
         $DB->insert_record('offlinequiz_reports', $record);
-    } else {
-        $DB->insert_record('offlinequiz_report', $record);
     }
 }

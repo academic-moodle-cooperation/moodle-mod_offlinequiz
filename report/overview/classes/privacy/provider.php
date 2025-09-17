@@ -27,7 +27,6 @@
 
 namespace offlinequiz_overview\privacy;
 
-defined('MOODLE_INTERNAL') || die();
 /**
  * privacy null provider
  */

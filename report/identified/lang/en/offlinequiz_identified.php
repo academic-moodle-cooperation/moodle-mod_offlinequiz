@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * lang strings for the identified subplugin
+ *
+ * @package   offlinequiz_identified
+ * @author    Juan Pablo de Castro <juanpablo.decastro@uva.es>
+ * @copyright 2023
+ * @since     Moodle 4.1
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $string['create'] = 'Create';
 $string['enableidentified'] = 'Enable prefilled answer forms';
 $string['enableidentified_help'] = 'Gives teachers the choice to create answer forms, prefilled with name and idnumber. This makes filling out the forms easier, but removes the ability to decide the users group at the time of the exam.';
@@ -27,7 +37,7 @@ $string['noparticipantsinlist'] = 'There are no participants in the selected att
 $string['noroles'] = 'No roles with capability \'mod/offlinequiz:attempt\' defined in system context';
 $string['notgenerated'] = 'The forms have not been generated yet. Please, go to the <a href="{$a}">Preparation</a> section and create your forms.';
 $string['offlinequizidentifiedheading'] = 'Prefill answer forms';
-$string['onlyifaccess'] = 'Only for students with access to this offline quiz.';
 $string['participants'] = 'Attendance list';
 $string['pluginname'] = 'Prefilled answer forms';
+$string['privacy:metadata'] = 'Identified does not store any data about the user';
 $string['return'] = 'Back';

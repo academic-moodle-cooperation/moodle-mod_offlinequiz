@@ -342,7 +342,7 @@ switch($mode) {
         $potentialmemberscount = 0;
         $params = array_merge($rparams, $cparams);
 
-        // find $userinlistids in order to prevent users being added to multiple lists
+        // Find $userinlistids in order to prevent users being added to multiple lists.
         $sql = "SELECT DISTINCT p.*
                       FROM {offlinequiz_participants} p
                       JOIN {offlinequiz_p_lists} pl ON pl.id  = p.listid
@@ -446,7 +446,8 @@ switch($mode) {
         // We redirect if no list has been created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
             ;
-            redirect(new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id]), get_string('createlistfirst', 'offlinequiz'));
+            redirect(new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id]),
+                 get_string('createlistfirst', 'offlinequiz'));
         } else {
             if ($download) {
                 offlinequiz_download_partlist($offlinequiz, $download, $coursecontext, $systemcontext);
@@ -458,7 +459,8 @@ switch($mode) {
     case 'createpdfs':
         // We redirect if no list has been created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
-            redirect(new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id]), get_string('createlistfirst', 'offlinequiz'));
+            redirect(new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id]),
+                get_string('createlistfirst', 'offlinequiz'));
         }
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
@@ -537,7 +539,8 @@ switch($mode) {
     case 'correct':
         // We redirect if no list created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
-            redirect(new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id]), get_string('createlistfirst', 'offlinequiz'));
+            redirect(new moodle_url('/mod/offlinequiz/participants.php',
+                ['q' => $offlinequiz->id]), get_string('createlistfirst', 'offlinequiz'));
         }
 
         $lists = $DB->get_records_sql("
@@ -558,7 +561,8 @@ switch($mode) {
         }
 
         if ($redirect) {
-            redirect(new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'createpdfs', 'q' => $offlinequiz->id]), get_string('createpdffirst', 'offlinequiz'));
+            redirect(new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'createpdfs', 'q' => $offlinequiz->id]),
+                get_string('createpdffirst', 'offlinequiz'));
         }
 
         // Only print headers and tabs if not asked to download data.

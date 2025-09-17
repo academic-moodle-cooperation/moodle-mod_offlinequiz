@@ -1875,7 +1875,7 @@ function offlinequiz_get_id_field_name() {
     if (get_string_manager()->string_exists($offlinequizconfig->ID_field, 'core')) {
         return get_string($offlinequizconfig->ID_field);
     } else {
-        // Some table fields don't have a name (e.g. id). We have to make langstrings for them
+        // Some table fields don't have a name (e.g. id). We have to make langstrings for them.
         return get_string($offlinequizconfig->ID_field, 'offlinequiz');
     }
 }

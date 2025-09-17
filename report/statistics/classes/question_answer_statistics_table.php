@@ -56,6 +56,11 @@ class question_answer_statistics_table extends flexible_table {
         parent::__construct('mod-offlinequiz-report-statistics-report');
     }
 
+    /**
+     * set the question data
+     * @param mixed $questiondata
+     * @return void
+     */
     public function set_questiondata($questiondata) {
         $this->questiondata = $questiondata;
     }
@@ -157,7 +162,7 @@ class question_answer_statistics_table extends flexible_table {
      */
     protected function col_icon($question) {
         if (property_exists($question, 'qtype') && $question->qtype) {
-            return print_question_icon($question, true);
+            return print_question_icon($question);
         } else {
             return '';
         }
@@ -369,7 +374,7 @@ class question_answer_statistics_table extends flexible_table {
         }
         if (!is_numeric($question->_stats->discriminationindex)) {
             $result = get_string('notavailable', 'offlinequiz');
-            if(!$this->is_downloading()) {
+            if (!$this->is_downloading()) {
                 $result .= $OUTPUT->pix_icon('help', get_string('discriminationindex_info', 'offlinequiz'), 'moodle');
             }
             return $result;
@@ -393,6 +398,10 @@ class question_answer_statistics_table extends flexible_table {
         return $question->_stats->discriminationindex < 0;
     }
 
+    /**
+     * print html start
+     * @return void
+     */
     public function wrap_html_start() {
         // Horrible Moodle 2.0 wide-content work-around.
         if (!$this->is_downloading()) {
@@ -401,6 +410,10 @@ class question_answer_statistics_table extends flexible_table {
         }
     }
 
+    /**
+     * print html finish
+     * @return void
+     */
     public function wrap_html_finish() {
         if (!$this->is_downloading()) {
             echo html_writer::end_tag('div');

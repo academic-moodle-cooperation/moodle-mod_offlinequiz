@@ -17,15 +17,13 @@
 /**
  * The mod_offlinequiz question manually graded event.
  *
- * @package    core
+ * @package    mod_offlinequiz
  * @author  2014 Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright 2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since Moodle 2.7
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_offlinequiz\event;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The mod_offlinequiz event class for manual marking participants as present or absent.
@@ -77,8 +75,8 @@ class participant_manually_marked extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/offlinequiz/participants.php', array('mode' => 'attendances',
-                'id' => $this->contextinstanceid));
+        return new \moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'attendances',
+                'id' => $this->contextinstanceid]);
     }
 
     /**

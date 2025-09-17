@@ -25,15 +25,26 @@
  */
 namespace offlinequiz_identified;
 
-defined('MOODLE_INTERNAL') || die();
 /**
  * PDF forms generator for offlinequizzes with participant identification.
  * Call set_participant($participant) to set the participant data and then add_answer_page(...) to add the answer page.
  */
 class answer_pdf_identified extends \offlinequiz_answer_pdf {
+    /**
+     * the user that is being printed
+     * @var \stdClass
+     */
     public $participant = null;
+    /**
+     * the list number being printed
+     * @var int
+     */
     public $listno = null;
 
+    /**
+     * print the header of the pdf
+     * @return void
+     */
     public function header() {
         global $CFG;
         // Participant data.
@@ -77,6 +88,11 @@ class answer_pdf_identified extends \offlinequiz_answer_pdf {
             }
         }
     }
+    /**
+     * set the participant
+     * @param mixed $participant
+     * @return void
+     */
     public function set_participant($participant) {
         $this->participant = $participant;
     }
@@ -92,7 +108,8 @@ class answer_pdf_identified extends \offlinequiz_answer_pdf {
      * @param string $groupletter
      * @return void
      */
-    public function add_participant_answer_page($participant, $maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter) {
+    public function add_participant_answer_page($participant, $maxanswers, $templateusage, $offlinequiz,
+                                                $group, $courseid, $context, $groupletter) {
         $this->set_participant($participant);
         $this->add_answer_page( $maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter);
     }

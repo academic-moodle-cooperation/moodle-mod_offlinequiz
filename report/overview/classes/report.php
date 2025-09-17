@@ -62,7 +62,7 @@ class report extends default_report {
 
         // Set table options.
         $noresults = optional_param('noresults', 0, PARAM_INT);
-        // set and safe pagesize according to user preferences
+        // Set and safe pagesize according to user preferences.
         $pspreference = get_user_preferences('offlinequiz_pagesize');
         if ($pspreference) {
             $pagesizedefault = $pspreference;
@@ -526,7 +526,10 @@ class report extends default_report {
                     ];
                 }
 
-                if (!empty($result) && $result->offlinegroupid && $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade) {
+                if (!empty($result)
+                    && $result->offlinegroupid
+                    && $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade
+                    ) {
                     $outputgrade = format_float($result->sumgrades /
                             $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints, false);
                 } else {
@@ -771,7 +774,8 @@ class report extends default_report {
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         // TO DO: Move strings to subplugin.
         $navnode = navigation_node::create(text: get_string('tabresultsoverview', 'offlinequiz'),
-                                        action:  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'overview']),
+                                        action:  new moodle_url('/mod/offlinequiz/report.php',
+                                                                ['q' => $offlinequiz->id, 'mode' => 'overview']),
                                         key: $this->get_navigation_key());
 
         $parentnode = $navigation->get('mod_offlinequiz_results');

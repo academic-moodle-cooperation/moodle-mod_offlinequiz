@@ -77,8 +77,10 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         if ($userinfo) {
             // Scanned pages and their choices and corners.
             $paths[] = new restore_path_element('offlinequiz_scannedpage', '/activity/offlinequiz/scannedpages/scannedpage');
-            $paths[] = new restore_path_element('offlinequiz_choice', '/activity/offlinequiz/scannedpages/scannedpage/choices/choice');
-            $paths[] = new restore_path_element('offlinequiz_corner', '/activity/offlinequiz/scannedpages/scannedpage/corners/corner');
+            $paths[] = new restore_path_element('offlinequiz_choice',
+                '/activity/offlinequiz/scannedpages/scannedpage/choices/choice');
+            $paths[] = new restore_path_element('offlinequiz_corner',
+                '/activity/offlinequiz/scannedpages/scannedpage/corners/corner');
 
             // Lists of participants and their scanned pages.
             $paths[] = new restore_path_element('offlinequiz_participant',
@@ -125,8 +127,10 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         global $DB;
         $groupvariable = $data["group_response"]["group_variable"];
         $this->restore_question_attempt_step_worker($data, 'group_');
-        $oldquestionid = $DB->get_field('question_attempts', 'questionid', ['id' => $this->elementsoldid["group_question_attempt"]]);
-        $newquestionid = $DB->get_field('question_attempts', 'questionid', ['id' => $this->elementsnewid["group_question_attempt"]]);
+        $oldquestionid = $DB->get_field('question_attempts', 'questionid',
+            ['id' => $this->elementsoldid["group_question_attempt"]]);
+        $newquestionid = $DB->get_field('question_attempts', 'questionid',
+            ['id' => $this->elementsnewid["group_question_attempt"]]);
         if ($oldquestionid == $newquestionid) { // Duplicate.
             $stepid = $DB->get_field('question_attempt_steps',
                                 'id',

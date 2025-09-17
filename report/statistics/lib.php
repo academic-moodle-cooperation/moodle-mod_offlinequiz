@@ -26,8 +26,6 @@
  */
 
 
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Serve questiontext files in the question text when they are displayed in this report.

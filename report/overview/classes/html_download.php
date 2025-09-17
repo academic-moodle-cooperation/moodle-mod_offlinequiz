@@ -100,7 +100,7 @@ class html_download {
 
         $isteacher = has_capability('mod/offlinequiz:viewreports', $this->context);
         if (!$isteacher) {
-            // This view is only allowed for teachers who are allowed to see the review
+            // This view is only allowed for teachers who are allowed to see the review.
             redirect('../view.php?q=' . $this->offlinequiz->id, get_string("noreview", "offlinequiz"));
             return;
         }
@@ -131,9 +131,7 @@ class html_download {
             $options->manualcommentlink = null;
             echo '<div class="pagebreak">';
             echo $OUTPUT->heading(get_string('reviewofresult', 'offlinequiz'));
-            // --------------------------------------
             // Print info table with user details.
-            // --------------------------------------
             $timelimit = 0;
 
             $table = new \html_table();

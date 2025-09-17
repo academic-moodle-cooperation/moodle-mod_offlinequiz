@@ -30,23 +30,46 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
-
+/**
+ * select all table
+ */
 class offlinequiz_selectall_table extends flexible_table {
-
+    /**
+     * the script of the fitting report
+     * @var string
+     */
     protected $reportscript;
+    /**
+     * params array
+     * @var array
+     */
     protected $params;
 
+    /**
+     * constructor
+     * @param mixed $uniqueid
+     * @param mixed $reportscript
+     * @param mixed $params
+     */
     public function __construct($uniqueid, $reportscript, $params) {
         parent::__construct($uniqueid);
         $this->reportscript = $reportscript;
         $this->params = $params;
     }
 
+    /**
+     * there is nothing to display
+     * @return void
+     */
     public function print_nothing_to_display() {
         global $OUTPUT;
         return;
     }
 
+    /**
+     * start the html
+     * @return void
+     */
     public function wrap_html_start() {
         echo '<div id="tablecontainer" class="centerbox">';
         echo '<form id="reportform" method="post" action="'. $this->reportscript .
@@ -60,6 +83,10 @@ class offlinequiz_selectall_table extends flexible_table {
         echo '  <center>';
     }
 
+    /**
+     * end the html
+     * @return void
+     */
     public function wrap_html_finish() {
         $strselectall = get_string('selectall', 'offlinequiz');
         $strselectnone = get_string('selectnone', 'offlinequiz');
@@ -79,7 +106,14 @@ class offlinequiz_selectall_table extends flexible_table {
     }
 } // End class.
 
+/**
+ * participants list table
+ */
 class offlinequiz_partlist_table extends offlinequiz_selectall_table {
+    /**
+     * end html
+     * @return void
+     */
     public function wrap_html_finish() {
         $strselectall = get_string('selectall', 'offlinequiz');
         $strselectnone = get_string('selectnone', 'offlinequiz');
@@ -105,6 +139,15 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
         echo '</form></div>';
     }
 
+    /**
+     * print the initials bar
+     * @param mixed $alpha
+     * @param mixed $current
+     * @param mixed $class
+     * @param mixed $title
+     * @param mixed $urlvar
+     * @return void
+     */
     protected function print_one_initials_bar($alpha, $current, $class, $title, $urlvar) {
         echo html_writer::start_tag('div', ['class' => 'initialbar ' . $class]) .
         $title . ' : ';

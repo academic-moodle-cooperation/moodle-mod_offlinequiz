@@ -161,7 +161,7 @@ if ($action == 'cancel') {
         $scannedpage->listnumber = intval($list->listnumber);
     }
 
-    // Action setlist
+    // Action setlist.
 } else if ($action == 'setlist') {
         $upperleft = new oq_point(required_param('c-0-x', PARAM_INT) + 8, required_param('c-0-y', PARAM_INT) + 8);
         $upperright = new oq_point(required_param('c-1-x', PARAM_INT) + 8, required_param('c-1-y', PARAM_INT) + 8);
@@ -191,7 +191,7 @@ if ($action == 'cancel') {
         $listchosen = 1;
     }
 
-        // Action readjust
+        // Action readjust.
 } else if ($action == 'readjust') {
     require_sesskey();
     $upperleft = new oq_point(required_param('c-0-x', PARAM_INT) + 7, required_param('c-0-y', PARAM_INT) + 7);

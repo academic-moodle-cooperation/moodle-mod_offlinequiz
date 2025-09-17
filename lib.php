@@ -1290,12 +1290,13 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
 }
 
 /**
+ * an array of all the user's results at this offlinequiz. Returns an empty
+ *      array if there are none.
  * @param int $offlinequizid the offlinequiz id.
  * @param int $userid the userid.
  * @param string $status 'all', 'finished' or 'unfinished' to control
  * @param bool $includepreviews
- * @return an array of all the user's results at this offlinequiz. Returns an empty
- *      array if there are none.
+ * @return stdClass
  */
 function offlinequiz_get_user_results($offlinequizid, $userid) {
     global $DB, $CFG;
@@ -1342,7 +1343,8 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
     if ($active == 'mod_offlinequiz_edit') {
         $url = $settings->get_page()->url;
     } else {
-        $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $settings->get_page()->cm->id, 'tab' => 'mod_offlinequiz_edit']);
+        $url = new moodle_url('/mod/offlinequiz/navigate.php',
+            ['id' => $settings->get_page()->cm->id, 'tab' => 'mod_offlinequiz_edit']);
     }
     if ($managecapability || $viewreportscapability) {
         $node = navigation_node::create(get_string('tabofflinequizcontent', 'offlinequiz'),
@@ -1356,7 +1358,8 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
         if ($active == 'mod_offlinequiz_results') {
             $url = $settings->get_page()->url;
         } else {
-            $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $settings->get_page()->cm->id, 'tab' => 'mod_offlinequiz_results']);
+            $url = new moodle_url('/mod/offlinequiz/navigate.php',
+                ['id' => $settings->get_page()->cm->id, 'tab' => 'mod_offlinequiz_results']);
         }
         $node = navigation_node::create(get_string('tabresults', 'offlinequiz'),
             $url,
@@ -1379,13 +1382,14 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
         $offlinequiznode->add_node($node, $beforekey);
     }
     if ($viewreportscapability || $managecapability) {
-        // Tab attendances
+        // Tab attendances.
         $participantsusage = $DB->get_field('offlinequiz', 'participantsusage', ['id' => $settings->get_page()->cm->instance]);
         if ($participantsusage) {
             if ($active == 'tabattendances') {
                 $url = $settings->get_page()->url;
             } else {
-                $url = new moodle_url('/mod/offlinequiz/navigate.php', ['id' => $settings->get_page()->cm->id, 'tab' => 'tabattendances']);
+                $url = new moodle_url('/mod/offlinequiz/navigate.php',
+                    ['id' => $settings->get_page()->cm->id, 'tab' => 'tabattendances']);
             }
             $node = navigation_node::create(get_string('tabattendances', 'offlinequiz'),
                     $url,
@@ -1681,7 +1685,8 @@ function mod_offlinequiz_output_fragment_add_random_question_form($args) {
     require_capability('mod/offlinequiz:manage', $contexts->lowest());
 
     // Custom View.
-    $questionbank = new mod_offlinequiz\question\bank\random_question_view($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
+    $questionbank = new mod_offlinequiz\question\bank\random_question_view($contexts, $thispageurl, $course,
+         $cm, $pagevars, $extraparams);
 
     $renderer = $PAGE->get_renderer('mod_offlinequiz', 'edit');
     $questionbankoutput = $renderer->question_bank_contents($questionbank, $pagevars);

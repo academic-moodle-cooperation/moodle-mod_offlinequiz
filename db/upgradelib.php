@@ -1230,7 +1230,8 @@ function offlinequiz_fix_question_versions() {
         }
         $values = implode(',', $values);
         $DB->set_field('question_attempt_step_data', 'value', $values, ['id' => $value->id]);
-        $DB->set_field('question_attempts', 'questionid', $record->newquestionid, ['questionid' => $record->oldquestionid, 'questionusageid' => $templateusage->get_id()]);
+        $DB->set_field('question_attempts', 'questionid', $record->newquestionid,
+            ['questionid' => $record->oldquestionid, 'questionusageid' => $templateusage->get_id()]);
     }
     offlinequiz_fix_question_references();
 

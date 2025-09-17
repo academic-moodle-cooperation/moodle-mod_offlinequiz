@@ -16,20 +16,20 @@
 
 /**
  * Navigate students or teachers to a certain url.
- * @package       mod
- * @subpackage    offlinequiz
+ * @package       mod_offlinequiz
  * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
  * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @since         Moodle 2.8+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require_once(__DIR__ . '/../../config.php');
 require_once('locallib.php');
 
 $tab = optional_param('tab', '', PARAM_ALPHAEXT);
 $id = required_param('id', PARAM_INT);
 
-list($offlinequiz, $course, $cm) = get_course_objects($id, null);
+list($offlinequiz, $course, $cm) = get_course_objects($id, 0);
 
 require_login($course->id, true, $cm);
 $context = context_module::instance($cm->id);

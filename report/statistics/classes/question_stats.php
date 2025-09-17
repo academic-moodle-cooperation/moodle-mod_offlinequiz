@@ -27,8 +27,6 @@
  **/
 namespace offlinequiz_statistics;
 use question_bank;
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * This class has methods to compute the question statistics from the raw data.
@@ -37,17 +35,45 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_stats {
+    /**
+     * questions array
+     * @var array
+     */
     public $questions;
+    /**
+     * subquestions array
+     * @var array
+     */
     public $subquestions = [];
 
+    /**
+     * sum
+     * @var int
+     */
     protected $s;
+    /**
+     * the average of the sum mark
+     * @var float
+     */
     protected $summarksavg;
+    /**
+     * all attempts as object
+     * @var array
+     */
     protected $allattempts;
 
     /** @var mixed states from which to calculate stats - iteratable. */
     protected $lateststeps;
 
+    /**
+     * the sum of mark variance
+     * @var int
+     */
     protected $sumofmarkvariance = 0;
+    /**
+     * the random selectors
+     * @var array
+     */
     protected $randomselectors = [];
 
     /**
@@ -70,7 +96,8 @@ class question_stats {
     }
 
     /**
-     * @return object ready to hold all the question statistics.
+     * ready to hold all the question statistics.
+     * @return object
      */
     protected function make_blank_question_stats() {
         $stats = new \stdClass();
@@ -132,14 +159,14 @@ class question_stats {
 
                 FROM $fromqa
                 JOIN {question_attempts} qa ON qa.questionusageid = offlinequiza.usageid AND qa.questionid $qsql
-                JOIN {question_attempt_steps} qas ON 
+                JOIN {question_attempt_steps} qas ON
                       qas.id =(SELECT MAX(id) FROM {question_attempt_steps} qas2 WHERE qas2.questionattemptid = qa.id)
                 WHERE $whereqa", $params);
     }
 
-    /*
+    /**
      * Compute the statistics for the questions given to the constructor
-     *
+     * @return void
      */
     public function compute_statistics() {
         set_time_limit(0);
@@ -205,7 +232,7 @@ class question_stats {
             $this->initial_question_walker($subquestion->_stats);
 
             if ($subquestionstats[$qid]->differentweights) {
-                // TODO output here really sucks, but throwing is too severe.
+                // TO DO output here really sucks, but throwing is too severe.
                 global $OUTPUT;
                 echo $OUTPUT->notification(
                         get_string('erroritemappearsmorethanoncewithdifferentweight',
@@ -262,7 +289,7 @@ class question_stats {
             $this->sumofmarkvariance += $question->_stats->markvariance;
 
             if ($question->_stats->covariancewithoverallmark >= 0) {
-                if(!is_null($question->_stats->covariancewithoverallmark)) {
+                if (!is_null($question->_stats->covariancewithoverallmark)) {
                     $sumofcovariancewithoverallmark += sqrt($question->_stats->covariancewithoverallmark);
                 }
                 $question->_stats->negcovar = 0;
@@ -418,6 +445,7 @@ class question_stats {
     }
 
     /**
+     * get the random guess score
      * @param object $questiondata
      * @return number the random guess score for this question.
      */

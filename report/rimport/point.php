@@ -28,7 +28,6 @@
 
 namespace offlinequiz_result_import;
 
-defined('MOODLE_INTERNAL') || die();
 /**
  * a point in on an offlinequiz page
  */

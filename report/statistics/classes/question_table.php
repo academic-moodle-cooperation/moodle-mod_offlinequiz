@@ -58,7 +58,7 @@ class question_table extends flexible_table {
      * Set up the columns and headers and other properties of the table and then
      * call flexible_table::setup() method.
      *
-     * @param moodle_url $reporturl the URL to redisplay this report.
+     * @param \moodle_url $reporturl the URL to redisplay this report.
      * @param object $question a question with a _stats field
      * @param bool $hassubqs
      */
@@ -103,6 +103,11 @@ class question_table extends flexible_table {
         parent::setup();
     }
 
+    /**
+     * get the percentage of the fraction
+     * @param mixed $fraction
+     * @return string
+     */
     protected function format_percentage($fraction) {
         return format_float($fraction * 100, 2) . '%';
     }

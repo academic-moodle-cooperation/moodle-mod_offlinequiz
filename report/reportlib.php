@@ -79,7 +79,10 @@ function offlinequiz_report_list($context) {
 
     return $reportlist;
 }
-
+/**
+ * reindex the report
+ * @param mixed $datum
+ */
 function offlinequiz_report_unindex($datum) {
     if (!$datum) {
         return $datum;

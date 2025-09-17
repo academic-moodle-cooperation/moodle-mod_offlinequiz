@@ -27,13 +27,14 @@ namespace offlinequiz_identified;
 
 use html_writer;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * form to select the pdf to be generated
+ */
 class identifiedformselector extends \moodleform {
-    // Constructor.
-    public function __construct($action, $customdata, $method = 'post', $target = '', $attributes = null, $editable = true) {
-        parent::__construct($action, $customdata, $method, $target, $attributes, $editable);
-    }
+    /**
+     * form definition
+     * @return void
+     */
     public function definition() {
         global $CFG, $DB;
         $offlinequiz = $this->_customdata['offlinequiz'];
@@ -89,8 +90,7 @@ class identifiedformselector extends \moodleform {
         $mform->setType('list', PARAM_INT);
         $mform->setDefault('list', 0);
         // Check box for only if access.
-        // currently not used and hidden. check offlinequiz #205 for more info
-        // $mform->addElement('checkbox', 'onlyifaccess', get_string('onlyifaccess', 'offlinequiz_identified'));
+        // currently not used and hidden. check offlinequiz #205 for more info.
         $mform->addElement('hidden', 'onlyifaccess', 0);
         $mform->setType('onlyifaccess', PARAM_INT);
         // Set list required.

@@ -386,12 +386,6 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
         $font = offlinequiz_get_pdffont($offlinequiz);
 
-        // $fm = new stdClass();
-        // $fm->q = 0;
-        // $fm->a = 0;
-
-        // $texfilter = new filter_tex($context, array());
-
         $title = offlinequiz_str_html_pdf($offlinequiz->name);
         if (!empty($offlinequiz->time)) {
             $title = $title . ": " . offlinequiz_str_html_pdf(userdate($offlinequiz->time));
