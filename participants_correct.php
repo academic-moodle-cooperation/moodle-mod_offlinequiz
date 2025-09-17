@@ -37,7 +37,8 @@ $action     = optional_param('action', 'load', PARAM_TEXT);
 $listchosen = optional_param('listchosen', 0, PARAM_INT);
 
 if (!$scannedpage = $DB->get_record('offlinequiz_scanned_p_pages', ['id' => $pageid])) {
-    throw new \moodle_exception('noscannedpage', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, $pageid);
+    throw new \moodle_exception('noscannedpage', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, $pageid);
 }
 
 if (!$offlinequiz = $DB->get_record('offlinequiz', ['id' => $scannedpage->offlinequizid])) {
@@ -51,7 +52,8 @@ if (!$course = $DB->get_record('course', ['id' => $offlinequiz->course])) {
                       'offlinequiz' => $offlinequiz->id]);
 }
 if (!$cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $course->id)) {
-    throw new \moodle_exception('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, $offlinequiz->id);
+    throw new \moodle_exception('cmmissing', 'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $offlinequiz->course, $offlinequiz->id);
 }
 
 // Fix string listnumber delivered smallint by DB.
@@ -113,9 +115,7 @@ if ($action == 'load') {
     $origtime = required_param('origtime', PARAM_INT);
 }
 
-// -------------------------------------------------------------
 // Action cancel.
-// -------------------------------------------------------------
 if ($action == 'cancel') {
     $scannedpage->filename = $origfilename;
     $scannedpage->listnumber = $origlistnumber;
@@ -161,9 +161,7 @@ if ($action == 'cancel') {
         $scannedpage->listnumber = intval($list->listnumber);
     }
 
-    // -------------------------------------------------------------
     // Action setlist
-    // -------------------------------------------------------------
 } else if ($action == 'setlist') {
         $upperleft = new oq_point(required_param('c-0-x', PARAM_INT) + 8, required_param('c-0-y', PARAM_INT) + 8);
         $upperright = new oq_point(required_param('c-1-x', PARAM_INT) + 8, required_param('c-1-y', PARAM_INT) + 8);
@@ -193,9 +191,7 @@ if ($action == 'cancel') {
         $listchosen = 1;
     }
 
-        // -------------------------------------------------------------
         // Action readjust
-        // -------------------------------------------------------------
 } else if ($action == 'readjust') {
     require_sesskey();
     $upperleft = new oq_point(required_param('c-0-x', PARAM_INT) + 7, required_param('c-0-y', PARAM_INT) + 7);
@@ -363,9 +359,8 @@ if ($action == 'update') {
     }
 }
 
-// -------------------------------------------------------------
+
 // OUTPUT THE PAGE HTML.
-// -------------------------------------------------------------
 echo '<html>';
 echo "<style>\n";
 echo "body {margin:0px; font-family:Arial,Verdana,Helvetica,sans-serif;}\n";
@@ -606,7 +601,7 @@ if ($sheetloaded) {
         foreach ($scanner->export_hotspots_barcodes(860) as $key => $hotspot) {
             $x = substr($key, 1);
             echo "<select name=\"userids[$x]\"  autocomplete='on'     class=\"barcodeselect";
-            if (!isset($participants[$x]) or $participants[$x]->userid == 0) {
+            if (!isset($participants[$x]) || $participants[$x]->userid == 0) {
                 echo " barcodeerror";
             }
             echo "\" id=\"b$x\" style=\"position:absolute; top:".($hotspot->y - 10)."px; left:".($hotspot->x - 100).
@@ -616,7 +611,7 @@ lass', 'barcodeselect');}; checkinput(false);\">\n>";
             echo "<option value=\"0\"></option>\n";
             foreach ($users as $user) {
                 echo "<option value=\"{$user->userid}\"";
-                if (isset($participants[$x]) and $participants[$x]->userid == $user->userid) {
+                if (isset($participants[$x]) && $participants[$x]->userid == $user->userid) {
                     echo ' selected="selected"';
                 }
                 echo ">" . substr($user->{$offlinequizconfig->ID_field},
@@ -639,17 +634,13 @@ lass', 'barcodeselect');}; checkinput(false);\">\n>";
             " style=\"position:absolute; top:" .
             ($hotspot->y - 7) . "px; left:" . ($hotspot->x - 7) . "px; cursor:pointer;\">";
     }
-    echo "</form>\n";
-    ?>
-
-    <script>
+    echo "</form>\n
+        <script>
     $(function() {
-        $( "#c-0" ).draggable();
-        $( "#c-1" ).draggable();
-        $( "#c-2" ).draggable();
-        $( "#c-3" ).draggable();
+        $( \"#c-0\" ).draggable();
+        $( \"#c-1\" ).draggable();
+        $( \"#c-2\" ).draggable();
+        $( \"#c-3\" ).draggable();
     });
-    </script>
-
-    <?php
+    </script>";
 }

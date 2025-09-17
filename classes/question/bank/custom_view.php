@@ -102,7 +102,8 @@ class custom_view extends \core_question\local\bank\view {
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
         [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
         $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $extraparams['groupid']);
-        $this->offlinequiz->questionbankentries = offlinequiz_get_group_questionbankentry_ids($this->offlinequiz, $extraparams['groupid']);
+        $this->offlinequiz->questionbankentries =
+            offlinequiz_get_group_questionbankentry_ids($this->offlinequiz, $extraparams['groupid']);
         if ($extraparams['groupid']) {
             $groupnumber = $DB->get_field('offlinequiz_groups', 'groupnumber', ['id' => $extraparams['groupid']]);
             $this->groupnumber = $groupnumber;
@@ -324,7 +325,7 @@ class custom_view extends \core_question\local\bank\view {
         $this->countsql = 'SELECT count(1)' . $sql;
         $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
 
-        // Maybe move this part in future to js in modal_offlinequiz_question_bank
+        // Maybe move this part in future to js in modal_offlinequiz_question_bank.
         if ($this->get_question_count() <= $this->pagesize) {
             $this->pagevars['qpage'] = 0;
         }
@@ -411,6 +412,7 @@ class custom_view extends \core_question\local\bank\view {
 
         $cminfo = \cm_info::create($this->cm);
 
-        return $OUTPUT->render_from_template('mod_offlinequiz/switch_bank_header', ['currentbank' => $cminfo->get_formatted_name()]);
+        return $OUTPUT->render_from_template('mod_offlinequiz/switch_bank_header',
+            ['currentbank' => $cminfo->get_formatted_name()]);
     }
 }

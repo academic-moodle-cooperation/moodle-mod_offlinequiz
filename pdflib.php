@@ -36,6 +36,9 @@ require_once($CFG->dirroot . '/mod/offlinequiz/documentlib.php');
 
 define('LOGO_MAX_ASPECT_RATIO', 3.714285714);
 
+/**
+ * creates the barcode for the pagenumber
+ */
 class offlinequiz_barcodewriter {
     /**
      *
@@ -67,30 +70,58 @@ class offlinequiz_barcodewriter {
     }
 }
 
+/**
+ * creates the questions pdf
+ */
 class offlinequiz_pdf extends pdf {
     /**
      * Containing the current page buffer after checkpoint() was called.
+     * @var string
      */
     private $checkpoint;
 
+    /**
+     * make a checkpoint to jump back later
+     * @return void
+     */
     public function checkpoint() {
         $this->checkpoint = $this->getPageBuffer($this->page);
     }
 
+    /**
+     * get back to checkpoint
+     * @return void
+     */
     public function backtrack() {
         $this->setPageBuffer($this->page, $this->checkpoint);
     }
 
+    /**
+     * if the stuff printed now fits on the page.
+     * @return bool
+     */
     public function is_overflowing() {
         return $this->y > $this->PageBreakTrigger;
     }
 
+    /**
+     * set title of the document
+     * @param mixed $newtitle
+     * @return void
+     */
     public function set_title($newtitle) {
         $this->title = $newtitle;
     }
 
 }
+/**
+ * class for the questions pdf
+ */
 class offlinequiz_question_pdf extends offlinequiz_pdf {
+    /**
+     * temporary files
+     * @var array
+     */
     private $tempfiles = [];
 
     /**
@@ -128,11 +159,35 @@ class offlinequiz_question_pdf extends offlinequiz_pdf {
  * Answer form generator.
  */
 class offlinequiz_answer_pdf extends offlinequiz_pdf {
+    /**
+     * group id for the answer pdf
+     * @var int
+     */
     public $groupid = 0;
+    /**
+     * groupobject of the answerpdf
+     * @var stdClass
+     */
     public $group;
+    /**
+     * offlinequiz
+     * @var stdClass
+     */
     public $offlinequiz;
+    /**
+     * stuff to write next into the form
+     * @var string
+     */
     public $formtype;
+    /**
+     * width of the column
+     * @var int
+     */
     public $colwidth;
+    /**
+     * user id
+     * @var int
+     */
     public $userid;
     /**
      * (non-PHPdoc)
@@ -184,7 +239,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
             $this->Cell(0.85,  1, '', 0, 0, 'R');
             $this->Rect($this->GetX(),  $this->GetY(),  3.5,  3.5);
             $this->Cell(2.7,  1, '', 0, 0, 'C');
-            if (!empty($this->group) and $letterstr[$i] == $this->group) {
+            if (!empty($this->group) && $letterstr[$i] == $this->group) {
                 $this->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif", $this->GetX() - 2.75,  $this->Gety() + 0.15,  3.15,  0);
             }
         }
@@ -248,6 +303,11 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $this->Ln();
     }
 
+    /**
+     * get the aspect ratio of the logo
+     * @param mixed $logourl
+     * @return float|int
+     */
     private function get_logo_aspect_ratio($logourl) {
         list($originalwidth, $originalheight) = getimagesize($logourl);
         return $originalwidth / $originalheight;
@@ -306,18 +366,18 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $this->Cell(0, 10, offlinequiz_str_html_pdf(get_string('page') . ' ' . $this->getPageNumGroupAlias() . '/' .
                                                                 $this->getPageGroupAlias()), 0, 0, 'C');
     }
-    /*
-    * Generates the body of PDF answer form for an offlinequiz group using an optional groupletter.
-    *
-    * @param offlinequiz_answer_pdf $pdf the PDF object
-    * @param int $maxanswers the maximum number of answers in all question of the offline group
-    * @param question_usage_by_activity $templateusage the template question  usage for this offline group
-    * @param object $offlinequiz The offlinequiz object
-    * @param object $group the offline group object
-    * @param int $courseid the ID of the Moodle course
-    * @param object $context the context of the offline quiz.
-    * @param string $groupletter the groupletter to mark. No mark if empty.
-    */
+    /**
+     * Generates the body of PDF answer form for an offlinequiz group using an optional groupletter.
+     *
+     * @param offlinequiz_answer_pdf $pdf the PDF object
+     * @param int $maxanswers the maximum number of answers in all question of the offline group
+     * @param question_usage_by_activity $templateusage the template question  usage for this offline group
+     * @param object $offlinequiz The offlinequiz object
+     * @param object $group the offline group object
+     * @param int $courseid the ID of the Moodle course
+     * @param object $context the context of the offline quiz.
+     * @param string $groupletter the groupletter to mark. No mark if empty.
+     */
     public function add_answer_page($maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter): void {
         global $CFG, $DB, $OUTPUT, $USER;
         // Static variable for caching the questions. Useful in case of consecutive calls.
@@ -455,7 +515,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
                 $pdf->SetY($offsety);
                 $col++;
                 // Do a pagebreak if necessary.
-                if ($col > $pdf->formtype and ($number + 1) < $totalnumber) {
+                if ($col > $pdf->formtype && ($number + 1) < $totalnumber) {
                     $col = 1;
                     $pdf->AddPage();
                     $page++;
@@ -469,7 +529,14 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
     }
 }
 
+/**
+ * participants pdf
+ */
 class offlinequiz_participants_pdf extends offlinequiz_pdf {
+    /**
+     * the id of the list
+     * @var int
+     */
     public $listno;
 
     /**
@@ -578,7 +645,7 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
     // Filter only for tex formulas.
     $questiontext = offlinequiz_apply_filters($questiontext, $texfilters);
 
-    if($question->questiontextformat == FORMAT_PLAIN) {
+    if ($question->questiontextformat == FORMAT_PLAIN) {
         $questiontext = s($questiontext);
     }
     // Remove all HTML comments (typically from MS Office).
@@ -603,6 +670,17 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
     return $html;
 }
 
+/**
+ * get the html of this offlinequiz
+ * @param mixed $offlinequiz
+ * @param mixed $templateusage
+ * @param mixed $slot
+ * @param mixed $question
+ * @param mixed $texfilters
+ * @param mixed $trans
+ * @param mixed $correction
+ * @return string
+ */
 function offlinequiz_get_answers_html($offlinequiz, $templateusage,
     $slot, $question, $texfilters, $trans, $correction) {
     $html = '';
@@ -616,7 +694,7 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         // Filter only for tex formulas.
         $answertext = offlinequiz_apply_filters($answertext, $texfilters);
         // If the answer is in plain text, escape it.
-        if($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
+        if ($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
             $answertext = s($answertext);
         }
         // Remove all HTML comments (typically from MS Office).
@@ -657,7 +735,15 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
     }
     return $html;
 }
-
+/**
+ * write the question htmls into the pdf file
+ * @param mixed $pdf
+ * @param mixed $fontsize
+ * @param mixed $questiontype
+ * @param mixed $html
+ * @param mixed $number
+ * @return void
+ */
 function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html, $number) {
 
     $pdf->writeHTMLCell(165,  round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
@@ -689,7 +775,7 @@ function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html
  * @param int $courseid the ID of the Moodle course
  * @param object $context the context of the offline quiz.
  * @param boolean correction if true the correction form is generated.
- * @return stored_file instance, the generated PDF file.
+ * @return stored_file|null the generated PDF file.
  */
 function offlinequiz_create_pdf_question(question_usage_by_activity $templateusage, $offlinequiz, $group,
                                          $courseid, $context, $correction = false) {
@@ -804,7 +890,7 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
         echo $OUTPUT->box_start();
         echo $OUTPUT->error_text(get_string('noquestionsfound', 'offlinequiz', $groupletter));
         echo $OUTPUT->box_end();
-        return;
+        return null;
     }
 
     // Load the question type specific information.
@@ -951,17 +1037,17 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 }
 
 
-/*
+/**
  * Generates the PDF answer form for an offlinequiz group.
-*
-* @param int $maxanswers the maximum number of answers in all question of the offline group
-* @param question_usage_by_activity $templateusage the template question  usage for this offline group
-* @param object $offlinequiz The offlinequiz object
-* @param object $group the offline group object
-* @param int $courseid the ID of the Moodle course
-* @param object $context the context of the offline quiz.
-* @return stored_file instance, the generated PDF file.
-*/
+ *
+ * @param int $maxanswers the maximum number of answers in all question of the offline group
+ * @param question_usage_by_activity $templateusage the template question  usage for this offline group
+ * @param object $offlinequiz The offlinequiz object
+ * @param object $group the offline group object
+ * @param int $courseid the ID of the Moodle course
+ * @param object $context the context of the offline quiz.
+ * @return stored_file instance, the generated PDF file.
+ */
 function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context) {
     global $CFG, $DB, $OUTPUT, $USER;
 
@@ -1002,10 +1088,10 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
 /**
  * Creates a PDF document for a list of participants
  *
- * @param unknown_type $offlinequiz
- * @param unknown_type $courseid
- * @param unknown_type $list
- * @param unknown_type $context
+ * @param stdClass $offlinequiz
+ * @param int $courseid
+ * @param stdClass $list
+ * @param context_module $context
  * @return boolean|stored_file
  */
 function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $context) {

@@ -495,7 +495,8 @@ class provider implements
     public static function export_user_preferences(int $userid) {
         $context = \context_system::instance();
         $offlinequizpreferences = [
-            'offlinequiz_pagesize' => ['string' => get_string('privacy:metadata:offlinequizpagesize', 'mod_offlinequiz'), 'bool' => false],
+            'offlinequiz_pagesize' =>
+            ['string' => get_string('privacy:metadata:offlinequizpagesize', 'mod_offlinequiz'), 'bool' => false],
         ];
         foreach ($offlinequizpreferences as $key => $preference) {
             $value = get_user_preferences($key, null, $userid);

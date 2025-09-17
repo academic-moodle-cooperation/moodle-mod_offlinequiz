@@ -42,7 +42,13 @@ require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner2.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/positionslib.php');
-
+/**
+ * do the cron evaluation
+ * @deprecated You should use the adhoc tasks instead
+ * @param mixed $jobid
+ * @param mixed $verbose
+ * @return void
+ */
 function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
     global $CFG, $DB;
 

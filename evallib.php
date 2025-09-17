@@ -263,7 +263,7 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
                         ['offlinequizid' => $offlinequiz->id,
                               'offlinegroupid' => $group->id]);
 
-                // Clone it...
+                // Clone the templateusage...
                 $quba = $templateusage->get_clone($qinstances);
 
                 // And save it. The clone contains the same question in the same order and the same order of the answers.
@@ -405,7 +405,7 @@ function offlinequiz_process_scanned_page($offlinequiz, offlinequiz_page_scanner
                 }
                 $choicesdata[$slot][$key] = $choice;
             }
-        } // End for (slot...
+        } // End for slot...
 
         if ((!$insecuremarkings) && $submit) {
             $scannedpage = offlinequiz_submit_scanned_page($offlinequiz, $scannedpage, $choicesdata, $startindex, $endindex);
@@ -832,7 +832,7 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
                 $scannedpage->listnumber > $maxlistnumber) {
             $scannedpage->status = 'error';
             $scannedpage->error = 'invalidlistnumber';
-            // for the unlikely case that the listnumber is out of range, due to scanning errors
+            // For the unlikely case that the listnumber is out of range, due to scanning errors.
             if (property_exists($scannedpage, 'listnumber') && $scannedpage->listnumber > 50000) {
                 $scannedpage->listnumber = 9999;
                 echo $OUTPUT->notification(get_string('scanerrorlistnumber', 'offlinequiz_rimport'), 'error');
@@ -890,7 +890,7 @@ function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_p
 
                     $scannedpage->status = 'error';
                     $scannedpage->error = 'invalidlistnumber';
-                    // for the unlikely case that the listnumber is out of range, due to scanning errors
+                    // For the unlikely case that the listnumber is out of range, due to scanning errors.
                     if ($scannedpage->listnumber > 50000) {
                         $scannedpage->listnumber = 9999;
                         echo $OUTPUT->notification(get_string('scanerrorlistnumber', 'offlinequiz_rimport'), 'error');
@@ -981,9 +981,6 @@ function offlinequiz_process_scanned_participants_page($offlinequiz, offlinequiz
 
     // Check if all users are in the offlinequiz_p_list.
     if ($scannedpage->status == 'ok') {
-        // $list = $DB->get_record('offlinequiz_p_lists', array('offlinequizid' => $offlinequiz->id)); //,
-        // 'listnumber' => $scannedpage->listnumber));
-        // $userdata = $DB->get_records('offlinequiz_participants', array('listid' => $list->id));
 
         $sql = "SELECT DISTINCT p.*
                       FROM {offlinequiz_participants} p
@@ -1044,11 +1041,10 @@ function offlinequiz_submit_scanned_participants_page($offlinequiz, $scannedpage
         $params['offlinequizid'] = $offlinequiz->id;
         $params['userid'] = $choice->userid;
         $attuserdata = $DB->get_records_sql($sql, $params);
-        // put out a warning in case a user is listed in more than one attendance list
+        // Put out a warning in case a user is listed in more than one attendance list.
         if (count($attuserdata) > 1) {
             echo $OUTPUT->notification(get_string('errormultiuserinlist', 'offlinequiz'), 'error');
 
-            // break;
             $scannedpage->status = 'error';
             $scannedpage->error = 'multiuserinlist';
             $DB->update_record('offlinequiz_scanned_p_pages', $scannedpage);
@@ -1058,9 +1054,6 @@ function offlinequiz_submit_scanned_participants_page($offlinequiz, $scannedpage
                     $userdata->checked = 1;
                     $DB->update_record('offlinequiz_participants', $userdata);
                 }
-                // $DB->set_field('offlinequiz_participants', 'checked', 1, array('userid' => $choice->userid, 'listid' => $list->id));
-                // The following makes sure that the output is sent immediately.
-                // @flush();@ob_flush();
             }
         }
     }

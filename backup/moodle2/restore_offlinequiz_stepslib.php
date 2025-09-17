@@ -26,8 +26,6 @@
  *
  **/
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Structure step to restore one offlinequiz activity
  *
@@ -101,15 +99,28 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         return $this->prepare_activity_structure($paths);
     }
 
-    // Dummy methods for group question usages.
+    /**
+     * templates for documents
+     * @param mixed $data
+     * @return void
+     */
     public function process_group_question_usage($data) {
         $this->restore_question_usage_worker($data, 'group_');
     }
 
+    /**
+     * process attempt
+     * @param mixed $data
+     * @return void
+     */
     public function process_group_question_attempt($data) {
         $this->restore_question_attempt_worker($data, 'group_');
     }
-
+    /**
+     * process group question attempt
+     * @param mixed $data
+     * @return void
+     */
     public function process_group_question_attempt_step($data) {
         global $DB;
         $groupvariable = $data["group_response"]["group_variable"];
@@ -187,20 +198,38 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         }
         $DB->insert_record('question_references', $data);
     }
-
+    /**
+     * process result question usages
+     * @param mixed $data
+     * @return void
+     */
     public function process_result_question_usage($data) {
         $this->restore_question_usage_worker($data, 'result_');
     }
 
+    /**
+     * process result question attempt
+     * @param mixed $data
+     * @return void
+     */
     public function process_result_question_attempt($data) {
         $this->restore_question_attempt_worker($data, 'result_');
     }
 
+    /**
+     * process result question attempt steps
+     * @param mixed $data
+     * @return void
+     */
     public function process_result_question_attempt_step($data) {
         $this->restore_question_attempt_step_worker($data, 'result_');
     }
 
-    // Restore method for the activity.
+    /**
+     * Restore method for the activity.
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz($data) {
         global $CFG, $DB;
 
@@ -227,7 +256,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->apply_activity_instance($newitemid);
     }
 
-    // Restore method for offline groups.
+    /**
+     * Restore method for offline groups.
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz_group($data) {
         global $DB;
 
@@ -247,7 +280,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         }
     }
 
-    // Restore method for offlinequiz group questions.
+    /**
+     * Restore method for offlinequiz group questions.
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz_groupquestion($data) {
         global $DB;
 
@@ -286,7 +323,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         }
     }
 
-    // Restore method for scanned pages.
+    /**
+     * Restore method for scanned pages.
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz_scannedpage($data) {
         global $DB;
 
@@ -300,7 +341,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->set_mapping('offlinequiz_scannedpage', $oldid, $newitemid, true);
     }
 
-    // Restore method for choices on scanned pages.
+    /**
+     * Restore method for choices on scanned pages.
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz_choice($data) {
         global $DB;
 
@@ -312,7 +357,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $newitemid = $DB->insert_record('offlinequiz_choices', $data);
     }
 
-    // Restore method for corners of scanned pages.
+    /**
+     *  Restore method for corners of scanned pages.
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz_corner($data) {
         global $DB;
 
@@ -324,7 +373,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $newitemid = $DB->insert_record('offlinequiz_page_corners', $data);
     }
 
-    // Restore method for scanned participants pages.
+    /**
+     * Restore method for scanned participants pages.
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz_scannedppage($data) {
         global $DB;
 
@@ -337,7 +390,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->set_mapping('offlinequiz_scannedppage', $oldid, $newitemid, true);
     }
 
-    // Restore method for choices on scanned participants pages.
+    /**
+     * Restore method for choices on scanned participants pages.
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz_pchoice($data) {
         global $DB;
 
@@ -349,7 +406,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $newitemid = $DB->insert_record('offlinequiz_p_choices', $data);
     }
 
-    // Restore method for lists of participants.
+    /**
+     * Restore method for lists of participants.
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz_plist($data) {
         global $DB;
 
@@ -362,7 +423,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->set_mapping('offlinequiz_plist', $oldid, $newitemid, true);
     }
 
-    // Restore method for a participant.
+    /**
+     * Restore method for a participant.
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz_participant($data) {
         global $DB;
 
@@ -374,7 +439,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $newitemid = $DB->insert_record('offlinequiz_participants', $data);
     }
 
-    // Restore method for offlinequiz results (attempts).
+    /**
+     * Restore method for offlinequiz results (attempts).
+     * @param mixed $data
+     * @return void
+     */
     protected function process_offlinequiz_result($data) {
         global $DB;
 
@@ -395,7 +464,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $this->currentofflinequizresult = clone($data);
     }
 
-    // Restore the usage id after it has been created.
+    /**
+     * Restore the usage id after it has been created.
+     * @param mixed $newusageid
+     * @return void
+     */
     protected function inform_new_usage_id($newusageid) {
         global $DB;
 
@@ -425,13 +498,16 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             }
         }
     }
-
+    /**
+     * add files at the end
+     * @return void
+     */
     protected function after_execute() {
         parent::after_execute();
         $userinfo = $this->get_setting_value('userinfo');
         // Add offlinequiz related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_offlinequiz', 'intro', null);
-        if($userinfo) {
+        if ($userinfo) {
             $this->add_related_files('mod_offlinequiz', 'imagefiles', null);
             $this->add_related_files('mod_offlinequiz', 'queue', 'offlinequiz_queue');
             $this->add_related_files('mod_offlinequiz', 'queuedata', 'offlinequiz_queue_data');

@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Navigate students or teachers to a certain url.
+ * @package       mod
+ * @subpackage    offlinequiz
+ * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
+ * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @since         Moodle 2.8+
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 require_once(__DIR__ . '/../../config.php');
 require_once('locallib.php');
 
@@ -65,9 +74,10 @@ if ($newurl == '') {
         } else {
             $newurl = $navigation->find('tabpreview', null)->action();
         }
-    } else if ($tab == 'mod_offlinequiz_results') { // TODO: Move to plugin Route tab..
+    } else if ($tab == 'mod_offlinequiz_results') { // TO DO: Move to plugin Route tab..
         $hasresults = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
-        $needscorrections = $DB->record_exists('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
+        $needscorrections = $DB->record_exists('offlinequiz_scanned_pages',
+        ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
         if ($needscorrections) {
             $newurl = $navigation->find('tabofflinequizupload', null)->action();
 

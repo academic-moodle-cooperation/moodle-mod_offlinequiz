@@ -42,7 +42,8 @@ if (! $offlinequiz = $DB->get_record("offlinequiz", ["id" => $result->offlinequi
     throw new \moodle_exception("The offlinequiz with id $result->offlinequiz belonging to result $result is missing");
 }
 if (! $course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
-    throw new \moodle_exception("The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
+    throw new \moodle_exception(
+        "The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
 }
 if (! $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
     throw new \moodle_exception("The course module for the offlinequiz with id $offlinequiz->id is missing");
@@ -122,31 +123,28 @@ if (property_exists($slotquestion, '_number')) {
     echo $quba->render_question($slot, $options);
 }
 
-?>
-  <div>
-    <input type="hidden" name="resultid" value="<?php echo $result->id; ?>" />
-    <input type="hidden" name="slot" value="<?php echo $slot; ?>" /> <input
-        type="hidden" name="slots" value="<?php echo $slot; ?>" /> <input
-        type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
+echo "<div>
+    <input type=\"hidden\" name=\"resultid\" value=\"$result->id\" />
+    <input type=\"hidden\" name=\"slot\" value=\"$slot\" /> <input
+        type=\"hidden\" name=\"slots\" value=\"$slot\" /> <input
+        type=\"hidden\" name=\"sesskey\" value=\"sesskey()\" />
   </div>
-  <fieldset class="hidden">
+  <fieldset class=\"hidden\">
     <div>
-        <div class="fitem">
-            <div class="fitemtitle">
-                <div class="fgrouplabel">
+        <div class=\"fitem\">
+            <div class=\"fitemtitle\">
+                <div class=\"fgrouplabel\">
                     <label> </label>
                 </div>
             </div>
-            <fieldset class="felement fgroup">
-                <input class="btn btn-secondary" id="id_submitbutton" type="submit" name="submit"
-                    value="<?php
-                        print_string('save', 'offlinequiz'); ?>" />
+            <fieldset class=\"felement fgroup\">
+                <input class=\"btn btn-secondary\" id=\"id_submitbutton\" type=\"submit\" name=\"submit\"
+                    value=\"print_string('save', 'offlinequiz')\" />
             </fieldset>
         </div>
     </div>
   </fieldset>
-</form>
-<?php
+</form>";
 
 $PAGE->requires->js_init_call('M.mod_offlinequiz.init_comment_popup', null, false, offlinequiz_get_js_module());
 

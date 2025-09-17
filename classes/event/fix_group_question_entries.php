@@ -26,9 +26,6 @@
 
 namespace mod_offlinequiz\event;
 
-
-defined('MOODLE_INTERNAL') || die();
-
 use core\event\course_restored;
 use core\event\course_module_created;
 /**

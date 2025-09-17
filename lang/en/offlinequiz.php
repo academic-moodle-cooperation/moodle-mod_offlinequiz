@@ -382,6 +382,7 @@ $string['missingimagefile'] = 'Missing image file';
 $string['missingitemdata'] = 'Missing answer(s) for user {$a}';
 $string['missinglogdata'] = 'Missing logdata for existing result.';
 $string['missingquestion'] = 'This question no longer seems to exist';
+$string['missingquestions'] = 'There are no Questions in this group.';
 $string['missinguserid'] = 'Missing user identification number! Could not read barcode!';
 $string['modulename'] = 'Offline quiz';
 $string['modulename_help'] = 'This module allows the teacher to design offline quizzes consisting of multiple choice questions. These questions are kept in the Moodle question bank and can be re-used within courses and even between courses. The offline quizzes can be downloaded as PDF-, DOCX- or LaTeX-files. The students mark their answers on form sheets. The form sheets are scanned and the answers imported into the system.

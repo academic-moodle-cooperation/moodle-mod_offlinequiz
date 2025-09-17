@@ -31,8 +31,6 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_question\local\bank\question_bank_helper;
 use qbank_managecategories\helper;
 
@@ -87,11 +85,8 @@ function offlinequiz_add_instance($offlinequiz) {
     $offlinequiz->questions = '';
     $offlinequiz->grade = 100;
 
-    $result = offlinequiz_process_options($offlinequiz);
+    offlinequiz_process_options($offlinequiz);
 
-    if ($result && is_string($result)) {
-        return $result;
-    }
     if (!property_exists($offlinequiz, 'intro') || $offlinequiz->intro == null) {
         $offlinequiz->intro = '';
     }
@@ -117,7 +112,6 @@ function offlinequiz_add_instance($offlinequiz) {
     try {
         if (!$offlinequiz->id = $DB->insert_record('offlinequiz', $offlinequiz)) {
             throw new \moodle_exception('Could not create Offlinequiz object!');
-            return false;
         }
     } catch (Exception $e) {
         throw new \moodle_exception("ERROR: " . $e->debuginfo);
@@ -146,10 +140,7 @@ function offlinequiz_update_instance($offlinequiz) {
     $offlinequiz->id = $offlinequiz->instance;
 
     // Process the options from the form.
-    $result = offlinequiz_process_options($offlinequiz);
-    if ($result && is_string($result)) {
-        return $result;
-    }
+    offlinequiz_process_options($offlinequiz);
 
     $context = context_module::instance($offlinequiz->coursemodule);
 
@@ -280,9 +271,9 @@ function offlinequiz_get_editor_options($context = null) {
  * Delete grade item for given offlinequiz
  *
  * @param object $offlinequiz object
- * @return object offlinequiz
+ * @return object int
  */
-function offlinequiz_grade_item_delete($offlinequiz) {
+function offlinequiz_grade_item_delete($offlinequiz): int {
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
 
@@ -305,7 +296,7 @@ function offlinequiz_grade_item_delete($offlinequiz) {
  * @param array $args the remaining bits of the file path.
  * @param bool $forcedownload whether the user must be forced to download the file.
  * @param array $options additional options affecting the file serving
- * @return bool false if file not found, does not return if found - justsend the file
+ * @return mixed false if file not found, does not return if found - justsend the file
  */
 function offlinequiz_question_pluginfile($course, $context, $component,
         $filearea, $qubaid, $slot, $args, $forcedownload, array $options=[]) {
@@ -328,11 +319,13 @@ function offlinequiz_question_pluginfile($course, $context, $component,
     $fs = get_file_storage();
     $relativepath = implode('/', $args);
     $fullpath = "/$context->id/$component/$filearea/$relativepath";
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    $file = $fs->get_file_by_hash(sha1($fullpath));
+    if (!$file  || $file->is_directory()) {
         send_file_not_found();
     }
 
     send_stored_file($file, 0, 0, $forcedownload, $options);
+    return;
 }
 
 /**
@@ -364,7 +357,7 @@ function offlinequiz_question_preview_pluginfile($previewcontext, $questionid, $
     $fs = get_file_storage();
     $relativepath = implode('/', $args);
     $fullpath = "/{$filecontext->id}/{$filecomponent}/{$filearea}/{$relativepath}";
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
         send_file_not_found();
     }
     send_stored_file($file, 0, 0, $forcedownload, $options);
@@ -407,7 +400,7 @@ function offlinequiz_send_answertext_file($context, $answerid, $args, $forcedown
 
     $fs = get_file_storage();
     $fullpath = "/$context->id/question/answer/$answerid/" . implode('/', $args);
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
         send_file_not_found();
     }
 
@@ -451,7 +444,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
 
     $fullpath = '/' . $context->id . '/mod_offlinequiz/' . $filearea . '/' . $relativepath;
 
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
         return false;
     }
 
@@ -464,6 +457,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
         } else {
             send_stored_file($file, 86400, 0, $forcedownload);
         }
+        return false;
     } else {
 
         // Get the corresponding scanned pages. There might be several in case an image file is used twice.
@@ -472,7 +466,6 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
             if (!$scannedpages = $DB->get_records('offlinequiz_scanned_pages', ['offlinequizid' => $offlinequiz->id,
                     'filename' => $file->get_filename()])) {
                 throw new \moodle_exception('scanned page not found');
-                    return false;
             }
         }
 
@@ -488,7 +481,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
 
             // Check whether the student is allowed to see scanned sheets.
             $options = offlinequiz_get_review_options($offlinequiz, $result, $context);
-            if ($options->sheetfeedback == question_display_options::HIDDEN and
+            if ($options->sheetfeedback == question_display_options::HIDDEN &&
                     $options->gradedsheetfeedback == question_display_options::HIDDEN) {
                 return false;
             }
@@ -578,7 +571,7 @@ function offlinequiz_attempt_summary_link_to_reports($offlinequiz, $cm, $context
  * Check for features supported by offlinequizzes.
  *
  * @param string $feature FEATURE_xx constant for requested feature
- * @return bool True if offlinequiz supports feature
+ * @return mixed True if offlinequiz supports feature
  */
 function offlinequiz_supports($feature) {
     switch($feature) {
@@ -902,7 +895,7 @@ function offlinequiz_scale_used($offlinequizid, $scaleid) {
 function offlinequiz_scale_used_anywhere($scaleid) {
     global $DB;
 
-    if ($scaleid and $DB->record_exists('offlinequiz', ['grade' => -$scaleid])) {
+    if ($scaleid && $DB->record_exists('offlinequiz', ['grade' => -$scaleid])) {
         return true;
     } else {
         return false;
@@ -1150,7 +1143,7 @@ function offlinequiz_get_user_grades($offlinequiz, $userid=0) {
             $grades[$key] = [];
             $groupsumgrades = $groups[$result->offlinegroupid]->sumgrades;
             $grades[$key]['userid'] = $result->userid;
-            if($groupsumgrades && $maxgrade) {
+            if ($groupsumgrades && $maxgrade) {
                 $grades[$key]['rawgrade'] = round($result->sumgrades / $groupsumgrades * $maxgrade, $offlinequiz->decimalpoints);
             } else {
                 $grades[$key]['rawgrade'] = 0;
@@ -1336,7 +1329,7 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
     $keys = $offlinequiznode->get_children_key_list();
     $beforekey = null;
     $i = array_search('modedit', $keys);
-    if ($i === false and array_key_exists(0, $keys)) {
+    if ($i === false && array_key_exists(0, $keys)) {
         $beforekey = $keys[0];
     } else if (array_key_exists($i + 1, $keys)) {
         $beforekey = $keys[$i + 1];
@@ -1407,6 +1400,9 @@ function offlinequiz_extend_settings_navigation($settings, $offlinequiznode) {
     question_extend_settings_navigation($offlinequiznode, $settings->get_page()->cm->context)->trim_if_empty();
 }
 
+/**
+ * get active tab of this page
+ */
 function offlinequiz_get_active_tab() {
 
     global $PAGE, $CFG;
@@ -1418,7 +1414,7 @@ function offlinequiz_get_active_tab() {
         $reportclass = offlinequiz_instantiate_report_class($subplugin);
         if ($reportclass && method_exists($reportclass, 'get_active_tab')) {
             $activetab = $reportclass->get_active_tab($url);
-            if($activetab) {
+            if ($activetab) {
                 return $activetab;
             }
         }
@@ -1453,6 +1449,7 @@ function offlinequiz_get_grade_format($offlinequiz) {
 }
 
 /**
+ * what questions are in use
  * @param array $questionids of question ids.
  * @return bool whether any of these questions are used by any instance of this module.
  */
@@ -1477,7 +1474,7 @@ function offlinequiz_questions_in_use($questionids) {
  * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
  *
  * @param stdClass $coursemodule The coursemodule object (record).
- * @return cached_cm_info An object on information that the courses
+ * @return cached_cm_info|null An object on information that the courses
  *                        will know about (most noticeably, an icon).
  */
 function offlinequiz_get_coursemodule_info($coursemodule) {
@@ -1485,7 +1482,7 @@ function offlinequiz_get_coursemodule_info($coursemodule) {
     $dbparams = ['id' => $coursemodule->instance];
     $fields = 'id, name, intro, introformat, completionpass';
     if (!$offlinequiz = $DB->get_record('offlinequiz', $dbparams, $fields)) {
-        return false;
+        return null;
     }
     $result = new cached_cm_info();
     $result->name = $offlinequiz->name;

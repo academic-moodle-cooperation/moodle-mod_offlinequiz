@@ -63,17 +63,20 @@ require_login($course->id, false, $cm);
 $context = context_module::instance($cm->id);
 
 if (!has_capability('mod/offlinequiz:viewreports', $context) && !has_capability('mod/offlinequiz:attempt', $context)) {
-    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+         $scannedpage->offlinequizid);
 }
 
 if (!has_capability('mod/offlinequiz:viewreports', $context) && $result->userid != $USER->id) {
-    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid);
 }
 
 $options = offlinequiz_get_review_options($offlinequiz, $result, $context);
 
 if (!$options->sheetfeedback && !$options->gradedsheetfeedback) {
-    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid);
 }
 
 $url = new moodle_url('/mod/offlinequiz/image.php', ['pageid' => $scannedpage->id, 'resultid' => $result->id]);

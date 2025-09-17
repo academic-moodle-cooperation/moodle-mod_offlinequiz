@@ -31,6 +31,9 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/offlinequiz/backup/moodle2/backup_offlinequiz_stepslib.php');
 
+/**
+ * backup the offline quiz activity
+ */
 class backup_offlinequiz_activity_task extends backup_activity_task {
 
     /**

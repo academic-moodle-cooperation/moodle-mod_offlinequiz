@@ -434,7 +434,8 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
         // Remove all paragraph tags because they mess up the layout.
-        $answertext = preg_replace('/<p\b(?:\s+[A-Za-z_:][\w:.-]*(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s\'">=]+))?)*\s*>/i', "", $answertext);
+        $answertext = preg_replace(
+            '/<p\b(?:\s+[A-Za-z_:][\w:.-]*(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s\'">=]+))?)*\s*>/i', "", $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
         $answertext = preg_replace("/<\/p>/i", "", $answertext);
@@ -563,7 +564,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Print title page.
     if (!$correction) {
-        $section->addText(offlinequiz_str_html_docx(get_string('questionsheet', 'offlinequiz') . ' - ' . get_string('group', 'offlinequiz') .
+        $section->addText(offlinequiz_str_html_docx(get_string('questionsheet', 'offlinequiz')
+            . ' - ' . get_string('group', 'offlinequiz') .
                                                     " $groupletter"), 'hStyle', 'cStyle');
         $section->addTextBreak(2);
 
@@ -799,7 +801,8 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 }
 
 /**
- * Function to transform Moodle HTML code of a question into proprietary markup that only supports italic, underline, bold, super and subtext.
+ * Function to transform Moodle HTML code of a question into proprietary markup that only supports
+ * italic, underline, bold, super and subtext.
  *
  * @param string $input The input text.
  * @return mixed

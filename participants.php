@@ -47,7 +47,7 @@ list($offlinequiz, $course, $cm) = get_course_objects($id, $q);
 
 require_login($course->id, false, $cm);
 
-if (!offlinequiz_partlist_created($offlinequiz) and $mode != 'editlists') {
+if (!offlinequiz_partlist_created($offlinequiz) && $mode != 'editlists') {
     $mode = 'editparticipants';
     // Notify redirection.
     $notify = get_string('createlistfirst', 'offlinequiz');
@@ -89,9 +89,16 @@ $PAGE->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
         );
 
 
-offlinequiz_load_useridentification();
+
 $offlinequizconfig = get_config('offlinequiz');
 
+/**
+ * find the pdf file for a group
+ * @param mixed $contextid
+ * @param mixed $listfilename
+ * @throws \moodle_exception
+ * @return bool|stored_file
+ */
 function find_pdf_file($contextid, $listfilename) {
     $fs = get_file_storage();
     if ($pdffile = $fs->get_file($contextid, 'mod_offlinequiz', 'participants', 0, '/', $listfilename)) {
@@ -348,7 +355,7 @@ switch($mode) {
 
         if ($potentialmembers = get_enrolled_users($coursecontext, 'mod/offlinequiz:attempt')) {
             foreach ($potentialmembers as $member) {
-                if (empty($members[$member->id]) and (empty($group) or !empty($groupmembers[$member->id]))) {
+                if (empty($members[$member->id]) && (empty($group) || !empty($groupmembers[$member->id]))) {
                     if (!in_array($member->id, $usersinlistsids)) {
                         $potentialmembersoptions .= '<option value="' . $member->id . '">' . fullname($member) .
                         ' (' . $member->{$offlinequizconfig->ID_field} . ')</option>';
@@ -382,10 +389,10 @@ switch($mode) {
             echo $OUTPUT->single_select($url, 'listid', $options, $listid);
             echo '<br />&nbsp;<br /></div>';
         }
-        if ($action == 'uncheck' and $participantids = optional_param_array('participantid', [], PARAM_INT)) {
+        if ($action == 'uncheck' && $participantids = optional_param_array('participantid', [], PARAM_INT)) {
             confirm_sesskey();
             foreach ($participantids as $participantid) {
-                $sql = "SELECT p.id 
+                $sql = "SELECT p.id
                           FROM {offlinequiz_p_lists} l
                           JOIN {offlinequiz_participants} p ON p.listid = l.id
                           WHERE l.offlinequizid = :offlinequizid
@@ -410,7 +417,7 @@ switch($mode) {
                 $event->trigger();
             }
         }
-        if ($action == 'check' and $participantids = optional_param_array('participantid', [], PARAM_INT)) {
+        if ($action == 'check' && $participantids = optional_param_array('participantid', [], PARAM_INT)) {
             foreach ($participantids as $participantid) {
                 $sql = "SELECT p.id
                           FROM {offlinequiz_p_lists} l
@@ -461,24 +468,24 @@ switch($mode) {
             echo $OUTPUT->heading_with_help(get_string('createpdfsparticipants', 'offlinequiz'), 'participants', 'offlinequiz');
         }
         // Show update button.
-        ?>
+        echo "
 
-        <div class="singlebutton" align="center">
-            <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/participants.php" ?>" method="post">
+        <div class=\"singlebutton\" align=\"center\">
+            <form action=\"$CFG->wwwroot/mod/offlinequiz/participants.php\" method=\"post\">
                 <div>
-                    <input type="hidden" name="q" value="<?php echo $offlinequiz->id ?>" />
-                    <input type="hidden" name="forcenew" value="1" />
-                    <input type="hidden" name="mode" value="createpdfs" />
-                    <button type="submit"
-                    onClick='return confirm("<?php echo get_string('reallydeleteupdatepdf', 'offlinequiz') ?>")' 
-                    class="btn btn-secondary">
-            <?php echo get_string('deleteupdatepdf', 'offlinequiz') ?>
+                    <input type=\"hidden\" name=\"q\" value=\"$offlinequiz->id\" />
+                    <input type=\"hidden\" name=\"forcenew\" value=\"1\" />
+                    <input type=\"hidden\" name=\"mode\" value=\"createpdfs\" />
+                    <button type=\"submit\"
+                    onClick='return confirm(\"get_string('reallydeleteupdatepdf', 'offlinequiz')\")'
+                    class=\"btn btn-secondary\">
+            echo get_string('deleteupdatepdf', 'offlinequiz')
                     </button>
                 </div>
             </form>
             <br>&nbsp;<br>
         </div>
-        <?php
+       ";
 
         echo $OUTPUT->box_start('boxaligncenter generalbox boxwidthnormal');
 
@@ -661,7 +668,7 @@ switch($mode) {
                 }
             }
             echo $OUTPUT->box_end();
-            if ($last == $numpages - 1 or $numpages == 0) {
+            if ($last == $numpages - 1 || $numpages == 0) {
                 if ($numimports) {
                     $OUTPUT->notification(get_string('numpages', 'offlinequiz', $numimports), 'notifysuccess');
                 } else {

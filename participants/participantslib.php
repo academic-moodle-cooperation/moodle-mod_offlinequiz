@@ -26,8 +26,6 @@
  * @since         Moodle 3.8+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
 /**
  *
  * @author Thomas Wedekind <Thomas.Wedekind@univie.ac.at>

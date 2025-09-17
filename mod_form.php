@@ -125,7 +125,8 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         if ($offlinequiz) {
             $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
             $context = context_module::instance($cm->id);
-            $hasevalationrights = $offlinequizconfig->experimentalevaluation && has_capability('mod/offlinequiz:changeevaluationmode', $context);
+            $hasevalationrights = $offlinequizconfig->experimentalevaluation &&
+            has_capability('mod/offlinequiz:changeevaluationmode', $context);
         }
         if (is_siteadmin() || $hasevalationrights) {
                 $mform->addElement('selectyesno', 'experimentalevaluation', get_string('experimentalevaluation', 'offlinequiz'));
@@ -377,11 +378,13 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $items = [];
 
         $group = [];
-        $group[] = $mform->createElement('advcheckbox', 'completionpass' . $this->get_suffix(), null, get_string('completionpass', 'offlinequiz'),
+        $group[] = $mform->createElement('advcheckbox', 'completionpass' . $this->get_suffix(),
+            null, get_string('completionpass', 'offlinequiz'),
             ['group' => 'cpass']);
         $mform->disabledIf('completionpass' . $this->get_suffix(), 'completionusegrade', 'notchecked');
 
-        $mform->addGroup($group, 'completionpassgroup' . $this->get_suffix(), get_string('completionpass', 'offlinequiz'), ' &nbsp; ', false);
+        $mform->addGroup($group, 'completionpassgroup' . $this->get_suffix(),
+            get_string('completionpass', 'offlinequiz'), ' &nbsp; ', false);
         $mform->addHelpButton('completionpassgroup' . $this->get_suffix(), 'completionpass', 'offlinequiz');
         $items[] = 'completionpassgroup'  . $this->get_suffix();
 

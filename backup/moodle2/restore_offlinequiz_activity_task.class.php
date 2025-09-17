@@ -127,7 +127,7 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
 
         // All the ones calling to review.php have two rules to handle both old and new urls
         // in any case they are always converted to new urls on restore.
-        // TODO: In Moodle 2.x (x >= 5) kill the old rules.
+        // TO DO: In Moodle 2.x (x >= 5) kill the old rules.
         // Note we are using the 'offlinequiz_attempt_id' mapping because that is the
         // one containing the offlinequiz_attempt->ids old an new for offlinequiz-attempt.
         $rules[] = new restore_log_rule('offlinequiz', 'attempt',

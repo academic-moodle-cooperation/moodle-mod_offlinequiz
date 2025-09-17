@@ -53,7 +53,7 @@ class offlinequiz_answer_pdf_identified extends offlinequiz_answer_pdf {
      */
     public function header() {
         global $CFG, $DB;
-        // participant data.
+        // Participant data.
         parent::Header();
         $offlinequizconfig = get_config('offlinequiz');
         $pdf = $this;
@@ -143,12 +143,6 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
 
     $params['offlinequizid'] = $offlinequiz->id;
     $params['listid'] = $list->id;
-    // $sql = "SELECT p.userid
-    // FROM {offlinequiz_participants} p, {offlinequiz_p_lists} pl
-    // WHERE p.listid = pl.id
-    // AND pl.offlinequizid = :offlinequizid
-    // AND p.listid = :listid";
-    // $params = array('offlinequizid' => $offlinequiz->id, 'listid' => $list->id);
 
     $users = $DB->get_records_sql($sql, $params);
     if ($onlyifaccess) {
@@ -180,7 +174,8 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
  * @param context_module $context
  * @return boolean
  */
-function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $groupnumber, $list, $context, $nogroupmark=false, $onlyifaccess = false) {
+function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $groupnumber,
+        $list, $context, $nogroupmark=false, $onlyifaccess = false) {
     global $CFG, $DB;
     // Get the participants filtering by access if requested.
     $participants = offlinequizidentified_get_participants($offlinequiz, $list, $onlyifaccess);

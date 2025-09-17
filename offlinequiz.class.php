@@ -47,14 +47,42 @@ use mod_offlinequiz\structure;
  */
 class offlinequiz {
     // Fields initialised in the constructor.
+    /**
+     * offlinequiz course
+     * @var stdClass
+     */
     protected $course;
+    /**
+     * course module
+     * @var stdClass
+     */
     protected $cm;
+    /**
+     * offlinequiz db object
+     * @var stdClass
+     */
     protected $offlinequiz;
+    /**
+     * module context
+     * @var context_module
+     */
     protected $context;
 
     // Fields set later if that data is needed.
+    /**
+     * questions in this offlinequiz
+     * @var array
+     */
     protected $questions = null;
+    /**
+     * access manager of this offlinequiz
+     * @var offlinequiz_access_manager
+     */
     protected $accessmanager = null;
+    /**
+     * is this the preview user
+     * @var bool
+     */
     protected $ispreviewuser = null;
 
     /**
@@ -89,11 +117,6 @@ class offlinequiz {
         $offlinequiz->groupid = $offlinegroupid;
         $course = $DB->get_record('course', ['id' => $offlinequiz->course], '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('offlinequiz', $offlinequiz->id, $course->id, false, MUST_EXIST);
-
-        // Update offlinequiz with override information.
-        if ($userid) {
-            $offlinequiz = offlinequiz_update_effective_access($offlinequiz, $userid);
-        }
 
         return new offlinequiz($offlinequiz, $cm, $course);
     }
@@ -141,66 +164,94 @@ class offlinequiz {
      * @return \mod_offlinequiz\structure describes the questions in the offlinequiz.
      */
     public function get_structure() {
-        return \mod_offlinequiz\structure::create_for_offlinequiz($this);
+        return structure::create_for_offlinequiz($this);
     }
 
     // Simple getters.
-    /** @return int the course id. */
+    /**
+     * get_courseid
+     */
     public function get_courseid() {
         return $this->course->id;
     }
 
-    /** @return object the row of the course table. */
+    /**
+     * get course
+     * @return stdClass
+     */
     public function get_course() {
         return $this->course;
     }
 
-    /** @return int the offlinequiz id. */
+    /**
+     * get offlinequiz id
+     */
     public function get_offlinequizid() {
         return $this->offlinequiz->id;
     }
 
-    /** @return int the offlinequiz group id. */
+    /**
+     * get offlinequiz group id
+     */
     public function get_offlinegroupid() {
         return $this->offlinequiz->groupid;
     }
 
-    /** @return object the row of the offlinequiz table. */
+    /**
+     * get offlinequiz db object
+     * @return stdClass
+     */
     public function get_offlinequiz() {
         return $this->offlinequiz;
     }
 
-    /** @return string the name of this offlinequiz. */
+    /**
+     * get offlinequiz name
+     */
     public function get_offlinequiz_name() {
         return $this->offlinequiz->name;
     }
 
-    /** @return int the offlinequiz navigation method. */
+    /**
+     * get navigation method
+     */
     public function get_navigation_method() {
         return $this->offlinequiz->navmethod;
     }
 
-    /** @return int the number of attempts allowed at this offlinequiz (0 = infinite). */
+    /**
+     * get number of attempts allowed
+     * @return array|int|object|string
+     */
     public function get_num_attempts_allowed() {
         return $this->offlinequiz->attempts;
     }
 
-    /** @return int the course_module id. */
+    /**
+     * course module id
+     */
     public function get_cmid() {
         return $this->cm->id;
     }
 
-    /** @return object the course_module object. */
+    /**
+     * get course module
+     * @return stdClass
+     */
     public function get_cm() {
         return $this->cm;
     }
 
-    /** @return object the module context for this offlinequiz. */
+    /**
+     * get context
+     * @return context_module
+     */
     public function get_context() {
         return $this->context;
     }
 
     /**
+     * is this the preview user
      * @return bool wether the current user is someone who previews the offlinequiz,
      * rather than attempting it.
      */
@@ -212,7 +263,8 @@ class offlinequiz {
     }
 
     /**
-     * @return whether any questions have been added to this offlinequiz.
+     * whether any questions have been added to this offlinequiz.
+     * @return bool
      */
     public function has_questions() {
         if ($this->questions === null) {
@@ -222,6 +274,7 @@ class offlinequiz {
     }
 
     /**
+     * get the question id
      * @param int $id the question id.
      * @return object the question object with that id.
      */
@@ -230,7 +283,8 @@ class offlinequiz {
     }
 
     /**
-     * @param array $questionids question ids of the questions to load. null for all.
+     * questions to load. null for all.
+     * @param array $questionids
      */
     public function get_questions($questionids = null) {
         if (is_null($questionids)) {
@@ -248,6 +302,7 @@ class offlinequiz {
     }
 
     /**
+     * get the access manager
      * @param int $timenow the current time as a unix timestamp.
      * @return offlinequiz_access_manager and instance of the offlinequiz_access_manager class
      *      for this offlinequiz at this time.
@@ -276,6 +331,7 @@ class offlinequiz {
 
     // URLs related to this attempt.
     /**
+     * returns the view url of this plugin
      * @return string the URL of this offlinequiz's view page.
      */
     public function view_url() {
@@ -284,6 +340,7 @@ class offlinequiz {
     }
 
     /**
+     * returns the edit url of this plugin
      * @return string the URL of this offlinequiz's edit page.
      */
     public function edit_url() {
@@ -292,6 +349,7 @@ class offlinequiz {
     }
 
     /**
+     * attempt url
      * @param int $attemptid the id of an attempt.
      * @param int $page optional page number to go to in the attempt.
      * @return string the URL of that attempt.
@@ -306,6 +364,7 @@ class offlinequiz {
     }
 
     /**
+     * the url to start an attempt
      * @return string the URL of this offlinequiz's edit page. Needs to be POSTed to with a cmid parameter.
      */
     public function start_attempt_url($page = 0) {
@@ -317,6 +376,7 @@ class offlinequiz {
     }
 
     /**
+     * the url to review an attempt
      * @param int $attemptid the id of an attempt.
      * @return string the URL of the review of that attempt.
      */
@@ -325,6 +385,7 @@ class offlinequiz {
     }
 
     /**
+     * the url for the summary
      * @param int $attemptid the id of an attempt.
      * @return string the URL of the review of that attempt.
      */
@@ -335,6 +396,7 @@ class offlinequiz {
     // Bits of content.
 
     /**
+     * confirm to start an attempt
      * @param bool $unfinished whether there is currently an unfinished attempt active.
      * @return string if the offlinequiz policies merit it, return a warning string to
      *      be displayed in a javascript alert on the start attempt button.
@@ -387,6 +449,7 @@ class offlinequiz {
     }
 
     /**
+     * gets the navigation to this offlinequiz
      * @param string $title the name of this particular offlinequiz page.
      * @return array the data that needs to be sent to print_header_simple as the $navigation
      * parameter.

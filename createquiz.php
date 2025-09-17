@@ -193,7 +193,7 @@ if ($mode == 'preview') {
         $buttonurl = new moodle_url('/mod/offlinequiz/createquiz.php', $buttonoptions);
 
         echo '<div class="controlbuttons linkbox">';
-        if ($offlinequiz->shufflequestions and $offlinequiz->shuffleanswers) {
+        if ($offlinequiz->shufflequestions && $offlinequiz->shuffleanswers) {
             echo $OUTPUT->single_button($buttonurl, get_string('shufflequestionsanswers', 'offlinequiz').' / ' .
                     get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else if ($offlinequiz->shufflequestions) {
@@ -381,21 +381,20 @@ if ($mode == 'preview') {
             echo $OUTPUT->single_button($buttonurl, get_string('createpdfforms', 'offlinequiz'), 'get');
             echo '</div>';
         } else {
-            ?>
-            <div class="singlebutton">
-               <form action="<?php echo "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=" . $offlinequiz->id .
-                      "&mode=createpdfs" ?>" method="POST">
+            echo
+            "<div class=\"singlebutton\">
+               <form action=\"$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=\"$offlinequiz->id&mode=createpdfs\" method=\"POST\">
                     <div>
-                        <input type="hidden" name="forcepdfnew" value="1" />
-                        <button type="submit"
-                                onClick='return confirm("<?php echo get_string('reallydeletepdfs', 'offlinequiz') ?>")'
-                                class="btn btn-secondary">
-                            <?php echo get_string('deletepdfs', 'offlinequiz') ?>
+                        <input type=\"hidden\" name=\"forcepdfnew\" value=\"1\" />
+                        <button type=\"submit\"
+                                onClick='return confirm(\"get_string('reallydeletepdfs', 'offlinequiz')\")'
+                                class=\"btn btn-secondary\"
+                            get_string('deletepdfs', 'offlinequiz')
                         </button>
                    </div>
               </form>
-            </div>
-            <?php
+            </div>";
+
         }
     }
     echo $OUTPUT->box_end();

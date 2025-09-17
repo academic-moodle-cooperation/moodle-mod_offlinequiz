@@ -46,7 +46,6 @@
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
-// require_once($CFG->dirroot . '/mod/offlinequiz/addrandomform.php');
 
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
@@ -113,7 +112,8 @@ if ($newquestionid = optional_param('lastchanged', false, PARAM_INT)) {
             $newquestioncountanswers = $DB->count_records('question_answers', ['question' => $newquestionid]);
             $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
             if (!$docscreated || $oldquestioncountanswers == $newquestioncountanswers) {
-                offlinequiz_update_question_instance($offlinequiz, $contexts->lowest()->id, $oldquestionid, $maxmark, $newquestionid);
+                offlinequiz_update_question_instance($offlinequiz, $contexts->lowest()->id,
+                    $oldquestionid, $maxmark, $newquestionid);
             } else {
                 $updatereference = new stdClass();
                 $updatereference->id = $questionupdate->id;
@@ -135,7 +135,8 @@ $structure = $offlinequizobj->get_structure();
 if ($warning = optional_param('warning', '', PARAM_TEXT)) {
     $structure->add_warning(urldecode($warning));
 }
-$changedversionsexist = $DB->count_records_select('offlinequiz_group_questions', 'documentquestionid IS NOT NULL AND offlinequizid = $1', [$offlinequiz->id]);
+$changedversionsexist = $DB->count_records_select('offlinequiz_group_questions',
+     'documentquestionid IS NOT NULL AND offlinequizid = $1', [$offlinequiz->id]);
 $hasresults = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
 if ($changedversionsexist && $hasresults) {
     $recordupdateanddocscreated =
@@ -249,21 +250,6 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     redirect($afteractionurl);
 }
 
-/*if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
-    // Add random questions to the offlinequiz.
-    $structure->check_can_be_edited();
-    $recurse = optional_param('recurse', 0, PARAM_BOOL);
-    $preventsamequestion = optional_param('preventsamequestion', 0, PARAM_BOOL);
-    $addonpage = optional_param('addonpage', 0, PARAM_INT);
-    $categoryid = required_param('categoryid', PARAM_INT);
-    $randomcount = required_param('randomcount', PARAM_INT);
-
-    offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount, $recurse, $preventsamequestion);
-    offlinequiz_delete_template_usages($offlinequiz);
-    offlinequiz_update_sumgrades($offlinequiz);
-    redirect($afteractionurl);
-}*/
-
 if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     // Add random questions to the quiz.
     $structure->check_can_be_edited();
@@ -272,10 +258,7 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     $categoryid = required_param('categoryid', PARAM_INT);
     $randomcount = required_param('randomcount', PARAM_INT);
     offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount);
-    // quiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $recurse);
 
-    // quiz_delete_previews($quiz);
-    // $gradecalculator->recompute_quiz_sumgrades();
     redirect($afteractionurl);
 }
 

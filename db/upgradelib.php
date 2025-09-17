@@ -1173,12 +1173,14 @@ function offlinequiz_get_number_of_pages($questions, $columns) {
  */
 function offlinequiz_fix_question_versions() {
     global $DB;
-    // first set all
+    // First set all.
     $sql = "SELECT DISTINCT gq1.id,gq1.offlinegroupid,  gq2.questionid
                        FROM {offlinequiz_group_questions} gq1
-                       JOIN {question_versions} qv1 on qv1.questionid = gq1.questionid
-                       JOIN {question_versions} qv2 on qv2.questionbankentryid = qv1.questionbankentryid and qv1.version < qv2.version
-                       JOIN {offlinequiz_group_questions} gq2 on gq2.questionid = qv2.questionid and gq2.offlinequizid = gq1.offlinequizid";
+                       JOIN {question_versions} qv1 ON qv1.questionid = gq1.questionid
+                       JOIN {question_versions} qv2 ON qv2.questionbankentryid = qv1.questionbankentryid
+                                                    AND qv1.version < qv2.version
+                       JOIN {offlinequiz_group_questions} gq2 ON gq2.questionid = qv2.questionid
+                                                             AND gq2.offlinequizid = gq1.offlinequizid";
     $records = $DB->get_records_sql($sql);
     foreach ($records as $record) {
         $DB->set_field('offlinequiz_group_questions', 'questionid', $record->questionid, ['id' => $record->id]);
@@ -1194,7 +1196,8 @@ function offlinequiz_fix_question_versions() {
         $DB->set_field('question_references', 'version', $record->version, ['id' => $record->id]);
     }
 
-    $sql = "SELECT ogq.id groupquestionid, og.templateusageid templateusageid, qa.id questionattemtid, qa.questionid oldquestionid, ogq.questionid newquestionid
+    $sql = "SELECT ogq.id groupquestionid, og.templateusageid templateusageid,
+                   qa.id questionattemtid, qa.questionid oldquestionid, ogq.questionid newquestionid
               FROM {offlinequiz_groups} og
               JOIN {question_usages} qu on qu.id = og.templateusageid
               JOIN {offlinequiz_group_questions} ogq on og.id = ogq.offlinegroupid
@@ -1238,7 +1241,8 @@ function offlinequiz_fix_question_versions() {
  */
 function offlinequiz_fix_question_references() {
     global $DB;
-    $sql = "SELECT ogq.id itemid, c.id usingcontextid, 'mod_offlinequiz' component, 'slot' questionarea,  qv.questionbankentryid questionbankentryid, qv.version \"version\"
+    $sql = "SELECT ogq.id itemid, c.id usingcontextid, 'mod_offlinequiz' component,
+                  'slot' questionarea,  qv.questionbankentryid questionbankentryid, qv.version \"version\"
               FROM {offlinequiz_group_questions} ogq
               JOIN {modules} m ON m.name ='offlinequiz'
               JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = ogq.offlinequizid
@@ -1246,7 +1250,8 @@ function offlinequiz_fix_question_references() {
               JOIN {question_versions} qv ON qv.questionid = ogq.questionid
          LEFT JOIN {question_references} mqr on component = 'mod_offlinequiz' AND questionarea = 'slot' AND itemid = ogq.id
              WHERE mqr.id is null";
-    $sql2 = "INSERT INTO {question_references} (itemid, usingcontextid, component, questionarea, questionbankentryid, version) ($sql LIMIT 10000)";
+    $sql2 = "INSERT INTO {question_references} (itemid, usingcontextid, component,
+                                                        questionarea, questionbankentryid, version) ($sql LIMIT 10000)";
     $thiscount = $DB->count_records('question_references');
     $lastcount = -1;
     try {

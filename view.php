@@ -407,8 +407,9 @@ $attendanceoverviewcontext = [
     'noattwithresults' => count($status['noattwithresults']),
     'noattwithoutresults' => count($status['noattwithoutresults']),
 ];
-$attendanceoverview['expandedcontent'] = $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_attendancesummary', $attendanceoverviewcontext);
-if($status['attendanceresultdocsbroken']) {
+$attendanceoverview['expandedcontent'] =
+    $OUTPUT->render_from_template('mod_offlinequiz/teacher_view_attendancesummary', $attendanceoverviewcontext);
+if ($status['attendanceresultdocsbroken']) {
     $attendanceoverview['status'] = STATUS_NEXT;
 } else if (!$uploadattendance['status'] == STATUS_DONE) {
     $attendanceoverview['status'] = STATUS_DONE;
@@ -445,7 +446,7 @@ $PAGE->set_pagelayout('report');
 if (has_any_capability(['mod/offlinequiz:viewreports', 'mod/offlinequiz:manage'], $context)) {
     echo $OUTPUT->header();
     // Print the page header.
-    if ($edit != -1 and $PAGE->user_allowed_editing()) {
+    if ($edit != -1 && $PAGE->user_allowed_editing()) {
         $USER->editing = $edit;
     }
     echo $OUTPUT->render_from_template('mod_offlinequiz/teacher_view', $templatedata);

@@ -28,8 +28,6 @@
 namespace mod_offlinequiz\plugininfo;
 
 use core\plugininfo\base;
-
-defined('MOODLE_INTERNAL') || die();
 /**
  * Summary of offlinequiz
  */

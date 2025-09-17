@@ -26,8 +26,6 @@
  *
  **/
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Step for backuping offlinequiz.
  */
@@ -101,7 +99,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         // This module is using questions, so produce the related question states and sessions
         // attaching them to the $result element based in 'uniqueid' matching.
 
-        // TODO once the Moodle bug is fixed.
+        // TO DO once the Moodle bug is fixed.
         $this->add_question_usages($result, 'usageid', 'result_');
         $this->add_question_usages($group, 'templateusageid', 'group_');
 
@@ -185,7 +183,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
 
         // Define file annotations.
         $offlinequiz->annotate_files('mod_offlinequiz', 'intro', null);
-        if($userinfo) {
+        if ($userinfo) {
             $offlinequiz->annotate_files('mod_offlinequiz', 'imagefiles', null); // This file area has no itemid.
             $offlinequiz->annotate_files('mod_offlinequiz', 'queuedata', null);
             $offlinequiz->annotate_files('mod_offlinequiz', 'queue', null);

@@ -37,7 +37,10 @@ require_once($CFG->libdir.'/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_add_random_form extends moodleform {
-
+    /**
+     * form definition
+     * @return void
+     */
     protected function definition() {
         $mform =& $this->_form;
         $mform->setDisableShortforms();
@@ -75,7 +78,12 @@ class offlinequiz_add_random_form extends moodleform {
         $mform->addElement('hidden', 'groupnumber', $this->_customdata['groupnumber']);
         $mform->setType('groupnumber', PARAM_INT);
     }
-
+    /**
+     * validation
+     * @param mixed $fromform
+     * @param mixed $files
+     * @return array
+     */
     public function validation($fromform, $files) {
         $errors = parent::validation($fromform, $files);
 

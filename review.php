@@ -47,7 +47,8 @@ if (!$group = $DB->get_record("offlinequiz_groups", ['id' => $result->offlinegro
     throw new \moodle_exception("The offlinequiz group belonging to result $result is miss1ing");
 }
 if (!$course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
-    throw new \moodle_exception("The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
+    throw new \moodle_exception(
+        "The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
     throw new \moodle_exception("The course module for the offlinequiz with id $offlinequiz->id is missing");
@@ -111,9 +112,7 @@ $offlinequizconfig = get_config('offlinequiz');
 
 echo $OUTPUT->heading(get_string('reviewofresult', 'offlinequiz'));
 
-// --------------------------------------
 // Print info table with user details.
-// --------------------------------------
 $timelimit = 0;
 
 $table = new html_table();
@@ -153,9 +152,7 @@ if ($options->marks != question_display_options::HIDDEN) {
 
 echo html_writer::table($table);
 
-// --------------------------------------
 // Print buttons to the scanned pages.
-// --------------------------------------
 if ($isteacher || ($options->sheetfeedback == question_display_options::VISIBLE) ||
         ($options->gradedsheetfeedback == question_display_options::VISIBLE)) {
     if ($result->userid == $USER->id) {
@@ -190,7 +187,8 @@ if ($isteacher || ($options->sheetfeedback == question_display_options::VISIBLE)
                 $fs = get_file_storage();
                 $imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/',
                         $scannedpage->warningfilename);
-                $imageurl = moodle_url::make_pluginfile_url($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $imagefile->get_filename());
+                $imageurl = moodle_url::make_pluginfile_url($context->id, 'mod_offlinequiz',
+                    'imagefiles', 0, '/', $imagefile->get_filename());
                 echo '<br/>&nbsp;<br/><img name="formimage" src="' . $imageurl . '" border="1" width="760" />';
             }
         }
