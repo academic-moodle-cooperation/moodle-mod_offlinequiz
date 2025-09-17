@@ -32,6 +32,7 @@ use core\output\datafilter;
 use core_question\local\bank\column_base;
 use core_question\local\bank\condition;
 use core_question\local\bank\column_manager_base;
+use core_question\local\bank\filter_condition_manager;
 use core_question\local\bank\question_version_status;
 use mod_offlinequiz\question\bank\filter\custom_category_condition;
 
@@ -79,7 +80,7 @@ class custom_view extends \core_question\local\bank\view {
         global $DB;
         // Default filter condition.
         if (!isset($params['filter'])) {
-            $params['filter']  = [];
+            /*$params['filter']  = [];
             [$categoryid, $contextid] = custom_category_condition::validate_category_param($params['cat']);
             if (!is_null($categoryid)) {
                 $category = custom_category_condition::get_category_record($categoryid, $contextid);
@@ -88,7 +89,11 @@ class custom_view extends \core_question\local\bank\view {
                     'values' => [$category->id],
                     'filteroptions' => ['includesubcategories' => false],
                 ];
-            }
+            }*/
+            $params['filter']  = filter_condition_manager::get_default_filter($params['cat']);
+            // The quiz question bank modal doesn't include a hidden filter option.
+            // Therefore, the default filter hidden condition is unnecessary.
+            unset($params['filter']['hidden']);
         }
         $this->init_columns($this->wanted_columns(), $this->heading_column());
         $this->pagesize = self::DEFAULT_PAGE_SIZE;
