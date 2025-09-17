@@ -43,6 +43,7 @@ export default class AddQuestionModal extends Modal {
         // This is because the URL cmid param will change during filter operations as we will be in another bank context.
         this.quizCmId = modalConfig.quizCmId;
         this.bankCmId = modalConfig.bankCmId;
+        this.groupNumber = modalConfig.groupNumber;
 
         // Store the original title of the modal, so we can revert back to it once we have switched to another bank.
         this.originalTitle = modalConfig.title;

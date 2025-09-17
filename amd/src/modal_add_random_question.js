@@ -68,6 +68,7 @@ export default class ModalAddRandomQuestion extends Modal {
      * @param  {string} returnUrl URL to return to after form submission.
      * @param  {Number} quizCmId Current quiz course module id.
      * @param  {boolean} showNewCategory Display the New category tab when selecting random questions.
+     * @param  {Number} groupNumber groupId
      */
     static init(
         contextId,
@@ -75,7 +76,8 @@ export default class ModalAddRandomQuestion extends Modal {
         category,
         returnUrl,
         quizCmId,
-        showNewCategory = true
+        showNewCategory = true,
+        groupNumber
     ) {
         const selector = '.menu [data-action="addarandomquestion"]';
         document.addEventListener('click', (e) => {
@@ -92,6 +94,7 @@ export default class ModalAddRandomQuestion extends Modal {
                 returnUrl,
                 quizCmId,
                 showNewCategory,
+                groupNumber,
                 title: trigger.dataset.header,
                 addOnPage: trigger.dataset.addonpage,
 
@@ -113,6 +116,7 @@ export default class ModalAddRandomQuestion extends Modal {
         this.returnUrl = null;
         this.quizCmId = null;
         this.loadedForm = false;
+        this.groupNumber = null;
     }
 
     configure(modalConfig) {
@@ -240,6 +244,8 @@ export default class ModalAddRandomQuestion extends Modal {
         const returnurl = this.getReturnUrl();
         const quizcmid = this.quizCmId;
         const bankcmid = this.bankCmId;
+        const groupnumber = this.groupNumber;
+
 
         return Fragment.loadFragment(
             'mod_offlinequiz',
@@ -250,6 +256,7 @@ export default class ModalAddRandomQuestion extends Modal {
                 returnurl,
                 quizcmid,
                 bankcmid,
+                groupnumber,
             }
         )
             .then((html, js) => {
@@ -325,6 +332,7 @@ export default class ModalAddRandomQuestion extends Modal {
                                         'addOnPage': ModalOfflinequizQuestionBank.getAddOnPageId(),
                                         'templateContext': {hidden: ModalOfflinequizQuestionBank.showNewCategory},
                                         'showNewCategory': ModalOfflinequizQuestionBank.showNewCategory,
+                                        'groupNumber': ModalOfflinequizQuestionBank.groupNumber,
                                     })
                                         .then(ModalOfflinequizQuestionBank.destroy())
                                         .catch(Notification.exception);
@@ -347,6 +355,7 @@ export default class ModalAddRandomQuestion extends Modal {
                         'addOnPage': this.getAddOnPageId(),
                         'templateContext': {hidden: this.showNewCategory},
                         'showNewCategory': this.showNewCategory,
+                        'groupNumber': this.groupNumber,
                     }).then(this.destroy()).catch(Notification.exception);
                 });
 
@@ -364,6 +373,7 @@ export default class ModalAddRandomQuestion extends Modal {
                             'addOnPage': this.getAddOnPageId(),
                             'templateContext': {hidden: this.showNewCategory},
                             'showNewCategory': this.showNewCategory,
+                            'groupNumber': this.groupNumber,
                         }).then(this.destroy()).catch(Notification.exception);
                     }
                 });
