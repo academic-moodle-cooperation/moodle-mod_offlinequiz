@@ -332,6 +332,7 @@ export default class ModalAddRandomQuestion extends Modal {
                                         'addOnPage': ModalOfflinequizQuestionBank.getAddOnPageId(),
                                         'templateContext': {hidden: ModalOfflinequizQuestionBank.showNewCategory},
                                         'showNewCategory': ModalOfflinequizQuestionBank.showNewCategory,
+                                        'groupNumber': ModalOfflinequizQuestionBank.groupNumber,
                                     })
                                         .then(ModalOfflinequizQuestionBank.destroy())
                                         .catch(Notification.exception);
@@ -354,6 +355,7 @@ export default class ModalAddRandomQuestion extends Modal {
                         'addOnPage': this.getAddOnPageId(),
                         'templateContext': {hidden: this.showNewCategory},
                         'showNewCategory': this.showNewCategory,
+                        'groupNumber': this.groupNumber,
                     }).then(this.destroy()).catch(Notification.exception);
                 });
 
@@ -371,6 +373,7 @@ export default class ModalAddRandomQuestion extends Modal {
                             'addOnPage': this.getAddOnPageId(),
                             'templateContext': {hidden: this.showNewCategory},
                             'showNewCategory': this.showNewCategory,
+                            'groupNumber': this.groupNumber,
                         }).then(this.destroy()).catch(Notification.exception);
                     }
                 });
