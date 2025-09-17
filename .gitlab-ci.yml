@@ -2,65 +2,17 @@ default:
   tags:
     - moodle
 
-cache:
-  paths:
-    - .composer/cache
+stages:
+  - preflight
+  - test
+  - deploy
 
-variables:
-  CI_BUILD_DIR: "$CI_PROJECT_DIR"
-  COMPOSER_HOME: "$CI_PROJECT_DIR/.composer/cache"
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - when: always
 
-  POSTGRES_USER: "postgres"
-  POSTGRES_HOST_AUTH_METHOD: "trust"
-
-  MYSQL_ROOT_HOST: "%"
-  MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-  MYSQL_CHARACTER_SET_SERVER: "utf8mb4"
-  MYSQL_COLLATION_SERVER: "utf8mb4_unicode_ci"
-
-.job_template: &job_configuration
-  image: quay.io/amc/moodle-plugin-ci:${PHP_VERSION}-node.22
-  before_script:
-    - cd ../..
-    - moodle-db-isready
-    - moodle-plugin-ci install --moodle="moodle-upstream-core" --db-host=$DB_HOST --db-port=$DB_PORT
-    - eval $(failed setup-command)
-  script:
-    - moodle-plugin-ci phplint || failed
-    - moodle-plugin-ci phpcpd || true
-    - moodle-plugin-ci phpmd || failed
-    - moodle-plugin-ci phpcs || failed
-    - moodle-plugin-ci validate || failed
-    - moodle-plugin-ci savepoints || failed
-    - moodle-plugin-ci mustache || failed
-    - moodle-plugin-ci grunt || failed
-    - moodle-plugin-ci phpdoc || failed
-    - moodle-plugin-ci phpunit || failed
-    - moodle-plugin-ci behat --profile chrome
-    - failed result
-  after_script:
-    - failed report
-  parallel:
-    matrix:
-      - MOODLE_BRANCH: [ "MOODLE_500_STABLE" ]
-        PHP_VERSION: [ "8.2", "8.3" ]
-
-test:postgres:
-  <<: *job_configuration
-  services:
-    - postgres:14
-    - docker:dind
-  variables:
-    DB: pgsql
-    DB_HOST: postgres
-    DB_PORT: 5432
-
-test:mariadb:
-  <<: *job_configuration
-  services:
-    - mariadb:10.11
-    - docker:dind
-  variables:
-    DB: "mariadb"
-    DB_HOST: "mariadb"
-    DB_PORT: 3306
+include:
+  - component: $CI_SERVER_FQDN/amc/moodle/moodle-ci/moodle-plugin-ci@5.0
+  - component: $CI_SERVER_FQDN/amc/moodle/moodle-ci/moodle-devil-app@5.0
