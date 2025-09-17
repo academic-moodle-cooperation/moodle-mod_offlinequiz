@@ -64,10 +64,11 @@ class backup_offlinequiz_activity_task extends backup_activity_task {
         // needed anymore.
         $this->add_step(new backup_delete_temp_questions('clean_temp_questions'));
     }
-
     /**
      * Code the transformations to perform in the activity in
      * order to get transportable (encoded) links
+     * @param mixed $content
+     * @return array|string|null
      */
     public static function encode_content_links($content) {
         global $CFG;

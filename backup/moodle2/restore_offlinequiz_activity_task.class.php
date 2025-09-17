@@ -43,13 +43,15 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
 
     /**
      * Define (add) particular settings this activity can have
+     * @return void
      */
     protected function define_my_settings() {
         // No particular settings for this activity.
     }
 
     /**
-     * Define (add) particular steps this activity can have
+     * define your steps here
+     * @return void
      */
     protected function define_my_steps() {
         // Offlinequiz only has one structure step.
@@ -59,6 +61,7 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
     /**
      * Define the contents in the activity that must be
      * processed by the link decoder
+     * @return restore_decode_content[]
      */
     public static function define_decode_contents() {
         $contents = [];
@@ -72,6 +75,7 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
     /**
      * Define the decoding rules for links belonging
      * to the activity to be executed by the link decoder
+     * @return restore_decode_rule[]
      */
     public static function define_decode_rules() {
         $rules = [];
@@ -89,9 +93,10 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
 
     /**
      * Define the restore log rules that will be applied
-     * by the {@link restore_logs_processor} when restoring
+     * by the restore_logs_processor when restoring
      * offlinequiz logs. It must return one array
-     * of {@link restore_log_rule} objects
+     * of restore_log_rules objects
+     * @return restore_log_rule[]
      */
     public static function define_restore_log_rules() {
         $rules = [];
@@ -170,14 +175,8 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
     }
 
     /**
-     * Define the restore log rules that will be applied
-     * by the {@link restore_logs_processor} when restoring
-     * course logs. It must return one array
-     * of {@link restore_log_rule} objects
-     *
-     * Note this rules are applied when restoring course logs
-     * by the restore final task, but are defined here at
-     * activity level. All them are rules not linked to any module instance (cmid = 0)
+     * Define logstore rule
+     * @return restore_log_rule[]
      */
     public static function define_restore_log_rules_for_course() {
         $rules = [];

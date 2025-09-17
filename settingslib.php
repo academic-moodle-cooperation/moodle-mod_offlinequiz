@@ -35,8 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_offlinequiz_admin_review_setting extends admin_setting {
     /**
-     * @var integer should match the constants defined in {@link mod_offlinequiz_display_options}.
-     * again, copied for performance reasons.
+     * @var integer should match the constants defined in
      */
     const DURING = 0x10000;
     /**
@@ -137,8 +136,9 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
     }
 
     /**
-     * (non-PHPdoc)
-     * @see admin_setting::write_setting()
+     * write setting
+     * @param mixed $data
+     * @return string
      */
     public function write_setting($data) {
         if (is_array($data) || empty($data)) {
@@ -149,8 +149,10 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
     }
 
     /**
-     * (non-PHPdoc)
-     * @see admin_setting::output_html()
+     * output html
+     * @param mixed $data
+     * @param mixed $query
+     * @return string
      */
     public function output_html($data, $query = '') {
         if (is_array($data) || empty($data)) {

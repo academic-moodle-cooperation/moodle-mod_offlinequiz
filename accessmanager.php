@@ -178,10 +178,11 @@ class offlinequiz_access_manager {
     /**
      * Build the SQL for loading all the access settings in one go.
      * @param int $offlinequizid the offlinequiz id.
-     * @param string $basefields initial part of the select list.
+     * @param string $basefields initial part of the select list.'.
+     * @param mixed $basefields
      * @return array with two elements, the sql and the placeholder values.
      *      If $basefields is '' then you must allow for the possibility that
-     *      there is no data to load, in which case this method returns $sql = ''.
+     *      there is no data to load, in which case this method returns $sql = '
      */
     protected static function get_load_sql($offlinequizid, $rules, $basefields) {
         $allfields = $basefields;
