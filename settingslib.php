@@ -60,7 +60,7 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
     protected $duringstate;
 
     /**
-     * This should match {@link mod_offlinequiz_mod_form::$reviewfields} but copied
+     * This should match mod_offlinequiz_mod_form::$reviewfields but copied
      * here because generating the admin tree needs to be fast.
      * @return array
      */

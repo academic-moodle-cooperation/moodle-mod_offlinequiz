@@ -36,12 +36,12 @@ class offlinequiz_groupnumberscanner {
 
     /**
      * boxscanner
-     * @var \stdClass
+     * @var pixelcountboxscanner
      */
     private $boxscanner;
     /**
      * constructor
-     * @param $boxscanner
+     * @param weighted_diagonal_box_scanner $boxscanner
      */
     public function __construct($boxscanner) {
         $this->boxscanner = $boxscanner;

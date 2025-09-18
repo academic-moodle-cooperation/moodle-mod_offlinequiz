@@ -107,6 +107,7 @@ class offlinequiz {
      * Static function to create a new offlinequiz object for a specific user.
      *
      * @param int $offlinequizid the the offlinequiz id.
+     * @param int $offlinegroupid
      * @param int $userid the the userid.
      * @return offlinequiz the new offlinequiz object
      */
@@ -139,7 +140,7 @@ class offlinequiz {
 
     /**
      * Fully load some or all of the questions for this offlinequiz. You must call
-     * {@link preload_questions()} first.
+     * preload_questions() first.
      *
      * @param array $questionids question ids of the questions to load. null for all.
      */
@@ -160,7 +161,7 @@ class offlinequiz {
     }
 
     /**
-     * Get an instance of the {@link \mod_offlinequiz\structure} class for this offlinequiz.
+     * Get an instance of the \mod_offlinequiz\structure class for this offlinequiz.
      * @return \mod_offlinequiz\structure describes the questions in the offlinequiz.
      */
     public function get_structure() {
@@ -317,6 +318,10 @@ class offlinequiz {
 
     /**
      * Wrapper round the has_capability funciton that automatically passes in the offlinequiz context.
+     * @param mixed $capability
+     * @param mixed $userid
+     * @param mixed $doanything
+     * @return bool
      */
     public function has_capability($capability, $userid = null, $doanything = true) {
         return has_capability($capability, $this->context, $userid, $doanything);
@@ -324,6 +329,9 @@ class offlinequiz {
 
     /**
      * Wrapper round the require_capability funciton that automatically passes in the offlinequiz context.
+     * @param mixed $capability
+     * @param mixed $userid
+     * @param mixed $doanything
      */
     public function require_capability($capability, $userid = null, $doanything = true) {
         return require_capability($capability, $this->context, $userid, $doanything);
@@ -365,6 +373,7 @@ class offlinequiz {
 
     /**
      * the url to start an attempt
+     * @param int $page
      * @return string the URL of this offlinequiz's edit page. Needs to be POSTed to with a cmid parameter.
      */
     public function start_attempt_url($page = 0) {
@@ -460,10 +469,9 @@ class offlinequiz {
         return '';
     }
 
-    // Private methods.
     /**
      * Check that the definition of a particular question is loaded, and if not throw an exception.
-     * @param $id a questionid.
+     * @param int $id a questionid.
      */
     protected function ensure_question_loaded($id) {
         if (isset($this->questions[$id]->_partiallyloaded)) {

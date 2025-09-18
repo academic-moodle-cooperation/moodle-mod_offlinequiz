@@ -90,6 +90,7 @@ class add_random_questions extends external_api {
      * @param string $filtercondition Filter condition
      * @param string $newcategory add new category
      * @param string $parentcategory parent category of new category
+     * @param int $groupnumber
      * @return array result
      */
     public static function execute(

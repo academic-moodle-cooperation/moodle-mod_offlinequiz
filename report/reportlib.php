@@ -40,6 +40,7 @@ define('OFFLINEQUIZ_REPORT_ATTEMPTS_ALL_STUDENTS', 3);
 
 /**
  * Returns an array of reports to which the current user has access to.
+ * @param context_module $context
  * @return array reports are ordered as they should be for display in tabs.
  */
 function offlinequiz_report_list($context) {
@@ -156,7 +157,7 @@ function offlinequiz_report_get_significant_questions($offlinequiz) {
 /**
  * Format a number as a percentage out of $offlinequiz->sumgrades
  *
- * @param number $rawgrade the mark to format.
+ * @param number $rawmark the mark to format.
  * @param object $offlinequiz the offlinequiz settings
  * @param bool $round whether to round the results ot $offlinequiz->decimalpoints.
  */
@@ -178,7 +179,7 @@ function offlinequiz_report_scale_summarks_as_percentage($rawmark, $offlinequiz,
 /**
  * Format a number as a percentage out of $offlinequiz->sumgrades
  *
- * @param number $rawgrade the mark to format.
+ * @param number $rawmark the mark to format.
  * @param object $offlinequiz the offlinequiz settings
  * @param bool $round whether to round the results ot $offlinequiz->decimalpoints.
  */

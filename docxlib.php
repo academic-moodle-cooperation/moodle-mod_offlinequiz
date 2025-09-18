@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/lib/phpwordinit.php');
  * If the first block is a string it is printed as a listitem using the numbering and depth provided.
  * Otherwise, the empty string is used as the list item string.
  *
- * @param $section A PHP Word section
+ * @param object $section A PHP Word section
  * @param array $blocks The array of blocks as created by the conversion functions.
  * @param PHPWord_Numbering_AbstractNumbering $numbering The numbering used for the list item
  * @param int $depth The depth in the enumeration (0 for questions, 1 for answers).
@@ -461,7 +461,7 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
  * @param object $group the offline group object
  * @param int $courseid the ID of the Moodle course
  * @param object $context the context of the offline quiz.
- * @param boolean correction if true the correction form is generated.
+ * @param boolean $correction if true the correction form is generated.
  * @return stored_file instance, the generated DOCX file.
  */
 function offlinequiz_create_docx_question(question_usage_by_activity $templateusage, $offlinequiz, $group,

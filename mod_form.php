@@ -291,8 +291,9 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
     }
 
     /**
-     * (non-PHPdoc)
-     * @see moodleform_mod::data_preprocessing()
+     * data preprocessing before the form
+     * @param mixed $toform
+     * @return void
      */
     public function data_preprocessing(&$toform) {
         if (!empty($this->_feedbacks)) {
@@ -355,8 +356,10 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
     }
 
     /**
-     * (non-PHPdoc)
-     * @see moodleform_mod::validation()
+     * form validation
+     * @param mixed $data
+     * @param mixed $files
+     * @return array
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);

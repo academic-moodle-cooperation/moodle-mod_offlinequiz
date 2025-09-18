@@ -386,7 +386,7 @@ class question_answer_statistics_table extends flexible_table {
     /**
      * This method encapsulates the test for whether a question should be considered dubious.
      *
-     * @param object question the question object with a property _stats which
+     * @param object $question the question object with a property _stats which
      * includes all the stats for the question.
      * @return bool is this question possibly not pulling it's weight?
      */
@@ -428,7 +428,7 @@ class question_answer_statistics_table extends flexible_table {
     }
     /**
      * The frequency with which this response was given.
-     * @param object $response containst the data to display.
+     * @param object $question containst the data to display.
      * @return string contents of this table cell.
      */
     protected function col_correct($question) {
@@ -442,7 +442,7 @@ class question_answer_statistics_table extends flexible_table {
 
     /**
      * The frequency with which this response was given.
-     * @param object $response containst the data to display.
+     * @param object $question containst the data to display.
      * @return string contents of this table cell.
      */
     protected function col_partially($question) {
@@ -456,7 +456,7 @@ class question_answer_statistics_table extends flexible_table {
 
     /**
      * The frequency with which this response was given.
-     * @param object $response containst the data to display.
+     * @param object $question containst the data to display.
      * @return string contents of this table cell.
      */
     protected function col_wrong($question) {

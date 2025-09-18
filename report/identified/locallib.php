@@ -170,6 +170,9 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
  *
  * @param stdClass $offlinequiz
  * @param int $courseid
+ * @param int $groupnumber
+ * @param bool $nogroupmark
+ * @param bool onlyifaccess
  * @param stdClass $list
  * @param context_module $context
  * @return boolean

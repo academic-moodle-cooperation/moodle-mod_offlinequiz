@@ -76,7 +76,8 @@ class custom_view extends \core_question\local\bank\view {
      * @param \moodle_url $pageurl
      * @param \stdClass $course course settings
      * @param \stdClass $cm activity settings.
-     * @param \stdClass $offlinequiz offlinequiz settings.
+     * @param array $params
+     * @param array $extraparams
      */
     public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams) {
         global $DB;
@@ -190,7 +191,7 @@ class custom_view extends \core_question\local\bank\view {
     /**
      * URL of add to offlinequiz.
      *
-     * @param $questionid
+     * @param int $questionid
      * @return \moodle_url
      */
     public function add_to_offlinequiz_url($questionid) {
@@ -222,11 +223,7 @@ class custom_view extends \core_question\local\bank\view {
 
     /**
      * Display the controls at the bottom of the list of questions.
-     * @param int       $totalnumber Total number of questions that might be shown (if it was not for paging).
-     * @param bool      $recurse     Whether to include subcategories.
-     * @param \stdClass $category    The question_category row from the database.
      * @param \context  $catcontext  The context of the category being displayed.
-     * @param array     $addcontexts contexts where the user is allowed to add new questions.
      */
     protected function display_bottom_controls(\context $catcontext): void {
         $cmoptions = new \stdClass();

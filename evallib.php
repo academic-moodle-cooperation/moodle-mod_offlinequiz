@@ -327,7 +327,9 @@ function offlinequiz_check_scanned_page($offlinequiz, offlinequiz_page_scanner $
  * @param offlinequiz_page_scanner $scanner
  * @param stdClass $scannedpage
  * @param int $teacherid
+ * @param int $questionsperpage
  * @param context_course $coursecontext
+ * @param bool $submit
  */
 function offlinequiz_process_scanned_page($offlinequiz, offlinequiz_page_scanner $scanner, $scannedpage,
                                           $teacherid, $questionsperpage, $coursecontext, $submit = false) {
@@ -801,6 +803,7 @@ function offlinequiz_get_question_numbers($offlinequiz, array $groups) {
  * @param stdClass $scannedpage
  * @param int $teacherid
  * @param context_course $coursecontext
+ * @param bool $autorotate
  * @return array|object Errors
  * @throws dml_exception
  */

@@ -47,7 +47,7 @@ class question_table extends flexible_table {
 
     /**
      * Constructor.
-     * @param $qid the id of the particular question whose statistics are being
+     * @param int $qid the id of the particular question whose statistics are being
      * displayed.
      */
     public function __construct($qid) {
@@ -59,8 +59,8 @@ class question_table extends flexible_table {
      * call flexible_table::setup() method.
      *
      * @param \moodle_url $reporturl the URL to redisplay this report.
-     * @param object $question a question with a _stats field
-     * @param bool $hassubqs
+     * @param object $questiondata
+     * @param response_analyser $responsestats
      */
     public function question_setup($reporturl, $questiondata,
             response_analyser $responsestats) {

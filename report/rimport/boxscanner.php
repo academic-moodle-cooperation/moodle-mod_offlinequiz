@@ -51,7 +51,7 @@ class pixelcountboxscanner {
      * In the future we will provide more sophisticated ways to find out if a box is crossed out or not.
      * @param offlinequiz_result_page $page
      * @param offlinequiz_point $boxmiddlepoint the guessed middle of the box.
-     * @param integer $marginedboxsize the size of the box in pixels from left to right and from top to bottom
+     * @param integer $boxsize the size of the box in pixels from left to right and from top to bottom
      * @return number 0, if not crossed out, 1 if crossed out. -1 if uncertain
      */
     public function scan_box(offlinequiz_result_page $page, offlinequiz_point $boxmiddlepoint, $boxsize) {
@@ -121,7 +121,7 @@ class weighted_diagonal_box_scanner {
      * In the future we will provide more sophisticated ways to find out if a box is crossed out or not.
      * @param offlinequiz_result_page $page
      * @param offlinequiz_point $boxmiddlepoint the guessed middle of the box.
-     * @param integer $marginedboxsize the size of the box in pixels from left to right and from top to bottom
+     * @param integer $boxsize the size of the box in pixels from left to right and from top to bottom
      * @return number 0, if not crossed out, 1 if crossed out. -1 if uncertain
      */
     public function scan_box(offlinequiz_result_page $page, offlinequiz_point $boxmiddlepoint, $boxsize) {

@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
  * @param object $group the offline group object
  * @param int $courseid the ID of the Moodle course
  * @param object $context the context of the offline quiz.
- * @param boolean correction if true the correction form is generated.
+ * @param boolean $correction if true the correction form is generated.
  * @return stored_file|null instance, the generated PDF file.
  */
 function offlinequiz_create_latex_question(question_usage_by_activity $templateusage, $offlinequiz, $group,

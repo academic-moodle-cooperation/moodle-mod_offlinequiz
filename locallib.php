@@ -112,7 +112,7 @@ class offlinequiz_question_usage_by_activity extends question_usage_by_activity 
      * For internal use only.
      *
      * @param Iterator $records Raw records loaded from the database.
-     * @param int $questionattemptid The id of the question_attempt to extract.
+     * @param int $qubaid The id of the question_attempt to extract.
      * @return question_usage_by_activity The newly constructed usage.
      */
     public static function load_from_records($records, $qubaid) {
@@ -146,9 +146,14 @@ class offlinequiz_question_usage_by_activity extends question_usage_by_activity 
         return $quba;
     }
 }
+
 /**
  * Print the tertiary menu for offlinequiz using navigation_node structure.
  * Get sibbling nodes of current active node and render them as select object.
+ * @param mixed $offlinequiz
+ * @param mixed $currenttab
+ * @param mixed $cm
+ * @return void
  */
 function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
     global $CFG, $OUTPUT, $PAGE;
@@ -302,7 +307,7 @@ function offlinequiz_make_questions_usage_by_activity($component, $context) {
 }
 /**
  * get the pdf font of a certain oq
- * @param string
+ * @param stdClass $offlinequiz
  */
 function offlinequiz_get_pdffont($offlinequiz = null) {
     $offlinequizconfig = get_config('offlinequiz');
@@ -359,10 +364,9 @@ function get_course_objects($id, $q) {
 }
 
 /**
- * Load a {@link question_usage_by_activity} from the database, including
- * all its {@link question_attempt}s and all their steps.
+ * Load a question_usage_by_activity from the database, including
+ * all its question_attempt and all their steps.
  * @param int $qubaid the id of the usage to load.
- * @param offlinequiz_question_usage_by_activity the usage that was loaded.
  */
 function offlinequiz_load_questions_usage_by_activity($qubaid) {
     global $DB;
@@ -499,6 +503,7 @@ function offlinequiz_get_empty_groups($offlinequiz) {
 /**
  * Get the slot for a question with a particular id.
  * @param object $offlinequiz the offlinequiz settings.
+ * @param stdClass $group
  * @param int $questionid the of a question in the offlinequiz.
  * @return mixed the corresponding slot. Null if the question is not in the offlinequiz.
  */
@@ -709,6 +714,7 @@ function offlinequiz_save_page_corners($scannedpage, $corners) {
 /**
  * returns the maximum number of answers in the group questions of an offlinequiz
  * @param stdClass $offlinequiz
+ * @param array $groups
  * @return number
  */
 function offlinequiz_get_maxanswers($offlinequiz, $groups = []) {
@@ -756,6 +762,7 @@ function offlinequiz_get_maxanswers($offlinequiz, $groups = []) {
 /**
  * Repaginate the questions in a offlinequiz
  * @param int $offlinequizid the id of the offlinequiz to repaginate.
+ * @param int $offlinegroupid the id off the offlinequizgroup
  * @param int $slotsperpage number of items to put on each page. 0 means unlimited.
  */
 function offlinequiz_repaginate_questions($offlinequizid, $offlinegroupid, $slotsperpage) {
@@ -902,9 +909,10 @@ function offlinequiz_completed_results($offlinequizid, $courseid, $onlystudents 
 /**
  * Delete an offlinequiz result, including the questions_usage_by_activity corresponding to it.
  *
- * @param mixed $attempt an integer attempt id or an attempt object
+ * @param mixed $resultid an integer attempt id or an attempt object
  *      (row of the offlinequiz_results table).
- * @param object $offlinequiz the offlinequiz object.
+ * @param context_module $context
+ * @param stdClass $offlinequiz the offlinequiz object.
  */
 function offlinequiz_delete_result($resultid, $context) {
     global $DB;
@@ -939,8 +947,10 @@ function offlinequiz_delete_result($resultid, $context) {
  * This function does not update 'sumgrades' in the offlinequiz table.
  *
  * @param stdClass $offlinequiz  The offlinequiz to update / add the instances for.
+ * @param int $contextid
  * @param int $questionid  The id of the question
- * @param int grade    The maximal grade for the question
+ * @param int $grade    The maximal grade for the question
+ * @param int $newquestionid
  */
 function offlinequiz_update_question_instance($offlinequiz, $contextid, $questionid, $grade, $newquestionid = null) {
     global $DB;
@@ -1073,7 +1083,7 @@ function offlinequiz_update_all_attempt_sumgrades($offlinequiz) {
 }
 
 /**
- * A {@link qubaid_condition} for finding all the question usages belonging to
+ * A qubaid_condition for finding all the question usages belonging to
  * a particular offlinequiz. Used in editlib.php.
  *
  * @copyright  2010 The University of Vienna
@@ -1181,7 +1191,7 @@ function offlinequiz_question_action_icons($offlinequiz, $cmid, $question, $retu
 /**
  * Returns true if the student has access to results. Function doesn't check if there is a result.
  *
- * @param object offlinequiz  The offlinequiz object
+ * @param stdClass $offlinequiz  The offlinequiz object
  */
 function offlinequiz_results_open($offlinequiz) {
 
@@ -1311,6 +1321,7 @@ function offlinequiz_get_group_sumgrades($offlinequiz) {
  * added or removed, or a question weight is changed.
  *
  * @param object $offlinequiz a offlinequiz.
+ * @param int $offlinegroupid
  */
 function offlinequiz_update_sumgrades($offlinequiz, $offlinegroupid = null) {
     global $DB;
@@ -1348,6 +1359,7 @@ function offlinequiz_update_sumgrades($offlinequiz, $offlinegroupid = null) {
  *
  * @param float $rawgrade the unadjusted grade, fof example $attempt->sumgrades
  * @param object $offlinequiz the offlinequiz object. Only the fields grade, sumgrades and decimalpoints are used.
+ * @param stdClass $group
  * @param bool|string $format whether to format the results for display
  *      or 'question' to format a question grade (different number of decimal places.
  * @return float|string the rescaled grade, or null/the lang string 'notyetgraded'
@@ -1409,8 +1421,8 @@ function offlinequiz_get_group($offlinequiz, $groupnumber) {
 /**
  * Adds a new group with a given group number to a given offlinequiz.
  *
- * @param object $offlinequiz the data that came from the form.
- * @param int groupnumber The number of the group to add.
+ * @param int $offlinequizid the data that came from the form.
+ * @param int $groupnumber The number of the group to add.
  * @return mixed the id of the new instance on success,
  *          false or a string error message on failure.
  */
@@ -1475,9 +1487,7 @@ class mod_offlinequiz_display_options extends question_display_options {
 
     /**
      * Set up the various options from the offlinequiz settings, and a time constant.
-     * @param object $offlinequiz the offlinequiz settings.
-     * @param int $one of the {@link DURING}, {@link IMMEDIATELY_AFTER},
-     * {@link LATER_WHILE_OPEN} or {@link AFTER_CLOSE} constants.
+     * @param stdClass $offlinequiz the offlinequiz settings.
      * @return mod_offlinequiz_display_options set up appropriately.
      */
     public static function make_from_offlinequiz($offlinequiz) {
@@ -1528,7 +1538,7 @@ class mod_offlinequiz_display_options extends question_display_options {
  *
  * @param object $offlinequiz the offlinequiz instance.
  * @param object $result the result in question.
- * @param $context the offlinequiz context.
+ * @param context_module $context the offlinequiz context.
  *
  * @return mod_offlinequiz_display_options
  */
@@ -1575,10 +1585,7 @@ function offlinequiz_get_review_options($offlinequiz, $result, $context) {
  * funciton is:
  * list($someoptions, $alloptions) = offlinequiz_get_combined_reviewoptions(...)
  *
- * @param object $offlinequiz the offlinequiz instance.
- * @param array $attempts an array of attempt objects.
- * @param $context the roles and permissions context,
- *          normally the context for the offlinequiz module instance.
+ * @param stdClass $offlinequiz the offlinequiz instance.
  *
  * @return array of two options objects, one showing which options are true for
  *          at least one of the attempts, the other showing which options are true
@@ -1612,7 +1619,7 @@ function offlinequiz_get_combined_reviewoptions($offlinequiz) {
  * @param int $cmid the course_module.id for this offlinequiz.
  * @param object $question the question.
  * @param string $returnurl url to return to after action is done.
- * @param string $contentbeforeicon some HTML content to be added inside the link, before the icon.
+ * @param string $contentaftericon some HTML content to be added inside the link, after the icon.
  * @return string the HTML for an edit icon, view icon, or nothing for a question
  *      (depending on permissions).
  */
@@ -1659,9 +1666,6 @@ function offlinequiz_question_edit_button($cmid, $question, $returnurl, $content
  * Common setup for all pages for editing offlinequiz questions.
  * @param string $baseurl the name of the script calling this funciton. For examle 'question/edit.php'.
  * @param string $edittab code for this edit tab
- * @param bool $requirecmid require cmid? default false
- * @param bool $unused no longer used, do no pass
- * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
 function offlinequiz_question_edit_setup($edittab, $baseurl) {
     global $SESSION;
@@ -1844,6 +1848,7 @@ function offlinequiz_delete_pdf_forms($offlinequiz) {
  * called if the offline quiz has attempts or scanned pages
  *
  * @param object $offlinequiz
+ * @param bool $deletefiles
  */
 function offlinequiz_delete_template_usages($offlinequiz, $deletefiles = true) {
     global $CFG, $DB, $OUTPUT;
@@ -1906,6 +1911,7 @@ function offlinequiz_get_user_by_userkey($offlinequiz, $userkey) {
  * @param array $choiceorder
  * @param int $number
  * @param object $context
+ * @param int $page
  */
 function offlinequiz_print_question_preview($question, $choiceorder, $number, $context, $page) {
     global $CFG, $DB;
@@ -1995,7 +2001,9 @@ function offlinequiz_get_math_filters($context, $page = null) {
     return $mathfilters;
 }
 /**
- * Apply filters to a text.
+ * apply filters to a text
+ * @param mixed $text
+ * @param mixed $filters
  */
 function offlinequiz_apply_filters($text, $filters) {
     foreach ($filters as $filter) {
@@ -2406,6 +2414,8 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
  * @param bool $showicon If true, show the question's icon with the question. False by default.
  * @param bool $showquestiontext If true (default), show question text after question name.
  *       If false, show only question name.
+ * @param bool $showidnumber
+ * @param bool $showtags
  * @param bool $return If true (default), return the output. If false, print it.
  */
 function offlinequiz_question_tostring($question, $showicon = false, $showquestiontext = true,
@@ -2458,11 +2468,12 @@ function offlinequiz_question_tostring($question, $showicon = false, $showquesti
  * Adds a question to a offlinequiz by updating $offlinequiz as well as the
  * offlinequiz and offlinequiz_question_instances tables. It also adds a page break
  * if required.
- * @param int $id The id of the question to be added
+ * @param array $questionids The id of the question to be added
  * @param object $offlinequiz The extended offlinequiz object as used by edit.php
  *      This is updated by this function
- * @param int $page Which page in offlinequiz to add the question on. If 0 (default),
- *      add at the end
+ * @param int $offlinegroup
+ * @param int $fromofflinegroup
+ * @param int $maxmarks
  * @return bool false if the question was already in the offlinequiz
  */
 function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offlinegroup,

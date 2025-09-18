@@ -62,7 +62,7 @@ class offlinequiz_access_manager {
      * @param int $timenow the time that should be considered as 'now'.
      * @param bool $canignoretimelimits whether the current user is exempt from
      *      time limits by the mod/offlinequiz:ignoretimelimits capability.
-     * @return array of {@link offlinequiz_access_rule_base}s.
+     * @return array of offlinequiz_access_rule_base.
      */
     protected function make_rules($offlinequizobj, $timenow, $canignoretimelimits) {
 
@@ -125,7 +125,7 @@ class offlinequiz_access_manager {
     }
 
     /**
-     * Validate the data from any form fields added using {@link add_settings_form_fields()}.
+     * Validate the data from any form fields added using  add_settings_form_fields().
      * @param array $errors the errors found so far.
      * @param array $data the submitted form data.
      * @param array $files information about any uploaded files.
@@ -179,7 +179,7 @@ class offlinequiz_access_manager {
      * Build the SQL for loading all the access settings in one go.
      * @param int $offlinequizid the offlinequiz id.
      * @param string $basefields initial part of the select list.'.
-     * @param mixed $basefields
+     * @param mixed $rules
      * @return array with two elements, the sql and the placeholder values.
      *      If $basefields is '' then you must allow for the possibility that
      *      there is no data to load, in which case this method returns $sql = '
@@ -317,7 +317,7 @@ class offlinequiz_access_manager {
      * If there are any restrictions in force now, return an array of reasons why access
      * should be blocked. If access is OK, return false.
      *
-     * @param int $numattempts the number of previous attempts this user has made.
+     * @param int $numprevattempts the number of previous attempts this user has made.
      * @param object|false $lastattempt information about the user's last completed attempt.
      *      if there is not a previous attempt, the false is passed.
      * @return mixed An array of reason why access is not allowed, or an empty array
@@ -392,7 +392,7 @@ class offlinequiz_access_manager {
      * offlinequiz. Used, for example, to change the label by the grade displayed on the view page from
      * 'your current grade is' to 'your final grade is'.
      *
-     * @param int $numattempts the number of previous attempts this user has made.
+     * @param int $numprevattempts the number of previous attempts this user has made.
      * @param object $lastattempt information about the user's last completed attempt.
      * @return bool true if there is no way the user will ever be allowed to attempt
      *      this offlinequiz again.
@@ -487,7 +487,7 @@ class offlinequiz_access_manager {
      *
      * This method does not return;
      *
-     * @param  $output the offlinequiz renderer.
+     * @param object $output the offlinequiz renderer.
      * @param string $message optional message to output while redirecting.
      */
     public function back_to_view_page($output, $message = '') {
@@ -502,7 +502,8 @@ class offlinequiz_access_manager {
     /**
      * Make some text into a link to review the offlinequiz, if that is appropriate.
      *
-     * @param string $linktext some text.
+     * @param object $output
+     * @param array $reviewoptions
      * @param object $attempt the attempt object
      * @return string some HTML, the $linktext either unmodified or wrapped in a
      *      link to the review page.

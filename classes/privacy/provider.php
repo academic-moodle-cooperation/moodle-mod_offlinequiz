@@ -16,6 +16,8 @@
 
 namespace mod_offlinequiz\privacy;
 
+use context_module;
+
 defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
@@ -720,13 +722,14 @@ class provider implements
         if (! $cm) {
             return false;
         }
-        $context = \context_module::instance($cm->id);
+        $context = context_module::instance($cm->id);
         static::delete_results($context, $offlinequizid, $user);
         static::remove_from_lists($offlinequizid, $user);
     }
 
     /**
      * delete all results referring to a user in an offlinequiz
+     * @param context_module $context
      * @param int $offlinequizid
      * @param \stdClass $user
      */

@@ -47,7 +47,7 @@ class offlinequiz_ilog_upgrader {
     protected $questionloader;
     /** @var question_engine_assumption_logger */
     protected $logger;
-    /** @var int used by {@link prevent_timeout()}. */
+    /** @var int used by @link prevent_timeout() */
     protected $dotcounter = 0;
     /** @var progress_bar */
     protected $progressbar = null;
@@ -487,7 +487,8 @@ class offlinequiz_ilog_upgrader {
 
     /**
      * retrieve the image name FROM the rawdata
-     *
+     * @param mixed $rawdata
+     * @return string|null
      */
     public function get_pic_name($rawdata) {
         $dataarray = explode(",", $rawdata);
@@ -546,7 +547,7 @@ class offlinequiz_attempt_upgrader extends question_engine_attempt_upgrader {
     protected $questionloader;
     /** @var question_engine_assumption_logger */
     protected $logger;
-    /** @var int used by {@link prevent_timeout()}. */
+    /** @var int used by link prevent_timeout(). */
     protected $dotcounter = 0;
     /** @var progress_bar */
     protected $progressbar = null;

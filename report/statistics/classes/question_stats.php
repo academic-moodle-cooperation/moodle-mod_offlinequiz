@@ -125,6 +125,7 @@ class question_stats {
      * @param int $currentgroup the current group. 0 for none.
      * @param array $groupstudents students in this group.
      * @param bool $allattempts use all attempts, or just first attempts.
+     * @param int $offlinegroupid group id
      */
     public function load_step_data($offlinequizid, $currentgroup, $groupstudents, $allattempts, $offlinegroupid) {
         global $DB;
@@ -377,7 +378,6 @@ class question_stats {
      *
      * @param object $step the state to add to the statistics.
      * @param object $stats the question statistics we are accumulating.
-     * @param bool $positionstat whether this is a statistic of position of question.
      */
     protected function secondary_steps_walker($step, $stats) {
         $markdifference = $step->mark - $stats->markaverage;

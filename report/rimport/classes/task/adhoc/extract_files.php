@@ -169,8 +169,10 @@ class extract_files extends \core\task\adhoc_task {
 
     /**
      * extract the pdf to a tiff
-     * @param string dirname
-     * @param string importfile
+     * @param string $dirname
+     * @param string $importfile
+     * @param \stdClass $queue
+     * @param bool $unlink
      */
     private function extract_pdf_to_tiff($dirname, $importfile, $queue, $unlink = false) {
         global $DB;

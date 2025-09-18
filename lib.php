@@ -255,8 +255,8 @@ function offlinequiz_delete_instance($id) {
 
 /**
  * This gets an array with default options for the editor
- *
- * @return array the options
+ * @param mixed $context
+ * @return array{maxfiles: mixed, noclean: bool}
  */
 function offlinequiz_get_editor_options($context = null) {
     $options = ['maxfiles' => EDITOR_UNLIMITED_FILES,
@@ -337,7 +337,7 @@ function offlinequiz_question_pluginfile($course, $context, $component,
  * @param string $filecomponent the component the file belongs to.
  * @param string $filearea the file area.
  * @param array $args remaining file args.
- * @param bool $forcedownload.
+ * @param bool $forcedownload
  * @param array $options additional options affecting the file serving.
  */
 function offlinequiz_question_preview_pluginfile($previewcontext, $questionid, $filecontext, $filecomponent, $filearea,
@@ -370,6 +370,7 @@ function offlinequiz_question_preview_pluginfile($previewcontext, $questionid, $
  * @param int $answerid the answer id
  * @param array $args remaining file args
  * @param bool $forcedownload
+ * @param array $options
  */
 function offlinequiz_answertext_preview_pluginfile($context, $answerid, $args, $forcedownload, array $options=[]) {
     global $CFG;
@@ -389,10 +390,11 @@ function offlinequiz_answertext_preview_pluginfile($context, $answerid, $args, $
 
 /**
  * Send a file in the text of an answer.
- *
- * @param int $questionid the question id
- * @param array $args the remaining file arguments (file path).
- * @param bool $forcedownload whether the user must be forced to download the file.
+ * @param mixed $context
+ * @param mixed $answerid
+ * @param mixed $args
+ * @param mixed $forcedownload
+ * @return void
  */
 function offlinequiz_send_answertext_file($context, $answerid, $args, $forcedownload) {
     global $DB, $CFG;
@@ -540,7 +542,7 @@ function offlinequiz_num_attempt_summary($offlinequiz, $cm, $returnzero = false,
 
 
 /**
- * Returns the same as {@link offlinequiz_num_attempt_summary()} but wrapped in a link
+ * Returns the same as offlinequiz_num_attempt_summary() but wrapped in a link
  * to the offlinequiz reports.
  *
  * @param object $offlinequiz the offlinequiz object. Only $offlinequiz->id is used at the moment.
@@ -868,6 +870,7 @@ function offlinequiz_get_participants($offlinequizid) {
  * as reference.
  *
  * @param int $offlinequizid ID of an instance of this module
+ * @param int $scaleid
  * @return mixed
  */
 function offlinequiz_scale_used($offlinequizid, $scaleid) {
@@ -889,8 +892,8 @@ function offlinequiz_scale_used($offlinequizid, $scaleid) {
  * This function was added in 1.9
  *
  * This is used to find out if scale used anywhere
- * @param $scaleid int
- * @return boolean True if the scale is used by any offlinequiz
+ * @param int $scaleid
+ * @return bool True if the scale is used by any offlinequiz
  */
 function offlinequiz_scale_used_anywhere($scaleid) {
     global $DB;
@@ -936,7 +939,6 @@ function offlinequiz_after_add_or_update($offlinequiz) {
  *
  * @uses OFFLINEQUIZ_MAX_EVENT_LENGTH
  * @param object $offlinequiz the offlinequiz object.
- * @param object optional $override limit to a specific override
  */
 function offlinequiz_update_events($offlinequiz) {
     global $DB, $CFG;
@@ -1159,8 +1161,9 @@ function offlinequiz_get_user_grades($offlinequiz, $userid=0) {
 /**
  * Update grades in central gradebook
  *
- * @param object $offlinequiz the offline quiz settings.
+ * @param stdClass $offlinequiz the offline quiz settings.
  * @param int $userid specific user only, 0 means all users.
+ * @param bool $nullifnone
  */
 function offlinequiz_update_grades($offlinequiz, $userid = 0, $nullifnone = true) {
     global $CFG, $DB;
@@ -1294,8 +1297,6 @@ function offlinequiz_grade_item_update($offlinequiz, $grades = null) {
  *      array if there are none.
  * @param int $offlinequizid the offlinequiz id.
  * @param int $userid the userid.
- * @param string $status 'all', 'finished' or 'unfinished' to control
- * @param bool $includepreviews
  * @return stdClass
  */
 function offlinequiz_get_user_results($offlinequizid, $userid) {

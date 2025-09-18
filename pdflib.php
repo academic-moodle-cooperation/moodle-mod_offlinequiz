@@ -369,7 +369,6 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
     /**
      * Generates the body of PDF answer form for an offlinequiz group using an optional groupletter.
      *
-     * @param offlinequiz_answer_pdf $pdf the PDF object
      * @param int $maxanswers the maximum number of answers in all question of the offline group
      * @param question_usage_by_activity $templateusage the template question  usage for this offline group
      * @param object $offlinequiz The offlinequiz object
@@ -621,7 +620,7 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
  *
  * @param int $num The number, starting at 0.
  * @param string $style The style to render the number in. One of the
- * options returned by {@link qtype_multichoice:;get_numbering_styles()}.
+ * options returned by qtype_multichoice:get_numbering_styles()
  * @return string the number $num in the requested style.
  */
 function number_in_style($num, $style) {
@@ -630,6 +629,12 @@ function number_in_style($num, $style) {
 
 /**
  * prints the question to the pdf
+ * @param mixed $pdf
+ * @param mixed $question
+ * @param mixed $texfilters
+ * @param mixed $trans
+ * @param mixed $offlinequiz
+ * @return string
  */
 function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $offlinequiz) {
     $pdf->checkpoint();
@@ -764,11 +769,11 @@ function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html
  * Generates the PDF question/correction form for an offlinequiz group.
  *
  * @param question_usage_by_activity $templateusage the template question  usage for this offline group
- * @param object $offlinequiz The offlinequiz object
- * @param object $group the offline group object
+ * @param stdClass $offlinequiz The offlinequiz object
+ * @param stdClass $group the offline group object
  * @param int $courseid the ID of the Moodle course
  * @param object $context the context of the offline quiz.
- * @param boolean correction if true the correction form is generated.
+ * @param bool $correction if true the correction form is generated.
  * @return stored_file|null the generated PDF file.
  */
 function offlinequiz_create_pdf_question(question_usage_by_activity $templateusage, $offlinequiz, $group,

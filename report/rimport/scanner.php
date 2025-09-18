@@ -680,8 +680,9 @@ class offlinequiz_page_scanner {
      *
      * @param int $filename The name of the file in the imagefiles filearea of the scanner's context
      * @param mixed $corners The corner coordinates as retrieved from the offlinequiz_page_corners table
+     * @param int $scannedpageid
      */
-    public function load_stored_image($filename, $corners, $scannedpageid = null) {
+    public function load_stored_image($filename, $corners, $scannedpageid = 0) {
         global $CFG, $OUTPUT;
 
         $this->offset = new oq_point();
@@ -766,8 +767,8 @@ class offlinequiz_page_scanner {
     /**
      * Returns absolute positions of hotspots for group numbers.
      *
-     * @param unknown_type $width
-     * @return multitype:oq_point
+     * @param int $width
+     * @return mixed
      */
     public function export_hotspots_group(int $width) {
         global $CFG;
@@ -1011,8 +1012,9 @@ class offlinequiz_page_scanner {
      *    3 if insecure.
      * If return is true, it returns the percentage of black pixels found
      *
-     * @param unknown_type $point
-     * @param unknown_type $return
+     * @param mixed $point
+     * @param mixed $return
+     * @param string $name
      * @return number
      */
     public function hotspot_value($point, $return = false, $name = '') {
@@ -1577,12 +1579,12 @@ class offlinequiz_page_scanner {
      * Tries to grab the form sheet: corners, zoom factor, angle, orientation
      * This can take a long time (e.g. 12 seconds)
      *
-     * @param unknown_type $check
-     * @param unknown_type $upperleft
-     * @param unknown_type $upperright
-     * @param unknown_type $lowerleft
-     * @param unknown_type $lowerright
-     * @param unknown_type $width
+     * @param bool $check
+     * @param \offlinequiz_result_import\offlinequiz_point $upperleft
+     * @param \offlinequiz_result_import\offlinequiz_point $upperright
+     * @param \offlinequiz_result_import\offlinequiz_point $lowerleft
+     * @param \offlinequiz_result_import\offlinequiz_point $lowerright
+     * @param int $width
      * @return boolean
      */
     public function adjust($check, $upperleft, $upperright, $lowerleft, $lowerright, $width, $scannedpageid = null) {

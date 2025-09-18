@@ -23,7 +23,9 @@
  */
 
 /**
- * Offlinequiz statistics report upgrade code.
+ * Offlinequiz statistics upgrade
+ * @param mixed $oldversion
+ * @return bool
  */
 function xmldb_offlinequiz_statistics_upgrade($oldversion) {
     global $DB;

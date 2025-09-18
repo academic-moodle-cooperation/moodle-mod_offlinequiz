@@ -54,7 +54,7 @@ class repaginate {
     /**
      * Constructor.
      * @param int $offlinequizid the ID of the offlinequiz being manipulated.
-     * @param int $offlinequizid the ID of the offlinequiz group being manipulated.
+     * @param int $offlinegroupid the ID of the offlinequiz group being manipulated.
      * @param \stdClass[] $slots the offlinequiz_group_questions for that offlinequiz.
      */
     public function __construct($offlinequizid = 0, $offlinegroupid = 0, $slots = null) {

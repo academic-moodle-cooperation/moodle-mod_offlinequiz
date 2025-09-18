@@ -70,7 +70,12 @@ class report extends default_report {
         $this->statmode = optional_param('statmode', 'statsoverview', PARAM_ALPHA);
     }
     /**
-     * Display the report.
+     * display offlinequiz
+     * @param mixed $offlinequiz
+     * @param mixed $cm
+     * @param mixed $course
+     * @throws \moodle_exception
+     * @return void
      */
     public function display($offlinequiz, $cm, $course) {
         global $CFG, $DB, $OUTPUT, $PAGE, $COURSE, $SESSION;
@@ -442,6 +447,7 @@ class report extends default_report {
      * @param stdClass $cm The course module, needed to construct the base URL
      * @param stdClass $groups The group objects as read from the database
      * @param string $groupnumber The currently chosen group number
+     * @param array $pageoptions
      */
     private function print_offlinequiz_group_selector($cm, $groups, $groupnumber, $pageoptions) {
         global $CFG, $OUTPUT;
@@ -468,8 +474,6 @@ class report extends default_report {
      * Only called when not downloading.
      * @param object $offlinequiz the offlinequiz settings.
      * @param object $question the question to report on.
-     * @param moodle_url $reporturl the URL to resisplay this report.
-     * @param object $offlinequizstats Holds the offlinequiz statistics.
      */
     protected function output_individual_question_data($offlinequiz, $question) {
         global $OUTPUT;
@@ -546,6 +550,7 @@ class report extends default_report {
     /**
      * render the question text as html
      * @param object $question question data.
+     * @param bool $showimages
      * @return string HTML of question text, ready for display.
      */
     protected function render_question_text_plain($question, $showimages = true) {
@@ -796,6 +801,7 @@ class report extends default_report {
      * @param int $s number of attempts.
      * @param array $questions the questions in the offlinequiz.
      * @param array $subquestions the subquestions of any random questions.
+     * @param stdClass $offlinequizstats
      */
     protected function output_offlinequiz_question_answer_table($s, $questions, $subquestions, $offlinequizstats) {
         if (!$s) {
@@ -815,6 +821,7 @@ class report extends default_report {
      * Output a question and its answers in one table in a sequence of rows.
      *
      * @param object $question
+     * @param stdClass $offlinequizstats
      */
     protected function output_question_answers($question, $offlinequizstats) {
 
@@ -901,7 +908,7 @@ class report extends default_report {
     }
     /**
      * Output the table of overall offlinequiz statistics.
-     * @param array $offlinequizinfo as returned by {@link get_formatted_offlinequiz_info_data()}.
+     * @param array $offlinequizinfo as returned by  get_formatted_offlinequiz_info_data().
      * @return string the HTML.
      */
     protected function output_offlinequiz_info_table($offlinequizinfo) {
@@ -920,7 +927,7 @@ class report extends default_report {
 
     /**
      * Download the table of overall offlinequiz statistics.
-     * @param array $offlinequizinfo as returned by {@link get_formatted_offlinequiz_info_data()}.
+     * @param array $offlinequizinfo as returned by get_formatted_offlinequiz_info_data().
      */
     protected function download_offlinequiz_info_table($offlinequizinfo) {
         global $OUTPUT;
@@ -955,6 +962,7 @@ class report extends default_report {
     /**
      * Output the HTML needed to show the statistics graph.
      * @param int $offlinequizstatsid the id of the statistics to show in the graph.
+     * @param int $s
      */
     protected function output_statistics_graph($offlinequizstatsid, $s) {
         global $PAGE;
@@ -995,15 +1003,16 @@ class report extends default_report {
         return [0, $offlinequizstats, false];
     }
 
+
     /**
      * Compute the offlinequiz statistics.
-     *
      * @param int $offlinequizid the offlinequiz id.
      * @param int $currentgroup the current group. 0 for none.
      * @param bool $nostudentsingroup true if there a no students.
      * @param bool $useallattempts use all attempts, or just first attempts.
      * @param array $groupstudents students in this group.
      * @param array $questions question definitions.
+     * @param int $offlinegroupid
      * @return array with three elements:
      *      - integer $s Number of attempts included in the stats.
      *      - array $offlinequizstats The statistics for overall attempt scores.
@@ -1237,13 +1246,12 @@ class report extends default_report {
 
     /**
      * Store the statistics in the cache tables in the database.
-     *
-     * @param object $offlinequizid the offlinequiz id.
+     * @param int $offlinequizid the offlinequiz id.
      * @param int $currentgroup the current group. 0 for none.
-     * @param bool $useallattempts use all attempts, or just first attempts.
      * @param object $offlinequizstats The statistics for overall attempt scores.
      * @param array $questions The questions, with an additional _stats field.
      * @param array $subquestions The subquestions, if any, with an additional _stats field.
+     * @param mixed $offlinegroupid
      */
     protected function cache_stats($offlinequizid, $currentgroup,
             $offlinequizstats, $questions, $subquestions, $offlinegroupid = 0) {
@@ -1386,6 +1394,8 @@ class report extends default_report {
      * @param array $groupstudents ids of students in the group.
      * @param bool $useallattempts whether to use all attempts, instead of just
      *      first attempts.
+     * @param mixed $reporturl
+     * @param mixed $offlinegroupid
      * @return string a HTML snipped saying when the stats were last computed,
      *      or blank if that is not appropriate.
      */
@@ -1429,11 +1439,12 @@ class report extends default_report {
     }
 
     /**
-     * Clear the cached data for a particular report configuration. This will
-     * trigger a re-computation the next time the report is displayed.
-     * @param int $offlinequizid the offlinequiz id.
-     * @param int $currentgroup a group id, or 0.
-     * @param bool $useallattempts whether all attempts, or just first attempts are included.
+     * clear all statistics cache data
+     * @param mixed $offlinequizid
+     * @param mixed $currentgroup
+     * @param mixed $useallattempts
+     * @param mixed $offlinegroupid
+     * @return void
      */
     protected function clear_cached_data($offlinequizid, $currentgroup, $useallattempts, $offlinegroupid) {
         global $DB;
@@ -1476,7 +1487,11 @@ class report extends default_report {
     }
 
     /**
-     * Add navigation nodes to mod_offlinequiz_result.
+     * add nodes to navigation
+     * @param \navigation_node $navigation
+     * @param mixed $cm
+     * @param mixed $offlinequiz
+     * @return navigation_node
      */
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         $parentnode = $navigation->get('mod_offlinequiz_statistics');
@@ -1574,10 +1589,17 @@ function offlinequiz_statistics_attempts_sql($offlinequizid, $currentgroup, $gro
 }
 
 /**
- * Return a {@link qubaid_condition} from the values returned by
- * {@link offlinequiz_statistics_attempts_sql}
- * @param string $fromqa from offlinequiz_statistics_attempts_sql.
- * @param string $whereqa from offlinequiz_statistics_attempts_sql.
+ * Return a qubaid_condition from the values returned by
+ * offlinequiz_statistics_attempts_sql
+ *
+ *
+ * @param int $offlinequizid
+ * @param mixed $currentgroup
+ * @param mixed $groupstudents
+ * @param mixed $allattempts
+ * @param mixed $includeungraded
+ * @param mixed $offlinegroupid
+ * @return qubaid_join
  */
 function offlinequiz_statistics_qubaids_condition($offlinequizid, $currentgroup, $groupstudents,
         $allattempts = true, $includeungraded = false, $offlinegroupid = 0) {

@@ -204,11 +204,8 @@ class offlinequiz_resultsaver {
      *
      * We assume that choicesdata does not contain any insecure values (-1) anymore.
      *
-     * @param mixed $offlinequiz
+     * @param mixed $quba
      * @param mixed $scannedpage
-     * @param array $choicesdata
-     * @param int $startindex
-     * @param int $endindex
      */
     private function submit_scanned_page_to_result($quba, $scannedpage) {
         global $DB;

@@ -48,8 +48,12 @@ class report extends default_report {
      */
     public $context;
     /**
-     * (non-PHPdoc)
-     * @see offlinequiz_default_report::display()
+     * display the report
+     * @param mixed $offlinequiz
+     * @param mixed $cm
+     * @param mixed $course
+     * @throws \moodle_exception
+     * @return bool
      */
     public function display($offlinequiz, $cm, $course) {
         global $CFG, $COURSE, $DB, $OUTPUT, $USER;

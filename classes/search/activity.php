@@ -45,7 +45,7 @@ class activity extends \core_search\base_activity {
     /**
      * Add the attached description files.
      *
-     * @param  $document The current document
+     * @param object $document The current document
      * @return null
      */
     public function attach_files($document) {

@@ -31,7 +31,10 @@ use mod_offlinequiz\correct\offlinequiz_selectall_table;
  */
 class participants_report {
     /**
-     * Print table with import errors.
+     * error report
+     * @param mixed $offlinequiz
+     * @param mixed $courseid
+     * @return void
      */
     public function error_report($offlinequiz, $courseid) {
         global $CFG, $USER, $DB, $OUTPUT;

@@ -50,9 +50,11 @@ require_once($CFG->libdir . '/gradelib.php');
 class report extends default_report {
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see offlinequiz_default_report::display()
+     * display the report
+     * @param mixed $offlinequiz
+     * @param mixed $cm
+     * @param mixed $course
+     * @return bool
      */
     public function display($offlinequiz, $cm, $course) {
         global $CFG, $OUTPUT, $SESSION, $DB;

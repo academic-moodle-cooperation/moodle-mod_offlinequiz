@@ -49,15 +49,17 @@ abstract class default_report {
 
     /**
      * Override this function to displays the report.
-     * @param $cm the course-module for this offlinequiz.
-     * @param $course the coures we are in.
-     * @param $offlinequiz this offlinequiz.
+     * @param \stdClass $cm the course-module for this offlinequiz.
+     * @param \stdClass $course the coures we are in.
+     * @param \stdClass $offlinequiz this offlinequiz.
      */
     abstract public function display($cm, $course, $offlinequiz);
     /**
-     * Add this report to the tabs structure.
-     * Extension point for adding the plugin to the tabs.
-     * TODO: move static structure from offlinequiz_get_tabs_object into this function implementations.
+     * add this report to the navigation
+     * @param \navigation_node $navigation
+     * @param mixed $cm
+     * @param mixed $offlinequiz
+     * @return void
      */
     abstract public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node;
     /**
@@ -94,7 +96,7 @@ abstract class default_report {
      * Get the current group for the user looking at the report.
      *
      * @param object $cm the course_module information.
-     * @param object $coures the course settings.
+     * @param object $course the course settings.
      * @param \context $context the offlinequiz context.
      * @return int the current group id, if applicable. 0 for all users,
      *      NO_GROUPS_ALLOWED if the user cannot see any group.

@@ -51,7 +51,8 @@ class edit_renderer extends \plugin_renderer_base {
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param \moodle_url $pageurl the canonical URL of this page.
-     * @param array $pagevars the variables from {@link question_edit_setup()}.
+     * @param array $pagevars the variables from question_edit_setup()
+     * @param array $groupletters
      * @return string HTML to output.
      */
     public function edit_page(\offlinequiz $offlinequizobj,
@@ -212,6 +213,8 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      *
      * @param \stdClass $offlinequiz
+     * @param \stdClass $cm
+     * @param array $templatecontext
      * @return string
      */
     public function offlinequiz_group_selector_values($offlinequiz, $cm, $templatecontext) {
@@ -239,6 +242,7 @@ class edit_renderer extends \plugin_renderer_base {
      * turned on.
      *
      * @param structure $structure the offlinequiz structure.
+     * @param array $templatecontext
      * @return string HTML to output.
      */
     public function offlinequiz_state_warnings_values(structure $structure, $templatecontext) {
@@ -263,6 +267,7 @@ class edit_renderer extends \plugin_renderer_base {
      * Render the status bar.
      *
      * @param structure $structure the offlinequiz structure.
+     * @param array $templatecontext
      * @return string HTML to output.
      */
     public function offlinequiz_information_values(structure $structure, $templatecontext) {
@@ -279,6 +284,7 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param \stdClass $offlinequiz the offlinequiz settings from the database.
      * @param \moodle_url $pageurl the canonical URL of this page.
+     * @param array templatecontext
      * @return string HTML to output.
      */
     public function maximum_grade_input_values($offlinequiz, \moodle_url $pageurl, $templatecontext) {
@@ -291,6 +297,7 @@ class edit_renderer extends \plugin_renderer_base {
      * Return the repaginate button
      * @param structure $structure the structure of the offlinequiz being edited.
      * @param \moodle_url $pageurl the canonical URL of this page.
+     * @param array $templatecontext
      * @return string HTML to output.
      */
     protected function repaginate_button_values(structure $structure, \moodle_url $pageurl, $offlinequiz, $templatecontext) {
@@ -417,6 +424,7 @@ class edit_renderer extends \plugin_renderer_base {
      * Render the total marks available for the offlinequiz.
      *
      * @param \stdClass $offlinequiz the offlinequiz settings from the database.
+     * @param array $templatecontext
      * @return string HTML to output.
      */
     public function total_marks($offlinequiz, $templatecontext) {
@@ -500,12 +508,12 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      * Renders HTML to display the questions in a section of the offlinequiz.
      *
-     * This function calls {@link core_course_renderer::offlinequiz_section_question()}
+     * This function calls core_course_renderer::offlinequiz_section_question()
      *
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param \stdClass $section information about the section.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from \question_edit_setup()
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
@@ -526,7 +534,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param int $slot data from the question and offlinequiz_slots tables.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from \question_edit_setup()
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
@@ -559,7 +567,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param \stdClass $question data from the question and offlinequiz_slots tables.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from \question_edit_setup()
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
@@ -582,7 +590,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param int $slot data from the question and offlinequiz_slots tables.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from \question_edit_setup()
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
@@ -618,7 +626,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param int $page the page number that this menu will add to.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from \question_edit_setup()
      * @return string HTML to output.
      */
     public function add_menu_actions(structure $structure, $page, \moodle_url $pageurl,
@@ -659,7 +667,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param int $page the page number that this menu will add to.
      * @param \moodle_url $pageurl the canonical URL of this page.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from \question_edit_setup()
      * @return array the actions.
      */
     public function edit_menu_actions(structure $structure, $page,
@@ -723,7 +731,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param int $page the page number that this menu will add to.
      * @param \moodle_url $pageurl the canonical URL of this page.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from \question_edit_setup()
      * @return string HTML to output.
      */
     protected function add_question_form(structure $structure, $page, \moodle_url $pageurl, array $pagevars) {
@@ -1081,7 +1089,7 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      * Renders the question chooser.
      *
-     * @param question_chooser Chooser
+     * @param question_chooser $chooser
      * @return string
      */
     public function render_question_chooser(question_chooser $chooser) {
@@ -1113,7 +1121,7 @@ class edit_renderer extends \plugin_renderer_base {
      * Return random question form.
      * @param \moodle_url $thispageurl the canonical URL of this page.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from \question_edit_setup()
      * @return string HTML to output.
      */
     protected function random_question_form(\moodle_url $thispageurl,
@@ -1146,7 +1154,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \stdClass $offlinequiz the offlinequiz settings from the database.
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from \question_edit_setup()
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return bool Always returns true
      */
@@ -1247,7 +1255,7 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from \question_edit_setup().
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML for a new page.
      */
@@ -1301,7 +1309,7 @@ class edit_renderer extends \plugin_renderer_base {
      * Return the contents of the question bank, to be displayed in the question-bank pop-up.
      *
      * @param \mod_offlinequiz\question\bank\custom_view $questionbank the question bank view object.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param array $pagevars the variables from  \question_edit_setup().
      * @return string HTML to output / send back in response to an AJAX request.
      */
     public function question_bank_contents(\mod_offlinequiz\question\bank\custom_view $questionbank, array $pagevars) {
