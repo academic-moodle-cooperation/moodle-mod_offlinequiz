@@ -83,16 +83,6 @@ class custom_view extends \core_question\local\bank\view {
         global $DB;
         // Default filter condition.
         if (!isset($params['filter'])) {
-            /*$params['filter']  = [];
-            [$categoryid, $contextid] = custom_category_condition::validate_category_param($params['cat']);
-            if (!is_null($categoryid)) {
-                $category = custom_category_condition::get_category_record($categoryid, $contextid);
-                $params['filter']['category'] = [
-                    'jointype' => custom_category_condition::JOINTYPE_DEFAULT,
-                    'values' => [$category->id],
-                    'filteroptions' => ['includesubcategories' => false],
-                ];
-            }*/
             $params['filter']  = filter_condition_manager::get_default_filter($params['cat']);
             // The quiz question bank modal doesn't include a hidden filter option.
             // Therefore, the default filter hidden condition is unnecessary.

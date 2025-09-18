@@ -17,16 +17,15 @@
 /**
  * Example CLI script for the plugintype_pluginname plugin.
  *
- * @package   plugintype_pluginname
+ * @package   mod_offlinequiz
  * @copyright Year, You Name <your@email.address>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('CLI_SCRIPT', true);
 
-require(__DIR__ . '/../../config.php');
+require(__DIR__ . '/../../../config.php');
 require_once("{$CFG->libdir}/clilib.php");
-require_once(__DIR__ . '/../cronlib.php');
 
 [$options, $unrecognized] = cli_get_params(['cli' => false], ['h' => 'help']);
 
