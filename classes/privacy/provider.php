@@ -58,6 +58,7 @@ class provider implements
           [
          'course' => 'privacy:metadata:offlinequiz:course',
          'name' => 'privacy:metadata:offlinequiz:name',
+         'intro' => 'privacy:metadata:offlinequiz:intro',
          'introformat' => 'privacy:metadata:offlinequiz:introformat',
          'pdfintro' => 'privacy:metadata:offlinequiz:pdfintro',
          'timeopen' => 'privacy:metadata:offlinequiz:timeopen',
@@ -70,6 +71,7 @@ class provider implements
          'docscreated' => 'privacy:metadata:offlinequiz:docscreated',
          'shufflequestions' => 'privacy:metadata:offlinequiz:shufflequestions',
          'printstudycodefield' => 'privacy:metadata:offlinequiz:printstudycodefield',
+         'pdffont' => 'privacy:metadata:offlinequiz:pdffont',
          'papergray' => 'privacy:metadata:offlinequiz:papergray',
          'fontsize' => 'privacy:metadata:offlinequiz:fontsize',
          'timecreated' => 'privacy:metadata:offlinequiz:timecreated',
@@ -80,6 +82,9 @@ class provider implements
          'showtutorial' => 'privacy:metadata:offlinequiz:showtutorial',
          'id_digits' => 'privacy:metadata:offlinequiz:id_digits',
          'disableimgnewlines' => 'privacy:metadata:offlinequiz:disableimgnewlines',
+         'algorithmversion' => 'privacy:metadata:offlinequiz:algorithmversion',
+         'experimentalevaluation' => 'privacy:metadata:offlinequiz:experimentalevaluation',
+         'completionpass' => 'privacy:metadata:offlinequiz:completionpass',
           ],
           'privacy:metadata:offlinequiz'
           );
