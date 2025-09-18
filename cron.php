@@ -36,12 +36,7 @@ define("OFFLINEQUIZ_MAX_CRON_JOBS", "5");
 define("OFFLINEQUIZ_TOP_QUEUE_JOBS", "5");
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->libdir . '/moodlelib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner2.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/positionslib.php');
+
 /**
  * do the cron evaluation
  * @deprecated You should use the adhoc tasks instead
@@ -51,6 +46,13 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/positionslib.php')
  */
 function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
     global $CFG, $DB;
+
+    require_once($CFG->libdir . '/moodlelib.php');
+    require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
+    require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
+    require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
+    require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner2.php');
+    require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/positionslib.php');
 
     raise_memory_limit(MEMORY_EXTRA);
 
