@@ -383,19 +383,10 @@ if ($mode == 'preview') {
             echo $OUTPUT->single_button($buttonurl, get_string('createpdfforms', 'offlinequiz'), 'get');
             echo '</div>';
         } else {
-            echo
-            "<div class=\"singlebutton\">
-               <form action=\"$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=\"$offlinequiz->id&mode=createpdfs\" method=\"POST\">
-                    <div>
-                        <input type=\"hidden\" name=\"forcepdfnew\" value=\"1\" />
-                        <button type=\"submit\"
-                                onClick='return confirm(\"get_string('reallydeletepdfs', 'offlinequiz')\")'
-                                class=\"btn btn-secondary\"
-                            get_string('deletepdfs', 'offlinequiz')
-                        </button>
-                   </div>
-              </form>
-            </div>";
+            $actionurl = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs']);
+            echo $OUTPUT->render_from_template('mod_offlinequiz/delete_documents_button',
+                ['actionurl' => $actionurl->out()]);
+            "";
 
         }
     }
