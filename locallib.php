@@ -194,7 +194,7 @@ function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
  *  mod_offlinequiz_attendances ==> attendances
  *  mod_offlinequiz_statistics ==> statistics
  * Subplugins can add their own nodes to the navigation tree.
- * 
+ *
  * @param mixed $offlinequiz
  * @param mixed $cm
  * @return navigation_node|false
@@ -204,7 +204,7 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm): navigation_node {
     if (empty($offlinequiz) || empty($cm) ) {
         return false;
     }
-    
+
     $secondarynav = $PAGE->secondarynav;
     // Populate Predefined tabs.
 
@@ -215,12 +215,12 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm): navigation_node {
         if (has_capability('mod/offlinequiz:manage', context_module::instance($cm->id))) {
             $preparationnode->add(
                 text: get_string('tabeditgroupquestions', 'offlinequiz'),
-                action: new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0]),
+                action: new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0, 'groupnumber' => 1]),
                 key: 'tabeditgroupquestions');
         }
         // Add "Forms Preview" tab.
         $preparationnode->add(
-            text: get_string('tabpreview', 'offlinequiz'), 
+            text: get_string('tabpreview', 'offlinequiz'),
             action: new moodle_url('/mod/offlinequiz/navigate.php', ['tab' => 'tabforms', 'id' => $cm->id]),
             key: 'tabpreview');
     }
@@ -268,7 +268,7 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm): navigation_node {
             $reportclass->add_to_navigation($secondarynav, $cm, $offlinequiz);
         }
     }
-    
+
     return $secondarynav;
 }
 function offlinequiz_instantiate_report_class($subpluginname): mixed {
@@ -426,7 +426,7 @@ function offlinequiz_get_group_questionbankentry_ids($offlinequiz, $groupid) {
     if (!$groupid) {
         return '';
     }
-    
+
     $sql = "SELECT qv.questionbankentryid
               FROM {offlinequiz_group_questions} ogq
               JOIN {question_versions} qv ON qv.questionid = ogq.questionid
@@ -436,7 +436,7 @@ function offlinequiz_get_group_questionbankentry_ids($offlinequiz, $groupid) {
 
     $params = array('offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $groupid);
     $questionbankentryids = $DB->get_fieldset_sql($sql, $params);
-    
+
     return $questionbankentryids;
 }
 
@@ -940,7 +940,7 @@ function offlinequiz_update_question_instance($offlinequiz, $contextid, $questio
                 offlinequiz_update_quba($templateusage, $questionid, $newquestionid, $grade);
             }
         }
-    
+
         // Now do the same for the qubas of the results of the offline quiz.
         if ($results = $DB->get_records('offlinequiz_results', array('offlinequizid' => $offlinequiz->id))) {
             foreach ($results as $result) {
@@ -1610,7 +1610,7 @@ function offlinequiz_question_edit_setup($edittab, $baseurl) {
     if ($groupnumber === -1 and !empty($SESSION->question_pagevars['groupnumber'])) {
         $groupnumber = $SESSION->question_pagevars['groupnumber'];
     }
-    
+
     if ($groupnumber === -1) {
         $groupnumber = 1;
     }
@@ -1829,7 +1829,7 @@ function offlinequiz_get_user_by_userkey($offlinequiz, $userkey) {
               JOIN {enrol} e on ue.enrolid = e.id
              WHERE $idfield = :userkey
                AND e.courseid = :courseid";
-    $users = $DB->get_records_sql($sql,['userkey' => $userkey, 'courseid' =>$offlinequiz->course]); 
+    $users = $DB->get_records_sql($sql,['userkey' => $userkey, 'courseid' =>$offlinequiz->course]);
     if($users) {
         return reset($users);
     }
@@ -1868,7 +1868,7 @@ function offlinequiz_print_question_preview($question, $choiceorder, $number, $c
     // Filter only for tex formulas.
     $mathfilters = offlinequiz_get_math_filters($context, $page);
     $text = offlinequiz_apply_filters($text, $mathfilters );
-        
+
     if ($question->qtype != 'description') {
         foreach ($choiceorder as $key => $answer) {
             $question->options->answers[$answer]->answer = offlinequiz_apply_filters($question->options->answers[$answer]->answer, $mathfilters);
@@ -1919,15 +1919,15 @@ function offlinequiz_get_math_filters($context, $page = null) {
         $mathjaxfilter = new filter_tex\text_filter($context, []);
         $mathfilters[] = $mathjaxfilter;
     }
-          
+
     // Wiris support.
-    if (array_key_exists('wiris', $filters) 
+    if (array_key_exists('wiris', $filters)
         && get_config('offlinequiz', 'wirismathfilter_enabled')) {
         // Use a forged wiris filter to force the use of PHP rendering.
         $wirisfilter = new mod_offlinequiz\output\wiris_filter($context, []);
         $mathfilters[] = $wirisfilter;
     }
-    
+
     return $mathfilters;
 }
 /**
@@ -2773,8 +2773,8 @@ function offlinequiz_remove_questionlist($offlinequiz, $questionids) {
 
 function update_queue_status($queueid) {
     global $DB;
-    $sql = "SELECT DISTINCT status, count(status) 
-            FROM {offlinequiz_queue_data} qd 
+    $sql = "SELECT DISTINCT status, count(status)
+            FROM {offlinequiz_queue_data} qd
             WHERE qd.queueid = :queueid
             GROUP BY status";
     $statuslist = $DB->get_records_sql($sql,['queueid' => $queueid]);
