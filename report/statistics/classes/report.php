@@ -983,7 +983,7 @@ class report extends default_report {
      *
      * @param array $questions question definitions.
      * @param int $firstattemptscount number of first attempts (optional).
-     * @param int $firstattemptscount total number of attempts (optional).
+     * @param int $allattemptscount total number of attempts (optional).
      * @return array with three elements:
      *      - integer $s Number of attempts included in the stats (0).
      *      - array $offlinequizstats The statistics for overall attempt scores.

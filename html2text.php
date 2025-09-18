@@ -50,7 +50,7 @@ class offlinequiz_html_translator {
      * @param int $itemid The itemid used to locate the image files.
      * @param float $kfactor A magnification factor.
      * @param int $maxwidth The maximum width in pixels for images.
-     * @param bool $imagenewlines
+     * @param bool $disableimgnewlines
      * @param string $format
      * @return string The result string
      */

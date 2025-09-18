@@ -178,8 +178,8 @@ class offlinequiz_access_manager {
     /**
      * Build the SQL for loading all the access settings in one go.
      * @param int $offlinequizid the offlinequiz id.
-     * @param string $basefields initial part of the select list.'.
      * @param mixed $rules
+     * @param string $basefields initial part of the select list.'.
      * @return array with two elements, the sql and the placeholder values.
      *      If $basefields is '' then you must allow for the possibility that
      *      there is no data to load, in which case this method returns $sql = '
@@ -502,9 +502,9 @@ class offlinequiz_access_manager {
     /**
      * Make some text into a link to review the offlinequiz, if that is appropriate.
      *
-     * @param object $output
-     * @param array $reviewoptions
      * @param object $attempt the attempt object
+     * @param array $reviewoptions
+     * @param object $output
      * @return string some HTML, the $linktext either unmodified or wrapped in a
      *      link to the review page.
      */

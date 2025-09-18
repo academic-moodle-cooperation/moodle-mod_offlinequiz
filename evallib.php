@@ -805,7 +805,6 @@ function offlinequiz_get_question_numbers($offlinequiz, array $groups) {
  * @param context_course $coursecontext
  * @param bool $autorotate
  * @return array|object Errors
- * @throws dml_exception
  */
 function offlinequiz_check_scanned_participants_page($offlinequiz, offlinequiz_participants_scanner $scanner,
                                                      $scannedpage, $teacherid, $coursecontext, $autorotate = false) {

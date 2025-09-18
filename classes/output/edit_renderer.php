@@ -284,7 +284,7 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param \stdClass $offlinequiz the offlinequiz settings from the database.
      * @param \moodle_url $pageurl the canonical URL of this page.
-     * @param array templatecontext
+     * @param array $templatecontext
      * @return string HTML to output.
      */
     public function maximum_grade_input_values($offlinequiz, \moodle_url $pageurl, $templatecontext) {
@@ -297,6 +297,7 @@ class edit_renderer extends \plugin_renderer_base {
      * Return the repaginate button
      * @param structure $structure the structure of the offlinequiz being edited.
      * @param \moodle_url $pageurl the canonical URL of this page.
+     * @param \stdClass $offlinequiz
      * @param array $templatecontext
      * @return string HTML to output.
      */

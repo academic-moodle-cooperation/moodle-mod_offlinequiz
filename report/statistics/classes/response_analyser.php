@@ -46,7 +46,7 @@ class response_analyser {
      * @var array This is a multi-dimensional array that stores the results of
      * the analysis.
      *
-     * The description of {@link question_type::get_possible_responses()} should
+     * The description of question_type::get_possible_responses() should
      * help understand this description.
      *
      * $this->responses[$subpartid][$responseclassid][$response] is an
@@ -124,7 +124,7 @@ class response_analyser {
     /**
      * Analyse all the response data for for all the specified attempts at
      * this question.
-     * @param $qubaids which attempts to consider.
+     * @param array $qubaids which attempts to consider.
      */
     public function analyse($qubaids) {
         // Load data.

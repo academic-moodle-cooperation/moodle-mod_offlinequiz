@@ -171,10 +171,10 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
  * @param stdClass $offlinequiz
  * @param int $courseid
  * @param int $groupnumber
- * @param bool $nogroupmark
- * @param bool onlyifaccess
  * @param stdClass $list
  * @param context_module $context
+ * @param bool $nogroupmark
+ * @param bool $onlyifaccess
  * @return boolean
  */
 function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $groupnumber,

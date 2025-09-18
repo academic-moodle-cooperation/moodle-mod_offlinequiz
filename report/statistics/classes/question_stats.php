@@ -78,9 +78,9 @@ class question_stats {
 
     /**
      * Constructor.
-     * @param $questions the questions.
-     * @param $s the number of attempts included in the stats.
-     * @param $summarksavg the average attempt summarks.
+     * @param array $questions the questions.
+     * @param int $s the number of attempts included in the stats.
+     * @param float $summarksavg the average attempt summarks.
      */
     public function __construct($questions, $s, $summarksavg) {
         $this->s = $s;

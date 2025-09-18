@@ -912,7 +912,6 @@ function offlinequiz_completed_results($offlinequizid, $courseid, $onlystudents 
  * @param mixed $resultid an integer attempt id or an attempt object
  *      (row of the offlinequiz_results table).
  * @param context_module $context
- * @param stdClass $offlinequiz the offlinequiz object.
  */
 function offlinequiz_delete_result($resultid, $context) {
     global $DB;
@@ -1664,8 +1663,9 @@ function offlinequiz_question_edit_button($cmid, $question, $returnurl, $content
 }
 /**
  * Common setup for all pages for editing offlinequiz questions.
- * @param string $baseurl the name of the script calling this funciton. For examle 'question/edit.php'.
+ *
  * @param string $edittab code for this edit tab
+ * @param string $baseurl the name of the script calling this funciton. For examle 'question/edit.php'.
  */
 function offlinequiz_question_edit_setup($edittab, $baseurl) {
     global $SESSION;

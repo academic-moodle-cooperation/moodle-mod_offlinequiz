@@ -1585,6 +1585,7 @@ class offlinequiz_page_scanner {
      * @param \offlinequiz_result_import\offlinequiz_point $lowerleft
      * @param \offlinequiz_result_import\offlinequiz_point $lowerright
      * @param int $width
+     * @param int $scannedpageid
      * @return boolean
      */
     public function adjust($check, $upperleft, $upperright, $lowerleft, $lowerright, $width, $scannedpageid = null) {
