@@ -795,11 +795,11 @@ function offlinequiz_get_question_numbers($offlinequiz, array $groups) {
 // Functions for lists of participants.
 // O=======================================================================.
 // O=======================================================================.
+
 /**
  * Checks  groupnumber, userkey, and pagenumber of a scanned list of participants page
- *
  * @param stdClass $offlinequiz
- * @param offlinequiz_page_scanner $scanner
+ * @param offlinequiz_participants_scanner $scanner
  * @param stdClass $scannedpage
  * @param int $teacherid
  * @param context_course $coursecontext
