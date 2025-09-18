@@ -71,7 +71,7 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_cacheable(true);
 $PAGE->force_settings_menu(true);
 
-if ($node = $PAGE->settingsnav->find('mod_offlinequiz_createquiz', navigation_node::TYPE_SETTING)) {
+if ($node = $PAGE->settingsnav->find('mod_offlinequiz_createquiz', core\navigation\navigation_node::TYPE_SETTING)) {
     $node->make_active();
 }
 
