@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+5.1.0
+-----------------
+* [Feature] 5.1 compatible version
+* [Feature] added a setting to set a default max mark
 
 5.0.2
 -----------------
