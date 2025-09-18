@@ -2412,11 +2412,9 @@ function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontex
  *
  * @param object $question A question object from the database questions table
  * @param bool $showicon If true, show the question's icon with the question. False by default.
- * @param bool $showquestiontext If true (default), show question text after question name.
- *       If false, show only question name.
+ * @param bool $showquestiontext If true (default), show question text after question name. If false, show only question name.
  * @param bool $showidnumber
  * @param bool $showtags
- * @param bool $return If true (default), return the output. If false, print it.
  */
 function offlinequiz_question_tostring($question, $showicon = false, $showquestiontext = true,
                                        $showidnumber = false, $showtags = false) {
