@@ -24,7 +24,7 @@
             {{#groupchoiceoptions}}
               <option value="{{number}}" {{#selected}}selected{{/selected}}>{{#str}} questionsingroup, mod_offlinequiz {{/str}} {{letter}}</option>
             {{/groupchoiceoptions}}
-          </select> 
+          </select>
         </form>
       </div>
       <div class="offlinequizinformation statusbar">
@@ -32,7 +32,7 @@
           {{#str}} numquestionsx, mod_offlinequiz {{/str}} {{informationquestioncount}}
         </span>
         <span>
-          | 
+          |
         </span>
         <span class="offlinequizopeningstatus" title="{{informationexplanation}}">
          {{informationcurrentstatus}}
@@ -85,7 +85,7 @@
         <input type="hidden" name="sesskey" value="{{sesskey}}" />
         <input type="hidden" name="fromofflinegroup" value="{{groupid}}" />
         <div class="copyselected">
-          <span class="addselectedtogrouptext">{{#str}} copyselectedtogroup, mod_offlinequiz {{/str}} </span> 
+          <span class="addselectedtogrouptext">{{#str}} copyselectedtogroup, mod_offlinequiz {{/str}} </span>
           <select id="menucopyselectedtogrouptop" class="select form-select menucopyselectedtogrouptop" name="copyselectedtogrouptop">
             <option value="0" selected> {{#str}} selectagroup, mod_offlinequiz {{/str}}</option>
             {{#addtogroupotpions}}
@@ -94,7 +94,7 @@
           </select>
           <input class="btn btn-secondary" type="submit" name="savechanges"  {{#addtogroupdisabled}} disabled="disabled" {{/addtogroupdisabled}} value="{{#str}} add {{/str}}" />
           <div class="removeselected" "cmid="{{cmid}}">
-            <input type="submit"  name="offlinequizdeleteselected" id="removeselectedcommand"  {{#addtogroupdisabled}} disabled="disabled" {{/addtogroupdisabled}} 
+            <input type="submit"  name="offlinequizdeleteselected" id="removeselectedcommand"  {{#addtogroupdisabled}} disabled="disabled" {{/addtogroupdisabled}}
                onclick="return confirm('{{#str}} areyousureremoveselected, mod_offlinequiz {{/str}}');" value="{{#str}} removeselected, mod_offlinequiz {{/str}}" class="btn btn-secondary">
             </input>
           </div>
