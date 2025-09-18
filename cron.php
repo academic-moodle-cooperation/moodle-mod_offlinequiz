@@ -27,15 +27,9 @@
  **/
 
 use offlinequiz_result_import\offlinequiz_result_engine;
-use offlinequiz_result_import\offlinequiz_point;
-use offlinequiz_result_import\offlinequiz_result_page;
-
-defined('MOODLE_INTERNAL') || die();
 
 define("OFFLINEQUIZ_MAX_CRON_JOBS", "5");
 define("OFFLINEQUIZ_TOP_QUEUE_JOBS", "5");
-
-require_once(dirname(__FILE__) . '/../../config.php');
 
 /**
  * do the cron evaluation
@@ -303,21 +297,3 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 
 } // End function.
 
-
-/**
- * run the cron task
- * @return void
- */
-function run_cron() {
-    global $CFG;
-    require_once($CFG->libdir . '/clilib.php');
-    list($options, $unrecognized) = cli_get_params(['cli' => false], ['h' => 'help']);
-
-    if (array_key_exists('cli', $options) && $options['cli']) {
-        echo date('Y-m-d-H:i') . ': ';
-        offlinequiz_evaluation_cron();
-        echo " done.\n";
-        die();
-    }
-}
-run_cron();
