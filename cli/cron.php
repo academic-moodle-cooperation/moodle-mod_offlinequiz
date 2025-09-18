@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Example CLI script for the plugintype_pluginname plugin.
+ * legacy cron
  *
  * @package   mod_offlinequiz
- * @copyright Year, You Name <your@email.address>
+ * @copyright AMC 2025
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
