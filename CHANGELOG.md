@@ -1,5 +1,12 @@
 CHANGELOG
 =========
+
+5.0.2
+-----------------
+* [Bug] Fixed a bug that evaluations didn't work if offlinequiz was installed with 5.0.0 or later
+* [Bug] Fixed that random questions coulnd't be added
+* [Bug] Fixed that the category wasn't resetted when closing the question menu
+
 5.0.1
 -----------------
 * [Bug] Fixed that it was not possible to use questions from other question banks
