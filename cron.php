@@ -303,12 +303,21 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
 
 } // End function.
 
-require_once($CFG->libdir . '/clilib.php');
-list($options, $unrecognized) = cli_get_params(['cli' => false], ['h' => 'help']);
 
-if (array_key_exists('cli', $options) && $options['cli']) {
-    echo date('Y-m-d-H:i') . ': ';
-    offlinequiz_evaluation_cron();
-    echo " done.\n";
-    die();
+/**
+ * run the cron task
+ * @return void
+ */
+function run_cron() {
+    global $CFG;
+    require_once($CFG->libdir . '/clilib.php');
+    list($options, $unrecognized) = cli_get_params(['cli' => false], ['h' => 'help']);
+
+    if (array_key_exists('cli', $options) && $options['cli']) {
+        echo date('Y-m-d-H:i') . ': ';
+        offlinequiz_evaluation_cron();
+        echo " done.\n";
+        die();
+    }
 }
+run_cron();
