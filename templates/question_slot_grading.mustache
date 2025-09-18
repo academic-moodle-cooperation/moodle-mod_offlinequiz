@@ -12,7 +12,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_offlinequiz/question_slot
+    @template mod_offlinequiz/question_slot_grading
 
     This template renders the question slot content.
 
@@ -24,24 +24,25 @@
         "canbeedited" : false,
     }
 }}
-
-<div class="mod-indent-outer" id="mod-indent-outer-slot-{{slotid}}">
-    {{{questionnumber}}}
-    <div class="mod-indent"></div>
-    <div class="activityinstance">
-        {{{questionname}}}
+<div>
+    <div class="mod-indent-outer" id="mod-indent-outer-slot-{{slotid}}">
+        {{{questionnumber}}}
+        <div class="mod-indent"></div>
+        <div class="activityinstance">
+            {{{questionname}}}
+        </div>
+        <span class="actions">
+            {{#versionselection}}
+                <label for="version-{{slotid}}"> </label>
+                <select autocomplete="off" id="version-{{slotid}}" name="version" class="form-control mr-2 h-auto version-selection"
+                data-action="mod_offlinequiz-select_slot" data-slot-id="{{slotid}}">
+                    {{#versionoption}}
+                        <option value="{{version}}" {{#selected}}selected="selected"{{/selected}}>{{versionvalue}}</option>
+                    {{/versionoption}}
+                </select>
+            {{/versionselection}}
+            {{{questionpreviewicon}}}
+            {{{questionmarkicon}}}
+        </span>
     </div>
-    <span class="actions">
-        {{#versionselection}}
-            <label for="version-{{slotid}}"> </label>
-            <select autocomplete="off" id="version-{{slotid}}" name="version" class="form-control mr-2 h-auto version-selection"
-            data-action="mod_offlinequiz-select_slot" data-slot-id="{{slotid}}">
-                {{#versionoption}}
-                    <option value="{{version}}" {{#selected}}selected="selected"{{/selected}}>{{versionvalue}}</option>
-                {{/versionoption}}
-            </select>
-        {{/versionselection}}
-        {{{questionpreviewicon}}}
-        {{{questionmarkicon}}}
-    </span>
 </div>
