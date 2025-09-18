@@ -226,7 +226,7 @@ function offlinequiz_get_tabs_object($offlinequiz, $cm): navigation_node {
         if (has_capability('mod/offlinequiz:manage', context_module::instance($cm->id))) {
             $preparationnode->add(
                 text: get_string('tabeditgroupquestions', 'offlinequiz'),
-                action: new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0]),
+                action: new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id, 'gradetool' => 0, 'groupnumber' => 1]),
                 key: 'tabeditgroupquestions');
         }
         // Add "Forms Preview" tab.
