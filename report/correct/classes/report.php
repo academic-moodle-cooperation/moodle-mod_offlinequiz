@@ -411,7 +411,8 @@ class report extends default_report {
                 if ($page->scannedpageid) {
                     $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
                     $filecontext['editurl'] = $OUTPUT->action_link($editurl,
-                    $OUTPUT->pix_icon('t/edit', get_string('queuefilecorrectionhovertext', 'offlinequiz')), new popup_action('click', $editurl, 'correct' .
+                    $OUTPUT->pix_icon('t/edit', get_string('queuefilecorrectionhovertext', 'offlinequiz')),
+                    new popup_action('click', $editurl, 'correct' .
                         $page->scannedpageid, $options));
                 }
                 $filecontext['statusmessage'] = get_string('queuefilestatusmessage_' . $page->status, 'offlinequiz');
