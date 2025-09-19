@@ -963,6 +963,7 @@ $string['totalquestionsinrandomqcategory'] = 'Total of {$a} questions in categor
 $string['trigger'] = 'lower/higher boundary';
 $string['tutorial'] = 'Tutorial for offline quizzes';
 $string['tutorial:alt:answerform'] = 'The answer form of the offline quiz';
+$string['tutorial:alt:answersimage'] = 'Answers image';
 $string['tutorial:alt:checkboxbold'] = 'Boldly marked checkbox';
 $string['tutorial:alt:checkboxdeleted'] = 'fully black marked checkbox';
 $string['tutorial:alt:checkboxempty'] = 'Empty checkbox';
