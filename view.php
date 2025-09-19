@@ -219,7 +219,7 @@ if ($editquestion['status'] == STATUS_DONE) {
 } else {
     $editquestion['collapsestatus'] = STATUS_NEXT;
 }
-$url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'edit', 'cmid' => $id]);
+$url = new moodle_url('/mod/offlinequiz/edit.php', ['mode' => 'edit', 'cmid' => $id, 'groupnumber' => 1]);
 $editquestion['link'] = $url->out(false);
 $editquestion['text'] = get_string('editquestions', 'offlinequiz');
 
