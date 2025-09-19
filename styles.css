@@ -1045,7 +1045,7 @@ input#showviewbutton {
 #page-mod-offlinequiz-edit .statusbar {
     margin-left: 0.6em;
     display: inline-block;
-    
+
 }
 
 #page-mod-offlinequiz-edit .maxgrade {
@@ -1418,7 +1418,6 @@ input#showviewbutton {
     width: 100%;
     display: block;
     margin-bottom: 0.5em;
-    margin-bottom: 0.5em;
 }
 #page-mod-offlinequiz-tutorial label {
     margin-left: 0.5em;
@@ -1461,9 +1460,12 @@ input#showviewbutton {
 #page-mod-offlinequiz-tutorial .tutorialbutton {
     margin-top: 1em;
 }
+#page-mod-offlinequiz-tutorial .tutorialquestion img {
+    border: 0;
+}
 
 .offlinequiz-queue-file-header {
-	font-weight: bold;
+    font-weight: bold;
     padding-top: 0.5rem;
     margin-top: 0.25rem;
     width: 100%;

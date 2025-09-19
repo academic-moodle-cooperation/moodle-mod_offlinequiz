@@ -14,6 +14,28 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_offlinequiz/correct_queue_list
+
+    Lists uploads
+
+    Example context (json):
+    {
+    uploadfurtherfileslink: "https://moodle.org/mod/offlinequiz/report/rimport/report.php?offlinequizid=5"
+        "queues": [
+            {
+                "queueid": "1",
+                "queuestatusdone": "true",
+                "importdate": "05/05/25 03:14pm",
+                "documentname": "upload.zip",
+                "numberofpages": "1",
+                "starttime": "05/05/25 03:15pm",
+                "finishtime": "05/05/25 03:16pm",
+                "expandedcontent" : "<p> see correct_files_list.mustache</p>"
+            }
+        ],
+    }
+}}
 <div>
   <h3> {{#str}} queueheader, mod_offlinequiz {{/str}} </h3>
   <a class="btn btn-secondary" id="offlinequiz-queue-uploadbutton" href="{{{uploadfurtherfileslink}}}"> {{#str}} uploadfurtherfiles, mod_offlinequiz {{/str}} </a>
@@ -90,7 +112,7 @@
         </div>
       </div>
     {{/queues}}
-    <script> 
+    <script>
       function toggle_queue_content(queueid) {
         expandedicon = document.querySelector("#queuefilescollapse-" + queueid + " .expanded-icon");
         collapseicon = document.querySelector("#queuefilescollapse-" + queueid + " .collapsed-icon");

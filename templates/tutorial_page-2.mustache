@@ -1,3 +1,28 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_offlinequiz/tutorial_page-2
+
+    Form to add random questions.
+
+    Example context (json):
+    {
+    }
+}}
 <div class="sideblock col-9">
 {{{notification}}}
 <h3>{{#str}} tutorial:header:2, mod_offlinequiz {{/str}}</h3>
@@ -14,11 +39,31 @@
 
   <input type="hidden" name="id" value="{{id}}">
   <input type="hidden" name="page" value="2">
-  <div class="option"><input type="radio" name="answer" value="1" id="answer1"><label for="answer1"><img src="./pix/tutorial/checkbox_light.svg" border="1"></label></div>
-  <div class="option"><input type="radio" name="answer" value="2" id="answer2"><label for="answer2"><img src="./pix/tutorial/checkbox_marked.svg" border="1"></label></div>
-  <div class="option"><input type="radio" name="answer" value="3" id="answer3"><label for="answer3"><img src="./pix/tutorial/checkbox_bold.svg" border="1"></label></div>
-  <div class="option"><input type="radio" name="answer" value="4" id="answer4"><label for="answer4"><img src="./pix/tutorial/checkbox_empty.svg" border="1"></label></div>
-  <div class="option"><input type="radio" name="answer" value="5" id="answer5"><label for="answer5"><img src="./pix/tutorial/checkbox_deleted.svg" border="1"></label></div>
+  <div class="option"><input type="radio" name="answer" value="1" id="answer1">
+    <label for="answer1">
+      <img src="./pix/tutorial/checkbox_light.svg" alt="{{#str}} tutorial:alt:checkboxlight, mod_offlinequiz {{/str}}" >
+    </label>
+  </div>
+  <div class="option"><input type="radio" name="answer" value="2" id="answer2">
+    <label for="answer2">
+      <img src="./pix/tutorial/checkbox_marked.svg" alt="{{#str}} tutorial:alt:checkboxmarked, mod_offlinequiz {{/str}}" >
+    </label>
+  </div>
+  <div class="option"><input type="radio" name="answer" value="3" id="answer3">
+    <label for="answer3">
+      <img src="./pix/tutorial/checkbox_bold.svg" alt="{{#str}} tutorial:alt:checkboxbold, mod_offlinequiz {{/str}}" >
+    </label>
+  </div>
+  <div class="option"><input type="radio" name="answer" value="4" id="answer4">
+    <label for="answer4">
+      <img src="./pix/tutorial/checkbox_empty.svg" alt="{{#str}} tutorial:alt:checkboxempty, mod_offlinequiz {{/str}}" >
+    </label>
+  </div>
+  <div class="option"><input type="radio" name="answer" value="5" id="answer5">
+    <label for="answer5">
+      <img src="./pix/tutorial/checkbox_deleted.svg" alt="{{#str}} tutorial:alt:checkboxdeleted, mod_offlinequiz {{/str}}" >
+    </label>
+  </div>
 
 
 </div>

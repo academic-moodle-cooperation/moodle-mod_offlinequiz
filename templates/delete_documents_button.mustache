@@ -21,13 +21,13 @@
 
     Example context (json):
     {
-    "actionurl" : "$CFG->wwwroot/mod/offlinequiz/createquiz.php?q=$offlinequiz->id&mode=createpdfs"
+    "actionurl" : "https://moodle.com/mod/offlinequiz/createquiz.php?q=1&mode=createpdfs"
     }
 }}
 <div class="singlebutton">
     <form action="{{{actionurl}}}" method="POST">
         <div>
-            <input type="hidden" name="forcepdfnew" value="1" />
+            <input type="hidden" name="forcepdfnew" value="1" >
             <button type="submit"
                 onClick="return confirm('{{#str}}reallydeletepdfs, offlinequiz{{/str}}')"
                 class="btn btn-secondary">

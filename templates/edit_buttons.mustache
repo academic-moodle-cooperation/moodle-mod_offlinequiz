@@ -14,12 +14,42 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_offlinequiz/edit_buttons
+
+    the buttons on the edit.php
+
+    Example context (json):
+    {
+    uploadfurtherfileslink: "https://moodle.org/mod/offlinequiz/report/rimport/report.php?offlinequizid=5"
+        "groupchoiceoptions": [
+            {
+                "number": "1",
+                "selected" "true",
+                "letter": "A"
+            }
+        ],
+        "informationquestioncount": "1",
+        "informationcurrentstatus": "This offline quiz is open",
+        "warningsempty": "true",
+            {
+                "queueid": "1",
+                "queuestatusdone": "true",
+                "importdate": "05/05/25 03:14pm",
+                "documentname": "upload.zip",
+                "numberofpages": "1",
+                "starttime": "05/05/25 03:15pm",
+                "finishtime": "05/05/25 03:16pm",
+                "expandedcontent" : "<p> see correct_files_list.mustache</p>"
+            }
+    }
+}}
 <div>
   <div class="offlinequizeditsection row">
     <div class="groupchoice col-7">
       <div class="single-select d-inline-block">
-        <form method="get" action="{{{groupchoiceactionurl}}}" class="d-flex flex-wrap align-items-center">
-          <input type="hidden" name="cmid" value="{{cmid}}"></input>
+        <form method="get" action="{{groupchoiceactionurl}}" class="d-flex flex-wrap align-items-center">
+          <input type="hidden" name="cmid" value="{{cmid}}">
           <select class="custom-select single-select" name="groupnumber" onchange="this.form.submit()">
             {{#groupchoiceoptions}}
               <option value="{{number}}" {{#selected}}selected{{/selected}}>{{#str}} questionsingroup, mod_offlinequiz {{/str}} {{letter}}</option>
@@ -41,16 +71,16 @@
     </div>
     <div class="maxgrade col-5 ms-auto">
       <form class="row ms-auto">
-        <input type="hidden" name="cmid" value="{{cmid}}"></input>
-        <input type="hidden" name="sesskey" value="{{sesskey}}"></input>
-        <input type="hidden" name="groupnumber" value="{{groupnumber}}"></input>
+        <input type="hidden" name="cmid" value="{{cmid}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <input type="hidden" name="groupnumber" value="{{groupnumber}}">
         <div class="inputmaxgradelabel col-5 pe-0">
           <label for="inputmaxgrade">
             {{#str}} maximumgradex,  {{/str}}
           </label>
         </div>
         <div class="col-4">
-          <input type="text" id="inputmaxgrade" name="maxgrade" size="{{maxgradeinputsize}}" value="{{maxgradevalue}}"></input>
+          <input type="text" id="inputmaxgrade" name="maxgrade" size="{{maxgradeinputsize}}" value="{{maxgradevalue}}">
         </div>
         <button type="submit" name="savechanges" value="true" class="btn btn-secondary savechanges col-3">
           {{#str}} save, mod_offlinequiz {{/str}}
@@ -61,7 +91,7 @@
           {{#str}} totalmarksx, mod_offlinequiz {{/str}}
         </span>
         <span class="mod_offlinequiz_summarks col-4">{{sumgrades}}</span>
-        <div class="col-3" />
+        <div class="col-3" > </div>
       </div>
     </div>
     </div>
@@ -82,8 +112,8 @@
     </div>
     <div class="col-12 editquestionsform">
       <form method="post" action="{{addtogroupformurl}}" id="offlinequizbulkcopyform" class="offlinequizbulkcopyform">
-        <input type="hidden" name="sesskey" value="{{sesskey}}" />
-        <input type="hidden" name="fromofflinegroup" value="{{groupid}}" />
+        <input type="hidden" name="sesskey" value="{{sesskey}}" >
+        <input type="hidden" name="fromofflinegroup" value="{{groupid}}" >
         <div class="copyselected">
           <span class="addselectedtogrouptext">{{#str}} copyselectedtogroup, mod_offlinequiz {{/str}} </span>
           <select id="menucopyselectedtogrouptop" class="select form-select menucopyselectedtogrouptop" name="copyselectedtogrouptop">
@@ -92,11 +122,10 @@
               <option value="{{number}}">{{#str}} questionsingroup, mod_offlinequiz {{/str}} {{letter}}</option>
             {{/addtogroupotpions}}
           </select>
-          <input class="btn btn-secondary" type="submit" name="savechanges"  {{#addtogroupdisabled}} disabled="disabled" {{/addtogroupdisabled}} value="{{#str}} add {{/str}}" />
-          <div class="removeselected" "cmid="{{cmid}}">
+          <input class="btn btn-secondary" type="submit" name="savechanges"  {{#addtogroupdisabled}} disabled="disabled" {{/addtogroupdisabled}} value="{{#str}} add {{/str}}" >
+          <div class="removeselected" cmid="{{cmid}}">
             <input type="submit"  name="offlinequizdeleteselected" id="removeselectedcommand"  {{#addtogroupdisabled}} disabled="disabled" {{/addtogroupdisabled}}
                onclick="return confirm('{{#str}} areyousureremoveselected, mod_offlinequiz {{/str}}');" value="{{#str}} removeselected, mod_offlinequiz {{/str}}" class="btn btn-secondary">
-            </input>
           </div>
         </div>
         <div class="btn-toolbar" role="toolbar" aria-label="{{#str}} selectmultipletoolbar, mod_offlinequiz {{/str}}">

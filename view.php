@@ -456,7 +456,7 @@ if (has_any_capability(['mod/offlinequiz:viewreports', 'mod/offlinequiz:manage']
         WHERE qa.offlinequizid = :offlinequizid
           AND qa.userid = :userid
           AND qa.status = 'complete'";
-    $result = $DB->get_record_sql($select, ['offlinequizid' => $offlinequiz->id, 'userid' => $USER->i]);
+    $result = $DB->get_record_sql($select, ['offlinequizid' => $offlinequiz->id, 'userid' => $USER->id]);
     if ($result && offlinequiz_results_open($offlinequiz) && has_capability('mod/offlinequiz:attempt', $context)) {
         $options = offlinequiz_get_review_options($offlinequiz, $result, $context);
         if ($result->timefinish && ($options->attempt == question_display_options::VISIBLE ||
