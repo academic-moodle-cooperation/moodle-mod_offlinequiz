@@ -113,7 +113,7 @@
             {{/addtogroupotpions}}
           </select>
           <input class="btn btn-secondary" type="submit" name="savechanges"  {{#addtogroupdisabled}} disabled="disabled" {{/addtogroupdisabled}} value="{{#str}} add {{/str}}" >
-          <div class="removeselected" cmid="{{cmid}}">
+          <div class="removeselected">
             <input type="submit"  name="offlinequizdeleteselected" id="removeselectedcommand"  {{#addtogroupdisabled}} disabled="disabled" {{/addtogroupdisabled}}
                onclick="return confirm('{{#str}} areyousureremoveselected, mod_offlinequiz {{/str}}');" value="{{#str}} removeselected, mod_offlinequiz {{/str}}" class="btn btn-secondary">
           </div>
