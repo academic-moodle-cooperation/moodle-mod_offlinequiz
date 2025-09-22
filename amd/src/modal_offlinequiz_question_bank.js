@@ -160,6 +160,7 @@ export default class ModalOfflinequizQuestionBank extends Modal {
         this.getModal().on('click', SELECTORS.SWITCH_TO_OTHER_BANK, () => {
             this.handleSwitchBankContentReload(SELECTORS.BANK_SEARCH)
                 .then(function(ModalOfflinequizQuestionBank) {
+                        // eslint-disable-next-line promise/always-return
                         document.querySelector(SELECTORS.BANK_SEARCH)?.addEventListener('change', (e) => {
                             const bankCmId = e.currentTarget.value;
                             if (bankCmId > 0) {
