@@ -331,7 +331,7 @@ Y.Moodle.mod_offlinequiz.util.slot = {
             var pagebreaklink = pagebreak.get('childNodes').item(0);
 
             // Get the correct title.
-            var action = '';
+            var action;
             var iconname = '';
             if (Y.Moodle.mod_offlinequiz.util.page.isPage(nextitem)) {
                 action = 'removepagebreak';
@@ -367,74 +367,5 @@ Y.Moodle.mod_offlinequiz.util.slot = {
             // Update the anchor.
             pagebreaklink.set('href', newurl);
         }, this);
-    },
-
-    /**
-     * Update the dependency icons.
-     *
-     * @method updateAllDependencyIcons
-     * @return void
-     */
-    updateAllDependencyIcons: function() {
-        // Get list of slot nodes.
-        var slots = this.getSlots(),
-            slotnumber = 0,
-            previousslot = null;
-        // Loop through slots incrementing the number each time.
-        slots.each(function(slot) {
-            slotnumber++;
-
-            if (slotnumber == 1 || previousslot.getData('canfinish') === '0') {
-                slot.one(this.SELECTORS.DEPENDENCY_WRAPPER).addClass(this.CSS.CANNOT_DEPEND);
-            } else {
-                slot.one(this.SELECTORS.DEPENDENCY_WRAPPER).removeClass(this.CSS.CANNOT_DEPEND);
-            }
-            this.updateDependencyIcon(slot, null);
-
-            previousslot = slot;
-        }, this);
-    },
-
-    /**
-     * Update the slot icon to indicate the new requiresprevious state.
-     *
-     * @method slot Slot node
-     * @method requiresprevious Whether this node now requires the previous one.
-     * @return void
-     */
-    updateDependencyIcon: function(slot, requiresprevious) {
-        var link = slot.one(this.SELECTORS.DEPENDENCY_LINK);
-        var icon = slot.one(this.SELECTORS.DEPENDENCY_ICON);
-        var previousSlot = this.getPrevious(slot);
-        var a = {thisq: this.getNumber(slot)};
-        if (previousSlot) {
-            a.previousq = this.getNumber(previousSlot);
-        }
-
-        if (requiresprevious === null) {
-            requiresprevious = link.getData('action') === 'removedependency';
-        }
-
-        if (requiresprevious) {
-            link.set('title', M.util.get_string('questiondependencyremove', 'offlinequiz', a));
-            link.setData('action', 'removedependency');
-            window.require(['core/templates'], function(Templates) {
-                Templates.renderPix('t/locked', 'core', M.util.get_string('questiondependsonprevious', 'offlinequiz')).then(
-                    function(html) {
-                        icon.replace(html);
-                    }
-                );
-            });
-        } else {
-            link.set('title', M.util.get_string('questiondependencyadd', 'offlinequiz', a));
-            link.setData('action', 'adddependency');
-            window.require(['core/templates'], function(Templates) {
-                Templates.renderPix('t/unlocked', 'core', M.util.get_string('questiondependencyfree', 'offlinequiz')).then(
-                    function(html) {
-                        icon.replace(html);
-                    }
-                );
-            });
-        }
     }
 };
