@@ -502,7 +502,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                 'size': parseInt(this.get('config').questiondecimalpoints, 10) + 2
             });
 
-            // Clear the existing content and put the editor in.
+            // Clear the existing content and put the editor in.P
             editform.appendChild(editor);
             editform.setData('anchor', anchor);
             instance.insert(editinstructions, 'before');
