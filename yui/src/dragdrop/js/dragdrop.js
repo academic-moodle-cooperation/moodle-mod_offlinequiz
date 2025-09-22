@@ -17,7 +17,7 @@ var CSS = {
     LIGHTBOX: 'lightbox',
     MOVEDOWN: 'movedown',
     MOVEUP: 'moveup',
-    PAGE : 'page',
+    PAGE: 'page',
     PAGECONTENT: 'page-content',
     RIGHT: 'right',
     SECTION: 'section',

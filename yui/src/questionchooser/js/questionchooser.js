@@ -47,10 +47,10 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
         this.display_chooser(e);
 
         var nodes = Y.all('#chooseform input[type=radio]')._nodes;
-        for(i = 0; i < nodes.length; i++) {
+        for (i = 0; i < nodes.length; i++) {
             if (nodes[i].id != 'item_qtype_multichoiceset' &&
                 nodes[i].id != 'item_qtype_multichoice' &&
-                nodes[i].id != 'item_qtype_description' ) {
+                nodes[i].id != 'item_qtype_description') {
                 nodes[i].disabled = true;
             }
         }

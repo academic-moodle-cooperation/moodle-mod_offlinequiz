@@ -13,7 +13,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
 
     initializer: function() {
         // Set group for parent class.
-        this.groups = [ CSS.SECTIONDRAGGABLE ];
+        this.groups = [CSS.SECTIONDRAGGABLE];
         this.samenodeclass = M.mod_offlinequiz.edit.get_sectionwrapperclass();
         this.parentnodeclass = M.mod_offlinequiz.edit.get_containerclass();
 
@@ -102,7 +102,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         var sectionnode = Y.Node.create(
                 '<' + M.mod_offlinequiz.edit.get_sectionwrappernode() +
                 '></' + M.mod_offlinequiz.edit.get_sectionwrappernode() + '>');
-        sectionnode.addClass( M.mod_offlinequiz.edit.get_sectionwrapperclass());
+        sectionnode.addClass(M.mod_offlinequiz.edit.get_sectionwrapperclass());
         sectionnode.setStyle('margin', 0);
         sectionnode.setContent(drag.get('node').get('innerHTML'));
         containernode.appendChild(sectionnode);
@@ -177,7 +177,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         params.courseid = this.get('courseid');
         params.offlinequizid = this.get('offlinequizid');
         params.offlinegroupid = this.get('offlinegroupid');
-        params['class'] = 'section';
+        params.class = 'section';
         params.field = 'move';
         params.id = dragnodeid;
         params.value = dropnodeindex;
@@ -242,7 +242,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                     lightbox.hide();
                 }
             },
-            context:this
+            context: this
         });
     }
 

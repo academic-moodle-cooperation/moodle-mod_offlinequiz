@@ -42,7 +42,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
      * @method initializer
      * @protected
      */
-    initializer : function() {
+    initializer: function() {
         M.mod_offlinequiz.offlinequizbase.register_module(this);
 
         BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
@@ -50,7 +50,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         Y.delegate('change', this.handle_data_action, BODY, SELECTOR.EDITSHUFFLEQUESTIONSACTION, this);
     },
 
-    toggle_hide_section : function(e) {
+    toggle_hide_section: function(e) {
         // Prevent the default button action.
         e.preventDefault();
 
@@ -80,18 +80,18 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
 
         var newstring = M.util.get_string(nextaction + 'fromothers', 'format_' + this.get('format'));
         hideicon.setAttrs({
-            'alt' : newstring,
-            'src'   : M.util.image_url('i/' + nextaction)
+            'alt': newstring,
+            'src': M.util.image_url('i/' + nextaction)
         });
         button.set('title', newstring);
 
         // Change the highlight status.
         var data = {
-            'class' : 'section',
-            'field' : 'visible',
-            'id'    : Y.Moodle.core_course.util.section.getId(
+            'class': 'section',
+            'field': 'visible',
+            'id': Y.Moodle.core_course.util.section.getId(
                         section.ancestor(M.mod_offlinequiz.edit.get_section_wrapper(Y), true)),
-            'value' : value
+            'value': value
         };
         var lightbox = M.util.add_lightbox(Y, section);
         lightbox.show();
@@ -115,20 +115,20 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
             }, this);
         });
     }
-},  {
-    NAME : 'mod_offlinequiz-section-toolbox',
-    ATTRS : {
-        courseid : {
-            'value' : 0
+}, {
+    NAME: 'mod_offlinequiz-section-toolbox',
+    ATTRS: {
+        courseid: {
+            'value': 0
         },
-        offlinequizid : {
-            'value' : 0
+        offlinequizid: {
+            'value': 0
         },
-        offlinegroupid : {
-            'value' : 0
+        offlinegroupid: {
+            'value': 0
         },
-        format : {
-            'value' : 'topics'
+        format: {
+            'value': 'topics'
         }
     }
 });
