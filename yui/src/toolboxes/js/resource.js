@@ -280,8 +280,9 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             anchor.replace(editform);
 
             // Force the editing instruction to match the mod-indent position.
+            var isRtl = document.documentElement.dir === 'rtl';
             var padside = 'left';
-            if (right_to_left()) {
+            if (isRtl) {
                 padside = 'right';
             }
 

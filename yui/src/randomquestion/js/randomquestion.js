@@ -45,7 +45,7 @@ Y.extend(POPUP, Y.Base, {
 
     dialogue: function(header) {
         // Create a dialogue on the page and hide it.
-        config = {
+        var config = {
             headerContent: header,
             bodyContent: Y.one(CSS.RANDOMQUESTIONFORM),
             draggable: true,

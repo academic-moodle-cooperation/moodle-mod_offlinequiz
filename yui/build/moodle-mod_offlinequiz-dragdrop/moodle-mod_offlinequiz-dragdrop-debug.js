@@ -316,7 +316,6 @@ M.mod_offlinequiz = M.mod_offlinequiz || {};
 M.mod_offlinequiz.init_section_dragdrop = function(params) {
     new DRAGSECTION(params);
 };
-/* global SELECTOR */
 /**
  * Resource drag and drop.
  *
