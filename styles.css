@@ -97,7 +97,7 @@ body.jsenabled .questionflagcheckbox {
     border: 1px solid #bbb;
     background: #ddd;
     text-align: center;
-    line-height: 1.5em !important;
+    line-height: 1.5em;
     font-weight: bold;
     text-decoration: none;
 }
@@ -362,7 +362,7 @@ table.offlinequizattemptsummary .noreviewmessage {
 
 @media print {
     .offlinequiz-secure-window * {
-        display: none !important;
+        display: none;
     }
 }
 
@@ -415,7 +415,7 @@ table.offlinequizreviewsummary td.cell {
     text-align: center;
 }
 #page-mod-offlinequiz-report .downloadoptions .text-xs-right {
-    text-align: center !important;
+    text-align: center;
 }
 #page-mod-offlinequiz-report table#overview-options {
     margin-left: auto;
@@ -453,7 +453,7 @@ table.offlinequizreviewsummary td.cell {
 }
 #page-mod-offlinequiz-report table .numcol {
     text-align: center;
-    vertical-align: middle !important;
+    vertical-align: middle;
 }
 
 #page-mod-offlinequiz-report table#attempts {
@@ -496,7 +496,7 @@ table.offlinequizreviewsummary td.cell {
     text-align: left;
 }
 #page-mod-offlinequiz-report table#attempts .picture {
-    text-align: center !important;
+    text-align: center;
 }
 #page-mod-offlinequiz-report table#attempts.grades span.que,
 #page-mod-offlinequiz-report table#attempts span.avgcell {
@@ -626,7 +626,7 @@ table.offlinequizreviewsummary td.cell {
     vertical-align: middle;
 }
 #page-mod-offlinequiz-report .dowloadoptions .text-xs-right {
-    text-align: center !important;
+    text-align: center;
 }
 #page-mod-offlinequiz-report table#statsoverviewtable {
     border: 1px solid #ddd;
@@ -736,14 +736,7 @@ table.offlinequizreviewsummary td.cell {
 }
 #overlay {
     display: none;
-    background: -moz-radial-gradient(center, ellipse cover,  rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.5) 100%);
-    background: -webkit-gradient(radial, center center, 0, center center, 100%, color-stop(0%, rgba(0, 0, 0, 0.65)),
-                  color-stop(100%, rgba(0, 0, 0, 0.5)));
-    background: -webkit-radial-gradient(center, ellipse cover,  rgba(0, 0, 0, 0.65) 0%,rgba(0, 0, 0, 0.5) 100%);
-    background: -o-radial-gradient(center, ellipse cover,  rgba(0, 0, 0, 0.65) 0%,rgba(0, 0, 0, 0.5) 100%);
-    background: -ms-radial-gradient(center, ellipse cover,  rgba(0, 0, 0, 0.65) 0%,rgba(0, 0, 0, 0.5) 100%);
-    background: radial-gradient(ellipse at center,  rgba(0, 0, 0, 0.65) 0%,rgba(0, 0, 0, 0.5) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#80000000',GradientType=1 );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a6000000', endColorstr='#80000000', GradientType=1);
     width: 100%;
     height: 100%;
     position: fixed;
@@ -754,15 +747,15 @@ table.offlinequizreviewsummary td.cell {
 
 #overlay.fade,
 .Popup.fade {
-  opacity: 0;
-  transition: opacity 0.6s ease;
-  display: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    display: none;
 }
 
 #overlay.fade.show,
 .Popup.fade.show {
-  opacity: 1;
-  display: block;
+    opacity: 1;
+    display: block;
 }
 
 #overlay.fade-out,
@@ -939,12 +932,12 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .mod-indent-outer {
-	display: flex;
-	padding-left: 22px;
+    display: flex;
+    padding-left: 22px;
 }
 
 #page-mod-offlinequiz-edit #editbuttonsgroup {
-	display: flex;
+    display: flex;
 }
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_0 {
@@ -977,7 +970,7 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit .offlinequizeditsection {
-	display: flex;
+    display: flex;
 }
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .edit_icon,
@@ -994,10 +987,10 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .activityinstance {
-	display: flex;
-	flex: 1 1 auto;
-	min-height: 1.7em;
-	padding-right: 2px;
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 1.7em;
+    padding-right: 2px;
 }
 
 #page-mod-offlinequiz-edit .questionblock {
@@ -1049,28 +1042,28 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit .maxgrade {
-	max-width: 35em;
+    max-width: 35em;
 }
 
 #page-mod-offlinequiz-edit #inputmaxgrade {
-    width:100%;
+    width: 100%;
 }
 
 #page-mod-offlinequiz-edit .inputmaxgradelabel label,
 #page-mod-offlinequiz-edit .edit_grades .totalpoints {
-	padding: 0;
-	justify-content: flex-end;
-	display: flex;
+    padding: 0;
+    justify-content: flex-end;
+    display: flex;
 }
 
 #page-mod-offlinequiz-edit .editing_move {
-	position: absolute;
-	left: 0;
-	top: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 #page-mod-offlinequiz-edit .savechanges {
-	height: 2.5em;
+    height: 2.5em;
 }
 
 #page-mod-offlinequiz-edit .edit_grades .maxgrade {
@@ -1093,13 +1086,13 @@ input#showviewbutton {
     clear: both;
 }
 #page-mod-offlinequiz-edit .copyselected {
-	display: flex;
+    display: flex;
 }
 #page-mod-offlinequiz-edit .addselectedtogrouptext {
     align-self: center;
 }
 #page-mod-offlinequiz-edit #menucopyselectedtogrouptop {
-	margin-left: 1em;
+    margin-left: 1em;
 }
 #page-mod-offlinequiz-edit div.removeselected input {
     margin-left: 0.5em;
@@ -1121,12 +1114,13 @@ input#showviewbutton {
     margin: 0 0.2em;
 }
 
-#page-mod-offlinequiz-edit #categoryquestions .questionname, #page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .questionname {
-	font-weight: 700;
-	color: #555;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+#page-mod-offlinequiz-edit #categoryquestions .questionname,
+#page-mod-offlinequiz-edit ul.slots li.activity div.activityinstance .questionname {
+    font-weight: 700;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     margin-right: 0.4rem;
 }
 
@@ -1155,8 +1149,8 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit .section .activity .actions .version-selection {
-	width: 8em;
-	padding: 0;
+    width: 8em;
+    padding: 0;
 }
 
 #page-mod-offlinequiz-edit .section .activity.forgrading .actions input.gradeinput {
@@ -1170,11 +1164,11 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit .section .activity .activityinstance > a {
-	text-indent: 0;
-	padding-left: 0;
-	display: flex;
-	max-width: 100%;
-	align-items: center;
+    text-indent: 0;
+    padding-left: 0;
+    display: flex;
+    max-width: 100%;
+    align-items: center;
 }
 
 #page-mod-offlinequiz-edit .mod_offlinequiz_edit_forms {
@@ -1275,10 +1269,10 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-view li.nextitem {
-   list-style-image: url([[pix:offlinequiz|icon_unchecked]]);
+    list-style-image: url([[pix:offlinequiz|icon_unchecked]]);
 }
 #page-mod-offlinequiz-view li.warning {
-     list-style-image: url([[pix:offlinequiz|icon_warning]]);
+    list-style-image: url([[pix:offlinequiz|icon_warning]]);
 }
 
 #page-mod-offlinequiz-view .collapsible-content.inactive {
@@ -1309,9 +1303,9 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-view .offlinequiz-view-statistics-column {
-  width: 100%;
-  border-top: 1px dashed gray;
-  padding-top: 2em;
+    width: 100%;
+    border-top: 1px dashed gray;
+    padding-top: 2em;
 }
 
 .path-mod-offlinequiz .urlselect {
@@ -1332,22 +1326,24 @@ input#showviewbutton {
     color: #2774b9;
 }
 
-.offlinequiz-processing, .offlinequiz-notstarted {
-    color: #777777;
+.offlinequiz-processing,
+.offlinequiz-notstarted {
+    color: #777;
 }
 
 .offlinequiz-locked {
-    pointer-events:none;
-    opacity:0.8;
+    pointer-events: none;
+    opacity: 0.8;
 }
 .offlinequiz-view-header {
     width: 100%;
     background-color: #f8f9fa;
     padding: 1em;
 }
-@media all{
+
+@media all {
     #page-mod-offlinequiz-edit #questionscontainer .justify-content-start {
-        display: none !important;
+        display: none;
     }
 }
 
@@ -1443,7 +1439,7 @@ input#showviewbutton {
     padding: 2em;
     background-color: GhostWhite;
     width: 30em;
-    max-width: 100%
+    max-width: 100%;
 }
 #page-mod-offlinequiz-tutorial .questionimage {
     float: right;
@@ -1478,7 +1474,7 @@ input#showviewbutton {
     border-top: 1px solid #dee2e6;
 }
 .offlinequiz-queue-content {
-    margin: 1em 0em 1em 3em;
+    margin: 1em 0 1em 3em;
 }
 .offlinequiz-queue-item {
     padding: 1rem;
