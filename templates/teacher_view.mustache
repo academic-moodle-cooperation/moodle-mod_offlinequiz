@@ -28,7 +28,9 @@
     <h3>{{#str}} preparation, mod_offlinequiz {{/str}}</h3>
     <ul class="fa-ul">
       {{#preparationsteps}}
+        <li>
          {{> mod_offlinequiz/teacher_view_step }}
+        </li>
       {{/preparationsteps}}
     </ul>
   </div>
@@ -36,7 +38,9 @@
     <h3>{{#str}} evaluation, mod_offlinequiz {{/str}}</h3>
     <ul class="oq-expandable {{evaluation-expanded}} fa-ul">
       {{#evaluationsteps}}
+        <li>
           {{> mod_offlinequiz/teacher_view_step }}
+        </li>
       {{/evaluationsteps}}
     </ul>
   </div>
@@ -51,7 +55,9 @@
         <h3>{{#str}} attendancespreparationheadline, mod_offlinequiz {{/str}}</h3>
         <ul class="oq-expandable {{participantslist-expanded}} fa-ul">
           {{#participantslistpreparationsteps}}
-            {{> mod_offlinequiz/teacher_view_step }}
+            <li>
+              {{> mod_offlinequiz/teacher_view_step }}
+            </li>
           {{/participantslistpreparationsteps}}
         </ul>
       </div>
@@ -59,7 +65,9 @@
         <h3>{{#str}} attendancesevaluationheadline, mod_offlinequiz {{/str}}</h3>
         <ul class="oq-expandable {{participantslist-expanded}} fa-ul">
           {{#participantslistevaluationsteps}}
-            {{> mod_offlinequiz/teacher_view_step }}
+            <li>
+              {{> mod_offlinequiz/teacher_view_step }}
+            </li>
           {{/participantslistevaluationsteps}}
         </ul>
       </div>
