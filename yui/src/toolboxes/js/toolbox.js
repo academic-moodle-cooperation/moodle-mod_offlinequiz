@@ -9,6 +9,7 @@
  */
 
 // The CSS classes we use.
+// eslint-disable-next-line no-redeclare
 var CSS = {
     ACTIVITYINSTANCE: 'activityinstance',
     AVAILABILITYINFODIV: 'div.availabilityinfo',
@@ -67,6 +68,7 @@ SELECTOR = {
 BODY = Y.one(document.body);
 
 // Setup the basic namespace.
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 
 /**
@@ -93,6 +95,7 @@ Y.extend(TOOLBOX, Y.Base, {
      * @param {Object} [optionalconfig] Any additional configuration to submit
      * @chainable
      */
+    // eslint-disable-next-line camelcase
     send_request: function(data, statusspinner, success_callback, optionalconfig) {
             // Default data structure.
         if (!data) {
@@ -121,8 +124,7 @@ Y.extend(TOOLBOX, Y.Base, {
                         if (responsetext.error) {
                             new M.core.ajaxException(responsetext);
                         }
-                    } catch (e) {
-                    }
+                    } catch (e) { /* Empty */ }
                     // Run the callback if we have one.
                     if (responsetext.hasOwnProperty('newsummarks')) {
                         Y.one(SELECTOR.SUMMARKS).setHTML(responsetext.newsummarks);
@@ -131,6 +133,7 @@ Y.extend(TOOLBOX, Y.Base, {
                         Y.one(SELECTOR.NUMQUESTIONS).setHTML(
                                 M.util.get_string('numquestionsx', 'offlinequiz', responsetext.newnumquestions));
                     }
+                    // eslint-disable-next-line camelcase
                     if (success_callback) {
                         Y.bind(success_callback, this, responsetext)();
                     }

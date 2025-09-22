@@ -50,6 +50,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         Y.delegate('change', this.handle_data_action, BODY, SELECTOR.EDITSHUFFLEQUESTIONSACTION, this);
     },
 
+    // eslint-disable-next-line camelcase
     toggle_hide_section: function(e) {
         // Prevent the default button action.
         e.preventDefault();
@@ -133,6 +134,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.init_section_toolbox = function(config) {
     return new SECTIONTOOLBOX(config);
 };

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-redeclare
 var CSS = {
     ADDNEWQUESTIONBUTTONS: '.menu [data-action="addquestion"]',
     CREATENEWQUESTION: 'div.createnewquestion',
@@ -23,6 +24,7 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
         Y.one('body').delegate('click', this.display_dialogue, CSS.ADDNEWQUESTIONBUTTONS, this);
     },
 
+    // eslint-disable-next-line camelcase
     display_dialogue: function(e) {
         e.preventDefault();
         var dialogue = Y.one(CSS.CREATENEWQUESTION + ' ' + CSS.CHOOSERDIALOGUE),
@@ -56,6 +58,7 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
         }
     },
 
+    // eslint-disable-next-line camelcase
     parameters_to_hidden_input: function(parameters, form, name) {
         var value;
         if (parameters.hasOwnProperty(name)) {
@@ -74,8 +77,11 @@ Y.extend(QUESTIONCHOOSER, M.core.chooserdialogue, {
     NAME: 'mod_offlinequiz-questionchooser'
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.init_questionchooser = function() {
+    // eslint-disable-next-line camelcase
     M.mod_offlinequiz.question_chooser = new QUESTIONCHOOSER({});
     return M.mod_offlinequiz.question_chooser;
 };

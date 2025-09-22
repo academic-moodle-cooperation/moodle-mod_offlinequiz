@@ -26,6 +26,7 @@ YUI.add('moodle-mod_offlinequiz-randomquestion', function (Y, NAME) {
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// eslint-disable-next-line no-redeclare
 var CSS = {
     RANDOMQUESTIONFORM: 'div.randomquestionformforpopup',
     PAGEHIDDENINPUT: 'input#rform_qpage',
@@ -47,27 +48,28 @@ Y.extend(POPUP, Y.Base, {
     dialogue: function(header) {
         // Create a dialogue on the page and hide it.
         config = {
-            headerContent : header,
-            bodyContent : Y.one(CSS.RANDOMQUESTIONFORM),
-            draggable : true,
-            modal : true,
-            zIndex : 1000,
+            headerContent: header,
+            bodyContent: Y.one(CSS.RANDOMQUESTIONFORM),
+            draggable: true,
+            modal: true,
+            zIndex: 1000,
             centered: false,
             width: 'auto',
             visible: false,
             postmethod: 'form',
             footerContent: null
         };
-        var popup = { dialog: null };
+        var popup = {dialog: null};
         popup.dialog = new M.core.dialogue(config);
         popup.dialog.show();
     },
 
-    initializer : function() {
+    initializer: function() {
         Y.one('body').delegate('click', this.display_dialogue, CSS.RANDOMQUESTIONLINKS, this);
     },
 
-    display_dialogue : function (e) {
+    // eslint-disable-next-line camelcase
+    display_dialogue: function(e) {
         e.preventDefault();
 
         Y.one(CSS.RANDOMQUESTIONFORM + ' ' + CSS.PAGEHIDDENINPUT).set('value',
@@ -77,6 +79,7 @@ Y.extend(POPUP, Y.Base, {
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 M.mod_offlinequiz.randomquestion = M.mod_offlinequiz.randomquestion || {};
 M.mod_offlinequiz.randomquestion.init = function() {

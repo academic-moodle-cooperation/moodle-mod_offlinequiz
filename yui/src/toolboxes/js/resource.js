@@ -72,6 +72,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @method initialise_select_multiple
      * @protected
      */
+    // eslint-disable-next-line camelcase
     initialise_select_multiple: function() {
         // Click select all link to check all the checkboxes.
         Y.all(SELECTOR.SELECTALL).on('click', function(e) {
@@ -105,6 +106,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {EventFacade} ev The event that was triggered.
      * @returns {boolean}
      */
+    // eslint-disable-next-line camelcase
     handle_data_action: function(ev) {
         // We need to get the anchor element that triggered this event.
         var node = ev.target;
@@ -152,6 +154,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity to add a loading icon to
      * @return {Node|null} The newly created icon, or null if the action area was not found.
      */
+    // eslint-disable-next-line camelcase
     add_spinner: function(activity) {
         var actionarea = activity.one(SELECTOR.ACTIONAREA);
         if (actionarea) {
@@ -170,6 +173,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity node that this action will be performed on.
      * @chainable
      */
+    // eslint-disable-next-line camelcase
     delete_with_confirmation: function(ev, button, activity) {
         // Prevent the default button action.
         ev.preventDefault();
@@ -227,6 +231,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {String} action The action that has been requested.
      * @return Boolean
      */
+    // eslint-disable-next-line camelcase
     edit_maxmark: function(ev, button, activity) {
         // Get the element we're working on.
         var activityid = Y.Moodle.mod_offlinequiz.util.slot.getId(activity),
@@ -307,6 +312,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity whose maxmark we are altering.
      * @param {String} originalmaxmark The original maxmark the activity or resource had.
      */
+    // eslint-disable-next-line camelcase
     edit_maxmark_submit: function(ev, activity, originalmaxmark) {
         // We don't actually want to submit anything.
         ev.preventDefault();
@@ -338,6 +344,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity whose maxmark we are altering.
      * @param {Boolean} preventdefault If true we should prevent the default action from occuring.
      */
+    // eslint-disable-next-line camelcase
     edit_maxmark_cancel: function(ev, activity, preventdefault) {
         if (preventdefault) {
             ev.preventDefault();
@@ -352,6 +359,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @method edit_maxmark_clear
      * @param {Node} activity  The activity whose maxmark we were altering.
      */
+    // eslint-disable-next-line camelcase
     edit_maxmark_clear: function(activity) {
         // Detach all listen events to prevent duplicate triggers.
         new Y.EventHandle(this.editmaxmarkevents).detach();
@@ -392,6 +400,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity node that this action will be performed on.
      * @chainable
      */
+    // eslint-disable-next-line camelcase
     update_page_break: function(ev, button, activity, action) {
         // Prevent the default button action.
         ev.preventDefault();
@@ -428,6 +437,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @protected
      * @method reorganise_edit_page
      */
+    // eslint-disable-next-line camelcase
     reorganise_edit_page: function() {
         Y.Moodle.mod_offlinequiz.util.slot.reorderSlots();
         Y.Moodle.mod_offlinequiz.util.slot.reorderPageBreaks();
@@ -448,8 +458,11 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.resource_toolbox = null;
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.init_resource_toolbox = function(config) {
+    // eslint-disable-next-line camelcase
     M.mod_offlinequiz.resource_toolbox = new RESOURCETOOLBOX(config);
     return M.mod_offlinequiz.resource_toolbox;
 };

@@ -47,6 +47,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
             });
             del.dd.plug(Y.Plugin.DDWinScroll);
         }
+        return true;
     },
 
     /**
@@ -55,6 +56,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
      * @method setup_for_section
      * @param {String} baseselector The CSS selector or node to limit scope to
      */
+    // eslint-disable-next-line camelcase
     setup_for_section: function(baseselector) {
         Y.Node.all(baseselector).each(function(sectionnode) {
             // Determine the section ID.
@@ -91,6 +93,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
     /*
      * Drag-dropping related functions.
      */
+    // eslint-disable-next-line camelcase
     drag_start: function(e) {
         // Get our drag object.
         var drag = e.target;
@@ -110,6 +113,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         drag.get('dragNode').addClass(CSS.COURSECONTENT);
     },
 
+    // eslint-disable-next-line camelcase
     drag_dropmiss: function(e) {
         // Missed the target, but we assume the user intended to drop it
         // on the last last ghost node location, e.drag and e.drop should be
@@ -117,6 +121,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         this.drop_hit(e);
     },
 
+    // eslint-disable-next-line camelcase
     get_section_index: function(node) {
         var sectionlistselector = '.' + CSS.COURSECONTENT + ' ' + M.mod_offlinequiz.edit.get_section_selector(Y),
             sectionList = Y.all(sectionlistselector),
@@ -126,6 +131,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         return (nodeIndex - zeroIndex);
     },
 
+    // eslint-disable-next-line camelcase
     drop_hit: function(e) {
         var drag = e.drag;
 
@@ -200,7 +206,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                             new M.core.ajaxException(responsetext);
                         }
                         M.mod_offlinequiz.edit.process_sections(Y, sectionlist, responsetext, loopstart, loopend);
-                    } catch (e) {}
+                    } catch (e) { /* Empty */ }
 
                     // Update all of the section IDs - first unset them, then set them
                     // to avoid duplicates in the DOM.
@@ -267,7 +273,9 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.init_section_dragdrop = function(params) {
     new DRAGSECTION(params);
 };

@@ -24,6 +24,7 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// eslint-disable-next-line no-redeclare
 var CSS = {
     REPAGINATECONTAINERCLASS: '.rpcontainerclass',
     REPAGINATECOMMAND: '#repaginatecommand'
@@ -52,6 +53,7 @@ Y.extend(POPUP, Y.Base, {
         Y.one(CSS.REPAGINATECOMMAND).on('click', this.display_dialog, this);
     },
 
+    // eslint-disable-next-line camelcase
     display_dialog: function(e) {
         e.preventDefault();
 
@@ -76,6 +78,7 @@ Y.extend(POPUP, Y.Base, {
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 M.mod_offlinequiz.repaginate = M.mod_offlinequiz.repaginate || {};
 M.mod_offlinequiz.repaginate.init = function() {

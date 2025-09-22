@@ -58,6 +58,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
      * @method setup_for_section
      * @param {String} baseselector The CSS selector or node to limit scope to
      */
+    // eslint-disable-next-line camelcase
     setup_for_section: function() {
         Y.Node.all('.mod-offlinequiz-edit-content ul.slots ul.section').each(function(resources) {
             resources.setAttribute('data-draggroups', this.groups.join(' '));
@@ -79,6 +80,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
      * @method setup_for_resource
      * @param {String} baseselector The CSS selector or node to limit scope to
      */
+    // eslint-disable-next-line camelcase
     setup_for_resource: function(baseselector) {
         Y.Node.all(baseselector).each(function(resourcesnode) {
             // Replace move icons.
@@ -91,6 +93,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         }, this);
     },
 
+    // eslint-disable-next-line camelcase
     drag_start: function(e) {
         // Get our drag object.
         var drag = e.target;
@@ -98,6 +101,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         drag.get('dragNode').all('.icon').setStyle('vertical-align', 'baseline');
     },
 
+    // eslint-disable-next-line camelcase
     drag_dropmiss: function(e) {
         // Missed the target, but we assume the user intended to drop it
         // on the last ghost node location, e.drag and e.drop should be
@@ -105,6 +109,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         this.drop_hit(e);
     },
 
+    // eslint-disable-next-line camelcase
     drop_hit: function(e) {
         var drag = e.drag;
         // Get a reference to our drag node.
@@ -176,6 +181,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         });
     },
 
+    // eslint-disable-next-line camelcase
     global_drop_over: function(e) {
         // Overriding parent method so we can stop the slots being dragged before the first page node.
 
@@ -233,7 +239,9 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.init_resource_dragdrop = function(params) {
     new DRAGRESOURCE(params);
 };

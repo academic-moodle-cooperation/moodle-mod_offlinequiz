@@ -6,6 +6,7 @@ YUI.add('moodle-mod_offlinequiz-dragdrop', function (Y, NAME) {
  * @module moodle-mod-offlinequiz-dragdrop
  */
 
+// eslint-disable-next-line no-redeclare
 var CSS = {
     ACTIONAREA: '.actions',
     ACTIVITY: 'activity',
@@ -19,7 +20,7 @@ var CSS = {
     LIGHTBOX: 'lightbox',
     MOVEDOWN: 'movedown',
     MOVEUP: 'moveup',
-    PAGE : 'page',
+    PAGE: 'page',
     PAGECONTENT: 'page-content',
     RIGHT: 'right',
     SECTION: 'section',
@@ -49,7 +50,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
 
     initializer: function() {
         // Set group for parent class.
-        this.groups = [ CSS.SECTIONDRAGGABLE ];
+        this.groups = [CSS.SECTIONDRAGGABLE];
         this.samenodeclass = M.mod_offlinequiz.edit.get_sectionwrapperclass();
         this.parentnodeclass = M.mod_offlinequiz.edit.get_containerclass();
 
@@ -83,6 +84,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
             });
             del.dd.plug(Y.Plugin.DDWinScroll);
         }
+        return true;
     },
 
     /**
@@ -91,6 +93,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
      * @method setup_for_section
      * @param {String} baseselector The CSS selector or node to limit scope to
      */
+    // eslint-disable-next-line camelcase
     setup_for_section: function(baseselector) {
         Y.Node.all(baseselector).each(function(sectionnode) {
             // Determine the section ID.
@@ -127,6 +130,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
     /*
      * Drag-dropping related functions.
      */
+    // eslint-disable-next-line camelcase
     drag_start: function(e) {
         // Get our drag object.
         var drag = e.target;
@@ -138,7 +142,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         var sectionnode = Y.Node.create(
                 '<' + M.mod_offlinequiz.edit.get_sectionwrappernode() +
                 '></' + M.mod_offlinequiz.edit.get_sectionwrappernode() + '>');
-        sectionnode.addClass( M.mod_offlinequiz.edit.get_sectionwrapperclass());
+        sectionnode.addClass(M.mod_offlinequiz.edit.get_sectionwrapperclass());
         sectionnode.setStyle('margin', 0);
         sectionnode.setContent(drag.get('node').get('innerHTML'));
         containernode.appendChild(sectionnode);
@@ -146,6 +150,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         drag.get('dragNode').addClass(CSS.COURSECONTENT);
     },
 
+    // eslint-disable-next-line camelcase
     drag_dropmiss: function(e) {
         // Missed the target, but we assume the user intended to drop it
         // on the last last ghost node location, e.drag and e.drop should be
@@ -153,6 +158,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         this.drop_hit(e);
     },
 
+    // eslint-disable-next-line camelcase
     get_section_index: function(node) {
         var sectionlistselector = '.' + CSS.COURSECONTENT + ' ' + M.mod_offlinequiz.edit.get_section_selector(Y),
             sectionList = Y.all(sectionlistselector),
@@ -162,6 +168,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         return (nodeIndex - zeroIndex);
     },
 
+    // eslint-disable-next-line camelcase
     drop_hit: function(e) {
         var drag = e.drag;
 
@@ -209,7 +216,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         params.courseid = this.get('courseid');
         params.offlinequizid = this.get('offlinequizid');
         params.offlinegroupid = this.get('offlinegroupid');
-        params['class'] = 'section';
+        params.class = 'section';
         params.field = 'move';
         params.id = dragnodeid;
         params.value = dropnodeindex;
@@ -232,7 +239,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                             new M.core.ajaxException(responsetext);
                         }
                         M.mod_offlinequiz.edit.process_sections(Y, sectionlist, responsetext, loopstart, loopend);
-                    } catch (e) {}
+                    } catch (e) { /* Empty */ }
 
                     // Update all of the section IDs - first unset them, then set them
                     // to avoid duplicates in the DOM.
@@ -271,7 +278,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                     lightbox.hide();
                 }
             },
-            context:this
+            context: this
         });
     }
 
@@ -296,7 +303,9 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.init_section_dragdrop = function(params) {
     new DRAGSECTION(params);
 };
@@ -360,6 +369,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
      * @method setup_for_section
      * @param {String} baseselector The CSS selector or node to limit scope to
      */
+    // eslint-disable-next-line camelcase
     setup_for_section: function() {
         Y.Node.all('.mod-offlinequiz-edit-content ul.slots ul.section').each(function(resources) {
             resources.setAttribute('data-draggroups', this.groups.join(' '));
@@ -381,6 +391,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
      * @method setup_for_resource
      * @param {String} baseselector The CSS selector or node to limit scope to
      */
+    // eslint-disable-next-line camelcase
     setup_for_resource: function(baseselector) {
         Y.Node.all(baseselector).each(function(resourcesnode) {
             // Replace move icons.
@@ -393,6 +404,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         }, this);
     },
 
+    // eslint-disable-next-line camelcase
     drag_start: function(e) {
         // Get our drag object.
         var drag = e.target;
@@ -400,6 +412,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         drag.get('dragNode').all('.icon').setStyle('vertical-align', 'baseline');
     },
 
+    // eslint-disable-next-line camelcase
     drag_dropmiss: function(e) {
         // Missed the target, but we assume the user intended to drop it
         // on the last ghost node location, e.drag and e.drop should be
@@ -407,6 +420,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         this.drop_hit(e);
     },
 
+    // eslint-disable-next-line camelcase
     drop_hit: function(e) {
         var drag = e.drag;
         // Get a reference to our drag node.
@@ -431,7 +445,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         params.courseid = this.get('courseid');
         params.offlinequizid = this.get('offlinequizid');
         params.offlinegroupid = this.get('offlinegroupid');
-        params['class'] = 'resource';
+        params.class = 'resource';
         params.field = 'move';
         params.id = Number(Y.Moodle.mod_offlinequiz.util.slot.getId(dragnode));
         params.sectionId = Y.Moodle.core_course.util.section.getId(dropnode.ancestor('li.section', true));
@@ -478,6 +492,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         });
     },
 
+    // eslint-disable-next-line camelcase
     global_drop_over: function(e) {
         // Overriding parent method so we can stop the slots being dragged before the first page node.
 
@@ -535,7 +550,9 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.init_resource_dragdrop = function(params) {
     new DRAGRESOURCE(params);
 };

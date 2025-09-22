@@ -11,64 +11,66 @@ YUI.add('moodle-mod_offlinequiz-toolboxes', function (Y, NAME) {
  */
 
 // The CSS classes we use.
+// eslint-disable-next-line no-redeclare
 var CSS = {
-    ACTIVITYINSTANCE : 'activityinstance',
-    AVAILABILITYINFODIV : 'div.availabilityinfo',
-    CONTENTWITHOUTLINK : 'contentwithoutlink',
-    CONDITIONALHIDDEN : 'conditionalhidden',
-    DIMCLASS : 'dimmed',
-    DIMMEDTEXT : 'dimmed_text',
-    EDITINSTRUCTIONS : 'editinstructions',
+    ACTIVITYINSTANCE: 'activityinstance',
+    AVAILABILITYINFODIV: 'div.availabilityinfo',
+    CONTENTWITHOUTLINK: 'contentwithoutlink',
+    CONDITIONALHIDDEN: 'conditionalhidden',
+    DIMCLASS: 'dimmed',
+    DIMMEDTEXT: 'dimmed_text',
+    EDITINSTRUCTIONS: 'editinstructions',
     EDITINGMAXMARK: 'editor_displayed',
-    HIDE : 'hide',
+    HIDE: 'hide',
     JOIN: 'page_join',
-    MODINDENTCOUNT : 'mod-indent-',
-    MODINDENTHUGE : 'mod-indent-huge',
-    MODULEIDPREFIX : 'slot-',
+    MODINDENTCOUNT: 'mod-indent-',
+    MODINDENTHUGE: 'mod-indent-huge',
+    MODULEIDPREFIX: 'slot-',
     PAGE: 'page',
-    SECTIONHIDDENCLASS : 'hidden',
-    SECTIONIDPREFIX : 'section-',
-    SLOT : 'slot',
-    SHOW : 'editing_show',
-    TITLEEDITOR : 'titleeditor'
+    SECTIONHIDDENCLASS: 'hidden',
+    SECTIONIDPREFIX: 'section-',
+    SLOT: 'slot',
+    SHOW: 'editing_show',
+    TITLEEDITOR: 'titleeditor'
 },
 // The CSS selectors we use.
 SELECTOR = {
     ACTIONAREA: '.actions',
-    ACTIONLINKTEXT : '.actionlinktext',
-    ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_maxmark',
-    ACTIVITYFORM : 'span.instancemaxmarkcontainer form',
-    ACTIVITYICON : 'img.activityicon',
-    ACTIVITYINSTANCE : '.' + CSS.ACTIVITYINSTANCE,
+    ACTIONLINKTEXT: '.actionlinktext',
+    ACTIVITYACTION: 'a.cm-edit-action[data-action], a.editing_maxmark',
+    ACTIVITYFORM: 'span.instancemaxmarkcontainer form',
+    ACTIVITYICON: 'img.activityicon',
+    ACTIVITYINSTANCE: '.' + CSS.ACTIVITYINSTANCE,
     ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a',
-    ACTIVITYLI : 'li.activity',
-    ACTIVITYMAXMARK : 'input[name=maxmark]',
-    COMMANDSPAN : '.commands',
-    CONTENTAFTERLINK : 'div.contentafterlink',
-    CONTENTWITHOUTLINK : 'div.contentwithoutlink',
+    ACTIVITYLI: 'li.activity',
+    ACTIVITYMAXMARK: 'input[name=maxmark]',
+    COMMANDSPAN: '.commands',
+    CONTENTAFTERLINK: 'div.contentafterlink',
+    CONTENTWITHOUTLINK: 'div.contentwithoutlink',
     DESELECTALL: '.deselectall',
     EDITMAXMARK: 'a.editing_maxmark',
-    HIDE : 'a.editing_hide',
-    HIGHLIGHT : 'a.editing_highlight',
-    INSTANCENAME : 'span.instancename',
-    INSTANCEMAXMARK : 'span.instancemaxmark',
-    MODINDENTDIV : '.mod-indent',
-    MODINDENTOUTER : '.mod-indent-outer',
-    NUMQUESTIONS : '.numberofquestions',
-    PAGECONTENT : 'div#page-content',
-    PAGELI : 'li.page',
-    SECTIONUL : 'ul.section',
-    SELECTMULTIPLECHECKBOX : '.offlinequizbulkcopyform input[type^=checkbox], .select-multiple-checkbox',
+    HIDE: 'a.editing_hide',
+    HIGHLIGHT: 'a.editing_highlight',
+    INSTANCENAME: 'span.instancename',
+    INSTANCEMAXMARK: 'span.instancemaxmark',
+    MODINDENTDIV: '.mod-indent',
+    MODINDENTOUTER: '.mod-indent-outer',
+    NUMQUESTIONS: '.numberofquestions',
+    PAGECONTENT: 'div#page-content',
+    PAGELI: 'li.page',
+    SECTIONUL: 'ul.section',
+    SELECTMULTIPLECHECKBOX: '.offlinequizbulkcopyform input[type^=checkbox], .select-multiple-checkbox',
     SELECTALL: '.selectall',
     SELECTALLCHECKBOX: '.select-all-checkbox',
-    SHOW : 'a.' + CSS.SHOW,
-    SHOWHIDE : 'a.editing_showhide',
-    SLOTLI : 'li.slot',
-    SUMMARKS : '.mod_offlinequiz_summarks'
+    SHOW: 'a.' + CSS.SHOW,
+    SHOWHIDE: 'a.editing_showhide',
+    SLOTLI: 'li.slot',
+    SUMMARKS: '.mod_offlinequiz_summarks'
 },
 BODY = Y.one(document.body);
 
 // Setup the basic namespace.
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 
 /**
@@ -95,6 +97,7 @@ Y.extend(TOOLBOX, Y.Base, {
      * @param {Object} [optionalconfig] Any additional configuration to submit
      * @chainable
      */
+    // eslint-disable-next-line camelcase
     send_request: function(data, statusspinner, success_callback, optionalconfig) {
             // Default data structure.
         if (!data) {
@@ -123,8 +126,7 @@ Y.extend(TOOLBOX, Y.Base, {
                         if (responsetext.error) {
                             new M.core.ajaxException(responsetext);
                         }
-                    } catch (e) {
-                    }
+                    } catch (e) { /* Empty */ }
                     // Run the callback if we have one.
                     if (responsetext.hasOwnProperty('newsummarks')) {
                         Y.one(SELECTOR.SUMMARKS).setHTML(responsetext.newsummarks);
@@ -133,6 +135,7 @@ Y.extend(TOOLBOX, Y.Base, {
                         Y.one(SELECTOR.NUMQUESTIONS).setHTML(
                                 M.util.get_string('numquestionsx', 'offlinequiz', responsetext.newnumquestions));
                     }
+                    // eslint-disable-next-line camelcase
                     if (success_callback) {
                         Y.bind(success_callback, this, responsetext)();
                     }
@@ -298,6 +301,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @method initialise_select_multiple
      * @protected
      */
+    // eslint-disable-next-line camelcase
     initialise_select_multiple: function() {
         // Click select all link to check all the checkboxes.
         Y.all(SELECTOR.SELECTALL).on('click', function(e) {
@@ -313,7 +317,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             Y.all(SELECTOR.SELECTALLCHECKBOX).set('checked', '');
         });
         Y.all(SELECTOR.SELECTALLCHECKBOX).on('click', function(e) {
-            if (e.target._node.checked){
+            if (e.target._node.checked) {
                 Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', 'checked');
             } else {
                 Y.all(SELECTOR.SELECTMULTIPLECHECKBOX).set('checked', '');
@@ -331,6 +335,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {EventFacade} ev The event that was triggered.
      * @returns {boolean}
      */
+    // eslint-disable-next-line camelcase
     handle_data_action: function(ev) {
         // We need to get the anchor element that triggered this event.
         var node = ev.target;
@@ -378,6 +383,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity to add a loading icon to
      * @return {Node|null} The newly created icon, or null if the action area was not found.
      */
+    // eslint-disable-next-line camelcase
     add_spinner: function(activity) {
         var actionarea = activity.one(SELECTOR.ACTIONAREA);
         if (actionarea) {
@@ -396,12 +402,13 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity node that this action will be performed on.
      * @chainable
      */
+    // eslint-disable-next-line camelcase
     delete_with_confirmation: function(ev, button, activity) {
         // Prevent the default button action.
         ev.preventDefault();
 
         // Get the element we're working on.
-        var element   = activity,
+        var element = activity,
             // Create confirm string (different if element has or does not have name).
             confirmstring = '',
             qtypename = M.util.get_string('pluginname',
@@ -453,20 +460,21 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {String} action The action that has been requested.
      * @return Boolean
      */
-    edit_maxmark : function(ev, button, activity) {
+    // eslint-disable-next-line camelcase
+    edit_maxmark: function(ev, button, activity) {
         // Get the element we're working on.
         var activityid = Y.Moodle.mod_offlinequiz.util.slot.getId(activity),
-        instancemaxmark  = activity.one(SELECTOR.INSTANCEMAXMARK),
+        instancemaxmark = activity.one(SELECTOR.INSTANCEMAXMARK),
         instance = activity.one(SELECTOR.ACTIVITYINSTANCE),
         currentmaxmark = instancemaxmark.get('firstChild'),
         oldmaxmark = currentmaxmark.get('data'),
         maxmarktext = oldmaxmark,
         thisevent,
-        anchor = instancemaxmark,// Grab the anchor so that we can swap it with the edit form.
+        anchor = instancemaxmark, // Grab the anchor so that we can swap it with the edit form.
         data = {
-            'class'   : 'resource',
-            'field'   : 'getmaxmark',
-            'id'      : activityid
+            'class': 'resource',
+            'field': 'getmaxmark',
+            'id': activityid
         };
 
         // Prevent the default actions.
@@ -487,11 +495,11 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             var editinstructions = Y.Node.create('<span class="' + CSS.EDITINSTRUCTIONS + '" id="id_editinstructions" />')
                 .set('innerHTML', M.util.get_string('edittitleinstructions', 'moodle'));
             var editor = Y.Node.create('<input name="maxmark" type="text" class="' + CSS.TITLEEDITOR + '" />').setAttrs({
-                'value' : maxmarktext,
-                'autocomplete' : 'off',
-                'aria-describedby' : 'id_editinstructions',
-                'maxLength' : '12',
-                'size' : parseInt(this.get('config').questiondecimalpoints, 10) + 2
+                'value': maxmarktext,
+                'autocomplete': 'off',
+                'aria-describedby': 'id_editinstructions',
+                'maxLength': '12',
+                'size': parseInt(this.get('config').questiondecimalpoints, 10) + 2
             });
 
             // Clear the existing content and put the editor in.
@@ -533,7 +541,8 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity whose maxmark we are altering.
      * @param {String} originalmaxmark The original maxmark the activity or resource had.
      */
-    edit_maxmark_submit : function(ev, activity, originalmaxmark) {
+    // eslint-disable-next-line camelcase
+    edit_maxmark_submit: function(ev, activity, originalmaxmark) {
         // We don't actually want to submit anything.
         ev.preventDefault();
         var newmaxmark = Y.Lang.trim(activity.one(SELECTOR.ACTIVITYFORM + ' ' + SELECTOR.ACTIVITYMAXMARK).get('value'));
@@ -542,10 +551,10 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         activity.one(SELECTOR.INSTANCEMAXMARK).setContent(newmaxmark);
         if (newmaxmark !== null && newmaxmark !== "" && newmaxmark !== originalmaxmark) {
             var data = {
-                'class'   : 'resource',
-                'field'   : 'updatemaxmark',
-                'maxmark'   : newmaxmark,
-                'id'      : Y.Moodle.mod_offlinequiz.util.slot.getId(activity)
+                'class': 'resource',
+                'field': 'updatemaxmark',
+                'maxmark': newmaxmark,
+                'id': Y.Moodle.mod_offlinequiz.util.slot.getId(activity)
             };
             this.send_request(data, spinner, function(response) {
                 if (response.instancemaxmark) {
@@ -564,7 +573,8 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity whose maxmark we are altering.
      * @param {Boolean} preventdefault If true we should prevent the default action from occuring.
      */
-    edit_maxmark_cancel : function(ev, activity, preventdefault) {
+    // eslint-disable-next-line camelcase
+    edit_maxmark_cancel: function(ev, activity, preventdefault) {
         if (preventdefault) {
             ev.preventDefault();
         }
@@ -578,7 +588,8 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @method edit_maxmark_clear
      * @param {Node} activity  The activity whose maxmark we were altering.
      */
-    edit_maxmark_clear : function(activity) {
+    // eslint-disable-next-line camelcase
+    edit_maxmark_clear: function(activity) {
         // Detach all listen events to prevent duplicate triggers.
         new Y.EventHandle(this.editmaxmarkevents).detach();
 
@@ -618,6 +629,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity node that this action will be performed on.
      * @chainable
      */
+    // eslint-disable-next-line camelcase
     update_page_break: function(ev, button, activity, action) {
         // Prevent the default button action.
         ev.preventDefault();
@@ -654,28 +666,32 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @protected
      * @method reorganise_edit_page
      */
+    // eslint-disable-next-line camelcase
     reorganise_edit_page: function() {
         Y.Moodle.mod_offlinequiz.util.slot.reorderSlots();
         Y.Moodle.mod_offlinequiz.util.slot.reorderPageBreaks();
         Y.Moodle.mod_offlinequiz.util.page.reorderPages();
     },
 
-    NAME : 'mod_offlinequiz-resource-toolbox',
-    ATTRS : {
-        courseid : {
-            'value' : 0
+    NAME: 'mod_offlinequiz-resource-toolbox',
+    ATTRS: {
+        courseid: {
+            'value': 0
         },
-        offlinequizid : {
-            'value' : 0
+        offlinequizid: {
+            'value': 0
         },
-        offlinegroupid : {
-            'value' : 0
+        offlinegroupid: {
+            'value': 0
         }
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.resource_toolbox = null;
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.init_resource_toolbox = function(config) {
+    // eslint-disable-next-line camelcase
     M.mod_offlinequiz.resource_toolbox = new RESOURCETOOLBOX(config);
     return M.mod_offlinequiz.resource_toolbox;
 };
@@ -723,7 +739,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
      * @method initializer
      * @protected
      */
-    initializer : function() {
+    initializer: function() {
         M.mod_offlinequiz.offlinequizbase.register_module(this);
 
         BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
@@ -731,7 +747,8 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         Y.delegate('change', this.handle_data_action, BODY, SELECTOR.EDITSHUFFLEQUESTIONSACTION, this);
     },
 
-    toggle_hide_section : function(e) {
+    // eslint-disable-next-line camelcase
+    toggle_hide_section: function(e) {
         // Prevent the default button action.
         e.preventDefault();
 
@@ -761,18 +778,18 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
 
         var newstring = M.util.get_string(nextaction + 'fromothers', 'format_' + this.get('format'));
         hideicon.setAttrs({
-            'alt' : newstring,
-            'src'   : M.util.image_url('i/' + nextaction)
+            'alt': newstring,
+            'src': M.util.image_url('i/' + nextaction)
         });
         button.set('title', newstring);
 
         // Change the highlight status.
         var data = {
-            'class' : 'section',
-            'field' : 'visible',
-            'id'    : Y.Moodle.core_course.util.section.getId(
+            'class': 'section',
+            'field': 'visible',
+            'id': Y.Moodle.core_course.util.section.getId(
                         section.ancestor(M.mod_offlinequiz.edit.get_section_wrapper(Y), true)),
-            'value' : value
+            'value': value
         };
         var lightbox = M.util.add_lightbox(Y, section);
         lightbox.show();
@@ -796,24 +813,25 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
             }, this);
         });
     }
-},  {
-    NAME : 'mod_offlinequiz-section-toolbox',
-    ATTRS : {
-        courseid : {
-            'value' : 0
+}, {
+    NAME: 'mod_offlinequiz-section-toolbox',
+    ATTRS: {
+        courseid: {
+            'value': 0
         },
-        offlinequizid : {
-            'value' : 0
+        offlinequizid: {
+            'value': 0
         },
-        offlinegroupid : {
-            'value' : 0
+        offlinegroupid: {
+            'value': 0
         },
-        format : {
-            'value' : 'topics'
+        format: {
+            'value': 'topics'
         }
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.init_section_toolbox = function(config) {
     return new SECTIONTOOLBOX(config);
 };

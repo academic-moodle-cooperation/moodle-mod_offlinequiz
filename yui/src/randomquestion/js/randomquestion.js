@@ -24,6 +24,7 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// eslint-disable-next-line no-redeclare
 var CSS = {
     RANDOMQUESTIONFORM: 'div.randomquestionformforpopup',
     PAGEHIDDENINPUT: 'input#rform_qpage',
@@ -65,6 +66,7 @@ Y.extend(POPUP, Y.Base, {
         Y.one('body').delegate('click', this.display_dialogue, CSS.RANDOMQUESTIONLINKS, this);
     },
 
+    // eslint-disable-next-line camelcase
     display_dialogue: function(e) {
         e.preventDefault();
 
@@ -75,6 +77,7 @@ Y.extend(POPUP, Y.Base, {
     }
 });
 
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 M.mod_offlinequiz.randomquestion = M.mod_offlinequiz.randomquestion || {};
 M.mod_offlinequiz.randomquestion.init = function() {

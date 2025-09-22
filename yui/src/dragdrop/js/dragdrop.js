@@ -4,6 +4,7 @@
  * @module moodle-mod-offlinequiz-dragdrop
  */
 
+// eslint-disable-next-line no-redeclare
 var CSS = {
     ACTIONAREA: '.actions',
     ACTIVITY: 'activity',

@@ -37,6 +37,7 @@ Y.extend(MODFORM, Y.Base, {
 });
 
 // Ensure that M.course exists and that coursebase is initialised correctly.
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 M.mod_offlinequiz.modform = M.mod_offlinequiz.modform || new MODFORM();
 M.mod_offlinequiz.modform.init = function() {

@@ -20,6 +20,7 @@ Y.extend(QUIZBASE, Y.Base, {
      * @param {Object} The instantiated module to call functions on
      * @chainable
      */
+    // eslint-disable-next-line camelcase
     register_module: function(object) {
         this.registermodules.push(object);
 
@@ -34,6 +35,7 @@ Y.extend(QUIZBASE, Y.Base, {
      * @param {mixed} args The argument supplied to the function
      * @chainable
      */
+    // eslint-disable-next-line camelcase
     invoke_function: function(functionname, args) {
         var module;
         for (module in this.registermodules) {
@@ -50,6 +52,7 @@ Y.extend(QUIZBASE, Y.Base, {
 });
 
 // Ensure that M.course exists and that coursebase is initialised correctly.
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 M.mod_offlinequiz.offlinequizbase = M.mod_offlinequiz.offlinequizbase || new QUIZBASE();
 
@@ -64,6 +67,7 @@ M.mod_offlinequiz.edit = M.mod_offlinequiz.edit || {};
  * @param {string} node2 node to swap with
  * @return {NodeList} section list
  */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.swap_sections = function(Y, node1, node2) {
     var CSS = {
         COURSECONTENT: 'mod-offlinequiz-edit-content',
@@ -87,6 +91,7 @@ M.mod_offlinequiz.edit.swap_sections = function(Y, node1, node2) {
  * @param {string} sectionto last affected section
  * @return void
  */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.process_sections = function(Y, sectionlist, response, sectionfrom, sectionto) {
     var CSS = {
         SECTIONNAME: 'sectionname'
@@ -135,11 +140,16 @@ M.mod_offlinequiz.edit.process_sections = function(Y, sectionlist, response, sec
 *
 * @return {object} section list configuration
 */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.get_config = function() {
     return {
+        // eslint-disable-next-line camelcase
         container_node: 'ul',
+        // eslint-disable-next-line camelcase
         container_class: 'slots',
+        // eslint-disable-next-line camelcase
         section_node: 'li',
+        // eslint-disable-next-line camelcase
         section_class: 'section'
     };
 };
@@ -150,6 +160,7 @@ M.mod_offlinequiz.edit.get_config = function() {
  * @param {YUI} Y YUI3 instance
  * @return {string} section selector
  */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.get_section_selector = function() {
     var config = M.mod_offlinequiz.edit.get_config();
     if (config.section_node && config.section_class) {
@@ -168,6 +179,7 @@ M.mod_offlinequiz.edit.get_section_selector = function() {
  * @return {string} section wrapper selector or M.mod_offlinequiz.format.get_section_selector
  * if section_wrapper_node and section_wrapper_class are not defined in the format config.
  */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.get_section_wrapper = function(Y) {
     var config = M.mod_offlinequiz.edit.get_config();
     if (config.section_wrapper_node && config.section_wrapper_class) {
@@ -181,6 +193,7 @@ M.mod_offlinequiz.edit.get_section_wrapper = function(Y) {
  *
  * @return {string} tag of container node.
  */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.get_containernode = function() {
     var config = M.mod_offlinequiz.edit.get_config();
     if (config.container_node) {
@@ -189,6 +202,7 @@ M.mod_offlinequiz.edit.get_containernode = function() {
         Y.log('container_node is not defined in M.mod_offlinequiz.edit.get_config',
                 'warn', 'moodle-mod_offlinequiz-offlinequizbase');
     }
+    return null;
 };
 
 /**
@@ -196,6 +210,7 @@ M.mod_offlinequiz.edit.get_containernode = function() {
  *
  * @return {string} class of the container node.
  */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.get_containerclass = function() {
     var config = M.mod_offlinequiz.edit.get_config();
     if (config.container_class) {
@@ -204,6 +219,7 @@ M.mod_offlinequiz.edit.get_containerclass = function() {
         Y.log('container_class is not defined in M.mod_offlinequiz.edit.get_config',
                 'warn', 'moodle-mod_offlinequiz-offlinequizbase');
     }
+    return null;
 };
 
 /**
@@ -211,6 +227,7 @@ M.mod_offlinequiz.edit.get_containerclass = function() {
  *
  * @return {string} tag of the draggable node.
  */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.get_sectionwrappernode = function() {
     var config = M.mod_offlinequiz.edit.get_config();
     if (config.section_wrapper_node) {
@@ -225,6 +242,7 @@ M.mod_offlinequiz.edit.get_sectionwrappernode = function() {
  *
  * @return {string} class of the draggable node.
  */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.get_sectionwrapperclass = function() {
     var config = M.mod_offlinequiz.edit.get_config();
     if (config.section_wrapper_class) {
@@ -239,6 +257,7 @@ M.mod_offlinequiz.edit.get_sectionwrapperclass = function() {
  *
  * @return {string} tag of section node.
  */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.get_sectionnode = function() {
     var config = M.mod_offlinequiz.edit.get_config();
     if (config.section_node) {
@@ -247,6 +266,7 @@ M.mod_offlinequiz.edit.get_sectionnode = function() {
         Y.log('section_node is not defined in M.mod_offlinequiz.edit.get_config',
                  'warn', 'moodle-mod_offlinequiz-offlinequizbase');
     }
+    return null;
 };
 
 /**
@@ -254,6 +274,7 @@ M.mod_offlinequiz.edit.get_sectionnode = function() {
  *
  * @return {string} class of the section node.
  */
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz.edit.get_sectionclass = function() {
     var config = M.mod_offlinequiz.edit.get_config();
     if (config.section_class) {
@@ -262,4 +283,5 @@ M.mod_offlinequiz.edit.get_sectionclass = function() {
         Y.log('section_class is not defined in M.mod_offlinequiz.edit.get_config',
                 'warn', 'moodle-mod_offlinequiz-offlinequizbase');
     }
+    return null;
 };

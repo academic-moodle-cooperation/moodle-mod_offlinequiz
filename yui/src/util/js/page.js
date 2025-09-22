@@ -193,6 +193,7 @@ Y.Moodle.mod_offlinequiz.util.page = {
         var page = Y.Node.create(pagehtml);
 
         // Assign is as a drop target.
+        // eslint-disable-next-line new-cap
         YUI().use('dd-drop', function(Y) {
             var drop = new Y.DD.Drop({
                 node: page,

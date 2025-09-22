@@ -15,7 +15,7 @@ Y.extend(MODFORM, Y.Base, {
     qppSelect: null,
     qppInitialValue: 0,
 
-    initializer: function () {
+    initializer: function() {
         this.repaginateCheckbox = Y.one('#id_repaginatenow');
         if (!this.repaginateCheckbox) {
             // The checkbox only appears when editing an existing offlinequiz.
@@ -39,6 +39,7 @@ Y.extend(MODFORM, Y.Base, {
 });
 
 // Ensure that M.course exists and that coursebase is initialised correctly.
+// eslint-disable-next-line camelcase
 M.mod_offlinequiz = M.mod_offlinequiz || {};
 M.mod_offlinequiz.modform = M.mod_offlinequiz.modform || new MODFORM();
 M.mod_offlinequiz.modform.init = function() {
