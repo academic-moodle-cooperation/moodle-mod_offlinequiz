@@ -13,6 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/* eslint-disable promise/no-nesting */
+/* eslint-disable promise/catch-or-return */
+/* eslint-disable promise/always-return */
 /**
  * Contain the logic for the add random question modal.
  *
