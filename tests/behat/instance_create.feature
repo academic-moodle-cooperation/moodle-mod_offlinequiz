@@ -19,7 +19,7 @@ Feature: In a course, a teacher should be able to add a new offlinequiz
   Scenario: Add an offlinequiz instance
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I turn editing mode on
+    And I switch editing mode on
     And I add a offlinequiz activity to course "Course 1" section "2" and I fill the form with:
       | Offline quiz name | Add an offlinequiz to the current course |
       | Description | Add an offlinequiz to the current course (Description) |

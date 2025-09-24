@@ -25,49 +25,21 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
   Scenario: Login as a teacher, add a new offlinequiz to a course and set the value for groups to 6. Then add there some multiple choice questions and create the forms for all groups within the offline quiz.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I turn editing mode on
+    And I switch editing mode on
     And I add a offlinequiz activity to course "Course 1" section "1" and I fill the form with:
-      | Offline quiz name | Add an offline quiz and multiple choice questions to create files for 6 groups |
+      | Offline quiz name | testofflinequiz |
       | Description | Add an offline quiz and multiple choice questions to create files for 6 groups |
       | Number of groups | 6 |
-    And I am on the "Add an offline quiz and multiple choice questions to create files for 6 groups" "offlinequiz activity" page logged in as teacher1
-    And I follow "Questions"
-    And I open the "last" add to quiz menu
-    And I follow "from question bank"
-    Then I should see "Multi-choice-001" in the "categoryquestions" "table"
-    And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
-    And I press "Add to offline quiz"
-    And I set the field "groupnumber" to "Group B"
-    And I open the "last" add to quiz menu
-    And I follow "from question bank"
-    Then I should see "Multi-choice-001" in the "categoryquestions" "table"
-    And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
-    And I press "Add to offline quiz"
-    And I set the field "groupnumber" to "Group C"
-    And I open the "last" add to quiz menu
-    And I follow "from question bank"
-    Then I should see "Multi-choice-001" in the "categoryquestions" "table"
-    And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
-    And I press "Add to offline quiz"
-    And I set the field "groupnumber" to "Group D"
-    And I open the "last" add to quiz menu
-    And I follow "from question bank"
-    Then I should see "Multi-choice-001" in the "categoryquestions" "table"
-    And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
-    And I press "Add to offline quiz"
-    And I set the field "groupnumber" to "Group E"
-    And I open the "last" add to quiz menu
-    And I follow "from question bank"
-    Then I should see "Multi-choice-001" in the "categoryquestions" "table"
-    And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
-    And I press "Add to offline quiz"
-    And I set the field "groupnumber" to "Group F"
-    And I open the "last" add to quiz menu
-    And I follow "from question bank"
-    Then I should see "Multi-choice-001" in the "categoryquestions" "table"
-    And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
-    And I press "Add to offline quiz"
-    And I navigate to "Offline Quiz" in current page administration
+    And I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
+    And I add the following questions to the offlinequiz "testofflinequiz"
+      | questioncategory | qtype       | questionname     | group |
+      | Test questions   | multichoice | Multi-choice-001 | A     |
+      | Test questions   | multichoice | Multi-choice-001 | B     |
+      | Test questions   | multichoice | Multi-choice-001 | C     |
+      | Test questions   | multichoice | Multi-choice-001 | D     |
+      | Test questions   | multichoice | Multi-choice-001 | E     |
+      | Test questions   | multichoice | Multi-choice-001 | F     |
+    And I navigate to "Offline quiz" in current page administration
     And I follow "Forms"
     And I press "Create forms"
     Then I should see "Question form for group A"

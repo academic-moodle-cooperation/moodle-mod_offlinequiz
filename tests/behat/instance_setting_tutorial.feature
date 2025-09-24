@@ -21,7 +21,7 @@ Feature: Within a moodle instance, a teacher should be able to show an offline q
   Scenario: Login as a teacher, add a new offline quiz to a course and set the value to show an offline quiz tutorial. Then log in as a student and check if the tutorial is shown.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I turn editing mode on
+    And I switch editing mode on
     And I add a offlinequiz activity to course "Course 1" section "1" and I fill the form with:
       | Offline quiz name | Test offline quiz 'Settings - Tutorial' |
       | Description | Add an offline quiz and multiple choice questions to create files |

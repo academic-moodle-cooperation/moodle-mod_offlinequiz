@@ -70,7 +70,7 @@ $thispageurl = new moodle_url('/mod/offlinequiz/participants.php',
 
 $PAGE->set_url($thispageurl);
 $PAGE->set_pagelayout('admin');
-$node = $PAGE->settingsnav->find('mod_offlinequiz_participants', navigation_node::TYPE_SETTING);
+$node = $PAGE->settingsnav->find('mod_offlinequiz_participants', \core\navigation\navigation_node::TYPE_SETTING);
 $PAGE->force_settings_menu(true);
 if ($node) {
     $node->make_active();
@@ -690,7 +690,6 @@ switch($mode) {
                     ]);
                 redirect($url);
             }
-            $importform->display();
         } else if ($action == 'delete') {
             // Some pages need to be deleted.
             $pageids = optional_param_array('pageid', [], PARAM_INT);

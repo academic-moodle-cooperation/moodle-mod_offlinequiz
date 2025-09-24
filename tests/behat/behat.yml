@@ -1,0 +1,5 @@
+default:
+  suites:
+    default:
+      contexts:
+        - behat_mod_offlinequizy

@@ -25,17 +25,14 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
   Scenario: Login as a teacher, add a new offline quiz to a course and there some multiple choice questions. Then create the forms as PDF for the offline quiz.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I turn editing mode on
+    And I switch editing mode on
     And I add a offlinequiz activity to course "Course 1" section "1" and I fill the form with:
-      | Offline quiz name | Add an offline quiz and multiple choice questions to create files as PDF |
+      | Offline quiz name | testofflinequiz |
       | Description | Add an offline quiz and multiple choice questions to create files as PDF |
     And I am on the "Add an offline quiz and multiple choice questions to create files as PDF" "offlinequiz activity" page logged in as teacher1
-    And I follow "Group A: 0"
-    And I open the "last" add to quiz menu
-    And I follow "from question bank"
-    And I set the field with xpath "//tr[contains(normalize-space(.), 'Multi-choice-001')]//input[@type='checkbox']" to "1"
-    And I press "Add to offline quiz"
-    And I navigate to "Offline Quiz" in current page administration
+    And I add the following questions to the offlinequiz "testofflinequiz"
+      | questioncategory | qtype       | questionname     | group |
+      | Test questions   | multichoice | Multi-choice-001 | A     |
     And I follow "Forms"
     And I press "Create forms"
     Then I should see "Question form for group A"
