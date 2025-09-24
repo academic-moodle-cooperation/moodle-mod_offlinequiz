@@ -30,7 +30,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/type/questionbase.php');
-require_once($CFG->dirroot . '/filter/tex/filter.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 
 /**
