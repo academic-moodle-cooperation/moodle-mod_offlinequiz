@@ -29,7 +29,7 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
     And I add a offlinequiz activity to course "Course 1" section "1" and I fill the form with:
       | Offline quiz name | testofflinequiz |
       | Description | Add an offline quiz and multiple choice questions to create files as PDF |
-    And I am on the "Add an offline quiz and multiple choice questions to create files as PDF" "offlinequiz activity" page logged in as teacher1
+    And I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
     And I add the following questions to the offlinequiz "testofflinequiz"
       | questioncategory | qtype       | questionname     | group |
       | Test questions   | multichoice | Multi-choice-001 | A     |
