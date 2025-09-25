@@ -30,10 +30,10 @@ Feature: Within a moodle instance, a teacher should be able to create the questi
       | Offline quiz name | testofflinequiz |
       | Description | Add an offline quiz and multiple choice questions to create question forms as LATEX |
       | Format for question sheets | LATEX |
+    And I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
     And I add the following questions to the offlinequiz "testofflinequiz"
       | questioncategory | qtype       | questionname     | group |
       | Test questions   | multichoice | Multi-choice-001 | A     |
-    And I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
     And I follow "Forms"
     And I press "Create forms"
     Then I should see "Question form for group A (LATEX)"

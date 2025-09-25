@@ -1,5 +1,7 @@
 default:
   suites:
     default:
+      paths:
+        - %paths.base%/mod/offlinequiz/tests/behat
       contexts:
-        - behat_mod_offlinequizy
+        - behat_mod_offlinequiz
