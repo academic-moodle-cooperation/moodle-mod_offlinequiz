@@ -984,7 +984,7 @@ class offlinequiz_page_scanner {
     /**
      * Function to restore the hotspots from DB records in offlinequiz_hotspots.
      *
-     * @param unknown_type $hotspots
+     * @param stdClass $hotspots
      */
     private function restore_hotspots($hotspots) {
         foreach ($hotspots as $hotspot) {

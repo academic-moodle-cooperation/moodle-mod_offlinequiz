@@ -1145,7 +1145,7 @@ function offlinequiz_get_user_grades($offlinequiz, $userid=0) {
             $grades[$key] = [];
             $groupsumgrades = $groups[$result->offlinegroupid]->sumgrades;
             $grades[$key]['userid'] = $result->userid;
-            if ($groupsumgrades && $maxgrade) {
+            if ($groupsumgrades && $groupsumgrades > 0.000001 && $maxgrade) {
                 $grades[$key]['rawgrade'] = round($result->sumgrades / $groupsumgrades * $maxgrade, $offlinequiz->decimalpoints);
             } else {
                 $grades[$key]['rawgrade'] = 0;

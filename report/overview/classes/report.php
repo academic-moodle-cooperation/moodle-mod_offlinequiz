@@ -266,14 +266,11 @@ class report extends default_report {
             $table->no_sorting('checked');
         }
 
-        $table->column_suppress('picture');
-        $table->column_suppress('fullname');
-
-        $table->column_class('picture', 'picture');
-        $table->column_class($offlinequizconfig->ID_field, 'userkey');
-        $table->column_class('timestart', 'timestart');
-        $table->column_class('offlinegroupid', 'offlinegroupid');
-        $table->column_class('sumgrades', 'sumgrades');
+        $table->column_class(1, 'picture');
+        $table->column_class(2, 'userkey');
+        $table->column_class(3, 'timestart');
+        $table->column_class(4, 'offlinegroupid');
+        $table->column_class(5, 'sumgrades');
 
         $table->set_attribute('cellpadding', '2');
         $table->set_attribute('id', 'attempts');

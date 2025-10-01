@@ -48,16 +48,15 @@ class behat_mod_offlinequiz extends behat_question_base {
      *
      *
      * @Given /^the following questions are added to the offlinequiz :entityname$/
-     * @Then /^I add the following questions to the offlinequiz :entityname$/
      *
      * @param string $entityname The name of the offlinequiz
      * @param TableNode $data
      */
-    #[Given('I add the following questions to the offlinequiz :arg1')]
-    #[\core\attribute\example('And I add the following questions to the offlinequiz "testofflinequiz"
+    #[Given('the following questions are added to the offlinequiz :arg1')]
+    #[\core\attribute\example('The following questions are added to the offlinequiz "testofflinequiz"
       | questioncategory  | questionname     | group | maxmark |
       | Test questions    | Multi-choice-001 | A     | 1       |')]
-    public function i_add_following_questions_to_the_offlinequiz($entityname, $data): void {
+    public function the_following_questions_are_added_to_the_offlinequiz($entityname, $data): void {
         global $CFG;
         $groupnumbers = ['A' => 1, 'B' => 2, 'C' => 3, 'D' => 4, 'E' => 5, 'F' => 6];
         require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');

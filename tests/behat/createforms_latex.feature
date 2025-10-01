@@ -21,19 +21,16 @@ Feature: Within a moodle instance, a teacher should be able to create the questi
       | questioncategory | qtype       | name             | template    |
       | Test questions   | multichoice | Multi-choice-001 | two_of_four |
 
-  @javascript
-  Scenario: Login as a teacher, add a new offline quiz to a course and there some multiple choice questions. Then create the question forms as LATEX for the offline quiz.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I switch editing mode on
-    And I add a offlinequiz activity to course "Course 1" section "1" and I fill the form with:
-      | Offline quiz name | testofflinequiz |
-      | Description | Add an offline quiz and multiple choice questions to create question forms as LATEX |
-      | Format for question sheets | LATEX |
-    And I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
-    And I add the following questions to the offlinequiz "testofflinequiz"
+    And the following "mod_offlinequiz > offlinequizzes" exist:
+      | name            | course | fileformat |
+      | testofflinequiz | C1     | LATEX       |
+    And the following questions are added to the offlinequiz "testofflinequiz"
       | questioncategory | qtype       | questionname     | group |
       | Test questions   | multichoice | Multi-choice-001 | A     |
+
+  @javascript
+  Scenario: Login as a teacher, add a new offline quiz to a course and there some multiple choice questions. Then create the question forms as LATEX for the offline quiz.
+    Given  I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
     And I follow "Forms"
     And I press "Create forms"
     Then I should see "Question form for group A (LATEX)"
