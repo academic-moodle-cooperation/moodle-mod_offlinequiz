@@ -29,7 +29,8 @@ class send_notifications extends \core\task\adhoc_task {
     }
     public function execute()
     {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
         $data = $this->get_custom_data();
         $queue = $DB->get_record('offlinequiz_queue',['id' => $data->queueid]);
         
