@@ -229,3 +229,4 @@ Feature: If you import a multipage offlinequiz twice it should handle the partia
     And I "Show all results" in the offlinequiz result overview of the offlinequiz "testofflinequiz"
     And I pause
     Then I should see "student 1" 2 times
+    And I should see "partial"

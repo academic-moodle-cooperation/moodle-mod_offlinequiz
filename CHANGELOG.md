@@ -4,6 +4,11 @@ CHANGELOG
 -----------------
 * [Feature] 5.1 compatible version
 * [Feature] added a setting to set a default max mark
+* [Bug] Changed that partial results also show the name and user profile picture
+
+5.0.3
+-----------------
+* [Bug] fixed failing send_notifications adhoc task
 
 5.0.2
 -----------------
