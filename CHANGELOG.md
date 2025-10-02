@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+5.0.3
+-----------------
+* [Bug] fixed evaluation mails not being sent under certain conditions
+* [Bug] fixed that temporary file evaluation task deleted the cron folder
+
 5.0.2
 -----------------
 * [Bug] Fixed a bug that evaluations didn't work if offlinequiz was installed with 5.0.0 or later
@@ -111,7 +116,7 @@ This version was skipped.
 * [Bug] Fixed bug in line 155 index.php [github #222]
 * [Bug] Fixed bug with url enconding [github pull request #188 @jboulen]
 * [Bug] Fixed that deleting groups has no effect in overview
-* [Bug] Grades and Gradebook update now correctly after question version is changed 
+* [Bug] Grades and Gradebook update now correctly after question version is changed
 
 4.2.0
 -----------------
@@ -288,7 +293,7 @@ This version was skipped.
 * Moodle 3.3 compatible version
 * Official support of boost Theme
 * Offlinequizzes are now searchable through the moodle search
-* Multiple little bugfixes 
+* Multiple little bugfixes
 
 3.2.0 (2017-02-01)
 ------------------
