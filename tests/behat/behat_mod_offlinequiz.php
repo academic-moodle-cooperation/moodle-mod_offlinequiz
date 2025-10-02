@@ -47,12 +47,12 @@ class behat_mod_offlinequiz extends behat_question_base {
      * Adds the specified questions to offlinequiz
      *
      *
-     * @Given /^the following questions are added to the offlinequiz :entityname$/
+     * @Given /^the following questions are added to the offlinequiz "(?P<entityname>.+)"$/
      *
      * @param string $entityname The name of the offlinequiz
      * @param TableNode $data
      */
-    #[Given('the following questions are added to the offlinequiz :arg1')]
+    #[Given('the following questions are added to the offlinequiz "(?P<entityname>.+)"')]
     #[\core\attribute\example('The following questions are added to the offlinequiz "testofflinequiz"
       | questioncategory  | questionname     | group | maxmark |
       | Test questions    | Multi-choice-001 | A     | 1       |')]

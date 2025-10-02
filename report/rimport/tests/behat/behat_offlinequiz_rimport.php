@@ -31,7 +31,7 @@ class behat_offlinequiz_rimport extends behat_base {
     /**
      * Adds the files to the offlinequiz and evaluates them
      *
-     * @When /^I upload the file :filename to the offlinequiz :entityname and let it evaluate$/
+     * @When /^I upload the file "(?P<filename>.+)" to the offlinequiz "(?P<entityname>.+)" and let it evaluate$/
      *
      * @param string $entityname The name of the offlinequiz
      * @param string $filename
