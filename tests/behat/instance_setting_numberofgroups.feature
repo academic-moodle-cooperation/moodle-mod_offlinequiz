@@ -31,7 +31,7 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
       | Description | Add an offline quiz and multiple choice questions to create files for 6 groups |
       | Number of groups | 6 |
     And I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
-    And I add the following questions to the offlinequiz "testofflinequiz"
+    And the following questions are added to the offlinequiz "testofflinequiz"
       | questioncategory | qtype       | questionname     | group |
       | Test questions   | multichoice | Multi-choice-001 | A     |
       | Test questions   | multichoice | Multi-choice-001 | B     |
