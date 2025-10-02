@@ -36,7 +36,6 @@ class behat_offlinequiz_rimport extends behat_base {
      * @param string $entityname The name of the offlinequiz
      * @param string $filename
      */
-    #[When('I upload the file :filename to the offlinequiz :entityname and let it evaluate')]
     #[\core\attribute\example('I upload the file "/mod/../import_multipage_incomplete.zip" to the offlinequiz "testofflinequiz" and let it evaluate')]
     public function i_upload_the_file_to_the_offlinequiz_and_let_it_evaluate($filename, $entityname): void {
         global $CFG, $DB;

@@ -37,7 +37,6 @@ class behat_offlinequiz_overview extends behat_base {
      * @param string $entityname The name of the offlinequiz
      * @param string $selectname
      */
-    #[When('I :selectname in the offlinequiz result overview of the offlinequiz :entityname')]
     #[\core\attribute\example('I "Show all results" in the offlinequiz result overview of the offlinequiz "testofflinequiz"')]
     public function i_in_offlinequiz_results_overview_of($selectname, $entityname): void {
         global $CFG, $DB;
