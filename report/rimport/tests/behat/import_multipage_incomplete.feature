@@ -227,6 +227,5 @@ Feature: If you import a multipage offlinequiz twice it should handle the partia
     And I press "Create forms"
     And I upload the file "/mod/offlinequiz/report/rimport/tests/behat/files/import_multipage_incomplete.zip" to the offlinequiz "testofflinequiz" and let it evaluate
     And I "Show all results" in the offlinequiz result overview of the offlinequiz "testofflinequiz"
-    And I pause
     Then I should see "student 1" 2 times
     And I should see "partial"
