@@ -46,6 +46,7 @@ class mod_offlinequiz_generator extends testing_module_generator {
 
         $defaultofflinequizsettings = [
             'pdfintro'               => '',
+            'introformat'            => 1,
             'timeopen'               => 0,
             'timeclose'              => 0,
             'time'                   => 0,

@@ -41,7 +41,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
 
         // Define each element separately.
         $offlinequiz = new backup_nested_element('offlinequiz', ['id'], [
-                'name', 'intro', 'pdfintro', 'timeopen',
+                'name', 'intro', 'introformat', 'pdfintro', 'timeopen',
                 'timeclose', 'time', 'grade', 'participantsusage', 'numgroups', 'decimalpoints',
                 'review', 'questionsperpage', 'docscreated', 'shufflequestions', 'shuffleanswers',
                 'questions', 'sumgrades', 'papergray', 'fontsize', 'pdffont', 'timecreated',
