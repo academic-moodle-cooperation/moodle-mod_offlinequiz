@@ -71,7 +71,7 @@ class temporary_file_deletion_task extends \core\task\scheduled_task {
                     }
                 }
             }
-            if(empty($dirname) || $dirname == '.' || !str_starts_with($dirname, $CFG->dataroot . '/offlinequiz')) {
+            if (empty($dirname) || $dirname == '.' || !str_starts_with($dirname, $CFG->dataroot . '/offlinequiz')) {
                 $dirname = "$CFG->dataroot/offlinequiz/import/$jobid/";
             }
             if (is_dir($dirname)) {
