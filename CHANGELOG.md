@@ -8,7 +8,8 @@ CHANGELOG
 
 5.0.3
 -----------------
-* [Bug] fixed failing send_notifications adhoc task
+* [Bug] fixed evaluation mails not being sent under certain conditions
+* [Bug] fixed that temporary file evaluation task deleted the cron folder
 
 5.0.2
 -----------------

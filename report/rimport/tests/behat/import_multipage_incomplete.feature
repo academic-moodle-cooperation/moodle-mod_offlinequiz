@@ -118,10 +118,10 @@ Feature: If you import a multipage offlinequiz twice it should handle the partia
       | Test questions   | multichoice | Multi-choice-095 | two_of_four |
       | Test questions   | multichoice | Multi-choice-096 | two_of_four |
       | Test questions   | multichoice | Multi-choice-097 | two_of_four |
-   And the following "mod_offlinequiz > offlinequizzes" exist:
+    And the following "mod_offlinequiz > offlinequizzes" exist:
       | name            | course |
       | testofflinequiz | C1     |
-   And the following questions are added to the offlinequiz "testofflinequiz"
+    And the following questions are added to the offlinequiz "testofflinequiz"
       | questioncategory | qtype       | questionname             | group |
       | Test questions   | multichoice | Multi-choice-001         | A |
       | Test questions   | multichoice | Multi-choice-002         | A |
@@ -221,7 +221,7 @@ Feature: If you import a multipage offlinequiz twice it should handle the partia
       | Test questions   | multichoice | Multi-choice-096         | A |
       | Test questions   | multichoice | Multi-choice-097         | A |
   @javascript
-  Scenario:
+  Scenario: I can see the partial results when I upload a multipage document twice
     And I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
     And I follow "Forms"
     And I press "Create forms"
