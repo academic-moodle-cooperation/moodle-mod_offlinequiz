@@ -671,55 +671,63 @@ $string['questioninfoqtype'] = 'Question type';
 $string['questionname'] = 'Question name';
 $string['questionpage'] = 'Page';
 $string['questionsheet'] = 'Question sheet';
-$string['questionsheetlatextemplate'] = '% !TEX encoding = UTF-8 Unicode
+$string['questionsheetlatextemplate'] = '% GENERAL FORMATTING
+% !TEX encoding = UTF-8 Unicode
 \documentclass[11pt,a4paper]{article}
+\usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{amsmath} % for \implies etc.
+\usepackage{amsfonts} % for \mathbb etc.
+\usepackage{graphicx} % for using pictures
+\usepackage{enumitem}
+\usepackage{ifthen}
+\usepackage{xcolor}
+\usepackage{ulem}
+\usepackage{acronym}
+ \usepackage[colorlinks=true, urlcolor=blue,linkcolor=black]{hyperref} % for using hyperlinks
+\usepackage{lastpage}
+\usepackage{fancyhdr}
 \textwidth 16truecm
 \textheight 23truecm
 \setlength{\oddsidemargin}{0cm}
 \setlength{\evensidemargin}{0cm}
 \setlength{\topmargin}{-1cm}
-\usepackage{amsmath} % for \implies etc
-\usepackage{amsfonts} % for \mathbb etc
-\usepackage[colorlinks=true,urlcolor=dunkelrot,linkcolor=black]{hyperref} % For using hyperlinks
-\usepackage{ifthen}
-\usepackage{enumitem}
-\usepackage{xcolor}
-\usepackage{ulem}
 \parindent 0pt % no indent on the beginning of a section
-\renewcommand\UrlFont{\sf}
-\usepackage{lastpage}
-\usepackage{fancyhdr}
 \pagestyle{fancy}
-\chead{\sc \TestTitle, Group \Group}
-\cfoot{Seite \thepage/\pageref{LastPage}}
-\makeatletter %%% disable pagebreaks between answers
+\renewcommand{\familydefault}{\sfdefault} % Font family
+\chead{\sc \Title \Date, Group \Group}
+\cfoot{Page \thepage/\pageref{LastPage}}
+\makeatletter % disable pagebreaks between answers
 \@beginparpenalty=10000
 \@itempenalty=10000
 \makeatother
-%
-\newcommand{\answerIs}[1]{} %%%Disable showing the right answer
-% \newcommand{\answerIs}[1]{[#1]} %%%Enable showing the right answer
-%%%
+
+
+% QUESTION FORM OR CORRECTION FORM:
+% If second line is commented out -> question form, if first line is commented out -> correction form
+\newcommand{\answerIs}[1]{} % Question form (true & false answers are not displayed)
+% \newcommand{\answerIs}[1]{[#1]} % Correction form (true & false answers are displayed)
+
 
 
 % ===========================================================================================================
-%%% Course data:
+% DATE OF THE EXAM
+\newcommand{\Title}{{$a->activityname}} % Module name, alternatively use the course name {{$a->coursename}}
+\newcommand{\Date}{{$a->date}}
 \newcommand{\Group}{{$a->groupname}}
-\newcommand{\Title}{{$a->activityname}}
-%%% Or use {{$a->coursename} as course name instead
-\newcommand{\Date}
 
-\newcommand{\TestTitle}{%
+\newcommand{\TestTitle}{
 \begin{center}
-{\bf \Large Question sheet}\\\\[3mm]
+{\bf \Large Question form}\\\\[3mm]
 \fbox{
 \begin{tabular}{rl}
-\rule{0pt}{25pt} Name: & $\underline{\hspace*{8cm}}$ \rule{20pt}{0pt}\\\\[5mm]
+\rule{0pt}{25pt}
+Name: & $\underline{\hspace*{8cm}}$\rule{20pt}{0pt}\\\\[5mm]
 ID number: & $\underline{\hspace*{8cm}}$\\\\[5mm]
 \ifthenelse{\equal{true}{{$a->printstudycodefield}}}{\rule{10pt}{0pt} Study code: & $\underline{\hspace*{8cm}}$\\\\[5mm]}{}
-\rule[-20pt]{0pt}{20pt} Signature: & $\underline{\hspace*{8cm}}$
+\rule[-20pt]{0pt}{20pt}
+Signature: & $\underline{\hspace*{8cm}}$
 \end{tabular}}
 \end{center}
 }
@@ -727,28 +735,21 @@ ID number: & $\underline{\hspace*{8cm}}$\\\\[5mm]
 \InputIfFileExists{offline_test_extras.tex}{}{} % Input extra user definitions
 
 \begin{document}
-
-
 % ===========================================================================================================
+
 \TestTitle
-
 % ===========================================================================================================
-
-
 \bigskip
 % ===========================================================================================================
 
 {$a->pdfintrotext}
-
 % ===========================================================================================================
 
 \newpage
-
 % ===========================================================================================================
 
-
 {$a->latexforquestions}
-
+% ===========================================================================================================
 
 \end{document}';
 $string['questionsin'] = 'Questions in';
