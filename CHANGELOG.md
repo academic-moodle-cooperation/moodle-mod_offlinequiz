@@ -5,6 +5,7 @@ CHANGELOG
 * [Feature] 5.1 compatible version
 * [Feature] added a setting to set a default max mark
 * [Bug] Changed that partial results also show the name and user profile picture
+* [Bug] Support underline formatting of tinymce
 
 5.0.4
 -----------------

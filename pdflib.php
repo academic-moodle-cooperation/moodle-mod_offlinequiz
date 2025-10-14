@@ -655,7 +655,6 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
 
     // Remove <script> tags that are created by mathjax preview.
     $questiontext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $questiontext);
-
     // Remove all class info from paragraphs because TCPDF won't use CSS.
     // JPC: Exclude pre tags.
     $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
@@ -700,11 +699,8 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
         // Remove all paragraph tags because they mess up the layout.
         $answertext = preg_replace("/<p\\b[^>]*>/ms", "", $answertext);
-        // Remove <span> tags.
-        $answertext = preg_replace("/<span\\b[^>]*>/ms", "", $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
-        $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
         $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer,
             1, 300, $offlinequiz->disableimgnewlines);
 
