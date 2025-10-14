@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+5.0.4
+-----------------
+* [Bug] Fixed broken intro format after duplication or import
+
 5.0.3
 -----------------
 * [Bug] fixed evaluation mails not being sent under certain conditions
