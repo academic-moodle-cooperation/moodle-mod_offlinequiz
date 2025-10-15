@@ -980,7 +980,7 @@ class structure {
     }
     /**
      * get bank cminfo
-     * @param int $slot
+     * @param int $qcategoryid
      * @return object|null
      */
     public function get_source_bank_cminfo(int $qcategoryid): ?\stdClass {
