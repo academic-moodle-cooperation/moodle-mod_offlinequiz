@@ -214,7 +214,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \stdClass $offlinequiz
      * @param \stdClass $cm
      * @param array $templatecontext
-     * @return string
+     * @return array
      */
     public function offlinequiz_group_selector_values($offlinequiz, $cm, $templatecontext) {
 
@@ -242,7 +242,7 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param structure $structure the offlinequiz structure.
      * @param array $templatecontext
-     * @return string HTML to output.
+     * @return array HTML to output.
      */
     public function offlinequiz_state_warnings_values(structure $structure, $templatecontext) {
 
@@ -267,7 +267,7 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param structure $structure the offlinequiz structure.
      * @param array $templatecontext
-     * @return string HTML to output.
+     * @return array HTML to output.
      */
     public function offlinequiz_information_values(structure $structure, $templatecontext) {
 
@@ -284,7 +284,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \stdClass $offlinequiz the offlinequiz settings from the database.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @param array $templatecontext
-     * @return string HTML to output.
+     * @return array HTML to output.
      */
     public function maximum_grade_input_values($offlinequiz, \moodle_url $pageurl, $templatecontext) {
         $templatecontext['maxgradeinputsize'] = $offlinequiz->decimalpoints + 2;
@@ -298,7 +298,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @param \stdClass $offlinequiz
      * @param array $templatecontext
-     * @return string HTML to output.
+     * @return array HTML to output.
      */
     protected function repaginate_button_values(structure $structure, \moodle_url $pageurl, $offlinequiz, $templatecontext) {
 
@@ -425,7 +425,7 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param \stdClass $offlinequiz the offlinequiz settings from the database.
      * @param array $templatecontext
-     * @return string HTML to output.
+     * @return array HTML to output.
      */
     public function total_marks($offlinequiz, $templatecontext) {
         $templatecontext['sumgrades'] = offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades);
@@ -782,6 +782,8 @@ class edit_renderer extends \plugin_renderer_base {
                                 $this->random_question($structure, $question, $pageurl) :
                                 $this->question_name($structure, $question, $pageurl)
                             ),
+            'bankname' => $this->get_bank_name($structure, $question),
+            'bankurl' => $this->get_bank_url($structure, $question),
             'questionpreviewicon' => $this->question_preview_icon($structure->get_offlinequiz(), $question),
             'questionremoveicon' => ($structure->can_be_edited() ? $this->question_remove_icon($question, $pageurl) : ''),
             'questionmarkicon' => $this->marked_out_of_field($structure->get_offlinequiz(), $question),
@@ -828,6 +830,8 @@ class edit_renderer extends \plugin_renderer_base {
                                 $this->random_question($structure, $question, $pageurl) :
                                 $this->question_name($structure, $question, $pageurl)
                             ),
+            'bankname' => $this->get_bank_name($structure, $question),
+            'bankurl' => $this->get_bank_url($structure, $question),
             'questionpreviewicon' => $this->question_preview_icon($structure->get_offlinequiz(), $question),
             'questionremoveicon' => ($structure->can_be_edited() ? $this->question_remove_icon($question, $pageurl) : ''),
             'questionmarkicon' => $this->marked_out_of_field($structure->get_offlinequiz(), $question),
@@ -847,6 +851,32 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= html_writer::end_tag('div');
 
         return $output;
+    }
+    /**
+     * get the url of the question bank
+     * @param mixed $structure
+     * @param mixed $question
+     * @return string
+     */
+    private function get_bank_url($structure, $question) {
+        $bankurl = new \moodle_url('/question/edit.php',
+                [
+                    'cmid' => $structure->get_source_bank_cminfo($question->contextid)->id,
+                    'cat' => "{$question->categoryid},{$question->contextid}",
+                ]
+            );
+        return $bankurl->out(false);
+    }
+    /**
+     * get the name of the question bank
+     * @param mixed $structure
+     * @param mixed $question
+     */
+    private function get_bank_name($structure, $question) {
+        if ($structure->get_context()->id != $question->contextid) {
+            return $question->qcname;
+        }
+        return '';
     }
 
     /**

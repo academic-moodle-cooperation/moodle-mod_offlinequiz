@@ -987,10 +987,13 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit ul.slots li.section li.activity .activityinstance {
-    display: flex;
-    flex: 1 1 auto;
     min-height: 1.7em;
     padding-right: 2px;
+}
+
+#page-mod-offlinequiz-edit ul.slots li.section li.activity .sharedbank {
+    display: flex;
+    flex: 1 1 auto;
 }
 
 #page-mod-offlinequiz-edit .questionblock {
