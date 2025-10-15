@@ -22,7 +22,9 @@
         "questionname" : "This is a test question",
         "questionpreviewicon" : "<i class='icon fa fa-search-plus fa-fw' title='Preview question'></i>",
         "questionmarkicon" :  "<i class='icon fa fa-search-plus fa-fw' title='Mark question'></i>",
-        "canbeedited" : false
+        "canbeedited" : false,
+        "bankurl": "https://moodle.org/question/edit.php?cmid=8",
+        "bankname" "course questionbank 1"
     }
 }}
 <div>
@@ -31,6 +33,13 @@
         <div class="mod-indent"></div>
         <div class="activityinstance">
             {{{questionname}}}
+        </div>
+        <div class="sharedbank">
+            {{#bankname}}
+                <a href="{{{bankurl}}}">
+                    <span class="badge bg-primary text-light ms-2 mt-1">{{bankname}}</span>
+                </a>
+            {{/bankname}}
         </div>
         <span class="actions">
             {{#versionselection}}

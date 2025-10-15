@@ -26,6 +26,7 @@
  */
 
 namespace mod_offlinequiz;
+use context_module;
 use mod_offlinequiz\question\bank\qbank_helper;
 defined('MOODLE_INTERNAL') || die();
 
@@ -45,7 +46,6 @@ require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
 class structure {
     /** @var \offlinequiz the offlinequiz this is the structure of. */
     protected $offlinequizobj = null;
-
     /**
      * @var \stdClass[] the questions in this offlinequiz. Contains the row from the questions
      * table, with the data from the offlinequiz_group_questions table added, and also question_categories.contextid.
@@ -73,6 +73,16 @@ class structure {
      * @var array
      */
     private $warnings = [];
+
+    /**
+     * @var bool if the user can add random questions
+     */
+    private $canaddrandom = null;
+
+    /**
+     * @var array qbank cms
+     */
+    private $qbankcms = [];
 
     /**
      * Create an instance of this class representing an empty offlinequiz.
@@ -319,6 +329,14 @@ class structure {
     }
 
     /**
+     * return the context of this offlinequiz
+     * @return context_module
+     */
+    public function get_context() {
+        return $this->offlinequizobj->get_context();
+    }
+
+    /**
      * Get any warnings to show at the top of the edit page.
      * @return string[] array of strings.
      */
@@ -411,7 +429,7 @@ class structure {
 
         $slots = $DB->get_records_sql("
                 SELECT slot.id AS slotid, slot.slot, slot.questionid, slot.page, slot.maxmark,
-                       q.*, qc.contextid, qr.version AS requestedversion
+                       q.*, qc.contextid, qc.name qcname, qc.id categoryid, qr.version AS requestedversion
                   FROM {offlinequiz_group_questions} slot
                   LEFT JOIN {question} q ON q.id = slot.questionid
                   LEFT JOIN {question_versions} qv ON q.id = qv.questionid
@@ -439,6 +457,9 @@ class structure {
             $slot->page = $slotdata->page;
             $slot->questionid = $slotdata->questionid;
             $slot->maxmark = $slotdata->maxmark;
+            $slot->qccontextid = $slotdata->contextid;
+            $slot->qcategoryid = $slotdata->categoryid;
+            $slot->qcname = $slotdata->qcname;
             $slot->requestedversion = $slotdata->requestedversion;
 
             $this->slots[$slot->id] = $slot;
@@ -456,6 +477,7 @@ class structure {
 
         $this->populate_slots_with_sectionids();
         $this->populate_question_numbers();
+        $this->populate_question_sources();
     }
 
     /**
@@ -472,7 +494,6 @@ class structure {
                 $slot->category = 0;
                 $slot->qtype = 'missingtype';
                 $slot->name = get_string('missingquestion', 'offlinequiz');
-                $slot->slot = $slot->slot;
                 $slot->maxmark = 0;
                 $slot->questiontext = ' ';
                 $slot->questiontextformat = FORMAT_HTML;
@@ -518,6 +539,20 @@ class structure {
             } else {
                 $question->displayednumber = $number;
                 $number += 1;
+            }
+        }
+    }
+
+    /**
+     * populate the sources to get the question bank info
+     * @return void
+     */
+    protected function populate_question_sources() {
+        foreach ($this->slots as $slot) {
+            if (!array_key_exists($slot->qccontextid, $this->qbankcms)) {
+                $context = \context::instance_by_id($slot->qccontextid);
+                $cm = get_coursemodule_from_id(null, $context->instanceid);
+                $this->qbankcms[$slot->qccontextid] = $cm;
             }
         }
     }
@@ -931,7 +966,7 @@ class structure {
         // Create the selected number of random questions.
         for ($i = 0; $i < $number; $i++) {
             // Slot data.
-            $randomslotdata = new stdClass();
+            $randomslotdata = new \stdClass();
             $randomslotdata->quizid = $this->get_offlinequizid();
             $randomslotdata->usingcontextid = context_module::instance($this->get_cmid())->id;
             $randomslotdata->questionscontextid = $category->contextid;
@@ -942,5 +977,18 @@ class structure {
             $randomslot->set_filter_condition(json_encode($filtercondition));
             $randomslot->insert($addonpage);
         }
+    }
+    /**
+     * get bank cminfo
+     * @param int $slot
+     * @return object|null
+     */
+    public function get_source_bank_cminfo(int $qcategoryid): ?\stdClass {
+
+        // This shouldn't happen as all categories belong to a module context level but let's account for it.
+        if (!array_key_exists($qcategoryid, $this->qbankcms)) {
+            return null;
+        }
+        return $this->qbankcms[$qcategoryid];
     }
 }

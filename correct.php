@@ -294,9 +294,6 @@ if ($action == 'cancel') {
 
     if (!confirm_sesskey()) {
         throw new \moodle_exception('invalidsesskey');
-        echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
-onClick=\"self.close(); return false;\"><br />";
-        die;
     }
 
     // Maybe old errors have been fixed.
@@ -427,9 +424,6 @@ onClick=\"self.close(); return false;\"><br />";
 } else if ($action == 'rotate') {
     if (!confirm_sesskey()) {
         throw new \moodle_exception('invalidsesskey');
-        echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
-onClick=\"self.close(); return false;\"><br />";
-        die;
     }
 
     if ($newfile = $scanner->rotate_180()) {
@@ -482,9 +476,6 @@ onClick=\"self.close(); return false;\"><br />";
 
     if (!confirm_sesskey()) {
         throw new \moodle_exception('invalidsesskey');
-        echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
-        onClick=\"self.close(); return false;\"><br />";
-        die;
     }
 
     // If the page number was invalid and the user selected a pagenumber, take that and hope that page is OK now.
@@ -519,9 +510,6 @@ onClick=\"self.close(); return false;\"><br />";
 
     if (!confirm_sesskey()) {
         throw new \moodle_exception('invalidsesskey');
-        echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
-onClick=\"self.close(); return false;\"><br />";
-        die;
     }
 
     $scannedpage->status = 'ok';
@@ -552,9 +540,6 @@ onClick=\"self.close(); return false;\"><br />";
     // O=============================================.
     if (!confirm_sesskey()) {
         throw new \moodle_exception('invalidsesskey');
-        echo "<input class=\"imagebutton\" type=\"submit\" value=\"" . get_string('cancel')."\" name=\"submitbutton4\"
-onClick=\"self.close(); return false;\"><br />";
-        die;
     }
 
     require_once($CFG->libdir . '/enrollib.php');

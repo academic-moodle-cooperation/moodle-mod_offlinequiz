@@ -208,7 +208,7 @@ function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
  *
  * @param mixed $offlinequiz
  * @param mixed $cm
- * @return navigation_node|false
+ * @return mixed navigation_node|bool
  */
 function offlinequiz_get_tabs_object($offlinequiz, $cm): navigation_node {
     global $CFG, $PAGE;
@@ -951,7 +951,7 @@ function offlinequiz_delete_result($resultid, $context) {
  * @param int $grade    The maximal grade for the question
  * @param int $newquestionid
  */
-function offlinequiz_update_question_instance($offlinequiz, $contextid, $questionid, $grade, $newquestionid = null) {
+function offlinequiz_update_question_instance($offlinequiz, $contextid, $questionid, $grade = 1, $newquestionid = null) {
     global $DB;
     $transaction = $DB->start_delegated_transaction();
     $DB->set_field('offlinequiz_group_questions', 'maxmark', $grade,
@@ -1297,7 +1297,7 @@ function offlinequiz_count_multichoice_questions(question_usage_by_activity $que
  * Returns the sumgrades for a given offlinequiz group.
  *
  * @param object $offlinequiz object that must contain the groupid field.
- * @return Ambigous <mixed, boolean>
+ * @return mixed
  */
 function offlinequiz_get_group_sumgrades($offlinequiz) {
     global $DB;
@@ -1403,7 +1403,7 @@ function offlinequiz_extend_object (&$first, &$second) {
  *
  * @param stdClass $offlinequiz
  * @param int $groupnumber
- * @return Ambigous <mixed, boolean, unknown>
+ * @return mixed
  */
 function offlinequiz_get_group($offlinequiz, $groupnumber) {
     global $DB;
@@ -1445,7 +1445,7 @@ function offlinequiz_add_group($offlinequizid, $groupnumber) {
 /**
  * Checks whether any list of participants have been created for a given offlinequiz.
  *
- * @param unknown_type $offlinequiz
+ * @param object $offlinequiz
  * @return boolean
  */
 function offlinequiz_partlist_created($offlinequiz) {
@@ -1654,9 +1654,8 @@ function offlinequiz_question_edit_button($cmid, $question, $returnurl, $content
         }
         $questionparams = ['returnurl' => $returnurl, 'cmid' => $cmid, 'id' => $question->id];
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
-        return '<a title="' . $action . '" href="' . $questionurl->out() . '"><img src="' .
-                $OUTPUT->pix_url($icon) . '" alt="' . $action . '" />' . $contentaftericon .
-                '</a>';
+        $iconhtml = $OUTPUT->pix_icon($icon, $action, 'core');
+        return html_writer::link($questionurl, $iconhtml . $contentaftericon, ['title' => $action]);
     } else {
         return $contentaftericon;
     }
@@ -1690,7 +1689,7 @@ function offlinequiz_question_edit_setup($edittab, $baseurl) {
  * @param object $offlinequiz the offlinequiz settings
  * @param object $question the question
  * @param bool $label if true, show the preview question label after the icon
- * @return the HTML for a preview question icon.
+ * @return string the HTML for a preview question icon.
  */
 function offlinequiz_question_preview_button($offlinequiz, $question, $label = false) {
     global $CFG, $OUTPUT;
@@ -1911,7 +1910,7 @@ function offlinequiz_get_user_by_userkey($offlinequiz, $userkey) {
  * @param array $choiceorder
  * @param int $number
  * @param object $context
- * @param int $page
+ * @param object $page the Page object
  */
 function offlinequiz_print_question_preview($question, $choiceorder, $number, $context, $page) {
     global $CFG, $DB;
@@ -2015,13 +2014,12 @@ function offlinequiz_apply_filters($text, $filters) {
 /**
  * Prints a list of participants to Stdout.
  *
- * @param unknown_type $offlinequiz
- * @param unknown_type $coursecontext
- * @param unknown_type $systemcontext
+ * @param object $offlinequiz
+ * @param context $coursecontext
+ * @param context $systemcontext
  */
 function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemcontext) {
     global $CFG, $COURSE, $DB, $OUTPUT;
-    offlinequiz_load_useridentification();
     $offlinequizconfig = get_config('offlinequiz');
 
     if (!$course = $DB->get_record('course', ['id' => $coursecontext->instanceid])) {
@@ -2274,15 +2272,14 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
 /**
  * Serves a list of participants as a file.
  *
- * @param unknown_type $offlinequiz
- * @param unknown_type $fileformat
- * @param unknown_type $coursecontext
- * @param unknown_type $systemcontext
+ * @param object $offlinequiz
+ * @param string $fileformat
+ * @param context_course $coursecontext
+ * @param context $systemcontext
  */
 function offlinequiz_download_partlist($offlinequiz, $fileformat, &$coursecontext, &$systemcontext) {
     global $CFG, $DB;
 
-    offlinequiz_load_useridentification();
     $offlinequizconfig = get_config('offlinequiz');
 
     $filename = clean_filename(get_string('participants', 'offlinequiz') . $offlinequiz->id);
@@ -2469,9 +2466,9 @@ function offlinequiz_question_tostring($question, $showicon = false, $showquesti
  * @param array $questionids The id of the question to be added
  * @param object $offlinequiz The extended offlinequiz object as used by edit.php
  *      This is updated by this function
- * @param int $offlinegroup
+ * @param object $offlinegroup
  * @param int $fromofflinegroup
- * @param int $maxmarks
+ * @param array $maxmarks
  * @return bool false if the question was already in the offlinequiz
  */
 function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offlinegroup,
