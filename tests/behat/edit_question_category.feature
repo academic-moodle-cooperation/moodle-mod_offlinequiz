@@ -28,13 +28,13 @@ Feature: See if the question categories are displayed correctly
       | Test questions   | multichoice | Multi-choice-001 | A     |
 
   @javascript
-Scenario: see if the question category is displayed
-  Given I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
-  And I follow "Questions"
-  Then I should see "Test questions"
+  Scenario: see if the question category is displayed
+    Given I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
+    And I follow "Questions"
+    Then I should see "Test questions"
 
-Scenario: When I click on the question category I see it's questions
-  Given I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
-  And I follow "Questions"
-  And I click on "Test questions" "link"
-  Then I should see "Multi-choice-001"
+  Scenario: When I click on the question category I see it's questions
+    Given I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
+    And I follow "Questions"
+    And I click on "Test questions" "link"
+    Then I should see "Multi-choice-001"
