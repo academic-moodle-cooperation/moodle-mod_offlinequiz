@@ -53,6 +53,8 @@ const SELECTORS = {
     BANK_SEARCH: '#searchbanks',
     GO_BACK_BUTTON: 'button[data-action="go-back"]',
     GROUP_ID: 'select[name="groupnumber"]',
+    INCLUDE_SUBCATEGORIES: 'input[type="checkbox"][name="includesubcategories"]',
+    PREVENT_SAME_QUESTION: 'input[type="checkbox"][name="preventsamequestion"]',
 };
 
 export default class ModalAddRandomQuestion extends Modal {
@@ -296,8 +298,11 @@ export default class ModalAddRandomQuestion extends Modal {
                         const randomcount = document.querySelector(SELECTORS.SELECT_NUMBER_TO_ADD).value;
                         const filtercondition = document.querySelector(SELECTORS.FILTER_CONDITION_ELEMENT).dataset?.filtercondition;
                         const groupnumber = document.querySelector(SELECTORS.GROUP_ID).value;
+                        const includesubcategories = document.querySelector(SELECTORS.INCLUDE_SUBCATEGORIES).checked ? 1 : 0;
+                        const preventsamequestion = document.querySelector(SELECTORS.PREVENT_SAME_QUESTION).checked ? 1 : 0;
 
-                        this.addQuestions(quizcmid, addonpage, randomcount, filtercondition, '', '', groupnumber);
+                        this.addQuestions(quizcmid, addonpage, randomcount, filtercondition,
+                            '', '', groupnumber, includesubcategories, preventsamequestion);
                         return;
                     }
                     // Add new category if the add category button was clicked.
@@ -391,6 +396,8 @@ export default class ModalAddRandomQuestion extends Modal {
      * @param {string} newcategory add new category
      * @param {string} parentcategory parent category of new category
      * @param {number} groupnumber groupnumber
+     * @param {number} includesubcategories includesubcategories
+     * @param {number} preventsamequestion preventsamequestion
      */
     async addQuestions(
         quizcmid,
@@ -399,7 +406,9 @@ export default class ModalAddRandomQuestion extends Modal {
         filtercondition,
         newcategory,
         parentcategory,
-        groupnumber
+        groupnumber,
+        includesubcategories,
+        preventsamequestion
     ) {
         // We do not need to resolve this Pending because the form submission will result in a page redirect.
         new Pending('mod-offlinequiz/modal_add_random_questions');
@@ -413,6 +422,8 @@ export default class ModalAddRandomQuestion extends Modal {
                 newcategory,
                 parentcategory,
                 groupnumber,
+                includesubcategories,
+                preventsamequestion,
             }
         };
         try {

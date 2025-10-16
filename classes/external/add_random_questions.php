@@ -77,6 +77,18 @@ class add_random_questions extends external_api {
                     VALUE_DEFAULT,
                     1,
                 ),
+                'includesubcategories' => new external_value(
+                    PARAM_INT,
+                    'Recurse',
+                    VALUE_DEFAULT,
+                    0,
+                ),
+                'preventsamequestion' => new external_value(
+                    PARAM_INT,
+                    'Prevent same question',
+                    VALUE_DEFAULT,
+                    0,
+                ),
             ]
         );
     }
@@ -100,6 +112,8 @@ class add_random_questions extends external_api {
         string $newcategory = '',
         string $parentcategory = '',
         int $groupnumber = 0,
+        int $recurse = 0,
+        int $preventsamequestion = 0,
     ): array {
         [
             'cmid' => $cmid,
@@ -109,6 +123,8 @@ class add_random_questions extends external_api {
             'newcategory' => $newcategory,
             'parentcategory' => $parentcategory,
             'groupnumber' => $groupnumber,
+            'includesubcategories' => $recurse,
+            'preventsamequestion' => $preventsamequestion,
         ] = self::validate_parameters(self::execute_parameters(), [
             'cmid' => $cmid,
             'addonpage' => $addonpage,
@@ -117,6 +133,8 @@ class add_random_questions extends external_api {
             'newcategory' => $newcategory,
             'parentcategory' => $parentcategory,
             'groupnumber' => $groupnumber,
+            'includesubcategories' => $recurse,
+            'preventsamequestion' => $preventsamequestion,
         ]);
 
         // Validate context.
@@ -155,7 +173,7 @@ class add_random_questions extends external_api {
         [$quiz, ] = get_module_from_cmid($cmid);
         $group = offlinequiz_get_group($quiz, $groupnumber);
 
-        offlinequiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $group->id);
+        offlinequiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $group->id, $recurse, $preventsamequestion);
         offlinequiz_delete_template_usages($quiz);
         offlinequiz_update_sumgrades($quiz);
 

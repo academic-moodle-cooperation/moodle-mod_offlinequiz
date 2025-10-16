@@ -2499,7 +2499,8 @@ function offlinequiz_add_questionlist_to_group($questionids, $offlinequiz, $offl
     return false;
 }
 
-function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $categoryid, int $number, int $groupid): void {
+function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $categoryid, int $number,
+                                          int $groupid, int $recurse, int $preventsamequestion): void {
     /*debugging(
         'quiz_add_random_questions is deprecated. Please use mod_quiz\structure::add_random_questions() instead.',
         DEBUG_DEVELOPER
@@ -2526,7 +2527,11 @@ function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $c
     $catcontext = \context::instance_by_id($category->contextid);
     require_capability('moodle/question:useall', $catcontext);
 
-    $categoryids = array($category->id);
+    if ($recurse) {
+        $categoryids = question_categorylist($category->id);
+    } else {
+        $categoryids = array($category->id);
+    }
 
     list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
 
@@ -2543,13 +2548,22 @@ function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $c
                                  WHERE qv2.questionbankentryid = qv.questionbankentryid
                                    AND qv.version < qv2.version) ";
 
-        // Find all questions in the selected categories that are not in the offline test yet.
-    $sql .= "AND NOT EXISTS (SELECT 1
+    if (!$preventsamequestion) {
+        // Find all questions in the selected categories that are not in the offline group yet.
+        $sql .= "AND NOT EXISTS (SELECT 1
                                    FROM {offlinequiz_group_questions} ogq
                                    JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
                                   WHERE qv3.questionbankentryid = qv.questionbankentryid
                                     AND ogq.offlinequizid = :offlinequizid
                                     AND ogq.offlinegroupid = :offlinegroupid)";
+    } else {
+        // Find all questions in the selected categories that are not in the offline test yet.
+        $sql .= "AND NOT EXISTS (SELECT 1
+                                   FROM {offlinequiz_group_questions} ogq
+                                   JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
+                                  WHERE qv3.questionbankentryid = qv.questionbankentryid
+                                    AND ogq.offlinequizid = :offlinequizid)";
+    }
 
     $qcparams['offlinequizid'] = $quiz->id;
     $qcparams['offlinegroupid'] = $groupid;
@@ -2603,98 +2617,6 @@ function offlinequiz_add_random_questions(stdClass $quiz, int $addonpage, int $c
         $randomslot->insert($addonpage);
     }*/
 }
-
-/**
- * Randomly add a number of multichoice questions to an offlinequiz group.
- *
- * @param unknown_type $offlinequiz
- * @param unknown_type $addonpage
- * @param unknown_type $categoryid
- * @param unknown_type $number
- * @param unknown_type $includesubcategories
- */
-/*function offlinequiz_add_random_questions($offlinequiz, $offlinegroup, $categoryid,
-        $number, $recurse, $preventsamequestion) {
-    global $DB;
-
-    $category = $DB->get_record('question_categories', array('id' => $categoryid));
-    if (!$category) {
-        throw new \moodle_exception('invalidcategoryid', 'error');
-    }
-
-    $catcontext = context::instance_by_id($category->contextid);
-    require_capability('moodle/question:useall', $catcontext);
-
-    if ($recurse) {
-        $categoryids = question_categorylist($category->id);
-    } else {
-        $categoryids = array($category->id);
-    }
-
-    list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
-
-    $sql = "SELECT q.id
-              FROM {question} q
-              JOIN {question_versions} qv ON qv.questionid = q.id
-              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-             WHERE qbe.questioncategoryid $qcsql
-               AND q.parent = 0
-               AND qv.status = 'ready'
-               AND q.qtype IN ('multichoice', 'multichoiceset')
-               AND NOT EXISTS (SELECT 1
-                                 FROM {question_versions} qv2
-                                 WHERE qv2.questionbankentryid = qv.questionbankentryid
-                                   AND qv.version < qv2.version) ";
-    if (!$preventsamequestion) {
-        // Find all questions in the selected categories that are not in the offline group yet.
-        $sql .= "AND NOT EXISTS (SELECT 1
-                                   FROM {offlinequiz_group_questions} ogq
-                                   JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
-                                  WHERE qv3.questionbankentryid = qv.questionbankentryid
-                                    AND ogq.offlinequizid = :offlinequizid
-                                    AND ogq.offlinegroupid = :offlinegroupid)";
-    } else {
-        // Find all questions in the selected categories that are not in the offline test yet.
-        $sql .= "AND NOT EXISTS (SELECT 1
-                                   FROM {offlinequiz_group_questions} ogq
-                                   JOIN {question_versions} qv3 ON qv3.questionid = ogq.questionid
-                                  WHERE qv3.questionbankentryid = qv.questionbankentryid
-                                    AND ogq.offlinequizid = :offlinequizid)";
-    }
-    $qcparams['offlinequizid'] = $offlinequiz->id;
-    $qcparams['offlinegroupid'] = $offlinegroup->id;
-
-    $questionids = $DB->get_fieldset_sql($sql, $qcparams);
-    shuffle($questionids);
-
-    $chosenids = array();
-    while (($questionid = array_shift($questionids)) && $number > 0) {
-        $chosenids[] = $questionid;
-        $number -= 1;
-    }
-
-    $maxmarks = array();
-    if ($chosenids) {
-        // Get the old maxmarks in case questions are already in other offlinequiz groups.
-        list($qsql, $params) = $DB->get_in_or_equal($chosenids, SQL_PARAMS_NAMED);
-
-        $sql = "SELECT id, questionid, maxmark
-                  FROM {offlinequiz_group_questions}
-                 WHERE offlinequizid = :offlinequizid
-                   AND questionid $qsql";
-        $params['offlinequizid'] = $offlinequiz->id;
-
-        if ($slots = $DB->get_records_sql($sql, $params)) {
-            foreach ($slots as $slot) {
-                if (!array_key_exists($slot->questionid, $maxmarks)) {
-                    $maxmarks[$slot->questionid] = $slot->maxmark;
-                }
-            }
-        }
-    }
-
-    offlinequiz_add_questionlist_to_group($chosenids, $offlinequiz, $offlinegroup, null, $maxmarks);
-}*/
 
 /**
  *

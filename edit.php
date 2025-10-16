@@ -45,7 +45,6 @@
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
-// require_once($CFG->dirroot . '/mod/offlinequiz/addrandomform.php');
 
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
@@ -263,7 +262,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     redirect($afteractionurl);
 }*/
 
-if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
+/*if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     // Add random questions to the quiz.
     $structure->check_can_be_edited();
     $recurse = optional_param('recurse', 0, PARAM_BOOL);
@@ -276,7 +275,7 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     //quiz_delete_previews($quiz);
     //$gradecalculator->recompute_quiz_sumgrades();
     redirect($afteractionurl);
-}
+}*/
 
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
