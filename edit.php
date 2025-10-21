@@ -250,18 +250,6 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     redirect($afteractionurl);
 }
 
-if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
-    // Add random questions to the quiz.
-    $structure->check_can_be_edited();
-    $recurse = optional_param('recurse', 0, PARAM_BOOL);
-    $addonpage = optional_param('addonpage', 0, PARAM_INT);
-    $categoryid = required_param('categoryid', PARAM_INT);
-    $randomcount = required_param('randomcount', PARAM_INT);
-    offlinequiz_add_random_questions($offlinequiz, $addonpage, $categoryid, $randomcount);
-
-    redirect($afteractionurl);
-}
-
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     // Parameter to copy selected questions to another group.
