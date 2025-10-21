@@ -28,7 +28,6 @@
 namespace mod_offlinequiz\output;
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/offlinequiz/addrandomform.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/classes/output/question_chooser.php');
 
 use mod_offlinequiz\structure;
@@ -1146,35 +1145,6 @@ class edit_renderer extends \plugin_renderer_base {
         return html_writer::div(html_writer::empty_tag('img',
                 ['alt' => 'loading', 'class' => 'loading-icon', 'src' => $this->image_url('i/loading')]),
                 'questionbankloading');
-    }
-
-    /**
-     * Return random question form.
-     * @param \moodle_url $thispageurl the canonical URL of this page.
-     * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
-     * @param array $pagevars the variables from \question_edit_setup()
-     * @return string HTML to output.
-     */
-    protected function random_question_form(\moodle_url $thispageurl,
-                                                \core_question\local\bank\question_edit_contexts $contexts,
-                                                array $pagevars
-                                            ) {
-
-        if (!$contexts->have_cap('moodle/question:useall')) {
-            return '';
-        }
-        $randomform = new \offlinequiz_add_random_form(new \moodle_url('/mod/offlinequiz/addrandom.php'),
-                                 ['contexts' => $contexts,
-                                       'cat' => $pagevars['cat'],
-                                       'groupnumber' => $thispageurl->get_param('groupnumber'),
-                                 ]);
-        $randomform->set_data([
-                'category' => $pagevars['cat'],
-                'returnurl' => $thispageurl->out_as_local_url(true),
-                'randomnumber' => 1,
-                'cmid' => $thispageurl->param('cmid'),
-        ]);
-        return html_writer::div($randomform->render(), 'randomquestionformforpopup');
     }
 
     /**
