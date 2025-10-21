@@ -29,4 +29,5 @@ Feature: Within a moodle instance, an administrator should be able to set the fi
     And I switch editing mode on
     And I add a offlinequiz activity to course "Course 1" section "2" and I fill the form with:
       | Offline quiz name | Add an offlinequiz to the current course |
-    Then I should see "- Required"
+    And I pause
+    Then I should see "Required"
