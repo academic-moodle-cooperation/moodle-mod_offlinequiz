@@ -44,6 +44,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
      */
     private $currentofflinegroup = null;
     /**
+     * qtype plugin restorers
+     * @var array
+     */
+    private $qtypeplugins = [];
+    /**
      * Define the structure of the restore.
      */
     protected function define_structure() {
@@ -517,5 +522,25 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             $this->add_related_files('mod_offlinequiz', 'queuedata', 'offlinequiz_queue_data');
         }
         $this->add_related_files('mod_offlinequiz', 'pdfs', null);
+    }
+
+    /**
+     * Get the restore_qtype_plugin subclass for a specific question type.
+     * @param string $qtype e.g. multichoice.
+     * @return restore_qtype_plugin instance.
+     */
+    protected function get_qtype_restorer($qtype) {
+        // Build one static cache to store {@link restore_qtype_plugin}
+        // while we are needing them, just to save zillions of instantiations
+        // or using static stuff that will break our nice API
+        if (!isset($this->qtypeplugins[$qtype])) {
+            $classname = 'restore_qtype_' . $qtype . '_plugin';
+            if (class_exists($classname)) {
+                $this->qtypeplugins[$qtype] = new $classname('qtype', $qtype, $this);
+            } else {
+                $this->qtypeplugins[$qtype] = null;
+            }
+        }
+        return $this->qtypeplugins[$qtype];
     }
 }
