@@ -248,6 +248,12 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
     private function get_logo_aspect_ratio($logourl) {
         list($originalwidth, $originalheight) = getimagesize($logourl);
+        // For any reason, we cannot get the image size.
+        if (empty($originalheight)) {
+            // Preventing errors by division by zero.
+            return 1.0;
+        }
+        // Otherwise, we can get the actual aspect ratio.
         return $originalwidth / $originalheight;
     }
 
