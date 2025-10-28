@@ -26,7 +26,6 @@ namespace mod_offlinequiz\question\bank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class add_action_column extends \core_question\local\bank\column_base {
-
     /** @var string caches a lang string used repeatedly. */
     protected $stradd;
     /**
@@ -74,7 +73,8 @@ class add_action_column extends \core_question\local\bank\column_base {
             '',
             null,
             ['title' => $this->stradd],
-            new \pix_icon('t/add', $this->stradd));
+            new \pix_icon('t/add', $this->stradd)
+        );
         echo $OUTPUT->render($link);
     }
     /**

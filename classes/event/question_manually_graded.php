@@ -42,7 +42,6 @@ namespace mod_offlinequiz\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_manually_graded extends \core\event\base {
-
     /**
      * Init method.
      */
@@ -101,6 +100,5 @@ class question_manually_graded extends \core\event\base {
         if (!isset($this->other['slot'])) {
             throw new \coding_exception('The \'slot\' value must be set in other.');
         }
-
     }
 }

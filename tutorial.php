@@ -104,7 +104,6 @@ if ($answer) {
         $feedbackstring = '<b>' . get_string('tutorial:feedback:wrong', 'offlinequiz') . '</b> ' . $feedbackstring;
         $notification = $OUTPUT->notification($feedbackstring, 'notifyerror');
     }
-
 }
 
 

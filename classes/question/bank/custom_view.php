@@ -223,8 +223,10 @@ class custom_view extends \core_question\local\bank\view {
 
         echo \html_writer::start_tag('div', ['class' => 'pt-2']);
         if ($canuseall) {
-            echo \html_writer::empty_tag('input',
-                ['name' => 'groupnumber', 'value' => $this->groupnumber, 'type' => 'hidden']);
+            echo \html_writer::empty_tag(
+                'input',
+                ['name' => 'groupnumber', 'value' => $this->groupnumber, 'type' => 'hidden']
+            );
             // Add selected questions to the offlinequiz.
             $params = [
                     'type' => 'submit',
@@ -284,12 +286,12 @@ class custom_view extends \core_question\local\bank\view {
                                           JOIN {question_bank_entries} be
                                             ON be.id = v.questionbankentryid
                                          WHERE be.id = qbe.id)';
-        $onlyready = '((' . "qv.status = '" . question_version_status::QUESTION_STATUS_READY . "'" .'))';
+        $onlyready = '((' . "qv.status = '" . question_version_status::QUESTION_STATUS_READY . "'" . '))';
         $this->sqlparams = [];
         $conditions = [];
         foreach ($this->searchconditions as $searchcondition) {
             if ($searchcondition->where()) {
-                $conditions[] = '((' . $searchcondition->where() .'))';
+                $conditions[] = '((' . $searchcondition->where() . '))';
             }
             if ($searchcondition->params()) {
                 $this->sqlparams = array_merge($this->sqlparams, $searchcondition->params());
@@ -399,7 +401,9 @@ class custom_view extends \core_question\local\bank\view {
 
         $cminfo = \cm_info::create($this->cm);
 
-        return $OUTPUT->render_from_template('mod_offlinequiz/switch_bank_header',
-            ['currentbank' => $cminfo->get_formatted_name()]);
+        return $OUTPUT->render_from_template(
+            'mod_offlinequiz/switch_bank_header',
+            ['currentbank' => $cminfo->get_formatted_name()]
+        );
     }
 }

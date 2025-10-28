@@ -43,10 +43,17 @@ require_login($offlinequizobj->get_course(), false, $offlinequizobj->get_cm());
 require_capability('mod/offlinequiz:manage', $offlinequizobj->get_context());
 
 if (offlinequiz_has_scanned_pages($offlinequizid)) {
-    $reportlink = offlinequiz_attempt_summary_link_to_reports($offlinequizobj->get_offlinequiz(),
-                    $offlinequizobj->get_cm(), $offlinequizobj->get_context());
-    throw new \moodle_exception('cannoteditafterattempts', 'offlinequiz',
-            new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cmid]), $reportlink);
+    $reportlink = offlinequiz_attempt_summary_link_to_reports(
+        $offlinequizobj->get_offlinequiz(),
+        $offlinequizobj->get_cm(),
+        $offlinequizobj->get_context()
+    );
+    throw new \moodle_exception(
+        'cannoteditafterattempts',
+        'offlinequiz',
+        new moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cmid]),
+        $reportlink
+    );
 }
 
 $slotnumber++;
@@ -58,6 +65,8 @@ offlinequiz_delete_template_usages($offlinequizobj->get_offlinequiz());
 $structure = $offlinequizobj->get_structure();
 $structure->refresh_page_numbers_and_update_db($structure->get_offlinequiz());
 
-redirect(new moodle_url('edit.php',
+redirect(new moodle_url(
+    'edit.php',
     ['cmid' => $offlinequizobj->get_cmid(),
-          'groupnumber' => $group->groupnumber]));
+    'groupnumber' => $group->groupnumber]
+));

@@ -36,7 +36,6 @@ namespace mod_offlinequiz;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repaginate {
-
     /** @var int means join pages. */
     const LINK = 1;
     /** @var int means split pages. */
@@ -65,9 +64,12 @@ class repaginate {
             $this->slots = [];
         }
         if (!$slots) {
-            $this->slots = $DB->get_records('offlinequiz_group_questions',
-                    ['offlinequizid' => $this->offlinequizid,
-                          'offlinegroupid' => $this->offlinegroupid], 'slot');
+            $this->slots = $DB->get_records(
+                'offlinequiz_group_questions',
+                ['offlinequizid' => $this->offlinequizid,
+                'offlinegroupid' => $this->offlinegroupid],
+                'slot'
+            );
         } else {
             $this->slots = $slots;
         }
@@ -138,9 +140,12 @@ class repaginate {
      */
     public function repaginate_slots($nextslotnumber, $type) {
         global $DB;
-        $this->slots = $DB->get_records('offlinequiz_group_questions',
-                ['offlinequizid' => $this->offlinequizid,
-                      'offlinegroupid' => $this->offlinegroupid], 'slot');
+        $this->slots = $DB->get_records(
+            'offlinequiz_group_questions',
+            ['offlinequizid' => $this->offlinequizid,
+            'offlinegroupid' => $this->offlinegroupid],
+            'slot'
+        );
         $nextslot = null;
         $newslots = [];
         foreach ($this->slots as $slot) {

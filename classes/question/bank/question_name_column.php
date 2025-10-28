@@ -26,7 +26,6 @@ namespace mod_offlinequiz\question\bank;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_name_column extends \core_question\local\bank\column_base {
-
     /**
      * @var null $checkboxespresent
      */

@@ -30,7 +30,7 @@ namespace mod_offlinequiz\correct;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir . '/tablelib.php');
 /**
  * select all table
  */
@@ -65,12 +65,12 @@ class offlinequiz_selectall_table extends \flexible_table {
     public function wrap_html_start() {
 
         echo '<div id="tablecontainer" class="centerbox">';
-        echo '<form id="reportform" method="post" action="'. $this->reportscript .
+        echo '<form id="reportform" method="post" action="' . $this->reportscript .
              '" onsubmit="return confirm(\'' . $this->params['strreallydel'] . '\');">';
         echo ' <div>';
 
         foreach ($this->params as $name => $value) {
-            echo '<input type="hidden" name="' . $name .'" value="' . $value . '" />';
+            echo '<input type="hidden" name="' . $name . '" value="' . $value . '" />';
         }
         echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         echo '  <center>';
@@ -86,10 +86,10 @@ class offlinequiz_selectall_table extends \flexible_table {
 
         echo '<table id="commands">';
         echo '<tr><td>';
-        echo '<a href="#" class="selectall">'. $strselectall . '</a> / ';
+        echo '<a href="#" class="selectall">' . $strselectall . '</a> / ';
         echo '<a href="#" class="deselectall">' . $strselectnone . '</a> ';
         echo '&nbsp;&nbsp;';
-        echo '<input type="submit" value="'.get_string('deleteselectedpages', 'offlinequiz_rimport')
+        echo '<input type="submit" value="' . get_string('deleteselectedpages', 'offlinequiz_rimport')
               . '" class="btn btn-secondary"/>';
         echo '</td></tr></table>';
         echo '  </center>';
@@ -97,4 +97,4 @@ class offlinequiz_selectall_table extends \flexible_table {
         echo ' </div>';
         echo '</form></div>';
     }
-} // End class.
+}

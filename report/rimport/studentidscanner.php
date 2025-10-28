@@ -114,7 +114,9 @@ class offlinequiz_studentid_scanner {
             for ($i = 0; $i < $iddigits; $i++) {
                 $boxmiddlepoint = new offlinequiz_point(
                     STUDENT_BOX_STUDENTID_CORNER_X + STUDENT_BOX_SIZE / 2 + STUDENT_BOX_DISTANCE_X * $i,
-                    STUDENT_BOX_STUDENTID_CORNER_Y + STUDENT_BOX_SIZE / 2 + STUDENT_BOX_DISTANCE_Y * $j, 2);
+                    STUDENT_BOX_STUDENTID_CORNER_Y + STUDENT_BOX_SIZE / 2 + STUDENT_BOX_DISTANCE_Y * $j,
+                    2
+                );
                 $studentidpoints[$i][$j] = calculate_point_relative_to_corner($page, $boxmiddlepoint);
             }
         }

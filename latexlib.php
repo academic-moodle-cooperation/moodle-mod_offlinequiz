@@ -43,8 +43,14 @@ require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
  * @param boolean $correction if true the correction form is generated.
  * @return stored_file|null instance, the generated PDF file.
  */
-function offlinequiz_create_latex_question(question_usage_by_activity $templateusage, $offlinequiz, $group,
-                                         $courseid, $context, $correction = false) {
+function offlinequiz_create_latex_question(
+    question_usage_by_activity $templateusage,
+    $offlinequiz,
+    $group,
+    $courseid,
+    $context,
+    $correction = false
+) {
     global $CFG, $DB, $OUTPUT;
 
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
@@ -102,7 +108,6 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
             $latexforquestions .= '\item ' .  $questiontext . "\n";
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-
                 // There is only a slot for multichoice questions.
                 $attempt = $templateusage->get_question_attempt($slot);
                 $order = $slotquestion->get_order($attempt);  // Order of the answers.
@@ -118,10 +123,8 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
                     $latexforquestions .= $infostr . "\n";
                 }
             }
-
         }
         $latexforquestions .= '\end{enumerate}' . "\n";
-
     } else {
         // No shufflequestions, so go through the questions as they have been added to the offlinequiz group.
         // We also have to show description questions that are not in the template.
@@ -143,13 +146,12 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
                 $latexforquestions .= '\item %' .  $question->name . "\n" . $questiontext . "\n";
             }
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-
                 $slot = $questionslots[$currentquestionid];
 
                 // There is only a slot for multichoice questions.
-                $slotquestion = $templateusage->get_question ( $slot );
-                $attempt = $templateusage->get_question_attempt ( $slot );
-                $order = $slotquestion->get_order ( $attempt ); // Order of the answers.
+                $slotquestion = $templateusage->get_question($slot);
+                $attempt = $templateusage->get_question_attempt($slot);
+                $order = $slotquestion->get_order($attempt); // Order of the answers.
                 $latexforquestions .= '\begin{enumerate}' . " \n";
                 foreach ($order as $key => $answer) {
                     $latexforquestions .= offlinequiz_get_answer_latex($question, $answer);
@@ -159,7 +161,6 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
                 if ($infostr) {
                     $latexforquestions .= $infostr . "\n";
                 }
-
             }
         }
         $latexforquestions .= '\end{enumerate}' . "\n";
@@ -193,8 +194,15 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
 
     // Prepare file record object.
     $date = usergetdate(time());
-    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
-            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+    $timestamp = sprintf(
+        '%04d%02d%02d_%02d%02d%02d',
+        $date['year'],
+        $date['mon'],
+        $date['mday'],
+        $date['hours'],
+        $date['minutes'],
+        $date['seconds']
+    );
 
     $fileinfo = [
             'contextid' => $context->id,
@@ -204,8 +212,16 @@ function offlinequiz_create_latex_question(question_usage_by_activity $templateu
             'itemid' => 0,
             'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.tex'];
 
-    if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
-            $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
+    if (
+        $oldfile = $fs->get_file(
+            $fileinfo['contextid'],
+            $fileinfo['component'],
+            $fileinfo['filearea'],
+            $fileinfo['itemid'],
+            $fileinfo['filepath'],
+            $fileinfo['filename']
+        )
+    ) {
         $oldfile->delete();
     }
 
@@ -237,13 +253,13 @@ function offlinequiz_convert_html_to_latex_paragraph($dom) {
     $elements = $dom->getElementsByTagName('p');
     foreach ($elements as $element) {
         $style = $element->getAttribute("style");
-        if ( strpos($style, 'text-align: center') ) {
+        if (strpos($style, 'text-align: center')) {
             $pre = "\\begin{center}\n";
             $post = "\\end{center}\n";
-        } else if ( strpos($style, 'text-align: left') ) {
+        } else if (strpos($style, 'text-align: left')) {
             $pre = "\\begin{flushleft}\n";
             $post = "\\end{flushleft}\n";
-        } else if ( strpos($style, 'text-align: right') ) {
+        } else if (strpos($style, 'text-align: right')) {
             $pre = "\\begin{flushright}\n";
             $post = "\\end{flushright}\n";
         } else {
@@ -262,10 +278,10 @@ function offlinequiz_convert_html_to_latex_span($dom) {
     $elements = $dom->getElementsByTagName('span');
     foreach ($elements as $element) {
         $style = $element->getAttribute("style");
-        if ( preg_match('/background-color:\s+rgb\((\d+),\s+(\d+),\s+(\d+)\)/', $style, $m) ) {
+        if (preg_match('/background-color:\s+rgb\((\d+),\s+(\d+),\s+(\d+)\)/', $style, $m)) {
             $pre = "\\colorbox[RGB]{{$m[1]},{$m[2]},{$m[3]}}{";
             $post = "}";
-        } else if ( preg_match('/color:\s+rgb\((\d+),\s+(\d+),\s+(\d+)\)/', $style, $m) ) {
+        } else if (preg_match('/color:\s+rgb\((\d+),\s+(\d+),\s+(\d+)\)/', $style, $m)) {
             $pre = "\\textcolor[RGB]{{$m[1]},{$m[2]},{$m[3]}}{";
             $post = "}";
         } else {
@@ -286,9 +302,9 @@ function offlinequiz_convert_html_to_latex_tables($dom) {
         $pre = '\begin{tabular}';
         $post = '\end{tabular}';
         $caption = $element->getElementsByTagName('caption')->item(0);
-        if ( $caption && $caption->nodeValue !== '' ) {
+        if ($caption && $caption->nodeValue !== '') {
             $style = $caption->getAttribute("style");
-            if ( strpos($style, 'caption-side: bottom') !== false ) {
+            if (strpos($style, 'caption-side: bottom') !== false) {
                 $post .= "\n" . "{\large " . $caption->nodeValue . "}\n\n";
             } else {
                 $pre = "{\large " . $caption->nodeValue . "}\n\n" . $pre;
@@ -317,7 +333,7 @@ function offlinequiz_convert_html_to_latex_tables($dom) {
                 $row->nodeValue = "\\\\\n" . $row->nodeValue; // Add \\ between colums.
             }
         }
-        $pre .= '{' . str_repeat ("c", $cmax) . '}';
+        $pre .= '{' . str_repeat("c", $cmax) . '}';
         offlinequiz_convert_html_to_latex_single_tag_replace($dom, $pre, $post, $element);
     }
 }
@@ -371,8 +387,12 @@ function offlinequiz_convert_html_to_latex($text) {
     // Replace "&amp;" by "&" in math mode.
     $text = preg_replace_callback('/(\\\\[\(\[])(.*?)(\\\\[\)\]])/s', function ($m) {
           $tmp = str_replace('&amp;', '&', $m[2]);
-        if ( !(strpos($tmp, '\begin{align}') !== false || strpos($tmp, '\begin{align*}') !== false || strpos($tmp,
-                 '\begin{eqnarray') !== false) ) {
+        if (
+            !(strpos($tmp, '\begin{align}') !== false || strpos($tmp, '\begin{align*}') !== false || strpos(
+                $tmp,
+                '\begin{eqnarray'
+            ) !== false)
+        ) {
               $tmp = $m[1] . $tmp . $m[3];
         }
           return $tmp;

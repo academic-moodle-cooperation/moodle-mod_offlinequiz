@@ -61,13 +61,13 @@ class identifiedformselector extends \moodleform {
         };
 
         // Map lists to list->name.
-        $lists = array_map(function($list) use ($offlinequiz) {
+        $lists = array_map(function ($list) use ($offlinequiz) {
                 $alluserids = offlinequizidentified_get_participants($offlinequiz, $list, false);
                 $accessuserids = offlinequizidentified_get_participants($offlinequiz, $list, true);
                 $numusers = count($alluserids);
                 $numaccessusers = count($accessuserids);
             if ($numaccessusers != $numusers) {
-                $listname = $list->name . ' (' . $numaccessusers . '/'. $numusers . ')';
+                $listname = $list->name . ' (' . $numaccessusers . '/' . $numusers . ')';
             } else {
                 $listname = $list->name . '(' . $numusers . ')';
             }

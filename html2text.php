@@ -54,11 +54,19 @@ class offlinequiz_html_translator {
      * @param string $format
      * @return string The result string
      */
-    public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor,
-            $maxwidth, $disableimgnewlines, $format = 'pdf') {
+    public function fix_image_paths(
+        $input,
+        $contextid,
+        $filearea,
+        $itemid,
+        $kfactor,
+        $maxwidth,
+        $disableimgnewlines,
+        $format = 'pdf'
+    ) {
         global $CFG, $DB;
-        require_once($CFG->dirroot.'/filter/tex/lib.php');
-        require_once($CFG->dirroot.'/filter/tex/latex.php');
+        require_once($CFG->dirroot . '/filter/tex/lib.php');
+        require_once($CFG->dirroot . '/filter/tex/latex.php');
         $file = null;
         $fs = get_file_storage();
         $output = $input;
@@ -97,7 +105,6 @@ class offlinequiz_html_translator {
                 $parts = preg_split("!$CFG->wwwroot/filter/tex/pix.php/!", $pluginfilename);
 
                 if (preg_match('!@@PLUGINFILE@@/!', $pluginfilename)) {
-
                     $pluginfilename = str_replace('@@PLUGINFILE@@/', '', $pluginfilename);
                     $pathparts = pathinfo($pluginfilename);
                     if (!empty($pathparts['dirname']) && $pathparts['dirname'] != '.') {
@@ -105,13 +112,21 @@ class offlinequiz_html_translator {
                     } else {
                         $filepath = '/';
                     }
-                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath,
-                            rawurldecode($pathparts['basename']))) {
+                    if (
+                        $imagefile = $fs->get_file(
+                            $contextid,
+                            'question',
+                            $filearea,
+                            $itemid,
+                            $filepath,
+                            rawurldecode($pathparts['basename'])
+                        )
+                    ) {
                         $imagefilename = $imagefile->get_filename();
                         // Copy image content to temporary file.
                         $pathparts = pathinfo($imagefilename);
                         $filetype = $pathparts["extension"];
-                        $file = $CFG->tempdir ."/offlinequiz/" . $unique . '.' . strtolower($filetype);
+                        $file = $CFG->tempdir . "/offlinequiz/" . $unique . '.' . strtolower($filetype);
                         clearstatcache();
                         if (!check_dir_exists($CFG->tempdir . "/offlinequiz", true, true)) {
                             throw new \moodle_exception("Could not create data directory");
@@ -148,7 +163,7 @@ class offlinequiz_html_translator {
                                 $texexp = str_replace('&lt;', '<', $texexp);
                                 $texexp = str_replace('&gt;', '>', $texexp);
                                 $texexp = preg_replace('!\r\n?!', ' ', $texexp);
-                                $texexp = '\Large '.$texexp;
+                                $texexp = '\Large ' . $texexp;
                                 $cmd = filter_tex_get_cmd($teximagefile, $texexp);
                                 system($cmd, $status);
                             }
@@ -185,7 +200,7 @@ class offlinequiz_html_translator {
                             $resize = '';
                             $percent = round(200000000 / ($filewidth * $fileheight));
                             if ($percent < 100) {
-                                $resize = ' -resize '.$percent.'%';
+                                $resize = ' -resize ' . $percent . '%';
                             }
                             $handle = popen($pathconvert . ' ' . $file . $resize . ' -background white -flatten +matte ' .
                                     $newfile, 'r');
@@ -232,7 +247,8 @@ class offlinequiz_html_translator {
                             $output .= '<br/>';
                         }
                         $img = file_get_contents(
-                            $file);
+                            $file
+                        );
                         if ($format == 'pdf') {
                             // Encode the image string data into base64.
                             $data = base64_encode($img);
@@ -242,10 +258,9 @@ class offlinequiz_html_translator {
                             $output .= '<img src="file://' . $file . '"';
                         }
                         $output .= ' align="middle" width="' . $width . '" height="' .
-                                $height .'"/>';
+                                $height . '"/>';
                     }
                 } else {
-
                     if (($imagewidth > 0) && ($imageheight > 0)) {
                         $width = $imagewidth / ($kfactor * $factor);
                         if ($width > $maxwidth) {
@@ -253,7 +268,7 @@ class offlinequiz_html_translator {
                         }
                         $height = $imageheight * $width / $imagewidth;
                         $output .= '<img src="' . $pluginfilename . '" align="middle" width="' . $width . '" height="' .
-                            $height .'"/>';
+                            $height . '"/>';
                     } else {
                         $output .= '<img src="' . $pluginfilename . '" align="middle"/>';
                     }

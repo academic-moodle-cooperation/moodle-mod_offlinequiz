@@ -91,11 +91,16 @@ class send_notifications extends \core\task\adhoc_task {
                                JOIN {offlinequiz_scanned_pages} osp ON osp.queuedataid = oqd.id
                               WHERE oqd.queueid = :queueid
                                 AND osp.error = 'doublepage'";
-                $mailtext .= "\n" . get_string('importnumberexisting', 'offlinequiz',
-                 $DB->count_records_sql($countsql, ['queueid' => $queue->id]));
+                $mailtext .= "\n" . get_string(
+                    'importnumberexisting',
+                    'offlinequiz',
+                    $DB->count_records_sql($countsql, ['queueid' => $queue->id])
+                );
 
-                $linkoverview = new \moodle_url('/mod/offlinequiz/report.php',
-                     ['q' => $queue->offlinequizid, 'mode' => 'overview']);
+                $linkoverview = new \moodle_url(
+                    '/mod/offlinequiz/report.php',
+                    ['q' => $queue->offlinequizid, 'mode' => 'overview']
+                );
                 $mailtext .= "\n\n" . get_string('importlinkresults', 'offlinequiz', $linkoverview);
 
                 $linkupload = new \moodle_url('/mod/offlinequiz/report.php', ['q' => $queue->offlinequizid, 'mode' => 'rimport']);
@@ -122,9 +127,5 @@ class send_notifications extends \core\task\adhoc_task {
                 message_send($eventdata);
             }
         }
-
     }
-
-
-
 }

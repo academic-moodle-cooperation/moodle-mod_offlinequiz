@@ -29,10 +29,16 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
     if ($ADMIN->fulltree) {
-        $settings->add(new admin_setting_heading('offlinequizidentifiedheading',
-            get_string('offlinequizidentifiedheading', 'offlinequiz_identified'), ''));
-        $settings->add(new admin_setting_configcheckbox('offlinequiz_identified/enableidentified',
-            get_string('enableidentified', 'offlinequiz_identified'), get_string('enableidentified_help', 'offlinequiz_identified'),
-            1));
+        $settings->add(new admin_setting_heading(
+            'offlinequizidentifiedheading',
+            get_string('offlinequizidentifiedheading', 'offlinequiz_identified'),
+            ''
+        ));
+        $settings->add(new admin_setting_configcheckbox(
+            'offlinequiz_identified/enableidentified',
+            get_string('enableidentified', 'offlinequiz_identified'),
+            get_string('enableidentified_help', 'offlinequiz_identified'),
+            1
+        ));
     }
 }

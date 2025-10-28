@@ -96,8 +96,11 @@ if ($offlinequizstatistics->groupid && !in_array($offlinequizstatistics->groupid
 
 // Load the rest of the required data.
 $questions = offlinequiz_report_get_significant_questions($offlinequiz);
-$questionstatistics = $DB->get_records_select('offlinequiz_q_statistics',
-        'offlinequizstatisticsid = ? AND slot IS NOT NULL', [$offlinequizstatistics->id]);
+$questionstatistics = $DB->get_records_select(
+    'offlinequiz_q_statistics',
+    'offlinequizstatisticsid = ? AND slot IS NOT NULL',
+    [$offlinequizstatistics->id]
+);
 
 // Create the graph, and set the basic options.
 $graph = new graph(800, 600);

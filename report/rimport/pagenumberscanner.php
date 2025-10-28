@@ -41,7 +41,6 @@ define('PAGE_NUMBER_MEASURING_POINT_COUNT', 5);
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_pagenumberscanner {
-
     /**
      * The Page number box is a binary encoded page number.
      * @param \offlinequiz_result_import\offlinequiz_result_page $page
@@ -60,7 +59,6 @@ class offlinequiz_pagenumberscanner {
                 if (pixelisblack($image, $positions[$i][$j]->getx(), $positions[$i][$j]->gety())) {
                     $count++;
                 }
-
             }
             // And if we find more black pixels than white, we consider it black.
             if ($count > PAGE_NUMBER_MEASURING_POINT_COUNT / 2) {
@@ -86,7 +84,5 @@ class offlinequiz_pagenumberscanner {
             }
         }
         return $positions;
-
     }
-
 }

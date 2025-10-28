@@ -87,7 +87,6 @@ class offlinequiz_resultsaver {
             } else if ($groupnumber != $scannedpage->groupnumber) {
                 self::save_page_status($scannedpageid, RESULT_STATUS_ERROR, RESULT_STATUS_RESULT_ALREADY_EXISTS_FOR_OTHER_GRUOP);
             }
-
         }
         // TO DO what happens with differend group versions?
         $scannedpage = $scannedpages[$scannedpageid];
@@ -96,7 +95,7 @@ class offlinequiz_resultsaver {
         $group = $DB->get_record('offlinequiz_groups', $conditions);
 
         $scannedpageids = array_keys($scannedpages);
-        list($scannedpagesql, $params) = $DB->get_in_or_equal($scannedpageids, SQL_PARAMS_QM, 'pages');
+        [$scannedpagesql, $params] = $DB->get_in_or_equal($scannedpageids, SQL_PARAMS_QM, 'pages');
         $sql = "SELECT * FROM {offlinequiz_choices} choice
                 WHERE  scannedpageid" . $scannedpagesql;
 
@@ -123,7 +122,6 @@ class offlinequiz_resultsaver {
             $this->submit_scanned_page_to_result($quba, $scannedpage);
         }
         \question_engine::save_questions_usage_by_activity($quba);
-
     }
     /**
      * get if result exists errors
@@ -169,9 +167,11 @@ class offlinequiz_resultsaver {
                      WHERE offlinequizid = :offlinequizid
                        AND offlinegroupid = :offlinegroupid";
 
-        $qinstances = $DB->get_records_sql($sql,
-                ['offlinequizid' => $offlinequizid,
-                        'offlinegroupid' => $groupid]);
+        $qinstances = $DB->get_records_sql(
+            $sql,
+            ['offlinequizid' => $offlinequizid,
+            'offlinegroupid' => $groupid]
+        );
 
         // Clone the templateusage.
         $quba = $templateusage->get_clone($qinstances);
@@ -218,7 +218,6 @@ class offlinequiz_resultsaver {
         $choicesdata = $this->get_choices_data($scannedpage);
         // To do: check if this works.
         for ($slotindex = array_key_first($slots); $slotindex < array_key_last($slots); $slotindex++) {
-
             $slot = $slots[$slotindex];
             $slotquestion = $quba->get_question($slot);
             $attempt = $quba->get_question_attempt($slot);
@@ -305,7 +304,5 @@ class offlinequiz_resultsaver {
                     WHERE id=:scannedpageid";
         $params = ['scannedpageid' => $scannedpageid, 'status' => $status, 'error' => $error];
         $DB->execute($sql, $params);
-
     }
-
 }

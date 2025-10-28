@@ -33,7 +33,6 @@ define('GROUP_BOXES', 6);
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_groupnumberscanner {
-
     /**
      * boxscanner
      * @var pixelcountboxscanner
@@ -66,12 +65,14 @@ class offlinequiz_groupnumberscanner {
                 $number = $i;
             }
         }
-        if ($amountofcrosses > 1 || $amountofcrosses == 0 ) {
+        if ($amountofcrosses > 1 || $amountofcrosses == 0) {
             $page->status = PAGE_STATUS_GROUP_ERROR;
         } else {
             $number++;
-            $group = $DB->get_record('offlinequiz_groups',
-                ['offlinequizid' => $page->offlinequizid, 'groupnumber' => $number ]);
+            $group = $DB->get_record(
+                'offlinequiz_groups',
+                ['offlinequizid' => $page->offlinequizid, 'groupnumber' => $number ]
+            );
             if ($group) {
                 $page->group = $group;
             } else {
@@ -89,8 +90,11 @@ class offlinequiz_groupnumberscanner {
         $grouppoints = [];
 
         for ($i = 0; $i < GROUP_BOXES; $i++) {
-            $boxmiddlepoint = new offlinequiz_point(BOX_A_CORNER_X + BOX_SIZE / 2 + BOX_DISTANCE_X * $i,
-                BOX_A_CORNER_Y + BOX_SIZE / 2, 2);
+            $boxmiddlepoint = new offlinequiz_point(
+                BOX_A_CORNER_X + BOX_SIZE / 2 + BOX_DISTANCE_X * $i,
+                BOX_A_CORNER_Y + BOX_SIZE / 2,
+                2
+            );
             $grouppoints[$i] = calculate_point_relative_to_corner($page, $boxmiddlepoint);
         }
         $page->expectedgroupnumberpositions = $grouppoints;

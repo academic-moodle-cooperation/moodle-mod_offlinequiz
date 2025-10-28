@@ -59,20 +59,26 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $offlinequiz = new restore_path_element('offlinequiz', '/activity/offlinequiz');
         $paths[] = $offlinequiz;
 
-        $paths[] = new restore_path_element('offlinequiz_plist',
-            '/activity/offlinequiz/plists/plist');
+        $paths[] = new restore_path_element(
+            'offlinequiz_plist',
+            '/activity/offlinequiz/plists/plist'
+        );
 
         // Handle offlinequiz groups.
         // We need to identify this path to add the question usages.
-        $offlinequizgroup = new restore_path_element('offlinequiz_group',
-            '/activity/offlinequiz/groups/group');
+        $offlinequizgroup = new restore_path_element(
+            'offlinequiz_group',
+            '/activity/offlinequiz/groups/group'
+        );
         $paths[] = $offlinequizgroup;
 
         // Add template question usages for offline groups.
         $this->add_question_usages($offlinequizgroup, $paths, 'group_');
 
-        $groupquestion = new restore_path_element('offlinequiz_groupquestion',
-             '/activity/offlinequiz/groups/group/groupquestions/groupquestion');
+        $groupquestion = new restore_path_element(
+            'offlinequiz_groupquestion',
+            '/activity/offlinequiz/groups/group/groupquestions/groupquestion'
+        );
         $paths[] = $groupquestion;
         if ($this->task->get_old_moduleversion() >= 2024071203) {
             $this->add_question_references($groupquestion, $paths);
@@ -82,20 +88,32 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         if ($userinfo) {
             // Scanned pages and their choices and corners.
             $paths[] = new restore_path_element('offlinequiz_scannedpage', '/activity/offlinequiz/scannedpages/scannedpage');
-            $paths[] = new restore_path_element('offlinequiz_choice',
-                '/activity/offlinequiz/scannedpages/scannedpage/choices/choice');
-            $paths[] = new restore_path_element('offlinequiz_corner',
-                '/activity/offlinequiz/scannedpages/scannedpage/corners/corner');
+            $paths[] = new restore_path_element(
+                'offlinequiz_choice',
+                '/activity/offlinequiz/scannedpages/scannedpage/choices/choice'
+            );
+            $paths[] = new restore_path_element(
+                'offlinequiz_corner',
+                '/activity/offlinequiz/scannedpages/scannedpage/corners/corner'
+            );
 
             // Lists of participants and their scanned pages.
-            $paths[] = new restore_path_element('offlinequiz_participant',
-                '/activity/offlinequiz/plists/plist/participants/participant');
-            $paths[] = new restore_path_element('offlinequiz_scannedppage',
-                '/activity/offlinequiz/scannedppages/scannedppage');
-            $paths[] = new restore_path_element('offlinequiz_pchoice',
-                '/activity/offlinequiz/scannedppages/scannedppage/pchoices/pchoice');
-            $offlinequizresult = new restore_path_element('offlinequiz_result',
-                '/activity/offlinequiz/results/result');
+            $paths[] = new restore_path_element(
+                'offlinequiz_participant',
+                '/activity/offlinequiz/plists/plist/participants/participant'
+            );
+            $paths[] = new restore_path_element(
+                'offlinequiz_scannedppage',
+                '/activity/offlinequiz/scannedppages/scannedppage'
+            );
+            $paths[] = new restore_path_element(
+                'offlinequiz_pchoice',
+                '/activity/offlinequiz/scannedppages/scannedppage/pchoices/pchoice'
+            );
+            $offlinequizresult = new restore_path_element(
+                'offlinequiz_result',
+                '/activity/offlinequiz/results/result'
+            );
             $paths[] = $offlinequizresult;
 
             // Add the results' question usages.
@@ -132,15 +150,22 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         global $DB;
         $groupvariable = $data["group_response"]["group_variable"];
         $this->restore_question_attempt_step_worker($data, 'group_');
-        $oldquestionid = $DB->get_field('question_attempts', 'questionid',
-            ['id' => $this->elementsoldid["group_question_attempt"]]);
-        $newquestionid = $DB->get_field('question_attempts', 'questionid',
-            ['id' => $this->elementsnewid["group_question_attempt"]]);
+        $oldquestionid = $DB->get_field(
+            'question_attempts',
+            'questionid',
+            ['id' => $this->elementsoldid["group_question_attempt"]]
+        );
+        $newquestionid = $DB->get_field(
+            'question_attempts',
+            'questionid',
+            ['id' => $this->elementsnewid["group_question_attempt"]]
+        );
         if ($oldquestionid == $newquestionid) { // Duplicate.
-            $stepid = $DB->get_field('question_attempt_steps',
-                                'id',
-                                ['questionattemptid' => $this->elementsnewid["group_question_attempt"]]
-                            );
+            $stepid = $DB->get_field(
+                'question_attempt_steps',
+                'id',
+                ['questionattemptid' => $this->elementsnewid["group_question_attempt"]]
+            );
             if ($stepid) {
                 $steporder = $DB->get_record('question_attempt_step_data', ['attemptstepid' => $stepid, 'name' => "_order"]);
                 if ($steporder && $steporder->value == '') {
@@ -279,7 +304,6 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
         $data->offlinequizid = $this->get_new_parentid('offlinequiz');
 
         if (empty($data->templateusageid)) {
-
             $newitemid = $DB->insert_record('offlinequiz_groups', $data);
             // Save offlinequiz_group->id mapping, because logs use it.
             $this->set_mapping('offlinequiz_group', $oldid, $newitemid, false);
@@ -328,7 +352,6 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             }
             $data->version = $DB->get_field('question_versions', 'version', ['questionid' => $data->questionid]);
             $DB->insert_record('question_references', $data);
-
         }
     }
 

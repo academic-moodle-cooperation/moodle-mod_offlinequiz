@@ -56,7 +56,7 @@ if ($editqcontexts->have_one_edit_tab_cap('questions')) {
     $streditquestions = "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/question/edit.php\">
                <div>
                <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />
-               <input type=\"submit\" value=\"".get_string("editquestions", "offlinequiz")."\" />
+               <input type=\"submit\" value=\"" . get_string("editquestions", "offlinequiz") . "\" />
                </div>
              </form>";
 }
@@ -81,7 +81,7 @@ $showclosingheader = false;
 $showfeedback = false;
 $therearesome = false;
 foreach ($offlinequizzes as $offlinequiz) {
-    if ($offlinequiz->timeclose != 0 ) {
+    if ($offlinequiz->timeclose != 0) {
         $showclosingheader = true;
     }
     if ($offlinequiz->visible || $isteacher) {
@@ -104,7 +104,7 @@ if ($showclosingheader) {
     array_push($align, 'left');
 }
 
-array_unshift($headings, get_string('sectionname', 'format_'.$course->format));
+array_unshift($headings, get_string('sectionname', 'format_' . $course->format));
 array_unshift($align, 'center');
 
 $showing = '';
@@ -113,7 +113,6 @@ if (has_capability('mod/offlinequiz:viewreports', $coursecontext)) {
     array_push($headings, get_string('results', 'offlinequiz'));
     array_push($align, 'left');
     $showing = 'stats';
-
 } else if (has_capability('mod/offlinequiz:attempt', $coursecontext)) {
     array_push($headings, get_string('grade', 'offlinequiz'));
     array_push($align, 'left');
@@ -174,10 +173,9 @@ foreach ($offlinequizzes as $offlinequiz) {
         // The $offlinequiz objects returned by get_all_instances_in_course have the necessary $cm
         // fields set to make the following call work.
         $data[] = offlinequiz_attempt_summary_link_to_reports($offlinequiz, $cm, $context);
-
     } else if ($showing == 'grades') {
         // Grade and feedback.
-        list($someoptions, $alloptions) = offlinequiz_get_combined_reviewoptions($offlinequiz);
+        [$someoptions, $alloptions] = offlinequiz_get_combined_reviewoptions($offlinequiz);
 
         $grade = '';
         $feedback = '';

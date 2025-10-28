@@ -44,7 +44,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     // ONLY UPGRADE FROM Moodle 1.9.x (module version 2009042100) is supported.
 
     if ($oldversion < 2009120700) {
-
         // Define field counter to be added to offlinequiz_i_log.
         $table = new xmldb_table('offlinequiz_i_log');
         $field = new xmldb_field('counter');
@@ -79,7 +78,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2010082900) {
-
         // Define table offlinequiz_p_list to be created.
         $table = new xmldb_table('offlinequiz_p_list');
 
@@ -124,7 +122,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2010090600) {
-
         // Define index offlinequiz (not unique) to be added to offlinequiz_p_list.
         $table = new xmldb_table('offlinequiz_p_list');
         $index = new XMLDBIndex('offlinequiz');
@@ -174,7 +171,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2011021400) {
-
         // Define field fileformat to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('fileformat');
@@ -190,7 +186,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2011032900) {
-
         // Define field page to be added to offlinequiz_i_log.
         $table = new xmldb_table('offlinequiz_i_log');
         $field = new xmldb_field('page');
@@ -251,11 +246,18 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     // UPGRADE for Moodle 2.0 module starts here.
     // First we do the changes to the main table 'offlinequiz'.
     if ($oldversion < 2012010100) {
-
         // Define field docscreated to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
-        $field = new xmldb_field('docscreated', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null,
-                                 '0', 'questionsperpage');
+        $field = new xmldb_field(
+            'docscreated',
+            XMLDB_TYPE_INTEGER,
+            '4',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'questionsperpage'
+        );
 
         // Conditionally launch add field docscreated.
         if (!$dbman->field_exists($table, $field)) {
@@ -268,7 +270,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // Fill the new field docscreated.
     if ($oldversion < 2012010101) {
-
         $offlinequizzes = $DB->get_records('offlinequiz');
         foreach ($offlinequizzes as $offlinequiz) {
             $dirname = $CFG->dataroot . '/' . $offlinequiz->course . '/moddata/offlinequiz/' . $offlinequiz->id . '/pdfs';
@@ -282,7 +283,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2012010105) {
-
         // Define table offlinequiz_reports to be created.
         $table = new xmldb_table('offlinequiz_reports');
 
@@ -322,7 +322,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     // Now we create all the new tables.
     // Create table offlinequiz_groups.
     if ($oldversion < 2012010200) {
-
         echo $OUTPUT->notification('Creating new tables', 'notifysuccess');
 
         // Define table offlinequiz_groups to be created.
@@ -353,7 +352,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // Create table offlinequiz_group_questions.
     if ($oldversion < 2012010300) {
-
         // Define table offlinequiz_group_questions to be created.
         $table = new xmldb_table('offlinequiz_group_questions');
 
@@ -382,7 +380,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2012010400) {
-
         // Define table offlinequiz_scanned_pages to be created.
         $table = new xmldb_table('offlinequiz_scanned_pages');
 
@@ -416,7 +413,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2012010500) {
-
         // Define table offlinequiz_choices to be created.
         $table = new xmldb_table('offlinequiz_choices');
 
@@ -443,7 +439,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2012010600) {
-
         // Define table offlinequiz_page_corners to be created.
         $table = new xmldb_table('offlinequiz_page_corners');
 
@@ -467,7 +462,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2012010700) {
-
         // Define table offlinequiz_results to be created.
         $table = new xmldb_table('offlinequiz_results');
 
@@ -499,7 +493,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2012010800) {
-
         // Define table offlinequiz_scanned_p_pages to be created.
         $table = new xmldb_table('offlinequiz_scanned_p_pages');
 
@@ -525,7 +518,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2012010900) {
-
         // Define table offlinequiz_p_choices to be created.
         $table = new xmldb_table('offlinequiz_p_choices');
 
@@ -548,7 +540,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2012011000) {
-
         // Define table offlinequiz_p_lists to be created.
         $table = new xmldb_table('offlinequiz_p_lists');
 
@@ -578,7 +569,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // Rename fields in offlinequiz_queue table.
     if ($oldversion < 2012020100) {
-
         echo $OUTPUT->notification('Renaming fields in old tables.', 'notifysuccess');
 
         // Rename field offlinequiz on table offlinequiz_queue to NEWNAMEGOESHERE.
@@ -609,7 +599,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // Add and rename fields in table offlinquiz_queue_data.
     if ($oldversion < 2012020200) {
-
         // Define field status to be added to offlinequiz_queue_data.
         $table = new xmldb_table('offlinequiz_queue_data');
         $field = new xmldb_field('status', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, 'ok', 'filename');
@@ -644,7 +633,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // Rename field list on table offlinequiz_participants to listid.
     if ($oldversion < 2012020300) {
-
         // Rename field list on table offlinequiz_participants to listid.
         $table = new xmldb_table('offlinequiz_participants');
         $field = new xmldb_field('list', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
@@ -658,7 +646,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // Migrate the old lists of participants to the new table offlinequiz_p_lists (with 's').
     if ($oldversion < 2012020400) {
-
         $oldplists = $DB->get_records('offlinequiz_p_list');
         foreach ($oldplists as $oldplist) {
             $newplist = new StdClass();
@@ -684,7 +671,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // Check if there are inconsistencies in the DB, i.e. uniqueids used by both quizzes and offlinequizzes.
     if ($oldversion < 2012020410) {
-
         $sql = 'SELECT uniqueid
         FROM {offlinequiz_attempts} qa WHERE
         EXISTS (SELECT id from {quiz_attempts} where uniqueid = qa.uniqueid)';
@@ -692,8 +678,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
         // For each double uniqueid create a new uniqueid and change the fields in the tables.
         // Offlinequiz_attempts, question_sessions and question_states.
-        echo $OUTPUT->notification('Fixing ' . count($doubleids) . ' question attempt uniqueids that are not unique',
-                                   'notifysuccess');
+        echo $OUTPUT->notification(
+            'Fixing ' . count($doubleids) . ' question attempt uniqueids that are not unique',
+            'notifysuccess'
+        );
 
         foreach ($doubleids as $doubleid) {
             echo $doubleid . ', ';
@@ -702,12 +690,27 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                 unset($usage->id);
                 $usage->id = $DB->insert_record('question_usages', $usage);
 
-                $DB->set_field_select('offlinequiz_attempts', 'uniqueid', $usage->id, 'uniqueid = :oldid',
-                                      ['oldid' => $doubleid]);
-                $DB->set_field_select('question_states', 'attempt', $usage->id, 'attempt = :oldid',
-                                      ['oldid' => $doubleid]);
-                $DB->set_field_select('question_sessions', 'attemptid', $usage->id, 'attemptid = :oldid',
-                                      ['oldid' => $doubleid]);
+                $DB->set_field_select(
+                    'offlinequiz_attempts',
+                    'uniqueid',
+                    $usage->id,
+                    'uniqueid = :oldid',
+                    ['oldid' => $doubleid]
+                );
+                $DB->set_field_select(
+                    'question_states',
+                    'attempt',
+                    $usage->id,
+                    'attempt = :oldid',
+                    ['oldid' => $doubleid]
+                );
+                $DB->set_field_select(
+                    'question_sessions',
+                    'attemptid',
+                    $usage->id,
+                    'attemptid = :oldid',
+                    ['oldid' => $doubleid]
+                );
                 $transaction->allow_commit();
             }
         }
@@ -716,7 +719,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // Update the contextid field in question_usages (compare lib/db/upgrade.php lines 6108 following).
     if ($oldversion < 2012020500) {
-
         echo $OUTPUT->notification('Fixing question usages context ID', 'notifysuccess');
 
         // Update the component field if necessary.
@@ -749,7 +751,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // We have to delete redundant question instances from offlinequizzes because they are incompatible with the new code.
     if ($oldversion < 2012030100) {
-
         echo $OUTPUT->notification('Migrating old offline quizzes to new offline quizzes..', 'notifysuccess');
 
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
@@ -761,7 +762,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // Migrate all entries in the offlinequiz_group table to the new tables offlinequiz_groups  and offlinequiz_group_questions.
     if ($oldversion < 2012030101) {
-
         echo $OUTPUT->notification('Creating new offlinequiz groups', 'notifysuccess');
 
         $offlinequizzes = $DB->get_records('offlinequiz');
@@ -788,8 +788,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                     $newgroup->timecreated = time();
                     $newgroup->timemodified = time();
                     // First we need the ID of the new group.
-                    if (!$oldid = $DB->get_field('offlinequiz_groups', 'id', ['offlinequizid' => $offlinequiz->id,
-                            'number' => $newgroup->number])) {
+                    if (
+                        !$oldid = $DB->get_field('offlinequiz_groups', 'id', ['offlinequizid' => $offlinequiz->id,
+                            'number' => $newgroup->number])
+                    ) {
                             $newgroup->id = $DB->insert_record('offlinequiz_groups', $newgroup);
                     } else {
                         $newgroup->id = $oldid;
@@ -803,17 +805,18 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                         $groupquestion->offlinegroupid = $newgroup->id;
                         $groupquestion->questionid = $question;
                         $groupquestion->position = $position++;
-                        if (!$DB->get_record('offlinequiz_group_questions', ['offlinequizid' => $offlinequiz->id,
+                        if (
+                            !$DB->get_record('offlinequiz_group_questions', ['offlinequizid' => $offlinequiz->id,
                                 'offlinegroupid' => $newgroup->id,
-                                'questionid' => $question])) {
+                                'questionid' => $question])
+                        ) {
                                 $DB->insert_record('offlinequiz_group_questions', $groupquestion);
                         }
                     }
                     $newgroups[] = $newgroup;
-
                 }
                 require_once($CFG->dirroot . '/mod/offlinequiz/evallib.php');
-                list($maxquestions, $maxanswers, $formtype, $questionsperpage) =
+                [$maxquestions, $maxanswers, $formtype, $questionsperpage] =
                     offlinequiz_get_question_numbers($offlinequiz, $newgroups);
                 foreach ($newgroups as $newgroup) {
                     // Now we know the number of pages of the group.
@@ -836,8 +839,16 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     if ($oldversion < 2012030200) {
         // Define field needsilogupgrade to be added to offlinequiz_attempts.
         $table = new xmldb_table('offlinequiz');
-        $field = new xmldb_field('needsilogupgrade', XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED,
-                XMLDB_NOTNULL, null, '0', 'timeopen');
+        $field = new xmldb_field(
+            'needsilogupgrade',
+            XMLDB_TYPE_INTEGER,
+            '3',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'timeopen'
+        );
 
         // Launch add field needsilogupgrade.
         if (!$dbman->field_exists($table, $field)) {
@@ -854,8 +865,16 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     if ($oldversion < 2012030300) {
         // Define field needsupgradetonewqe to be added to offlinequiz_attempts.
         $table = new xmldb_table('offlinequiz_attempts');
-        $field = new xmldb_field('needsupgradetonewqe', XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED,
-                XMLDB_NOTNULL, null, '0', 'sheet');
+        $field = new xmldb_field(
+            'needsupgradetonewqe',
+            XMLDB_TYPE_INTEGER,
+            '3',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'sheet'
+        );
 
         // Launch add field needsupgradetonewqe.
         if (!$dbman->field_exists($table, $field)) {
@@ -910,7 +929,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
     // In a second step we convert all offlinequiz_attempts into offlinequiz_results and also upgrade the ilog table.
     if ($oldversion < 2012060101) {
-
         require_once($CFG->dirroot . '/mod/offlinequiz/db/upgradelib.php');
 
         $oldrcachesetting = $CFG->rcache;
@@ -925,7 +943,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2012060105) {
-
         // Changing type of field grade on table offlinequiz_q_instances to number.
         $table = new xmldb_table('offlinequiz_q_instances');
         $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'question');
@@ -940,7 +957,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2012121200) {
-
         // Define field introformat to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
@@ -955,7 +971,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2013012400) {
-
         // Define field info to be added to offlinequiz_queue.
         $table = new xmldb_table('offlinequiz_queue');
         $field = new xmldb_field('info', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'status');
@@ -970,7 +985,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2013012410) {
-
         // Define field info to be added to offlinequiz_queue_data.
         $table = new xmldb_table('offlinequiz_queue_data');
         $field = new xmldb_field('info', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'error');
@@ -985,7 +999,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2013012500) {
-
         // Changing type of field grade on table offlinequiz to int.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'time');
@@ -1000,7 +1013,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2013041600) {
-
         // Rename field question on table offlinequiz_q_instances to questionid.
         $table = new xmldb_table('offlinequiz_q_instances');
         $field = new xmldb_field('question', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'offlinequiz');
@@ -1013,7 +1025,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2013041601) {
-
         // Rename field offlinequiz on table offlinequiz_q_instances to offlinequizid.
         $table = new xmldb_table('offlinequiz_q_instances');
         $field = new xmldb_field('offlinequiz', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
@@ -1026,7 +1037,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2013061300) {
-
         // Define table offlinequiz_hotspots to be created.
         $table = new xmldb_table('offlinequiz_hotspots');
 
@@ -1055,7 +1065,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2013110800) {
-
         // Define field timecreated to be added to offlinequiz_queue.
         $table = new xmldb_table('offlinequiz_queue');
         $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'importuserid');
@@ -1070,7 +1079,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2013112500) {
-
         // Define index offlinequiz_userid_idx (not unique) to be added to offlinequiz_results.
         $table = new xmldb_table('offlinequiz_results');
         $index = new xmldb_index('offlinequiz_userid_idx', XMLDB_INDEX_NOTUNIQUE, ['userid']);
@@ -1088,7 +1096,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2015060500) {
-
         // Rename field page on table offlinequiz_group_questions to NEWNAMEGOESHERE.
         $table = new xmldb_table('offlinequiz_group_questions');
         $field = new xmldb_field('pagenumber', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'position');
@@ -1101,7 +1108,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2015060501) {
-
         // Rename field page on table offlinequiz_group_questions to NEWNAMEGOESHERE.
         $table = new xmldb_table('offlinequiz_group_questions');
         $field = new xmldb_field('usageslot', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'position');
@@ -1114,7 +1120,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2015060502) {
-
         // Define field maxmark to be added to offlinequiz_group_questions.
         $table = new xmldb_table('offlinequiz_group_questions');
         $field = new xmldb_field('maxmark', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '1', 'slot');
@@ -1129,7 +1134,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2015060902) {
-
         // This upgrade migrates old offlinequiz_q_instances grades (maxgrades) to new
         // maxmark field in offlinequiz_group_questions.
         // It also deletes group questions with questionid 0 (pagebreaks) and inserts the
@@ -1139,18 +1143,27 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         if ($numofflinequizzes > 0) {
             $pbar = new progress_bar('offlinequizquestionstoslots', 500, true);
             $pbar->create();
-            $pbar->update(0, $numofflinequizzes,
-                        "Upgrading offlinequiz group questions - {0}/{$numofflinequizzes}.");
+            $pbar->update(
+                0,
+                $numofflinequizzes,
+                "Upgrading offlinequiz group questions - {0}/{$numofflinequizzes}."
+            );
 
             $numberdone = 0;
             $offlinequizzes = $DB->get_recordset('offlinequiz', null, 'id', 'id, numgroups');
             foreach ($offlinequizzes as $offlinequiz) {
                 $transaction = $DB->start_delegated_transaction();
 
-                $groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id],
-                        'number', '*');
-                $instancesraw = $DB->get_records('offlinequiz_q_instances',
-                        ['offlinequizid' => $offlinequiz->id]);
+                $groups = $DB->get_records(
+                    'offlinequiz_groups',
+                    ['offlinequizid' => $offlinequiz->id],
+                    'number',
+                    '*'
+                );
+                $instancesraw = $DB->get_records(
+                    'offlinequiz_q_instances',
+                    ['offlinequizid' => $offlinequiz->id]
+                );
 
                 $questioninstances = [];
                 foreach ($instancesraw as $instance) {
@@ -1160,8 +1173,11 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                 }
 
                 foreach ($groups as $group) {
-                    $groupquestions = $DB->get_records('offlinequiz_group_questions',
-                            ['offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id], 'position');
+                    $groupquestions = $DB->get_records(
+                        'offlinequiz_group_questions',
+                        ['offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $group->id],
+                        'position'
+                    );
                     // For every group we start on page 1.
                     $currentpage = 1;
                     $currentslot = 1;
@@ -1175,9 +1191,11 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                         }
                         // If the maxmarks in the question instances differs from the default maxmark (1)
                         // of the offlinequiz_group_questions then change it.
-                        if (array_key_exists($groupquestion->questionid, $questioninstances)
+                        if (
+                            array_key_exists($groupquestion->questionid, $questioninstances)
                             && ($maxmark = floatval($questioninstances[$groupquestion->questionid]->grade))
-                            && abs(floatval($groupquestion->maxmark) - $maxmark) > 0.001) {
+                            && abs(floatval($groupquestion->maxmark) - $maxmark) > 0.001
+                        ) {
                                 $groupquestion->maxmark = $maxmark;
                                 $needsupdate = true;
                         }
@@ -1201,8 +1219,11 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
 
                 // Done with this offlinequiz. Update progress bar.
                 $numberdone++;
-                $pbar->update($numberdone, $numofflinequizzes,
-                        "Upgrading offlinequiz group questions - {$numberdone}/{$numofflinequizzes}.");
+                $pbar->update(
+                    $numberdone,
+                    $numofflinequizzes,
+                    "Upgrading offlinequiz group questions - {$numberdone}/{$numofflinequizzes}."
+                );
 
                 $transaction->allow_commit();
             }
@@ -1212,7 +1233,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2015112002) {
-
         // Define field questionfilename to be added to offlinequiz_groups.
         $table = new xmldb_table('offlinequiz_groups');
         $field = new xmldb_field('questionfilename', XMLDB_TYPE_CHAR, '1000', null, null, null, null, 'templateusageid');
@@ -1244,7 +1264,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2015112007) {
-
         // Define field printstudycodefield to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('printstudycodefield', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1', 'shuffleanswers');
@@ -1259,7 +1278,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2016042100) {
-
         // Define field showquestioninfo to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('showquestioninfo', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'fileformat');
@@ -1301,10 +1319,11 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                 <br><b>Continuing the upgrade:<br></b>
                 If you have read and understood this message click the link below to continue the upgrade.
                 <br>
-                <br><b><a href='. $PAGE->url->__toString() . '&croninfo_read=true> CONTINUE </a> </b>
+                <br><b><a href=' . $PAGE->url->__toString() . '&croninfo_read=true> CONTINUE </a> </b>
                 <br>
                 </div>' );
-                echo $OUTPUT->footer(); die;
+                echo $OUTPUT->footer();
+                die;
                 return false;
             } else {
                 print('The offline quiz cron works now with the Cron-API.'
@@ -1314,14 +1333,12 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
                       . ' or disable your own cron, which is only needed, if you run the evaluation on a dedicated server.'
                       . ' For more information read chapter III of the README.md, which comes with the plugin.');
             }
-
         }
         upgrade_mod_savepoint(true, 2017020201, 'offlinequiz');
     }
 
     // Add id_digits containing amount of digits to match idnumber against.
     if ($oldversion < 2017020202) {
-
         // Define field id_digits to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('id_digits', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'showtutorial');
@@ -1373,7 +1390,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2018011601) {
-
         // Define field id_digits to be added to offlinequiz, if not defined.
         // This might miss due to an error in an old moodle-version.
         $table = new xmldb_table('offlinequiz');
@@ -1400,8 +1416,16 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
     if ($oldversion < 2018100300) {
         $table = new xmldb_table('offlinequiz');
-        $field = new xmldb_field('algorithmversion', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL,
-            null, '0', 'disableimgnewlines');
+        $field = new xmldb_field(
+            'algorithmversion',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'disableimgnewlines'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -1431,10 +1455,10 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         if ($idstodelete) {
             $chunks = array_chunk($idstodelete, 250, true);
             $i = 1;
-            echo "Delete choices in ".count($chunks)." chunks of 250 entries...".PHP_EOL;
+            echo "Delete choices in " . count($chunks) . " chunks of 250 entries..." . PHP_EOL;
             foreach ($chunks as $curchunk) {
-                echo "Delete chunk ".($i++)." of ".count($chunks)."!".PHP_EOL;
-                list($querysql, $queryparams) = $DB->get_in_or_equal($curchunk);
+                echo "Delete chunk " . ($i++) . " of " . count($chunks) . "!" . PHP_EOL;
+                [$querysql, $queryparams] = $DB->get_in_or_equal($curchunk);
                 $DB->delete_records_select('offlinequiz_choices', 'id ' .  $querysql, $queryparams);
             }
         }
@@ -1443,8 +1467,16 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
     if ($oldversion < 2018121100) {
         $table = new xmldb_table('offlinequiz');
-        $field = new xmldb_field('experimentalevaluation', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null,
-            '0', 'algorithmversion');
+        $field = new xmldb_field(
+            'experimentalevaluation',
+            XMLDB_TYPE_INTEGER,
+            '4',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'algorithmversion'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -1452,7 +1484,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2019050800) {
-
         // Rename field groupnumber on table offlinequiz_groups to NEWNAMEGOESHERE.
         $table = new xmldb_table('offlinequiz_groups');
         $field = new xmldb_field('number', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'offlinequizid');
@@ -1464,7 +1495,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2019050800, 'offlinequiz');
     }
     if ($oldversion < 2019050801) {
-
         // Define field id to be added to offlinequiz_p_lists.
         $table = new xmldb_table('offlinequiz_p_lists');
         $field = new xmldb_field('number', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'offlinequizid');
@@ -1522,7 +1552,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2020051200) {
-
         // Define table offlinequiz_attempts to be dropped.
         $table = new xmldb_table('offlinequiz_attempts');
 
@@ -1550,7 +1579,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2021070801.03) {
-
         // Changing precision of field info on table offlinequiz_scanned_pages to (255).
         $table = new xmldb_table('offlinequiz_scanned_pages');
         $field = new xmldb_field('info', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'error');
@@ -1562,7 +1590,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2021070801.03, 'offlinequiz');
     }
     if ($oldversion < 2023022000) {
-
         // Define field participantsusage to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('participantsusage', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'grade');
@@ -1576,7 +1603,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2023022000, 'offlinequiz');
     }
     if ($oldversion < 2023092600) {
-
         // Define field documentquestionid to be added to offlinequiz_group_questions.
         $table = new xmldb_table('offlinequiz_group_questions');
         $field = new xmldb_field('documentquestionid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'maxmark');
@@ -1663,7 +1689,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2024041904, 'offlinequiz');
     }
     if ($oldversion < 2024041905) {
-
         // Changing type of field status on table offlinequiz_queue to char.
         $table = new xmldb_table('offlinequiz_queue');
         $field = new xmldb_field('status', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'timefinish');
@@ -1675,7 +1700,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2024041905, 'offlinequiz');
     }
     if ($oldversion < 2024041906) {
-
         // Changing type of field status on table offlinequiz_queue_data to char.
         $table = new xmldb_table('offlinequiz_queue_data');
         $field = new xmldb_field('status', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'filename');
@@ -1687,7 +1711,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2024041906, 'offlinequiz');
     }
     if ($oldversion < 2024043002) {
-
         // Define field pdffont to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('pdffont', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'printstudycodefield');
@@ -1701,7 +1724,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2024043002, 'offlinequiz');
     }
     if ($oldversion < 2024072500) {
-
         // Define field queuedataid to be added to offlinequiz_scanned_pages.
         $table = new xmldb_table('offlinequiz_scanned_pages');
         $field = new xmldb_field('queuedataid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'resultid');
@@ -1716,7 +1738,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2024072600) {
-
         // Define field filename to be added to offlinequiz_queue.
         $table = new xmldb_table('offlinequiz_queue');
         $field = new xmldb_field('filename', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'status');
@@ -1743,7 +1764,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2024073001, 'offlinequiz');
     }
     if ($oldversion < 2025020100) {
-
         // Define field pdffont to be added to offlinequiz.
         $table = new xmldb_table('offlinequiz');
         $field = new xmldb_field('pdffont', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'printstudycodefield');
@@ -1762,7 +1782,6 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2025062400, 'offlinequiz');
     }
     if ($oldversion < 2025062600) {
-
         // Name of the plugin you want to uninstall.
         $plugincomponent = 'offlinequiz_regrade';
 

@@ -20,7 +20,7 @@ require_once($CFG->libdir . '/questionlib.php');
 
 define('ANSWERS_BLOCK_SIZE', 8);
 define('ANSWERS_MAX_QUESTIONS_PER_COLUMN', 24);
-define('ANSWERS_COLUMNS_PER_PAGE_LIMITS' , [1 => 13, 2 => 8, 3 => 6]);
+define('ANSWERS_COLUMNS_PER_PAGE_LIMITS', [1 => 13, 2 => 8, 3 => 6]);
 
 define('ANSWERS_DISTANCE_X', 100);
 define('ANSWERS_DISTANCE_Y', 988);
@@ -93,7 +93,6 @@ class offlinequiz_resultscanner {
                 break;
             }
         }
-
     }
     /**
      * get the max answers for this page
@@ -112,7 +111,6 @@ class offlinequiz_resultscanner {
                                    AND qa.question = ogq.questionid)
     	              GROUP BY qa.question) AS answercount";
         return $DB->get_field_sql($sql, ['groupid' => $page->group->id]);
-
     }
     /**
      * get the maximum answer counts for a group
@@ -130,7 +128,6 @@ class offlinequiz_resultscanner {
 					 AND qa.question = ogq.questionid)
 				GROUP BY qa.question";
         return $DB->get_records_sql($sql, ['groupid' => $groupid]);
-
     }
     /**
      * get the number of columns an answer has

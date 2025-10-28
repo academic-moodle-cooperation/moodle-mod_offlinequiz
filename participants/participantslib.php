@@ -73,7 +73,7 @@ class mod_offlinequiz_corners {
         $position = substr($cornerid, 0, 2);
         if ($position == 'ul') {
             $corner = $this->_upperleft;
-        } else if ($position == 'ur' ) {
+        } else if ($position == 'ur') {
             $corner = $this->_upperright;
         } else if ($position == 'll') {
             $corner = $this->_lowerleft;

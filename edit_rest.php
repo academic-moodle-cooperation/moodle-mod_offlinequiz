@@ -72,10 +72,9 @@ if ($pageaction == 'DELETE') {
     $requestmethod = 'DELETE';
 }
 
-switch($requestmethod) {
+switch ($requestmethod) {
     case 'POST':
     case 'GET': // For debugging.
-
         switch ($class) {
             case 'section':
                 break;
@@ -109,16 +108,28 @@ switch($requestmethod) {
                         }
                         if ($structure->update_slot_maxmark($slot, $maxmark)) {
                             // Recalculate the sumgrades for all groups.
-                            if ($groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id],
-                                'groupnumber', '*', 0, $offlinequiz->numgroups)) {
+                            if (
+                                $groups = $DB->get_records(
+                                    'offlinequiz_groups',
+                                    ['offlinequizid' => $offlinequiz->id],
+                                    'groupnumber',
+                                    '*',
+                                    0,
+                                    $offlinequiz->numgroups
+                                )
+                            ) {
                                 foreach ($groups as $group) {
                                     $sumgrade = offlinequiz_update_sumgrades($offlinequiz, $group->id);
                                 }
                             }
 
                             // Grade has really changed.
-                            offlinequiz_update_question_instance($offlinequiz, $modcontext->id,
-                                $slot->questionid, unformat_float($maxmark));
+                            offlinequiz_update_question_instance(
+                                $offlinequiz,
+                                $modcontext->id,
+                                $slot->questionid,
+                                unformat_float($maxmark)
+                            );
                             offlinequiz_update_all_attempt_sumgrades($offlinequiz);
                             offlinequiz_update_grades($offlinequiz, 0, true);
                         }
@@ -149,9 +160,13 @@ switch($requestmethod) {
         switch ($class) {
             case 'resource':
                 require_capability('mod/offlinequiz:manage', $modcontext);
-                if (!$slot = $DB->get_record('offlinequiz_group_questions',
-                        ['offlinequizid' => $offlinequiz->id, 'id' => $id])) {
-                    throw new moodle_exception('AJAX commands.php: Bad slot ID '.$id);
+                if (
+                    !$slot = $DB->get_record(
+                        'offlinequiz_group_questions',
+                        ['offlinequizid' => $offlinequiz->id, 'id' => $id]
+                    )
+                ) {
+                    throw new moodle_exception('AJAX commands.php: Bad slot ID ' . $id);
                 }
                 $structure->remove_slot($offlinequiz, $slot->slot);
                 offlinequiz_delete_template_usages($offlinequiz);

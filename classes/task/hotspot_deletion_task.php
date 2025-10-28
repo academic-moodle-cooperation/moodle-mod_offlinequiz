@@ -60,7 +60,7 @@ class hotspot_deletion_task extends \core\task\scheduled_task {
         $ids = $DB->get_fieldset_sql($sql, $params);
 
         if (!empty($ids)) {
-            list($isql, $iparams) = $DB->get_in_or_equal($ids);
+            [$isql, $iparams] = $DB->get_in_or_equal($ids);
 
             // Now we delete the records.
             $DB->delete_records_select('offlinequiz_hotspots', 'scannedpageid ' . $isql, $iparams);

@@ -69,7 +69,8 @@ class response_analyser {
         $this->questiondata = $questiondata;
 
         $this->responseclasses = \question_bank::get_qtype($questiondata->qtype)->get_possible_responses(
-                        $questiondata);
+            $questiondata
+        );
         foreach ($this->responseclasses as $subpartid => $responseclasses) {
             foreach ($responseclasses as $responseclassid => $notused) {
                 $this->responses[$subpartid][$responseclassid] = [];
@@ -176,9 +177,11 @@ class response_analyser {
     public function load_cached($offlinequizstatisticsid) {
         global $DB;
 
-        $rows = $DB->get_records('offlinequiz_q_response_stats',
-                ['offlinequizstatisticsid' => $offlinequizstatisticsid,
-                        'questionid' => $this->questiondata->id]);
+        $rows = $DB->get_records(
+            'offlinequiz_q_response_stats',
+            ['offlinequizstatisticsid' => $offlinequizstatisticsid,
+            'questionid' => $this->questiondata->id]
+        );
         if (!$rows) {
             return false;
         }
@@ -203,7 +206,8 @@ class response_analyser {
 
         if (!$this->loaded) {
             throw new \coding_exception(
-                    'Question responses have not been analyised. Cannot store in the database.');
+                'Question responses have not been analyised. Cannot store in the database.'
+            );
         }
 
         foreach ($this->responses as $subpartid => $partdata) {

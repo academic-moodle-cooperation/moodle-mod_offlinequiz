@@ -62,8 +62,11 @@ class question_table extends flexible_table {
      * @param object $questiondata
      * @param response_analyser $responsestats
      */
-    public function question_setup($reporturl, $questiondata,
-            response_analyser $responsestats) {
+    public function question_setup(
+        $reporturl,
+        $questiondata,
+        response_analyser $responsestats
+    ) {
         $this->questiondata = $questiondata;
 
         $this->define_baseurl($reporturl->out());

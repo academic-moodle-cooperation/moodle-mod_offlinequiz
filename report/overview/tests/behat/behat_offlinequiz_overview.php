@@ -28,7 +28,6 @@ require_once(__DIR__ . '/../../../../../../lib/behat/behat_base.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_offlinequiz_overview extends behat_base {
-
     /**
      * Displays all results in the overview summary
      *
@@ -60,7 +59,7 @@ class behat_offlinequiz_overview extends behat_base {
         $page = $this->getSession()->getPage();
         $elements = $page->findAll('xpath', "//*[contains(text(), '$text')]");
         if (count($elements) != (int)$count) {
-            throw new Exception("Expected '$text' $count times, but found ".count($elements));
+            throw new Exception("Expected '$text' $count times, but found " . count($elements));
         }
     }
 }

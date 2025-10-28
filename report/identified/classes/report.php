@@ -35,7 +35,6 @@ use mod_offlinequiz\constants\offlinequiz_page;
  * Offlinequiz identified forms generator.
  */
 class report extends default_report {
-
     /**
      * display the report
      * @param mixed $offlinequiz
@@ -51,7 +50,6 @@ class report extends default_report {
         $mform = new identifiedformselector(null, $toform, 'get');
         // Disable if forms are not generated.
         if ($offlinequiz->docscreated == 1) {
-
             $resultmsg = "";
             // Form processing and displaying is done here.
             if ($fromform = $mform->get_data()) {
@@ -62,8 +60,17 @@ class report extends default_report {
                 $list = $DB->get_record('offlinequiz_p_lists', ['offlinequizid' => $offlinequiz->id, 'id' => $listid]);
                 if ($list) {
                     raise_memory_limit(MEMORY_EXTRA);
-                    if (offlinequiz_create_pdf_participants_answers($offlinequiz, $course->id, $groupid,
-                        $list, $context, $nogroupmark, $onlyifaccess)) {
+                    if (
+                        offlinequiz_create_pdf_participants_answers(
+                            $offlinequiz,
+                            $course->id,
+                            $groupid,
+                            $list,
+                            $context,
+                            $nogroupmark,
+                            $onlyifaccess
+                        )
+                    ) {
                         // PDF created and downloaded.
                         die();
                     } else {
@@ -97,8 +104,10 @@ class report extends default_report {
             echo $OUTPUT->single_button($url, get_string('return', 'offlinequiz_identified'), 'get');
             // Display the description.
             // Url: participants.php?q=1&mode=editlists.
-            $url = new moodle_url('/mod/offlinequiz/participants.php',
-                ['q' => $offlinequiz->id, 'mode' => 'editlists', 'tabs' => 'tabattendances']);
+            $url = new moodle_url(
+                '/mod/offlinequiz/participants.php',
+                ['q' => $offlinequiz->id, 'mode' => 'editlists', 'tabs' => 'tabattendances']
+            );
             echo $OUTPUT->box(get_string('identifiedreport', 'offlinequiz_identified', $url->out()), 'generalbox', 'intro');
             // Display the form.
             $mform->display();
@@ -153,9 +162,11 @@ class report extends default_report {
         global $OUTPUT;
         $html = '';
         if (get_config('offlinequiz_identified', 'enableidentified')) {
-            if ($sourceplugin == 'offlinequiz'
+            if (
+                $sourceplugin == 'offlinequiz'
                 && $sourcepage == offlinequiz_page::CREATEQUIZ_CREATEPDFS
-                && $offlinequiz->docscreated == 1) {
+                && $offlinequiz->docscreated == 1
+            ) {
                 $url = new moodle_url('/mod/offlinequiz/report.php', ['mode' => 'identified', 'q' => $offlinequiz->id]);
                 $html = $OUTPUT->single_button($url, get_string('identified', 'offlinequiz_identified'), 'get');
             }

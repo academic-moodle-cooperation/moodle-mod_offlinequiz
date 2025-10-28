@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_offlinequiz_generator extends testing_module_generator {
-
     /**
      * Creates an instance of the module for testing purposes.
      *
@@ -38,11 +37,11 @@ class mod_offlinequiz_generator extends testing_module_generator {
     public function create_offlinequiz($record = null, ?array $options = null): stdClass {
         global $CFG, $DB;
 
-        require_once($CFG->dirroot.'/mod/offlinequiz/locallib.php');
+        require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
         $record = (object)(array)$record;
 
         $iddigits = get_config('offlinequiz', 'ID_digits');
-        $record->course = $DB->get_field('course', 'id', ['shortname' => $record->course] );
+        $record->course = $DB->get_field('course', 'id', ['shortname' => $record->course]);
 
         $defaultofflinequizsettings = [
             'pdfintro'               => '',
@@ -77,7 +76,7 @@ class mod_offlinequiz_generator extends testing_module_generator {
                 $record->{$name} = $value;
             }
         }
-        if (is_string($record->fileformat) ) {
+        if (is_string($record->fileformat)) {
             $record->fileformat = $this->convert_file_format($record->fileformat);
         }
 

@@ -29,7 +29,7 @@ require_once('locallib.php');
 $tab = optional_param('tab', '', PARAM_ALPHAEXT);
 $id = required_param('id', PARAM_INT);
 
-list($offlinequiz, $course, $cm) = get_course_objects($id, 0);
+[$offlinequiz, $course, $cm] = get_course_objects($id, 0);
 
 require_login($course->id, true, $cm);
 $context = context_module::instance($cm->id);
@@ -76,11 +76,12 @@ if ($newurl == '') {
         }
     } else if ($tab == 'mod_offlinequiz_results') { // TO DO: Move to plugin Route tab..
         $hasresults = $DB->record_exists('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
-        $needscorrections = $DB->record_exists('offlinequiz_scanned_pages',
-        ['offlinequizid' => $offlinequiz->id, 'status' => 'error']);
+        $needscorrections = $DB->record_exists(
+            'offlinequiz_scanned_pages',
+            ['offlinequizid' => $offlinequiz->id, 'status' => 'error']
+        );
         if ($needscorrections) {
             $newurl = $navigation->find('tabofflinequizupload', null)->action();
-
         } else if ($hasresults) {
             $newurl = $navigation->find('tabresultsoverview', null)->action();
         } else {

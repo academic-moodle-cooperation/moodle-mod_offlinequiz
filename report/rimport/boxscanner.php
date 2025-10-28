@@ -63,8 +63,12 @@ class pixelcountboxscanner {
         $zoomfactorx = $page->scanproperties->zoomfactorx;
         $zoomfactory = $page->scanproperties->zoomfactory;
         $boximage = clone $page->image;
-        $boximage->cropimage(round($marginedboxsize * $zoomfactorx), round($marginedboxsize * $zoomfactory),
-            $boxupperleft->getx(), $boxupperleft->gety());
+        $boximage->cropimage(
+            round($marginedboxsize * $zoomfactorx),
+            round($marginedboxsize * $zoomfactory),
+            $boxupperleft->getx(),
+            $boxupperleft->gety()
+        );
 
         // Find out how many black points we have in the image.
         $blackpoints = $this->get_image_black_value($boximage);
@@ -135,8 +139,12 @@ class weighted_diagonal_box_scanner {
         $zoomfactorx = $page->scanproperties->zoomfactorx;
         $zoomfactory = $page->scanproperties->zoomfactory;
         $boximage = clone $page->image;
-        $boximage->cropimage(round($marginedboxsize * $zoomfactorx), round($marginedboxsize * $zoomfactory),
-            $boxupperleft->getx(), $boxupperleft->gety());
+        $boximage->cropimage(
+            round($marginedboxsize * $zoomfactorx),
+            round($marginedboxsize * $zoomfactory),
+            $boxupperleft->getx(),
+            $boxupperleft->gety()
+        );
         $blackdotsbefore = $this->get_image_black_value($boximage);
 
         $this->remove_edges($boximage);
@@ -165,7 +173,6 @@ class weighted_diagonal_box_scanner {
         } else {
             return -1;
         }
-
     }
     /**
      * remove the edges of a box

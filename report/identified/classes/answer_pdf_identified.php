@@ -58,10 +58,10 @@ class answer_pdf_identified extends \offlinequiz_answer_pdf {
             // Pad with zeros.
             $idnumber = str_pad($idnumber, $offlinequizconfig->ID_digits, '0', STR_PAD_LEFT);
             $pdf->SetFont('FreeSans', '', 8);
-            $pdf->setXY(34.4,  29);
-            $pdf->Cell(90, 7, ' '.offlinequiz_str_html_pdf($participant->firstname), 0, 0, 'L');
-            $pdf->setXY(34.4,  36);
-            $pdf->Cell(90, 7, ' '.offlinequiz_str_html_pdf($participant->lastname), 0, 1, 'L');
+            $pdf->setXY(34.4, 29);
+            $pdf->Cell(90, 7, ' ' . offlinequiz_str_html_pdf($participant->firstname), 0, 0, 'L');
+            $pdf->setXY(34.4, 36);
+            $pdf->Cell(90, 7, ' ' . offlinequiz_str_html_pdf($participant->lastname), 0, 1, 'L');
             // Print Check test.
 
             $pdf->SetFont('FreeSans', '', 12);
@@ -80,9 +80,9 @@ class answer_pdf_identified extends \offlinequiz_answer_pdf {
                 for ($j = 0; $j <= 9; $j++) {
                     $y = 44 + $j * 6;
                     $pdf->SetXY($x, $y);
-                    $pdf->Cell(2.7,  1, '', 0, 0, 'C');
+                    $pdf->Cell(2.7, 1, '', 0, 0, 'C');
                     if ($idnumber[$i] == $j) {
-                        $pdf->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif", $x ,  $y + 0.15,  3.15,  0);
+                        $pdf->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif", $x, $y + 0.15, 3.15, 0);
                     }
                 }
             }
@@ -108,10 +108,17 @@ class answer_pdf_identified extends \offlinequiz_answer_pdf {
      * @param string $groupletter
      * @return void
      */
-    public function add_participant_answer_page($participant, $maxanswers, $templateusage, $offlinequiz,
-                                                $group, $courseid, $context, $groupletter) {
+    public function add_participant_answer_page(
+        $participant,
+        $maxanswers,
+        $templateusage,
+        $offlinequiz,
+        $group,
+        $courseid,
+        $context,
+        $groupletter
+    ) {
         $this->set_participant($participant);
-        $this->add_answer_page( $maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter);
+        $this->add_answer_page($maxanswers, $templateusage, $offlinequiz, $group, $courseid, $context, $groupletter);
     }
-
 }

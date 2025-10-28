@@ -27,7 +27,6 @@ use Behat\Step\When;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_offlinequiz_rimport extends behat_base {
-
     /**
      * Adds the files to the offlinequiz and evaluates them
      *
@@ -76,5 +75,4 @@ class behat_offlinequiz_rimport extends behat_base {
             }
         }
     }
-
 }
