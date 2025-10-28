@@ -983,7 +983,7 @@ class structure {
     }
     /**
      * get bank cminfo
-     * @param int $qcategoryid
+     * @param int $qcategorycontextid
      * @return object|null
      */
     public function get_source_bank_cminfo(int $qcategorycontextid): ?\core_course\cm_info {
