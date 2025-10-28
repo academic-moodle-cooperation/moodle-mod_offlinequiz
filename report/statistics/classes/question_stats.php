@@ -138,10 +138,16 @@ class question_stats {
         }
 
         // Get the SQL and params for question IDs.
-        list($qsql, $qparams) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'q');
+        [$qsql, $qparams] = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'q');
 
-        list($fromqa, $whereqa, $qaparams) = offlinequiz_statistics_attempts_sql(
-                $offlinequizid, $currentgroup, $groupstudents, $allattempts, false, $offlinegroupid);
+        [$fromqa, $whereqa, $qaparams] = offlinequiz_statistics_attempts_sql(
+            $offlinequizid,
+            $currentgroup,
+            $groupstudents,
+            $allattempts,
+            false,
+            $offlinegroupid
+        );
 
         // Trying to make this work on MySQL
         // First we get the questionattemptids that we actually need.
@@ -197,15 +203,20 @@ class question_stats {
                 // Redmine 1302. Compute the number of results.
                 if (abs($step->maxmark - $step->mark) <= 1e-7) {
                     $subquestionstats[$step->questionid]->correct++;
-                } else if ($step->mark > 0 && $step->mark < $step->maxmark &&
-                         (abs($step->maxmark - $step->mark) > 1e-7)) {
+                } else if (
+                    $step->mark > 0 && $step->mark < $step->maxmark &&
+                         (abs($step->maxmark - $step->mark) > 1e-7)
+                ) {
                     $subquestionstats[$step->questionid]->partially++;
                 } else {
                     $subquestionstats[$step->questionid]->wrong++;
                 }
 
-                $this->initial_steps_walker($step,
-                        $subquestionstats[$step->questionid], false);
+                $this->initial_steps_walker(
+                    $step,
+                    $subquestionstats[$step->questionid],
+                    false
+                );
 
                 $number = $this->questions[$step->questionid]->number;
                 $subquestionstats[$step->questionid]->usedin[$number] = $number;
@@ -236,8 +247,12 @@ class question_stats {
                 // TO DO output here really sucks, but throwing is too severe.
                 global $OUTPUT;
                 echo $OUTPUT->notification(
-                        get_string('erroritemappearsmorethanoncewithdifferentweight',
-                        'offlinequiz_statistics', $this->subquestions[$qid]->name));
+                    get_string(
+                        'erroritemappearsmorethanoncewithdifferentweight',
+                        'offlinequiz_statistics',
+                        $this->subquestions[$qid]->name
+                    )
+                );
             }
 
             if ($subquestion->_stats->usedin) {
@@ -263,7 +278,7 @@ class question_stats {
             $this->initial_question_walker($question->_stats);
 
             if ($question->qtype == 'random') {
-                $randomselectorstring = $question->category.'/'.$question->questiontext;
+                $randomselectorstring = $question->category . '/' . $question->questiontext;
                 if ($nextquestion && $nextquestion->qtype == 'random') {
                     $nextrandomselectorstring = $nextquestion->category . '/' .
                             $nextquestion->questiontext;
@@ -272,8 +287,10 @@ class question_stats {
                     }
                 }
                 if (isset($this->randomselectors[$randomselectorstring])) {
-                    $question->_stats->subquestions = implode(',',
-                            $this->randomselectors[$randomselectorstring]);
+                    $question->_stats->subquestions = implode(
+                        ',',
+                        $this->randomselectors[$randomselectorstring]
+                    );
                 }
             }
         }
@@ -333,7 +350,6 @@ class question_stats {
         if ($positionstat) {
             $stats->totalothermarks += $step->sumgrades - $step->mark;
             $stats->othermarksarray[] = $step->sumgrades - $step->mark;
-
         } else {
             $stats->totalothermarks += $step->sumgrades;
             $stats->othermarksarray[] = $step->sumgrades;
@@ -400,8 +416,10 @@ class question_stats {
         // Redmine 1302. Compute the number of results.
         if (abs($step->maxmark - $step->mark) <= 1e-7) {
             $stats->correct++;
-        } else if ($step->mark > 0 && $step->mark < $step->maxmark &&
-                   (abs($step->maxmark - $step->mark) > 1e-7)) {
+        } else if (
+            $step->mark > 0 && $step->mark < $step->maxmark &&
+                   (abs($step->maxmark - $step->mark) > 1e-7)
+        ) {
             $stats->partially++;
         } else {
             $stats->wrong++;
@@ -421,7 +439,6 @@ class question_stats {
             $stats->covariancemax = $stats->covariancemaxsum / ($stats->s - 1);
             $stats->covariancewithoverallmark = $stats->covariancewithoverallmarksum / ($stats->s - 1);
             $stats->sd = sqrt($stats->markvariancesum / ($stats->s - 1));
-
         } else {
             $stats->markvariance = null;
             $stats->othermarkvariance = null;
@@ -451,7 +468,9 @@ class question_stats {
      */
     protected function get_random_guess_score($questiondata) {
         return question_bank::get_qtype(
-                $questiondata->qtype, false)->get_random_guess_score($questiondata);
+            $questiondata->qtype,
+            false
+        )->get_random_guess_score($questiondata);
     }
 
     /**

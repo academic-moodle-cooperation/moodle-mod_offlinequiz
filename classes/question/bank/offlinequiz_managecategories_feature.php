@@ -30,7 +30,6 @@ use mod_offlinequiz\question\bank\filter\custom_category_condition;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_managecategories_feature extends \qbank_managecategories\plugin_feature {
-
     /**
      * get question filters
      * @param \core_question\local\bank\view|null $qbank

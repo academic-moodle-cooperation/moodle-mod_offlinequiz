@@ -27,7 +27,6 @@ use context_module;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class slot_random {
-
     /** @var \stdClass Slot's properties. A record retrieved from the quiz_slots table. */
     protected $record;
 
@@ -160,8 +159,12 @@ class slot_random {
     public function insert($page) {
         global $DB;
 
-        $slots = $DB->get_records('quiz_slots', ['quizid' => $this->record->quizid],
-            'slot', 'id, slot, page');
+        $slots = $DB->get_records(
+            'quiz_slots',
+            ['quizid' => $this->record->quizid],
+            'slot',
+            'id, slot, page'
+        );
         $quiz = $this->get_quiz();
 
         $trans = $DB->start_delegated_transaction();

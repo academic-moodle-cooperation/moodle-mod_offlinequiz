@@ -67,7 +67,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         $scannedpages = new backup_nested_element('scannedpages');
 
         $scannedpage = new backup_nested_element('scannedpage', ['id'], [
-                'resultid', 'filename' , 'warningfilename', 'groupnumber', 'userkey', 'pagenumber',
+                'resultid', 'filename', 'warningfilename', 'groupnumber', 'userkey', 'pagenumber',
                 'time', 'status', 'error', 'info']);
 
         $choices = new backup_nested_element('choices');
@@ -141,44 +141,62 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
         // Define sources.
         $offlinequiz->set_source_table('offlinequiz', ['id' => backup::VAR_ACTIVITYID]);
 
-        $group->set_source_table('offlinequiz_groups',
-                ['offlinequizid' => backup::VAR_PARENTID]);
+        $group->set_source_table(
+            'offlinequiz_groups',
+            ['offlinequizid' => backup::VAR_PARENTID]
+        );
 
-        $groupquestion->set_source_table('offlinequiz_group_questions',
-                ['offlinegroupid' => backup::VAR_PARENTID]);
+        $groupquestion->set_source_table(
+            'offlinequiz_group_questions',
+            ['offlinegroupid' => backup::VAR_PARENTID]
+        );
 
-        $plist->set_source_table('offlinequiz_p_lists',
-                ['offlinequizid' => backup::VAR_PARENTID]);
+        $plist->set_source_table(
+            'offlinequiz_p_lists',
+            ['offlinequizid' => backup::VAR_PARENTID]
+        );
 
         // All the rest of elements only happen if we are including user info.
         if ($userinfo) {
-
-            $result->set_source_sql('
+            $result->set_source_sql(
+                '
                     SELECT *
                     FROM {offlinequiz_results}
                     WHERE offlinequizid = :offlinequizid
                     ',
-                    ['offlinequizid' => backup::VAR_PARENTID]);
+                ['offlinequizid' => backup::VAR_PARENTID]
+            );
 
-            $scannedpage->set_source_table('offlinequiz_scanned_pages',
-                    ['offlinequizid' => backup::VAR_PARENTID]);
+            $scannedpage->set_source_table(
+                'offlinequiz_scanned_pages',
+                ['offlinequizid' => backup::VAR_PARENTID]
+            );
 
-            $choice->set_source_table('offlinequiz_choices',
-                    ['scannedpageid' => backup::VAR_PARENTID]);
+            $choice->set_source_table(
+                'offlinequiz_choices',
+                ['scannedpageid' => backup::VAR_PARENTID]
+            );
 
-            $corner->set_source_table('offlinequiz_page_corners',
-                    ['scannedpageid' => backup::VAR_PARENTID]);
+            $corner->set_source_table(
+                'offlinequiz_page_corners',
+                ['scannedpageid' => backup::VAR_PARENTID]
+            );
 
             // Add participants info only when userinfo.
-            $participant->set_source_table('offlinequiz_participants',
-                    ['listid' => backup::VAR_PARENTID]);
+            $participant->set_source_table(
+                'offlinequiz_participants',
+                ['listid' => backup::VAR_PARENTID]
+            );
 
-            $scannedppage->set_source_table('offlinequiz_scanned_p_pages',
-                    ['offlinequizid' => backup::VAR_PARENTID]);
+            $scannedppage->set_source_table(
+                'offlinequiz_scanned_p_pages',
+                ['offlinequizid' => backup::VAR_PARENTID]
+            );
 
-            $pchoice->set_source_table('offlinequiz_p_choices',
-                    ['scannedppageid' => backup::VAR_PARENTID]);
-
+            $pchoice->set_source_table(
+                'offlinequiz_p_choices',
+                ['scannedppageid' => backup::VAR_PARENTID]
+            );
         }
 
         // Define file annotations.

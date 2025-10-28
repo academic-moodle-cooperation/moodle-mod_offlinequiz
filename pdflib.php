@@ -49,7 +49,7 @@ class offlinequiz_barcodewriter {
      */
     public static function print_barcode($pdf, $barcode, $x, $y) {
         // Print bar code for page.
-        $value = substr('000000000000000000000000'.base_convert($barcode,  10,  2), -25);
+        $value = substr('000000000000000000000000' . base_convert($barcode, 10, 2), -25);
         $pdf->Rect($x, $y, 0.2, 3.5, 'F');
         $pdf->Rect($x, $y, 0.7, 0.2, 'F');
         $pdf->Rect($x, $y + 3.5, 0.7, 0.2, 'F');
@@ -112,7 +112,6 @@ class offlinequiz_pdf extends pdf {
     public function set_title($newtitle) {
         $this->title = $newtitle;
     }
-
 }
 /**
  * class for the questions pdf
@@ -210,7 +209,6 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
             } else {
                 $this->Image($logourl, 133, 10.8, 54, 0);
             }
-
         }
         // Print the top left fixation cross.
         $this->Line(11, 12, 14, 12);
@@ -218,48 +216,48 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $this->Line(193, 12, 196, 12);
         $this->Line(194.5, 10.5, 194.5, 13.5);
         $this->SetFont($font, 'B', 14);
-        $this->SetXY(15,  15);
-        $this->Cell(90, 4, offlinequiz_str_html_pdf(get_string('answerform',  'offlinequiz')), 0, 0, 'C');
+        $this->SetXY(15, 15);
+        $this->Cell(90, 4, offlinequiz_str_html_pdf(get_string('answerform', 'offlinequiz')), 0, 0, 'C');
         $this->Ln(6);
         $this->SetFont($font, '', 10);
-        $this->Cell(90, 6, offlinequiz_str_html_pdf(get_string('forautoanalysis',  'offlinequiz')), 0, 1, 'C');
+        $this->Cell(90, 6, offlinequiz_str_html_pdf(get_string('forautoanalysis', 'offlinequiz')), 0, 1, 'C');
         $this->Ln(2);
         $this->SetFont($font, '', 8);
-        $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('firstname')).":", 1, 0, 'L');
-        $this->Cell(29, 7, ' '.offlinequiz_str_html_pdf(get_string('invigilator',  'offlinequiz')), 0, 1, 'C');
-        $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('lastname')).":", 1, 1, 'L');
-        $this->Cell(90, 7, ' '.offlinequiz_str_html_pdf(get_string('signature',  'offlinequiz')).":", 1, 1, 'L');
+        $this->Cell(90, 7, ' ' . offlinequiz_str_html_pdf(get_string('firstname')) . ":", 1, 0, 'L');
+        $this->Cell(29, 7, ' ' . offlinequiz_str_html_pdf(get_string('invigilator', 'offlinequiz')), 0, 1, 'C');
+        $this->Cell(90, 7, ' ' . offlinequiz_str_html_pdf(get_string('lastname')) . ":", 1, 1, 'L');
+        $this->Cell(90, 7, ' ' . offlinequiz_str_html_pdf(get_string('signature', 'offlinequiz')) . ":", 1, 1, 'L');
         $this->Ln(5);
-        $this->Cell(20, 7, offlinequiz_str_html_pdf(get_string('group', 'offlinequiz')).":", 0, 0, 'L');
-        $this->SetXY(34.4,  57.4);
+        $this->Cell(20, 7, offlinequiz_str_html_pdf(get_string('group', 'offlinequiz')) . ":", 0, 0, 'L');
+        $this->SetXY(34.4, 57.4);
 
         // Print boxes for groups.
         for ($i = 0; $i <= 5; $i++) {
-            $this->Cell(6,  3.5,  $letterstr[$i], 0, 0, 'R');
-            $this->Cell(0.85,  1, '', 0, 0, 'R');
-            $this->Rect($this->GetX(),  $this->GetY(),  3.5,  3.5);
-            $this->Cell(2.7,  1, '', 0, 0, 'C');
+            $this->Cell(6, 3.5, $letterstr[$i], 0, 0, 'R');
+            $this->Cell(0.85, 1, '', 0, 0, 'R');
+            $this->Rect($this->GetX(), $this->GetY(), 3.5, 3.5);
+            $this->Cell(2.7, 1, '', 0, 0, 'C');
             if (!empty($this->group) && $letterstr[$i] == $this->group) {
-                $this->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif", $this->GetX() - 2.75,  $this->Gety() + 0.15,  3.15,  0);
+                $this->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif", $this->GetX() - 2.75, $this->Gety() + 0.15, 3.15, 0);
             }
         }
 
         $this->Ln(10);
-        $this->MultiCell(115, 3, offlinequiz_str_html_pdf(get_string('instruction1',  'offlinequiz')), 0, 'L');
+        $this->MultiCell(115, 3, offlinequiz_str_html_pdf(get_string('instruction1', 'offlinequiz')), 0, 'L');
         $this->Ln(1);
         $this->SetY(78);
         $this->Cell(42, 8, "", 0, 0, 'C');
-        $this->Rect($this->GetX(),  $this->GetY(),  3.5,  3.5);
+        $this->Rect($this->GetX(), $this->GetY(), 3.5, 3.5);
         $this->Cell(3.5, 3.5, "", 0, 1, 'C');
         $this->Ln(1);
-        $this->MultiCell(115, 3, offlinequiz_str_html_pdf(get_string('instruction2',  'offlinequiz')), 0, 'L');
-        $this->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif",  57.2,  78.2,  3.15,  0);   // JZ added 0.4 to y value.
-        $this->Image("$CFG->dirroot/mod/offlinequiz/pix/ausstreichen.jpg", 56.8,  93,  4.1,  0);  // JZ added 0.4 to y value.
+        $this->MultiCell(115, 3, offlinequiz_str_html_pdf(get_string('instruction2', 'offlinequiz')), 0, 'L');
+        $this->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif", 57.2, 78.2, 3.15, 0);   // JZ added 0.4 to y value.
+        $this->Image("$CFG->dirroot/mod/offlinequiz/pix/ausstreichen.jpg", 56.8, 93, 4.1, 0);  // JZ added 0.4 to y value.
         $this->SetY(93.1);
         $this->Cell(42, 8, "", 0, 0, 'C');
         $this->Cell(3.5, 3.5, '', 1, 1, 'C');
         $this->Ln(1);
-        $this->MultiCell(115, 3, offlinequiz_str_html_pdf(get_string('instruction3',  'offlinequiz')), 0, 'L');
+        $this->MultiCell(115, 3, offlinequiz_str_html_pdf(get_string('instruction3', 'offlinequiz')), 0, 'L');
 
         $this->Line(109, 29, 130, 29);                                 // Rectangle for the teachers to sign.
         $this->Line(109, 50, 130, 50);
@@ -268,8 +266,14 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
         $this->SetFont($font, 'B', 10);
         $this->SetXY(137, 27);
-        $this->Cell($offlinequizconfig->ID_digits * 6.5, 7,
-                    offlinequiz_str_html_pdf(get_string('idnumber',  'offlinequiz')), 0, 1, 'C');
+        $this->Cell(
+            $offlinequizconfig->ID_digits * 6.5,
+            7,
+            offlinequiz_str_html_pdf(get_string('idnumber', 'offlinequiz')),
+            0,
+            1,
+            'C'
+        );
         $this->SetXY(137, 34);
         $this->Cell($offlinequizconfig->ID_digits * 6.5, 7, '', 1, 1, 'C');  // Box for ID number.
 
@@ -278,7 +282,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         }
 
         $this->SetDrawColor(150);
-        $this->Line(137,  47.7,  138 + $offlinequizconfig->ID_digits * 6.5,  47.7);  // Line to sparate 0 from the other.
+        $this->Line(137, 47.7, 138 + $offlinequizconfig->ID_digits * 6.5, 47.7);  // Line to sparate 0 from the other.
         $this->SetDrawColor(0);
 
         // Print boxes for the user ID number.
@@ -309,7 +313,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
      * @return float|int
      */
     private function get_logo_aspect_ratio($logourl) {
-        list($originalwidth, $originalheight) = getimagesize($logourl);
+        [$originalwidth, $originalheight] = getimagesize($logourl);
         return $originalwidth / $originalheight;
     }
 
@@ -336,20 +340,20 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
         $this->Cell(10, 4, $this->formtype, 1, 0, 'C');
 
         // ID of the offline quiz.
-        $this->Cell(15, 4, substr('0000000'.$this->offlinequiz, -7), 1, 0, 'C');
+        $this->Cell(15, 4, substr('0000000' . $this->offlinequiz, -7), 1, 0, 'C');
 
         // Letter for the group.
         $this->Cell(10, 4, $letterstr[$this->groupid], 1, 0, 'C');
 
         // ID of the user who created the form.
-        $this->Cell(15, 4, substr('0000000'.$this->userid, -7), 1, 0, 'C');
+        $this->Cell(15, 4, substr('0000000' . $this->userid, -7), 1, 0, 'C');
 
         // Name of the offline-quiz.
         $title = $this->title;
         $width = 100;
 
         while ($this->GetStringWidth($title) > ($width - 1)) {
-            $title = mb_substr($title,  0,  mb_strlen($title) - 1);
+            $title = mb_substr($title, 0, mb_strlen($title) - 1);
         }
         $this->Cell($width, 4, $title, 1, 0, 'C');
 
@@ -487,7 +491,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
 
             $pdf->SetX(($col - 1) * ($pdf->colwidth) + $offsetx);
 
-            $pdf->Cell(5, 1, ($number + 1).")  ", 0, 0, 'R');
+            $pdf->Cell(5, 1, ($number + 1) . ")  ", 0, 0, 'R');
 
             // Print one empty box for each answer.
             $x = $pdf->GetX();
@@ -515,7 +519,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
                     $pdf->SetY($offsety);
                 }
             }
-            $number ++;
+            $number++;
         }
 
         $group->numberofpages = $page;
@@ -538,10 +542,10 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
      */
     // @codingStandardsIgnoreLine  This function name is not moodle-standard but I need to overwrite TCPDF
     public function Header() {
-        global $CFG,  $DB;
+        global $CFG, $DB;
         $font = offlinequiz_get_pdffont();
 
-        $this->Line(11,  12,  14, 12);
+        $this->Line(11, 12, 14, 12);
         $this->Line(12.5, 10.5, 12.5, 13.5);
         $this->Line(193, 12, 196, 12);
         $this->Line(194.5, 10.5, 194.5, 13.5);
@@ -602,10 +606,16 @@ class offlinequiz_participants_pdf extends offlinequiz_pdf {
         // FreeSans italic 8.
         $this->SetFont($font, 'I', 8);
         // Page number.
-        $this->Cell(0, 10,
-                    offlinequiz_str_html_pdf(get_string('page') . ' ' .
-                                             $this->getAliasNumPage().'/' . $this->getAliasNbPages() .
-                                             ' ( '.$this->listno.' )'), 0, 0, 'C');
+        $this->Cell(
+            0,
+            10,
+            offlinequiz_str_html_pdf(get_string('page') . ' ' .
+                                             $this->getAliasNumPage() . '/' . $this->getAliasNbPages() .
+            ' ( ' . $this->listno . ' )'),
+            0,
+            0,
+            'C'
+        );
         // Print barcode for list.
         $y = $this->GetY() - 5;
         $x = 170;
@@ -659,8 +669,15 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
     // JPC: Exclude pre tags.
     $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-    $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
-        1, 300, $offlinequiz->disableimgnewlines);
+    $questiontext = $trans->fix_image_paths(
+        $questiontext,
+        $question->contextid,
+        'questiontext',
+        $question->id,
+        1,
+        300,
+        $offlinequiz->disableimgnewlines
+    );
 
     $html = '';
 
@@ -679,10 +696,17 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
  * @param mixed $correction
  * @return string
  */
-function offlinequiz_get_answers_html($offlinequiz, $templateusage,
-    $slot, $question, $texfilters, $trans, $correction) {
+function offlinequiz_get_answers_html(
+    $offlinequiz,
+    $templateusage,
+    $slot,
+    $question,
+    $texfilters,
+    $trans,
+    $correction
+) {
     $html = '';
-    $slotquestion = $templateusage->get_question ( $slot );
+    $slotquestion = $templateusage->get_question($slot);
     // There is only a slot for multichoice questions.
     $attempt = $templateusage->get_question_attempt($slot);
     $order = $slotquestion->get_order($attempt);  // Order of the answers.
@@ -701,15 +725,22 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         $answertext = preg_replace("/<p\\b[^>]*>/ms", "", $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
-        $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer,
-            1, 300, $offlinequiz->disableimgnewlines);
+        $answertext = $trans->fix_image_paths(
+            $answertext,
+            $question->contextid,
+            'answer',
+            $answer,
+            1,
+            300,
+            $offlinequiz->disableimgnewlines
+        );
 
         if ($correction) {
             if ($question->options->answers[$answer]->fraction > 0) {
                 $html .= '<b>';
             }
 
-            $answertext .= " (".round($question->options->answers[$answer]->fraction * 100)."%)";
+            $answertext .= " (" . round($question->options->answers[$answer]->fraction * 100) . "%)";
         }
 
         $html .= number_in_style($key, $question->options->answernumbering) . ') &nbsp; ';
@@ -741,7 +772,7 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
  */
 function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html, $number) {
 
-    $pdf->writeHTMLCell(165,  round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
+    $pdf->writeHTMLCell(165, round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
     $pdf->Ln();
 
     if ($pdf->is_overflowing()) {
@@ -757,7 +788,7 @@ function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html
             $pdf->SetFont($font, '', $fontsize);
         }
 
-        $pdf->writeHTMLCell(165,  round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
+        $pdf->writeHTMLCell(165, round($fontsize / 2), $pdf->GetX(), $pdf->GetY() + 0.3, $html);
         $pdf->Ln();
     }
 }
@@ -772,8 +803,14 @@ function offlinequiz_write_question_to_pdf($pdf, $fontsize, $questiontype, $html
  * @param bool $correction if true the correction form is generated.
  * @return stored_file|null the generated PDF file.
  */
-function offlinequiz_create_pdf_question(question_usage_by_activity $templateusage, $offlinequiz, $group,
-                                         $courseid, $context, $correction = false) {
+function offlinequiz_create_pdf_question(
+    question_usage_by_activity $templateusage,
+    $offlinequiz,
+    $group,
+    $courseid,
+    $context,
+    $correction = false
+) {
     global $CFG, $DB, $OUTPUT;
 
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
@@ -786,9 +823,9 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
     $title = offlinequiz_str_html_pdf($offlinequiz->name);
     if (!empty($offlinequiz->time)) {
-        $title .= ": ".offlinequiz_str_html_pdf(userdate($offlinequiz->time));
+        $title .= ": " . offlinequiz_str_html_pdf(userdate($offlinequiz->time));
     }
-    $title .= ",  ".offlinequiz_str_html_pdf(get_string('group', 'offlinequiz')." $groupletter");
+    $title .= ",  " . offlinequiz_str_html_pdf(get_string('group', 'offlinequiz') . " $groupletter");
     $pdf->set_title($title);
     $pdf->SetMargins(15, 28, 15);
     $pdf->SetAutoPageBreak(false, 25);
@@ -847,8 +884,13 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
                         $sentences = preg_split('/<br\s*\/>/', $paragraph);
                         foreach ($sentences as $sentence) {
                             $pdf->checkpoint();
-                            $pdf->writeHTMLCell(165, round($offlinequiz->fontsize / 2), $pdf->GetX(), $pdf->GetY(),
-                                                $sentence . '<br/>');
+                            $pdf->writeHTMLCell(
+                                165,
+                                round($offlinequiz->fontsize / 2),
+                                $pdf->GetX(),
+                                $pdf->GetY(),
+                                $sentence . '<br/>'
+                            );
                             $pdf->Ln();
                             if ($pdf->is_overflowing()) {
                                 $pdf->backtrack();
@@ -920,10 +962,15 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             $html = offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $offlinequiz);
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-
-                $html = $html . offlinequiz_get_answers_html($offlinequiz, $templateusage,
-                    $slot, $question, $texfilters, $trans, $correction);
-
+                $html = $html . offlinequiz_get_answers_html(
+                    $offlinequiz,
+                    $templateusage,
+                    $slot,
+                    $question,
+                    $texfilters,
+                    $trans,
+                    $correction
+                );
             }
             if ($offlinequiz->disableimgnewlines) {
                 // This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
@@ -963,26 +1010,32 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             // Add page break if necessary because of overflow.
             if ($pdf->GetY() > 230) {
                 $pdf->AddPage();
-                $pdf->Ln( 14 );
+                $pdf->Ln(14);
             }
-            set_time_limit( 120 );
+            set_time_limit(120);
 
             // Either we print the question HTML.
             $html = offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $offlinequiz);
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-
                 $slot = $questionslots[$currentquestionid];
 
-                $html = $html . offlinequiz_get_answers_html($offlinequiz, $templateusage,
-                    $slot, $question, $texfilters, $trans, $correction);
+                $html = $html . offlinequiz_get_answers_html(
+                    $offlinequiz,
+                    $templateusage,
+                    $slot,
+                    $question,
+                    $texfilters,
+                    $trans,
+                    $correction
+                );
             }
 
             // Finally print the question number and the HTML string.
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-                $pdf->SetFont ($font, 'B', $offlinequiz->fontsize );
-                $pdf->Cell ( 4, round ( $offlinequiz->fontsize / 2 ), "$number)  ", 0, 0, 'R' );
-                $pdf->SetFont ($font, '', $offlinequiz->fontsize );
+                $pdf->SetFont($font, 'B', $offlinequiz->fontsize);
+                $pdf->Cell(4, round($offlinequiz->fontsize / 2), "$number)  ", 0, 0, 'R');
+                $pdf->SetFont($font, '', $offlinequiz->fontsize);
             }
 
             // This removes span attribute added by TEX filter which created extra line break after every LATEX formula.
@@ -995,7 +1048,6 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             offlinequiz_write_question_to_pdf($pdf, $offlinequiz->fontsize, $question->qtype, $html, $number);
             $number += $questions[$currentquestionid]->length;
         }
-
     }
 
     $fs = get_file_storage();
@@ -1007,8 +1059,15 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
 
     // Prepare file record object.
     $date = usergetdate(time());
-    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
-            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+    $timestamp = sprintf(
+        '%04d%02d%02d_%02d%02d%02d',
+        $date['year'],
+        $date['mon'],
+        $date['mday'],
+        $date['hours'],
+        $date['minutes'],
+        $date['seconds']
+    );
 
     $fileinfo = [
             'contextid' => $context->id,
@@ -1018,9 +1077,16 @@ function offlinequiz_create_pdf_question(question_usage_by_activity $templateusa
             'itemid' => 0,
             'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.pdf'];
 
-    if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
-            $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
-
+    if (
+        $oldfile = $fs->get_file(
+            $fileinfo['contextid'],
+            $fileinfo['component'],
+            $fileinfo['filearea'],
+            $fileinfo['itemid'],
+            $fileinfo['filepath'],
+            $fileinfo['filename']
+        )
+    ) {
         $oldfile->delete();
     }
     $pdfstring = $pdf->Output('', 'S');
@@ -1059,8 +1125,15 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
 
     // Prepare file record object.
     $date = usergetdate(time());
-    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
-            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+    $timestamp = sprintf(
+        '%04d%02d%02d_%02d%02d%02d',
+        $date['year'],
+        $date['mon'],
+        $date['mday'],
+        $date['hours'],
+        $date['minutes'],
+        $date['seconds']
+    );
 
     $fileprefix = get_string('fileprefixanswer', 'offlinequiz');
     $fileinfo = [
@@ -1071,8 +1144,16 @@ function offlinequiz_create_pdf_answer($maxanswers, $templateusage, $offlinequiz
             'itemid' => 0,
             'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.pdf'];
 
-    if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
-            $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
+    if (
+        $oldfile = $fs->get_file(
+            $fileinfo['contextid'],
+            $fileinfo['component'],
+            $fileinfo['filearea'],
+            $fileinfo['itemid'],
+            $fileinfo['filepath'],
+            $fileinfo['filename']
+        )
+    ) {
         $oldfile->delete();
     }
     $pdfstring = $pdf->Output('', 'S');
@@ -1108,8 +1189,8 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
         $roleids[] = $role->id;
     }
 
-    list($csql, $cparams) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
-    list($rsql, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
+    [$csql, $cparams] = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
+    [$rsql, $rparams] = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
     $params = array_merge($cparams, $rparams);
 
     $sql = "SELECT DISTINCT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
@@ -1138,7 +1219,7 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
     $pdf->listno = $list->listnumber;
     $title = offlinequiz_str_html_pdf($offlinequiz->name);
     // Add the list name to the title.
-    $title .= ', '.offlinequiz_str_html_pdf($listname);
+    $title .= ', ' . offlinequiz_str_html_pdf($listname);
     $pdf->set_title($title);
     $pdf->SetMargins(15, 25, 15);
     $pdf->SetAutoPageBreak(true, 20);
@@ -1157,8 +1238,11 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
         $pdf->Cell(3, 3.5, '', 0, 0, 'C');
 
         $pdf->Cell(6, 3.5, '', 0, 0, 'C');
-        $userkey = substr($participant->{$offlinequizconfig->ID_field},
-                          strlen($offlinequizconfig->ID_prefix), $offlinequizconfig->ID_digits);
+        $userkey = substr(
+            $participant->{$offlinequizconfig->ID_field},
+            strlen($offlinequizconfig->ID_prefix),
+            $offlinequizconfig->ID_digits
+        );
         $pdf->Cell(13, 3.5, $userkey, 0, 0, 'R');
         $pdf->Cell(12, 3.5, '', 0, 0, 'L');
         if ($pdf->GetStringWidth($participant->firstname) > 40) {
@@ -1189,8 +1273,15 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
 
     // Prepare file record object.
     $date = usergetdate(time());
-    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
-            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+    $timestamp = sprintf(
+        '%04d%02d%02d_%02d%02d%02d',
+        $date['year'],
+        $date['mon'],
+        $date['mday'],
+        $date['hours'],
+        $date['minutes'],
+        $date['seconds']
+    );
 
     $fileprefix = get_string('fileprefixparticipants', 'offlinequiz');
     $fileinfo = [
@@ -1201,8 +1292,16 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
             'itemid' => 0,
             'filename' => $fileprefix . '_' . $list->id . '_' . $timestamp . '.pdf'];
 
-    if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
-            $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
+    if (
+        $oldfile = $fs->get_file(
+            $fileinfo['contextid'],
+            $fileinfo['component'],
+            $fileinfo['filearea'],
+            $fileinfo['itemid'],
+            $fileinfo['filepath'],
+            $fileinfo['filename']
+        )
+    ) {
         $oldfile->delete();
     }
 
@@ -1221,7 +1320,7 @@ function offlinequiz_create_pdf_participants($offlinequiz, $courseid, $list, $co
  * @param int $coursecontextid The course context ID.
  * @return mixed
  */
-function offlinequiz_str_html_pdf($input, $stripalltags=true, $questionid=null, $coursecontextid=null) {
+function offlinequiz_str_html_pdf($input, $stripalltags = true, $questionid = null, $coursecontextid = null) {
     global $CFG;
 
     $output = $input;
@@ -1250,7 +1349,7 @@ function offlinequiz_str_html_pdf($input, $stripalltags=true, $questionid=null, 
                     $pluginfilename = str_replace('@@PLUGINFILE@@/', '', $pluginfilename);
                     $file = $fs->get_file($coursecontextid, 'question', 'questiontext', $questionid, '/', $pluginfilename);
                     // Copy file to temporary file.
-                    $output .= $file->get_id(). ']';
+                    $output .= $file->get_id() . ']';
                 }
             }
             $output .= substr($string, strpos($string, '>') + 1);

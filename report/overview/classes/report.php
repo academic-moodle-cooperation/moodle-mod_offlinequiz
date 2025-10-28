@@ -48,7 +48,6 @@ require_once($CFG->libdir . '/gradelib.php');
  * Report for the results overview
  */
 class report extends default_report {
-
     /**
      * display the report
      * @param mixed $offlinequiz
@@ -111,13 +110,15 @@ class report extends default_report {
             echo $OUTPUT->heading(get_string('results', 'offlinequiz'));
 
             require_once($CFG->libdir . '/grouplib.php');
-            $groupselecturl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php',
-                    ['id' => $cm->id,
+            $groupselecturl = new moodle_url(
+                $CFG->wwwroot . '/mod/offlinequiz/report.php',
+                ['id' => $cm->id,
                             'mode' => 'overview',
                             'noresults' => $noresults,
                             'pagesize' => $pagesize,
                             'group' => $groupid,
-                    ]);
+                ]
+            );
 
             echo groups_print_activity_menu($cm, $groupselecturl, true);
             echo $OUTPUT->box_end();
@@ -144,11 +145,13 @@ class report extends default_report {
 
             if ($selectedresultids) {
                 foreach ($selectedresultids as $resultid) {
-
-                    if ($resultid && $todelete = $DB->get_record('offlinequiz_results',
+                    if (
+                        $resultid && $todelete = $DB->get_record(
+                            'offlinequiz_results',
                             ['id' => $resultid,
-                            ])) {
-
+                            ]
+                        )
+                    ) {
                         offlinequiz_delete_result($resultid, $context);
 
                         // Log this event.
@@ -163,12 +166,16 @@ class report extends default_report {
 
                         // Change the status of all related pages with error 'resultexists' to
                         // 'suspended'.
-                        $user = $DB->get_record('user',
-                                ['id' => $todelete->userid,
-                                ]);
-                        $group = $DB->get_record('offlinequiz_groups',
-                                ['id' => $todelete->offlinegroupid,
-                                ]);
+                        $user = $DB->get_record(
+                            'user',
+                            ['id' => $todelete->userid,
+                            ]
+                        );
+                        $group = $DB->get_record(
+                            'offlinequiz_groups',
+                            ['id' => $todelete->offlinegroupid,
+                            ]
+                        );
 
                         $sql = "SELECT id
                                   FROM {offlinequiz_scanned_pages}
@@ -183,12 +190,20 @@ class report extends default_report {
                         ];
                         $otherpages = $DB->get_records_sql($sql, $params);
                         foreach ($otherpages as $page) {
-                            $DB->set_field('offlinequiz_scanned_pages', 'status', 'suspended',
-                                    ['id' => $page->id,
-                                    ]);
-                            $DB->set_field('offlinequiz_scanned_pages', 'error', '',
-                                    ['id' => $page->id,
-                                    ]);
+                            $DB->set_field(
+                                'offlinequiz_scanned_pages',
+                                'status',
+                                'suspended',
+                                ['id' => $page->id,
+                                ]
+                            );
+                            $DB->set_field(
+                                'offlinequiz_scanned_pages',
+                                'error',
+                                '',
+                                ['id' => $page->id,
+                                ]
+                            );
                         }
                     }
                 }
@@ -196,24 +211,34 @@ class report extends default_report {
                 offlinequiz_update_grades($offlinequiz);
             }
             redirect(
-                new moodle_url('/mod/offlinequiz/report.php',
+                new moodle_url(
+                    '/mod/offlinequiz/report.php',
                     ['mode' => 'overview', 'id' => $cm->id,
                         'noresults' => $noresults, 'group' => $groupid,
                         'pagesize' => $pagesize,
-                    ]));
+                    ]
+                )
+            );
         }
 
         // Now check if asked download of data.
         if ($download) {
             $filename = clean_filename(
-                    "$course->shortname " . format_string($offlinequiz->name, true));
+                "$course->shortname " . format_string($offlinequiz->name, true)
+            );
             $sort = '';
         }
 
         // Fetch the group data.
-        $groups = $DB->get_records('offlinequiz_groups',
-                ['offlinequizid' => $offlinequiz->id,
-                ], 'groupnumber', '*', 0, $offlinequiz->numgroups);
+        $groups = $DB->get_records(
+            'offlinequiz_groups',
+            ['offlinequizid' => $offlinequiz->id,
+            ],
+            'groupnumber',
+            '*',
+            0,
+            $offlinequiz->numgroups
+        );
 
         // Define table columns.
         $tablecolumns = ['checkbox', 'picture', 'fullname', $offlinequizconfig->ID_field,
@@ -230,16 +255,22 @@ class report extends default_report {
         $checked = [];
         // Get participants list.
         $withparticipants = false;
-        if ($lists = $DB->get_records('offlinequiz_p_lists',
+        if (
+            $lists = $DB->get_records(
+                'offlinequiz_p_lists',
                 ['offlinequizid' => $offlinequiz->id,
-                ])) {
+                ]
+            )
+        ) {
             $withparticipants = true;
             $tablecolumns[] = 'checked';
             $tableheaders[] = get_string('present', 'offlinequiz');
             foreach ($lists as $list) {
-                $participants = $DB->get_records('offlinequiz_participants',
-                        ['listid' => $list->id,
-                        ]);
+                $participants = $DB->get_records(
+                    'offlinequiz_participants',
+                    ['listid' => $list->id,
+                    ]
+                );
                 foreach ($participants as $participant) {
                     $checked[$participant->userid] = $participant->checked;
                 }
@@ -253,10 +284,12 @@ class report extends default_report {
 
         $table->define_columns($tablecolumns);
         $table->define_headers($tableheaders);
-        $baseurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report.php',
-                ['mode' => 'overview', 'id' => $cm->id, 'noresults' => $noresults, 'group' => $groupid,
+        $baseurl = new moodle_url(
+            $CFG->wwwroot . '/mod/offlinequiz/report.php',
+            ['mode' => 'overview', 'id' => $cm->id, 'noresults' => $noresults, 'group' => $groupid,
                     'pagesize' => $pagesize,
-                ]);
+            ]
+        );
         $table->define_baseurl($baseurl);
 
         $table->sortable(true);
@@ -280,7 +313,7 @@ class report extends default_report {
         $table->setup();
 
         if ($download == 'ODS' || $download == 'Excel') {
-            if ($download == 'ODS' ) {
+            if ($download == 'ODS') {
                 require_once("$CFG->libdir/odslib.class.php");
                 $filename .= ".ods";
                 // Creating a workbook.
@@ -294,7 +327,7 @@ class report extends default_report {
             // Sending HTTP headers.
             $workbook->send($filename);
             require($CFG->dirroot  . '/mod/offlinequiz/sheetlib.php');
-            list($myxls, $formats) = offlinequiz_sheetlib_initialize_headers($workbook);
+            [$myxls, $formats] = offlinequiz_sheetlib_initialize_headers($workbook);
 
             // Here starts workshhet headers.
             $headers = [offlinequiz_get_id_field_name(), get_string('firstname'),
@@ -350,7 +383,8 @@ class report extends default_report {
             foreach ($groups as $group) {
                 if ($group->templateusageid) {
                     $quba = question_engine::load_questions_usage_by_activity(
-                            $group->templateusageid);
+                        $group->templateusageid
+                    );
                     $slots = $quba->get_slots();
                     echo ', ,' . get_string('correct', 'offlinequiz');
                     echo ',' . $group->groupnumber;
@@ -364,9 +398,12 @@ class report extends default_report {
                             $letters = [];
                             $counter = 0;
                             foreach ($order as $key => $answerid) {
-                                $fraction = $DB->get_field('question_answers', 'fraction',
-                                        ['id' => $answerid,
-                                        ]);
+                                $fraction = $DB->get_field(
+                                    'question_answers',
+                                    'fraction',
+                                    ['id' => $answerid,
+                                    ]
+                                );
                                 if ($fraction > 0) {
                                     $letters[] = $answerletters[$counter];
                                 }
@@ -391,8 +428,13 @@ class report extends default_report {
 
         // Construct the SQL
         // First get roleids for students from leagcy.
-        if (!$roles = get_roles_with_capability('mod/offlinequiz:attempt', CAP_ALLOW,
-                $systemcontext)) {
+        if (
+            !$roles = get_roles_with_capability(
+                'mod/offlinequiz:attempt',
+                CAP_ALLOW,
+                $systemcontext
+            )
+        ) {
             error("No roles with capability 'moodle/offlinequiz:attempt' defined in system context");
         }
         $roleids = [];
@@ -410,8 +452,8 @@ class report extends default_report {
         qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ";
 
         $result = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'ctx');
-        list($contexttest, $cparams) = $result;
-        list($roletest, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
+        [$contexttest, $cparams] = $result;
+        [$roletest, $rparams] = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
 
         $from = " FROM {user} u
                   JOIN {role_assignments} ra ON ra.userid = u.id
@@ -450,7 +492,7 @@ class report extends default_report {
         $totalinitials = $DB->count_records_sql($countsql, $params);
 
         // Add extra limits due to initials bar.
-        list($ttest, $tparams) = $table->get_sql_where();
+        [$ttest, $tparams] = $table->get_sql_where();
 
         if (!empty($ttest)) {
             $where .= ' AND ' . $ttest;
@@ -474,8 +516,12 @@ class report extends default_report {
 
         // Fetch the results.
         if (!$download) {
-            $results = $DB->get_records_sql($select . $from . $where . $sort, $params,
-                    $table->get_page_start(), $table->get_page_size());
+            $results = $DB->get_records_sql(
+                $select . $from . $where . $sort,
+                $params,
+                $table->get_page_start(),
+                $table->get_page_size()
+            );
         } else {
             $results = $DB->get_records_sql($select . $from . $where . $sort, $params);
         }
@@ -486,12 +532,16 @@ class report extends default_report {
         }
         if (!empty($results) || !empty($noresults)) {
             foreach ($results as $result) {
-                $user = $DB->get_record('user',
-                        ['id' => $result->userid,
-                        ]);
-                $picture = $OUTPUT->user_picture($user,
-                        ['courseid' => $course->id,
-                        ]);
+                $user = $DB->get_record(
+                    'user',
+                    ['id' => $result->userid,
+                    ]
+                );
+                $picture = $OUTPUT->user_picture(
+                    $user,
+                    ['courseid' => $course->id,
+                    ]
+                );
 
                 if (!empty($result->resultid)) {
                     $checkbox = '<input type="checkbox" name="s' . $result->resultid . '" value="' .
@@ -525,10 +575,11 @@ class report extends default_report {
                     ];
                 }
 
-                if (!empty($result)
+                if (
+                    !empty($result)
                     && $result->offlinegroupid
                     && $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade
-                    ) {
+                ) {
                     $outputgrade = format_float($result->sumgrades /
                             $groups[$result->offlinegroupid]->sumgrades * $offlinequiz->grade, $offlinequiz->decimalpoints, false);
                 } else {
@@ -561,7 +612,6 @@ class report extends default_report {
                             $row[] = '-';
                         }
                     }
-
                 }
 
                 if (!$download) {
@@ -579,14 +629,22 @@ class report extends default_report {
                 } else if ($download == 'CSVplus1' || $download == 'CSVpluspoints') {
                     $text = $row[1] . ',' . $row[2] . ',' . $row[0] . ',' .
                              $letterstr[$groups[$result->offlinegroupid]->groupnumber];
-                    if ($pages = $DB->get_records('offlinequiz_scanned_pages',
+                    if (
+                        $pages = $DB->get_records(
+                            'offlinequiz_scanned_pages',
                             ['resultid' => $result->resultid,
-                            ], 'pagenumber ASC')) {
+                            ],
+                            'pagenumber ASC'
+                        )
+                    ) {
                         foreach ($pages as $page) {
                             if ($page->status == 'ok' || $page->status == 'submitted') {
-                                $choices = $DB->get_records('offlinequiz_choices',
-                                        ['scannedpageid' => $page->id,
-                                        ], 'slotnumber, choicenumber');
+                                $choices = $DB->get_records(
+                                    'offlinequiz_choices',
+                                    ['scannedpageid' => $page->id,
+                                    ],
+                                    'slotnumber, choicenumber'
+                                );
                                 $counter = 0;
                                 $oldslot = -1;
                                 $letters = [];
@@ -627,8 +685,11 @@ class report extends default_report {
                             $slotquestion = $quba->get_question($slot);
                             $attempt = $quba->get_question_attempt($slot);
                             $text .= ',' .
-                                     format_float($attempt->get_mark(), $offlinequiz->decimalpoints,
-                                            false);
+                                     format_float(
+                                         $attempt->get_mark(),
+                                         $offlinequiz->decimalpoints,
+                                         false
+                                     );
                         }
                         echo $text . "\n";
                     }
@@ -772,10 +833,14 @@ class report extends default_report {
      */
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         // TO DO: Move strings to subplugin.
-        $navnode = navigation_node::create(text: get_string('tabresultsoverview', 'offlinequiz'),
-                                        action:  new moodle_url('/mod/offlinequiz/report.php',
-                                                                ['q' => $offlinequiz->id, 'mode' => 'overview']),
-                                        key: $this->get_navigation_key());
+        $navnode = navigation_node::create(
+            text: get_string('tabresultsoverview', 'offlinequiz'),
+            action:  new moodle_url(
+                '/mod/offlinequiz/report.php',
+                ['q' => $offlinequiz->id, 'mode' => 'overview']
+            ),
+            key: $this->get_navigation_key()
+        );
 
         $parentnode = $navigation->get('mod_offlinequiz_results');
         $parentnode->add_node($navnode);

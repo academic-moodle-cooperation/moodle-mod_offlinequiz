@@ -43,7 +43,8 @@ if (! $offlinequiz = $DB->get_record("offlinequiz", ["id" => $result->offlinequi
 }
 if (! $course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
     throw new \moodle_exception(
-        "The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
+        "The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing"
+    );
 }
 if (! $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
     throw new \moodle_exception("The course module for the offlinequiz with id $offlinequiz->id is missing");

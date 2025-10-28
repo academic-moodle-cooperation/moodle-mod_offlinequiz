@@ -33,8 +33,10 @@ $resultid = required_param('resultid', PARAM_INT); // Result id.
 $slot = required_param('slot', PARAM_INT);         // Question number in usage.
 $seq = optional_param('step', null, PARAM_INT);    // Sequence number.
 
-$baseurl = new moodle_url('/mod/offlinequiz/reviewquestion.php',
-        ['resultid' => $resultid, 'slot' => $slot]);
+$baseurl = new moodle_url(
+    '/mod/offlinequiz/reviewquestion.php',
+    ['resultid' => $resultid, 'slot' => $slot]
+);
 $currenturl = new moodle_url($baseurl);
 if ($seq !== 0) {
     $currenturl->param('step', $seq);
@@ -57,8 +59,16 @@ if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $cour
     throw new \moodle_exception('cmmissing', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
     $COURSE->id, $offlinequiz->id);
 }
-if (!$groups = $DB->get_records('offlinequiz_groups',
-        ['offlinequizid' => $offlinequiz->id], 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
+if (
+    !$groups = $DB->get_records(
+        'offlinequiz_groups',
+        ['offlinequizid' => $offlinequiz->id],
+        'groupnumber',
+        '*',
+        0,
+        $offlinequiz->numgroups
+    )
+) {
     throw new \moodle_exception('nogroups', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' .
     $COURSE->id, $scannedpage->offlinequizid);
 }
@@ -77,8 +87,12 @@ if (!has_capability('mod/offlinequiz:viewreports', $context) && ($USER->id != $r
 }
 
 if ($result->status != 'complete') {
-    throw new \moodle_exception('resultnotcomplete',
-        'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $offlinequiz->id);
+    throw new \moodle_exception(
+        'resultnotcomplete',
+        'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $offlinequiz->id
+    );
 }
 
 $options = offlinequiz_get_review_options($offlinequiz, $result, $context);

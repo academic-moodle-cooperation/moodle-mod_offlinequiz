@@ -29,7 +29,7 @@ use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir . '/tablelib.php');
 require_once(__DIR__ . '/../statisticslib.php');
 
 /**
@@ -218,7 +218,9 @@ class statistics_table extends flexible_table {
      */
     protected function col_intended_weight($question) {
         return offlinequiz_report_scale_summarks_as_percentage(
-                $question->_stats->maxmark, $this->offlinequiz);
+            $question->_stats->maxmark,
+            $this->offlinequiz
+        );
     }
 
     /**
@@ -238,9 +240,11 @@ class statistics_table extends flexible_table {
             $negcovar = get_string('negcovar', 'offlinequiz_statistics');
 
             if (!$this->is_downloading()) {
-                $negcovar = html_writer::tag('div',
-                        $negcovar . $OUTPUT->help_icon('negcovar', 'offlinequiz_statistics'),
-                        ['class' => 'negcovar']);
+                $negcovar = html_writer::tag(
+                    'div',
+                    $negcovar . $OUTPUT->help_icon('negcovar', 'offlinequiz_statistics'),
+                    ['class' => 'negcovar']
+                );
             }
 
             return $negcovar;
@@ -306,8 +310,12 @@ class statistics_table extends flexible_table {
     public function download_buttons() {
         global $OUTPUT;
         if ($this->is_downloadable() && !$this->is_downloading()) {
-            return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'offlinequiz_statistics'),
-                    $this->baseurl->out_omit_querystring(), 'download', $this->baseurl->params() + ['everything' => 1]);
+            return $OUTPUT->download_dataformat_selector(
+                get_string('downloadeverything', 'offlinequiz_statistics'),
+                $this->baseurl->out_omit_querystring(),
+                'download',
+                $this->baseurl->params() + ['everything' => 1]
+            );
         } else {
             return '';
         }

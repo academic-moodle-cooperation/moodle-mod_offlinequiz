@@ -64,10 +64,10 @@ class offlinequiz_answer_pdf_identified extends offlinequiz_answer_pdf {
             // Pad with zeros.
             $idnumber = str_pad($idnumber, $offlinequizconfig->ID_digits, '0', STR_PAD_LEFT);
             $pdf->SetFont('FreeSans', '', 8);
-            $pdf->setXY(34.4,  29);
-            $pdf->Cell(90, 7, ' '.offlinequiz_str_html_pdf($participant->firstname), 0, 0, 'L');
-            $pdf->setXY(34.4,  36);
-            $pdf->Cell(90, 7, ' '.offlinequiz_str_html_pdf($participant->lastname), 0, 1, 'L');
+            $pdf->setXY(34.4, 29);
+            $pdf->Cell(90, 7, ' ' . offlinequiz_str_html_pdf($participant->firstname), 0, 0, 'L');
+            $pdf->setXY(34.4, 36);
+            $pdf->Cell(90, 7, ' ' . offlinequiz_str_html_pdf($participant->lastname), 0, 1, 'L');
             // Print Check test.
 
             $pdf->SetFont('FreeSans', '', 12);
@@ -86,9 +86,9 @@ class offlinequiz_answer_pdf_identified extends offlinequiz_answer_pdf {
                 for ($j = 0; $j <= 9; $j++) {
                     $y = 44 + $j * 6;
                     $pdf->SetXY($x, $y);
-                    $pdf->Cell(2.7,  1, '', 0, 0, 'C');
+                    $pdf->Cell(2.7, 1, '', 0, 0, 'C');
                     if ($idnumber[$i] == $j) {
-                        $pdf->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif", $x ,  $y + 0.15,  3.15,  0);
+                        $pdf->Image("$CFG->dirroot/mod/offlinequiz/pix/kreuz.gif", $x, $y + 0.15, 3.15, 0);
                     }
                 }
             }
@@ -124,8 +124,8 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
         $roleids[] = $role->id;
     }
 
-    list($csql, $cparams) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
-    list($rsql, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
+    [$csql, $cparams] = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
+    [$rsql, $rparams] = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
     $params = array_merge($cparams, $rparams);
     // Get all users that are in the list. TODO: Use explicit JOINS.
     $sql = "SELECT DISTINCT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname
@@ -156,7 +156,7 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
             $modinfo = get_fast_modinfo($coursemodule->course, $user->id);
             $cm = $modinfo->get_cm($cmid);
 
-            if ( $cm->available) {
+            if ($cm->available) {
                 $filtereduserids[$user->id] = $user;
             }
         }
@@ -177,8 +177,15 @@ function offlinequizidentified_get_participants($offlinequiz, $list, $onlyifacce
  * @param bool $onlyifaccess
  * @return boolean
  */
-function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $groupnumber,
-        $list, $context, $nogroupmark=false, $onlyifaccess = false) {
+function offlinequiz_create_pdf_participants_answers(
+    $offlinequiz,
+    $courseid,
+    $groupnumber,
+    $list,
+    $context,
+    $nogroupmark = false,
+    $onlyifaccess = false
+) {
     global $CFG, $DB;
     // Get the participants filtering by access if requested.
     $participants = offlinequizidentified_get_participants($offlinequiz, $list, $onlyifaccess);
@@ -191,7 +198,7 @@ function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $g
     $pdf->listno = $list->listnumber;
     $title = offlinequiz_str_html_pdf($offlinequiz->name);
     // Add the list name to the title.
-    $title .= ', '.offlinequiz_str_html_pdf($list->name);
+    $title .= ', ' . offlinequiz_str_html_pdf($list->name);
     $pdf->set_title($title);
     $pdf->SetMargins(15, 25, 15);
     $pdf->SetAutoPageBreak(true, 20);
@@ -209,19 +216,26 @@ function offlinequiz_create_pdf_participants_answers($offlinequiz, $courseid, $g
     $maxanswers = offlinequiz_get_maxanswers($offlinequiz, [$group]);
     if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
         throw new \moodle_exception(
-            "missinggroup" ,
+            "missinggroup",
             "offlinequiz_identified",
-            "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey(),
+            "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey(),
             $groupletter
         );
     }
 
     foreach ($participants as $participant) {
-        $pdf->add_participant_answer_page( $participant, $maxanswers, $templateusage, $offlinequiz,
-            $group, $courseid, $context, $groupletter);
+        $pdf->add_participant_answer_page(
+            $participant,
+            $maxanswers,
+            $templateusage,
+            $offlinequiz,
+            $group,
+            $courseid,
+            $context,
+            $groupletter
+        );
     }
 
     $pdf->Output("{$offlinequiz->name}_{$list->name}.pdf", 'D');
     return true;
 }
-

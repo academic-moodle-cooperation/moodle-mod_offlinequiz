@@ -60,7 +60,7 @@ class participants_report {
         $table = new offlinequiz_selectall_table('mod-offlinequiz-participants-error', 'participants.php', $tableparams);
 
         // Add extra limits due to initials bar.
-        list($ttest, $tparams) = $table->get_sql_where();
+        [$ttest, $tparams] = $table->get_sql_where();
 
         if (!empty($ttest)) {
             $sql .= ' AND ' . $ttest;
@@ -77,7 +77,7 @@ class participants_report {
         }
 
         // Define table columns.
-        $tablecolumns = ['checkbox', 'time' , 'error', 'scan'];
+        $tablecolumns = ['checkbox', 'time', 'error', 'scan'];
         $tableheaders = ['', get_string('importedon', 'offlinequiz_rimport'), get_string('error'), ''];
 
         $table->define_columns($tablecolumns);

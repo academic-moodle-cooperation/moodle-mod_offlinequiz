@@ -42,7 +42,6 @@ use mod_offlinequiz\output\question_chooser;
  * @since Moodle 2.7
  */
 class edit_renderer extends \plugin_renderer_base {
-
     /**
      * Render the edit page
      *
@@ -54,13 +53,14 @@ class edit_renderer extends \plugin_renderer_base {
      * @param array $groupletters
      * @return string HTML to output.
      */
-    public function edit_page(\offlinequiz $offlinequizobj,
-                                structure $structure,
-                                \core_question\local\bank\question_edit_contexts $contexts,
-                                \moodle_url $pageurl,
-                                array $pagevars,
-                                array $groupletters
-                            ) {
+    public function edit_page(
+        \offlinequiz $offlinequizobj,
+        structure $structure,
+        \core_question\local\bank\question_edit_contexts $contexts,
+        \moodle_url $pageurl,
+        array $pagevars,
+        array $groupletters
+    ) {
         global $CFG;
         $offlinequiz = $offlinequizobj->get_offlinequiz();
         $cm = $offlinequizobj->get_cm();
@@ -69,10 +69,15 @@ class edit_renderer extends \plugin_renderer_base {
         offlinequiz_print_tabs($offlinequiz, 'tabeditgroupquestions', $cm);
 
         // Page title.
-        echo $this->heading_with_help(get_string('editingofflinequizx', 'offlinequiz') .
+        echo $this->heading_with_help(
+            get_string('editingofflinequizx', 'offlinequiz') .
             ' ' . get_string('group', 'offlinequiz') . ' ' . $groupletters[$offlinequiz->groupnumber],
-            'editingofflinequiz', 'offlinequiz', '',
-            get_string('basicideasofofflinequiz', 'offlinequiz'), 2);
+            'editingofflinequiz',
+            'offlinequiz',
+            '',
+            get_string('basicideasofofflinequiz', 'offlinequiz'),
+            2
+        );
         $templatecontext = [];
         $templatecontext['sesskey'] = sesskey();
         $templatecontext['groupnumber'] = $offlinequiz->groupnumber;
@@ -86,7 +91,7 @@ class edit_renderer extends \plugin_renderer_base {
         $templatecontext = $this->repaginate_button_values($structure, $pageurl, $offlinequiz, $templatecontext);
         $templatecontext = $this->total_marks($offlinequiz, $templatecontext);
         $templatecontext = $this->start_add_to_group_form_values($offlinequiz, $pageurl, $templatecontext);
-        $templatecontext = $this->add_to_group_button($structure, $offlinequiz,  $pageurl, $templatecontext);
+        $templatecontext = $this->add_to_group_button($structure, $offlinequiz, $pageurl, $templatecontext);
         $output = $this->render_from_template('mod_offlinequiz/edit_buttons', $templatecontext);
         // Start form for question checkboxes.
 
@@ -100,8 +105,13 @@ class edit_renderer extends \plugin_renderer_base {
             $output .= $this->questions_in_section($structure, $section, $contexts, $pagevars, $pageurl);
             if ($section === $lastsection) {
                 $output .= html_writer::start_div('last-add-menu');
-                $output .= html_writer::tag('span', $this->add_menu_actions($structure, 0,
-                        $pageurl, $contexts, $pagevars), ['class' => 'add-menu-outer']);
+                $output .= html_writer::tag('span', $this->add_menu_actions(
+                    $structure,
+                    0,
+                    $pageurl,
+                    $contexts,
+                    $pagevars
+                ), ['class' => 'add-menu-outer']);
                 $output .= html_writer::end_div();
             }
             $output .= $this->end_section();
@@ -112,8 +122,14 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= $this->end_add_to_group_form();
 
         // Inialise the JavaScript.
-        $this->initialise_editing_javascript($offlinequizobj->get_course(), $offlinequizobj->get_offlinequiz(),
-                $structure, $contexts, $pagevars, $pageurl);
+        $this->initialise_editing_javascript(
+            $offlinequizobj->get_course(),
+            $offlinequizobj->get_offlinequiz(),
+            $structure,
+            $contexts,
+            $pagevars,
+            $pageurl
+        );
 
         if ($structure->can_be_edited()) {
             $thiscontext = $contexts->lowest();
@@ -271,7 +287,7 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function offlinequiz_information_values(structure $structure, $templatecontext) {
 
-        list($currentstatus, $explanation) = $structure->get_dates_summary();
+        [$currentstatus, $explanation] = $structure->get_dates_summary();
         $templatecontext['informationcurrentstatus'] = $currentstatus;
         $templatecontext['informationexplanation'] = $explanation;
         $templatecontext['informationquestioncount'] = $structure->get_question_count();
@@ -323,8 +339,11 @@ class edit_renderer extends \plugin_renderer_base {
         } else {
             $this->page->requires->yui_module('moodle-mod_offlinequiz-repaginate', 'M.mod_offlinequiz.repaginate.init');
         }
-        $templatecontext['repaginatebutton'] = html_writer::tag('div',
-            html_writer::empty_tag('input', $buttonoptions), $containeroptions);
+        $templatecontext['repaginatebutton'] = html_writer::tag(
+            'div',
+            html_writer::empty_tag('input', $buttonoptions),
+            $containeroptions
+        );
         return $templatecontext;
     }
 
@@ -344,17 +363,21 @@ class edit_renderer extends \plugin_renderer_base {
         $hiddenurl = clone($pageurl);
         $hiddenurl->param('sesskey', sesskey());
 
-        $select = html_writer::select($perpage, 'questionsperpage',
-                $structure->get_questions_per_page(), false);
+        $select = html_writer::select(
+            $perpage,
+            'questionsperpage',
+            $structure->get_questions_per_page(),
+            false
+        );
 
         $buttonattributes = ['type' => 'submit', 'name' => 'repaginate', 'value' => get_string('go'),
             'class' => 'btn btn-secondary'];
 
         $formcontent = html_writer::tag('form', html_writer::div(
-                    html_writer::input_hidden_params($hiddenurl) .
+            html_writer::input_hidden_params($hiddenurl) .
                     get_string('repaginate', 'offlinequiz', $select) .
                     html_writer::empty_tag('input', $buttonattributes)
-                ), ['action' => 'edit.php', 'method' => 'post']);
+        ), ['action' => 'edit.php', 'method' => 'post']);
 
         return html_writer::div($formcontent, '', ['id' => 'repaginatedialog']);
     }
@@ -382,12 +405,16 @@ class edit_renderer extends \plugin_renderer_base {
             'role' => 'button',
             'class' => 'btn btn-link deselectall',
             ];
-            $output .= html_writer::tag('div',
-            html_writer::tag('div',
-                            html_writer::link('#', get_string('selectall', 'quiz'), $buttonselectalloptions) .
+            $output .= html_writer::tag(
+                'div',
+                html_writer::tag(
+                    'div',
+                    html_writer::link('#', get_string('selectall', 'quiz'), $buttonselectalloptions) .
                             html_writer::link('#', get_string('selectnone', 'quiz'), $buttondeselectalloptions),
-                            ['class' => 'btn-group selectmultiplecommandbuttons']),
-            $toolbaroptions);
+                    ['class' => 'btn-group selectmultiplecommandbuttons']
+                ),
+                $toolbaroptions
+            );
         }
         return $output;
     }
@@ -415,9 +442,11 @@ class edit_renderer extends \plugin_renderer_base {
             $buttonoptions['disabled'] = 'disabled';
         }
 
-        return html_writer::tag('div',
-                html_writer::empty_tag('input', $buttonoptions), $containeroptions);
-
+        return html_writer::tag(
+            'div',
+            html_writer::empty_tag('input', $buttonoptions),
+            $containeroptions
+        );
     }
 
     /**
@@ -459,8 +488,8 @@ class edit_renderer extends \plugin_renderer_base {
         $output = '';
         $sectionstyle = '';
 
-        $output .= html_writer::start_tag('li', ['id' => 'section-'.$section->id,
-            'class' => 'section main clearfix'.$sectionstyle, 'role' => 'region',
+        $output .= html_writer::start_tag('li', ['id' => 'section-' . $section->id,
+            'class' => 'section main clearfix' . $sectionstyle, 'role' => 'region',
             'aria-label' => $section->heading]);
 
         $leftcontent = $this->section_left_content($section);
@@ -517,8 +546,13 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
-    public function questions_in_section(structure $structure, $section,
-            $contexts, $pagevars, $pageurl) {
+    public function questions_in_section(
+        structure $structure,
+        $section,
+        $contexts,
+        $pagevars,
+        $pageurl
+    ) {
 
         $output = '';
         foreach ($structure->get_slots_in_section($section->id) as $slot) {
@@ -546,8 +580,11 @@ class edit_renderer extends \plugin_renderer_base {
         // Page split/join icon.
         $joinhtml = '';
         if ($structure->can_be_edited() && !$structure->is_last_slot_in_offlinequiz($slot)) {
-            $joinhtml = $this->page_split_join_button($structure->get_offlinequiz(),
-                    $slot, !$structure->is_last_slot_on_page($slot));
+            $joinhtml = $this->page_split_join_button(
+                $structure->get_offlinequiz(),
+                $slot,
+                !$structure->is_last_slot_on_page($slot)
+            );
         }
 
         // Question HTML.
@@ -555,8 +592,11 @@ class edit_renderer extends \plugin_renderer_base {
         $qtype = $structure->get_question_type_for_slot($slot);
         $questionclasses = 'activity ' . $qtype . ' qtype_' . $qtype . ' slot';
 
-        $output .= html_writer::tag('li', $questionhtml . $joinhtml,
-                ['class' => $questionclasses, 'id' => 'slot-' .$structure->get_slot_id_for_slot($slot)]);
+        $output .= html_writer::tag(
+            'li',
+            $questionhtml . $joinhtml,
+            ['class' => $questionclasses, 'id' => 'slot-' . $structure->get_slot_id_for_slot($slot)]
+        );
 
         return $output;
     }
@@ -578,8 +618,11 @@ class edit_renderer extends \plugin_renderer_base {
         $questionhtml = $this->question_for_grading($structure, $question->slot, $pageurl);
         $questionclasses = 'activity forgrading ' . $question->qtype . ' qtype_' . $question->qtype . ' slot';
 
-        $output .= html_writer::tag('li', $questionhtml ,
-                ['class' => $questionclasses, 'id' => 'slot-' . $question->slotid]);
+        $output .= html_writer::tag(
+            'li',
+            $questionhtml,
+            ['class' => $questionclasses, 'id' => 'slot-' . $question->slotid]
+        );
 
         return $output;
     }
@@ -606,15 +649,30 @@ class edit_renderer extends \plugin_renderer_base {
 
         if ($structure->is_first_slot_on_page($slot)) {
             // Add the add-menu at the page level.
-            $addmenu = html_writer::tag('span', $this->add_menu_actions($structure,
-                    $question->page, $pageurl, $contexts, $pagevars),
-                    ['class' => 'add-menu-outer']);
+            $addmenu = html_writer::tag(
+                'span',
+                $this->add_menu_actions(
+                    $structure,
+                    $question->page,
+                    $pageurl,
+                    $contexts,
+                    $pagevars
+                ),
+                ['class' => 'add-menu-outer']
+            );
 
-            $addquestionform = $this->add_question_form($structure,
-                    $question->page, $pageurl, $pagevars);
+            $addquestionform = $this->add_question_form(
+                $structure,
+                $question->page,
+                $pageurl,
+                $pagevars
+            );
 
-            $output .= html_writer::tag('li', $page . $addmenu . $addquestionform,
-                    ['class' => 'pagenumber activity yui3-dd-drop page', 'id' => 'page-' . $pagenumber]);
+            $output .= html_writer::tag(
+                'li',
+                $page . $addmenu . $addquestionform,
+                ['class' => 'pagenumber activity yui3-dd-drop page', 'id' => 'page-' . $pagenumber]
+            );
         }
 
         return $output;
@@ -629,8 +687,13 @@ class edit_renderer extends \plugin_renderer_base {
      * @param array $pagevars the variables from \question_edit_setup()
      * @return string HTML to output.
      */
-    public function add_menu_actions(structure $structure, $page, \moodle_url $pageurl,
-            \core_question\local\bank\question_edit_contexts $contexts, array $pagevars) {
+    public function add_menu_actions(
+        structure $structure,
+        $page,
+        \moodle_url $pageurl,
+        \core_question\local\bank\question_edit_contexts $contexts,
+        array $pagevars
+    ) {
 
         $actions = $this->edit_menu_actions($structure, $page, $pageurl, $pagevars);
         if (empty($actions)) {
@@ -670,8 +733,12 @@ class edit_renderer extends \plugin_renderer_base {
      * @param array $pagevars the variables from \question_edit_setup()
      * @return array the actions.
      */
-    public function edit_menu_actions(structure $structure, $page,
-            \moodle_url $pageurl, array $pagevars) {
+    public function edit_menu_actions(
+        structure $structure,
+        $page,
+        \moodle_url $pageurl,
+        array $pagevars
+    ) {
         $questioncategoryid = question_get_category_id_from_pagevars($pagevars);
         static $str;
         if (!isset($str)) {
@@ -692,7 +759,8 @@ class edit_renderer extends \plugin_renderer_base {
         $actions['addnewquestion'] = new \action_menu_link_secondary(
             new \moodle_url('/question/addquestion.php', $params),
             new \pix_icon('t/add', $str->addnewquestion, 'moodle', ['class' => 'iconsmall', 'title' => '']),
-            $str->addnewquestion, ['class' => 'cm-edit-action addquestion', 'data-action' => 'addquestion']
+            $str->addnewquestion,
+            ['class' => 'cm-edit-action addquestion', 'data-action' => 'addquestion']
         );
 
         // Call question bank.
@@ -707,8 +775,10 @@ class edit_renderer extends \plugin_renderer_base {
         $actions['questionbank'] = new \action_menu_link_secondary($pageurl, $icon, $str->fromquestionbank, $attributes);
 
         // Add a random question.
-        $returnurl = new \moodle_url('/mod/offlinequiz/edit.php',
-                ['cmid' => $structure->get_cmid(), 'groupnumber' => $pageurl->get_param('groupnumber'), 'data-addonpage' => $page]);
+        $returnurl = new \moodle_url(
+            '/mod/offlinequiz/edit.php',
+            ['cmid' => $structure->get_cmid(), 'groupnumber' => $pageurl->get_param('groupnumber'), 'data-addonpage' => $page]
+        );
         $params = [
             'returnurl' => $returnurl,
             'cmid' => $structure->get_cmid(),
@@ -738,19 +808,37 @@ class edit_renderer extends \plugin_renderer_base {
 
         $questioncategoryid = question_get_category_id_from_pagevars($pagevars);
 
-        $output = html_writer::tag('input', null,
-                ['type' => 'hidden', 'name' => 'returnurl',
-                        'value' => $pageurl->out_as_local_url(false, ['addonpage' => $page])]);
-        $output .= html_writer::tag('input', null,
-                ['type' => 'hidden', 'name' => 'cmid', 'value' => $structure->get_cmid()]);
-        $output .= html_writer::tag('input', null,
-                ['type' => 'hidden', 'name' => 'appendqnumstring', 'value' => 'addquestion']);
-        $output .= html_writer::tag('input', null,
-                ['type' => 'hidden', 'name' => 'category', 'value' => $questioncategoryid]);
+        $output = html_writer::tag(
+            'input',
+            null,
+            ['type' => 'hidden', 'name' => 'returnurl',
+            'value' => $pageurl->out_as_local_url(
+                false,
+                ['addonpage' => $page]
+            )]
+        );
+        $output .= html_writer::tag(
+            'input',
+            null,
+            ['type' => 'hidden', 'name' => 'cmid', 'value' => $structure->get_cmid()]
+        );
+        $output .= html_writer::tag(
+            'input',
+            null,
+            ['type' => 'hidden', 'name' => 'appendqnumstring', 'value' => 'addquestion']
+        );
+        $output .= html_writer::tag(
+            'input',
+            null,
+            ['type' => 'hidden', 'name' => 'category', 'value' => $questioncategoryid]
+        );
 
-        return html_writer::tag('form', html_writer::div($output),
-                ['class' => 'addnewquestion', 'method' => 'post',
-                        'action' => new \moodle_url('/question/addquestion.php')]);
+        return html_writer::tag(
+            'form',
+            html_writer::div($output),
+            ['class' => 'addnewquestion', 'method' => 'post',
+            'action' => new \moodle_url('/question/addquestion.php')]
+        );
     }
 
     /**
@@ -859,12 +947,13 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string
      */
     private function get_bank_url($structure, $question) {
-        $bankurl = new \moodle_url('/question/edit.php',
-                [
+        $bankurl = new \moodle_url(
+            '/question/edit.php',
+            [
                     'cmid' => $structure->get_source_bank_cminfo($question->contextid)->id,
                     'cat' => "{$question->categoryid},{$question->contextid}",
                 ]
-            );
+        );
         return $bankurl->out(false);
     }
     /**
@@ -886,7 +975,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string
      */
     private function question_checkbox($question) {
-         $checkbox = '<input class="select-multiple-checkbox" '.
+         $checkbox = '<input class="select-multiple-checkbox" ' .
              'id="s' . $question->id . '" type="checkbox" ' .
              'name="s' . $question->id . '" form="offlinequizbulkcopyform" ' .
              'aria-label="' . get_string('selectquestion', 'mod_offlinequiz', $question->id) . '"/>';
@@ -900,7 +989,8 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string The markup for the move action, or an empty string if not available.
      */
     public function question_move_icon($question) {
-        return html_writer::link(new \moodle_url('#'),
+        return html_writer::link(
+            new \moodle_url('#'),
             $this->pix_icon('i/dragdrop', get_string('move'), 'moodle', ['class' => 'iconsmall', 'title' => '']),
             ['class' => 'editing_move', 'data-action' => 'move']
         );
@@ -940,11 +1030,19 @@ class edit_renderer extends \plugin_renderer_base {
         $strpreviewquestion = get_string('previewquestion', 'offlinequiz');
         $image = $this->pix_icon('t/preview', $strpreviewquestion);
 
-        $action = new \popup_action('click', $url, 'questionpreview',
-                                        \qbank_previewquestion\helper::question_preview_popup_params());
+        $action = new \popup_action(
+            'click',
+            $url,
+            'questionpreview',
+            \qbank_previewquestion\helper::question_preview_popup_params()
+        );
 
-        return $this->action_link($url, $image . $strpreviewlabel, $action,
-                ['title' => $strpreviewquestion, 'class' => 'preview']);
+        return $this->action_link(
+            $url,
+            $image . $strpreviewlabel,
+            $action,
+            ['title' => $strpreviewquestion, 'class' => 'preview']
+        );
     }
 
     /**
@@ -974,13 +1072,15 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function page_split_join_button($offlinequiz, $slot, $insertpagebreak) {
-        $url = new \moodle_url('repaginate.php',
-                ['cmid' => $offlinequiz->cmid,
+        $url = new \moodle_url(
+            'repaginate.php',
+            ['cmid' => $offlinequiz->cmid,
                       'offlinequizid' => $offlinequiz->id,
                       'offlinegroupid' => $offlinequiz->groupid,
                       'slot' => $slot,
                       'repag' => $insertpagebreak ? 2 : 1,
-                      'sesskey' => sesskey()]);
+            'sesskey' => sesskey()]
+        );
 
         if ($insertpagebreak) {
             $title = get_string('addpagebreak', 'offlinequiz');
@@ -997,9 +1097,11 @@ class edit_renderer extends \plugin_renderer_base {
         if (offlinequiz_has_scanned_pages($offlinequiz->id)) {
             $disabled = "disabled";
         }
-        return html_writer::span($this->action_link($url, $image, null, ['title' => $title,
+        return html_writer::span(
+            $this->action_link($url, $image, null, ['title' => $title,
                     'class' => 'page_split_join cm-edit-action', 'disabled' => $disabled, 'data-action' => $action]),
-                'page_split_join_wrapper');
+            'page_split_join_wrapper'
+        );
     }
 
     /**
@@ -1035,8 +1137,11 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Display the link itself.
         $activitylink = $icon . html_writer::tag('span', $editicon . $instancename, ['class' => 'instancename']);
-        $output .= html_writer::link($editurl, $activitylink,
-                ['title' => get_string('editquestion', 'offlinequiz'). ' '. $title]);
+        $output .= html_writer::link(
+            $editurl,
+            $activitylink,
+            ['title' => get_string('editquestion', 'offlinequiz') . ' ' . $title]
+        );
 
         return $output;
     }
@@ -1074,8 +1179,11 @@ class edit_renderer extends \plugin_renderer_base {
                 'cmid' => $structure->get_cmid(),
                 'cat' => $question->category . ',' . $question->contextid,
                 'recurse' => !empty($question->questiontext)]);
-        $qbanklink = ' ' . html_writer::link($qbankurl,
-                get_string('seequestions', 'offlinequiz'), ['class' => 'mod_offlinequiz_random_qbank_link']);
+        $qbanklink = ' ' . html_writer::link(
+            $qbankurl,
+            get_string('seequestions', 'offlinequiz'),
+            ['class' => 'mod_offlinequiz_random_qbank_link']
+        );
 
         return html_writer::link($editurl, $icon . $editicon, ['title' => $configuretitle]) .
                 ' ' . $instancename . ' ' . $qbanklink;
@@ -1090,18 +1198,23 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function marked_out_of_field($offlinequiz, $question) {
         if ($question->length == 0) {
-            $output = html_writer::span('',
-                    'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($offlinequiz));
+            $output = html_writer::span(
+                '',
+                'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($offlinequiz)
+            );
 
             $output .= html_writer::span(
-                    $this->pix_icon('spacer', '', 'moodle', ['class' => 'editicon visibleifjs', 'title' => '']),
-                    'editing_maxmark');
+                $this->pix_icon('spacer', '', 'moodle', ['class' => 'editicon visibleifjs', 'title' => '']),
+                'editing_maxmark'
+            );
             return html_writer::span($output, 'instancemaxmarkcontainer infoitem');
         }
 
-        $output = html_writer::span(offlinequiz_format_question_grade($offlinequiz, $question->maxmark),
-                'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($offlinequiz),
-                ['title' => get_string('maxmark', 'offlinequiz')]);
+        $output = html_writer::span(
+            offlinequiz_format_question_grade($offlinequiz, $question->maxmark),
+            'instancemaxmark decimalplaces_' . offlinequiz_get_grade_format($offlinequiz),
+            ['title' => get_string('maxmark', 'offlinequiz')]
+        );
 
         $output .= html_writer::span(
             html_writer::link(
@@ -1143,9 +1256,13 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function question_bank_loading() {
-        return html_writer::div(html_writer::empty_tag('img',
-                ['alt' => 'loading', 'class' => 'loading-icon', 'src' => $this->image_url('i/loading')]),
-                'questionbankloading');
+        return html_writer::div(
+            html_writer::empty_tag(
+                'img',
+                ['alt' => 'loading', 'class' => 'loading-icon', 'src' => $this->image_url('i/loading')]
+            ),
+            'questionbankloading'
+        );
     }
 
     /**
@@ -1160,8 +1277,14 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return bool Always returns true
      */
-    protected function initialise_editing_javascript($course, $offlinequiz, structure $structure,
-            \core_question\local\bank\question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
+    protected function initialise_editing_javascript(
+        $course,
+        $offlinequiz,
+        structure $structure,
+        \core_question\local\bank\question_edit_contexts $contexts,
+        array $pagevars,
+        \moodle_url $pageurl
+    ) {
 
         $config = new \stdClass();
         $config->resourceurl = '/mod/offlinequiz/edit_rest.php';
@@ -1171,9 +1294,10 @@ class edit_renderer extends \plugin_renderer_base {
         $config->pagehtml = $this->new_page_template($structure, $contexts, $pagevars, $pageurl);
         $config->addpageiconhtml = $this->add_page_icon_template($structure, $offlinequiz);
 
-        $this->page->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
-                'M.mod_offlinequiz.init_resource_toolbox',
-                [[
+        $this->page->requires->yui_module(
+            'moodle-mod_offlinequiz-toolboxes',
+            'M.mod_offlinequiz.init_resource_toolbox',
+            [[
                         'courseid' => $course->id,
                         'offlinequizid' => $offlinequiz->id,
                         'offlinegroupid' => $offlinequiz->groupid,
@@ -1184,9 +1308,10 @@ class edit_renderer extends \plugin_renderer_base {
         unset($config->pagehtml);
         unset($config->addpageiconhtml);
 
-        $this->page->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
-                'M.mod_offlinequiz.init_section_toolbox',
-                [[
+        $this->page->requires->yui_module(
+            'moodle-mod_offlinequiz-toolboxes',
+            'M.mod_offlinequiz.init_section_toolbox',
+            [[
                         'courseid' => $course->id,
                         'offlinequizid' => $offlinequiz->id,
                         'offlinegroupid' => $offlinequiz->groupid,
@@ -1196,23 +1321,33 @@ class edit_renderer extends \plugin_renderer_base {
                 ]]
         );
 
-        $this->page->requires->yui_module('moodle-mod_offlinequiz-dragdrop', 'M.mod_offlinequiz.init_section_dragdrop',
-                [[
+        $this->page->requires->yui_module(
+            'moodle-mod_offlinequiz-dragdrop',
+            'M.mod_offlinequiz.init_section_dragdrop',
+            [[
                         'courseid' => $course->id,
                         'offlinequizid' => $offlinequiz->id,
                         'offlinegroupid' => $offlinequiz->groupid,
                         'ajaxurl' => $config->sectionurl,
                         'config' => $config,
-                ]], null, true);
+            ]],
+            null,
+            true
+        );
 
-        $this->page->requires->yui_module('moodle-mod_offlinequiz-dragdrop', 'M.mod_offlinequiz.init_resource_dragdrop',
-                [[
+        $this->page->requires->yui_module(
+            'moodle-mod_offlinequiz-dragdrop',
+            'M.mod_offlinequiz.init_resource_dragdrop',
+            [[
                         'courseid' => $course->id,
                         'offlinequizid' => $offlinequiz->id,
                         'offlinegroupid' => $offlinequiz->groupid,
                         'ajaxurl' => $config->resourceurl,
                         'config' => $config,
-                ]], null, true);
+            ]],
+            null,
+            true
+        );
 
         // Require various strings for the command toolbox.
         $this->page->requires->strings_for_js([
@@ -1261,8 +1396,12 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML for a new page.
      */
-    protected function new_page_template(structure $structure,
-            \core_question\local\bank\question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
+    protected function new_page_template(
+        structure $structure,
+        \core_question\local\bank\question_edit_contexts $contexts,
+        array $pagevars,
+        \moodle_url $pageurl
+    ) {
         if (!$structure->has_questions()) {
             return '';
         }

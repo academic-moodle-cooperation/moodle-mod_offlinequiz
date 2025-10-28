@@ -46,7 +46,6 @@ define('CROSSTHICKNESS', 2);
  *
  **/
 class crossfinder {
-
     /**
      * Finds one cross in a corner to find out the adjustment of a page
      * @param \Imagick $image the image of the page
@@ -156,7 +155,7 @@ class crossfinder {
      */
     private function findclosest($middle, $upper, $lower) {
         if ($upper && $lower) {
-            if ( abs($upper - $middle) > abs($lower - $middle) ) {
+            if (abs($upper - $middle) > abs($lower - $middle)) {
                 return $lower;
             } else {
                 return $upper;
@@ -261,7 +260,6 @@ class simple_cross_scanner {
                         }
                     }
                 } else {
-
                     for ($j = $upperleft->gety(); $j > $upperleft->gety() - $margin; $j--) {
                         if (pixelisblack($image, $i, $j)) {
                             $count++;
@@ -368,6 +366,5 @@ class simple_cross_scanner {
         }
         // To do: Fehlerbehandlung.
         return new offlinequiz_point($pointx, $pointy, 1);
-
     }
 }

@@ -41,5 +41,4 @@ class offlinequiz_page {
      * @var string
      */
     public string $status;
-
 }

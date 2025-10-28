@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir . '/tablelib.php');
 /**
  * the table for the results
  */
@@ -95,10 +95,10 @@ class offlinequiz_results_table extends flexible_table {
 
         echo '<table id="commands">';
         echo ' <tr><td>';
-        echo '  <a href="#" class="selectall">'. $strselectall . '</a> / ';
+        echo '  <a href="#" class="selectall">' . $strselectall . '</a> / ';
         echo '  <a href="#" class="deselectall">' . $strselectnone . '</a> ';
         echo '  &nbsp;&nbsp;';
-        echo '  <input class="btn btn-secondary" type="submit" value="'.get_string('deleteselectedresults', 'offlinequiz').'"/>';
+        echo '  <input class="btn btn-secondary" type="submit" value="' . get_string('deleteselectedresults', 'offlinequiz') . '"/>';
         echo ' </td></tr></table>';
         echo '  </center>';
         // Close form.
@@ -135,5 +135,4 @@ class offlinequiz_results_table extends flexible_table {
 
         echo html_writer::end_tag('div');
     }
-
 }

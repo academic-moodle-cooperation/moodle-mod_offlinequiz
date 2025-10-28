@@ -40,7 +40,6 @@ require_once($CFG->dirroot . '/mod/offlinequiz/backup/moodle2/restore_offlinequi
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_offlinequiz_activity_task extends restore_activity_task {
-
     /**
      * Define (add) particular settings this activity can have
      * @return void
@@ -80,15 +79,23 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
     public static function define_decode_rules() {
         $rules = [];
 
-        $rules[] = new restore_decode_rule('OFFLINEQUIZVIEWBYID',
-                '/mod/offlinequiz/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('OFFLINEQUIZVIEWBYQ',
-                '/mod/offlinequiz/view.php?q=$1', 'offlinequiz');
-        $rules[] = new restore_decode_rule('OFFLINEQUIZINDEX',
-                '/mod/offlinequiz/index.php?id=$1', 'course');
+        $rules[] = new restore_decode_rule(
+            'OFFLINEQUIZVIEWBYID',
+            '/mod/offlinequiz/view.php?id=$1',
+            'course_module'
+        );
+        $rules[] = new restore_decode_rule(
+            'OFFLINEQUIZVIEWBYQ',
+            '/mod/offlinequiz/view.php?q=$1',
+            'offlinequiz'
+        );
+        $rules[] = new restore_decode_rule(
+            'OFFLINEQUIZINDEX',
+            '/mod/offlinequiz/index.php?id=$1',
+            'course'
+        );
 
         return $rules;
-
     }
 
     /**
@@ -101,75 +108,188 @@ class restore_offlinequiz_activity_task extends restore_activity_task {
     public static function define_restore_log_rules() {
         $rules = [];
 
-        $rules[] = new restore_log_rule('offlinequiz', 'add',
-                'view.php?id={course_module}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'update',
-                'view.php?id={course_module}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'view',
-                'view.php?id={course_module}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'review',
-                'review.php?id={course_module}&resultid={offlinequiz_result_id}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'report',
-                'report.php?id={course_module}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'editquestions',
-                'view.php?id={course_module}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'delete result',
-                'report.php?id={course_module}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'uncheck_participant',
-                'participants.php?id={course_module}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'check_participant',
-                'participants.php?id={course_module}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'addcategory',
-                'view.php?id={course_module}', '{question_category}');
-        $rules[] = new restore_log_rule('offlinequiz', 'view summary',
-                'summary.php?result={offlinequiz_attempt_id}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'manualgrade',
-                'comment.php?resultid={offlinequiz_attempt_id}&question={question}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'manualgrading',
-                'report.php?mode=grading&q={offlinequiz}', '{offlinequiz}');
-        $rules[] = new restore_log_rule('offlinequiz', 'preview',
-                'view.php?id={course_module}', '{offlinequiz}');
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'add',
+            'view.php?id={course_module}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'update',
+            'view.php?id={course_module}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'view',
+            'view.php?id={course_module}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'review',
+            'review.php?id={course_module}&resultid={offlinequiz_result_id}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'report',
+            'report.php?id={course_module}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'editquestions',
+            'view.php?id={course_module}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'delete result',
+            'report.php?id={course_module}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'uncheck_participant',
+            'participants.php?id={course_module}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'check_participant',
+            'participants.php?id={course_module}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'addcategory',
+            'view.php?id={course_module}',
+            '{question_category}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'view summary',
+            'summary.php?result={offlinequiz_attempt_id}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'manualgrade',
+            'comment.php?resultid={offlinequiz_attempt_id}&question={question}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'manualgrading',
+            'report.php?mode=grading&q={offlinequiz}',
+            '{offlinequiz}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'preview',
+            'view.php?id={course_module}',
+            '{offlinequiz}'
+        );
 
         // All the ones calling to review.php have two rules to handle both old and new urls
         // in any case they are always converted to new urls on restore.
         // TO DO: In Moodle 2.x (x >= 5) kill the old rules.
         // Note we are using the 'offlinequiz_attempt_id' mapping because that is the
         // one containing the offlinequiz_attempt->ids old an new for offlinequiz-attempt.
-        $rules[] = new restore_log_rule('offlinequiz', 'attempt',
-                'review.php?id={course_module}&resultid={offlinequiz_attempt}', '{offlinequiz}',
-                null, null, 'review.php?attempt={offlinequiz_attempt}');
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'attempt',
+            'review.php?id={course_module}&resultid={offlinequiz_attempt}',
+            '{offlinequiz}',
+            null,
+            null,
+            'review.php?attempt={offlinequiz_attempt}'
+        );
         // Old an new for offlinequiz-submit.
-        $rules[] = new restore_log_rule('offlinequiz', 'submit',
-                'review.php?id={course_module}&attempt={offlinequiz_attempt_id}', '{offlinequiz}',
-                null, null, 'review.php?attempt={offlinequiz_attempt_id}');
-        $rules[] = new restore_log_rule('offlinequiz', 'submit',
-                'review.php?attempt={offlinequiz_attempt_id}', '{offlinequiz}');
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'submit',
+            'review.php?id={course_module}&attempt={offlinequiz_attempt_id}',
+            '{offlinequiz}',
+            null,
+            null,
+            'review.php?attempt={offlinequiz_attempt_id}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'submit',
+            'review.php?attempt={offlinequiz_attempt_id}',
+            '{offlinequiz}'
+        );
         // Old an new for offlinequiz-review.
         // Old an new for offlinequiz-start attempt.
-        $rules[] = new restore_log_rule('offlinequiz', 'start attempt',
-                'review.php?id={course_module}&attempt={offlinequiz_attempt_id}', '{offlinequiz}',
-                null, null, 'review.php?attempt={offlinequiz_attempt_id}');
-        $rules[] = new restore_log_rule('offlinequiz', 'start attempt',
-                'review.php?attempt={offlinequiz_attempt_id}', '{offlinequiz}');
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'start attempt',
+            'review.php?id={course_module}&attempt={offlinequiz_attempt_id}',
+            '{offlinequiz}',
+            null,
+            null,
+            'review.php?attempt={offlinequiz_attempt_id}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'start attempt',
+            'review.php?attempt={offlinequiz_attempt_id}',
+            '{offlinequiz}'
+        );
         // Old an new for offlinequiz-close attempt.
-        $rules[] = new restore_log_rule('offlinequiz', 'close attempt',
-                'review.php?id={course_module}&attempt={offlinequiz_attempt_id}', '{offlinequiz}',
-                null, null, 'review.php?attempt={offlinequiz_attempt_id}');
-        $rules[] = new restore_log_rule('offlinequiz', 'close attempt',
-                'review.php?attempt={offlinequiz_attempt_id}', '{offlinequiz}');
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'close attempt',
+            'review.php?id={course_module}&attempt={offlinequiz_attempt_id}',
+            '{offlinequiz}',
+            null,
+            null,
+            'review.php?attempt={offlinequiz_attempt_id}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'close attempt',
+            'review.php?attempt={offlinequiz_attempt_id}',
+            '{offlinequiz}'
+        );
         // Old an new for offlinequiz-continue attempt.
-        $rules[] = new restore_log_rule('offlinequiz', 'continue attempt',
-                'review.php?id={course_module}&attempt={offlinequiz_attempt_id}', '{offlinequiz}',
-                null, null, 'review.php?attempt={offlinequiz_attempt_id}');
-        $rules[] = new restore_log_rule('offlinequiz', 'continue attempt',
-                'review.php?attempt={offlinequiz_attempt_id}', '{offlinequiz}');
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'continue attempt',
+            'review.php?id={course_module}&attempt={offlinequiz_attempt_id}',
+            '{offlinequiz}',
+            null,
+            null,
+            'review.php?attempt={offlinequiz_attempt_id}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'continue attempt',
+            'review.php?attempt={offlinequiz_attempt_id}',
+            '{offlinequiz}'
+        );
         // Old an new for offlinequiz-continue attempt.
-        $rules[] = new restore_log_rule('offlinequiz', 'continue attemp',
-                'review.php?id={course_module}&attempt={offlinequiz_attempt_id}', '{offlinequiz}',
-                null, 'continue attempt', 'review.php?attempt={offlinequiz_attempt_id}');
-        $rules[] = new restore_log_rule('offlinequiz', 'continue attemp',
-                'review.php?attempt={offlinequiz_attempt_id}', '{offlinequiz}',
-                null, 'continue attempt');
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'continue attemp',
+            'review.php?id={course_module}&attempt={offlinequiz_attempt_id}',
+            '{offlinequiz}',
+            null,
+            'continue attempt',
+            'review.php?attempt={offlinequiz_attempt_id}'
+        );
+        $rules[] = new restore_log_rule(
+            'offlinequiz',
+            'continue attemp',
+            'review.php?attempt={offlinequiz_attempt_id}',
+            '{offlinequiz}',
+            null,
+            'continue attempt'
+        );
 
         return $rules;
     }

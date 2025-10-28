@@ -45,14 +45,14 @@ define("CORNER_SPACE_BOTTOM", "120.5");            // The space between the bott
  * define("LAYER_HEIGHT", A4_HEIGHT - CORNER_SPACE_TOP - CORNER_SPACE_BOTTOM);
  *
  */
-define("DIAGONAL_LENGTH", sqrt(pow(LAYER_WIDTH, 2) + pow(LAYER_HEIGHT, 2)) );
+define("DIAGONAL_LENGTH", sqrt(pow(LAYER_WIDTH, 2) + pow(LAYER_HEIGHT, 2)));
 /**
  * calculate without adjustment
  * @param mixed $imagegeometry
  * @param \offlinequiz_result_import\offlinequiz_point $point
  * @return offlinequiz_point
  */
-function calculatewithoutadjustment($imagegeometry, offlinequiz_point $point ) {
+function calculatewithoutadjustment($imagegeometry, offlinequiz_point $point) {
 
      $xpercentage = $point->getx() / A4_WIDTH;
      $ypercentage = $point->gety() / A4_HEIGHT;
@@ -93,7 +93,6 @@ function add(offlinequiz_point $point, $addx, $addy, $mode) {
  */
 function getdiagonalangle() {
     return asin(LAYER_HEIGHT / DIAGONAL_LENGTH);
-
 }
 /**
  * calculate the point of an with a vector
@@ -105,14 +104,17 @@ function getdiagonalangle() {
  */
 function calculatepoint(offlinequiz_point $initialpoint, offlinequiz_point $directionpoint, $anglechange, $length) {
 
-    $realdirection = new offlinequiz_point($directionpoint->getx() - $initialpoint->getx(),
-                                 $directionpoint->gety() - $initialpoint->gety(), false);
+    $realdirection = new offlinequiz_point(
+        $directionpoint->getx() - $initialpoint->getx(),
+        $directionpoint->gety() - $initialpoint->gety(),
+        false
+    );
 
     $directionangle = calculatepointangle($realdirection);
     $addeddirectionangle = $directionangle + $anglechange;
     $resultx = $initialpoint->getx() + cos($addeddirectionangle * $length);
     $resulty = $initialpoint->gety() + sin($addeddirectionangle * $length);
-    return new offlinequiz_point( $resultx, $resulty, $initialpoint->isfound() && $directionpoint->isfound());
+    return new offlinequiz_point($resultx, $resulty, $initialpoint->isfound() && $directionpoint->isfound());
 }
 /**
  * calculate the angle of a point

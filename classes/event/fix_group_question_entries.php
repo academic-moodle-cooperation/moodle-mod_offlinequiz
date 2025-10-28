@@ -32,7 +32,6 @@ use core\event\course_module_created;
  * fix group question entries
  */
 class fix_group_question_entries {
-
     /**
      * Event handler for course restored.
      *
@@ -66,7 +65,7 @@ class fix_group_question_entries {
      */
     public static function fix_single_offlinequiz($offlinequiz) {
         global $DB, $CFG;
-        require_once($CFG->dirroot.'/mod/offlinequiz/locallib.php');
+        require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
         $sql = "SELECT ogq.id as id, ogq.questionid as oldquestion, ogq.maxmark as grade, qrv.questionid as newquestion
                       FROM {offlinequiz_group_questions} ogq
                       JOIN {question_versions} qv on qv.questionid = ogq.questionid
@@ -88,8 +87,13 @@ class fix_group_question_entries {
                where cm.instance = :offlinequizid";
         $contextid = $DB->get_field_sql($sql, ['offlinequizid' => $offlinequiz->id]);
         foreach ($tofix as $groupquestion) {
-            offlinequiz_update_question_instance($offlinequiz, $contextid,
-            $groupquestion->oldquestion, $groupquestion->grade, $groupquestion->newquestion);
+            offlinequiz_update_question_instance(
+                $offlinequiz,
+                $contextid,
+                $groupquestion->oldquestion,
+                $groupquestion->grade,
+                $groupquestion->newquestion
+            );
         }
     }
 }

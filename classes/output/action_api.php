@@ -37,7 +37,7 @@ class action_api {
      * @param mixed $offlinequiz
      * @return string
      */
-    public static function insert_all_actions($sourceplugin, $sourcepage , $cm, $offlinequiz) {
+    public static function insert_all_actions($sourceplugin, $sourcepage, $cm, $offlinequiz) {
         $subplugins = \core_component::get_plugin_list('offlinequiz');
         $html = '';
         foreach ($subplugins as $subplugin => $subpluginpath) {

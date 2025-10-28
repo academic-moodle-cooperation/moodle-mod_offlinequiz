@@ -36,7 +36,6 @@ function xmldb_offlinequiz_statistics_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2012061800) {
-
         // Changing type of field subqid on table offlinequiz_question_response_stats to char.
         $table = new xmldb_table('offlinequiz_question_response_stats');
         $field = new xmldb_field('subqid', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'questionid');
@@ -49,7 +48,6 @@ function xmldb_offlinequiz_statistics_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012061801) {
-
         // Changing type of field aid on table offlinequiz_question_response_stats to char.
         $table = new xmldb_table('offlinequiz_question_response_stats');
         $field = new xmldb_field('aid', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'subqid');
@@ -67,7 +65,6 @@ function xmldb_offlinequiz_statistics_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this.
     if ($oldversion < 2013040300) {
-
         // Define field offlinegroupid to be added to offlinequiz_statistics.
         $table = new xmldb_table('offlinequiz_statistics');
         $field = new xmldb_field('offlinegroupid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'offlinequizid');
@@ -82,7 +79,6 @@ function xmldb_offlinequiz_statistics_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013120400) {
-
         // Define field correct to be added to offlinequiz_q_statistics.
         $table = new xmldb_table('offlinequiz_q_statistics');
         $field = new xmldb_field('correct', XMLDB_TYPE_INTEGER, '4', null, null, null, '0', 'randomguessscore');

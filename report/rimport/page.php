@@ -33,7 +33,6 @@ define('PAGE_STATUS_INSECURE_RESULT', 'PAGE_STATUS_INSECURE_RESULT');
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class offlinequiz_result_page {
-
     /**
      * page number of this page
      * @var int
@@ -125,5 +124,4 @@ class offlinequiz_result_page {
         $this->image = $imagick;
         $this->offlinequizid = $offlinequizid;
     }
-
 }

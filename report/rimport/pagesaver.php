@@ -33,7 +33,6 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
  * saves page to the database
  */
 class offlinequiz_page_saver {
-
     /**
      * save page information in the database
      * @param \offlinequiz_result_import\offlinequiz_result_page $page
@@ -67,7 +66,6 @@ class offlinequiz_page_saver {
         $this->save_choices($page);
 
         $this->save_status($page);
-
     }
     /**
      * save the choices
@@ -103,7 +101,6 @@ class offlinequiz_page_saver {
                 $rows[$k] = $row;
                 $k++;
             }
-
         }
          return $rows;
     }
@@ -115,7 +112,6 @@ class offlinequiz_page_saver {
      */
     private function save_status($page) {
         if ($page->status) {
-
             global $DB;
             $conditions = ['id' => $page->scannedpageid];
             $scannedpage = $DB->get_record('offlinequiz_scanned_pages', $conditions);
@@ -128,7 +124,6 @@ class offlinequiz_page_saver {
                     $scannedpage->error = null;
                 }
             }
-
         }
     }
     /**
@@ -145,9 +140,7 @@ class offlinequiz_page_saver {
             global $DB;
             $conditions = ['id' => $page->scannedpageid];
             $DB->set_field('offlinequiz_scanned_pages', 'userkey', $studentnumber, $conditions);
-
         }
-
     }
     /**
      * save page number to the database
@@ -171,7 +164,6 @@ class offlinequiz_page_saver {
             global $DB;
             $conditions = ['id' => $page->scannedpageid];
             $DB->set_field('offlinequiz_scanned_pages', 'groupnumber', $page->group->id, $conditions);
-
         }
     }
     /**
@@ -220,7 +212,7 @@ class offlinequiz_page_saver {
      * @return string
      */
     private function get_fitting_corner_name($cornernumber) {
-        if ($cornernumber == 0 ) {
+        if ($cornernumber == 0) {
             return "upperleft";
         } else if ($cornernumber == 1) {
             return "upperright";
@@ -231,7 +223,5 @@ class offlinequiz_page_saver {
         } else {
             return "UNKNOWN_CORNER";
         }
-
     }
-
 }

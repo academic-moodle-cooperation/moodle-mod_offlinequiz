@@ -37,7 +37,7 @@ class extract_files extends \core\task\adhoc_task {
      */
     public static function instance(
         int $queueid
-        ): self {
+    ): self {
         $task = new self();
         $task->set_custom_data((object) [
             'queueid' => $queueid,
@@ -74,7 +74,6 @@ class extract_files extends \core\task\adhoc_task {
             $dirname = "{$CFG->dataroot}/offlinequiz/import/$queue->id";
             $importfile = "$dirname/$queue->filename";
             if (!file_exists($importfile)) {
-
                 $this->restorefile($context->id, $queue->id, $queue->filename, $importfile);
             }
             $files = [];
@@ -122,10 +121,10 @@ class extract_files extends \core\task\adhoc_task {
                 $files = get_directory_list($dirname);
                 $files = $this->remove_original_file($files, $queue->filename);
             } else if ($mimetype == 'application/pdf') {
-                if (!$files = $this->extract_pdf_to_tiff ( $dirname, $importfile, $queue)) {
+                if (!$files = $this->extract_pdf_to_tiff($dirname, $importfile, $queue)) {
                     return;
                 }
-            } else if (preg_match('/^image/' , $mimetype)) {
+            } else if (preg_match('/^image/', $mimetype)) {
                 $files[] = $queue->filename;
             } else {
                 $queue->status = 'error';
@@ -248,11 +247,11 @@ class extract_files extends \core\task\adhoc_task {
     private function create_queuedatafile_entry($contextid, $queuedataid, $filename, $pathname) {
         $fs = get_file_storage();
         $filerecord = [
-            'contextid' => $contextid,      // ID of context.
+            'contextid' => $contextid, // ID of context.
             'component' => 'mod_offlinequiz', // Usually = table name.
-            'filearea'  => 'queuedata',      // Usually = table name.
-            'itemid'    => $queuedataid,                 // Usually = ID of row in table.
-            'filepath'  => '/',                // Any path beginning and ending in.
+            'filearea'  => 'queuedata', // Usually = table name.
+            'itemid'    => $queuedataid, // Usually = ID of row in table.
+            'filepath'  => '/', // Any path beginning and ending in.
         ]; // Any filename.
 
         $filerecord['filename'] = $filename;
@@ -261,5 +260,4 @@ class extract_files extends \core\task\adhoc_task {
         }
         return $newfile;
     }
-
 }

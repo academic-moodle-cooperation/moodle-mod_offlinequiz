@@ -28,7 +28,6 @@ use core_question\local\bank\question_version_status;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbank_helper {
-
     /**
      * Get the available versions of a question where one of the version has the given question id.
      *

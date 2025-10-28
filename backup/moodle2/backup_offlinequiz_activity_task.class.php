@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/mod/offlinequiz/backup/moodle2/backup_offlinequiz
  * backup the offline quiz activity
  */
 class backup_offlinequiz_activity_task extends backup_activity_task {
-
     /**
      * Define (add) particular settings this activity can have
      */

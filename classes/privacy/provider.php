@@ -37,12 +37,8 @@ require_once($CFG->libdir . '/questionlib.php');
  * @copyright  2017 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements
-\core_privacy\local\metadata\provider,
-
-\core_privacy\local\request\plugin\provider,
-\core_privacy\local\request\user_preference_provider,
-\core_privacy\local\request\core_userlist_provider {
+class provider implements \core_privacy\local\request\core_userlist_provider, \core_privacy\local\metadata\provider,
+ \core_privacy\local\request\plugin\provider, \core_privacy\local\request\user_preference_provider {
     /**
      * get metadata for offlinequiz
      * @param \core_privacy\local\metadata\collection $collection
@@ -54,206 +50,206 @@ class provider implements
         $collection->link_subsystem('core_question', 'privacy:metadata:core_question');
 
         $collection->add_database_table(
-          'offlinequiz',
-          [
-         'course' => 'privacy:metadata:offlinequiz:course',
-         'name' => 'privacy:metadata:offlinequiz:name',
-         'intro' => 'privacy:metadata:offlinequiz:intro',
-         'introformat' => 'privacy:metadata:offlinequiz:introformat',
-         'pdfintro' => 'privacy:metadata:offlinequiz:pdfintro',
-         'timeopen' => 'privacy:metadata:offlinequiz:timeopen',
-         'timeclose' => 'privacy:metadata:offlinequiz:timeclose',
-         'time' => 'privacy:metadata:offlinequiz:time',
-         'grade' => 'privacy:metadata:offlinequiz:grade',
-         'numgroups' => 'privacy:metadata:offlinequiz:numgroups',
-         'decimalpoints' => 'privacy:metadata:offlinequiz:decimalpoints',
-         'review' => 'privacy:metadata:offlinequiz:review',
-         'docscreated' => 'privacy:metadata:offlinequiz:docscreated',
-         'shufflequestions' => 'privacy:metadata:offlinequiz:shufflequestions',
-         'printstudycodefield' => 'privacy:metadata:offlinequiz:printstudycodefield',
-         'pdffont' => 'privacy:metadata:offlinequiz:pdffont',
-         'papergray' => 'privacy:metadata:offlinequiz:papergray',
-         'fontsize' => 'privacy:metadata:offlinequiz:fontsize',
-         'timecreated' => 'privacy:metadata:offlinequiz:timecreated',
-         'timemodified' => 'privacy:metadata:offlinequiz:timemodified',
-         'fileformat' => 'privacy:metadata:offlinequiz:fileformat',
-         'showquestioninfo' => 'privacy:metadata:offlinequiz:showquestioninfo',
-         'showgrades' => 'privacy:metadata:offlinequiz:showgrades',
-         'showtutorial' => 'privacy:metadata:offlinequiz:showtutorial',
-         'id_digits' => 'privacy:metadata:offlinequiz:id_digits',
-         'disableimgnewlines' => 'privacy:metadata:offlinequiz:disableimgnewlines',
-         'algorithmversion' => 'privacy:metadata:offlinequiz:algorithmversion',
-         'experimentalevaluation' => 'privacy:metadata:offlinequiz:experimentalevaluation',
-         'completionpass' => 'privacy:metadata:offlinequiz:completionpass',
-          ],
-          'privacy:metadata:offlinequiz'
-          );
+            'offlinequiz',
+            [
+            'course' => 'privacy:metadata:offlinequiz:course',
+            'name' => 'privacy:metadata:offlinequiz:name',
+            'intro' => 'privacy:metadata:offlinequiz:intro',
+            'introformat' => 'privacy:metadata:offlinequiz:introformat',
+            'pdfintro' => 'privacy:metadata:offlinequiz:pdfintro',
+            'timeopen' => 'privacy:metadata:offlinequiz:timeopen',
+            'timeclose' => 'privacy:metadata:offlinequiz:timeclose',
+            'time' => 'privacy:metadata:offlinequiz:time',
+            'grade' => 'privacy:metadata:offlinequiz:grade',
+            'numgroups' => 'privacy:metadata:offlinequiz:numgroups',
+            'decimalpoints' => 'privacy:metadata:offlinequiz:decimalpoints',
+            'review' => 'privacy:metadata:offlinequiz:review',
+            'docscreated' => 'privacy:metadata:offlinequiz:docscreated',
+            'shufflequestions' => 'privacy:metadata:offlinequiz:shufflequestions',
+            'printstudycodefield' => 'privacy:metadata:offlinequiz:printstudycodefield',
+            'pdffont' => 'privacy:metadata:offlinequiz:pdffont',
+            'papergray' => 'privacy:metadata:offlinequiz:papergray',
+            'fontsize' => 'privacy:metadata:offlinequiz:fontsize',
+            'timecreated' => 'privacy:metadata:offlinequiz:timecreated',
+            'timemodified' => 'privacy:metadata:offlinequiz:timemodified',
+            'fileformat' => 'privacy:metadata:offlinequiz:fileformat',
+            'showquestioninfo' => 'privacy:metadata:offlinequiz:showquestioninfo',
+            'showgrades' => 'privacy:metadata:offlinequiz:showgrades',
+            'showtutorial' => 'privacy:metadata:offlinequiz:showtutorial',
+            'id_digits' => 'privacy:metadata:offlinequiz:id_digits',
+            'disableimgnewlines' => 'privacy:metadata:offlinequiz:disableimgnewlines',
+            'algorithmversion' => 'privacy:metadata:offlinequiz:algorithmversion',
+            'experimentalevaluation' => 'privacy:metadata:offlinequiz:experimentalevaluation',
+            'completionpass' => 'privacy:metadata:offlinequiz:completionpass',
+            ],
+            'privacy:metadata:offlinequiz'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_choices',
-          [
-         'scannedpageid' => 'privacy:metadata:offlinequiz_choices:scannedpageid',
-         'slotnumber' => 'privacy:metadata:offlinequiz_choices:slotnumber',
-         'choicenumber' => 'privacy:metadata:offlinequiz_choices:choicenumber',
-         'value' => 'privacy:metadata:offlinequiz_choices:value',
-          ],
-          'privacy:metadata:offlinequiz_choices'
-          );
+            'offlinequiz_choices',
+            [
+            'scannedpageid' => 'privacy:metadata:offlinequiz_choices:scannedpageid',
+            'slotnumber' => 'privacy:metadata:offlinequiz_choices:slotnumber',
+            'choicenumber' => 'privacy:metadata:offlinequiz_choices:choicenumber',
+            'value' => 'privacy:metadata:offlinequiz_choices:value',
+            ],
+            'privacy:metadata:offlinequiz_choices'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_group_questions',
-          [
-         'offlinequizid' => 'privacy:metadata:offlinequiz_group_questions:offlinequizid',
-         'offlinegroupid' => 'privacy:metadata:offlinequiz_group_questions:offlinegroupid',
-         'questionid' => 'privacy:metadata:offlinequiz_group_questions:questionid',
-         'position' => 'privacy:metadata:offlinequiz_group_questions:position',
-         'page' => 'privacy:metadata:offlinequiz_group_questions:page',
-         'slot' => 'privacy:metadata:offlinequiz_group_questions:slot',
-         'maxmark' => 'privacy:metadata:offlinequiz_group_questions:maxmark',
-          ],
-          'privacy:metadata:offlinequiz_group_questions'
-          );
+            'offlinequiz_group_questions',
+            [
+            'offlinequizid' => 'privacy:metadata:offlinequiz_group_questions:offlinequizid',
+            'offlinegroupid' => 'privacy:metadata:offlinequiz_group_questions:offlinegroupid',
+            'questionid' => 'privacy:metadata:offlinequiz_group_questions:questionid',
+            'position' => 'privacy:metadata:offlinequiz_group_questions:position',
+            'page' => 'privacy:metadata:offlinequiz_group_questions:page',
+            'slot' => 'privacy:metadata:offlinequiz_group_questions:slot',
+            'maxmark' => 'privacy:metadata:offlinequiz_group_questions:maxmark',
+            ],
+            'privacy:metadata:offlinequiz_group_questions'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_groups',
-          [
-         'offlinequizid' => 'privacy:metadata:offlinequiz_groups:offlinequizid',
-         'groupnumber' => 'privacy:metadata:offlinequiz_groups:number',
-         'sumgrades' => 'privacy:metadata:offlinequiz_groups:sumgrades',
-         'numberofpages' => 'privacy:metadata:offlinequiz_groups:numberofpages',
-         'templateusageid' => 'privacy:metadata:offlinequiz_groups:templateusageid',
-         'qestionfilename' => 'privacy:metadata:offlinequiz_groups:questionfilename',
-         'answerfilename' => 'privacy:metadata:offlinequiz_groups:answerfilename',
-         'correctionfilename' => 'privacy:metadata:offlinequiz_groups:correctionfilename',
-          ],
-          'privacy:metadata:offlinequiz_groups'
-          );
+            'offlinequiz_groups',
+            [
+            'offlinequizid' => 'privacy:metadata:offlinequiz_groups:offlinequizid',
+            'groupnumber' => 'privacy:metadata:offlinequiz_groups:number',
+            'sumgrades' => 'privacy:metadata:offlinequiz_groups:sumgrades',
+            'numberofpages' => 'privacy:metadata:offlinequiz_groups:numberofpages',
+            'templateusageid' => 'privacy:metadata:offlinequiz_groups:templateusageid',
+            'qestionfilename' => 'privacy:metadata:offlinequiz_groups:questionfilename',
+            'answerfilename' => 'privacy:metadata:offlinequiz_groups:answerfilename',
+            'correctionfilename' => 'privacy:metadata:offlinequiz_groups:correctionfilename',
+            ],
+            'privacy:metadata:offlinequiz_groups'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_hotspots',
-          [
-         'scannedpageid' => 'privacy:metadata:offlinequiz_hotspots:scannedpageid',
-         'name' => 'privacy:metadata:offlinequiz_hotspots:name',
-         'x' => 'privacy:metadata:offlinequiz_hotspots:x',
-         'y' => 'privacy:metadata:offlinequiz_hotspots:y',
-         'blank' => 'privacy:metadata:offlinequiz_hotspots:blank',
-         'time' => 'privacy:metadata:offlinequiz_hotspots:time',
-          ],
-          'privacy:metadata:offlinequiz_hotspots'
-          );
+            'offlinequiz_hotspots',
+            [
+            'scannedpageid' => 'privacy:metadata:offlinequiz_hotspots:scannedpageid',
+            'name' => 'privacy:metadata:offlinequiz_hotspots:name',
+            'x' => 'privacy:metadata:offlinequiz_hotspots:x',
+            'y' => 'privacy:metadata:offlinequiz_hotspots:y',
+            'blank' => 'privacy:metadata:offlinequiz_hotspots:blank',
+            'time' => 'privacy:metadata:offlinequiz_hotspots:time',
+            ],
+            'privacy:metadata:offlinequiz_hotspots'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_page_corners',
-          [
-         'scannedpageid' => 'privacy:metadata:offlinequiz_page_corners:scannedpageid',
-         'x' => 'privacy:metadata:offlinequiz_page_corners:x',
-         'y' => 'privacy:metadata:offlinequiz_page_corners:y',
-         'position' => 'privacy:metadata:offlinequiz_page_corners:position',
-          ],
-          'privacy:metadata:offlinequiz_page_corners'
-          );
+            'offlinequiz_page_corners',
+            [
+            'scannedpageid' => 'privacy:metadata:offlinequiz_page_corners:scannedpageid',
+            'x' => 'privacy:metadata:offlinequiz_page_corners:x',
+            'y' => 'privacy:metadata:offlinequiz_page_corners:y',
+            'position' => 'privacy:metadata:offlinequiz_page_corners:position',
+            ],
+            'privacy:metadata:offlinequiz_page_corners'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_participants',
-          [
-         'listid' => 'privacy:metadata:offlinequiz_participants:listid',
-         'userid' => 'privacy:metadata:offlinequiz_participants:userid',
-         'checked' => 'privacy:metadata:offlinequiz_participants:checked',
-          ],
-          'privacy:metadata:offlinequiz_participants'
-          );
+            'offlinequiz_participants',
+            [
+            'listid' => 'privacy:metadata:offlinequiz_participants:listid',
+            'userid' => 'privacy:metadata:offlinequiz_participants:userid',
+            'checked' => 'privacy:metadata:offlinequiz_participants:checked',
+            ],
+            'privacy:metadata:offlinequiz_participants'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_p_choices',
-          [
-         'scannedpageid' => 'privacy:metadata:offlinequiz_p_choices:scannedpageid',
-         'userid' => 'privacy:metadata:offlinequiz_p_choices:userid',
-         'value' => 'privacy:metadata:offlinequiz_p_choices:value',
-          ],
-          'privacy:metadata:offlinequiz_p_choices'
-          );
+            'offlinequiz_p_choices',
+            [
+            'scannedpageid' => 'privacy:metadata:offlinequiz_p_choices:scannedpageid',
+            'userid' => 'privacy:metadata:offlinequiz_p_choices:userid',
+            'value' => 'privacy:metadata:offlinequiz_p_choices:value',
+            ],
+            'privacy:metadata:offlinequiz_p_choices'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_p_lists',
-          [
-         'offlinequizid' => 'privacy:metadata:offlinequiz_p_lists:offlinequizid',
-         'name' => 'privacy:metadata:offlinequiz_p_lists:name',
-         'listnumber' => 'privacy:metadata:offlinequiz_p_lists:number',
-         'filename' => 'privacy:metadata:offlinequiz_p_lists:filename',
-          ],
-          'privacy:metadata:offlinequiz_p_lists'
-          );
+            'offlinequiz_p_lists',
+            [
+            'offlinequizid' => 'privacy:metadata:offlinequiz_p_lists:offlinequizid',
+            'name' => 'privacy:metadata:offlinequiz_p_lists:name',
+            'listnumber' => 'privacy:metadata:offlinequiz_p_lists:number',
+            'filename' => 'privacy:metadata:offlinequiz_p_lists:filename',
+            ],
+            'privacy:metadata:offlinequiz_p_lists'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_queue',
-          [
-         'offlinequizid' => 'privacy:metadata:offlinequiz_queue:offlinequizid',
-         'importuserid' => 'privacy:metadata:offlinequiz_queue:importuserid',
-         'timecreated' => 'privacy:metadata:offlinequiz_queue:timecreated',
-         'timestart' => 'privacy:metadata:offlinequiz_queue:timestart',
-         'timefinish' => 'privacy:metadata:offlinequiz_queue:timefinish',
-         'status' => 'privacy:metadata:offlinequiz_queue:status',
-          ],
-          'privacy:metadata:offlinequiz_queue'
-          );
+            'offlinequiz_queue',
+            [
+            'offlinequizid' => 'privacy:metadata:offlinequiz_queue:offlinequizid',
+            'importuserid' => 'privacy:metadata:offlinequiz_queue:importuserid',
+            'timecreated' => 'privacy:metadata:offlinequiz_queue:timecreated',
+            'timestart' => 'privacy:metadata:offlinequiz_queue:timestart',
+            'timefinish' => 'privacy:metadata:offlinequiz_queue:timefinish',
+            'status' => 'privacy:metadata:offlinequiz_queue:status',
+            ],
+            'privacy:metadata:offlinequiz_queue'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_queue_data',
-          [
-         'queueid' => 'privacy:metadata:offlinequiz_queue_data:queueid',
-         'filename' => 'privacy:metadata:offlinequiz_queue_data:filename',
-         'status' => 'privacy:metadata:offlinequiz_queue_data:status',
-         'error' => 'privacy:metadata:offlinequiz_queue_data:error',
-          ],
-          'privacy:metadata:offlinequiz_queue_data'
-          );
+            'offlinequiz_queue_data',
+            [
+            'queueid' => 'privacy:metadata:offlinequiz_queue_data:queueid',
+            'filename' => 'privacy:metadata:offlinequiz_queue_data:filename',
+            'status' => 'privacy:metadata:offlinequiz_queue_data:status',
+            'error' => 'privacy:metadata:offlinequiz_queue_data:error',
+            ],
+            'privacy:metadata:offlinequiz_queue_data'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_results',
-          [
-         'offlinequizid' => 'privacy:metadata:offlinequiz_results:offlinequizid',
-         'offlinegroupid' => 'privacy:metadata:offlinequiz_results:offlinegroupid',
-         'userid' => 'privacy:metadata:offlinequiz_results:userid',
-         'sumgrades' => 'privacy:metadata:offlinequiz_results:sumgrades',
-         'usageid' => 'privacy:metadata:offlinequiz_results:usageid',
-         'teacherid' => 'privacy:metadata:offlinequiz_results:teacherid',
-         'status' => 'privacy:metadata:offlinequiz_results:status',
-         'timestart' => 'privacy:metadata:offlinequiz_results:timestart',
-         'timefinish' => 'privacy:metadata:offlinequiz_results:timefinish',
-         'timemodified' => 'privacy:metadata:offlinequiz_results:timemodified',
-          ],
-          'privacy:metadata:offlinequiz_results'
-          );
+            'offlinequiz_results',
+            [
+            'offlinequizid' => 'privacy:metadata:offlinequiz_results:offlinequizid',
+            'offlinegroupid' => 'privacy:metadata:offlinequiz_results:offlinegroupid',
+            'userid' => 'privacy:metadata:offlinequiz_results:userid',
+            'sumgrades' => 'privacy:metadata:offlinequiz_results:sumgrades',
+            'usageid' => 'privacy:metadata:offlinequiz_results:usageid',
+            'teacherid' => 'privacy:metadata:offlinequiz_results:teacherid',
+            'status' => 'privacy:metadata:offlinequiz_results:status',
+            'timestart' => 'privacy:metadata:offlinequiz_results:timestart',
+            'timefinish' => 'privacy:metadata:offlinequiz_results:timefinish',
+            'timemodified' => 'privacy:metadata:offlinequiz_results:timemodified',
+            ],
+            'privacy:metadata:offlinequiz_results'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_scanned_pages',
-          [
-         'offlinequizid' => 'privacy:metadata:offlinequiz_scanned_pages:offlinequizid',
-         'resultid' => 'privacy:metadata:offlinequiz_scanned_pages:resultid',
-         'filename' => 'privacy:metadata:offlinequiz_scanned_pages:filename',
-         'warningfilename' => 'privacy:metadata:offlinequiz_scanned_pages:warningfilename',
-         'groupnumber' => 'privacy:metadata:offlinequiz_scanned_pages:groupnumber',
-         'userkey' => 'privacy:metadata:offlinequiz_scanned_pages:userkey',
-         'pagenumber' => 'privacy:metadata:offlinequiz_scanned_pages:pagenumber',
-         'time' => 'privacy:metadata:offlinequiz_scanned_pages:time',
-         'status' => 'privacy:metadata:offlinequiz_scanned_pages:status',
-         'error' => 'privacy:metadata:offlinequiz_scanned_pages:error',
-          ],
-          'privacy:metadata:offlinequiz_scanned_pages'
-          );
+            'offlinequiz_scanned_pages',
+            [
+            'offlinequizid' => 'privacy:metadata:offlinequiz_scanned_pages:offlinequizid',
+            'resultid' => 'privacy:metadata:offlinequiz_scanned_pages:resultid',
+            'filename' => 'privacy:metadata:offlinequiz_scanned_pages:filename',
+            'warningfilename' => 'privacy:metadata:offlinequiz_scanned_pages:warningfilename',
+            'groupnumber' => 'privacy:metadata:offlinequiz_scanned_pages:groupnumber',
+            'userkey' => 'privacy:metadata:offlinequiz_scanned_pages:userkey',
+            'pagenumber' => 'privacy:metadata:offlinequiz_scanned_pages:pagenumber',
+            'time' => 'privacy:metadata:offlinequiz_scanned_pages:time',
+            'status' => 'privacy:metadata:offlinequiz_scanned_pages:status',
+            'error' => 'privacy:metadata:offlinequiz_scanned_pages:error',
+            ],
+            'privacy:metadata:offlinequiz_scanned_pages'
+        );
 
         $collection->add_database_table(
-          'offlinequiz_scanned_p_pages',
-          [
-         'offlinequizid' => 'privacy:metadata:offlinequiz_scanned_p_pages:offlinequizid',
-         'listnumber' => 'privacy:metadata:offlinequiz_scanned_p_pages:listnumber',
-         'filename' => 'privacy:metadata:offlinequiz_scanned_p_pages:filename',
-         'time' => 'privacy:metadata:offlinequiz_scanned_p_pages:time',
-         'status' => 'privacy:metadata:offlinequiz_scanned_p_pages:status',
-         'error' => 'privacy:metadata:offlinequiz_scanned_p_pages:error',
-          ],
-          'privacy:metadata:offlinequiz_scanned_p_pages'
-          );
+            'offlinequiz_scanned_p_pages',
+            [
+            'offlinequizid' => 'privacy:metadata:offlinequiz_scanned_p_pages:offlinequizid',
+            'listnumber' => 'privacy:metadata:offlinequiz_scanned_p_pages:listnumber',
+            'filename' => 'privacy:metadata:offlinequiz_scanned_p_pages:filename',
+            'time' => 'privacy:metadata:offlinequiz_scanned_p_pages:time',
+            'status' => 'privacy:metadata:offlinequiz_scanned_p_pages:status',
+            'error' => 'privacy:metadata:offlinequiz_scanned_p_pages:error',
+            ],
+            'privacy:metadata:offlinequiz_scanned_p_pages'
+        );
 
         $collection->add_user_preference('offlinequiz_pagesize', 'privacy:metadata:offlinequizpagesize');
 
@@ -333,7 +329,7 @@ class provider implements
         $type = $columns[$offlinequizconfig->ID_field]->type;
         $user = $contextlist->get_user();
 
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        [$contextsql, $contextparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
         $sql = "SELECT DISTINCT c.id contextid, cm.instance offlinequizid
         FROM {context} c
         JOIN {course_modules} cm ON cm.id = c.instanceid
@@ -435,13 +431,16 @@ class provider implements
                          WHERE c.id  = :contextid";
         $listids = $DB->get_records_sql($sql, ['contextid' => $context->id]);
 
-        list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        list($listidsql, $listidparams) = $DB->get_in_or_equal($listids, SQL_PARAMS_NAMED);
+        [$usersql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        [$listidsql, $listidparams] = $DB->get_in_or_equal($listids, SQL_PARAMS_NAMED);
 
         $params = $listidparams + $userparams;
         // Remove data from role_assignments.
-        $DB->delete_records_select('offlinequiz_participants',
-        "listid {$listidsql} AND userid {$usersql}", $params);
+        $DB->delete_records_select(
+            'offlinequiz_participants',
+            "listid {$listidsql} AND userid {$usersql}",
+            $params
+        );
     }
     /**
      * export a single offlinequiz
@@ -481,7 +480,7 @@ class provider implements
                 JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey
                 WHERE u.id = :userid
                 AND   sp.offlinequizid = :offlinequizid";
-        $scannedpages = $DB->get_records_sql($sql , ["userid" => $userid, "offlinequizid" => $offlinequizid]);
+        $scannedpages = $DB->get_records_sql($sql, ["userid" => $userid, "offlinequizid" => $offlinequizid]);
         if ($scannedpages) {
             $exportobject->scannedpages = static::get_scanned_pages_objects($context, $scannedpages);
         }
@@ -594,7 +593,7 @@ class provider implements
      */
     private static function export_file($context, $scannedpage) {
         $fs = get_file_storage();
-        if ( $imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename)) {
+        if ($imagefile = $fs->get_file($context->id, 'mod_offlinequiz', 'imagefiles', 0, '/', $scannedpage->filename)) {
             $datafoldername = get_string('privacy:data_folder_name', 'mod_offlinequiz');
             $scannedpage = get_string('scannedform', 'mod_offlinequiz');
             $filepath = [$datafoldername, $scannedpage];
@@ -650,19 +649,19 @@ class provider implements
     private static function get_group_letter($groupnumber) {
         switch ($groupnumber) {
             case 1:
-             return "A";
+                return "A";
             case 2:
-             return "B";
+                return "B";
             case 3:
-             return "C";
+                return "C";
             case 4:
-             return "D";
+                return "D";
             case 5:
-             return "E";
+                return "E";
             case 6:
-             return "F";
+                return "F";
             default:
-             return "none";
+                return "none";
         }
     }
 
@@ -682,7 +681,7 @@ class provider implements
             // Only offlinequiz module will be handled.
             return;
         }
-        list($course, $cm) = get_course_and_cm_from_cmid($cm);
+        [$course, $cm] = get_course_and_cm_from_cmid($cm);
         if (!$course) {
             // A Module without course? Something that should never happen better do nothing!
             return;
@@ -705,7 +704,7 @@ class provider implements
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         global $DB;
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        [$contextsql, $contextparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
         $sql = "SELECT cm.instance
                 FROM {context} c
                 JOIN {course_modules} cm ON cm.id = c.instanceid
@@ -743,8 +742,12 @@ class provider implements
         require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
         global $DB;
         $select = 'offlinequizid = :oqid AND userid = :userid';
-        $resultids = $DB->get_fieldset_select('offlinequiz_results', 'id',
-            $select, ['oqid' => $offlinequizid, 'userid' => $user->id]);
+        $resultids = $DB->get_fieldset_select(
+            'offlinequiz_results',
+            'id',
+            $select,
+            ['oqid' => $offlinequizid, 'userid' => $user->id]
+        );
         foreach ($resultids as $resultid) {
             // First delete all scannedpages.
             $scannedpages = $DB->get_records_select('offlinequiz_scanned_pages', 'resultid = :resultid', ['resultid' => $resultid]);
@@ -780,7 +783,7 @@ class provider implements
 
         $choiceids = $DB->get_fieldset_sql($sql, ['userid' => $user->id, 'oqid' => $offlinequizid]);
         if ($choiceids) {
-            list($choicesql, $choiceparams) = $DB->get_in_or_equal($choiceids, SQL_PARAMS_NAMED);
+            [$choicesql, $choiceparams] = $DB->get_in_or_equal($choiceids, SQL_PARAMS_NAMED);
             $DB->delete_records_select('offlinequiz_p_choices', "id {$choicesql}", $choiceparams);
         }
     }

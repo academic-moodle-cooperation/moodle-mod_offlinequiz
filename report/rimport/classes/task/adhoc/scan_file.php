@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
  *
  */
 class scan_file extends \core\task\adhoc_task {
-
     /**
      * constructor of this adhoc task
      * @param int $queuedataid
@@ -65,14 +64,18 @@ class scan_file extends \core\task\adhoc_task {
         $queuedata->status = 'processing';
         $DB->update_record('offlinequiz_queue_data', $queuedata);
         // Set up the context for this job.
-        if (! $offlinequiz = $DB->get_record('offlinequiz', [
+        if (
+            ! $offlinequiz = $DB->get_record('offlinequiz', [
             'id' => $queue->offlinequizid,
-        ])) {
+            ])
+        ) {
             $this->log_error($queuedata, 'offlinequiznotfound');
         }
-        if (! $course = $DB->get_record('course', [
+        if (
+            ! $course = $DB->get_record('course', [
             'id' => $offlinequiz->course,
-        ])) {
+            ])
+        ) {
             $this->log_error($queuedata, 'coursenotfound');
         }
 
@@ -85,18 +88,19 @@ class scan_file extends \core\task\adhoc_task {
         if (! $coursecontext = \context_course::instance($course->id)) {
             $this->log_error($queuedata, 'coursecontextnotfound');
         }
-        if (! $groups = $DB->get_records('offlinequiz_groups', [
+        if (
+            ! $groups = $DB->get_records('offlinequiz_groups', [
             'offlinequizid' => $offlinequiz->id,
-        ], 'groupnumber', '*', 0, $offlinequiz->numgroups)) {
+            ], 'groupnumber', '*', 0, $offlinequiz->numgroups)
+        ) {
             $this->log_error($queuedata, 'nogroupsfound');
         }
         $dirname = "{$CFG->dataroot}/offlinequiz/import/$queue->id";
         $importfile = "$dirname/$queuedata->filename";
         if (!file_exists($importfile)) {
-
             $this->restorefile($context->id, $queue->id, $queue->filename, $importfile);
         }
-        list ($maxquestions, $maxanswers, $formtype, $questionsperpage) = \offlinequiz_get_question_numbers($offlinequiz, $groups);
+         [$maxquestions, $maxanswers, $formtype, $questionsperpage] = \offlinequiz_get_question_numbers($offlinequiz, $groups);
 
         set_time_limit(120);
         try {
@@ -107,8 +111,12 @@ class scan_file extends \core\task\adhoc_task {
                 // Try to load the image file.
                 echo 'job ' . $queue->id . ': evaluating ' . $queuedata->filename . "\n";
                 $scannedpage = $scanner->load_image("$dirname/$queuedata->filename");
-                $scannedpage->id = $DB->get_field('offlinequiz_scanned_pages', 'id',
-                     ['queuedataid' => $queuedata->id], IGNORE_MISSING);
+                $scannedpage->id = $DB->get_field(
+                    'offlinequiz_scanned_pages',
+                    'id',
+                    ['queuedataid' => $queuedata->id],
+                    IGNORE_MISSING
+                );
                 if ($scannedpage->status == 'ok') {
                     echo 'job ' . $queue->id . ': image loaded ' . $scannedpage->filename . "\n";
                 } else if ($scannedpage->error == 'filenotfound') {
@@ -120,8 +128,14 @@ class scan_file extends \core\task\adhoc_task {
                 // If we could load the image file, the status is 'ok', so we can check the page for errors.
                 if ($scannedpage->status == 'ok') {
                     // We autorotate so check_scanned_page will return a potentially new scanner and the scannedpage.
-                    list ($scanner, $scannedpage) = \offlinequiz_check_scanned_page($offlinequiz, $scanner,
-                        $scannedpage, $queue->importuserid, $coursecontext, true);
+                     [$scanner, $scannedpage] = \offlinequiz_check_scanned_page(
+                         $offlinequiz,
+                         $scanner,
+                         $scannedpage,
+                         $queue->importuserid,
+                         $coursecontext,
+                         true
+                     );
                 } else {
                     if (property_exists($scannedpage, 'id') && ! empty($scannedpage->id)) {
                         $DB->update_record('offlinequiz_scanned_pages', $scannedpage);
@@ -135,26 +149,44 @@ class scan_file extends \core\task\adhoc_task {
                 // checks whether the result for a student is complete.
                 if ($scannedpage->status == 'ok') {
                     // We can process the answers and submit them if possible.
-                    $scannedpage = \offlinequiz_process_scanned_page($offlinequiz, $scanner,
-                    $scannedpage, $queue->importuserid, $questionsperpage, $coursecontext, true);
+                    $scannedpage = \offlinequiz_process_scanned_page(
+                        $offlinequiz,
+                        $scanner,
+                        $scannedpage,
+                        $queue->importuserid,
+                        $questionsperpage,
+                        $coursecontext,
+                        true
+                    );
                     echo 'job ' . $queue->id . ': processed answers for ' . $scannedpage->id . "\n";
                 } else if ($scannedpage->status == 'error' && $scannedpage->error == 'resultexists') {
                     // Already process the answers but don't submit them.
-                    $scannedpage = \offlinequiz_process_scanned_page($offlinequiz, $scanner,
-                     $scannedpage, $queue->importuserid, $questionsperpage, $coursecontext, false);
+                    $scannedpage = \offlinequiz_process_scanned_page(
+                        $offlinequiz,
+                        $scanner,
+                        $scannedpage,
+                        $queue->importuserid,
+                        $questionsperpage,
+                        $coursecontext,
+                        false
+                    );
 
                     // Compare the old and the new result wrt. the choices.
                     $scannedpage = \offlinequiz_check_different_result($scannedpage);
                 }
 
                 // If there is something to correct then store the hotspots for retrieval in correct.php.
-                if ($scannedpage->status != 'ok' && $scannedpage->error != 'couldnotgrab'
-                    && $scannedpage->error != 'notadjusted' && $scannedpage->error != 'grouperror') {
+                if (
+                    $scannedpage->status != 'ok' && $scannedpage->error != 'couldnotgrab'
+                    && $scannedpage->error != 'notadjusted' && $scannedpage->error != 'grouperror'
+                ) {
                     $scanner->store_hotspots($scannedpage->id);
                 }
 
-                if ($scannedpage->status == 'ok' || $scannedpage->status == 'submitted' ||
-                      $scannedpage->status == 'suspended' || $scannedpage->error == 'missingpages') {
+                if (
+                    $scannedpage->status == 'ok' || $scannedpage->status == 'submitted' ||
+                      $scannedpage->status == 'suspended' || $scannedpage->error == 'missingpages'
+                ) {
                     // Mark the file as processed.
                     $DB->set_field('offlinequiz_queue_data', 'status', 'processed', [
                         'id' => $queuedata->id,
@@ -169,8 +201,12 @@ class scan_file extends \core\task\adhoc_task {
                 }
             } else {
                 $contextid = 0;
-                $engine = new \offlinequiz_result_import\offlinequiz_result_engine
-                          ($offlinequiz, $context->id, $queuedata->filename, 0);
+                $engine = new \offlinequiz_result_import\offlinequiz_result_engine(
+                    $offlinequiz,
+                    $context->id,
+                    $queuedata->filename,
+                    0
+                );
                 $resultpage = $engine->scanpage();
                 $engine->save_page(2);
             }
@@ -195,7 +231,6 @@ class scan_file extends \core\task\adhoc_task {
             }
             $this->send_notifications($queue->id);
         }
-
     }
     /**
      * send notifications for a queue

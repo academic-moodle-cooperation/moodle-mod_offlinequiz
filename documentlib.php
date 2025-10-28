@@ -48,12 +48,11 @@ function offlinequiz_get_question_infostring($offlinequiz, $question) {
             if ($question->maxmark == 1) {
                 $pointstr = get_string('point', 'offlinequiz');
             }
-            $infostr = $infostr . format_float($question->maxmark, $offlinequiz->decimalpoints) . ' '. $pointstr;
+            $infostr = $infostr . format_float($question->maxmark, $offlinequiz->decimalpoints) . ' ' . $pointstr;
         }
 
         $infostr = $infostr . ')';
         return  $infostr;
-
     }
     return null;
 }
@@ -66,7 +65,6 @@ function offlinequiz_get_question_infostring($offlinequiz, $question) {
 function offlinequiz_get_questioninfo($offlinequiz, $question) {
     if ($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_QTYPE) {
         if ($question->qtype == 'multichoice') {
-
             if ($question->options->single) {
                 $questioninfo = get_string('singlechoice', 'offlinequiz');
             } else {
@@ -76,7 +74,6 @@ function offlinequiz_get_questioninfo($offlinequiz, $question) {
             $questioninfo = get_string('allornothing', 'offlinequiz');
         }
         return $questioninfo;
-
     } else if ($offlinequiz->showquestioninfo == OFFLINEQUIZ_QUESTIONINFO_ANSWERS) {
         $amount = offlinequiz_get_amount_correct_answers($question);
         $questioninfo = $amount . ' ' . get_string('questioninfocorrectanswers', 'offlinequiz');

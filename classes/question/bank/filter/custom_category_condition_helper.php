@@ -40,9 +40,14 @@ class custom_category_condition_helper extends \qbank_managecategories\helper {
      * @param bool $escapecontextnames
      * @return array<array>
      */
-    public static function question_category_options(array $contexts, bool $top = false, int $currentcat = 0,
-                                                     bool $popupform = false, int $nochildrenof = -1,
-                                                     bool $escapecontextnames = true): array {
+    public static function question_category_options(
+        array $contexts,
+        bool $top = false,
+        int $currentcat = 0,
+        bool $popupform = false,
+        int $nochildrenof = -1,
+        bool $escapecontextnames = true
+    ): array {
         global $CFG;
         $pcontexts = [];
         foreach ($contexts as $context) {
@@ -68,9 +73,12 @@ class custom_category_condition_helper extends \qbank_managecategories\helper {
                 if ($category->contextid == $contextid) {
                     $cid = $category->id;
                     if ($currentcat != $cid || $currentcat == 0) {
-                        $a = new \stdClass;
-                        $a->name = format_string($category->indentedname, true,
-                            ['context' => $context]);
+                        $a = new \stdClass();
+                        $a->name = format_string(
+                            $category->indentedname,
+                            true,
+                            ['context' => $context]
+                        );
                         if ($category->idnumber !== null && $category->idnumber !== '') {
                             $a->idnumber = s($category->idnumber);
                         }
@@ -114,11 +122,15 @@ class custom_category_condition_helper extends \qbank_managecategories\helper {
      * @param int $showallversions
      * @return array
      */
-    public static function get_categories_for_contexts($contexts, string $sortorder = 'parent, sortorder, name ASC',
-                                                       bool $top = false, int $showallversions = 0): array {
+    public static function get_categories_for_contexts(
+        $contexts,
+        string $sortorder = 'parent, sortorder, name ASC',
+        bool $top = false,
+        int $showallversions = 0
+    ): array {
         global $DB;
         $topwhere = $top ? '' : 'AND c.parent <> 0';
-        $statuscondition = "AND qv.status = '". question_version_status::QUESTION_STATUS_READY . "' ";
+        $statuscondition = "AND qv.status = '" . question_version_status::QUESTION_STATUS_READY . "' ";
 
         $sql = "SELECT c.*,
                     (SELECT COUNT(1)

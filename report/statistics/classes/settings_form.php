@@ -42,10 +42,16 @@ class settings_form extends moodleform {
     protected function definition() {
         $mform = $this->_form;
 
-        $mform->addElement('header', 'preferencespage',
-                get_string('preferencespage', 'offlinequiz_statistics'));
+        $mform->addElement(
+            'header',
+            'preferencespage',
+            get_string('preferencespage', 'offlinequiz_statistics')
+        );
 
-        $mform->addElement('submit', 'submitbutton',
-                get_string('preferencessave', 'offlinequiz_statistics'));
+        $mform->addElement(
+            'submit',
+            'submitbutton',
+            get_string('preferencessave', 'offlinequiz_statistics')
+        );
     }
 }

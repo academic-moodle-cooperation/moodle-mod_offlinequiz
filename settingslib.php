@@ -85,8 +85,13 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
      * @param string $defaultsetting
      * @param string $duringstate
      */
-    public function __construct($name, $visiblename, $description,
-            $defaultsetting, $duringstate = null) {
+    public function __construct(
+        $name,
+        $visiblename,
+        $description,
+        $defaultsetting,
+        $duringstate = null
+    ) {
         $this->duringstate = $duringstate;
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
@@ -162,7 +167,7 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
         $return = '<div class="group"><input type="hidden" name="' .
                 $this->get_full_name() . '[' . self::DURING . ']" value="0" />';
         foreach (self::times() as $timemask => $namestring) {
-            $id = $this->get_id(). '_' . $timemask;
+            $id = $this->get_id() . '_' . $timemask;
             $state = '';
             if ($data & $timemask) {
                 $state = 'checked="checked" ';
@@ -180,8 +185,16 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
         }
         $return .= "</div>\n";
 
-        return format_admin_setting($this, $this->visiblename, $return,
-                $this->description, true, '', get_string('everythingon', 'offlinequiz'), $query);
+        return format_admin_setting(
+            $this,
+            $this->visiblename,
+            $return,
+            $this->description,
+            true,
+            '',
+            get_string('everythingon', 'offlinequiz'),
+            $query
+        );
     }
 }
 
@@ -205,10 +218,8 @@ class admin_setting_configtext_user_formula extends admin_setting_configtext {
             } else {
                 return get_string('validateerror', 'admin');
             }
-
         } else if ($this->paramtype === PARAM_RAW) {
             $valid = true;
-
         } else {
              $cleaned = clean_param($data, $this->paramtype);
             if ("$data" === "$cleaned") { // Implicit conversion to string is needed to do exact comparison.

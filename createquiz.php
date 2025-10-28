@@ -40,7 +40,7 @@ $downloadall = optional_param('downloadall', false, PARAM_BOOL);
 
 $letterstr = 'ABCDEFGHIJKL';
 
-list($offlinequiz, $course, $cm) = get_course_objects($id, $q);
+[$offlinequiz, $course, $cm] = get_course_objects($id, $q);
 
 $offlinequiz->optionflags = 0;
 
@@ -54,7 +54,7 @@ $coursecontext = context_course::instance($course->id);
 
 // We redirect students to info.
 if (!has_capability('mod/offlinequiz:createofflinequiz', $context)) {
-    redirect('view.php?q='.$offlinequiz->id);
+    redirect('view.php?q=' . $offlinequiz->id);
 }
 
 // If not in all group questions have been set up yet redirect to edit.php.
@@ -75,16 +75,21 @@ if ($node = $PAGE->settingsnav->find('mod_offlinequiz_createquiz', core\navigati
     $node->make_active();
 }
 
-if (!$groups = $DB->get_records(
-    'offlinequiz_groups',
-    ['offlinequizid' => $offlinequiz->id],
-    'groupnumber',
-    '*',
-    0,
-    $offlinequiz->numgroups
-)) {
-    throw new \moodle_exception('There are no offlinequiz groups', 'mod_offlinequiz',
-         new moodle_url('/mod/offlinequiz/edit.php', ['q' => $offlinequiz->id, 'sesskey' => sesskey()]));
+if (
+    !$groups = $DB->get_records(
+        'offlinequiz_groups',
+        ['offlinequizid' => $offlinequiz->id],
+        'groupnumber',
+        '*',
+        0,
+        $offlinequiz->numgroups
+    )
+) {
+    throw new \moodle_exception(
+        'There are no offlinequiz groups',
+        'mod_offlinequiz',
+        new moodle_url('/mod/offlinequiz/edit.php', ['q' => $offlinequiz->id, 'sesskey' => sesskey()])
+    );
 }
 
 // Redmine 2131: Handle download all before any HTML output is produced.
@@ -142,9 +147,11 @@ if ($forcepdfnew) {
         throw new \moodle_exception(
             'Some answer forms have already been analysed',
             'mod_offlinequiz',
-            new moodle_url('/mod/offlinequiz/createquiz.php' ,
-            ['q' => $offlinequiz->id, 'mode' => 'createpdfs', 'sesskey' => sesskey()])
-            );
+            new moodle_url(
+                '/mod/offlinequiz/createquiz.php',
+                ['q' => $offlinequiz->id, 'mode' => 'createpdfs', 'sesskey' => sesskey()]
+            )
+        );
     } else {
         // Redmine 2750: Always delete templates as well.
         offlinequiz_delete_template_usages($offlinequiz);
@@ -195,13 +202,13 @@ if ($mode == 'preview') {
 
         echo '<div class="controlbuttons linkbox">';
         if ($offlinequiz->shufflequestions && $offlinequiz->shuffleanswers) {
-            echo $OUTPUT->single_button($buttonurl, get_string('shufflequestionsanswers', 'offlinequiz').' / ' .
+            echo $OUTPUT->single_button($buttonurl, get_string('shufflequestionsanswers', 'offlinequiz') . ' / ' .
                     get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else if ($offlinequiz->shufflequestions) {
-            echo $OUTPUT->single_button($buttonurl, get_string('shufflequestions', 'offlinequiz').' / ' .
+            echo $OUTPUT->single_button($buttonurl, get_string('shufflequestions', 'offlinequiz') . ' / ' .
                     get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else if ($offlinequiz->shuffleanswers) {
-            echo $OUTPUT->single_button($buttonurl, get_string('shuffleanswers', 'offlinequiz').' / ' .
+            echo $OUTPUT->single_button($buttonurl, get_string('shuffleanswers', 'offlinequiz') . ' / ' .
                     get_string('reloadquestionlist', 'offlinequiz'), 'post');
         } else {
             echo $OUTPUT->single_button($buttonurl, get_string('reloadquestionlist', 'offlinequiz'));
@@ -210,7 +217,8 @@ if ($mode == 'preview') {
         echo $OUTPUT->single_button(
             new moodle_url('/mod/offlinequiz/createquiz.php', $buttonoptions),
             get_string('createpdfforms', 'offlinequiz'),
-            'get', ['type' => 'primary']
+            'get',
+            ['type' => 'primary']
         );
 
         echo '</div>';
@@ -224,7 +232,7 @@ if ($mode == 'preview') {
             $createformsurl,
             get_string('createpdfs', 'offlinequiz'),
             'get'
-            );
+        );
         echo "</p>";
     }
     // Shuffle again if no scanned pages.
@@ -368,12 +376,15 @@ if ($mode == 'preview') {
 
     $url = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id]);
     echo $OUTPUT->single_button($url, get_string('backtopreview', 'offlinequiz'), 'get');
-    echo \mod_offlinequiz\output\action_api::insert_all_actions('offlinequiz', offlinequiz_page::CREATEQUIZ_CREATEPDFS,
-        $cm, $offlinequiz);
+    echo \mod_offlinequiz\output\action_api::insert_all_actions(
+        'offlinequiz',
+        offlinequiz_page::CREATEQUIZ_CREATEPDFS,
+        $cm,
+        $offlinequiz
+    );
 
     // Print buttons for delete/recreate iff there are no scanned pages yet.
     if (!$hasscannedpages) {
-
         unset($buttonoptions);
         $buttonoptions['q'] = $offlinequiz->id;
         $buttonoptions['mode'] = 'createpdfs';
@@ -384,10 +395,11 @@ if ($mode == 'preview') {
             echo '</div>';
         } else {
             $actionurl = new moodle_url('/mod/offlinequiz/createquiz.php', ['q' => $offlinequiz->id, 'mode' => 'createpdfs']);
-            echo $OUTPUT->render_from_template('mod_offlinequiz/delete_documents_button',
-                ['actionurl' => $actionurl->out()]);
+            echo $OUTPUT->render_from_template(
+                'mod_offlinequiz/delete_documents_button',
+                ['actionurl' => $actionurl->out()]
+            );
             "";
-
         }
     }
     echo $OUTPUT->box_end();
@@ -407,8 +419,8 @@ if ($mode == 'preview') {
         $downloadallurl = new moodle_url(
             $CFG->wwwroot . '/mod/offlinequiz/createquiz.php',
             ['q' => $offlinequiz->id,
-        'mode' => 'createpdfs',
-        'downloadall' => 1]
+            'mode' => 'createpdfs',
+            'downloadall' => 1]
         );
         echo html_writer::start_div('downloadalllink');
         echo html_writer::link($downloadallurl->out(false), get_string('downloadallzip', 'offlinequiz'));
@@ -422,7 +434,7 @@ if ($mode == 'preview') {
             if (!$offlinequiz->docscreated) {
                 if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
                     throw new \moodle_exception(
-                        "Missing data for group ".$groupletter,
+                        "Missing data for group " . $groupletter,
                         "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey()
                     );
                 }
@@ -480,7 +492,7 @@ if ($mode == 'preview') {
             if (!$templateusage = offlinequiz_get_group_template_usage($offlinequiz, $group, $context)) {
                 throw new \moodle_exception(
                     "Missing data for group " . $groupletter,
-                    "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=".sesskey()
+                    "createquiz.php?q=$offlinequiz->id&amp;mode=preview&amp;sesskey=" . sesskey()
                 );
             }
 
@@ -592,7 +604,6 @@ if ($mode == 'preview') {
         // Register that we have created the documents.
         $offlinequiz->docscreated = 1;
         $DB->set_field('offlinequiz', 'docscreated', 1, ['id' => $offlinequiz->id]);
-
     }
 }
 

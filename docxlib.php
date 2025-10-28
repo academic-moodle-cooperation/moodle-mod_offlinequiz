@@ -421,8 +421,18 @@ function offlinequiz_convert_image_docx($text) {
  * @param mixed $level2
  * @return void
  */
-function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
-      $texfilters, $offlinequiz, $trans, $section, $answernumbering, $level2) {
+function offlinequiz_print_answers_docx(
+    $templateusage,
+    $slot,
+    $slotquestion,
+    $question,
+    $texfilters,
+    $offlinequiz,
+    $trans,
+    $section,
+    $answernumbering,
+    $level2
+) {
     $attempt = $templateusage->get_question_attempt($slot);
     $order = $slotquestion->get_order($attempt);  // Order of the answers.
 
@@ -435,12 +445,23 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
         // Remove all paragraph tags because they mess up the layout.
         $answertext = preg_replace(
-            '/<p\b(?:\s+[A-Za-z_:][\w:.-]*(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s\'">=]+))?)*\s*>/i', "", $answertext);
+            '/<p\b(?:\s+[A-Za-z_:][\w:.-]*(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s\'">=]+))?)*\s*>/i',
+            "",
+            $answertext
+        );
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
         $answertext = preg_replace("/<\/p>/i", "", $answertext);
-        $answertext = $trans->fix_image_paths($answertext, $question->contextid,
-            'answer', $answer, 0.6, 200, $offlinequiz->disableimgnewlines, 'docx');
+        $answertext = $trans->fix_image_paths(
+            $answertext,
+            $question->contextid,
+            'answer',
+            $answer,
+            0.6,
+            200,
+            $offlinequiz->disableimgnewlines,
+            'docx'
+        );
 
         $blocks = offlinequiz_convert_image_docx($answertext);
         offlinequiz_print_blocks_docx($section, $blocks, $answernumbering, 1);
@@ -464,8 +485,14 @@ function offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $q
  * @param boolean $correction if true the correction form is generated.
  * @return stored_file instance, the generated DOCX file.
  */
-function offlinequiz_create_docx_question(question_usage_by_activity $templateusage, $offlinequiz, $group,
-                                          $courseid, $context, $correction = false) {
+function offlinequiz_create_docx_question(
+    question_usage_by_activity $templateusage,
+    $offlinequiz,
+    $group,
+    $courseid,
+    $context,
+    $correction = false
+) {
     global $CFG, $DB, $OUTPUT;
 
     $letterstr = 'abcdefghijklmnopqrstuvwxyz';
@@ -544,7 +571,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
         if (strlen($title) > 35) {
             $title = substr($title, 0, 33) . ' ...';
         }
-        $title .= ": ".offlinequiz_str_html_docx(userdate($offlinequiz->time));
+        $title .= ": " . offlinequiz_str_html_docx(userdate($offlinequiz->time));
     } else {
         if (strlen($title) > 40) {
             $title = substr($title, 0, 37) . ' ...';
@@ -554,7 +581,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Add a header.
     $header = $section->addHeader();
-    $header->addText($title, ['size' => 10], 'cStyle' );
+    $header->addText($title, ['size' => 10], 'cStyle');
     $header->addImage($CFG->dirroot . '/mod/offlinequiz/pix/line.png', ['width' => 600, 'height' => 5, 'align' => 'center']);
 
     // Add a footer.
@@ -633,7 +660,7 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     $texfilters = offlinequiz_get_math_filters($context);
     // Create the docx question numbering. This is only created once since we number all questions from 1...n.
     $questionnumbering = $docx->addNumberingStyle('questionnumbering', ['type' => 'multilevel', 'levels' => [
-        ['format' => 'decimal', 'text' => '%1)',  'left' => 10, 'hanging' => 300, 'tabPos' => 10],
+        ['format' => 'decimal', 'text' => '%1)', 'left' => 10, 'hanging' => 300, 'tabPos' => 10],
         ['format' => 'lowerLetter', 'text' => '%2)', 'left' => 10, 'hanging' => 10, 'tabPos' => 250],
     ],
     ]);
@@ -642,7 +669,6 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
     // the template question usage.
     if ($offlinequiz->shufflequestions) {
         foreach ($slots as $slot) {
-
             $slotquestion = $templateusage->get_question($slot);
             $myquestion = $slotquestion->id;
 
@@ -668,23 +694,39 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // JPC: Preserve pre tags.
             $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
-                                                    0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
+            $questiontext = $trans->fix_image_paths(
+                $questiontext,
+                $question->contextid,
+                'questiontext',
+                $question->id,
+                0.6,
+                300,
+                $offlinequiz->disableimgnewlines,
+                'docx'
+            );
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
             offlinequiz_print_blocks_docx($section, $blocks, $questionnumbering, 0);
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-
                 // There is only a slot for multichoice questions.
-                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
-                    $texfilters, $offlinequiz, $trans, $section, $questionnumbering, $level2);
+                offlinequiz_print_answers_docx(
+                    $templateusage,
+                    $slot,
+                    $slotquestion,
+                    $question,
+                    $texfilters,
+                    $offlinequiz,
+                    $trans,
+                    $section,
+                    $questionnumbering,
+                    $level2
+                );
             }
             $section->addTextBreak();
             $number++;
         }
     } else { // Not shufflequestions.
-
         // We have to compute the mapping  questionid -> slotnumber.
         $questionslots = [];
         foreach ($slots as $slot) {
@@ -695,7 +737,6 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
         // We also add custom page breaks.
         $currentpage = 1;
         foreach ($questions as $question) {
-
             // Add page break if set explicitely by teacher.
             if ($question->page > $currentpage) {
                 $section->addPageBreak();
@@ -723,8 +764,16 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             // JPC: Preserve pre tags.
             $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
 
-            $questiontext = $trans->fix_image_paths($questiontext, $question->contextid, 'questiontext', $question->id,
-                                                    0.6, 300, $offlinequiz->disableimgnewlines, 'docx');
+            $questiontext = $trans->fix_image_paths(
+                $questiontext,
+                $question->contextid,
+                'questiontext',
+                $question->id,
+                0.6,
+                300,
+                $offlinequiz->disableimgnewlines,
+                'docx'
+            );
 
             $blocks = offlinequiz_convert_image_docx($questiontext);
 
@@ -736,14 +785,23 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             }
 
             if ($question->qtype == 'multichoice' || $question->qtype == 'multichoiceset') {
-
                 $slot = $questionslots[$question->id];
 
                 // Now retrieve the order of the answers.
                 $slotquestion = $templateusage->get_question($slot);
 
-                offlinequiz_print_answers_docx($templateusage, $slot, $slotquestion, $question,
-                    $texfilters, $offlinequiz, $trans, $section, $questionnumbering, $level2);
+                offlinequiz_print_answers_docx(
+                    $templateusage,
+                    $slot,
+                    $slotquestion,
+                    $question,
+                    $texfilters,
+                    $offlinequiz,
+                    $trans,
+                    $section,
+                    $questionnumbering,
+                    $level2
+                );
                 $section->addTextBreak();
                 $number++;
                 // End if multichoice.
@@ -773,8 +831,15 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
 
     // Prepare file record object.
     $date = usergetdate(time());
-    $timestamp = sprintf('%04d%02d%02d_%02d%02d%02d',
-            $date['year'], $date['mon'], $date['mday'], $date['hours'], $date['minutes'], $date['seconds']);
+    $timestamp = sprintf(
+        '%04d%02d%02d_%02d%02d%02d',
+        $date['year'],
+        $date['mon'],
+        $date['mday'],
+        $date['hours'],
+        $date['minutes'],
+        $date['seconds']
+    );
 
     $fileinfo = [
             'contextid' => $context->id,
@@ -785,8 +850,16 @@ function offlinequiz_create_docx_question(question_usage_by_activity $templateus
             'filename' => $fileprefix . '_' . $groupletter . '_' . $timestamp . '.docx'];
 
     // Delete existing old files, should actually not happen.
-    if ($oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
-            $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
+    if (
+        $oldfile = $fs->get_file(
+            $fileinfo['contextid'],
+            $fileinfo['component'],
+            $fileinfo['filearea'],
+            $fileinfo['itemid'],
+            $fileinfo['filepath'],
+            $fileinfo['filename']
+        )
+    ) {
         $oldfile->delete();
     }
 

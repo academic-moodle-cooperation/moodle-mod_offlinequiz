@@ -134,7 +134,6 @@ class offlinequiz_result_engine {
             return $this->page;
         }
         return $this->page;
-
     }
     /**
      * save a page into the database
@@ -149,5 +148,4 @@ class offlinequiz_result_engine {
             $this->resultsaver->create_or_update_result_in_db($this->page->scannedpageid, $teacherid);
         }
     }
-
 }

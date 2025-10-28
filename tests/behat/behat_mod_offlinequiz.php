@@ -30,8 +30,8 @@ use function PHPUnit\Framework\throwException;
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../../question/tests/behat/behat_question_base.php');
 
-use Behat\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode,
+use Behat\Step\Given,
+    Behat\Gherkin\Node\TableNode,
     Behat\Behat\Tester\Exception\PendingException;
 
 
@@ -42,7 +42,6 @@ use Behat\Step\Given as Given,
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_mod_offlinequiz extends behat_question_base {
-
     /**
      * Adds the specified questions to offlinequiz
      *
@@ -82,12 +81,13 @@ class behat_mod_offlinequiz extends behat_question_base {
             }
             $questioncategory = $DB->get_record('question_categories', ['name' => $row[$columns['questioncategory']]]);
             $addquestion = $DB->get_field('question', 'id', ['name' => $row[$columns['questionname']]]);
-            $offlinequiz->groupid = $DB->get_field('offlinequiz_groups', 'id' ,
-            ['offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnummber]);
+            $offlinequiz->groupid = $DB->get_field(
+                'offlinequiz_groups',
+                'id',
+                ['offlinequizid' => $offlinequiz->id, 'groupnumber' => $groupnummber]
+            );
             offlinequiz_add_offlinequiz_question($addquestion, $offlinequiz, 0, $maxmark);
-
         }
-
     }
 
     /**
@@ -113,9 +113,5 @@ class behat_mod_offlinequiz extends behat_question_base {
             $this->execute('behat_general::i_click_on', [ $xpath, 'xpath_element']);
         }
         $this->execute('behat_general::i_click_on', [get_string('duplicate'), 'button']);
-
     }
-
-
-
 }

@@ -26,12 +26,11 @@ defined('MOODLE_INTERNAL') || die;
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot.'/mod/offlinequiz/lib.php');
+require_once($CFG->dirroot . '/mod/offlinequiz/lib.php');
 /**
  * report edit dates integration
  */
-class mod_offlinequiz_report_editdates_integration
-        extends report_editdates_mod_date_extractor {
+class mod_offlinequiz_report_editdates_integration extends report_editdates_mod_date_extractor {
     /**
      * constructor
      * @param mixed $course
@@ -48,14 +47,26 @@ class mod_offlinequiz_report_editdates_integration
     public function get_settings(cm_info $cm) {
         $offlinequiz = $this->mods[$cm->instance];
         return ['time'      => new report_editdates_date_setting(
-                                        get_string('quizdate', 'offlinequiz'),
-                                        $offlinequiz->time, self::DATETIME, true, 1),
+            get_string('quizdate', 'offlinequiz'),
+            $offlinequiz->time,
+            self::DATETIME,
+            true,
+            1
+        ),
                      'timeopen'  => new report_editdates_date_setting(
-                                        get_string('reviewopens', 'offlinequiz'),
-                                        $offlinequiz->timeopen, self::DATETIME, true, 1),
+                         get_string('reviewopens', 'offlinequiz'),
+                         $offlinequiz->timeopen,
+                         self::DATETIME,
+                         true,
+                         1
+                     ),
                      'timeclose' => new report_editdates_date_setting(
-                                        get_string('reviewcloses', 'offlinequiz'),
-                                        $offlinequiz->timeclose, self::DATETIME, true, 1),
+                         get_string('reviewcloses', 'offlinequiz'),
+                         $offlinequiz->timeclose,
+                         self::DATETIME,
+                         true,
+                         1
+                     ),
         ];
     }
     /**
@@ -66,8 +77,10 @@ class mod_offlinequiz_report_editdates_integration
      */
     public function validate_dates(cm_info $cm, array $dates) {
         $errors = [];
-        if ($dates['timeopen'] != 0 && $dates['timeclose'] != 0
-                && $dates['timeclose'] < $dates['timeopen']) {
+        if (
+            $dates['timeopen'] != 0 && $dates['timeclose'] != 0
+                && $dates['timeclose'] < $dates['timeopen']
+        ) {
             $errors['timeclose'] = get_string('closebeforeopen', 'offlinequiz');
         }
         return $errors;
@@ -95,6 +108,5 @@ class mod_offlinequiz_report_editdates_integration
         // Calling the update event method to change the calender events accordingly.
         offlinequiz_update_events($offlinequiz);
         offlinequiz_grade_item_update($offlinequiz);
-
     }
 }

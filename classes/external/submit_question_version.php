@@ -40,14 +40,13 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class submit_question_version extends external_api {
-
     /**
      * Parameters for the submit_question_version.
      *
      * @return \external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters (
+        return new external_function_parameters(
             [
                 'slotid' => new external_value(PARAM_INT, ''),
                 'newversion' => new external_value(PARAM_INT, ''),
@@ -74,16 +73,19 @@ class submit_question_version extends external_api {
         $params = self::validate_parameters(self::execute_parameters(), $params);
         $response = ['result' => false];
         // Get the required data.
-        $referencedata = $DB->get_record('question_references',
-            ['itemid' => $params['slotid'], 'component' => 'mod_offlinequiz', 'questionarea' => 'slot']);
+        $referencedata = $DB->get_record(
+            'question_references',
+            ['itemid' => $params['slotid'], 'component' => 'mod_offlinequiz', 'questionarea' => 'slot']
+        );
         $slotdata = $DB->get_record('offlinequiz_group_questions', ['id' => $slotid]);
-        $questionbankentryid = $DB->get_field('question_versions',
-                                                'questionbankentryid',
-                                                ['questionid' => $slotdata->questionid]
-                                            );
+        $questionbankentryid = $DB->get_field(
+            'question_versions',
+            'questionbankentryid',
+            ['questionid' => $slotdata->questionid]
+        );
 
         // Capability check.
-        list($course, $cm) = get_course_and_cm_from_instance($slotdata->offlinequizid, 'offlinequiz');
+        [$course, $cm] = get_course_and_cm_from_instance($slotdata->offlinequizid, 'offlinequiz');
         $context = \context_module::instance($cm->id);
         self::validate_context($context);
         require_capability('mod/offlinequiz:manage', $context);
@@ -94,10 +96,11 @@ class submit_question_version extends external_api {
             $sql = "SELECT MAX(questionid) FROM {question_versions} WHERE ? ";
             $newquestionid = $DB->get_field_sql($sql, ['questionbankentryid' => $questionbankentryid]);
         } else {
-            $newquestionid = $DB->get_field('question_versions',
-                                            'questionid',
-                                            ['questionbankentryid' => $questionbankentryid, 'version' => $newversion]
-                                            );
+            $newquestionid = $DB->get_field(
+                'question_versions',
+                'questionid',
+                ['questionbankentryid' => $questionbankentryid, 'version' => $newversion]
+            );
         }
 
         $oldquestioncountanswers = $DB->count_records('question_answers', ['question' => $oldquestionid]);
@@ -111,7 +114,6 @@ class submit_question_version extends external_api {
 
         // The forms are either still not created or the number of answers matches, so a question can be updated ex-post.
         if ($canbeedited || $oldquestioncountanswers == $newquestioncountanswers) {
-
             $newdata = new stdClass();
             $newdata->id = $slotdata->id;
             $newdata->questionid = $newquestionid;

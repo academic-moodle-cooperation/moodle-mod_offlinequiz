@@ -79,8 +79,10 @@ class report extends default_report {
             echo $OUTPUT->box_end();
         }
 
-        $importform = new offlinequiz_upload_form($reporturl,
-                ['offlinequiz' => $offlinequiz, 'context' => $this->context]);
+        $importform = new offlinequiz_upload_form(
+            $reporturl,
+            ['offlinequiz' => $offlinequiz, 'context' => $this->context]
+        );
 
         // Has the user submitted a file?
         if ($fromform = $importform->get_data() && confirm_sesskey()) {
@@ -88,7 +90,8 @@ class report extends default_report {
             // or one from the filesarea.
             $realfilename = $importform->get_new_filename('newfile');
             // Escape filename for security reasons.
-            $realfilename = preg_replace('/[^A-Za-z0-9\-\_\.]/', '_', $realfilename);;
+            $realfilename = preg_replace('/[^A-Za-z0-9\-\_\.]/', '_', $realfilename);
+            ;
             // Create a new queue job.
             $job = new stdClass();
             $job->offlinequizid = $offlinequiz->id;
@@ -123,7 +126,6 @@ class report extends default_report {
             echo $OUTPUT->notification(get_string('addingfilestoqueue', 'offlinequiz_rimport'), 'notifysuccess');
             echo $OUTPUT->continue_button($CFG->wwwroot . '/mod/offlinequiz/report.php?q=' . $offlinequiz->id . '&mode=correct');
         } else {
-
             // Print info about offlinequiz_queue jobs.
             $sql = 'SELECT COUNT(*) as count
                       FROM {offlinequiz_queue} q
@@ -141,8 +143,10 @@ class report extends default_report {
                 echo $OUTPUT->notification(get_string('newformsinqueue', 'offlinequiz_rimport', $newforms->count), 'notifysuccess');
             }
             if ($processingforms->count > 0) {
-                echo $OUTPUT->notification(get_string('processingformsinqueue', 'offlinequiz_rimport', $processingforms->count),
-                        'notifysuccess');
+                echo $OUTPUT->notification(
+                    get_string('processingformsinqueue', 'offlinequiz_rimport', $processingforms->count),
+                    'notifysuccess'
+                );
             }
 
             $action = optional_param('action', '', PARAM_ACTION);
@@ -150,7 +154,6 @@ class report extends default_report {
             switch ($action) {
                 case 'delete':
                     if (confirm_sesskey()) {
-
                         $selectedpageids = [];
                         $params = (array) data_submitted();
 
@@ -186,11 +189,11 @@ class report extends default_report {
     private function create_file_entry($filename, $pathname, $jobid) {
         $fs = get_file_storage();
         $filerecord = [
-            'contextid' => $this->context->id,      // ID of context.
+            'contextid' => $this->context->id, // ID of context.
             'component' => 'mod_offlinequiz', // Usually = table name.
-            'filearea'  => 'queue',      // Usually = table name.
-            'itemid'    => $jobid,                 // Usually = ID of row in table.
-            'filepath'  => '/',                // Any path beginning and ending in.
+            'filearea'  => 'queue', // Usually = table name.
+            'itemid'    => $jobid, // Usually = ID of row in table.
+            'filepath'  => '/', // Any path beginning and ending in.
         ]; // Any filename.
 
         $filerecord['filename'] = $filename;
@@ -210,9 +213,11 @@ class report extends default_report {
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         $parentnode = $navigation->get('mod_offlinequiz_results');
         if ($parentnode) {
-            $newnode = navigation_node::create(text: get_string('importforms', 'offlinequiz_rimport'),
+            $newnode = navigation_node::create(
+                text: get_string('importforms', 'offlinequiz_rimport'),
                 action:  new moodle_url('/mod/offlinequiz/report.php', ['q' => $offlinequiz->id, 'mode' => 'rimport']),
-                key: $this->get_navigation_key());
+                key: $this->get_navigation_key()
+            );
             // Now include as a the first item.
             $parentnode->add_node($newnode, 'tabofflinequizcorrect');
         }

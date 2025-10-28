@@ -40,7 +40,6 @@ namespace mod_offlinequiz\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class participant_manually_marked extends \core\event\base {
-
     /**
      * Init method.
      */
@@ -95,6 +94,5 @@ class participant_manually_marked extends \core\event\base {
         if (!isset($this->other['type'])) {
             throw new \coding_exception('The \'type\' value must be set in other.');
         }
-
     }
 }

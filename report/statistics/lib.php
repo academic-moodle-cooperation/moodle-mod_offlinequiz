@@ -38,12 +38,17 @@
  * @param bool $forcedownload
  * @param array $options additional options affecting the file serving
  */
-function offlinequiz_statistics_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload,
-                                                                array $options = []) {
+function offlinequiz_statistics_questiontext_preview_pluginfile(
+    $context,
+    $questionid,
+    $args,
+    $forcedownload,
+    array $options = []
+) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
 
-    list($context, $course, $cm) = get_context_info_array($context->id);
+    [$context, $course, $cm] = get_context_info_array($context->id);
     require_login($course, false, $cm);
 
     // Assume only trusted people can see this report. There is no real way to
@@ -60,23 +65,37 @@ function offlinequiz_statistics_cron() {
     global $DB;
 
     $expiretime = time() - 5 * HOURSECS;
-    $todelete = $DB->get_records_select_menu('offlinequiz_statistics',
-            'timemodified < ?', [$expiretime], '', 'id, 1');
+    $todelete = $DB->get_records_select_menu(
+        'offlinequiz_statistics',
+        'timemodified < ?',
+        [$expiretime],
+        '',
+        'id, 1'
+    );
 
     if (!$todelete) {
         return true;
     }
 
-    list($todeletesql, $todeleteparams) = $DB->get_in_or_equal(array_keys($todelete));
+    [$todeletesql, $todeleteparams] = $DB->get_in_or_equal(array_keys($todelete));
 
-    $DB->delete_records_select('offlinequiz_q_statistics',
-            'offlinequizstatisticsid ' . $todeletesql, $todeleteparams);
+    $DB->delete_records_select(
+        'offlinequiz_q_statistics',
+        'offlinequizstatisticsid ' . $todeletesql,
+        $todeleteparams
+    );
 
-    $DB->delete_records_select('offlinequiz_q_response_stats',
-            'offlinequizstatisticsid ' . $todeletesql, $todeleteparams);
+    $DB->delete_records_select(
+        'offlinequiz_q_response_stats',
+        'offlinequizstatisticsid ' . $todeletesql,
+        $todeleteparams
+    );
 
-    $DB->delete_records_select('offlinequiz_statistics',
-            'id ' . $todeletesql, $todeleteparams);
+    $DB->delete_records_select(
+        'offlinequiz_statistics',
+        'id ' . $todeletesql,
+        $todeleteparams
+    );
 
     return true;
 }

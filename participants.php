@@ -43,7 +43,7 @@ $mode = optional_param('mode', 'editparticipants', PARAM_ALPHA);
 $action = optional_param('action', '', PARAM_ALPHA);
 $download = optional_param('download', false, PARAM_ALPHA);
 
-list($offlinequiz, $course, $cm) = get_course_objects($id, $q);
+[$offlinequiz, $course, $cm] = get_course_objects($id, $q);
 
 require_login($course->id, false, $cm);
 
@@ -65,8 +65,10 @@ if (!has_capability('mod/offlinequiz:createofflinequiz', $context)) {
 }
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
-$thispageurl = new moodle_url('/mod/offlinequiz/participants.php',
-                              ['id' => $id, 'q' => $q, 'mode' => $mode, 'forcenew' => $forcenew]);
+$thispageurl = new moodle_url(
+    '/mod/offlinequiz/participants.php',
+    ['id' => $id, 'q' => $q, 'mode' => $mode, 'forcenew' => $forcenew]
+);
 
 $PAGE->set_url($thispageurl);
 $PAGE->set_pagelayout('admin');
@@ -80,13 +82,14 @@ $pagetitle = get_string('editparticipants', 'offlinequiz');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->disable();
-$PAGE->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
-        'M.mod_offlinequiz.init_resource_toolbox',
-        [[
+$PAGE->requires->yui_module(
+    'moodle-mod_offlinequiz-toolboxes',
+    'M.mod_offlinequiz.init_resource_toolbox',
+    [[
                 'courseid' => $course->id,
                 'offlinequizid' => $offlinequiz->id,
         ]]
-        );
+);
 
 
 
@@ -107,7 +110,7 @@ function find_pdf_file($contextid, $listfilename) {
         return $fs->get_file($contextid, 'mod_offlinequiz', 'pdfs', 0, '/', $listfilename);
     }
 }
-switch($mode) {
+switch ($mode) {
     case 'editlists':
         // Only print headers and tabs if not asked to download data.
         if (!$download && $action != 'savelist') {
@@ -154,8 +157,10 @@ switch($mode) {
                         $DB->set_field('offlinequiz_p_lists', 'name', $data->name, ['id' => $data->listid]);
                     }
                 }
-                $url = new moodle_url('/mod/offlinequiz/participants.php',
-                    ['mode' => 'editlists', 'q' => $offlinequiz->id]);
+                $url = new moodle_url(
+                    '/mod/offlinequiz/participants.php',
+                    ['mode' => 'editlists', 'q' => $offlinequiz->id]
+                );
                 redirect($url, get_string('changessaved'));
                 break;
             default:
@@ -179,26 +184,36 @@ switch($mode) {
             $numusers = $DB->count_records_sql($sql, $params);
             echo '<li>';
             $listname = '<b>' . $list->name . '(' . $numusers . ')</b>';
-            $listurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
-                    ['mode' => 'editparticipants', 'q' => $offlinequiz->id , 'listid' => $list->id]);
+            $listurl = new moodle_url(
+                $CFG->wwwroot . '/mod/offlinequiz/participants.php',
+                ['mode' => 'editparticipants', 'q' => $offlinequiz->id, 'listid' => $list->id]
+            );
             echo html_writer::link($listurl, $listname);
             $streditlist = get_string('editthislist', 'offlinequiz');
-            $imagehtml = $OUTPUT->pix_icon('i/edit',  $streditlist);
-            $editurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
-                    ['mode' => 'editlists', 'action' => 'edit' , 'q' => $offlinequiz->id , 'listid' => $list->id]);
+            $imagehtml = $OUTPUT->pix_icon('i/edit', $streditlist);
+            $editurl = new moodle_url(
+                $CFG->wwwroot . '/mod/offlinequiz/participants.php',
+                ['mode' => 'editlists', 'action' => 'edit', 'q' => $offlinequiz->id, 'listid' => $list->id]
+            );
             echo html_writer::link($editurl, $imagehtml, ['class' => 'editlistlink']);
 
             $strdeletelist = get_string('deletethislist', 'offlinequiz');
-            $imagehtml = $OUTPUT->pix_icon('t/delete',  $strdeletelist);
-            $deleteurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
-                    ['mode' => 'editlists',
+            $imagehtml = $OUTPUT->pix_icon('t/delete', $strdeletelist);
+            $deleteurl = new moodle_url(
+                $CFG->wwwroot . '/mod/offlinequiz/participants.php',
+                ['mode' => 'editlists',
                           'action' => 'delete',
                           'q' => $offlinequiz->id,
                           'listid' => $list->id,
-                          'sesskey' => sesskey()]);
-            echo html_writer::link($deleteurl, $imagehtml,
-                         ['onClick' => 'return confirm(\'' . addslashes(get_string('deletelistcheck', 'offlinequiz'))
-                         . '\');', 'class' => 'deletelistlink']);
+                'sesskey' => sesskey()]
+            );
+            echo html_writer::link(
+                $deleteurl,
+                $imagehtml,
+                ['onClick' => 'return confirm(\'' . addslashes(get_string('deletelistcheck', 'offlinequiz'))
+                . '\');',
+                'class' => 'deletelistlink']
+            );
             echo '</li>';
         }
         echo '</ul>';
@@ -219,8 +234,10 @@ switch($mode) {
 
         if (!$list = $DB->get_record('offlinequiz_p_lists', ['id' => $listid])) {
             if (!$lists = $DB->get_records('offlinequiz_p_lists', ['offlinequizid' => $offlinequiz->id], ' listnumber ASC ')) {
-                $url = new moodle_url('/mod/offlinequiz/participants.php',
-                        ['q' => $offlinequiz->id, 'mode' => 'editlists']);
+                $url = new moodle_url(
+                    '/mod/offlinequiz/participants.php',
+                    ['q' => $offlinequiz->id, 'mode' => 'editlists']
+                );
                 redirect($url);
             } else {
                 $list = array_pop($lists);
@@ -241,14 +258,18 @@ switch($mode) {
 
             foreach ($addselect as $userid) {
                 $record->userid = $userid;
-                if (!$DB->get_record('offlinequiz_participants',
-                        ['listid' => $record->listid, 'userid' => $record->userid])) {
+                if (
+                    !$DB->get_record(
+                        'offlinequiz_participants',
+                        ['listid' => $record->listid, 'userid' => $record->userid]
+                    )
+                ) {
                     $DB->insert_record('offlinequiz_participants', $record);
                 }
             }
         }
         if (!empty($removeselect) && confirm_sesskey()) {
-            list($dsql, $dparams) = $DB->get_in_or_equal($removeselect, SQL_PARAMS_NAMED, 'remove');
+            [$dsql, $dparams] = $DB->get_in_or_equal($removeselect, SQL_PARAMS_NAMED, 'remove');
             $sql = "SELECT p.*
                       FROM {offlinequiz_participants} p,
                            {offlinequiz_p_lists} pl
@@ -261,9 +282,11 @@ switch($mode) {
 
             $todelete = $DB->get_records_sql($sql, $dparams);
             foreach ($todelete as $deleteuser) {
-                $DB->delete_records('offlinequiz_participants',
-                        ['listid' => $list->id,
-                                'userid' => $deleteuser->userid]);
+                $DB->delete_records(
+                    'offlinequiz_participants',
+                    ['listid' => $list->id,
+                    'userid' => $deleteuser->userid]
+                );
             }
         }
         $groups = groups_get_all_groups($course->id);
@@ -274,7 +297,7 @@ switch($mode) {
                 if ($group == $item->id) {
                     $groupoptions .= ' selected="selected"';
                 }
-                $groupoptions .= '>'.$item->name.'</option>';
+                $groupoptions .= '>' . $item->name . '</option>';
             }
         }
         $listoptions = '';
@@ -284,7 +307,7 @@ switch($mode) {
                 if ($list->id == $item->id) {
                     $listoptions .= ' selected="selected"';
                 }
-                $listoptions .= '>'.$item->name.'</option>';
+                $listoptions .= '>' . $item->name . '</option>';
             }
         }
 
@@ -299,11 +322,11 @@ switch($mode) {
         }
         $rolelist = implode(',', $roleids);
 
-        list($csql, $cparams) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
+        [$csql, $cparams] = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
 
         $membersoptions = '';
 
-        list($rsql, $rparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
+        [$rsql, $rparams] = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'role');
         $params = array_merge($cparams, $rparams);
 
         $sql = "SELECT DISTINCT u.id, u." . $offlinequizconfig->ID_field . ", u.firstname, u.lastname,
@@ -324,7 +347,7 @@ switch($mode) {
         if ($members = $DB->get_records_sql($sql, $params)) {
             $memberscount = count($members);
             foreach ($members as $member) {
-                $membersoptions .= '<option value="' . $member->id.'">' . fullname($member) .
+                $membersoptions .= '<option value="' . $member->id . '">' . fullname($member) .
                 ' (' . $member->{$offlinequizconfig->ID_field} . ')</option>';
                 $memberids[] = $member->id;
             }
@@ -384,8 +407,10 @@ switch($mode) {
             }
             $listid = optional_param('listid', 0, PARAM_INT);
             echo '<div align="center">' . get_string('participantslist', 'offlinequiz') . ':&nbsp;';
-            $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/participants.php',
-                    ['q' => $offlinequiz->id, 'mode' => 'attendances']);
+            $url = new moodle_url(
+                $CFG->wwwroot . '/mod/offlinequiz/participants.php',
+                ['q' => $offlinequiz->id, 'mode' => 'attendances']
+            );
             echo $OUTPUT->single_select($url, 'listid', $options, $listid);
             echo '<br />&nbsp;<br /></div>';
         }
@@ -406,7 +431,7 @@ switch($mode) {
                 $userid = $DB->get_field('offlinequiz_participants', 'userid', ['id' => $participantid]);
                 $params = [
                            'objectid' => $userid,
-                           'context' => context_module::instance( $cm->id ),
+                           'context' => context_module::instance($cm->id),
                            'other' => [
                                    'mode' => 'attendances',
                                    'offlinequizid' => $offlinequiz->id,
@@ -432,7 +457,7 @@ switch($mode) {
                 $userid = $DB->get_field('offlinequiz_participants', 'userid', ['id' => $participantid]);
                 $params = [
                            'objectid' => $userid,
-                           'context' => context_module::instance( $cm->id ),
+                           'context' => context_module::instance($cm->id),
                            'other' => [
                                    'mode' => 'attendances',
                                    'offlinequizid' => $offlinequiz->id,
@@ -446,8 +471,10 @@ switch($mode) {
         // We redirect if no list has been created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
             ;
-            redirect(new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id]),
-                 get_string('createlistfirst', 'offlinequiz'));
+            redirect(
+                new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id]),
+                get_string('createlistfirst', 'offlinequiz')
+            );
         } else {
             if ($download) {
                 offlinequiz_download_partlist($offlinequiz, $download, $coursecontext, $systemcontext);
@@ -459,8 +486,10 @@ switch($mode) {
     case 'createpdfs':
         // We redirect if no list has been created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
-            redirect(new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id]),
-                get_string('createlistfirst', 'offlinequiz'));
+            redirect(
+                new moodle_url('/mod/offlinequiz/participants.php', ['q' => $offlinequiz->id]),
+                get_string('createlistfirst', 'offlinequiz')
+            );
         }
         // Only print headers and tabs if not asked to download data.
         if (!$download) {
@@ -502,16 +531,20 @@ switch($mode) {
             $fs = get_file_storage();
 
             // Delete existing pdf if forcenew.
-            if ($forcenew && property_exists($list, 'filename') && $list->filename
-                    && $file = find_pdf_file($context->id, $list->filename)) {
+            if (
+                $forcenew && property_exists($list, 'filename') && $list->filename
+                    && $file = find_pdf_file($context->id, $list->filename)
+            ) {
                 $file->delete();
                 $list->filename = null;
             }
 
             $pdffile = null;
             // Create PDF file if necessary.
-            if (!property_exists($list, 'filename') ||  !$list->filename ||
-                    !$pdffile = find_pdf_file($context->id, $list->filename)) {
+            if (
+                !property_exists($list, 'filename') ||  !$list->filename ||
+                    !$pdffile = find_pdf_file($context->id, $list->filename)
+            ) {
                 $pdffile = offlinequiz_create_pdf_participants($offlinequiz, $course->id, $list, $context);
                 if (!empty($pdffile)) {
                     $list->filename = $pdffile->get_filename();
@@ -539,16 +572,20 @@ switch($mode) {
     case 'correct':
         // We redirect if no list created.
         if (!offlinequiz_partlist_created($offlinequiz)) {
-            redirect(new moodle_url('/mod/offlinequiz/participants.php',
-                ['q' => $offlinequiz->id]), get_string('createlistfirst', 'offlinequiz'));
+            redirect(new moodle_url(
+                '/mod/offlinequiz/participants.php',
+                ['q' => $offlinequiz->id]
+            ), get_string('createlistfirst', 'offlinequiz'));
         }
 
-        $lists = $DB->get_records_sql("
+        $lists = $DB->get_records_sql(
+            "
                 SELECT *
                   FROM {offlinequiz_p_lists}
                  WHERE offlinequizid = :offlinequizid
               ORDER BY name ASC",
-                ['offlinequizid' => $offlinequiz->id]);
+            ['offlinequizid' => $offlinequiz->id]
+        );
 
         $fs = get_file_storage();
 
@@ -561,8 +598,10 @@ switch($mode) {
         }
 
         if ($redirect) {
-            redirect(new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'createpdfs', 'q' => $offlinequiz->id]),
-                get_string('createpdffirst', 'offlinequiz'));
+            redirect(
+                new moodle_url('/mod/offlinequiz/participants.php', ['mode' => 'createpdfs', 'q' => $offlinequiz->id]),
+                get_string('createpdffirst', 'offlinequiz')
+            );
         }
 
         // Only print headers and tabs if not asked to download data.
@@ -581,7 +620,6 @@ switch($mode) {
 
         if ($newfile = optional_param('newfile', '', PARAM_INT)) {
             if ($fromform = $importform->get_data()) {
-
                 @raise_memory_limit('128M');
                 $offlinequizconfig->papergray = $offlinequiz->papergray;
 
@@ -610,11 +648,12 @@ switch($mode) {
                         unlink($importfile);
                         $files = get_directory_list($tempdir);
                     } else {
-                        echo $OUTPUT->notification(get_string('couldnotunzip', 'offlinequiz_rimport', $realfilename),
-                                                   'notifyproblem');
-
+                        echo $OUTPUT->notification(
+                            get_string('couldnotunzip', 'offlinequiz_rimport', $realfilename),
+                            'notifyproblem'
+                        );
                     }
-                } else if (preg_match('/^image/' , $mimetype)) {
+                } else if (preg_match('/^image/', $mimetype)) {
                     $files[] = $realfilename;
                 }
             }
@@ -647,21 +686,34 @@ switch($mode) {
                 $scanner = new offlinequiz_participants_scanner($offlinequiz, $context->id, 0, 0);
 
                 if ($scannedpage = $scanner->load_image($filename)) {
-
                     if ($scannedpage->status == 'ok') {
-                        list($scanner, $scannedpage) = offlinequiz_check_scanned_participants_page(
-                                                       $offlinequiz, $scanner, $scannedpage, $USER->id, $coursecontext, true);
+                        [$scanner, $scannedpage] = offlinequiz_check_scanned_participants_page(
+                            $offlinequiz,
+                            $scanner,
+                            $scannedpage,
+                            $USER->id,
+                            $coursecontext,
+                            true
+                        );
                     }
                     if ($scannedpage->status == 'ok') {
-                        $scannedpage = offlinequiz_process_scanned_participants_page($offlinequiz, $scanner, $scannedpage,
-                                                                          $USER->id, $coursecontext);
+                        $scannedpage = offlinequiz_process_scanned_participants_page(
+                            $offlinequiz,
+                            $scanner,
+                            $scannedpage,
+                            $USER->id,
+                            $coursecontext
+                        );
                     }
                     if ($scannedpage->status == 'ok') {
                         $choicesdata = $DB->get_records('offlinequiz_p_choices', ['scannedppageid' => $scannedpage->id]);
                         $scannedpage = $scannedpage = offlinequiz_submit_scanned_participants_page(
-                                                      $offlinequiz, $scannedpage, $choicesdata);
+                            $offlinequiz,
+                            $scannedpage,
+                            $choicesdata
+                        );
                         if ($scannedpage->status == 'submitted') {
-                            echo get_string('pagenumberimported', 'offlinequiz', $j)."<br /><br />";
+                            echo get_string('pagenumberimported', 'offlinequiz', $j) . "<br /><br />";
                         }
                     }
                 } else {
@@ -684,10 +736,12 @@ switch($mode) {
                 die;
             } else {
                 $first = $last + 1;
-                $url = new moodle_url('/mod/offlinequiz/participants.php',
+                $url = new moodle_url(
+                    '/mod/offlinequiz/participants.php',
                     ['mode' => 'upload', 'q' => $offlinequiz->id, 'action' => 'upload', 'tempdir' => $tempdir,
                         'first' => $first, 'numimports' => $numimports, 'sesskey' => sesskey(),
-                    ]);
+                    ]
+                );
                 redirect($url);
             }
         } else if ($action == 'delete') {

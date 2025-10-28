@@ -78,8 +78,11 @@ function mod_offlinequiz_print_column_stats_name($question, $baseurl, $name, $du
     }
 
     if ($url) {
-        $name = html_writer::link($url, $name,
-            ['title' => get_string('detailedanalysis', 'offlinequiz_statistics')]);
+        $name = html_writer::link(
+            $url,
+            $name,
+            ['title' => get_string('detailedanalysis', 'offlinequiz_statistics')]
+        );
     }
 
     if ($dubiousquestion) {

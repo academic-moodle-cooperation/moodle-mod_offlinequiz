@@ -128,14 +128,16 @@ class offlinequiz {
      * Load just basic information about all the questions in this offlinequiz.
      */
     public function preload_questions() {
-        $this->questions = question_preload_questions(null,
-                'slot.maxmark, slot.id AS slotid, slot.slot, slot.page',
-                '{offlinequiz_group_questions} slot ON slot.offlinequizid = :offlinequizid
+        $this->questions = question_preload_questions(
+            null,
+            'slot.maxmark, slot.id AS slotid, slot.slot, slot.page',
+            '{offlinequiz_group_questions} slot ON slot.offlinequizid = :offlinequizid
                   AND slot.offlinegroupid = :offlinegroupid
                   AND q.id = slot.questionid',
-                ['offlinequizid' => $this->offlinequiz->id,
+            ['offlinequizid' => $this->offlinequiz->id,
                       'offlinegroupid' => $this->offlinequiz->groupid],
-                 'slot.slot');
+            'slot.slot'
+        );
     }
 
     /**
@@ -310,8 +312,11 @@ class offlinequiz {
      */
     public function get_access_manager($timenow) {
         if (is_null($this->accessmanager)) {
-            $this->accessmanager = new offlinequiz_access_manager($this, $timenow,
-                    has_capability('mod/offlinequiz:ignoretimelimits', $this->context, null, false));
+            $this->accessmanager = new offlinequiz_access_manager(
+                $this,
+                $timenow,
+                has_capability('mod/offlinequiz:ignoretimelimits', $this->context, null, false)
+            );
         }
         return $this->accessmanager;
     }
@@ -445,13 +450,20 @@ class offlinequiz {
             $dateformat = '';
         }
 
-        if ($when == mod_offlinequiz_display_options::DURING ||
-                $when == mod_offlinequiz_display_options::IMMEDIATELY_AFTER) {
+        if (
+            $when == mod_offlinequiz_display_options::DURING ||
+                $when == mod_offlinequiz_display_options::IMMEDIATELY_AFTER
+        ) {
             return '';
-        } else if ($when == mod_offlinequiz_display_options::LATER_WHILE_OPEN && $this->offlinequiz->timeclose &&
-                $this->offlinequiz->reviewattempt & mod_offlinequiz_display_options::AFTER_CLOSE) {
-            return get_string('noreviewuntil' . $langstrsuffix, 'offlinequiz',
-                    userdate($this->offlinequiz->timeclose, $dateformat));
+        } else if (
+            $when == mod_offlinequiz_display_options::LATER_WHILE_OPEN && $this->offlinequiz->timeclose &&
+                $this->offlinequiz->reviewattempt & mod_offlinequiz_display_options::AFTER_CLOSE
+        ) {
+            return get_string(
+                'noreviewuntil' . $langstrsuffix,
+                'offlinequiz',
+                userdate($this->offlinequiz->timeclose, $dateformat)
+            );
         } else {
             return get_string('noreview' . $langstrsuffix, 'offlinequiz');
         }

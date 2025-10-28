@@ -43,7 +43,6 @@ if ($id) {
     if (!$offlinequiz = $DB->get_record('offlinequiz', ['id' => $cm->instance])) {
         throw new \moodle_exception('invalidcoursemodule');
     }
-
 } else {
     if (!$offlinequiz = $DB->get_record('offlinequiz', ['id' => $q])) {
         throw new \moodle_exception('invalidofflinequizid', 'offlinequiz');
@@ -63,13 +62,14 @@ if ($mode != '') {
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->force_settings_menu(true);
-$PAGE->requires->yui_module('moodle-mod_offlinequiz-toolboxes',
-        'M.mod_offlinequiz.init_resource_toolbox',
-        [[
+$PAGE->requires->yui_module(
+    'moodle-mod_offlinequiz-toolboxes',
+    'M.mod_offlinequiz.init_resource_toolbox',
+    [[
                 'courseid' => $course->id,
                 'offlinequizid' => $offlinequiz->id,
         ]]
-        );
+);
 
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
@@ -111,4 +111,3 @@ $event = \mod_offlinequiz\event\report_viewed::create($params);
 $event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('offlinequiz', $offlinequiz);
 $event->trigger();
-

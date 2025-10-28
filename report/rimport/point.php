@@ -56,7 +56,7 @@ class offlinequiz_point {
      * @param mixed $y
      * @param mixed $mode
      */
-    public function __construct($x, $y , $mode) {
+    public function __construct($x, $y, $mode) {
         $this->x = $x;
         $this->y = $y;
         $this->mode = $mode;
@@ -91,7 +91,6 @@ class offlinequiz_point {
     public function getdistance() {
         return sqrt(pow($this->x, 2) + pow($this->y, 2));
     }
-
 }
 
 /**

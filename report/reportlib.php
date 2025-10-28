@@ -113,7 +113,7 @@ function offlinequiz_report_get_significant_questions($offlinequiz) {
         return [];
     }
 
-    list($usql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
+    [$usql, $params] = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
 
     $params['offlinequizid'] = $offlinequiz->id;
     $groupsql = '';
@@ -235,8 +235,10 @@ function offlinequiz_no_questions_message($offlinequiz, $cm, $context) {
     $output = '';
     $output .= $OUTPUT->notification(get_string('noquestions', 'offlinequiz'));
     if (has_capability('mod/offlinequiz:manage', $context)) {
-        $output .= $OUTPUT->single_button(new moodle_url('/mod/offlinequiz/edit.php',
-        ['cmid' => $cm->id]), get_string('editofflinequiz', 'offlinequiz'), 'get');
+        $output .= $OUTPUT->single_button(new moodle_url(
+            '/mod/offlinequiz/edit.php',
+            ['cmid' => $cm->id]
+        ), get_string('editofflinequiz', 'offlinequiz'), 'get');
     }
 
     return $output;

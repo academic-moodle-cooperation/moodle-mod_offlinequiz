@@ -104,7 +104,9 @@ class offlinequiz_access_manager {
      * @param MoodleQuickForm $mform the wrapped MoodleQuickForm.
      */
     public static function add_settings_form_fields(
-            mod_offlinequiz_mod_form $offlinequizform, MoodleQuickForm $mform) {
+        mod_offlinequiz_mod_form $offlinequizform,
+        MoodleQuickForm $mform
+    ) {
 
         foreach (self::get_rule_classes() as $rule) {
             $rule::add_settings_form_fields($offlinequizform, $mform);
@@ -132,8 +134,12 @@ class offlinequiz_access_manager {
      * @param mod_offlinequiz_mod_form $offlinequizform the offlinequiz form object.
      * @return array $errors the updated $errors array.
      */
-    public static function validate_settings_form_fields(array $errors,
-            array $data, $files, mod_offlinequiz_mod_form $offlinequizform) {
+    public static function validate_settings_form_fields(
+        array $errors,
+        array $data,
+        $files,
+        mod_offlinequiz_mod_form $offlinequizform
+    ) {
 
         foreach (self::get_rule_classes() as $rule) {
             $errors = $rule::validate_settings_form_fields($errors, $data, $files, $offlinequizform);
@@ -190,7 +196,7 @@ class offlinequiz_access_manager {
         $allparams = ['offlinequizid' => $offlinequizid];
 
         foreach ($rules as $rule) {
-            list($fields, $joins, $params) = $rule::get_settings_sql($offlinequizid);
+            [$fields, $joins, $params] = $rule::get_settings_sql($offlinequizid);
             if ($fields) {
                 if ($allfields) {
                     $allfields .= ', ';
@@ -227,7 +233,7 @@ class offlinequiz_access_manager {
         global $DB;
 
         $rules = self::get_rule_classes();
-        list($sql, $params) = self::get_load_sql($offlinequizid, $rules, '');
+        [$sql, $params] = self::get_load_sql($offlinequizid, $rules, '');
 
         if ($sql) {
             $data = (array) $DB->get_record_sql($sql, $params);
@@ -256,7 +262,7 @@ class offlinequiz_access_manager {
         global $DB;
 
         $rules = self::get_rule_classes();
-        list($sql, $params) = self::get_load_sql($offlinequizid, $rules, 'offlinequiz.*');
+        [$sql, $params] = self::get_load_sql($offlinequizid, $rules, 'offlinequiz.*');
         $offlinequiz = $DB->get_record_sql($sql, $params, MUST_EXIST);
 
         foreach ($rules as $rule) {
@@ -326,8 +332,10 @@ class offlinequiz_access_manager {
     public function prevent_new_attempt($numprevattempts, $lastattempt) {
         $reasons = [];
         foreach ($this->rules as $rule) {
-            $reasons = $this->accumulate_messages($reasons,
-                    $rule->prevent_new_attempt($numprevattempts, $lastattempt));
+            $reasons = $this->accumulate_messages(
+                $reasons,
+                $rule->prevent_new_attempt($numprevattempts, $lastattempt)
+            );
         }
         return $reasons;
     }
@@ -517,14 +525,17 @@ class offlinequiz_access_manager {
 
         $when = offlinequiz_attempt_state($this->offlinequizobj->get_offlinequiz(), $attempt);
         $reviewoptions = mod_offlinequiz_display_options::make_from_offlinequiz(
-                $this->offlinequizobj->get_offlinequiz());
+            $this->offlinequizobj->get_offlinequiz()
+        );
 
         if (!$reviewoptions->attempt) {
             return $output->no_review_message($this->offlinequizobj->cannot_review_message($when, true));
-
         } else {
-            return $output->review_link($this->offlinequizobj->review_url($attempt->id),
-                    $this->attempt_must_be_in_popup(), $this->get_popup_options());
+            return $output->review_link(
+                $this->offlinequizobj->review_url($attempt->id),
+                $this->attempt_must_be_in_popup(),
+                $this->get_popup_options()
+            );
         }
     }
 }

@@ -45,24 +45,28 @@ class offlinequiz_partlist_table extends offlinequiz_selectall_table {
 
         echo '<table id="commands">';
         echo '<tr><td>';
-        echo '<a href="#" class="selectall">'. $strselectall . '</a> / ';
+        echo '<a href="#" class="selectall">' . $strselectall . '</a> / ';
         echo '<a href="#" class="deselectall">' . $strselectnone . '</a> ';
         echo '&nbsp;&nbsp;';
         $options = ['check' => get_string('checkparts', 'offlinequiz'),
                 'uncheck' => get_string('uncheckparts', 'offlinequiz')];
-        echo html_writer::select($options, 'action', '', ['' => 'choosedots'],
-                ['onchange' => 'this.form.submit(); return true;']);
+        echo html_writer::select(
+            $options,
+            'action',
+            '',
+            ['' => 'choosedots'],
+            ['onchange' => 'this.form.submit(); return true;']
+        );
 
         echo '<noscript id="noscriptmenuaction" style="display: inline;"><div>';
-        echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
+        echo '<input type="submit" value="' . get_string('go') . '" /></div></noscript>';
         echo '<script type="text/javascript">' . "\n<!--\n" .
-            'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
+            'document.getElementById("noscriptmenuaction").style.display = "none";' . "\n-->\n" . '</script>';
         echo '</td></tr></table>';
         echo '  </center>';
         // Close form.
         echo ' </div>';
         echo '</form></div>';
-
     }
     /**
      * the initials bar

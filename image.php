@@ -34,49 +34,93 @@ $resultid = required_param('resultid', PARAM_INT);
 $pageid      = optional_param('pageid', 0, PARAM_INT);
 
 if (!$result = $DB->get_record('offlinequiz_results', ['id' => $resultid])) {
-    throw new \moodle_exception('noresult', 'offlinequiz',
-        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception(
+        'noresult',
+        'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid
+    );
 }
 if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', ['id' => $pageid])) {
-    throw new \moodle_exception('nopage', 'offlinequiz',
-        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception(
+        'nopage',
+        'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid
+    );
 }
 if (!$offlinequiz = $DB->get_record("offlinequiz", ['id' => $result->offlinequizid])) {
-    throw new \moodle_exception('noofflinequiz', 'offlinequiz',
-        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception(
+        'noofflinequiz',
+        'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid
+    );
 }
 if (!$course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
-    throw new \moodle_exception('nocourse', 'offlinequiz',
-        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception(
+        'nocourse',
+        'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid
+    );
 }
 if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
-    throw new \moodle_exception('nocm', 'offlinequiz',
-        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+    throw new \moodle_exception(
+        'nocm',
+        'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid
+    );
 }
-if (!$groups = $DB->get_records('offlinequiz_groups', ['offlinequizid' => $offlinequiz->id], 'groupnumber', '*', 0,
-        $offlinequiz->numgroups)) {
-    throw new \moodle_exception('nogroups', 'offlinequiz',
-        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id, $scannedpage->offlinequizid);
+if (
+    !$groups = $DB->get_records(
+        'offlinequiz_groups',
+        ['offlinequizid' => $offlinequiz->id],
+        'groupnumber',
+        '*',
+        0,
+        $offlinequiz->numgroups
+    )
+) {
+    throw new \moodle_exception(
+        'nogroups',
+        'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid
+    );
 }
 
 require_login($course->id, false, $cm);
 $context = context_module::instance($cm->id);
 
 if (!has_capability('mod/offlinequiz:viewreports', $context) && !has_capability('mod/offlinequiz:attempt', $context)) {
-    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
-         $scannedpage->offlinequizid);
+    throw new \moodle_exception(
+        'noaccess',
+        'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid
+    );
 }
 
 if (!has_capability('mod/offlinequiz:viewreports', $context) && $result->userid != $USER->id) {
-    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
-        $scannedpage->offlinequizid);
+    throw new \moodle_exception(
+        'noaccess',
+        'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid
+    );
 }
 
 $options = offlinequiz_get_review_options($offlinequiz, $result, $context);
 
 if (!$options->sheetfeedback && !$options->gradedsheetfeedback) {
-    throw new \moodle_exception('noaccess', 'offlinequiz', $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
-        $scannedpage->offlinequizid);
+    throw new \moodle_exception(
+        'noaccess',
+        'offlinequiz',
+        $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id,
+        $scannedpage->offlinequizid
+    );
 }
 
 $url = new moodle_url('/mod/offlinequiz/image.php', ['pageid' => $scannedpage->id, 'resultid' => $result->id]);
@@ -95,7 +139,7 @@ $offlinequizconfig = get_config('offlinequiz');
 $group = $groups[$result->offlinegroupid];
 $offlinequiz->groupid = - $group->id;
 
-list($maxquestions, $maxanswers, $formtype, $questionsperpage) = offlinequiz_get_question_numbers($offlinequiz, [$group]);
+[$maxquestions, $maxanswers, $formtype, $questionsperpage] = offlinequiz_get_question_numbers($offlinequiz, [$group]);
 
 $offlinequizconfig->papergray = $offlinequiz->papergray;
 
@@ -129,7 +173,7 @@ $slots = $quba->get_slots();
 // We start at the top of the page (e.g. 0, 96, etc).
 $startindex = min(($pagenumber - 1) * $questionsperpage, count($slots));
 // We end on the bottom of the page or when the questions are gone (e.g., 95, 105).
-$endindex = min( $pagenumber * $questionsperpage, count($slots) );
+$endindex = min($pagenumber * $questionsperpage, count($slots));
 
 // Load the choices made before from the database. There might not be any.
 $choices = $DB->get_records('offlinequiz_choices', ['scannedpageid' => $scannedpage->id], 'slotnumber, choicenumber');
@@ -158,10 +202,9 @@ if ($sheetloaded) {
     $answerspots = $scanner->export_hotspots_answer(OQ_IMAGE_WIDTH);
 
     if ($options->gradedsheetfeedback) {
-
         $questionids = offlinequiz_get_group_question_ids($offlinequiz, $group->id);
 
-        list($qsql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
+        [$qsql, $params] = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
         $params['offlinequizid'] = $offlinequiz->id;
         $params['offlinegroupid'] = $group->id;
 
@@ -175,8 +218,10 @@ if ($sheetloaded) {
 
         // Load the questions.
         if (!$questions = $DB->get_records_sql($sql, $params)) {
-            $viewurl = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/view.php',
-                    ['q' => $offlinequiz->id]);
+            $viewurl = new moodle_url(
+                $CFG->wwwroot . '/mod/offlinequiz/view.php',
+                ['q' => $offlinequiz->id]
+            );
             throw new \moodle_exception('noquestionsfound', 'offlinequiz', $viewurl);
         }
         // Load the question type specific information.
@@ -186,7 +231,6 @@ if ($sheetloaded) {
 
         $questioncounter = 0;
         for ($slotindex = $startindex; $slotindex < $endindex; $slotindex++) {
-
             $slot = $slots[$slotindex];
             $slotquestion = $quba->get_question($slot);
             $attempt = $quba->get_question_attempt($slot);
@@ -201,25 +245,25 @@ if ($sheetloaded) {
 
                 if ($answers[$answerid]->fraction > 0 && $choicesdata[$slot][$key]->value == 1) {
                     // The student crossed a correct answer.
-                    echo "<img title=\"".get_string('question') . ' ' .
+                    echo "<img title=\"" . get_string('question') . ' ' .
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
                             "\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\" border=\"0\"" .
                             " id=\"a-$slotindex-$key\" style=\"position:absolute; top:" .
-                            $hotspot->y."px; left:".$hotspot->x."px;\">";
+                            $hotspot->y . "px; left:" . $hotspot->x . "px;\">";
                 } else if ($answers[$answerid]->fraction > 0 && $choicesdata[$slot][$key]->value == 0) {
                     // The student did not cross a correct answer.
-                    echo "<img title=\"".get_string('question') . ' ' .
+                    echo "<img title=\"" . get_string('question') . ' ' .
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
                             "\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/missing.png\" border=\"0\"" .
-                            " id=\"a-$slotindex-$key\" style=\"position:absolute; top:".
-                            ($hotspot->y - 2) . "px; left:".($hotspot->x - 2)."px;\">";
+                            " id=\"a-$slotindex-$key\" style=\"position:absolute; top:" .
+                            ($hotspot->y - 2) . "px; left:" . ($hotspot->x - 2) . "px;\">";
                 } else if ($answers[$answerid]->fraction <= 0 && $choicesdata[$slot][$key]->value == 1) {
                     // The student crossed an answer that is wrong.
-                    echo "<img title=\"".get_string('question') . ' ' .
+                    echo "<img title=\"" . get_string('question') . ' ' .
                             ($slotindex + 1) . ' ' . get_string('answer') . ' ' . ($key + 1) .
                             "\" src=\"$CFG->wwwroot/mod/offlinequiz/pix/wrong.png\" border=\"0\"" .
                             " id=\"a-$slotindex-$key\" style=\"position:absolute; top:" .
-                            ($hotspot->y - 2)."px; left:".($hotspot->x - 2)."px;\">";
+                            ($hotspot->y - 2) . "px; left:" . ($hotspot->x - 2) . "px;\">";
                 }
             }
             $questioncounter++;
@@ -229,16 +273,16 @@ if ($sheetloaded) {
         echo "<div style=\"font-size:80%; position:absolute; top:10px; left:" . (OQ_IMAGE_WIDTH + 40) . "px; width:280px\">\n";
         echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\"" .
              " style=\"vertical-align: text-bottom; width: 14px; height:14px;\" border=\"0\" id=\"legend-green\"> ";
-        echo get_string('greeniscross', 'offlinequiz').'<br/>';
+        echo get_string('greeniscross', 'offlinequiz') . '<br/>';
         echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/missing.png\"" .
              " style=\"vertical-align: text-bottom; width: 14px; height:14px;\" border=\"0\" id=\"legend-green\"> ";
-        echo get_string('rediswrong', 'offlinequiz').'<br/>';
+        echo get_string('rediswrong', 'offlinequiz') . '<br/>';
         echo '</div>';
         echo '<div style="position: absolute; top: 80px; width:280px; left: ' . (OQ_IMAGE_WIDTH + 40) . 'px;">';
 
         echo '<table callpadding="4" border="1"><tr><td style="vertical-align: top;">'; // Outer table.
         echo '<table cellpadding="3" style=" font-size: 80%;"><tr><td><strong>' .
-             get_string('question').'&nbsp;&nbsp;&nbsp;</strong></td><td><strong>' .
+             get_string('question') . '&nbsp;&nbsp;&nbsp;</strong></td><td><strong>' .
              get_string('points', 'grades') . '</strong></td></tr>';
 
         // Print questions and points in a two column table.
@@ -262,8 +306,8 @@ if ($sheetloaded) {
         echo "</table>"; // Inner table 1.
         echo "</td><td style=\"vertical-align: top;\">";
         echo '<table cellpadding="3" style=" font-size: 80%;"><tr><td><strong>' .
-              get_string('question').'&nbsp;&nbsp;&nbsp;</strong></td><td><strong>' .
-              get_string('points', 'grades').'</strong></td></tr>';
+              get_string('question') . '&nbsp;&nbsp;&nbsp;</strong></td><td><strong>' .
+              get_string('points', 'grades') . '</strong></td></tr>';
 
         for ($slotindex = $middle; $slotindex < $endindex; $slotindex++) {
             $slot = $slots[$slotindex];
@@ -288,11 +332,9 @@ if ($sheetloaded) {
         echo '</td></tr></table>';  // Outer table.
         echo "\n<br /></div>\n";
     } else {
-
         // Print hotspots for answers.
         $questioncounter = 0;
         for ($slotindex = $startindex; $slotindex < $endindex; $slotindex++) {
-
             $slot = $slots[$slotindex];
             $slotquestion = $quba->get_question($slot);
             $attempt = $quba->get_question_attempt($slot);
@@ -304,8 +346,8 @@ if ($sheetloaded) {
 
                 if ($choicesdata[$slot][$key]->value == 1) {
                     echo "<img src=\"$CFG->wwwroot/mod/offlinequiz/pix/green.gif\" border=\"0\"" .
-                         " id=\"a-$slot-$key\" style=\"position:absolute; top:".$hotspot->y."px; left:" .
-                         $hotspot->x."px; cursor:pointer;\" onClick=\"set_item(this, $slot, $key)\">";
+                         " id=\"a-$slot-$key\" style=\"position:absolute; top:" . $hotspot->y . "px; left:" .
+                         $hotspot->x . "px; cursor:pointer;\" onClick=\"set_item(this, $slot, $key)\">";
                 }
             }
             $questioncounter++;

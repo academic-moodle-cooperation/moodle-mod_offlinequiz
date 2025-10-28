@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @param string $pclassname the classname to load
  */
-function mod_offlinequiz_phpword_autoload ($pclassname) {
+function mod_offlinequiz_phpword_autoload($pclassname) {
     $filename = __DIR__ . "/" . str_replace('\\', '/', $pclassname) . ".php";
     if (file_exists($filename)) {
         include($filename);

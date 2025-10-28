@@ -28,7 +28,7 @@ use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir . '/tablelib.php');
 require_once(__DIR__ . '/../statisticslib.php');
 
 
@@ -323,7 +323,9 @@ class question_answer_statistics_table extends flexible_table {
             return '';
         }
         return offlinequiz_report_scale_summarks_as_percentage(
-                $question->_stats->maxmark, $this->offlinequiz);
+            $question->_stats->maxmark,
+            $this->offlinequiz
+        );
     }
 
     /**
@@ -351,9 +353,11 @@ class question_answer_statistics_table extends flexible_table {
             $negcovar = get_string('negcovar', 'offlinequiz_statistics');
 
             if (!$this->is_downloading()) {
-                $negcovar = html_writer::tag('div',
-                        $negcovar . $OUTPUT->help_icon('negcovar', 'offlinequiz_statistics'),
-                        ['class' => 'negcovar']);
+                $negcovar = html_writer::tag(
+                    'div',
+                    $negcovar . $OUTPUT->help_icon('negcovar', 'offlinequiz_statistics'),
+                    ['class' => 'negcovar']
+                );
             }
             return $negcovar;
         }
@@ -447,7 +451,6 @@ class question_answer_statistics_table extends flexible_table {
      */
     protected function col_partially($question) {
         if (property_exists($question, '_stats') && property_exists($question->_stats, 'partially') && $question->_stats->s != 0) {
-
             return $question->_stats->partially . ' (' . round($question->_stats->partially / $question->_stats->s * 100) . '%)';
         } else {
             return '';

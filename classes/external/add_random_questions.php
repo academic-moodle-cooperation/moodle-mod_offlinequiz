@@ -40,14 +40,13 @@ use mod_offlinequiz\structure;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class add_random_questions extends external_api {
-
     /**
      * Parameters for the web service function
      *
      * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters (
+        return new external_function_parameters(
             [
                 'cmid' => new external_value(PARAM_INT, 'The cmid of the quiz'),
                 'addonpage' => new external_value(PARAM_INT, 'The page where random questions will be added to'),

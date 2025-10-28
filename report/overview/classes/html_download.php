@@ -70,7 +70,8 @@ class html_download {
         }
         $this->offlinequiz = $offlinequiz;        if (!$course = $DB->get_record("course", ['id' => $offlinequiz->course])) {
             throw new \moodle_exception(
-             "The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing");
+                "The course with id $offlinequiz->course that the offlinequiz with id $offlinequiz->id belongs to is missing"
+            );
         }
         $this->course = $course;
         if (!$cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $course->id)) {
@@ -121,7 +122,6 @@ class html_download {
         foreach ($resultids as $resultid) {
             if (!$result = $DB->get_record("offlinequiz_results", ["id" => $resultid])) {
                 throw new \moodle_exception("The offlinequiz result with id $resultid is missing");
-
             }
             if (!$group = $DB->get_record("offlinequiz_groups", ['id' => $result->offlinegroupid])) {
                 throw new \moodle_exception("The offlinequiz group belonging to result $result is missing");
@@ -139,23 +139,22 @@ class html_download {
             $table->align  = ["right", "left"];
             $student = $DB->get_record('user', ['id' => $result->userid]);
             $picture = $OUTPUT->user_picture($student);
-            $table->data[] = [$picture, '<a href="'.$CFG->wwwroot.'/user/view.php?id=' . $student->id .
-              '&amp;course=' . $this->course->id . '">' . fullname($student, true) . ' ('.$student->username.')</a>'];
+            $table->data[] = [$picture, '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $student->id .
+              '&amp;course=' . $this->course->id . '">' . fullname($student, true) . ' (' . $student->username . ')</a>'];
             $table->data[] = [get_string('group') . ':', $letterstr[$group->groupnumber]];
             if (!empty($this->offlinequiz->time)) {
-                   $table->data[] = [get_string('quizdate', 'offlinequiz').':', userdate($this->offlinequiz->time)];
+                   $table->data[] = [get_string('quizdate', 'offlinequiz') . ':', userdate($this->offlinequiz->time)];
             }
 
             // If the student is allowed to see his score.
             if ($options->marks != \question_display_options::HIDDEN) {
                 if ($this->offlinequiz->grade && $group->sumgrades) {
-
                     $resultmark = format_float($result->sumgrades, $this->offlinequiz->decimalpoints);
                     $maxmark = format_float($group->sumgrades, $this->offlinequiz->decimalpoints);
                     $percentage = format_float(($result->sumgrades * 100.0 / $group->sumgrades), $this->offlinequiz->decimalpoints);
                     $table->data[] = [$strscore . ':', $resultmark . '/' . $maxmark . ' (' . $percentage . '%)'];
 
-                    $a = new \stdClass;
+                    $a = new \stdClass();
                     $a->grade = format_float(preg_replace('/,/i', '.', $grade), $this->offlinequiz->decimalpoints);
                     $a->maxgrade = format_float($this->offlinequiz->grade, $this->offlinequiz->decimalpoints);
                     $table->data[] = [$strgrade . ':', get_string('outof', 'offlinequiz', $a)];
@@ -164,9 +163,10 @@ class html_download {
 
             echo \html_writer::table($table);
 
-            if ($options->sheetfeedback == \question_display_options::VISIBLE ||
-              $options->gradedsheetfeedback == \question_display_options::VISIBLE) {
-
+            if (
+                $options->sheetfeedback == \question_display_options::VISIBLE ||
+                $options->gradedsheetfeedback == \question_display_options::VISIBLE
+            ) {
                 // Options for the popup_action.
                 if ($options->attempt == \question_display_options::VISIBLE) {
                     // Load the questions needed by page.
@@ -194,11 +194,13 @@ class html_download {
     private function get_result_ids($userids) {
         global $DB;
         if ($userids) {
-            list($insql, $inparams) = $DB->get_in_or_equal($userids);
+            [$insql, $inparams] = $DB->get_in_or_equal($userids);
             $sql = "SELECT id FROM {offlinequiz_results}WHERE offlinequizid = ? AND status='complete' AND userid IN $insql";
             return $DB->get_fieldset_sql($sql, [$this->offlinequiz->id, $inparams]);
         }
-        return $DB->get_fieldset_sql("SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND status='complete'",
-         [$this->offlinequiz->id]);
+        return $DB->get_fieldset_sql(
+            "SELECT id FROM {offlinequiz_results} WHERE offlinequizid = ? AND status='complete'",
+            [$this->offlinequiz->id]
+        );
     }
 }
