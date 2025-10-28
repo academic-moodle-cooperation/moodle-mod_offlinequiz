@@ -530,9 +530,6 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
      * @return restore_qtype_plugin instance.
      */
     protected function get_qtype_restorer($qtype) {
-        // Build one static cache to store {@link restore_qtype_plugin}
-        // while we are needing them, just to save zillions of instantiations
-        // or using static stuff that will break our nice API
         if (!isset($this->qtypeplugins[$qtype])) {
             $classname = 'restore_qtype_' . $qtype . '_plugin';
             if (class_exists($classname)) {

@@ -983,6 +983,7 @@ class structure {
     }
     /**
      * get bank cminfo
+
      * @param int $qcategorycontextid
      * @return object|null
      */
