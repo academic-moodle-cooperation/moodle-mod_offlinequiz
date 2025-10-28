@@ -90,5 +90,23 @@ class behat_mod_offlinequiz extends behat_question_base {
 
     }
 
+    /**
+     * Adds the specified questions to offlinequiz
+     *
+     *
+     * @When /^I duplicate the following activities:$/
+     *
+     * @param string $entityname The name of the offlinequiz
+     * @param TableNode $data
+     */
+    #[\core\attribute\example('I duplicate the following activities:
+      | name        |
+      | duplicate 1 |
+      | duplicate 2 |')]
+    public function duplicate_the_following_activities($data): void {
+
+    }
+
+
 
 }
