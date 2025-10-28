@@ -104,6 +104,15 @@ class behat_mod_offlinequiz extends behat_question_base {
       | duplicate 1 |
       | duplicate 2 |')]
     public function duplicate_the_following_activities($data): void {
+        $this->execute('behat_general::i_click_on', [get_string('bulkactions'), 'button']);
+        $rows = $data->getRows();
+        unset($rows[0]);
+
+        foreach ($rows as $row) {
+            $xpath = "//div[contains(@class, 'activity-grid')][.//*[@data-value='{$row[0]}']]";
+            $this->execute('behat_general::i_click_on', [ $xpath, 'xpath_element']);
+        }
+        $this->execute('behat_general::i_click_on', [get_string('duplicate'), 'button']);
 
     }
 
