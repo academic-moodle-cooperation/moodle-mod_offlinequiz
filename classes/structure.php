@@ -436,6 +436,7 @@ class structure {
                   LEFT JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                   LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                   LEFT JOIN {question_references} qr ON qr.component = 'mod_offlinequiz'
+
                     AND qr.questionarea = 'slot' AND qr.itemid = slot.id
                  WHERE slot.offlinequizid = ?
                    AND slot.offlinegroupid = ?
@@ -551,8 +552,10 @@ class structure {
         foreach ($this->slots as $slot) {
             if (!array_key_exists($slot->qccontextid, $this->qbankcms)) {
                 $context = \context::instance_by_id($slot->qccontextid);
+
                 $cm = get_coursemodule_from_id(null, $context->instanceid);
-                $this->qbankcms[$slot->qccontextid] = $cm;
+                $cminfo = \cm_info::create($cm);
+                $this->qbankcms[$slot->qccontextid] = $cminfo;
             }
         }
     }
@@ -983,12 +986,12 @@ class structure {
      * @param int $qcategoryid
      * @return object|null
      */
-    public function get_source_bank_cminfo(int $qcategoryid): ?\stdClass {
+    public function get_source_bank_cminfo(int $qcategorycontextid): ?\core_course\cm_info {
 
         // This shouldn't happen as all categories belong to a module context level but let's account for it.
-        if (!array_key_exists($qcategoryid, $this->qbankcms)) {
+        if (!array_key_exists($qcategorycontextid, $this->qbankcms)) {
             return null;
         }
-        return $this->qbankcms[$qcategoryid];
+        return $this->qbankcms[$qcategorycontextid];
     }
 }

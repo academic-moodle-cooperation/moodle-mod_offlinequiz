@@ -874,7 +874,8 @@ class edit_renderer extends \plugin_renderer_base {
      */
     private function get_bank_name($structure, $question) {
         if ($structure->get_context()->id != $question->contextid) {
-            return $question->qcname;
+            $name = $structure->get_source_bank_cminfo($question->contextid)->get_formatted_name();
+            return $name;
         }
         return '';
     }
