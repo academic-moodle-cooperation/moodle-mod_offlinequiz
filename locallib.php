@@ -1138,39 +1138,6 @@ function offlinequiz_update_all_attempt_sumgrades($offlinequiz) {
 }
 
 /**
- * A qubaid_condition for finding all the question usages belonging to
- * a particular offlinequiz. Used in editlib.php.
- *
- * @copyright  2010 The University of Vienna
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class result_qubaids_for_offlinequiz extends qubaid_join {
-    /**
-     * constructor
-     * @param int $offlinequizid
-     * @param int $offlinegroupid
-     * @param boolean $includepreviews
-     * @param boolean $onlyfinished
-     */
-    public function __construct($offlinequizid, $offlinegroupid, $includepreviews = true, $onlyfinished = false) {
-        $where = 'quiza.offlinequizid = :offlinequizid AND quiza.offlinegroupid = :offlinegroupid';
-        if (!$includepreviews) {
-            $where .= ' AND preview = 0';
-        }
-        if ($onlyfinished) {
-            $where .= ' AND timefinish <> 0';
-        }
-
-        parent::__construct(
-            '{offlinequiz_results} quiza',
-            'quiza.usageid',
-            $where,
-            ['offlinequizid' => $offlinequizid, 'offlinegroupid' => $offlinegroupid]
-        );
-    }
-}
-
-/**
  * The offlinequiz grade is the maximum that student's results are marked out of. When it
  * changes, the corresponding data in offlinequiz_grades and offlinequiz_feedback needs to be
  * rescaled. After calling this function, you probably need to call
@@ -2343,7 +2310,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
         echo "</td><td>";
         echo html_writer::select($options, 'download', '', false);
         echo '<button type="submit" class="btn btn-primary" >' . get_string('go') . '</button>';
-        echo '<script type="text/javascript">' . "\n<!--\n" . 'document.getElementById("noscriptmenuaction").style.display = "none";' .
+        echo '<script type="text/javascript">\n<!--\n document.getElementById("noscriptmenuaction").style.display = "none";' .
             "\n-->\n" . '</script>';
         echo "</td>\n";
         echo "<td>";

@@ -36,22 +36,22 @@ class mod_offlinequiz_corners {
      * upperleft corner
      * @var mod_offlinequiz_corners
      */
-    private $_upperleft;
+    private $upperleft;
     /**
      * upper right corner
      * @var mod_offlinequiz_corners
      */
-    private $_upperright;
+    private $upperright;
     /**
      * lowerleft
      * @var mod_offlinequiz_corners
      */
-    private $_lowerleft;
+    private $lowerleft;
     /**
      * lower right
      * @var mod_offlinequiz_corners
      */
-    private $_lowerright;
+    private $lowerright;
     /**
      * constructor
      * @param mixed $upperleft
@@ -60,10 +60,10 @@ class mod_offlinequiz_corners {
      * @param mixed $lowerright
      */
     public function __construct($upperleft, $upperright, $lowerleft, $lowerright) {
-        $this->_upperleft = $upperleft;
-        $this->_upperright = $upperright;
-        $this->_lowerleft = $lowerleft;
-        $this->_lowerright = $lowerright;
+        $this->upperleft = $upperleft;
+        $this->upperright = $upperright;
+        $this->lowerleft = $lowerleft;
+        $this->lowerright = $lowerright;
     }
     /**
      *
@@ -72,13 +72,13 @@ class mod_offlinequiz_corners {
     public function get_corner_value($cornerid) {
         $position = substr($cornerid, 0, 2);
         if ($position == 'ul') {
-            $corner = $this->_upperleft;
+            $corner = $this->upperleft;
         } else if ($position == 'ur') {
-            $corner = $this->_upperright;
+            $corner = $this->upperright;
         } else if ($position == 'll') {
-            $corner = $this->_lowerleft;
+            $corner = $this->lowerleft;
         } else {
-            $corner = $this->_lowerright;
+            $corner = $this->lowerright;
         }
         if (substr($cornerid, 2, 1) === 'y') {
             return $corner->y;
@@ -92,10 +92,10 @@ class mod_offlinequiz_corners {
      */
     public function all() {
         $result = [];
-        $result[] = $this->_upperleft;
-        $result[] = $this->_upperright;
-        $result[] = $this->_lowerleft;
-        $result[] = $this->_lowerright;
+        $result[] = $this->upperleft;
+        $result[] = $this->upperright;
+        $result[] = $this->lowerleft;
+        $result[] = $this->lowerright;
         return $result;
     }
 }

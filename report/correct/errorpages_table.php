@@ -104,7 +104,7 @@ class offlinequiz_selectall_table extends flexible_table {
         echo ' </div>';
         echo '</form></div>';
     }
-} // End class.
+}
 
 /**
  * participants list table

@@ -168,7 +168,7 @@ class report extends default_report {
                 $errorstr = get_string('waitingforanalysis', 'offlinequiz_rimport');
             }
             $row = [
-                    '<input type="checkbox" name="p' . $page->id . '" value="' . $page->id . '"  class="select-multiple-checkbox" />',
+                    '<input type="checkbox" name="p' . $page->id . '" value="' . $page->id . '" class="select-multiple-checkbox"/>',
                     $counter . '&nbsp;',
                     $page->userkey,
                     $groupstr,
@@ -284,10 +284,9 @@ class report extends default_report {
                 } else {
                     throw new \moodle_exception('invalidsesskey');
                 }
-            default:
-                // Print the table with answer forms that need correction.
-                $this->print_error_report($offlinequiz);
         }
+        // Print the table with answer forms that need correction.
+        $this->print_error_report($offlinequiz);
         $this->display_uploaded_files($offlinequiz, $cm);
     }
     /**

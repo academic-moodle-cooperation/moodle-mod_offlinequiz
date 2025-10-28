@@ -173,10 +173,8 @@ class report extends default_report {
                     } else {
                         throw new moodle_exception('invalidsesskey');
                     }
-                default:
-                    // Display the upload form.
-                    $importform->display();
             }
+            $importform->display();
         }
     }
     /**

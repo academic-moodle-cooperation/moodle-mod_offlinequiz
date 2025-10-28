@@ -24,6 +24,7 @@
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+use mod_offlinequiz\settings\admin_setting_configtext_user_formula;
 
 defined('MOODLE_INTERNAL') || die();
 

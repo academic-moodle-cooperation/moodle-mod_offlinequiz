@@ -25,8 +25,6 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Admin settings class for the offlinequiz review opitions.
  *
@@ -195,70 +193,5 @@ class mod_offlinequiz_admin_review_setting extends admin_setting {
             get_string('everythingon', 'offlinequiz'),
             $query
         );
-    }
-}
-
-/**
- *
- */
-class admin_setting_configtext_user_formula extends admin_setting_configtext {
-    /**
-     * validate the configtext of a user formula
-     * @param mixed $data
-     * @return bool|string
-     */
-    public function validate($data) {
-        global $DB, $CFG;
-
-        $valid = false;
-        // Allow paramtype to be a custom regex if it is the form of /pattern/.
-        if (preg_match('#^/.*/$#', $this->paramtype)) {
-            if (preg_match($this->paramtype, $data)) {
-                $valid = true;
-            } else {
-                return get_string('validateerror', 'admin');
-            }
-        } else if ($this->paramtype === PARAM_RAW) {
-            $valid = true;
-        } else {
-             $cleaned = clean_param($data, $this->paramtype);
-            if ("$data" === "$cleaned") { // Implicit conversion to string is needed to do exact comparison.
-                $valid = true;
-            } else {
-                return get_string('validateerror', 'admin');
-            }
-        }
-        if ($valid) {
-             require_once($CFG->dirroot . "/mod/offlinequiz/locallib.php");
-
-             $matches = [];
-            if (preg_match(OFFLINEQUIZ_USER_FORMULA_REGEXP, $data, $matches)) {
-                $prefix = $matches[1];
-                $digits = intval($matches[2]);
-                $postfix = $matches[3];
-                $field = $matches[4];
-                // Check the number of digits.
-                if ($digits < 1 || $digits > 10) {
-                    return get_string('invalidnumberofdigits', 'offlinequiz');
-                }
-                   // Check for valid user table field.
-                if ($testusers = $DB->get_records('user', null, '', '*', 0, 1)) {
-                    if (count($testusers) > 0 && $testuser = array_pop($testusers)) {
-                        if (isset($testuser->{$field})) {
-                            set_config('ID_digits', $digits, 'offlinequiz');
-                            set_config('ID_prefix', $prefix, 'offlinequiz');
-                            set_config('ID_postfix', $postfix, 'offlinequiz');
-                            set_config('ID_field', $field, 'offlinequiz');
-                            return true;
-                        } else {
-                            return get_string('invaliduserfield', 'offlinequiz');
-                        }
-                    }
-                }
-            } else {
-                return get_string('invalidformula', 'offlinequiz');
-            }
-        }
-        return '';
     }
 }
