@@ -98,7 +98,7 @@ class offlinequiz_results_table extends flexible_table {
         echo '  <a href="#" class="selectall">' . $strselectall . '</a> / ';
         echo '  <a href="#" class="deselectall">' . $strselectnone . '</a> ';
         echo '  &nbsp;&nbsp;';
-        echo '  <input class="btn btn-secondary" type="submit" value="' . get_string('deleteselectedresults', 'offlinequiz') . '"/>';
+        echo ' <input class="btn btn-secondary" type="submit" value="' . get_string('deleteselectedresults', 'offlinequiz') . '"/>';
         echo ' </td></tr></table>';
         echo '  </center>';
         // Close form.

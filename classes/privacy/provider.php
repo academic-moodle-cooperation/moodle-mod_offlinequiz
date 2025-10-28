@@ -37,8 +37,11 @@ require_once($CFG->libdir . '/questionlib.php');
  * @copyright  2017 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\request\core_userlist_provider, \core_privacy\local\metadata\provider,
- \core_privacy\local\request\plugin\provider, \core_privacy\local\request\user_preference_provider {
+class provider implements
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\plugin\provider,
+    \core_privacy\local\request\user_preference_provider {
     /**
      * get metadata for offlinequiz
      * @param \core_privacy\local\metadata\collection $collection

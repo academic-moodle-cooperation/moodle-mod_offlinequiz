@@ -332,4 +332,4 @@ function offlinequiz_evaluation_cron($jobid = 0, $verbose = false) {
             );
         }
     } // End foreach.
-} // End function.
+}

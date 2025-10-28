@@ -32,7 +32,7 @@ namespace offlinequiz_overview\privacy;
  */
 class provider implements
 // This plugin does not store any personal user data.
-\core_privacy\local\metadata\null_provider {
+    \core_privacy\local\metadata\null_provider {
     /**
      * This plugin does not store any data
      *
