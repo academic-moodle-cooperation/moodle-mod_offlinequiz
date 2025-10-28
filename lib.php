@@ -495,6 +495,7 @@ function offlinequiz_pluginfile($course, $cm, $context, $filearea, $args, $force
             }
         }
     }
+    return false;
 }
 
 /**
