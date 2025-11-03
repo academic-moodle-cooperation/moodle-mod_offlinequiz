@@ -28,6 +28,8 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_offlinequiz\question\engine\offlinequiz_question_usage_by_activity;
+use offlinequiz_correct\table\partlist_table;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/filelib.php');
@@ -73,83 +75,7 @@ define('OFFLINEQUIZ_QUESTIONINFO_ANSWERS', 2); // The number of correct answers 
 
 define('NUMBERS_PER_PAGE', 30);        // Number of students on participants list.
 define('OQ_IMAGE_WIDTH', 860);         // Width of correction form.
-/**
- * overwritten questionusagebyactivity with clone function
- */
-class offlinequiz_question_usage_by_activity extends question_usage_by_activity {
-    /**
-     * get a clone of certain quba instances
-     * @param mixed $qinstances
-     * @return question_usage_by_activity
-     */
-    public function get_clone($qinstances) {
-        // The new quba doesn't have to be cloned, so we can use the parent class.
-        $newquba = question_engine::make_questions_usage_by_activity($this->owningcomponent, $this->context);
-        $newquba->set_preferred_behaviour('immediatefeedback');
 
-        foreach ($this->get_slots() as $slot) {
-            $slotquestion = $this->get_question($slot);
-            $attempt = $this->get_question_attempt($slot);
-
-            // We have to check for the type because we might have old migrated templates
-            // that could contain description questions.
-            if ($slotquestion->get_type_name() == 'multichoice' || $slotquestion->get_type_name() == 'multichoiceset') {
-                $order = $slotquestion->get_order($attempt);  // Order of the answers.
-                $order = implode(',', $order);
-                $newslot = $newquba->add_question($slotquestion, $qinstances[$slotquestion->id]->maxmark);
-                $qa = $newquba->get_question_attempt($newslot);
-                $qa->start('immediatefeedback', 1, ['_order' => $order]);
-            }
-        }
-        question_engine::save_questions_usage_by_activity($newquba);
-        return $newquba;
-    }
-
-    /**
-     * Create a question_usage_by_activity from records loaded from the database.
-     *
-     * For internal use only.
-     *
-     * @param Iterator $records Raw records loaded from the database.
-     * @param int $qubaid The id of the question_attempt to extract.
-     * @return question_usage_by_activity The newly constructed usage.
-     */
-    public static function load_from_records($records, $qubaid) {
-        $record = $records->current();
-        while ($record->qubaid != $qubaid) {
-            $records->next();
-            if (!$records->valid()) {
-                throw new coding_exception("Question usage $qubaid not found in the database.");
-            }
-            $record = $records->current();
-        }
-
-        $quba = new offlinequiz_question_usage_by_activity(
-            $record->component,
-            context::instance_by_id($record->contextid)
-        );
-        $quba->set_id_from_database($record->qubaid);
-        $quba->set_preferred_behaviour($record->preferredbehaviour);
-
-        $quba->observer = new question_engine_unit_of_work($quba);
-
-        while ($record && $record->qubaid == $qubaid && !is_null($record->slot)) {
-            $quba->questionattempts[$record->slot] = question_attempt::load_from_records(
-                $records,
-                $record->questionattemptid,
-                $quba->observer,
-                $quba->get_preferred_behaviour()
-            );
-            if ($records->valid()) {
-                $record = $records->current();
-            } else {
-                $record = false;
-            }
-        }
-
-        return $quba;
-    }
-}
 
 /**
  * Print the tertiary menu for offlinequiz using navigation_node structure.
@@ -2169,7 +2095,7 @@ function offlinequiz_print_partlist($offlinequiz, &$coursecontext, &$systemconte
             'pagesize' => $pagesize,
             'strreallydel' => ''];
 
-    $table = new mod_offlinequiz\correct\offlinequiz_partlist_table(
+    $table = new partlist_table(
         'mod-offlinequiz-participants',
         'participants.php',
         $tableparams

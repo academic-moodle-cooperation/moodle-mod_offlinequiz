@@ -24,8 +24,8 @@
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-use mod_offlinequiz\correct\offlinequiz_selectall_table;
 
+use offlinequiz_correct\table\selectall_table;
 /**
  * Summary of participants_report
  */
@@ -57,7 +57,7 @@ class participants_report {
 
         $tableparams = ['q' => $offlinequiz->id, 'mode' => 'upload', 'pagesize' => $pagesize, 'action' => 'delete',
                 'strreallydel' => addslashes(get_string('deletepagecheck', 'offlinequiz'))];
-        $table = new offlinequiz_selectall_table('mod-offlinequiz-participants-error', 'participants.php', $tableparams);
+        $table = new selectall_table('mod-offlinequiz-participants-error', 'participants.php', $tableparams);
 
         // Add extra limits due to initials bar.
         [$ttest, $tparams] = $table->get_sql_where();

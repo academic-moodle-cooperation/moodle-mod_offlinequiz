@@ -24,7 +24,7 @@
  * @since         Moodle 4.1+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+use mod_offlinequiz\document\create\pdf\answer_pdf;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/moodlelib.php');
@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/pdflib.php');
 /**
  * Generator of answer forms with participant identification.
  */
-class offlinequiz_answer_pdf_identified extends offlinequiz_answer_pdf {
+class answer_pdf_identified extends answer_pdf {
     /**
      * student
      * @var stdClass

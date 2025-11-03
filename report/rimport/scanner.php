@@ -25,9 +25,7 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
-
-defined('MOODLE_INTERNAL') || die();
-
+use offlinequiz_rimport\importer\deprecated\oq_point;
 define("A3_WIDTH", "2100");                    // Paper size.
 define("A3_HEIGHT", "2970");
 define("LAYER_WIDTH", "1815");                 // Active layer from corner cross to corner cross.
@@ -41,79 +39,6 @@ define("CORNER_SPOT_WIDTH_HORIZONTAL", "250"); // The width of the area where we
 
 define("BOX_OUTER_WIDTH", "54");               // Outer width of the little boxes.
 define("BOX_INNER_WIDTH", "28");               // Inner width of the little boxes.
-
-/**
- * A class for points in cartesian system that can rotate and zoom.
- *
- */
-class oq_point {
-    /**
-     * x value of this oq_point
-     * @var int
-     */
-    public $x;
-    /**
-     * y value of this oq_point
-     * @var int
-     */
-    public $y;
-    /**
-     * if this point is blank or not
-     * @var bool
-     */
-    public $blank;
-    /**
-     * scannedpageid this oq_point belongs to
-     * @var stdClass
-     */
-    public $scannedpageid;
-    /**
-     * position of this point
-     * @var stdClass
-     */
-    public $position;
-
-    /**
-     * Constructor
-     *
-     * @param int $x
-     * @param int $y
-     * @param unknown_type $blank
-     */
-    public function __construct($x = 0, $y = 0, $blank = true) {
-        $this->x = round($x);
-        $this->y = round($y);
-        $this->blank = $blank;
-    }
-
-
-    /**
-     * Rotates the point with center 0/0
-     *
-     * @param unknown_type $alpha
-     */
-    public function rotate($alpha) {
-        if ($alpha == 0) {
-            return;
-        }
-        $sin = sin(deg2rad($alpha));
-        $cos = cos(deg2rad($alpha));
-        $x = $this->x * $cos - $this->y * $sin;
-        $this->y = round($this->y * $cos + $this->x * $sin);
-        $this->x = round($x);
-    }
-
-    /**
-     * Zooms the point's distance from center 0/0
-     *
-     * @param unknown_type $x
-     * @param unknown_type $y
-     */
-    public function zoom($x, $y) {
-        $this->x = round($this->x * $x);
-        $this->y = round($this->y * $y);
-    }
-}
 
 /**
  * Class that contains all the routines and data to interprate scanned answer forms
@@ -715,9 +640,9 @@ class offlinequiz_page_scanner {
     /**
      * Saves an image in the Moodle file space. Extends the filename in case the file already exists.
      *
-     * @param unknown_type $filerecord
-     * @param unknown_type $sourcefile
-     * @param unknown_type $postfix
+     * @param array $filerecord
+     * @param string $sourcefile
+     * @param string $postfix
      * @return stored_file
      */
     public function save_image($filerecord, $sourcefile, $postfix = '') {
@@ -747,8 +672,8 @@ class offlinequiz_page_scanner {
     /**
      * Returns absolute positions of hotspots
      *
-     * @param unknown_type $width
-     * @return multitype:oq_point
+     * @param int $width
+     * @return array
      */
     public function export_hotspots_userid($width) {
         global $CFG;
@@ -793,7 +718,7 @@ class offlinequiz_page_scanner {
      * Returns absolute positions for answer hotspots.
      *
      * @param int $width
-     * @return multitype:oq_point
+     * @return array
      */
     public function export_hotspots_answer($width) {
         global $CFG;
@@ -818,7 +743,7 @@ class offlinequiz_page_scanner {
      * Goes through all the pixels of a hotspot (box) and counts the black pixels
      * This is very inefficient!
      *
-     * @param unknown_type $point
+     * @param oq_point $point
      * @return number
      */
     public function get_hotspot_x($point) {
@@ -849,7 +774,7 @@ class offlinequiz_page_scanner {
      * Goes through all the pixels of a hotspot (box) and counts the black pixels
      * This is very inefficient!
      *
-     * @param unknown_type $point
+     * @param oq_point $point
      * @return number
      */
     public function get_hotspot_y($point) {
@@ -958,7 +883,7 @@ class offlinequiz_page_scanner {
      * Function to store the hotspots in the DB for retrieval during correction. This is called by cron.php because
      * we only store the hotspots if the scannedpage has an error.
      *
-     * @param unknown_type $scannedpageid
+     * @param int $scannedpageid
      */
     public function store_hotspots($scannedpageid) {
         global $DB;
@@ -989,7 +914,7 @@ class offlinequiz_page_scanner {
     /**
      * Function to restore the hotspots from DB records in offlinequiz_hotspots.
      *
-     * @param stdClass $hotspots
+     * @param array $hotspots
      */
     private function restore_hotspots($hotspots) {
         foreach ($hotspots as $hotspot) {
@@ -1116,7 +1041,7 @@ class offlinequiz_page_scanner {
     /**
      * Marks the hotspot with red square for student warnings.
      *
-     * @param unknown_type $point
+     * @param oq_point $point
      */
     public function mark_hotspot($point) {
         global $CFG;
@@ -1135,11 +1060,11 @@ class offlinequiz_page_scanner {
     /**
      * Creates an image with red markings to inform student about problems interpreting his markings.
      *
-     * @param unknown_type $wrongusernumber
-     * @param unknown_type $rightusernumber
-     * @param unknown_type $wronggroup
-     * @param unknown_type $rightgroup
-     * @param unknown_type $wrongitems
+     * @param int $wrongusernumber
+     * @param int $rightusernumber
+     * @param int $wronggroup
+     * @param int $rightgroup
+     * @param array $wrongitems
      */
     public function create_warning_image($wrongusernumber, $rightusernumber, $wronggroup, $rightgroup, $wrongitems) {
         // Mark errors in usernumber.
@@ -1273,8 +1198,8 @@ class offlinequiz_page_scanner {
     /**
      * Returns true if pixel color is lower than paper gray.
      *
-     * @param unknown_type $x
-     * @param unknown_type $y
+     * @param int $x
+     * @param int $y
      * @return boolean
      */
     public function pixel_is_black($x, $y) {
@@ -1297,7 +1222,7 @@ class offlinequiz_page_scanner {
      * Determines the value of a bar code.
      * Given a starting point, this function returns the number (base converted into decimal) of the bar code.
      *
-     * @param unknown_type $point
+     * @param oq_point $point
      * @return string|boolean
      */
     public function get_barcode($point) {
@@ -1525,7 +1450,7 @@ class offlinequiz_page_scanner {
     /**
      * Find upper left corner cross.
      *
-     * @return Ambigous <boolean, oq_point>
+     * @return oq_point
      */
     private function get_upper_left() {
         return $this->get_corner(0, 0, 1, 1);
@@ -1533,7 +1458,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Find upper right corner cross.
-     * @return Ambigous <boolean, oq_point>
+     * @return oq_point
      */
     private function get_upper_right() {
         return $this->get_corner(imagesx($this->image) - 1, 0, -1, 1);
@@ -1541,7 +1466,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Find lower left corner cross.
-     * @return Ambigous <boolean, oq_point>
+     * @return oq_point
      */
     private function get_lower_left() {
         return $this->get_corner(0, imagesy($this->image) - 1, 1, -1);
@@ -1549,7 +1474,7 @@ class offlinequiz_page_scanner {
 
     /**
      * Find lower right corner cross.
-     * @return Ambigous <boolean, oq_point>
+     * @return oq_point
      */
     private function get_lower_right() {
         return $this->get_corner(imagesx($this->image) - 1, imagesy($this->image) - 1, -1, -1);
@@ -1558,7 +1483,7 @@ class offlinequiz_page_scanner {
     /**
      * Returns the corners as an array of oq_points (topleft, topright, bottomleft, bottomright).
      * @param int $width
-     * @return multitype:oq_point
+     * @return oq_point
      */
     public function get_corners($width = OQ_IMAGE_WIDTH) {
 
@@ -1594,10 +1519,10 @@ class offlinequiz_page_scanner {
      * This can take a long time (e.g. 12 seconds)
      *
      * @param bool $check
-     * @param \offlinequiz_result_import\offlinequiz_point $upperleft
-     * @param \offlinequiz_result_import\offlinequiz_point $upperright
-     * @param \offlinequiz_result_import\offlinequiz_point $lowerleft
-     * @param \offlinequiz_result_import\offlinequiz_point $lowerright
+     * @param bool $upperleft
+     * @param bool $upperright
+     * @param bool $lowerleft
+     * @param bool $lowerright
      * @param int $width
      * @param int $scannedpageid
      * @return boolean
@@ -1753,8 +1678,8 @@ class offlinequiz_page_scanner {
 
     /**
      * Set the 4 trigger values.
-     * @param unknown_type $empty
-     * @param unknown_type $cross
+     * @param bool $empty
+     * @param int $cross
      */
     public function calibrate($empty, $cross) {
         $this->lowerwarning = $empty + ($cross - $empty) * 0.2;
