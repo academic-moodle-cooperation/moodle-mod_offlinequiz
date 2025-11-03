@@ -7,6 +7,7 @@ CHANGELOG
 * [Feature] Display question
 * [Bug] Changed that partial results also show the name and user profile picture
 * [Bug] Support underline formatting of tinymce
+* [Bug] Fixed PDFs if the logo size can not be calculated for some reason [github #331 @jpahullo]
 
 5.0.4
 -----------------
@@ -20,7 +21,7 @@ CHANGELOG
 5.0.2
 -----------------
 * [Bug] Fixed a bug that evaluations didn't work if offlinequiz was installed with 5.0.0 or later
-* [Bug] Fixed that random questions couldn't be added [githhub #323]
+* [Bug] Fixed that random questions couldn't be added [github #323]
 * [Bug] Fixed fail of scheduled task deleting temporary files [github #322]
 
 5.0.1
