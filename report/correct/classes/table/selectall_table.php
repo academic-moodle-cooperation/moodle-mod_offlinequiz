@@ -1,5 +1,5 @@
 <?php
-// This file is part of mod_offlinequiz for Moodle - http://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,34 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The file defines some subclasses that can be used when you are building
- * a report like the overview or responses report.
- *
- * @package       mod_offlinequiz
- * @subpackage    offlinequiz
- * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2015 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @since         Moodle 2.1
- * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- **/
-namespace mod_offlinequiz\correct;
-
+namespace offlinequiz_correct\table;
 defined('MOODLE_INTERNAL') || die();
-
 require_once($CFG->libdir . '/tablelib.php');
 /**
- * select all table
+ * Class selectall_table
+ *
+ * @package    offlinequiz_correct
+ * @copyright  2025 Thomas Wedekind <Thomas.wedekind@univie.ac.at>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class offlinequiz_selectall_table extends \flexible_table {
+class selectall_table extends \flexible_table {
     /**
-     * the script of the report to be used
-     * @var mixed
+     * the script of the fitting report
+     * @var string
      */
     protected $reportscript;
     /**
-     * array of params
+     * params array
      * @var array
      */
     protected $params;
@@ -59,14 +49,22 @@ class offlinequiz_selectall_table extends \flexible_table {
     }
 
     /**
-     * before html of the report
+     * there is nothing to display
+     * @return void
+     */
+    public function print_nothing_to_display() {
+        global $OUTPUT;
+        return;
+    }
+
+    /**
+     * start the html
      * @return void
      */
     public function wrap_html_start() {
-
         echo '<div id="tablecontainer" class="centerbox">';
         echo '<form id="reportform" method="post" action="' . $this->reportscript .
-             '" onsubmit="return confirm(\'' . $this->params['strreallydel'] . '\');">';
+        '" onsubmit="return confirm(\'' . $this->params['strreallydel'] . '\');">';
         echo ' <div>';
 
         foreach ($this->params as $name => $value) {
@@ -77,7 +75,7 @@ class offlinequiz_selectall_table extends \flexible_table {
     }
 
     /**
-     * after html of this table
+     * end the html
      * @return void
      */
     public function wrap_html_finish() {
@@ -90,7 +88,7 @@ class offlinequiz_selectall_table extends \flexible_table {
         echo '<a href="#" class="deselectall">' . $strselectnone . '</a> ';
         echo '&nbsp;&nbsp;';
         echo '<input type="submit" value="' . get_string('deleteselectedpages', 'offlinequiz_rimport')
-              . '" class="btn btn-secondary"/>';
+        . '" class="btn btn-secondary"/>';
         echo '</td></tr></table>';
         echo '  </center>';
         // Close form.

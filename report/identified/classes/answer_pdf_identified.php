@@ -25,11 +25,13 @@
  */
 namespace offlinequiz_identified;
 
+use mod_offlinequiz\document\create\pdf\answer_pdf;
+
 /**
  * PDF forms generator for offlinequizzes with participant identification.
  * Call set_participant($participant) to set the participant data and then add_answer_page(...) to add the answer page.
  */
-class answer_pdf_identified extends \offlinequiz_answer_pdf {
+class answer_pdf_identified extends answer_pdf {
     /**
      * the user that is being printed
      * @var \stdClass

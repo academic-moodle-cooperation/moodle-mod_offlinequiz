@@ -18,11 +18,11 @@ namespace offlinequiz_correct;
 use context_module;
 use navigation_node;
 use moodle_url;
+use offlinequiz_correct\table\selectall_table;
 use popup_action;
 use DateTime;
 use pix_icon;
 use mod_offlinequiz\default_report;
-use mod_offlinequiz\correct\offlinequiz_selectall_table;
 /**
  * The results import report for offlinequizzes
  *
@@ -63,7 +63,7 @@ class report extends default_report {
         $tableparams = ['q' => $offlinequiz->id, 'mode' => 'correct', 'action' => 'delete',
                 'strreallydel'  => addslashes(get_string('deletepagecheck', 'offlinequiz'))];
 
-        $table = new offlinequiz_selectall_table('mod_offlinequiz_import_report', 'report.php', $tableparams);
+        $table = new selectall_table('mod_offlinequiz_import_report', 'report.php', $tableparams);
 
         $tablecolumns = ['checkbox', 'counter', 'userkey', 'groupnumber', 'pagenumber', 'time', 'error', 'info', 'link'];
         $tableheaders = ['', '#', offlinequiz_get_id_field_name(),
