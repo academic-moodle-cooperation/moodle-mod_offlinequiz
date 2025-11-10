@@ -177,7 +177,7 @@ class add_random_questions extends external_api {
 
         offlinequiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $group->id, $recurse, $preventsamequestion);
         offlinequiz_delete_template_usages($quiz);
-        offlinequiz_update_sumgrades($quiz);
+        offlinequiz_update_sumgrades($quiz, $group->id);
 
         return ['message' => get_string('addarandomquestion_success', 'mod_quiz')];
     }
