@@ -175,7 +175,7 @@ class add_random_questions extends external_api {
 
         offlinequiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $group->id, $recurse, $preventsamequestion);
         offlinequiz_delete_template_usages($quiz);
-        offlinequiz_update_sumgrades($quiz);
+        offlinequiz_update_sumgrades($quiz, $group->id);
 
         /*$settings = quiz_settings::create_for_cmid($cmid);
         $structure = structure::create_for_quiz($settings);
