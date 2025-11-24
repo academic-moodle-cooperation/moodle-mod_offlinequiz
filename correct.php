@@ -28,6 +28,7 @@
 
 use core\exception\moodle_exception;
 use core\output\html_writer;
+use offlinequiz_rimport\importer\deprecated\oq_point;
 
 require_once('../../config.php');
 
