@@ -3,10 +3,10 @@ CHANGELOG
 5.0.4
 -----------------
 * [Bug] Fixed broken intro format after duplication or import
-* [Bug] Fixed Adding random questions doesn't update the total marks
-* [Bug] Fixed underline style of tinymce doesn't work in pdf and docx
-* [Bug] Fixed that after duplication the intro editor has no tiny/atto
-* [Bug] Prevent use of already added question when adding random questions
+* [Bug] Fixed adding random questions doesn't update the total marks
+* [Bug] Fixed underline style of TinyMCE doesn't work in PDF and DOCX
+* [Bug] Fixed that after duplication the description wasn't shown with TinyMCE/Atto
+* [Bug] Prevent use of already added questions when adding random questions
 * [Bug] Fixed that adding questions from subcategories doesn't work when adding random questions
 
 
