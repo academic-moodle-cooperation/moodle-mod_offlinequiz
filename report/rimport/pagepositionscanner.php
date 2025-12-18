@@ -24,7 +24,6 @@ define("CORNER_SEARCH_AREA_START_SIZE", 50);
 
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/page.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/positionslib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/crossscanner.php');
 /**
  * scans a page for the position and scaling factors
  * @package       offlinequiz_rimport

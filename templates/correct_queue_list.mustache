@@ -113,7 +113,7 @@
       </div>
     {{/queues}}
     <script>
-      function toggle_queue_content(queueid) {
+      togglefunc = function toggle_queue_content(queueid) {
         expandedicon = document.querySelector("#queuefilescollapse-" + queueid + " .expanded-icon");
         collapseicon = document.querySelector("#queuefilescollapse-" + queueid + " .collapsed-icon");
         element = document.getElementById("offlinequiz-queue-" + queueid + "-content");
@@ -121,6 +121,16 @@
         collapseicon.classList.toggle("hide");
         expandedicon.classList.toggle("hide");
       }
+      document.addEventListener("DOMContentLoaded", function() {
+      // Get the current URL hash (part after #)
+        const hash = window.location.hash;
+        const match = hash.match(/offlinequiz-queue-(\d+)$/);
+
+        if (match) {
+          const queueid = match[1];
+          togglefunc(queueid);
+        }
+    });
     </script>
   </div>
 </div>

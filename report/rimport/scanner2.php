@@ -24,7 +24,6 @@ require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/pagenumberscanner.
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/resultscanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/groupnumberscanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/studentidscanner.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/boxscanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/pagesaver.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/resultsaver.php');
 

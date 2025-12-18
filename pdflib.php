@@ -37,8 +37,6 @@ require_once($CFG->dirroot . '/question/type/questionbase.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/html2text.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/documentlib.php');
 
-define('LOGO_MAX_ASPECT_RATIO', 3.714285714);
-
 /**
  * Returns a rendering of the number depending on the answernumbering format.
  *

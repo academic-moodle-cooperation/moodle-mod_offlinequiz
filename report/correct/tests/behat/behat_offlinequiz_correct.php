@@ -40,10 +40,6 @@ class behat_offlinequiz_correct extends behat_base {
     )]
     public function i_click_on_edit_icon_in_the_upload($iconnumber, $filenumber): void {
         global $CFG, $DB;
-        $this->execute('behat_navigation::i_am_on_page_instance', [$this->escape($entityname), 'offlinequiz activity']);
-        $this->execute("behat_general::i_click_on", [get_string('upload'), 'link']);
-        $this->execute('behat_repository_upload::i_upload_file_to_filemanager', [$filename, 'ZIP- or image-file']);
-        $this->execute("behat_general::i_click_on", [get_string('import', 'offlinequiz_rimport'), 'button']);
 
         // Run adhoc tasks.
         \core\cron::setup_user();

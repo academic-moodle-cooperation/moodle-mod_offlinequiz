@@ -16,6 +16,8 @@
 
 namespace mod_offlinequiz\document\create\pdf;
 
+define('LOGO_MAX_ASPECT_RATIO', 3.714285714);
+
 /**
  * answer_pdf
  *
@@ -67,7 +69,7 @@ class answer_pdf extends offlinequiz_pdf {
         $letterstr = 'ABCDEF';
 
         $logourl = trim($offlinequizconfig->logourl);
-        if (!empty($logourl)) {
+        if (!empty($logourl) && $this->is_url_image($logourl)) {
             $aspectratio = $this->get_logo_aspect_ratio($logourl);
             if ($aspectratio < LOGO_MAX_ASPECT_RATIO) {
                 $newlength = 54 * $aspectratio / LOGO_MAX_ASPECT_RATIO;
@@ -395,5 +397,29 @@ class answer_pdf extends offlinequiz_pdf {
         }
 
         $group->numberofpages = $page;
+    }
+
+    /**
+     * Checks if the url is an image.
+     * @param string $url the url to check
+     */
+    private function is_url_image($url) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        if (!$data) {
+            return false;
+        }
+
+        if (preg_match('/Content-Type: image/i', $data)) {
+            return true;
+        }
+
+        return false;
     }
 }
