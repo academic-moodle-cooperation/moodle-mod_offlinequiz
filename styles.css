@@ -1106,11 +1106,7 @@ input#showviewbutton {
 }
 
 #page-mod-offlinequiz-edit ul.slots .activityinstance span.instancename {
-    white-space: nowrap;
     text-overflow: ellipsis;
-    overflow: hidden;
-    height: 20px;
-    display: inline-block;
 }
 
 #page-mod-offlinequiz-edit ul.slots .activityinstance span.instancename img {

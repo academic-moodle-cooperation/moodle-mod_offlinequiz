@@ -6,6 +6,7 @@ CHANGELOG
 * [Feature] added a setting to set a default max mark
 * [Feature] Display question
 * [Bug] Changed that partial results also show the name and user profile picture
+* [Bug] Fixed faulty display of questions list for long questions or questions with html
 * [Bug] Support underline formatting of tinymce
 * [Bug] Fixed PDFs if the logo size can not be calculated for some reason [github #331 @jpahullo]
 

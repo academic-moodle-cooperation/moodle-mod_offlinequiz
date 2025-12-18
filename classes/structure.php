@@ -422,19 +422,7 @@ class structure {
         $explanation = implode(', ', $dates);
 
         // Brief summary on the page.
-        if ($timenow < $offlinequiz->timeopen) {
-            $currentstatus = get_string(
-                'offlinequizisclosedwillopen',
-                'offlinequiz',
-                userdate($offlinequiz->timeopen, get_string('strftimedatetimeshort', 'langconfig'))
-            );
-        } else if ($offlinequiz->timeclose && $timenow <= $offlinequiz->timeclose) {
-            $currentstatus = get_string(
-                'offlinequizisopenwillclose',
-                'offlinequiz',
-                userdate($offlinequiz->timeclose, get_string('strftimedatetimeshort', 'langconfig'))
-            );
-        } else if ($offlinequiz->timeclose && $timenow > $offlinequiz->timeclose) {
+        if ($offlinequiz->timeclose && $timenow > $offlinequiz->timeclose) {
             $currentstatus = get_string('offlinequizisclosed', 'offlinequiz');
         } else {
             $currentstatus = get_string('offlinequizisopen', 'offlinequiz');
