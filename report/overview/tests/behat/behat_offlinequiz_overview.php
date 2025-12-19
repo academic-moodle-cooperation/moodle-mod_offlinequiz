@@ -55,6 +55,7 @@ class behat_offlinequiz_overview extends behat_base {
      * @throws \Exception
      * @return void
      */
+    #[\core\attribute\example('I "Show all results" in the offlinequiz result overview of the offlinequiz "testofflinequiz"')]
     public function i_should_see_text_times($text, $count) {
         $page = $this->getSession()->getPage();
         $elements = $page->findAll('xpath', "//*[contains(text(), '$text')]");

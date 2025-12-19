@@ -30,7 +30,7 @@ Feature: After importing files for evaluating, corrected scans should be possibl
       | Test questions   | multichoice | Multi-choice-001         | A |
   @javascript
   Scenario: I can view the scans of a student after importing the file
-    And I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
+    When I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1
     And I follow "Forms"
     And I press "Create forms"
     And I upload the file "/mod/offlinequiz/report/correct/tests/behat/files/view_scanned_page.zip" to the offlinequiz "testofflinequiz" and let it evaluate

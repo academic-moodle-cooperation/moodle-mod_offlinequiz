@@ -503,7 +503,7 @@ function offlinequiz_create_docx_question(
     \PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);   // Escape < and other characters.
 
     // Define cell style arrays.
-    $cellstyle = ['valign' => 'center'];
+    $cellstyle = ['valign' => 'center', 'halign' => 'left'];
 
     // Add text styles.
     // Normal style.
@@ -598,20 +598,20 @@ function offlinequiz_create_docx_question(
 
         $table = $section->addTable('tableStyle');
         $table->addRow();
-        $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('name')) . ':  ', 'brStyle');
+        $table->addCell(null, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('name')) . ':  ', 'brStyle');
 
         $table->addRow();
-        $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('idnumber', 'offlinequiz')) .
+        $table->addCell(null, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('idnumber', 'offlinequiz')) .
                                                           ':  ', 'brStyle');
 
         if ($offlinequiz->printstudycodefield) {
             $table->addRow();
-            $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('studycode', 'offlinequiz')) .
+            $table->addCell(null, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('studycode', 'offlinequiz')) .
                                                           ':  ', 'brStyle');
         }
 
         $table->addRow();
-        $table->addCell(200, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('signature', 'offlinequiz')) .
+        $table->addCell(null, $cellstyle)->addText(offlinequiz_str_html_docx(get_string('signature', 'offlinequiz')) .
                                                           ':  ', 'brStyle');
 
         $section->addTextBreak(2);
