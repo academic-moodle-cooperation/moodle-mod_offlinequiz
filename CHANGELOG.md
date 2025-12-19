@@ -8,6 +8,7 @@ CHANGELOG
 * [Bug] Fixed that after duplication the description wasn't shown with TinyMCE/Atto
 * [Bug] Prevent use of already added questions when adding random questions
 * [Bug] Fixed that adding questions from subcategories doesn't work when adding random questions
+* [Bug] Fixed that questions were visible in the wrong questionbank when adding questions
 
 
 5.0.3
