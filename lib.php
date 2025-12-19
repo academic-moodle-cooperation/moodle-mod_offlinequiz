@@ -1525,10 +1525,12 @@ function mod_offlinequiz_output_fragment_offlinequiz_question_bank($args): strin
     global $PAGE;
 
     // Retrieve params.
-    $params = [];
-    $extraparams = [];
+    $paramsoq = [];
     $querystring = parse_url($args['querystring'], PHP_URL_QUERY);
-    parse_str($querystring, $params);
+    parse_str($querystring, $paramsoq);
+
+    [$params, $extraparams] = \core_question\local\bank\filter_condition_manager::extract_parameters_from_fragment_args($args);
+    $params['groupnumber'] = $paramsoq['groupnumber'];
 
     // Load the bank we are looking at rather than always the quiz module itself.
     $params['cmid'] = clean_param($args['bankcmid'], PARAM_INT);
