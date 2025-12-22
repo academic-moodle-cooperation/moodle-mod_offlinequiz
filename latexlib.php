@@ -413,7 +413,8 @@ function offlinequiz_convert_html_to_latex($text) {
         '%' => '\%',
         '&gt;' => '>',
         '&lt;' => '<',
-        '$' => '\$'];
+        '$' => '\$',
+        '_' => '\_'];
     foreach ($conversiontable as $search => $replace) {
         $text = str_ireplace($search, $replace, $text);
     }
