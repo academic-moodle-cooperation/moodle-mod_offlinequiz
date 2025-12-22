@@ -1452,6 +1452,9 @@ input#showviewbutton {
     padding: 1em;
     border-radius: 1em;
 }
+#page-mod-offlinequiz-tutorial .tutorialquestion label {
+    display: inline;
+}
 #page-mod-offlinequiz-tutorial .tutorialbutton {
     margin-top: 1em;
 }
