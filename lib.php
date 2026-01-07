@@ -394,7 +394,7 @@ function offlinequiz_question_preview_pluginfile(
     $fs = get_file_storage();
     $relativepath = implode('/', $args);
     $fullpath = "/{$filecontext->id}/{$filecomponent}/{$filearea}/{$relativepath}";
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
+    if ((!$file = $fs->get_file_by_hash(sha1($fullpath))) || $file->is_directory()) {
         send_file_not_found();
     }
     send_stored_file($file, 0, 0, $forcedownload, $options);
