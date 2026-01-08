@@ -80,6 +80,11 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
     // Remove all class info from paragraphs because TCPDF won't use CSS.
     // JPC: Exclude pre tags.
     $questiontext = preg_replace('/<p\\b[^>]+class="[^"]*"[^>]*>/i', "<p>", $questiontext);
+    $questiontext = preg_replace(
+        '/<code>(.*?)<\/code>/ms',
+        '<span style="background-color: #f0f0f0; font-family:monospace; padding:2px 4px;">$1</span>',
+        $questiontext
+    );
 
     $questiontext = $trans->fix_image_paths(
         $questiontext,
@@ -137,6 +142,11 @@ function offlinequiz_get_answers_html(
         $answertext = preg_replace("/<p\\b[^>]*>/ms", "", $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
+        $answertext = preg_replace(
+            '/<code>(.*?)<\/code>/ms',
+            '<span style="background-color: #fcfcfc; font-family:monospace; padding:2px 4px;">$1</span>',
+            $answertext
+        );
         $answertext = $trans->fix_image_paths(
             $answertext,
             $question->contextid,

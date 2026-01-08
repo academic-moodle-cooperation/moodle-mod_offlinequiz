@@ -4,7 +4,8 @@ CHANGELOG
 -----------------
 * [Feature] 5.1 compatible version
 * [Feature] added a setting to set a default max mark
-* [Feature] Display question
+* [Feature] Display question categories in the question overview
+* [Feature] Support for <code> and <pre> tags
 * [Bug] Changed that partial results also show the name and user profile picture
 * [Bug] Fixed faulty display of questions list for long questions or questions with html
 * [Bug] Support underline formatting of tinymce
