@@ -308,7 +308,7 @@ class offlinequiz_answer_pdf extends offlinequiz_pdf {
     }
     /*
     * Generates the body of PDF answer form for an offlinequiz group using an optional groupletter.
-    * 
+    *
     * @param offlinequiz_answer_pdf $pdf the PDF object
     * @param int $maxanswers the maximum number of answers in all question of the offline group
     * @param question_usage_by_activity $templateusage the template question  usage for this offline group
@@ -577,7 +577,7 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
 
     // Filter only for tex formulas.
     $questiontext = offlinequiz_apply_filters($questiontext, $texfilters);
-    
+
     if($question->questiontextformat == FORMAT_PLAIN) {
         $questiontext = s($questiontext);
     }
@@ -614,7 +614,7 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         $answertext = $question->options->answers[$answer]->answer;
         // Filter only for tex formulas.
         $answertext = offlinequiz_apply_filters($answertext, $texfilters);
-        // If the answer is in plain text, escape it.        
+        // If the answer is in plain text, escape it.
         if($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
             $answertext = s($answertext);
         }
@@ -624,6 +624,8 @@ function offlinequiz_get_answers_html($offlinequiz, $templateusage,
         $answertext = preg_replace("/<p\\b[^>]*>/ms", "", $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
+        $answertext = preg_replace("/<\/p[^>]*>/ms", "", $answertext);
+
         $answertext = $trans->fix_image_paths($answertext, $question->contextid, 'answer', $answer,
             1, 300, $offlinequiz->disableimgnewlines);
 
