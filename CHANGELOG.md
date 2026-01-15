@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+5.0.5
+-----------------
+* [Bug] removed extra gap between answers in question pdf
+
 5.0.4
 -----------------
 * [Bug] Fixed broken intro format after duplication or import
