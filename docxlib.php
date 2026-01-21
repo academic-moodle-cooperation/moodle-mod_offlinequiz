@@ -46,7 +46,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/lib/phpwordinit.php');
 function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $depth = 0) {
 
     // We skip leading newlines.
-    while ($blocks[0]['type'] == 'newline') {
+    while (array_key_exists(0, $blocks) && $blocks[0]['type'] == 'newline') {
         array_shift($blocks);
     }
 
@@ -54,7 +54,7 @@ function offlinequiz_print_blocks_docx($section, $blocks, $numbering = null, $de
     if (!empty($numbering)) {
         $itemstring = ' ';
         $style = 'nStyle';
-        if ($blocks[0]['type'] == 'string') {
+        if (array_key_exists(0, $blocks) && $blocks[0]['type'] == 'string') {
             $itemstring = $blocks[0]['value'];
             if (array_key_exists('style', $blocks[0])) {
                 $style = $blocks[0]['style'];
@@ -147,7 +147,7 @@ function offlinequiz_convert_underline_text_docx($text) {
     $result = [];
 
     $firstpart = array_shift($parts);
-    if (!empty($firstpart)) {
+    if (trim($firstpart) !== "") {
         $firstpart = strip_tags($firstpart);
         $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $firstpart)];
     }
@@ -164,7 +164,7 @@ function offlinequiz_convert_underline_text_docx($text) {
         $underlinetext = strip_tags(substr($part, 0, $closetagpos));
 
         $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $underlinetext), 'style' => 'uStyle'];
-        if (!empty($underlineremain)) {
+        if (trim($underlineremain) !== "") {
             $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, strip_tags($underlineremain))];
         }
     }
@@ -185,7 +185,7 @@ function offlinequiz_convert_super_text_docx($text) {
     $result = [];
 
     $firstpart = array_shift($parts);
-    if (!empty($firstpart)) {
+    if (trim($firstpart) !== "") {
         $result = offlinequiz_convert_sub_text_docx($firstpart);
     }
 
@@ -199,7 +199,7 @@ function offlinequiz_convert_super_text_docx($text) {
         $supertext = strip_tags(substr($part, 0, $closetagpos));
 
         $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $supertext), 'style' => 'supStyle'];
-        if (!empty($supertextremain)) {
+        if (trim($supertextremain) !== "") {
             $superremainblocks = offlinequiz_convert_sub_text_docx($supertextremain);
             $result = array_merge($result, $superremainblocks);
         }
@@ -220,7 +220,7 @@ function offlinequiz_convert_sub_text_docx($text) {
     $result = [];
 
     $firstpart = array_shift($parts);
-    if (!empty($firstpart)) {
+    if (trim($firstpart) !== "") {
         $result = offlinequiz_convert_bold_text_docx($firstpart);
     }
 
@@ -234,7 +234,7 @@ function offlinequiz_convert_sub_text_docx($text) {
         $subtext = strip_tags(substr($part, 0, $closetagpos));
 
         $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $subtext), 'style' => 'subStyle'];
-        if (!empty($subtextremain)) {
+        if (trim($subtextremain) !== "") {
             $subremainblocks = offlinequiz_convert_bold_text_docx($subtextremain);
             $result = array_merge($result, $subremainblocks);
         }
@@ -256,7 +256,7 @@ function offlinequiz_convert_italic_text_docx($text) {
     $result = [];
 
     $firstpart = array_shift($parts);
-    if (!empty($firstpart)) {
+    if (trim($firstpart) !== "") {
         $result = offlinequiz_convert_underline_text_docx($firstpart);
     }
 
@@ -272,7 +272,7 @@ function offlinequiz_convert_italic_text_docx($text) {
         $italictext = strip_tags(substr($part, 0, $closetagpos));
 
         $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $italictext), 'style' => 'iStyle'];
-        if (!empty($italicremain)) {
+        if (trim($italicremain) !== "") {
             $italicremainblocks = offlinequiz_convert_underline_text_docx($italicremain);
             $result = array_merge($result, $italicremainblocks);
         }
@@ -294,7 +294,7 @@ function offlinequiz_convert_bold_text_docx($text) {
     $result = [];
 
     $firstpart = array_shift($parts);
-    if (!empty($firstpart)) {
+    if (trim($firstpart) !== "") {
         $result = offlinequiz_convert_italic_text_docx($firstpart);
     }
 
@@ -310,7 +310,7 @@ function offlinequiz_convert_bold_text_docx($text) {
         $boldtext = strip_tags(substr($part, 0, $closetagpos));
 
         $result[] = ['type' => 'string', 'value' => str_ireplace($search, $replace, $boldtext), 'style' => 'bStyle'];
-        if (!empty($boldremain)) {
+        if (trim($boldremain) !== "") {
             $boldremainblocks = offlinequiz_convert_italic_text_docx($boldremain);
             $result = array_merge($result, $boldremainblocks);
         }
@@ -330,7 +330,7 @@ function offlinequiz_convert_newline_docx($text) {
 
     $firstpart = array_shift($parts);
     // If the original text was only a newline, we don't have a first part.
-    if (!empty($firstpart)) {
+    if (trim($firstpart) !== "") {
         if ($firstpart == '<br/>' || $firstpart == '<br />') {
             $result = [['type' => 'newline']];
         } else {
@@ -340,7 +340,7 @@ function offlinequiz_convert_newline_docx($text) {
 
     foreach ($parts as $part) {
         $result[] = ['type' => 'newline'];
-        if (!empty($part)) {
+        if (trim($part) !== "") {
             $newlineremainblocks = offlinequiz_convert_super_text_docx($part);
             $result = array_merge($result, $newlineremainblocks);
         }
@@ -364,9 +364,13 @@ function offlinequiz_convert_image_docx($text) {
     $text = preg_replace('!<a([^>]+)>!i', '', $text);
 
     // First add all the text that appears before the image tag.
-    $strings = preg_split("/<img/i", $text);
+    if ($text) {
+        $strings = preg_split("/<img/i", $text);
+    } else {
+        $strings = [1 => $text];
+    }
     $firstline = array_shift($strings);
-    if (!empty($firstline)) {
+    if (trim($firstline) !== "") {
         $result = offlinequiz_convert_newline_docx($firstline);
     }
 
@@ -380,7 +384,7 @@ function offlinequiz_convert_image_docx($text) {
             $valuepair = explode('=', $attribute);
             $valuepair[0] = strtolower(trim($valuepair[0]));
 
-            if (!empty($valuepair[0])) {
+            if (trim($valuepair[0]) !== "") {
                 if ($valuepair[0] == 'src') {
                     $imageurl = str_replace('file://', '', str_replace('"', '', str_replace("'", '', $valuepair[1])));
                 } else {
@@ -400,7 +404,7 @@ function offlinequiz_convert_image_docx($text) {
 
         // Now add the remaining text after the image tag.
         $remaining = substr($string, strpos($string, '>') + 1);
-        if (!empty($remaining)) {
+        if (trim($remaining) !== "") {
             $remainingblocks = offlinequiz_convert_newline_docx($remaining);
             $result = array_merge($result, $remainingblocks);
         }
