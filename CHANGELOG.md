@@ -6,6 +6,7 @@ CHANGELOG
 * [Feature] added a setting to set a default max mark
 * [Feature] Display question categories in the question overview
 * [Feature] Support for <code> and <pre> tags
+* [Bug] Fontsize was not working for LaTeX forms
 * [Bug] Changed that partial results also show the name and user profile picture
 * [Bug] Fixed faulty display of questions list for long questions or questions with html
 * [Bug] Support underline formatting of tinymce

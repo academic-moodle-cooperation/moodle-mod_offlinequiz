@@ -671,7 +671,7 @@ $string['questionpage'] = 'Page';
 $string['questionsheet'] = 'Question sheet';
 $string['questionsheetlatextemplate'] = '% GENERAL FORMATTING
 % !TEX encoding = UTF-8 Unicode
-\documentclass[11pt,a4paper]{article}
+\documentclass[{$a->fontsize}pt,a4paper]{article}
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
@@ -683,7 +683,7 @@ $string['questionsheetlatextemplate'] = '% GENERAL FORMATTING
 \usepackage{xcolor}
 \usepackage{ulem}
 \usepackage{acronym}
- \usepackage[colorlinks=true, urlcolor=blue,linkcolor=black]{hyperref} % for using hyperlinks
+\usepackage[colorlinks=true, urlcolor=blue,linkcolor=black]{hyperref} % for using hyperlinks
 \usepackage{lastpage}
 \usepackage{fancyhdr}
 \textwidth 16truecm
