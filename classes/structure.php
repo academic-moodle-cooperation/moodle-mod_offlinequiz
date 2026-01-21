@@ -439,16 +439,17 @@ class structure {
         global $DB;
 
         $slots = $DB->get_records_sql("
-                SELECT slot.id AS slotid, slot.slot, slot.questionid, slot.page, slot.maxmark,
+                SELECT slot.id AS slotid, slot.slot, qv.questionid, slot.page, slot.maxmark,
                        q.*, qc.contextid, qc.name qcname, qc.id categoryid, qr.version AS requestedversion
                   FROM {offlinequiz_group_questions} slot
-                  LEFT JOIN {question} q ON q.id = slot.questionid
-                  LEFT JOIN {question_versions} qv ON q.id = qv.questionid
-                  LEFT JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                  LEFT JOIN {question_references} qr ON
+                        qr.component = 'mod_offlinequiz'
+                        AND qr.itemid = slot.id
+                        AND qr.questionarea = 'slot'
+                  LEFT JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
+                  LEFT JOIN {question_versions} qv ON qv.version = qr.version AND qv.questionbankentryid = qr.questionbankentryid
+                  LEFT JOIN {question} q ON q.id = qv.questionid
                   LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
-                  LEFT JOIN {question_references} qr ON qr.component = 'mod_offlinequiz'
-
-                    AND qr.questionarea = 'slot' AND qr.itemid = slot.id
                  WHERE slot.offlinequizid = ?
                    AND slot.offlinegroupid = ?
               ORDER BY slot.slot", [$offlinequiz->id, $offlinequiz->groupid]);
@@ -560,12 +561,16 @@ class structure {
      */
     protected function populate_question_sources() {
         foreach ($this->slots as $slot) {
-            if (!array_key_exists($slot->qccontextid, $this->qbankcms)) {
-                $context = \context::instance_by_id($slot->qccontextid);
-
-                $cm = get_coursemodule_from_id(null, $context->instanceid);
-                $cminfo = \cm_info::create($cm);
-                $this->qbankcms[$slot->qccontextid] = $cminfo;
+            if (
+                !empty($slot->qccontextid)
+                && !array_key_exists($slot->qccontextid, $this->qbankcms)
+            ) {
+                $context = \context::instance_by_id($slot->qccontextid, IGNORE_MISSING);
+                if ($context) {
+                    $cm = get_coursemodule_from_id(null, $context->instanceid);
+                    $cminfo = \cm_info::create($cm);
+                    $this->qbankcms[$slot->qccontextid] = $cminfo;
+                }
             }
         }
     }

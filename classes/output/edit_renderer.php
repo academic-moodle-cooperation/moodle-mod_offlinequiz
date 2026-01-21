@@ -947,14 +947,18 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string
      */
     private function get_bank_url($structure, $question) {
-        $bankurl = new \moodle_url(
-            '/question/edit.php',
-            [
-                    'cmid' => $structure->get_source_bank_cminfo($question->contextid)->id,
-                    'cat' => "{$question->categoryid},{$question->contextid}",
-                ]
-        );
-        return $bankurl->out(false);
+        $bankurl = '';
+        if ($question->contextid && $question->categoryid) {
+            $bankurl = new \moodle_url(
+                '/question/edit.php',
+                [
+                        'cmid' => $structure->get_source_bank_cminfo($question->contextid)->id,
+                        'cat' => "{$question->categoryid},{$question->contextid}",
+                        ]
+            );
+            $bankurl = $bankurl->out(false);
+        }
+        return $bankurl;
     }
     /**
      * get the name of the question bank
@@ -962,7 +966,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param mixed $question
      */
     private function get_bank_name($structure, $question) {
-        if ($structure->get_context()->id != $question->contextid) {
+        if ($question->contextid && $structure->get_context()->id != $question->contextid) {
             $name = $structure->get_source_bank_cminfo($question->contextid)->get_formatted_name();
             return $name;
         }
