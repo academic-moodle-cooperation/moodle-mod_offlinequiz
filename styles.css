@@ -1494,3 +1494,7 @@ input#showviewbutton {
     margin-top: 1rem;
     margin-bottom: 1rem;
 }
+
+#offlinequiz_overview td[data-mdl-overview-item="actions"] a {
+    margin-right: 1em;
+}
