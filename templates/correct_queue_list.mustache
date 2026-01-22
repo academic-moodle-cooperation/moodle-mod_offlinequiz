@@ -121,6 +121,7 @@
         collapseicon.classList.toggle("hide");
         expandedicon.classList.toggle("hide");
       }
+      window.toggle_queue_content = togglefunc;
       document.addEventListener("DOMContentLoaded", function() {
       // Get the current URL hash (part after #)
         const hash = window.location.hash;
