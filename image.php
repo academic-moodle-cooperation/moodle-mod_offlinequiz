@@ -25,6 +25,7 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use offlinequiz_rimport\importer\deprecated\oq_point;
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
@@ -134,7 +135,6 @@ echo ".imagebutton {width:250px; height:24px; text-align:left; margin-bottom:10p
 echo "</style>\n";
 echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
 
-offlinequiz_load_useridentification();
 $offlinequizconfig = get_config('offlinequiz');
 $group = $groups[$result->offlinegroupid];
 $offlinequiz->groupid = - $group->id;
