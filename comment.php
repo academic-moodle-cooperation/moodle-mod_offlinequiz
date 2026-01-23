@@ -140,7 +140,7 @@ echo "<div>
             </div>
             <fieldset class=\"felement fgroup\">
                 <input class=\"btn btn-secondary\" id=\"id_submitbutton\" type=\"submit\" name=\"submit\"
-                    value=\"print_string('save', 'offlinequiz')\" />
+                    value=\"" . get_string('save', 'offlinequiz') . "\" />
             </fieldset>
         </div>
     </div>

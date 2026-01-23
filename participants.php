@@ -508,9 +508,9 @@ switch ($mode) {
                     <input type=\"hidden\" name=\"forcenew\" value=\"1\" />
                     <input type=\"hidden\" name=\"mode\" value=\"createpdfs\" />
                     <button type=\"submit\"
-                    onClick='return confirm(\"get_string('reallydeleteupdatepdf', 'offlinequiz')\")'
-                    class=\"btn btn-secondary\">
-            echo get_string('deleteupdatepdf', 'offlinequiz')
+                    onClick='return confirm(\"" . get_string('reallydeleteupdatepdf', 'offlinequiz') . "\")'
+                    class=\"btn btn-secondary\">" .
+             get_string('deleteupdatepdf', 'offlinequiz') . "
                     </button>
                 </div>
             </form>
@@ -657,8 +657,29 @@ switch ($mode) {
                     $files[] = $realfilename;
                 }
             }
-
-            if (empty($files)) {
+            $pdfs = false;
+            foreach ($files as $file) {
+                $mimetype = mimeinfo('type', $file);
+                if ($mimetype == 'application/pdf') {
+                    $newfile = "$file-%03d.tiff";
+                    $handle = popen("cd $tempdir;convert -type grayscale -density 300 '$file' '$newfile'", 'r');
+                    fread($handle, 1);
+                    while (!feof($handle)) {
+                        fread($handle, 1);
+                    }
+                    $returncode = pclose($handle);
+                    if ($returncode == 0) {
+                        unlink($tempdir . '/' . $file);
+                    } else {
+                        echo $OUTPUT->notification(
+                            get_string('couldnotextractpdf', 'offlinequiz_rimport', $realfilename),
+                            'notifyproblem'
+                        );
+                    }
+                    $pdfs = true;
+                }
+            }
+            if ($pdfs || empty($files)) {
                 $files = get_directory_list($tempdir);
             }
 

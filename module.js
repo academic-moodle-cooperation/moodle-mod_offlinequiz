@@ -28,11 +28,11 @@ M.mod_offlinequiz = M.mod_offlinequiz || {};
 
 M.mod_offlinequiz.init_comment_popup = function(Y) {
     // Add a close button to the window.
-    var closebutton = Y.Node.create('<input type="button" />');
+    var closebutton = Y.Node.create('<input type="button" class="btn btn-secondary" />');
     closebutton.set('value', M.util.get_string('cancel', 'moodle'));
     Y.one('#id_submitbutton').ancestor().append(closebutton);
-    Y.on('click', function() { window.close() }, closebutton);
-}
+    Y.on('click', function() { window.close(); }, closebutton);
+};
 
 // Code for updating the countdown timer that is used on timed offlinequizzes.
 M.mod_offlinequiz.timer = {

@@ -11,6 +11,7 @@ CHANGELOG
 * [Bug] Fixed faulty display of questions list for long questions or questions with html
 * [Bug] Support underline formatting of tinymce
 * [Bug] Fixed PDFs if the logo size can not be calculated for some reason [github #331 @jpahullo]
+* [Bug] Fixed PDF upload in attendance lists
 
 5.0.4
 -----------------

@@ -28,6 +28,7 @@
 $string['addingfilestoqueue'] = 'Answer forms have been added to the evaluation queue. A notification will be sent to you after the data has been processed.';
 $string['correcterror'] = 'Correct';
 $string['couldnotcreatejob'] = 'Could not create adhoc task.';
+$string['couldnotextractpdf'] = 'Error while extracting pdf images. Some lists may not be imported.';
 $string['couldnotunzip'] = 'Could not unzip file.';
 $string['deleteselectedpages'] = 'Delete selected pages';
 $string['errorcouldnotgrab'] = 'Could not grab';

@@ -16,6 +16,8 @@
 
 namespace offlinequiz_correct\table;
 
+use html_writer;
+
 /**
  * Class partlist_table
  *

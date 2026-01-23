@@ -24,7 +24,7 @@
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+use offlinequiz_rimport\importer\deprecated\oq_point;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/offlinequiz/report/rimport/scanner.php');
@@ -154,7 +154,7 @@ class offlinequiz_participants_scanner extends offlinequiz_page_scanner {
      * Returns the corners of the scanned page.
      *
      * @param int $width
-     * @return array of oq_points (upperleft, upperright, lowerleft, lowerright).
+     * @return mod_offlinequiz_corners of  (upperleft, upperright, lowerleft, lowerright).
      */
     public function export_corners($width) {
         $corners = [];
