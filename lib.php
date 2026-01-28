@@ -789,10 +789,10 @@ function offlinequiz_user_outline($course, $user, $mod, $offlinequiz) {
 function offlinequiz_user_complete($course, $user, $mod, $offlinequiz) {
     global $DB;
 
-    if ($results = $DB->get_records('offlinequiz_results', ['userid' => $user->id, 'offlinequiz' => $offlinequiz->id])) {
+    if ($results = $DB->get_records('offlinequiz_results', ['userid' => $user->id, 'offlinequizid' => $offlinequiz->id])) {
         if (
             $offlinequiz->grade && $offlinequiz->sumgrades &&
-                $grade = $DB->get_record('offlinequiz_results', ['userid' => $user->id, 'offlinequiz' => $offlinequiz->id])
+                $grade = $DB->get_record('offlinequiz_results', ['userid' => $user->id, 'offlinequizid' => $offlinequiz->id])
         ) {
             echo get_string('grade', 'offlinequiz') . ': ' . round($grade->grade, $offlinequiz->decimalpoints) .
                 '/' . $offlinequiz->grade . '<br />';

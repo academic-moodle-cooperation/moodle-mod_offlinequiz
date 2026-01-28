@@ -831,6 +831,7 @@ $string['reportends'] = 'Review of results ends';
 $string['reportoverview'] = 'Overview';
 $string['reportstarts'] = 'Review of results starts';
 $string['resetofflinequizzes'] = 'Reset Offline quiz data';
+$string['result'] = 'Result';
 $string['resultexists'] = 'Same result for {$a} already exists, import ignored';
 $string['resultimport'] = 'Upload';
 $string['resultnotcomplete'] = 'Result is not complete.';
