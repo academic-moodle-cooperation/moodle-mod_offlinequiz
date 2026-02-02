@@ -128,7 +128,7 @@ echo "<div>
     <input type=\"hidden\" name=\"resultid\" value=\"$result->id\" />
     <input type=\"hidden\" name=\"slot\" value=\"$slot\" /> <input
         type=\"hidden\" name=\"slots\" value=\"$slot\" /> <input
-        type=\"hidden\" name=\"sesskey\" value=\"sesskey()\" />
+        type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />
   </div>
   <fieldset class=\"hidden\">
     <div>
