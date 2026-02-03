@@ -80,7 +80,9 @@
         </div>
         <div class="col-2">
           {{{editurl}}}
-          <a href="{{{fileurl}}}" title="{{#str}} queuefiledownloadhovertext, mod_offlinequiz {{/str}}"><i class="fa-solid fa-download fa-fw"></i> </a>
+          {{#fileurl}}
+            <a href="{{{fileurl}}}" title="{{#str}} queuefiledownloadhovertext, mod_offlinequiz {{/str}}"><i class="fa-solid fa-download fa-fw"></i> </a>
+          {{/fileurl}}
         </div>
       </div>
     {{/files}}

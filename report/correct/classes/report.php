@@ -296,7 +296,7 @@ class report extends default_report {
      * @return void
      */
     private function display_uploaded_files($offlinequiz, $cm) {
-        global $DB, $OUTPUT;
+        global $DB, $OUTPUT, $CFG;
         $queues = $DB->get_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id], 'timecreated DESC');
 
         $sql = "SELECT qd.id queuedataid, q.id queueid, qd.status status, qd.filename filename, sp.id scannedpageid,
@@ -334,7 +334,10 @@ class report extends default_report {
                     '/mod/offlinequiz/report.php',
                     ['action' => 'download', 'mode' => 'correct', 'queueid' => $queue->id, 'id' => $cm->id]
                 );
-                $element['downloadlink'] = $link->out();
+                $path = "$CFG->dataroot/offlinequiz/import/$queue->id/$queue->filename";
+                if (file_exists($path)) {
+                    $element['downloadlink'] = $link->out();
+                }
                 $element['documentname'] = $queue->filename;
                 $element['queueid'] = $queue->id;
                 if (key_exists($queue->id, $queuefilesmatrix)) {
