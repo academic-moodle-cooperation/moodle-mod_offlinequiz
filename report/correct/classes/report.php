@@ -410,7 +410,7 @@ class report extends default_report {
 
             foreach ($queuepagematrix[$queueid] as $queuedataid => $page) {
                 $filecontext = [];
-                $filecontext['filename'] = substr($page->filename, strrpos($page->filename, '/') + 1);
+                $filecontext['filename'] = substr($page->filename, strrpos($page->filename, '/'));
                 $filecontext['fileurl'] = new moodle_url(
                     '/mod/offlinequiz/report.php',
                     ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]
