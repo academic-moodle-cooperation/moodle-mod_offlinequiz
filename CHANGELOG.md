@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+5.0.6
+-----------------
+* [Bug] Fixed an error with viewing the full report [github #338]
+* [Bug] Fixed an error deleting questions in Group A instead of the requested group when deleting multiple questions
+
 5.0.5
 -----------------
 * [Bug] removed extra gap between answers in question pdf
