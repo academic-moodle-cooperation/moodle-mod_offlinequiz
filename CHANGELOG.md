@@ -3,15 +3,30 @@ CHANGELOG
 5.1.0
 -----------------
 * [Feature] 5.1 compatible version
-* [Feature] added a setting to set a default max mark
+* [Feature] added a setting to set a default max mark [github #321 @gmanaud]
 * [Feature] Display question categories in the question overview
 * [Feature] Support for <code> and <pre> tags
+* [Feature] Support further information in the activity overview
 * [Bug] Fontsize was not working for LaTeX forms
 * [Bug] Changed that partial results also show the name and user profile picture
 * [Bug] Fixed faulty display of questions list for long questions or questions with html
 * [Bug] Support underline formatting of tinymce
 * [Bug] Fixed PDFs if the logo size can not be calculated for some reason [github #331 @jpahullo]
 * [Bug] Fixed PDF upload in attendance lists
+* [Bug] Fixed "0" as answer leading to broken docx document generation
+* [Bug] Fixed questionnaire box formatting in docx
+* [Bug] Fixed that the pdf file name isn't displayed correctly in the list of uploaded files
+* [Bug] Fixed that the questions in the tutorial weren't indented properly
+* [Bug] Fixed the duplication of multiple offlinequizzes
+
+5.0.6
+-----------------
+* [Bug] Fixed an error with viewing the full report [github #338]
+* [Bug] Fixed an error deleting questions in Group A instead of the requested group when deleting multiple questions
+
+5.0.5
+-----------------
+* [Bug] removed extra gap between answers in question pdf
 
 5.0.4
 -----------------

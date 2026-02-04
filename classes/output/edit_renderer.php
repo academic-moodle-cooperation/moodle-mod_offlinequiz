@@ -162,7 +162,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @param mixed $templatecontext
      */
     private function start_add_to_group_form_values($offlinequiz, $pageurl, $templatecontext) {
-        $templatecontext['addtogroupformurl'] = $pageurl->out();
+        $templatecontext['addtogroupformurl'] = $pageurl->out(false);
         $templatecontext['offlinegroupid'] = $offlinequiz->groupid;
         return $templatecontext;
     }
@@ -185,7 +185,7 @@ class edit_renderer extends \plugin_renderer_base {
         }
         $templatecontext['groupchoiceselected'] = $offlinequiz->groupnumber;
         $pageurl = new \moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $offlinequiz->cmid]);
-        $templatecontext['groupchoiceactionurl'] = $pageurl;
+        $templatecontext['groupchoiceactionurl'] = $pageurl->out(false);
 
         $templatecontext['addtogroupdisabled'] = !$structure->can_be_edited();
         return $templatecontext;
@@ -247,7 +247,7 @@ class edit_renderer extends \plugin_renderer_base {
         }
         $templatecontext['groupchoiceselected'] = $offlinequiz->groupnumber;
         $pageurl = new \moodle_url('/mod/offlinequiz/edit.php', ['cmid' => $cm->id]);
-        $templatecontext['groupchoiceactionurl'] = $pageurl;
+        $templatecontext['groupchoiceactionurl'] = $pageurl->out(false);
         return $templatecontext;
     }
 
