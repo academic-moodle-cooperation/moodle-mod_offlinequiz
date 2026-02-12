@@ -25,5 +25,8 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  **/
+$string['invalidpageid'] = 'Invalid page id';
+$string['nexterror'] = 'Next';
 $string['pluginname'] = 'Offlinequiz Results Correct';
+$string['previouserror'] = 'Previous error';
 $string['privacy:metadata'] = 'This plugin does not store any user related data.';

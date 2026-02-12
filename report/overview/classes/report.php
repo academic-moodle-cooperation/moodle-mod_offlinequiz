@@ -843,7 +843,9 @@ class report extends default_report {
         );
 
         $parentnode = $navigation->get('mod_offlinequiz_results');
-        $parentnode->add_node($navnode);
+        if ($parentnode) {
+            $parentnode->add_node($navnode);
+        }
         return $navigation;
     }
     /**

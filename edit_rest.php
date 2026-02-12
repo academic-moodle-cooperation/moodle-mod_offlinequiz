@@ -1,4 +1,6 @@
 <?php
+
+use mod_offlinequiz\offlinequiz;
 // This file is part of mod_offlinequiz for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,7 +27,6 @@ define('AJAX_SCRIPT', true);
 require_once(__DIR__ . '/../../config.php');
 
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
 
 // Initialise ALL the incoming parameters here, up front.
 $offlinequizid     = required_param('offlinequizid', PARAM_INT);

@@ -27,7 +27,8 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
+
+use mod_offlinequiz\offlinequiz;
 
 $cmid = required_param('cmid', PARAM_INT);
 $offlinequizid = required_param('offlinequizid', PARAM_INT);

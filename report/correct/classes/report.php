@@ -142,15 +142,22 @@ class report extends default_report {
                 $actionlink = '';
             } else {
                 if ($page->error == 'missingpages') {
-                    $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/image.php?pageid=' . $page->id .
-                            '&resultid=' . $page->resultid);
+                    $url = new moodle_url(
+                        $CFG->wwwroot . '/mod/offlinequiz/image.php',
+                        ['pageid' => $page->id, 'resultid' => $page->resultid ]
+                    );
                     $title = get_string('showpage', 'offlinequiz_rimport');
                 } else {
-                    $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/correct.php?pageid=' . $page->id);
+                    $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/correct.php', ['pageid' => $page->id]);
                     $title = get_string('correcterror', 'offlinequiz_rimport');
                 }
 
                 $actionlink = $OUTPUT->action_link($url, $title, new popup_action('click', $url, 'correct' .
+                        $page->id, $options));
+                //TODO case handling
+                $url = new moodle_url($CFG->wwwroot . '/mod/offlinequiz/report/correct/correct_file.php', ['pageid' => $page->id]);
+                $title = get_string('correcterror', 'offlinequiz_rimport');
+                $actionlink = $OUTPUT->action_link($url, $title, new popup_action('click', $url->out(false), 'correct' .
                         $page->id, $options));
             }
 
@@ -508,7 +515,9 @@ class report extends default_report {
         );
 
         $parentnode = $navigation->get('mod_offlinequiz_results');
-        $parentnode->add_node($navnode);
+        if ($parentnode) {
+            $parentnode->add_node($navnode);
+        }
         return $navigation;
     }
     /**

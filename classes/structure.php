@@ -28,9 +28,9 @@
 namespace mod_offlinequiz;
 use context_module;
 use mod_offlinequiz\question\bank\qbank_helper;
+use mod_offlinequiz\offlinequiz;
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
 
 
 /**
@@ -44,7 +44,7 @@ require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
  *
  */
 class structure {
-    /** @var \offlinequiz the offlinequiz this is the structure of. */
+    /** @var offlinequiz the offlinequiz this is the structure of. */
     protected $offlinequizobj = null;
     /**
      * @var \stdClass[] the questions in this offlinequiz. Contains the row from the questions
@@ -94,7 +94,7 @@ class structure {
 
     /**
      * Create an instance of this class representing the structure of a given offlinequiz.
-     * @param \offlinequiz $offlinequizobj the offlinequiz.
+     * @param offlinequiz $offlinequizobj the offlinequiz.
      * @return structure
      */
     public static function create_for_offlinequiz($offlinequizobj) {

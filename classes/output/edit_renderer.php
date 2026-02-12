@@ -26,14 +26,16 @@
  */
 
 namespace mod_offlinequiz\output;
-defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/offlinequiz/classes/output/question_chooser.php');
-
+use mod_offlinequiz\offlinequiz;
 use mod_offlinequiz\structure;
 use html_writer;
 use core_question\local\bank;
 use mod_offlinequiz\output\question_chooser;
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/offlinequiz/classes/output/question_chooser.php');
+
 
 /**
  * Renderer outputting the offlinequiz editing UI.
@@ -45,7 +47,7 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      * Render the edit page
      *
-     * @param \offlinequiz $offlinequizobj object containing all the offlinequiz settings information.
+     * @param offlinequiz $offlinequizobj object containing all the offlinequiz settings information.
      * @param structure $structure object containing the structure of the offlinequiz.
      * @param \core_question\local\bank\question_edit_contexts $contexts the relevant question bank contexts.
      * @param \moodle_url $pageurl the canonical URL of this page.
@@ -54,7 +56,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function edit_page(
-        \offlinequiz $offlinequizobj,
+        offlinequiz $offlinequizobj,
         structure $structure,
         \core_question\local\bank\question_edit_contexts $contexts,
         \moodle_url $pageurl,

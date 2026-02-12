@@ -24,11 +24,18 @@
  * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_offlinequiz;
+
+use coding_exception;
+use context_module;
+use mod_offlinequiz_display_options;
+use moodle_exception;
+use moodle_url;
+use offlinequiz_access_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/accesslib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/classes/structure.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/accessmanager.php');
 
 use mod_offlinequiz\structure;

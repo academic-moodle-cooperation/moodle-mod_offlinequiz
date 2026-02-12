@@ -42,10 +42,10 @@
  * @since         Moodle 2.8+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+use mod_offlinequiz\offlinequiz;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
-require_once($CFG->dirroot . '/mod/offlinequiz/offlinequiz.class.php');
 
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
@@ -60,7 +60,7 @@ if (array_key_exists('offlinequizdeleteselected', $_POST) && $_POST['offlinequiz
 }
 
 [$thispageurl, $contexts, $cmid, $cm, $offlinequiz, $pagevars] =
-   offlinequiz_question_edit_setup('editq', '/mod/offlinequiz/edit.php', true);
+   offlinequiz_question_edit_setup('editq', '/mod/offlinequiz/edit.php');
 
 $course = $DB->get_record('course', ['id' => $offlinequiz->course], '*', MUST_EXIST);
 

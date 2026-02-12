@@ -1733,34 +1733,34 @@ class report extends default_report {
      */
     public function add_to_navigation(navigation_node $navigation, $cm, $offlinequiz): navigation_node {
         $parentnode = $navigation->get('mod_offlinequiz_statistics');
+        if ($parentnode) {
+            $parentnode->add_node(navigation_node::create(
+                text: get_string('statsoverviewheader', 'offlinequiz_statistics'),
+                action: new moodle_url(
+                    '/mod/offlinequiz/report.php',
+                    ['q' => $offlinequiz->id, 'mode' => 'statistics']
+                ),
+                key: $this->get_navigation_key_from_statmode('statsoverview')
+            ));
 
-        $parentnode->add_node(navigation_node::create(
-            text: get_string('statsoverviewheader', 'offlinequiz_statistics'),
-            action: new moodle_url(
-                '/mod/offlinequiz/report.php',
-                ['q' => $offlinequiz->id, 'mode' => 'statistics']
-            ),
-            key: $this->get_navigation_key_from_statmode('statsoverview')
-        ));
+            $parentnode->add_node(navigation_node::create(
+                text: get_string('questionstats', 'offlinequiz_statistics'),
+                action: new moodle_url(
+                    '/mod/offlinequiz/report.php',
+                    ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionstats']
+                ),
+                key: $this->get_navigation_key_from_statmode('questionstats')
+            ));
 
-        $parentnode->add_node(navigation_node::create(
-            text: get_string('questionstats', 'offlinequiz_statistics'),
-            action: new moodle_url(
-                '/mod/offlinequiz/report.php',
-                ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionstats']
-            ),
-            key: $this->get_navigation_key_from_statmode('questionstats')
-        ));
-
-        $parentnode->add_node(navigation_node::create(
-            text: get_string('questionandanswerstats', 'offlinequiz_statistics'),
-            action: new moodle_url(
-                '/mod/offlinequiz/report.php',
-                ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionandanswerstats']
-            ),
-            key: $this->get_navigation_key_from_statmode('questionandanswerstats')
-        ));
-
+            $parentnode->add_node(navigation_node::create(
+                text: get_string('questionandanswerstats', 'offlinequiz_statistics'),
+                action: new moodle_url(
+                    '/mod/offlinequiz/report.php',
+                    ['q' => $offlinequiz->id, 'mode' => 'statistics', 'statmode' => 'questionandanswerstats']
+                ),
+                key: $this->get_navigation_key_from_statmode('questionandanswerstats')
+            ));
+        }
         return $navigation;
     }
     /**
