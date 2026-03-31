@@ -1110,8 +1110,7 @@ function offlinequiz_get_js_module() {
     return [
             'name' => 'mod_offlinequiz',
             'fullpath' => '/mod/offlinequiz/module.js',
-            'requires' => ['base', 'dom', 'event-delegate', 'event-key',
-                    'core_question_engine'],
+            'requires' => ['base', 'dom', 'event-delegate', 'event-key'],
             'strings' => [
                     ['timesup', 'offlinequiz'],
                     ['functiondisabledbysecuremode', 'offlinequiz'],

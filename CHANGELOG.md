@@ -1,5 +1,12 @@
 CHANGELOG
 =========
+5.2.0
+-----------------
+* [Feature] 5.2 compatible version
+* [Bug] Fixed the look of the controls on the result overview
+
+
+
 5.1.0
 -----------------
 * [Feature] 5.1 compatible version

@@ -372,7 +372,6 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
 }
 
 $PAGE->requires->data_for_js('offlinequiz_edit_config', $offlinequizeditconfig);
-$PAGE->requires->js_module('core_question_engine');
 
 echo html_writer::start_tag('div', ['class' => 'mod-offlinequiz-edit-content']);
 

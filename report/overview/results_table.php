@@ -90,19 +90,8 @@ class offlinequiz_results_table extends flexible_table {
      * @return void
      */
     public function wrap_html_finish() {
-        $strselectall = get_string('selectall', 'offlinequiz');
-        $strselectnone = get_string('selectnone', 'offlinequiz');
-
-        echo '<table id="commands">';
-        echo ' <tr><td>';
-        echo '  <a href="#" class="selectall">' . $strselectall . '</a> / ';
-        echo '  <a href="#" class="deselectall">' . $strselectnone . '</a> ';
-        echo '  &nbsp;&nbsp;';
-        echo ' <input class="btn btn-secondary" type="submit" value="' . get_string('deleteselectedresults', 'offlinequiz') . '"/>';
-        echo ' </td></tr></table>';
-        echo '  </center>';
-        // Close form.
-        echo ' </div>';
+        global $OUTPUT;
+        echo $OUTPUT->render_from_template("offlinequiz_overview/resultstable_htmlfinish", []);
         echo '</form></div>';
     }
     /**

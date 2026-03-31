@@ -704,33 +704,22 @@ class report extends default_report {
             $table->finish_html();
 
             if (!empty($results)) {
-                echo '<div>';
-                echo '<form id="downloadoptions" action="report.php" method="get">';
-                echo ' <input type="hidden" name="id" value="' . $cm->id . '" />';
-                echo ' <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
-                echo ' <input type="hidden" name="mode" value="overview" />';
-                echo ' <input type="hidden" name="group" value="' . $groupid . '" />';
-                echo ' <input type="hidden" name="noresults" value="' . $noresults . '" />';
-                echo ' <input type="hidden" name="noheader" value="yes" />';
-                echo ' <table class="boxaligncenter"><tr><td>';
-                $options = ['Excel' => get_string('excelformat', 'offlinequiz'),
+                $templatecontext = [];
+                $options = [
+                    'Excel' => get_string('excelformat', 'offlinequiz'),
                     'ODS' => get_string('odsformat', 'offlinequiz'),
                     'CSV' => get_string('csvformat', 'offlinequiz'),
                     'CSVplus1' => get_string('csvplus1format', 'offlinequiz'),
                     'CSVpluspoints' => get_string('csvpluspointsformat', 'offlinequiz'),
                     'html' => get_string('html', 'offlinequiz'),
                 ];
-                print_string('downloadresultsas', 'offlinequiz');
-                echo "</td><td>";
-                echo html_writer::select($options, 'download', '', false);
-                echo ' <button type="submit" class="btn btn-primary" > ' . get_string('download') . '</button>';
-                echo ' <script type="text/javascript">' . "\n<!--\n" .
-                         'document.getElementById("noscriptmenuaction").style.display = "none";' .
-                         "\n-->\n" . '</script>';
-                echo " </td>\n";
-                echo "<td>";
-                echo "</td>\n";
-                echo '</tr></table></form></div>';
+                $templatecontext['optionshtml'] = html_writer::select($options, 'download', '', false);
+                $templatecontext["selecthtml"] = html_writer::select($options, 'noresults', $noresults, null);
+                $templatecontext["cmid"] = $cm->id;
+                $templatecontext["offlinequizid"] = $offlinequiz->id;
+                $templatecontext["groupid"] = $groupid;
+                $templatecontext["noresults"] = $noresults;
+                echo $OUTPUT->render_from_template("offlinequiz_overview/downloadoptions", $templatecontext);
             }
         } else if ($download == 'Excel' || $download == 'ODS') {
             $workbook->close();
@@ -740,41 +729,19 @@ class report extends default_report {
         }
 
         // Print display options.
-        echo '<div class="display-options">';
-        echo '<form id="options" action="report.php" method="get">';
-        echo ' <div>';
-        echo '   <p>' . get_string('displayoptions', 'offlinequiz') . ': </p>';
-        echo '   <input type="hidden" name="id" value="' . $cm->id . '" />';
-        echo '   <input type="hidden" name="q" value="' . $offlinequiz->id . '" />';
-        echo '   <input type="hidden" name="mode" value="overview" />';
-        echo '   <input type="hidden" name="group" value="' . $groupid . '" />';
-        echo '   <input type="hidden" name="noresults" value="' . $noresults . '" />';
-        echo '   <input type="hidden" name="detailedmarks" value="0" />';
-        echo '   <table id="overview-options" class="boxaligncenter">';
-        echo '     <tr align="left">';
-        echo '     <td><label for="pagesize">' . get_string('pagesizeparts', 'offlinequiz') .
-                  '</label></td>';
-        echo '     <td><input type="text" id="pagesize" name="pagesize" size="3" value="' . $pagesize .
-                 '" /></td>';
-        echo '</tr>';
-        echo '<tr align="left">';
-        echo '<td colspan="2">';
-
         $options = [];
         $options[] = get_string('attemptsonly', 'offlinequiz');
         $options[] = get_string('noattemptsonly', 'offlinequiz');
         $options[] = get_string('allstudents', 'offlinequiz');
         $options[] = get_string('allresults', 'offlinequiz');
-
-        echo html_writer::select($options, 'noresults', $noresults, null);
-        echo '</td></tr>';
-        echo '<tr><td colspan="2" align="center">';
-        echo '<button type="submit" class="btn btn-secondary"> ' . get_string('go') . '</button>';
-        echo '</td></tr></table>';
-        echo '</div>';
-        echo '</form>';
-        echo '</div>';
-        echo "\n";
+        $templatecontext = [];
+        $templatecontext["selecthtml"] = html_writer::select($options, 'noresults', $noresults, null);
+        $templatecontext["cmid"] = $cm->id;
+        $templatecontext["offlinequizid"] = $offlinequiz->id;
+        $templatecontext["groupid"] = $groupid;
+        $templatecontext["noresults"] = $noresults;
+        $templatecontext["pagesize"] = $pagesize;
+        echo $OUTPUT->render_from_template("offlinequiz_overview/displayoptions", $templatecontext);
 
         return true;
     }

@@ -414,16 +414,10 @@ table.offlinequizreviewsummary td.cell {
     margin-top: 1em;
     text-align: center;
 }
-#page-mod-offlinequiz-report .downloadoptions .text-xs-right {
-    text-align: center;
+#page-mod-offlinequiz-report .form-select {
+    display: inline;
 }
-#page-mod-offlinequiz-report table#overview-options {
-    margin-left: auto;
-    margin-right: auto;
-}
-#page-mod-offlinequiz-report .menunoresults {
-    margin-top: 1em;
-}
+
 #page-mod-offlinequiz-report .dubious {
     background-color: #fcc;
 }

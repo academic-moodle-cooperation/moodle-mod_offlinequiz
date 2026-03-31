@@ -1,0 +1,54 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template offlinequiz_overview/displayoptions
+
+    Displays the options of the result overview
+
+    Example context (json):
+    {
+        "selecthtml": "<select id=\"menunoresults\" name=\"menunoresults\"> <option selected=\"selected\" value=\"0\">Show students with results only</option><option value=\"1\">Show students with no results only</option><option value=\"2\">Show all students</option></select>",
+        "cmid": "5",
+        "offlinequizid": "3",
+        "groupid": "2",
+        "pagesize": 2
+    }
+}}
+<div>
+  <div class="display-options">
+    <form id="options" action="report.php" method="get" class="container">
+      <div class="row">
+        <p class="col-sm">{{#str}} displayoptions, mod_offlinequiz {{/str}}: </p>
+      </div>
+      <div class="row">
+       <div class="col-sm justify-content-center">{{{selecthtml}}}</div>
+      </div>
+      <input type="hidden" name="id" value="{{cmid}}">
+      <input type="hidden" name="q" value="{{offlinequizid}}">
+      <input type="hidden" name="mode" value="overview">
+      <input type="hidden" name="group" value="{{groupid}}">
+      <input type="hidden" name="detailedmarks" value="0">
+      <div class="row mt-1">
+        <div class="col-sm">
+          <label for="pagesize">{{#str}} pagesizeparts, mod_offlinequiz {{/str}}</label>
+          <input type="text" id="pagesize" name="pagesize" size="3" value="{{pagesize}}">
+          <button type="submit" class="btn btn-secondary"> {{#str}} go {{/str}}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
