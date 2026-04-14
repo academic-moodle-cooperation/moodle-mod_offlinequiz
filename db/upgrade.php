@@ -610,6 +610,17 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2025080402, 'offlinequiz');
     }
+    if ($oldversion < 2026041400) {
+        $table = new xmldb_table('offlinequiz');
+        $field = new xmldb_field(
+            'showleaderboard', XMLDB_TYPE_INTEGER, '4', null,
+            XMLDB_NOTNULL, null, '0', 'showgrades'
+        );
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2026041400, 'offlinequiz');
+    }
 
     return true;
 }

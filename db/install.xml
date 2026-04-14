@@ -33,6 +33,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="fileformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="showgrades" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="showleaderboard" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0=disabled, 1=show with names, 2=show anonymous ranking"/>
         <FIELD NAME="showtutorial" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="id_digits" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Amount of digits used by offlinequiz-instance to match idnumbers"/>
         <FIELD NAME="disableimgnewlines" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Enable or disable new lines around images"/>
