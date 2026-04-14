@@ -45,7 +45,7 @@ class backup_offlinequiz_activity_structure_step extends backup_questions_activi
                 'timeclose', 'time', 'grade', 'participantsusage', 'numgroups', 'decimalpoints',
                 'review', 'questionsperpage', 'docscreated', 'shufflequestions', 'shuffleanswers',
                 'questions', 'sumgrades', 'papergray', 'fontsize', 'pdffont', 'timecreated',
-                'timemodified', 'fileformat', 'showgrades', 'showquestioninfo', 'disableimgnewlines', 'showtutorial',
+                'timemodified', 'fileformat', 'showgrades', 'showleaderboard', 'showquestioninfo', 'disableimgnewlines', 'showtutorial',
                 'printstudycodefield', 'id_digits', 'experimentalevaluation', 'completionpass']);
 
         $groups = new backup_nested_element('groups');

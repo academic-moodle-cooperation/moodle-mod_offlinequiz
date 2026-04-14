@@ -62,6 +62,7 @@ class mod_offlinequiz_generator extends testing_module_generator {
             'fileformat'             => 0,
             'showquestioninfo'       => 0,
             'showgrades'             => 0,
+            'showleaderboard'        => 0,
             'showtutorial'           => 0,
             'iddigits'               => $iddigits,
             'disableimgnewlines'     => 1,

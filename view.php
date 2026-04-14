@@ -513,5 +513,15 @@ if (has_any_capability(['mod/offlinequiz:viewreports', 'mod/offlinequiz:manage']
     }
 }
 
+// Show leaderboard link if enabled.
+if (!empty($offlinequiz->showleaderboard) && has_capability('mod/offlinequiz:view', $context)) {
+    $leaderboardurl = new moodle_url('/mod/offlinequiz/leaderboard.php', ['id' => $cm->id]);
+    echo html_writer::div(
+        html_writer::link($leaderboardurl, get_string('viewleaderboard', 'offlinequiz'),
+            ['class' => 'btn btn-info']),
+        'offlinequiz-leaderboard-link mt-3 text-center'
+    );
+}
+
 // Finish the page.
 echo $OUTPUT->footer();
