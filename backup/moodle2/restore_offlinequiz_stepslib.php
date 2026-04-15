@@ -284,6 +284,11 @@ class restore_offlinequiz_activity_structure_step extends restore_questions_acti
             unset($data->results_number);
         }
 
+        // Default for backups created before showleaderboard was introduced.
+        if (!isset($data->showleaderboard)) {
+            $data->showleaderboard = 0;
+        }
+
         // Insert the offlinequiz record.
         $newitemid = $DB->insert_record('offlinequiz', $data);
         // Immediately after inserting "activity" record, call this.

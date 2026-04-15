@@ -1,0 +1,317 @@
+{{!
+    This file is part of mod_offlinequiz for Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    @template mod_offlinequiz/leaderboard
+    @copyright 2024 Academic Moodle Cooperation
+    @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div class="offlinequiz-leaderboard">
+    <h2>{{quizname}} — {{#str}}leaderboard, offlinequiz{{/str}}</h2>
+
+    {{! Global cohort filter — preserved across all tabs }}
+    {{#hasfilter}}
+    <form method="get" action="{{filterurl}}" class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+        <input type="hidden" name="id" value="{{cmid}}">
+        <input type="hidden" name="tab" value="{{activetab}}">
+        <label for="leaderboard-cohort-filter" class="form-label mb-0 fw-semibold">
+            {{strfilterby}}
+        </label>
+        <select id="leaderboard-cohort-filter" name="cohortid" class="form-select w-auto" onchange="this.form.submit()">
+            <option value="0">{{strallcohorts}}</option>
+            {{#filteroptions}}
+            <option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>
+            {{/filteroptions}}
+        </select>
+        {{#isfiltered}}
+        <a href="{{filterurl}}&amp;tab={{activetab}}" class="btn btn-outline-secondary btn-sm">{{strresetfilter}}</a>
+        {{/isfiltered}}
+    </form>
+    {{/hasfilter}}
+
+    {{#isfiltered}}
+    <div class="alert alert-info py-2">
+        {{strfilterby}} : <strong>{{filteredcohort}}</strong>
+    </div>
+    {{/isfiltered}}
+
+    {{! Tab navigation }}
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link{{#tabisleaderboard}} active{{/tabisleaderboard}}"
+               href="{{filterurl}}&amp;tab=leaderboard{{#isfiltered}}&amp;cohortid={{filteredcohortid}}{{/isfiltered}}"
+               role="tab">{{strtableaderboard}}</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link{{#tabisstatistics}} active{{/tabisstatistics}}"
+               href="{{filterurl}}&amp;tab=statistics{{#isfiltered}}&amp;cohortid={{filteredcohortid}}{{/isfiltered}}"
+               role="tab">{{strtabstatistics}}</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link{{#tabismycopy}} active{{/tabismycopy}}"
+               href="{{filterurl}}&amp;tab=mycopy{{#isfiltered}}&amp;cohortid={{filteredcohortid}}{{/isfiltered}}"
+               role="tab">{{strtabmycopy}}</a>
+        </li>
+    </ul>
+
+    {{! ===== TAB 1: Leaderboard ===== }}
+    {{#tabisleaderboard}}
+    <div>
+        {{#hasresults}}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">{{strrank}}</th>
+                        <th scope="col">{{strname}}</th>
+                        <th scope="col">{{struserkey}}</th>
+                        <th scope="col">{{strcohort}}</th>
+                        <th scope="col" class="text-end">{{strscore}}</th>
+                        <th scope="col" class="text-end">{{strpercent}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#rows}}
+                    <tr{{#isyou}} class="table-primary fw-bold"{{/isyou}}>
+                        <td>{{rank}}</td>
+                        <td>
+                            {{name}}
+                            {{#isyou}}<span class="badge bg-primary ms-1">{{stryou}}</span>{{/isyou}}
+                        </td>
+                        <td>{{userkey}}</td>
+                        <td>{{cohort}}</td>
+                        <td class="text-end">{{score}} / {{max}}</td>
+                        <td class="text-end">{{percent}} %</td>
+                    </tr>
+                    {{/rows}}
+                </tbody>
+            </table>
+        </div>
+        {{/hasresults}}
+
+        {{^hasresults}}
+        <div class="alert alert-info">{{strnoresults}}</div>
+        {{/hasresults}}
+    </div>
+    {{/tabisleaderboard}}
+
+    {{! ===== TAB 2: Statistics ===== }}
+    {{#tabisstatistics}}
+    <div>
+        {{#hasstats}}
+
+        {{! Summary cards }}
+        <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="fs-4 fw-bold text-primary">{{statscount}}</div>
+                        <div class="text-muted small">{{strparticipants}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="fs-4 fw-bold text-success">{{statsavg}} %</div>
+                        <div class="text-muted small">{{stravg}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="fs-4 fw-bold">{{statsmedian}} %</div>
+                        <div class="text-muted small">{{strmedian}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="fs-4 fw-bold">{{statsstddev}} %</div>
+                        <div class="text-muted small">{{strstddev}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="fs-4 fw-bold text-info">{{statsmin}} %</div>
+                        <div class="text-muted small">{{strmin}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="fs-4 fw-bold text-info">{{statsmax}} %</div>
+                        <div class="text-muted small">{{strmax}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="fs-4 fw-bold text-warning">{{statspassrate}} %</div>
+                        <div class="text-muted small">{{strpassrate}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{! Score distribution chart }}
+        <div class="mb-4">
+            {{{scoredistchart}}}
+        </div>
+
+        {{! Per-question success rate chart }}
+        <div class="mb-4">
+            {{{questionchart}}}
+        </div>
+
+        {{! Cohort comparison chart (always uses all cohorts, unfiltered) }}
+        {{#hascohortchart}}
+        <div class="mb-4">
+            {{{cohortchart}}}
+        </div>
+        {{/hascohortchart}}
+
+        {{! Per-question detail table }}
+        {{#hasquestionstats}}
+        <div class="table-responsive mt-2">
+            <table class="table table-striped table-hover table-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">{{strqnum}}</th>
+                        <th scope="col" class="text-end">{{strqtotal}}</th>
+                        <th scope="col" class="text-end">{{strcorrect}}</th>
+                        <th scope="col" class="text-end">{{strpartial}}</th>
+                        <th scope="col" class="text-end">{{strwrong}}</th>
+                        <th scope="col" class="text-end">{{strcorrect}} %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#questionstats}}
+                    <tr>
+                        <td>Q{{qnum}}</td>
+                        <td class="text-end">{{total}}</td>
+                        <td class="text-end text-success">{{correct}}</td>
+                        <td class="text-end text-warning">{{partial}}</td>
+                        <td class="text-end text-danger">{{wrong}}</td>
+                        <td class="text-end fw-semibold">{{correctpct}} %</td>
+                    </tr>
+                    {{/questionstats}}
+                </tbody>
+            </table>
+        </div>
+        {{/hasquestionstats}}
+
+        {{/hasstats}}
+
+        {{^hasstats}}
+        <div class="alert alert-info">{{strnoresults}}</div>
+        {{/hasstats}}
+    </div>
+    {{/tabisstatistics}}
+
+    {{! ===== TAB 3: My Copy ===== }}
+    {{#tabismycopy}}
+    <div>
+        {{#hasmyresult}}
+
+        {{! Summary cards }}
+        <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="fs-4 fw-bold text-primary">{{myscore}} / {{mymaxscore}}</div>
+                        <div class="text-muted small">{{strmyscore}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="fs-4 fw-bold">{{myrank}} / {{mytotal}}</div>
+                        <div class="text-muted small">{{strmyrank}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="fs-4 fw-bold text-info">{{mypercent}} %</div>
+                        <div class="text-muted small">{{strmypercentile}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        {{#mypass}}
+                        <div class="fs-4 fw-bold text-success">{{strmypass}}</div>
+                        {{/mypass}}
+                        {{^mypass}}
+                        <div class="fs-4 fw-bold text-danger">{{strmyfail}}</div>
+                        {{/mypass}}
+                        <div class="text-muted small">{{strmyresult}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{! Per-question breakdown }}
+        {{#hasmyquestionstats}}
+        <h5 class="mt-3 mb-2">{{strmyquestionbreakdown}}</h5>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">{{strqnum}}</th>
+                        <th scope="col" class="text-center">{{strmyresultcol}}</th>
+                        <th scope="col" class="text-end">{{strclassavg}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#myquestionstats}}
+                    <tr>
+                        <td>Q{{qnum}}</td>
+                        <td class="text-center">
+                            {{#mycorrect}}<span class="text-success fw-bold">&#10003;</span>{{/mycorrect}}
+                            {{#mypartial}}<span class="text-warning fw-bold">~</span>{{/mypartial}}
+                            {{#mywrong}}<span class="text-danger fw-bold">&#10007;</span>{{/mywrong}}
+                            {{^hasanswer}}<span class="text-muted">—</span>{{/hasanswer}}
+                        </td>
+                        <td class="text-end">{{classavg}} %</td>
+                    </tr>
+                    {{/myquestionstats}}
+                </tbody>
+            </table>
+        </div>
+        {{/hasmyquestionstats}}
+
+        {{#canreview}}
+        <a href="{{myreviewurl}}" class="btn btn-primary mt-3">
+            {{strviewcopy}}
+        </a>
+        {{/canreview}}
+        {{^canreview}}
+        <p class="text-muted mt-3 small">{{strreviewnotavailable}}</p>
+        {{/canreview}}
+
+        {{/hasmyresult}}
+        {{^hasmyresult}}
+        <div class="alert alert-info">{{strnoresult}}</div>
+        {{/hasmyresult}}
+    </div>
+    {{/tabismycopy}}
+
+    <a href="{{viewurl}}" class="btn btn-secondary mt-3">
+        {{#str}}back, core{{/str}}
+    </a>
+</div>

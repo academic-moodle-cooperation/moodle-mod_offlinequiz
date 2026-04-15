@@ -209,6 +209,22 @@ class scan_file extends \core\task\adhoc_task {
                 );
                 $resultpage = $engine->scanpage();
                 $engine->save_page(2);
+
+                // Finalize the result if the page was successfully saved.
+                $scannedpageid = $engine->get_scanned_page_id();
+                if ($scannedpageid) {
+                    $scannedpage = $DB->get_record('offlinequiz_scanned_pages', ['id' => $scannedpageid]);
+                    if ($scannedpage && !empty($scannedpage->resultid)) {
+                        $result = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid]);
+                        $group = $DB->get_record('offlinequiz_groups', [
+                            'groupnumber' => $scannedpage->groupnumber,
+                            'offlinequizid' => $offlinequiz->id,
+                        ]);
+                        if ($result && $group) {
+                            \offlinequiz_check_result_completed($offlinequiz, $group, $result);
+                        }
+                    }
+                }
             }
             $this->send_notifications($queue->id);
         } catch (\Exception $e) {

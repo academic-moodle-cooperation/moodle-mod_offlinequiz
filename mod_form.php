@@ -217,6 +217,16 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'showgrades', get_string("showgrades", "offlinequiz"), $attribs);
         $mform->addHelpButton('showgrades', "showgrades", "offlinequiz");
 
+        $leaderboardoptions = [
+            0 => get_string('leaderboarddisabled', 'offlinequiz'),
+            1 => get_string('leaderboardwithnames', 'offlinequiz'),
+            2 => get_string('leaderboardanonymous', 'offlinequiz'),
+        ];
+        $mform->addElement('select', 'showleaderboard', get_string('showleaderboard', 'offlinequiz'),
+            $leaderboardoptions, $attribs);
+        $mform->addHelpButton('showleaderboard', 'showleaderboard', 'offlinequiz');
+        $mform->setDefault('showleaderboard', 0);
+
         $options = [];
         $options[OFFLINEQUIZ_QUESTIONINFO_NONE] = get_string("questioninfonone", "offlinequiz");
         $options[OFFLINEQUIZ_QUESTIONINFO_QTYPE] = get_string("questioninfoqtype", "offlinequiz");

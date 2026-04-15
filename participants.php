@@ -72,7 +72,7 @@ $thispageurl = new moodle_url(
 
 $PAGE->set_url($thispageurl);
 $PAGE->set_pagelayout('admin');
-$node = $PAGE->settingsnav->find('mod_offlinequiz_participants', \core\navigation\navigation_node::TYPE_SETTING);
+$node = $PAGE->settingsnav->find('mod_offlinequiz_participants', navigation_node::TYPE_SETTING);
 $PAGE->force_settings_menu(true);
 if ($node) {
     $node->make_active();
