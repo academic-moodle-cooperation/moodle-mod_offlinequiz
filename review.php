@@ -158,6 +158,15 @@ if ($options->marks != question_display_options::HIDDEN) {
 
 echo html_writer::table($table);
 
+if (!empty($offlinequiz->showleaderboard)) {
+    $leaderboardurl = new moodle_url('/mod/offlinequiz/leaderboard.php', ['id' => $cm->id, 'tab' => 'leaderboard']);
+    echo html_writer::link(
+        $leaderboardurl,
+        get_string('viewleaderboard', 'offlinequiz'),
+        ['class' => 'btn btn-outline-primary mb-3']
+    );
+}
+
 // Print buttons to the scanned pages.
 if (
     $isteacher || ($options->sheetfeedback == question_display_options::VISIBLE) ||

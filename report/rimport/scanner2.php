@@ -135,6 +135,14 @@ class offlinequiz_result_engine {
         return $this->page;
     }
     /**
+     * get the scanned page id after scanning/saving
+     * @return int
+     */
+    public function get_scanned_page_id(): int {
+        return $this->page->scannedpageid ?? 0;
+    }
+
+    /**
      * save a page into the database
      * @param mixed $teacherid
      * @return void
