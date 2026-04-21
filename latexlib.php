@@ -284,6 +284,9 @@ function offlinequiz_convert_html_to_latex_span($dom) {
         } else if (preg_match('/color:\s+rgb\((\d+),\s+(\d+),\s+(\d+)\)/', $style, $m)) {
             $pre = "\\textcolor[RGB]{{$m[1]},{$m[2]},{$m[3]}}{";
             $post = "}";
+        } else if (preg_match('/text-decoration:\s*underline/', $style, $m)) {
+            $pre = "\underline{";
+            $post = "}";
         } else {
             $pre = "";
             $post = "";
