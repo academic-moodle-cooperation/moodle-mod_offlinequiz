@@ -551,21 +551,15 @@ function offlinequiz_create_docx_question(
     $tabslevel1 = [new \PhpOffice\PhpWord\Style\Tab('clear', 720),
             new \PhpOffice\PhpWord\Style\Tab('num', 360)];
     $level1->setTabs($tabslevel1);
-    $indentlevel1 = new \PhpOffice\PhpWord\Style\Indentation([
-            'left' => 360,
-            'hanging' => 360,
-    ]);
-    $level1->setIndentation($indentlevel1);
+    $level1->setIndentLeft(360);
+    $level1->setIndentHanging(360);
 
     $level2 = new \PhpOffice\PhpWord\Style\Paragraph();
     $tabslevel2 = [new \PhpOffice\PhpWord\Style\Tab('left', 720),
             new \PhpOffice\PhpWord\Style\Tab('num', 720)];
     $level2->setTabs($tabslevel2);
-    $indentlevel2 = new \PhpOffice\PhpWord\Style\Indentation([
-            'left' => 720,
-            'hanging' => 360,
-    ]);
-    $level2->setIndentation($indentlevel2);
+    $level2->setIndentLeft(720);
+    $level2->setIndentHanging(360);
 
     // Create the section that will be used for all outputs.
     $section = $docx->addSection();

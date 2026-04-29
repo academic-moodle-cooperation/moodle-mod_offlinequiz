@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -21,6 +22,7 @@ use PhpOffice\PhpWord\Element\AbstractElement as Element;
 use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Shared\Text as SharedText;
 use PhpOffice\PhpWord\Shared\XMLWriter;
+use PhpOffice\PhpWord\Writer\Word2007\Part\AbstractPart;
 
 /**
  * Abstract element writer.
@@ -32,14 +34,14 @@ abstract class AbstractElement
     /**
      * XML writer.
      *
-     * @var \PhpOffice\PhpWord\Shared\XMLWriter
+     * @var XMLWriter
      */
     private $xmlWriter;
 
     /**
      * Element.
      *
-     * @var \PhpOffice\PhpWord\Element\AbstractElement
+     * @var Element
      */
     private $element;
 
@@ -51,16 +53,19 @@ abstract class AbstractElement
     protected $withoutP = false;
 
     /**
+     * @var null|AbstractPart
+     */
+    protected $part;
+
+    /**
      * Write element.
      */
     abstract public function write();
 
     /**
      * Create new instance.
-     *
-     * @param bool $withoutP
      */
-    public function __construct(XMLWriter $xmlWriter, Element $element, $withoutP = false)
+    public function __construct(XMLWriter $xmlWriter, Element $element, bool $withoutP = false)
     {
         $this->xmlWriter = $xmlWriter;
         $this->element = $element;
@@ -70,7 +75,7 @@ abstract class AbstractElement
     /**
      * Get XML Writer.
      *
-     * @return \PhpOffice\PhpWord\Shared\XMLWriter
+     * @return XMLWriter
      */
     protected function getXmlWriter()
     {
@@ -80,7 +85,7 @@ abstract class AbstractElement
     /**
      * Get element.
      *
-     * @return \PhpOffice\PhpWord\Element\AbstractElement
+     * @return Element
      */
     protected function getElement()
     {
@@ -120,14 +125,10 @@ abstract class AbstractElement
      */
     protected function writeCommentRangeStart(): void
     {
-        if ($this->element->getCommentRangeStart() != null) {
-            $comment = $this->element->getCommentRangeStart();
-            //only set the ID if it is not yet set, otherwise it will overwrite it
-            if ($comment->getElementId() == null) {
-                $comment->setElementId();
+        if ($this->element->getCommentsRangeStart() != null) {
+            foreach ($this->element->getCommentsRangeStart()->getItems() as $comment) {
+                $this->xmlWriter->writeElementBlock('w:commentRangeStart', ['w:id' => $comment->getElementId()]);
             }
-
-            $this->xmlWriter->writeElementBlock('w:commentRangeStart', ['w:id' => $comment->getElementId()]);
         }
     }
 
@@ -136,28 +137,23 @@ abstract class AbstractElement
      */
     protected function writeCommentRangeEnd(): void
     {
-        if ($this->element->getCommentRangeEnd() != null) {
-            $comment = $this->element->getCommentRangeEnd();
-            //only set the ID if it is not yet set, otherwise it will overwrite it, this should normally not happen
-            if ($comment->getElementId() == null) {
-                $comment->setElementId(); // @codeCoverageIgnore
-            } // @codeCoverageIgnore
-
-            $this->xmlWriter->writeElementBlock('w:commentRangeEnd', ['w:id' => $comment->getElementId()]);
-            $this->xmlWriter->startElement('w:r');
-            $this->xmlWriter->writeElementBlock('w:commentReference', ['w:id' => $comment->getElementId()]);
-            $this->xmlWriter->endElement();
-        } elseif ($this->element->getCommentRangeStart() != null && $this->element->getCommentRangeStart()->getEndElement() == null) {
-            $comment = $this->element->getCommentRangeStart();
-            //only set the ID if it is not yet set, otherwise it will overwrite it, this should normally not happen
-            if ($comment->getElementId() == null) {
-                $comment->setElementId(); // @codeCoverageIgnore
-            } // @codeCoverageIgnore
-
-            $this->xmlWriter->writeElementBlock('w:commentRangeEnd', ['w:id' => $comment->getElementId()]);
-            $this->xmlWriter->startElement('w:r');
-            $this->xmlWriter->writeElementBlock('w:commentReference', ['w:id' => $comment->getElementId()]);
-            $this->xmlWriter->endElement();
+        if ($this->element->getCommentsRangeEnd() != null) {
+            foreach ($this->element->getCommentsRangeEnd()->getItems() as $comment) {
+                $this->xmlWriter->writeElementBlock('w:commentRangeEnd', ['w:id' => $comment->getElementId()]);
+                $this->xmlWriter->startElement('w:r');
+                $this->xmlWriter->writeElementBlock('w:commentReference', ['w:id' => $comment->getElementId()]);
+                $this->xmlWriter->endElement();
+            }
+        }
+        if ($this->element->getCommentsRangeStart() != null) {
+            foreach ($this->element->getCommentsRangeStart()->getItems() as $comment) {
+                if ($comment->getEndElement() == null) {
+                    $this->xmlWriter->writeElementBlock('w:commentRangeEnd', ['w:id' => $comment->getElementId()]);
+                    $this->xmlWriter->startElement('w:r');
+                    $this->xmlWriter->writeElementBlock('w:commentReference', ['w:id' => $comment->getElementId()]);
+                    $this->xmlWriter->endElement();
+                }
+            }
         }
     }
 
@@ -223,5 +219,17 @@ abstract class AbstractElement
         }
 
         return $this->getXmlWriter()->writeRaw($content);
+    }
+
+    public function setPart(?AbstractPart $part): self
+    {
+        $this->part = $part;
+
+        return $this;
+    }
+
+    public function getPart(): ?AbstractPart
+    {
+        return $this->part;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -79,21 +80,17 @@ class Comment extends TrackChange
 
     /**
      * Sets the element where this comment starts.
-     *
-     * @param \PhpOffice\PhpWord\Element\AbstractElement $value
      */
     public function setStartElement(AbstractElement $value): void
     {
         $this->startElement = $value;
-        if ($value->getCommentRangeStart() == null) {
-            $value->setCommentRangeStart($this);
-        }
+        $value->setCommentRangeStart($this);
     }
 
     /**
      * Get the element where this comment starts.
      *
-     * @return \PhpOffice\PhpWord\Element\AbstractElement
+     * @return AbstractElement
      */
     public function getStartElement()
     {
@@ -102,21 +99,17 @@ class Comment extends TrackChange
 
     /**
      * Sets the element where this comment ends.
-     *
-     * @param \PhpOffice\PhpWord\Element\AbstractElement $value
      */
     public function setEndElement(AbstractElement $value): void
     {
         $this->endElement = $value;
-        if ($value->getCommentRangeEnd() == null) {
-            $value->setCommentRangeEnd($this);
-        }
+        $value->setCommentRangeEnd($this);
     }
 
     /**
      * Get the element where this comment ends.
      *
-     * @return \PhpOffice\PhpWord\Element\AbstractElement
+     * @return AbstractElement
      */
     public function getEndElement()
     {

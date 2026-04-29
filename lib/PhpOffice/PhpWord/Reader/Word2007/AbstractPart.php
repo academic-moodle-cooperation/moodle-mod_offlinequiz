@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -19,8 +20,15 @@ namespace PhpOffice\PhpWord\Reader\Word2007;
 
 use DateTime;
 use DOMElement;
+use InvalidArgumentException;
+use PhpOffice\Math\Reader\OfficeMathML;
+use PhpOffice\PhpWord\ComplexType\RubyProperties;
 use PhpOffice\PhpWord\ComplexType\TblWidth as TblWidthComplexType;
 use PhpOffice\PhpWord\Element\AbstractContainer;
+use PhpOffice\PhpWord\Element\AbstractElement;
+use PhpOffice\PhpWord\Element\FormField;
+use PhpOffice\PhpWord\Element\Ruby;
+use PhpOffice\PhpWord\Element\Text;
 use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\Element\TrackChange;
 use PhpOffice\PhpWord\PhpWord;
@@ -68,6 +76,20 @@ abstract class AbstractPart
     protected $rels = [];
 
     /**
+     * Comment references.
+     *
+     * @var array<string, array<string, AbstractElement>>
+     */
+    protected $commentRefs = [];
+
+    /**
+     * Image Loading.
+     *
+     * @var bool
+     */
+    protected $imageLoading = true;
+
+    /**
      * Read part.
      */
     abstract public function read(PhpWord $phpWord);
@@ -94,10 +116,78 @@ abstract class AbstractPart
         $this->rels = $value;
     }
 
+    public function setImageLoading(bool $value): self
+    {
+        $this->imageLoading = $value;
+
+        return $this;
+    }
+
+    public function hasImageLoading(): bool
+    {
+        return $this->imageLoading;
+    }
+
+    /**
+     * Get comment references.
+     *
+     * @return array<string, array<string, null|AbstractElement>>
+     */
+    public function getCommentReferences(): array
+    {
+        return $this->commentRefs;
+    }
+
+    /**
+     * Set comment references.
+     *
+     * @param array<string, array<string, null|AbstractElement>> $commentRefs
+     */
+    public function setCommentReferences(array $commentRefs): self
+    {
+        $this->commentRefs = $commentRefs;
+
+        return $this;
+    }
+
+    /**
+     * Set comment reference.
+     */
+    private function setCommentReference(string $type, string $id, AbstractElement $element): self
+    {
+        if (!in_array($type, ['start', 'end'])) {
+            throw new InvalidArgumentException('Type must be "start" or "end"');
+        }
+
+        if (!array_key_exists($id, $this->commentRefs)) {
+            $this->commentRefs[$id] = [
+                'start' => null,
+                'end' => null,
+            ];
+        }
+        $this->commentRefs[$id][$type] = $element;
+
+        return $this;
+    }
+
+    /**
+     * Get comment reference.
+     *
+     * @return array<string, null|AbstractElement>
+     */
+    protected function getCommentReference(string $id): array
+    {
+        if (!array_key_exists($id, $this->commentRefs)) {
+            throw new InvalidArgumentException(sprintf('Comment with id %s isn\'t referenced in document', $id));
+        }
+
+        return $this->commentRefs[$id];
+    }
+
     /**
      * Read w:p.
      *
-     * @param \PhpOffice\PhpWord\Element\AbstractContainer $parent
+     * @param AbstractContainer $parent
      * @param string $docPart
      *
      * @todo Get font style for preserve text
@@ -105,40 +195,93 @@ abstract class AbstractPart
     protected function readParagraph(XMLReader $xmlReader, DOMElement $domNode, $parent, $docPart = 'document'): void
     {
         // Paragraph style
-        $paragraphStyle = null;
-        $headingDepth = null;
-        if ($xmlReader->elementExists('w:pPr', $domNode)) {
-            $paragraphStyle = $this->readParagraphStyle($xmlReader, $domNode);
-            $headingDepth = $this->getHeadingDepth($paragraphStyle);
-        }
+        $paragraphStyle = $xmlReader->elementExists('w:pPr', $domNode) ? $this->readParagraphStyle($xmlReader, $domNode) : null;
 
-        // PreserveText
-        if ($xmlReader->elementExists('w:r/w:instrText', $domNode)) {
+        if ($xmlReader->elementExists('w:r/w:fldChar/w:ffData', $domNode)) {
+            // FormField
+            $partOfFormField = false;
+            $formNodes = [];
+            $formType = null;
+            $textRunContainers = $xmlReader->countElements('w:r|w:ins|w:del|w:hyperlink|w:smartTag', $domNode);
+            if ($textRunContainers > 0) {
+                $nodes = $xmlReader->getElements('*', $domNode);
+                $paragraph = $parent->addTextRun($paragraphStyle);
+                foreach ($nodes as $node) {
+                    if ($xmlReader->elementExists('w:fldChar/w:ffData', $node)) {
+                        $partOfFormField = true;
+                        $formNodes[] = $node;
+                        if ($xmlReader->elementExists('w:fldChar/w:ffData/w:ddList', $node)) {
+                            $formType = 'dropdown';
+                        } elseif ($xmlReader->elementExists('w:fldChar/w:ffData/w:textInput', $node)) {
+                            $formType = 'textinput';
+                        } elseif ($xmlReader->elementExists('w:fldChar/w:ffData/w:checkBox', $node)) {
+                            $formType = 'checkbox';
+                        }
+                    } elseif ($partOfFormField &&
+                        $xmlReader->elementExists('w:fldChar', $node) &&
+                        'end' == $xmlReader->getAttribute('w:fldCharType', $node, 'w:fldChar')
+                    ) {
+                        $formNodes[] = $node;
+                        $partOfFormField = false;
+                        // Process the form fields
+                        $this->readFormField($xmlReader, $formNodes, $paragraph, $paragraphStyle, $formType);
+                    } elseif ($partOfFormField) {
+                        $formNodes[] = $node;
+                    } else {
+                        // normal runs
+                        $this->readRun($xmlReader, $node, $paragraph, $docPart, $paragraphStyle);
+                    }
+                }
+            }
+        } elseif ($xmlReader->elementExists('w:r/w:instrText', $domNode)) {
+            // PreserveText
             $ignoreText = false;
             $textContent = '';
             $fontStyle = $this->readFontStyle($xmlReader, $domNode);
             $nodes = $xmlReader->getElements('w:r', $domNode);
             foreach ($nodes as $node) {
-                $instrText = $xmlReader->getValue('w:instrText', $node);
-                if ($xmlReader->elementExists('w:fldChar', $node)) {
-                    $fldCharType = $xmlReader->getAttribute('w:fldCharType', $node, 'w:fldChar');
-                    if ('begin' == $fldCharType) {
-                        $ignoreText = true;
-                    } elseif ('end' == $fldCharType) {
-                        $ignoreText = false;
-                    }
+                if ($xmlReader->elementExists('w:lastRenderedPageBreak', $node)) {
+                    $parent->addPageBreak();
                 }
+                $instrText = $xmlReader->getValue('w:instrText', $node);
                 if (null !== $instrText) {
                     $textContent .= '{' . $instrText . '}';
                 } else {
+                    if ($xmlReader->elementExists('w:fldChar', $node)) {
+                        $fldCharType = $xmlReader->getAttribute('w:fldCharType', $node, 'w:fldChar');
+                        if ('begin' == $fldCharType) {
+                            $ignoreText = true;
+                        } elseif ('end' == $fldCharType) {
+                            $ignoreText = false;
+                        }
+                    }
                     if (false === $ignoreText) {
                         $textContent .= $xmlReader->getValue('w:t', $node);
                     }
                 }
             }
             $parent->addPreserveText(htmlspecialchars($textContent, ENT_QUOTES, 'UTF-8'), $fontStyle, $paragraphStyle);
-        } elseif ($xmlReader->elementExists('w:pPr/w:numPr', $domNode)) {
-            // List item
+
+            return;
+        }
+
+        // Formula
+        $xmlReader->registerNamespace('m', 'http://schemas.openxmlformats.org/officeDocument/2006/math');
+        if ($xmlReader->elementExists('m:oMath', $domNode)) {
+            $mathElement = $xmlReader->getElement('m:oMath', $domNode);
+            $mathXML = $mathElement->ownerDocument->saveXML($mathElement);
+            if (is_string($mathXML)) {
+                $reader = new OfficeMathML();
+                $math = $reader->read($mathXML);
+
+                $parent->addFormula($math);
+            }
+
+            return;
+        }
+
+        // List item
+        if ($xmlReader->elementExists('w:pPr/w:numPr', $domNode)) {
             $numId = $xmlReader->getAttribute('w:val', $domNode, 'w:pPr/w:numPr/w:numId');
             $levelId = $xmlReader->getAttribute('w:val', $domNode, 'w:pPr/w:numPr/w:ilvl');
             $nodes = $xmlReader->getElements('*', $domNode);
@@ -148,11 +291,17 @@ abstract class AbstractPart
             foreach ($nodes as $node) {
                 $this->readRun($xmlReader, $node, $listItemRun, $docPart, $paragraphStyle);
             }
-        } elseif ($headingDepth !== null) {
-            // Heading or Title
+
+            return;
+        }
+
+        // Heading or Title
+        $headingDepth = $xmlReader->elementExists('w:pPr', $domNode) ? $this->getHeadingDepth($paragraphStyle) : null;
+        if ($headingDepth !== null) {
             $textContent = null;
-            $nodes = $xmlReader->getElements('w:r', $domNode);
-            if ($nodes->length === 1) {
+            $nodes = $xmlReader->getElements('w:r|w:hyperlink', $domNode);
+            $hasRubyElement = $xmlReader->elementExists('w:r/w:ruby', $domNode);
+            if ($nodes->length === 1 && !$hasRubyElement) {
                 $textContent = htmlspecialchars($xmlReader->getValue('w:t', $nodes->item(0)), ENT_QUOTES, 'UTF-8');
             } else {
                 $textContent = new TextRun($paragraphStyle);
@@ -161,25 +310,128 @@ abstract class AbstractPart
                 }
             }
             $parent->addTitle($textContent, $headingDepth);
+
+            return;
+        }
+
+        // Text and TextRun
+        $textRunContainers = $xmlReader->countElements('w:r|w:ins|w:del|w:hyperlink|w:smartTag|w:commentReference|w:commentRangeStart|w:commentRangeEnd', $domNode);
+        if (0 === $textRunContainers) {
+            $parent->addTextBreak(1, $paragraphStyle);
         } else {
-            // Text and TextRun
-            $textRunContainers = $xmlReader->countElements('w:r|w:ins|w:del|w:hyperlink|w:smartTag', $domNode);
-            if (0 === $textRunContainers) {
-                $parent->addTextBreak(null, $paragraphStyle);
-            } else {
-                $nodes = $xmlReader->getElements('*', $domNode);
-                $paragraph = $parent->addTextRun($paragraphStyle);
-                foreach ($nodes as $node) {
-                    $this->readRun($xmlReader, $node, $paragraph, $docPart, $paragraphStyle);
-                }
+            $nodes = $xmlReader->getElements('*', $domNode);
+            $paragraph = $parent->addTextRun($paragraphStyle);
+            foreach ($nodes as $node) {
+                $this->readRun($xmlReader, $node, $paragraph, $docPart, $paragraphStyle);
             }
         }
     }
 
     /**
+     * @param DOMElement[] $domNodes
+     * @param AbstractContainer $parent
+     * @param mixed $paragraphStyle
+     * @param string $formType
+     */
+    private function readFormField(XMLReader $xmlReader, array $domNodes, $parent, $paragraphStyle, $formType): void
+    {
+        if (!in_array($formType, ['textinput', 'checkbox', 'dropdown'])) {
+            return;
+        }
+
+        $formField = $parent->addFormField($formType, null, $paragraphStyle);
+        $ffData = $xmlReader->getElement('w:fldChar/w:ffData', $domNodes[0]);
+
+        foreach ($xmlReader->getElements('*', $ffData) as $node) {
+            /** @var DOMElement $node */
+            switch ($node->localName) {
+                case 'name':
+                    $formField->setName($node->getAttribute('w:val'));
+
+                    break;
+                case 'ddList':
+                    $listEntries = [];
+                    foreach ($xmlReader->getElements('*', $node) as $ddListNode) {
+                        switch ($ddListNode->localName) {
+                            case 'result':
+                                $formField->setValue($xmlReader->getAttribute('w:val', $ddListNode));
+
+                                break;
+                            case 'default':
+                                $formField->setDefault($xmlReader->getAttribute('w:val', $ddListNode));
+
+                                break;
+                            case 'listEntry':
+                                $listEntries[] = $xmlReader->getAttribute('w:val', $ddListNode);
+
+                                break;
+                        }
+                    }
+                    $formField->setEntries($listEntries);
+                    if (null !== $formField->getValue()) {
+                        $formField->setText($listEntries[$formField->getValue()]);
+                    }
+
+                    break;
+                case 'textInput':
+                    foreach ($xmlReader->getElements('*', $node) as $ddListNode) {
+                        switch ($ddListNode->localName) {
+                            case 'default':
+                                $formField->setDefault($xmlReader->getAttribute('w:val', $ddListNode));
+
+                                break;
+                            case 'format':
+                            case 'maxLength':
+                                break;
+                        }
+                    }
+
+                    break;
+                case 'checkBox':
+                    foreach ($xmlReader->getElements('*', $node) as $ddListNode) {
+                        switch ($ddListNode->localName) {
+                            case 'default':
+                                $formField->setDefault($xmlReader->getAttribute('w:val', $ddListNode));
+
+                                break;
+                            case 'checked':
+                                $formField->setValue($xmlReader->getAttribute('w:val', $ddListNode));
+
+                                break;
+                            case 'size':
+                            case 'sizeAuto':
+                                break;
+                        }
+                    }
+
+                    break;
+            }
+        }
+
+        if ('textinput' == $formType) {
+            $ignoreText = true;
+            $textContent = '';
+            foreach ($domNodes as $node) {
+                if ($xmlReader->elementExists('w:fldChar', $node)) {
+                    $fldCharType = $xmlReader->getAttribute('w:fldCharType', $node, 'w:fldChar');
+                    if ('separate' == $fldCharType) {
+                        $ignoreText = false;
+                    } elseif ('end' == $fldCharType) {
+                        $ignoreText = true;
+                    }
+                }
+
+                if (false === $ignoreText) {
+                    $textContent .= $xmlReader->getValue('w:t', $node);
+                }
+            }
+            $formField->setValue(htmlspecialchars($textContent, ENT_QUOTES, 'UTF-8'));
+            $formField->setText(htmlspecialchars($textContent, ENT_QUOTES, 'UTF-8'));
+        }
+    }
+
+    /**
      * Returns the depth of the Heading, returns 0 for a Title.
-     *
-     * @param array $paragraphStyle
      *
      * @return null|number
      */
@@ -203,7 +455,7 @@ abstract class AbstractPart
     /**
      * Read w:r.
      *
-     * @param \PhpOffice\PhpWord\Element\AbstractContainer $parent
+     * @param AbstractContainer $parent
      * @param string $docPart
      * @param mixed $paragraphStyle
      *
@@ -211,7 +463,7 @@ abstract class AbstractPart
      */
     protected function readRun(XMLReader $xmlReader, DOMElement $domNode, $parent, $docPart, $paragraphStyle = null): void
     {
-        if (in_array($domNode->nodeName, ['w:ins', 'w:del', 'w:smartTag', 'w:hyperlink'])) {
+        if (in_array($domNode->nodeName, ['w:ins', 'w:del', 'w:smartTag', 'w:hyperlink', 'w:commentReference'])) {
             $nodes = $xmlReader->getElements('*', $domNode);
             foreach ($nodes as $node) {
                 $this->readRun($xmlReader, $node, $parent, $docPart, $paragraphStyle);
@@ -221,6 +473,17 @@ abstract class AbstractPart
             $nodes = $xmlReader->getElements('*', $domNode);
             foreach ($nodes as $node) {
                 $this->readRunChild($xmlReader, $node, $parent, $docPart, $paragraphStyle, $fontStyle);
+            }
+        }
+
+        if ($xmlReader->elementExists('.//*["commentReference"=local-name()]', $domNode)) {
+            $node = iterator_to_array($xmlReader->getElements('.//*["commentReference"=local-name()]', $domNode))[0];
+            $attributeIdentifier = $node->attributes->getNamedItem('id');
+            if ($attributeIdentifier) {
+                $id = $attributeIdentifier->nodeValue;
+
+                $this->setCommentReference('start', $id, $parent->getElement($parent->countElements() - 1));
+                $this->setCommentReference('end', $id, $parent->getElement($parent->countElements() - 1));
             }
         }
     }
@@ -249,7 +512,7 @@ abstract class AbstractPart
             // Image
             $rId = $xmlReader->getAttribute('r:id', $node, 'v:shape/v:imagedata');
             $target = $this->getMediaTarget($docPart, $rId);
-            if (null !== $target) {
+            if ($this->hasImageLoading() && null !== $target) {
                 if ('External' == $this->getTargetMode($docPart, $rId)) {
                     $imageSource = $target;
                 } else {
@@ -271,7 +534,7 @@ abstract class AbstractPart
                 $embedId = $xmlReader->getAttribute('r:embed', $node, 'wp:anchor/a:graphic/a:graphicData/pic:pic/pic:blipFill/a:blip');
             }
             $target = $this->getMediaTarget($docPart, $embedId);
-            if (null !== $target) {
+            if ($this->hasImageLoading() && null !== $target) {
                 $imageSource = "zip://{$this->docFile}#{$target}";
                 $parent->addImage($imageSource, null, false, $name);
             }
@@ -320,12 +583,51 @@ abstract class AbstractPart
                     $type = ($runParent->nodeName == 'w:del') ? TrackChange::DELETED : TrackChange::INSERTED;
                     $author = $runParent->getAttribute('w:author');
                     $date = DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $runParent->getAttribute('w:date'));
+                    $date = $date instanceof DateTime ? $date : null;
                     $element->setChangeInfo($type, $author, $date);
                 }
             }
         } elseif ($node->nodeName == 'w:softHyphen') {
             $element = $parent->addText("\u{200c}", $fontStyle, $paragraphStyle);
+        } elseif ($node->nodeName == 'w:ruby') {
+            $rubyPropertiesNode = $xmlReader->getElement('w:rubyPr', $node);
+            $properties = $this->readRubyProperties($xmlReader, $rubyPropertiesNode);
+            // read base text node
+            $baseText = new TextRun($paragraphStyle);
+            $baseTextNode = $xmlReader->getElement('w:rubyBase/w:r', $node);
+            $this->readRun($xmlReader, $baseTextNode, $baseText, $docPart, $paragraphStyle);
+            // read the actual ruby text (e.g. furigana in Japanese)
+            $rubyText = new TextRun($paragraphStyle);
+            $rubyTextNode = $xmlReader->getElement('w:rt/w:r', $node);
+            $this->readRun($xmlReader, $rubyTextNode, $rubyText, $docPart, $paragraphStyle);
+            // add element to parent
+            $parent->addRuby($baseText, $rubyText, $properties);
         }
+    }
+
+    /**
+     * Read w:rubyPr element.
+     *
+     * @param XMLReader $xmlReader reader for XML
+     * @param DOMElement $domNode w:RubyPr element
+     *
+     * @return RubyProperties ruby properties from element
+     */
+    protected function readRubyProperties(XMLReader $xmlReader, DOMElement $domNode): RubyProperties
+    {
+        $rubyAlignment = $xmlReader->getElement('w:rubyAlign', $domNode)->getAttribute('w:val');
+        $rubyHps = $xmlReader->getElement('w:hps', $domNode)->getAttribute('w:val'); // font face
+        $rubyHpsRaise = $xmlReader->getElement('w:hpsRaise', $domNode)->getAttribute('w:val'); // pts above base text
+        $rubyHpsBaseText = $xmlReader->getElement('w:hpsBaseText', $domNode)->getAttribute('w:val'); // base text size
+        $rubyLid = $xmlReader->getElement('w:lid', $domNode)->getAttribute('w:val'); // type of ruby
+        $properties = new RubyProperties();
+        $properties->setAlignment($rubyAlignment);
+        $properties->setFontFaceSize((float) $rubyHps);
+        $properties->setFontPointsAboveBaseText((float) $rubyHpsRaise);
+        $properties->setFontSizeForBaseText((float) $rubyHpsBaseText);
+        $properties->setLanguageId($rubyLid);
+
+        return $properties;
     }
 
     /**
@@ -366,9 +668,8 @@ abstract class AbstractPart
                     } elseif ('w:tc' == $rowNode->nodeName) { // Cell
                         $cellWidth = $xmlReader->getAttribute('w:w', $rowNode, 'w:tcPr/w:tcW');
                         $cellStyle = null;
-                        $cellStyleNode = $xmlReader->getElement('w:tcPr', $rowNode);
-                        if (null !== $cellStyleNode) {
-                            $cellStyle = $this->readCellStyle($xmlReader, $cellStyleNode);
+                        if ($xmlReader->elementExists('w:tcPr', $rowNode)) {
+                            $cellStyle = $this->readCellStyle($xmlReader, $rowNode);
                         }
 
                         $cell = $row->addCell($cellWidth, $cellStyle);
@@ -403,8 +704,11 @@ abstract class AbstractPart
             'alignment' => [self::READ_VALUE, 'w:jc'],
             'basedOn' => [self::READ_VALUE, 'w:basedOn'],
             'next' => [self::READ_VALUE, 'w:next'],
-            'indent' => [self::READ_VALUE, 'w:ind', 'w:left'],
-            'hanging' => [self::READ_VALUE, 'w:ind', 'w:hanging'],
+            'indentLeft' => [self::READ_VALUE, 'w:ind', 'w:left'],
+            'indentRight' => [self::READ_VALUE, 'w:ind', 'w:right'],
+            'indentHanging' => [self::READ_VALUE, 'w:ind', 'w:hanging'],
+            'indentFirstLine' => [self::READ_VALUE, 'w:ind', 'w:firstLine'],
+            'indentFirstLineChars' => [self::READ_VALUE, 'w:ind', 'w:firstLineChars'],
             'spaceAfter' => [self::READ_VALUE, 'w:spacing', 'w:after'],
             'spaceBefore' => [self::READ_VALUE, 'w:spacing', 'w:before'],
             'widowControl' => [self::READ_FALSE, 'w:widowControl'],
@@ -414,6 +718,18 @@ abstract class AbstractPart
             'contextualSpacing' => [self::READ_TRUE,  'w:contextualSpacing'],
             'bidi' => [self::READ_TRUE,  'w:bidi'],
             'suppressAutoHyphens' => [self::READ_TRUE,  'w:suppressAutoHyphens'],
+            'borderTopStyle' => [self::READ_VALUE, 'w:pBdr/w:top'],
+            'borderTopColor' => [self::READ_VALUE, 'w:pBdr/w:top', 'w:color'],
+            'borderTopSize' => [self::READ_VALUE, 'w:pBdr/w:top', 'w:sz'],
+            'borderRightStyle' => [self::READ_VALUE, 'w:pBdr/w:right'],
+            'borderRightColor' => [self::READ_VALUE, 'w:pBdr/w:right', 'w:color'],
+            'borderRightSize' => [self::READ_VALUE, 'w:pBdr/w:right', 'w:sz'],
+            'borderBottomStyle' => [self::READ_VALUE, 'w:pBdr/w:bottom'],
+            'borderBottomColor' => [self::READ_VALUE, 'w:pBdr/w:bottom', 'w:color'],
+            'borderBottomSize' => [self::READ_VALUE, 'w:pBdr/w:bottom', 'w:sz'],
+            'borderLeftStyle' => [self::READ_VALUE, 'w:pBdr/w:left'],
+            'borderLeftColor' => [self::READ_VALUE, 'w:pBdr/w:left', 'w:color'],
+            'borderLeftSize' => [self::READ_VALUE, 'w:pBdr/w:left', 'w:sz'],
         ];
 
         return $this->readStyleDefs($xmlReader, $styleNode, $styleDefs);
@@ -554,7 +870,7 @@ abstract class AbstractPart
     /**
      * Read w:tcPr.
      *
-     * @return array
+     * @return null|array
      */
     private function readCellStyle(XMLReader $xmlReader, DOMElement $domNode)
     {
@@ -564,9 +880,26 @@ abstract class AbstractPart
             'gridSpan' => [self::READ_VALUE, 'w:gridSpan'],
             'vMerge' => [self::READ_VALUE, 'w:vMerge', null, null, 'continue'],
             'bgColor' => [self::READ_VALUE, 'w:shd', 'w:fill'],
+            'noWrap' => [self::READ_VALUE, 'w:noWrap', null, null, true],
         ];
+        $style = null;
 
-        return $this->readStyleDefs($xmlReader, $domNode, $styleDefs);
+        if ($xmlReader->elementExists('w:tcPr', $domNode)) {
+            $styleNode = $xmlReader->getElement('w:tcPr', $domNode);
+
+            $borders = ['top', 'left', 'bottom', 'right'];
+            foreach ($borders as $side) {
+                $ucfSide = ucfirst($side);
+
+                $styleDefs['border' . $ucfSide . 'Size'] = [self::READ_VALUE, 'w:tcBorders/w:' . $side, 'w:sz'];
+                $styleDefs['border' . $ucfSide . 'Color'] = [self::READ_VALUE, 'w:tcBorders/w:' . $side, 'w:color'];
+                $styleDefs['border' . $ucfSide . 'Style'] = [self::READ_VALUE, 'w:tcBorders/w:' . $side, 'w:val'];
+            }
+
+            $style = $this->readStyleDefs($xmlReader, $styleNode, $styleDefs);
+        }
+
+        return $style;
     }
 
     /**
@@ -618,7 +951,6 @@ abstract class AbstractPart
     /**
      * Read style definition.
      *
-     * @param DOMElement $parentNode
      * @param array $styleDefs
      *
      * @ignoreScrutinizerPatch

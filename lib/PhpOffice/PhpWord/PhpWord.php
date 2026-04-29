@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -47,7 +48,7 @@ class PhpWord
     /**
      * Collection of sections.
      *
-     * @var \PhpOffice\PhpWord\Element\Section[]
+     * @var Section[]
      */
     private $sections = [];
 
@@ -77,6 +78,7 @@ class PhpWord
         // Reset Media and styles
         Media::resetElements();
         Style::resetStyles();
+        Settings::setDefaultRtl(null);
 
         // Collection
         $collections = ['Bookmarks', 'Titles', 'Footnotes', 'Endnotes', 'Charts', 'Comments'];
@@ -133,7 +135,6 @@ class PhpWord
         if (in_array($function, $addCollection)) {
             $key = ucfirst(str_replace('add', '', $function) . 's');
 
-            /** @var \PhpOffice\PhpWord\Collection\AbstractCollection $collectionObject */
             $collectionObject = $this->collections[$key];
 
             return $collectionObject->addItem($args[0] ?? null);
@@ -151,7 +152,7 @@ class PhpWord
     /**
      * Get document properties object.
      *
-     * @return \PhpOffice\PhpWord\Metadata\DocInfo
+     * @return Metadata\DocInfo
      */
     public function getDocInfo()
     {
@@ -161,7 +162,7 @@ class PhpWord
     /**
      * Get compatibility.
      *
-     * @return \PhpOffice\PhpWord\Metadata\Compatibility
+     * @return Metadata\Compatibility
      *
      * @since 0.12.0
      */
@@ -173,7 +174,7 @@ class PhpWord
     /**
      * Get compatibility.
      *
-     * @return \PhpOffice\PhpWord\Metadata\Settings
+     * @return Metadata\Settings
      *
      * @since 0.14.0
      */
@@ -185,7 +186,7 @@ class PhpWord
     /**
      * Get all sections.
      *
-     * @return \PhpOffice\PhpWord\Element\Section[]
+     * @return Section[]
      */
     public function getSections()
     {
@@ -197,7 +198,7 @@ class PhpWord
      *
      * @param int $index
      *
-     * @return null|\PhpOffice\PhpWord\Element\Section
+     * @return null|Section
      */
     public function getSection($index)
     {
@@ -211,9 +212,9 @@ class PhpWord
     /**
      * Create new section.
      *
-     * @param array $style
+     * @param null|array|string $style
      *
-     * @return \PhpOffice\PhpWord\Element\Section
+     * @return Section
      */
     public function addSection($style = null)
     {
@@ -257,6 +258,40 @@ class PhpWord
     }
 
     /**
+     * Get default asian font name.
+     */
+    public function getDefaultAsianFontName(): string
+    {
+        return Settings::getDefaultAsianFontName();
+    }
+
+    /**
+     * Set default asian font name.
+     *
+     * @param string $fontName
+     */
+    public function setDefaultAsianFontName($fontName): void
+    {
+        Settings::setDefaultAsianFontName($fontName);
+    }
+
+    /**
+     * Set default font color.
+     */
+    public function setDefaultFontColor(string $fontColor): void
+    {
+        Settings::setDefaultFontColor($fontColor);
+    }
+
+    /**
+     * Get default font color.
+     */
+    public function getDefaultFontColor(): string
+    {
+        return Settings::getDefaultFontColor();
+    }
+
+    /**
      * Get default font size.
      *
      * @return int
@@ -281,7 +316,7 @@ class PhpWord
      *
      * @param array $styles Paragraph style definition
      *
-     * @return \PhpOffice\PhpWord\Style\Paragraph
+     * @return Style\Paragraph
      */
     public function setDefaultParagraphStyle($styles)
     {
@@ -324,5 +359,53 @@ class PhpWord
         $writer->save($filename);
 
         return true;
+    }
+
+    /**
+     * Create new section.
+     *
+     * @deprecated 0.10.0
+     *
+     * @param array $settings
+     *
+     * @return Section
+     *
+     * @codeCoverageIgnore
+     */
+    public function createSection($settings = null)
+    {
+        return $this->addSection($settings);
+    }
+
+    /**
+     * Get document properties object.
+     *
+     * @deprecated 0.12.0
+     *
+     * @return Metadata\DocInfo
+     *
+     * @codeCoverageIgnore
+     */
+    public function getDocumentProperties()
+    {
+        return $this->getDocInfo();
+    }
+
+    /**
+     * Set document properties object.
+     *
+     * @deprecated 0.12.0
+     *
+     * @param Metadata\DocInfo $documentProperties
+     *
+     * @return self
+     *
+     * @codeCoverageIgnore
+     */
+    public function setDocumentProperties($documentProperties)
+    {
+        $this->metadata['Document'] = $documentProperties;
+
+        return $this;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -61,8 +62,16 @@ class XMLReader
         }
 
         $zip = new ZipArchive();
-        $zip->open($zipFile);
-        $content = $zip->getFromName($xmlFile);
+        $openStatus = $zip->open($zipFile);
+        if ($openStatus !== true) {
+            /**
+             * Throw an exception since making further calls on the ZipArchive would cause a fatal error.
+             * This prevents fatal errors on corrupt archives and attempts to open old "doc" files.
+             */
+            throw new Exception("The archive failed to load with the following error code: $openStatus");
+        }
+
+        $content = $zip->getFromName(ltrim($xmlFile, '/'));
         $zip->close();
 
         if ($content === false) {
@@ -97,24 +106,21 @@ class XMLReader
      * Get elements.
      *
      * @param string $path
-     * @param DOMElement $contextNode
      *
-     * @return DOMNodeList
+     * @return DOMNodeList<DOMElement>
      */
     public function getElements($path, ?DOMElement $contextNode = null)
     {
         if ($this->dom === null) {
-            return [];
+            return new DOMNodeList(); // @phpstan-ignore-line
         }
         if ($this->xpath === null) {
             $this->xpath = new DOMXpath($this->dom);
         }
 
-        if (null === $contextNode) {
-            return $this->xpath->query($path);
-        }
+        $result = @$this->xpath->query($path, $contextNode);
 
-        return $this->xpath->query($path, $contextNode);
+        return empty($result) ? new DOMNodeList() : $result; // @phpstan-ignore-line
     }
 
     /**
@@ -141,7 +147,6 @@ class XMLReader
      * Get element.
      *
      * @param string $path
-     * @param DOMElement $contextNode
      *
      * @return null|DOMElement
      */
@@ -159,7 +164,6 @@ class XMLReader
      * Get element attribute.
      *
      * @param string $attribute
-     * @param DOMElement $contextNode
      * @param string $path
      *
      * @return null|string
@@ -187,7 +191,6 @@ class XMLReader
      * Get element value.
      *
      * @param string $path
-     * @param DOMElement $contextNode
      *
      * @return null|string
      */
@@ -205,7 +208,6 @@ class XMLReader
      * Count elements.
      *
      * @param string $path
-     * @param DOMElement $contextNode
      *
      * @return int
      */
@@ -220,7 +222,6 @@ class XMLReader
      * Element exists.
      *
      * @param string $path
-     * @param DOMElement $contextNode
      *
      * @return bool
      */
