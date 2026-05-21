@@ -924,12 +924,6 @@ function offlinequiz_update_question_instance($offlinequiz, $contextid, $questio
             ['questionid' => $questionid, 'offlinequizid' => $offlinequiz->id],
             'id'
         );
-        $DB->set_field(
-            'offlinequiz_group_questions',
-            'questionid',
-            $newquestionid,
-            ['offlinequizid' => $offlinequiz->id, 'questionid' => $questionid]
-        );
         if ($groupquestions && $newquestionversion) {
             foreach ($groupquestions as $groupquestion) {
                 $DB->set_field(
@@ -948,6 +942,12 @@ function offlinequiz_update_question_instance($offlinequiz, $contextid, $questio
                 }
             }
         }
+        $DB->set_field(
+            'offlinequiz_group_questions',
+            'questionid',
+            $newquestionid,
+            ['offlinequizid' => $offlinequiz->id, 'questionid' => $questionid]
+        );
     }
 
     if ($offlinequiz->docscreated) {

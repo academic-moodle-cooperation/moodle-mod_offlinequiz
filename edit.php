@@ -147,7 +147,6 @@ $changedversionsexist = $DB->count_records_select(
 );
 $hasresults = $DB->count_records('offlinequiz_results', ['offlinequizid' => $offlinequiz->id]);
 if ($changedversionsexist && $hasresults) {
-    $recordupdateanddocscreated =
     $structure->add_warning(get_string('documentschangedwithresults', 'offlinequiz'));
 } else if ($changedversionsexist && !$hasresults) {
     $recordupdateanddocscreated = get_string('documentschanged', 'offlinequiz');
