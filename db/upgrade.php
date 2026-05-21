@@ -610,6 +610,33 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
         // Offlinequiz savepoint reached.
         upgrade_mod_savepoint(true, 2025080402, 'offlinequiz');
     }
+    if ($oldversion < 2026031801) {
+        // 1. Get old URL setting
+        $oldurl = get_config('offlinequiz', 'logourl');
+        if (!empty($oldurl)) {
+            require_once($CFG->libdir . '/filelib.php');
+            // 2. Download the file to temp
+            $tempfile = download_file_content($oldurl);
+            if ($tempfile) {
+                $fs = get_file_storage();
+                $context = context_system::instance();
+                // 3. Prepare file record
+                $filerecord = [
+                    'contextid' => $context->id,
+                    'component' => 'offlinequiz',
+                    'filearea'  => 'image',
+                    'itemid'    => 0,
+                    'filepath'  => '/',
+                    'filename'  => basename(parse_url($oldurl, PHP_URL_PATH)),
+                ];
+                // 5. Save file
+                $fs->create_file_from_string($filerecord, $tempfile);
+            }
+        }
+
+        // Mark upgrade complete
+        upgrade_plugin_savepoint(true, 2026031801, 'mod', 'offlinequiz');
+    }
 
     return true;
 }
