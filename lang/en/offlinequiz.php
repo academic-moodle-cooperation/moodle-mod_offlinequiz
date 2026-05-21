@@ -685,6 +685,7 @@ $string['rotate'] = 'Rotate';
 $string['rotatingsheet'] = 'Sheet is rotated...';
 $string['save'] = 'Save';
 $string['saveandshow'] = 'Save and show changes to student';
+$string['savemanualgradingfailed'] = 'Modification not saved. Please check the message below and try again.';
 $string['scannedform'] = 'Scanned form';
 $string['scanningoptionsheading'] = 'Scanning options';
 $string['search:activity'] = 'Offline quiz - activity information';

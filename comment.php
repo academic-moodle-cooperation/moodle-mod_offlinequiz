@@ -78,35 +78,50 @@ echo $OUTPUT->heading(format_string($slotquestion->name));
 if (data_submitted() && confirm_sesskey()) {
     if (optional_param('submit', false, PARAM_BOOL)) {
         // Set the mark in the quba's slot.
-        $transaction = $DB->start_delegated_transaction();
-        $quba->process_all_actions(time());
-        question_engine::save_questions_usage_by_activity($quba);
-        $transaction->allow_commit();
+        $formdata = data_submitted();
+        foreach ($formdata as $key => $value) {
+            if (str_contains($key, "-mark")) {
+                $mark = $value;
+            }
+            if (str_contains($key, "-maxmark")) {
+                $maxmark = $value;
+            }
+        }
+        if ($mark) {
+            if ($mark > $maxmark) {
+                echo $OUTPUT->notification(get_string('savemanualgradingfailed', 'offlinequiz'), \core\output\notification::NOTIFY_ERROR);
+            } else {
+                $transaction = $DB->start_delegated_transaction();
+                $quba->process_all_actions(time());
+                question_engine::save_questions_usage_by_activity($quba);
+                $transaction->allow_commit();
 
-        // Set the result's total mark (sumgrades).
-        $result->sumgrades = $quba->get_total_mark();
-        $result->timemodified = time();
-        $DB->update_record('offlinequiz_results', $result);
+                // Set the result's total mark (sumgrades).
+                $result->sumgrades = $quba->get_total_mark();
+                $result->timemodified = time();
+                $DB->update_record('offlinequiz_results', $result);
 
-        // Log this action.
-        $params = [
-            'objectid' => $slotquestion->id,
-            'courseid' => $course->id,
-            'context' => context_module::instance($cm->id),
-            'other' => [
-                'offlinequizid' => $offlinequiz->id,
-                'resultid' => $result->id,
-                'slot' => $slot,
-            ],
-        ];
-        $event = \mod_offlinequiz\event\question_manually_graded::create($params);
-        $event->trigger();
+                // Log this action.
+                $params = [
+                    'objectid' => $slotquestion->id,
+                    'courseid' => $course->id,
+                    'context' => context_module::instance($cm->id),
+                    'other' => [
+                        'offlinequizid' => $offlinequiz->id,
+                        'resultid' => $result->id,
+                        'slot' => $slot,
+                    ],
+                ];
+                $event = \mod_offlinequiz\event\question_manually_graded::create($params);
+                $event->trigger();
 
-        // Update the gradebook.
-        offlinequiz_update_grades($offlinequiz);
-        echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
-        close_window(2, true);
-        die;
+                // Update the gradebook.
+                offlinequiz_update_grades($offlinequiz);
+                echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
+                close_window(2, true);
+                die;
+            }
+        }
     }
 }
 
