@@ -769,8 +769,13 @@ class report extends default_report {
         if (!$s) {
             return;
         }
-
+        $orderedquestions = [];
         foreach ($questions as $question) {
+            $orderedquestions[$question->number] = $question;
+        }
+        ksort($orderedquestions);
+
+        foreach ($orderedquestions as $question) {
             // Output the data for this question.
             $this->table->add_data_keyed($this->table->format_row($question));
 
@@ -893,8 +898,13 @@ class report extends default_report {
         if (!$s) {
             return;
         }
-
+        $orderedquestions = [];
         foreach ($questions as $question) {
+            $orderedquestions[$question->number] = $question;
+        }
+        ksort($orderedquestions);
+
+        foreach ($orderedquestions as $question) {
             // Output the data for this question.
             $question->actions = 'actions';
             $this->table->add_data_keyed($this->table->format_row($question));

@@ -27,6 +27,8 @@
  */
 namespace offlinequiz_statistics;
 
+use qubaid_join;
+
 /**
  * This class can store and compute the analysis of the responses to a particular
  * question.
@@ -125,7 +127,7 @@ class response_analyser {
     /**
      * Analyse all the response data for for all the specified attempts at
      * this question.
-     * @param array $qubaids which attempts to consider.
+     * @param qubaid_join $qubaids which attempts to consider.
      */
     public function analyse($qubaids) {
         // Load data.
