@@ -34,14 +34,13 @@ class mod_offlinequiz_generator extends testing_module_generator {
      * @return stdClass record from module-defined table with additional field
      *     cmid (corresponding id in course_modules table)
      */
-    public function create_offlinequiz($record = null, ?array $options = null): stdClass {
-        global $CFG, $DB;
+    public function create_instance($record = null, ?array $options = null): stdClass {
+        global $CFG;
 
         require_once($CFG->dirroot . '/mod/offlinequiz/locallib.php');
         $record = (object)(array)$record;
 
         $iddigits = get_config('offlinequiz', 'ID_digits');
-        $record->course = $DB->get_field('course', 'id', ['shortname' => $record->course]);
 
         $defaultofflinequizsettings = [
             'pdfintro'               => '',
