@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -29,7 +30,7 @@ class Settings
      */
     public const ZIPARCHIVE = 'ZipArchive';
     public const PCLZIP = 'PclZip';
-    public const OLD_LIB = \PhpOffice\PhpWord\Shared\ZipArchive::class; // @deprecated 0.11
+    public const OLD_LIB = Shared\ZipArchive::class; // @deprecated 0.11
 
     /**
      * PDF rendering libraries.
@@ -90,6 +91,13 @@ class Settings
     private static $pdfRendererName;
 
     /**
+     * Options used for rendering PDF files.
+     *
+     * @var array
+     */
+    private static $pdfRendererOptions = [];
+
+    /**
      * Directory Path to the external Library used for rendering PDF files.
      *
      * @var null|string
@@ -111,6 +119,20 @@ class Settings
     private static $defaultFontName = self::DEFAULT_FONT_NAME;
 
     /**
+     * Default asian font name.
+     *
+     * @var string
+     */
+    private static $defaultAsianFontName = self::DEFAULT_FONT_NAME;
+
+    /**
+     * Default font color.
+     *
+     * @var string
+     */
+    private static $defaultFontColor = self::DEFAULT_FONT_COLOR;
+
+    /**
      * Default font size.
      *
      * @var float|int
@@ -123,6 +145,13 @@ class Settings
      * @var string
      */
     private static $defaultPaper = self::DEFAULT_PAPER;
+
+    /**
+     * Is RTL by default ?
+     *
+     * @var ?bool
+     */
+    private static $defaultRtl;
 
     /**
      * The user defined temporary directory.
@@ -227,6 +256,22 @@ class Settings
     }
 
     /**
+     * Set options of the external library for rendering PDF files.
+     */
+    public static function setPdfRendererOptions(array $options): void
+    {
+        self::$pdfRendererOptions = $options;
+    }
+
+    /**
+     * Return the PDF Rendering Options.
+     */
+    public static function getPdfRendererOptions(): array
+    {
+        return self::$pdfRendererOptions;
+    }
+
+    /**
      * Location of external library to use for rendering PDF files.
      *
      * @param null|string $libraryBaseDir Directory path to the library's base folder
@@ -325,12 +370,53 @@ class Settings
     }
 
     /**
+     * Get default font name.
+     */
+    public static function getDefaultAsianFontName(): string
+    {
+        return self::$defaultAsianFontName;
+    }
+
+    /**
      * Set default font name.
      */
     public static function setDefaultFontName(string $value): bool
     {
         if (trim($value) !== '') {
             self::$defaultFontName = $value;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function setDefaultAsianFontName(string $value): bool
+    {
+        if (trim($value) !== '') {
+            self::$defaultAsianFontName = $value;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get default font color.
+     */
+    public static function getDefaultFontColor(): string
+    {
+        return self::$defaultFontColor;
+    }
+
+    /**
+     * Set default font color.
+     */
+    public static function setDefaultFontColor(string $value): bool
+    {
+        if (trim($value) !== '') {
+            self::$defaultFontColor = $value;
 
             return true;
         }
@@ -362,6 +448,16 @@ class Settings
         }
 
         return false;
+    }
+
+    public static function setDefaultRtl(?bool $defaultRtl): void
+    {
+        self::$defaultRtl = $defaultRtl;
+    }
+
+    public static function isDefaultRtl(): ?bool
+    {
+        return self::$defaultRtl;
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -17,6 +18,8 @@
 
 namespace PhpOffice\PhpWord\Shared\Microsoft;
 
+use PhpOffice\PhpWord\Exception\Exception;
+
 /**
  * Password encoder for microsoft office applications.
  */
@@ -33,6 +36,9 @@ class PasswordEncoder
     const ALGORITHM_RIPEMD_160 = 'RIPEMD-160';
     const ALGORITHM_MAC = 'MAC';
     const ALGORITHM_HMAC = 'HMAC';
+
+    private const ALL_ONE_BITS = (PHP_INT_SIZE > 4) ? 0xFFFFFFFF : -1;
+    private const HIGH_ORDER_BIT = (PHP_INT_SIZE > 4) ? 0x80000000 : PHP_INT_MIN;
 
     /**
      * Mapping between algorithm name and algorithm ID.
@@ -115,8 +121,11 @@ class PasswordEncoder
         //   Get the single-byte values by iterating through the Unicode characters of the truncated password.
         //   For each character, if the low byte is not equal to 0, take it. Otherwise, take the high byte.
         $passUtf8 = mb_convert_encoding($password, 'UCS-2LE', 'UTF-8');
-        $byteChars = [];
+        if (!is_string($passUtf8)) {
+            throw new Exception('Failed to convert password to UCS-2LE');
+        }
 
+        $byteChars = [];
         for ($i = 0; $i < mb_strlen($password); ++$i) {
             $byteChars[$i] = ord(substr($passUtf8, $i * 2, 1));
 
@@ -128,7 +137,7 @@ class PasswordEncoder
         // build low-order word and hig-order word and combine them
         $combinedKey = self::buildCombinedKey($byteChars);
         // build reversed hexadecimal string
-        $hex = str_pad(strtoupper(dechex($combinedKey & 0xFFFFFFFF)), 8, '0', \STR_PAD_LEFT);
+        $hex = str_pad(strtoupper(dechex($combinedKey & self::ALL_ONE_BITS)), 8, '0', \STR_PAD_LEFT);
         $reversedHex = $hex[6] . $hex[7] . $hex[4] . $hex[5] . $hex[2] . $hex[3] . $hex[0] . $hex[1];
 
         $generatedKey = mb_convert_encoding($reversedHex, 'UCS-2LE', 'UTF-8');
@@ -232,10 +241,10 @@ class PasswordEncoder
      */
     private static function int32($value)
     {
-        $value = ($value & 0xFFFFFFFF);
+        $value = $value & self::ALL_ONE_BITS;
 
-        if ($value & 0x80000000) {
-            $value = -((~$value & 0xFFFFFFFF) + 1);
+        if ($value & self::HIGH_ORDER_BIT) {
+            $value = -((~$value & self::ALL_ONE_BITS) + 1);
         }
 
         return $value;

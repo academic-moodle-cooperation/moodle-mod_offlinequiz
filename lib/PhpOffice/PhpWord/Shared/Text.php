@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -16,6 +17,8 @@
  */
 
 namespace PhpOffice\PhpWord\Shared;
+
+use PhpOffice\PhpWord\Exception\Exception;
 
 /**
  * Text.
@@ -138,14 +141,18 @@ class Text
     /**
      * Return UTF8 encoded value.
      *
-     * @param string $value
+     * @param null|string $value
      *
-     * @return string
+     * @return ?string
      */
     public static function toUTF8($value = '')
     {
         if (null !== $value && !self::isUTF8($value)) {
-            $value = utf8_encode($value);
+            // PHP8.2 : utf8_encode is deprecated, but mb_convert_encoding always usable
+            $value = (function_exists('mb_convert_encoding')) ? mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1') : utf8_encode($value);
+            if ($value === false) {
+                throw new Exception('Unable to convert text to UTF-8');
+            }
         }
 
         return $value;

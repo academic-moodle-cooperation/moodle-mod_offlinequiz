@@ -68,16 +68,37 @@ class answer_pdf extends offlinequiz_pdf {
         $font = offlinequiz_get_pdffont();
         $letterstr = 'ABCDEF';
 
-        $logourl = trim($offlinequizconfig->logourl);
-        if (!empty($logourl) && $this->is_url_image($logourl)) {
-            $aspectratio = $this->get_logo_aspect_ratio($logourl);
-            if ($aspectratio < LOGO_MAX_ASPECT_RATIO) {
-                $newlength = 54 * $aspectratio / LOGO_MAX_ASPECT_RATIO;
-                $this->IMAGE($logourl, 133, 10.8, $newlength, 0);
-            } else {
-                $this->Image($logourl, 133, 10.8, 54, 0);
+        $context = \context_system::instance();
+        $fs = get_file_storage();
+
+        // Get stored logo file
+        $files = $fs->get_area_files(
+            $context->id,
+            'offlinequiz',
+            'image',
+            0,
+            'sortorder',
+            false
+        );
+
+        if ($files) {
+            $file = reset($files);
+
+            $filepath = $file->copy_content_to_temp();
+
+            // Now reuse your existing logic
+            if (getimagesize($filepath) !== false) {
+                $aspectratio = $this->get_logo_aspect_ratio($filepath);
+
+                if ($aspectratio < LOGO_MAX_ASPECT_RATIO) {
+                    $newlength = 54 * $aspectratio / LOGO_MAX_ASPECT_RATIO;
+                    $this->Image($filepath, 133, 10.8, $newlength, 0);
+                } else {
+                    $this->Image($filepath, 133, 10.8, 54, 0);
+                }
             }
         }
+
         // Print the top left fixation cross.
         $this->Line(11, 12, 14, 12);
         $this->Line(12.5, 10.5, 12.5, 13.5);
@@ -397,29 +418,5 @@ class answer_pdf extends offlinequiz_pdf {
         }
 
         $group->numberofpages = $page;
-    }
-
-    /**
-     * Checks if the url is an image.
-     * @param string $url the url to check
-     */
-    private function is_url_image($url) {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-
-        $data = curl_exec($ch);
-        curl_close($ch);
-
-        if (!$data) {
-            return false;
-        }
-
-        if (preg_match('/Content-Type: image/i', $data)) {
-            return true;
-        }
-
-        return false;
     }
 }

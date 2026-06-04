@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -17,10 +18,12 @@
 
 namespace PhpOffice\PhpWord\Writer\RTF\Element;
 
+use PhpOffice\PhpWord\Element\Field as ElementField;
+
 /**
  * Field element writer.
  *
- * Note: for now, only date, page and numpages fields are implemented for RTF.
+ * Note: for now, only date, page, numpages and filename fields are implemented for RTF.
  */
 class Field extends Text
 {
@@ -30,7 +33,7 @@ class Field extends Text
     public function write()
     {
         $element = $this->element;
-        if (!$element instanceof \PhpOffice\PhpWord\Element\Field) {
+        if (!$element instanceof ElementField) {
             return;
         }
 
@@ -66,7 +69,18 @@ class Field extends Text
         return 'NUMPAGES';
     }
 
-    protected function writeDate(\PhpOffice\PhpWord\Element\Field $element)
+    protected function writeFilename(ElementField $element): string
+    {
+        $content = 'FILENAME';
+        $options = $element->getOptions();
+        if ($options != null && in_array('Path', $options)) {
+            $content .= ' \\\\p';
+        }
+
+        return $content;
+    }
+
+    protected function writeDate(ElementField $element)
     {
         $content = '';
         $content .= 'DATE';

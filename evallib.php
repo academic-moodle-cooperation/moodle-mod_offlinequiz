@@ -825,6 +825,9 @@ function offlinequiz_check_different_result($scannedpage) {
             }
         }
     }
+    if (!$scannedpage->error) {
+        $scannedpage->status = 'ok';
+    }
     return $scannedpage;
 }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -55,7 +56,8 @@ class Title extends AbstractElement
         $text = $element->getText();
         if (is_string($text)) {
             $this->writeText($text);
-        } elseif ($text instanceof \PhpOffice\PhpWord\Element\AbstractContainer) {
+        }
+        if ($text instanceof \PhpOffice\PhpWord\Element\AbstractContainer) {
             $containerWriter = new Container($xmlWriter, $text);
             $containerWriter->write();
         }

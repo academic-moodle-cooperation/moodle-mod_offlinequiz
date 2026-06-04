@@ -42,6 +42,7 @@ $scannedpageid = optional_param('pageid', 0, PARAM_INT);
 $overwrite     = optional_param('overwrite', 0, PARAM_INT);
 $action        = optional_param('action', 'load', PARAM_TEXT);
 $userchanged   = optional_param('userchanged', 0, PARAM_INT);
+$returnurl     = optional_param('returnurl', 'correct', PARAM_ALPHA);
 
 if (!$scannedpage = $DB->get_record('offlinequiz_scanned_pages', ['id' => $scannedpageid])) {
     throw new moodle_exception(
@@ -363,8 +364,11 @@ if ($action == 'cancel') {
         // Delete the old result and create a new one.
         if ($scannedpage->resultid && $oldresult = $DB->get_record('offlinequiz_results', ['id' => $scannedpage->resultid])) {
             $oldresultid = $scannedpage->resultid;
+            if ($oldresult) {
+                $DB->delete_records('offlinequiz_results', ['id' => $oldresultid]);
+            }
             $scannedpage->resultid = 0;
-            $DB->set_field('offlinequiz_scanned_pages', 'resultid', 0, ['id' => $scannedpage->id]);
+            $DB->set_field('offlinequiz_scanned_pages', 'resultid', 0, ['resultid' => $oldresultid]);
         }
 
         // This should create a new result and set the resultid field of the scannedpage.
@@ -894,7 +898,7 @@ if (
                 echo '</p>';
                 echo '<html>';
                 echo '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
-                if ($overwrite) {
+                if ($returnurl == 'review') {
                     echo "<input type=\"button\" value=\"" . get_string('closewindow') .
                             "\" onClick=\"window.opener.location.replace('" .
                             $CFG->wwwroot . '/mod/offlinequiz/review.php?q=' . $offlinequiz->id . '&resultid=' .
@@ -1184,6 +1188,7 @@ echo "</div>\n";
 echo "<input type=\"hidden\" name=\"usernumber\" value=\"$usernumber\">\n";
 echo "<input type=\"hidden\" name=\"groupnumber\" value=\"$groupnumber\">\n";
 echo "<input type=\"hidden\" name=\"overwrite\" value=\"$overwrite\">\n";
+echo "<input type=\"hidden\" name=\"returnurl\" value=\"$returnurl\">\n";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\">\n";
 echo "<input type=\"hidden\" name=\"filename\" value=\"$filename\">\n";
 echo "<input type=\"hidden\" name=\"action\" value=\"update\">\n";

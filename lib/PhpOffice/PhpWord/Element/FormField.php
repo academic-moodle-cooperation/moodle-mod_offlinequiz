@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -35,7 +36,7 @@ class FormField extends Text
     /**
      * Form field name.
      *
-     * @var bool|int|string
+     * @var ?string
      */
     private $name;
 
@@ -53,7 +54,7 @@ class FormField extends Text
     /**
      * Value.
      *
-     * @var bool|int|string
+     * @var null|bool|int|string
      */
     private $value;
 
@@ -105,7 +106,7 @@ class FormField extends Text
     /**
      * Get name.
      *
-     * @return string
+     * @return ?string
      */
     public function getName()
     {
@@ -115,7 +116,7 @@ class FormField extends Text
     /**
      * Set name.
      *
-     * @param bool|int|string $value
+     * @param ?string $value
      *
      * @return self
      */
@@ -153,7 +154,7 @@ class FormField extends Text
     /**
      * Get value.
      *
-     * @return bool|int|string
+     * @return null|bool|int|string
      */
     public function getValue()
     {
@@ -163,7 +164,7 @@ class FormField extends Text
     /**
      * Set value.
      *
-     * @param bool|int|string $value
+     * @param null|bool|int|string $value
      *
      * @return self
      */

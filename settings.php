@@ -112,14 +112,14 @@ if ($ADMIN->fulltree) {
         1
     ));
 
-    // Logo image URL setting.
-    $settings->add(new admin_setting_configtext(
-        'offlinequiz/logourl',
-        get_string('logourl', 'offlinequiz'),
-        get_string('logourldesc', 'offlinequiz'),
-        '',
-        PARAM_URL
-    ));
+    // Logo image setting.
+    $setting = new admin_setting_configstoredfile(
+        'offlinequiz/logo',
+        get_string('logo', 'offlinequiz'),
+        get_string('logodesc', 'offlinequiz'),
+        'image'
+    );
+    $settings->add($setting);
 
     // Admin setting to disable display of copyright statement.
     $settings->add(new admin_setting_configcheckbox(

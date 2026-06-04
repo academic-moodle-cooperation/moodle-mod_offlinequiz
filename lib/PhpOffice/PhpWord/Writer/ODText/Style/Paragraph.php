@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -17,7 +18,10 @@
 
 namespace PhpOffice\PhpWord\Writer\ODText\Style;
 
+use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Shared\Converter;
+use PhpOffice\PhpWord\SimpleType\Jc;
+use PhpOffice\PhpWord\Style;
 
 /**
  * Font style writer.
@@ -26,13 +30,23 @@ use PhpOffice\PhpWord\Shared\Converter;
  */
 class Paragraph extends AbstractStyle
 {
+    private const BIDI_MAP = [
+        Jc::END => Jc::LEFT,
+        Jc::START => Jc::RIGHT,
+    ];
+
+    private const NON_BIDI_MAP = [
+        Jc::START => Jc::LEFT,
+        Jc::END => Jc::RIGHT,
+    ];
+
     /**
      * Write style.
      */
     public function write(): void
     {
         $style = $this->getStyle();
-        if (!$style instanceof \PhpOffice\PhpWord\Style\Paragraph) {
+        if (!$style instanceof Style\Paragraph) {
             return;
         }
         $xmlWriter = $this->getXmlWriter();
@@ -42,7 +56,7 @@ class Paragraph extends AbstractStyle
 
         $xmlWriter->startElement('style:style');
 
-        $styleName = $style->getStyleName();
+        $styleName = (string) $style->getStyleName();
         $styleAuto = false;
         $mpm = '';
         $psm = '';
@@ -60,13 +74,11 @@ class Paragraph extends AbstractStyle
             } elseif (substr($styleName, 0, 2) === 'HD') {
                 $styleAuto = true;
                 $psm = 'Heading_' . substr($styleName, 2);
-                $stylep = \PhpOffice\PhpWord\Style::getStyle($psm);
-                if ($stylep instanceof \PhpOffice\PhpWord\Style\Font) {
-                    if (method_exists($stylep, 'getParagraph')) {
-                        $stylep = $stylep->getParagraph();
-                    }
+                $stylep = Style::getStyle($psm);
+                if ($stylep instanceof Style\Font) {
+                    $stylep = $stylep->getParagraph();
                 }
-                if ($stylep instanceof \PhpOffice\PhpWord\Style\Paragraph) {
+                if ($stylep instanceof Style\Paragraph) {
                     if ($stylep->hasPageBreakBefore()) {
                         $breakbefore = true;
                     }
@@ -111,8 +123,18 @@ class Paragraph extends AbstractStyle
             $xmlWriter->writeAttributeIf($marginTop !== null, 'fo:margin-top', ($marginTop / $twipToPoint) . 'pt');
             $xmlWriter->writeAttributeIf($marginBottom !== null, 'fo:margin-bottom', ($marginBottom / $twipToPoint) . 'pt');
         }
-        $temp = $style->getAlignment();
-        $xmlWriter->writeAttributeIf($temp !== '', 'fo:text-align', $temp);
+        $alignment = $style->getAlignment();
+        $bidi = $style->isBidi();
+        $defaultRtl = Settings::isDefaultRtl();
+        if ($alignment === '' && $bidi !== null) {
+            $alignment = Jc::START;
+        }
+        if ($bidi) {
+            $alignment = self::BIDI_MAP[$alignment] ?? $alignment;
+        } elseif ($defaultRtl !== null) {
+            $alignment = self::NON_BIDI_MAP[$alignment] ?? $alignment;
+        }
+        $xmlWriter->writeAttributeIf($alignment !== '', 'fo:text-align', $alignment);
         $temp = $style->getLineHeight();
         $xmlWriter->writeAttributeIf($temp !== null, 'fo:line-height', ((string) ($temp * 100) . '%'));
         $xmlWriter->writeAttributeIf($style->hasPageBreakBefore() === true, 'fo:break-before', 'page');

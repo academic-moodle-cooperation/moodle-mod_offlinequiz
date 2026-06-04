@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -27,7 +28,7 @@ use PhpOffice\PhpWord\Writer\AbstractWriter;
 abstract class AbstractPart
 {
     /**
-     * @var \PhpOffice\PhpWord\Writer\AbstractWriter
+     * @var \PhpOffice\PhpWord\Writer\RTF
      */
     private $parentWriter;
 
@@ -47,7 +48,7 @@ abstract class AbstractPart
     abstract public function write();
 
     /**
-     * @param \PhpOffice\PhpWord\Writer\AbstractWriter $writer
+     * @param \PhpOffice\PhpWord\Writer\RTF $writer
      */
     public function setParentWriter(?AbstractWriter $writer = null): void
     {
@@ -55,7 +56,7 @@ abstract class AbstractPart
     }
 
     /**
-     * @return \PhpOffice\PhpWord\Writer\AbstractWriter
+     * @return \PhpOffice\PhpWord\Writer\RTF
      */
     public function getParentWriter()
     {
