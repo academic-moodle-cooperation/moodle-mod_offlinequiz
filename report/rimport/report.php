@@ -213,20 +213,53 @@ class offlinequiz_rimport_report extends offlinequiz_default_report {
         }
     }
     /**
-     * @param dirname
-     * @param importfile
+     * @param $dirname
+     * @param $importfile
      */
     private function extract_pdf_to_tiff($dirname, $importfile) {
+        global $DB;
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $importfile);
+        if ($mime !== 'application/pdf') {
+            return [];
+        }
         // Extract each page to a separate file.
         $newfile = "$importfile-%03d.tiff";
-        $handle = popen("convert -type grayscale -density 300 '$importfile' '$newfile'", 'r');
-        fread($handle, 1);
-        while (!feof($handle)) {
-            fread($handle, 1);
+        $cmd = [
+        'convert',
+        '-type',
+        'grayscale',
+        '-density',
+        '300',
+        $importfile,
+        $newfile,
+        ];
+        $proc = proc_open(
+            $cmd,
+            [
+                0 => ['pipe', 'r'],
+                1 => ['pipe', 'w'],
+                2 => ['pipe', 'w'],
+            ],
+            $pipes,
+            $dirname
+        );
+        if (!is_resource($proc)) {
+            return [];
         }
-        pclose($handle);
-        if (count(get_directory_list($dirname)) > 1) {
-            // It worked, remove original.
+        fclose($pipes[0]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        $returncode = proc_close($proc);
+        if ($returncode) {
+            return [];
+        }
+        $files = get_directory_list($dirname);
+        $importfilename = substr($importfile, strrpos($importfile, '/') + 1);
+        if (
+            count(get_directory_list($dirname)) > 1
+            && array_search($importfilename, $files, true) !== false
+        ) {
             unlink($importfile);
         }
         $files = get_directory_list($dirname);

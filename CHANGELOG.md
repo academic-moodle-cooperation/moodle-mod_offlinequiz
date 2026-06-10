@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+4.5.4 
+-----------------
+* [Security] Fixed a remote code execution with uploading arbitrary files. Thanks for the disclosure to https://global.ptsecurity.com/en/
+
 4.5.3
 -----------------
 * [Bug] Fixed that no change in version was possible after restore
