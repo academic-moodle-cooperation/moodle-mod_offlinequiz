@@ -6,6 +6,9 @@ CHANGELOG
 * [Bug] Fixed the look of the controls on the result overview
 * [Bug] Fixed that the order of questions wasn't correct in the single group view in the statistics overview
 
+5.1.1
+-----------------
+* [Security] Fixed a remote code execution with uploading arbitrary files
 
 5.1.0
 -----------------
