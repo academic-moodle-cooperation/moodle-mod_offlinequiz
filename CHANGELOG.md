@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+5.0.7
+-----------------
+* [Security] Fixed a remote code execution with uploading arbitrary files
+
 5.0.6
 -----------------
 * [Bug] Fixed an error with viewing the full report [github #338]
