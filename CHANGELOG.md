@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+5.1.1
+-----------------
+* [Security] Fixed a remote code execution with uploading arbitrary files
+
 5.1.0
 -----------------
 * [Feature] 5.1 compatible version
