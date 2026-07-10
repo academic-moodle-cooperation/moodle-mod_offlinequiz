@@ -549,6 +549,11 @@ table.offlinequizreviewsummary td.cell {
 #page-mod-offlinequiz-createquiz div.notify {
     text-align: center;
 }
+#page-mod-offlinequiz-createquiz pre,
+#page-mod-offlinequiz-createquiz code {
+    overflow: visible;
+    margin-left: 1rem;
+}
 #page-mod-offlinequiz-createquiz div.preview {
     padding: 10px 10px 10px 30px;
     text-align: left;

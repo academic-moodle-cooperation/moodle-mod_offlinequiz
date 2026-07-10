@@ -5,6 +5,7 @@ CHANGELOG
 * [Feature] 5.2 compatible version
 * [Bug] Fixed the look of the controls on the result overview
 * [Bug] Fixed that the order of questions wasn't correct in the single group view in the statistics overview
+* [Bug] Fixed that <code> end <pre> tags had a scroll bar [github #289]
 
 5.1.1
 -----------------
