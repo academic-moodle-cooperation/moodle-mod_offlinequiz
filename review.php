@@ -225,7 +225,7 @@ if (
             if ($isteacher) {
                 $url = new moodle_url(
                     $CFG->wwwroot . '/mod/offlinequiz/correct.php',
-                    ['pageid' => $scannedpage->id, 'overwrite' => 1]
+                    ['pageid' => $scannedpage->id, 'overwrite' => 1, 'returnurl' => 'review']
                 );
                 echo $OUTPUT->action_link(
                     $url,

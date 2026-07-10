@@ -300,7 +300,7 @@ class report extends default_report {
         $queues = $DB->get_records('offlinequiz_queue', ['offlinequizid' => $offlinequiz->id], 'timecreated DESC');
 
         $sql = "SELECT qd.id queuedataid, q.id queueid, qd.status status, qd.filename filename, sp.id scannedpageid,
-                       sp.error error, sp.userkey userkey
+                       sp.error error, sp.userkey userkey, sp.resultid resultid
                   FROM {offlinequiz_queue} q
                   JOIN {offlinequiz_queue_data} qd on q.id = qd.queueid
              LEFT JOIN {offlinequiz_scanned_pages} sp ON sp.queuedataid = qd.id
@@ -419,7 +419,11 @@ class report extends default_report {
                     ['action' => 'download', 'mode' => 'correct', 'queuedataid' => $queuedataid, 'id' => $cm->id]
                 );
                 if ($page->scannedpageid) {
-                    $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
+                    if (property_exists($page, 'resultid')) {
+                        $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid, 'overwrite' => 1]);
+                    } else {
+                        $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
+                    }
                     $filecontext['editurl'] = $OUTPUT->action_link(
                         $editurl,
                         $OUTPUT->pix_icon('t/edit', get_string('queuefilecorrectionhovertext', 'offlinequiz')),
