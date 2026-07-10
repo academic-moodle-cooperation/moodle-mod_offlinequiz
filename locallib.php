@@ -95,10 +95,9 @@ function offlinequiz_print_tabs($offlinequiz, $currenttab, $cm) {
 
     // Get current node.
     $node = $secondarynav->find($currenttab, navigation_node::TYPE_CUSTOM);
-    if (!$node) {
+    if (!$node || !$node->get_siblings()) {
         return;
     }
-
     if (get_config('offlinequiz', 'usetabs')) {
         foreach ($node->get_siblings() as $child) {
             $title = isset($child->text) ? $child->text : get_string($child->key, 'offlinequiz');

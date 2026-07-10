@@ -69,7 +69,7 @@ if ($newurl == '') {
                  WHERE ogq.id IS NULL
                    AND og.offlinequizid = :id";
         $hasmissinggroupquestions = $DB->count_records_sql($sql, ['id' => $offlinequiz->id]);
-        if ($hasmissinggroupquestions) {
+        if ($hasmissinggroupquestions && $navigation->find('tabeditgroupquestions', null)) {
             $newurl = $navigation->find('tabeditgroupquestions', null)->action();
         } else {
             $newurl = $navigation->find('tabpreview', null)->action();
