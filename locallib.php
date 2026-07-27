@@ -2006,6 +2006,10 @@ function offlinequiz_get_math_filters($context, $page = null) {
  * @param mixed $filters
  */
 function offlinequiz_apply_filters($text, $filters) {
+
+    $text = preg_replace('/\\\\begin\{equation\}/i', '\\[', $text);
+    $text = preg_replace('/\\\\end\{equation\}/i', '\\]', $text);
+
     foreach ($filters as $filter) {
         $text = $filter->filter($text);
     }

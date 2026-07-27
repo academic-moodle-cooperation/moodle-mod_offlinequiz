@@ -64,7 +64,7 @@ class offlinequiz_html_translator {
         $disableimgnewlines,
         $format = 'pdf'
     ) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
         require_once($CFG->dirroot . '/filter/tex/lib.php');
         require_once($CFG->dirroot . '/filter/tex/latex.php');
         $file = null;
@@ -153,8 +153,11 @@ class offlinequiz_html_translator {
                                 'name' => 'density']);
                             $background = $DB->get_field('config_plugins', 'value', ['plugin' => 'filter_tex',
                                 'name' => 'latexbackground']);
-                            $texexp = $texcache->rawtext; // The entities are now decoded before inserting to DB.
-                            $latexpath = $latex->render($texexp, $md5, 12, $density, $background);
+                            $texexp = trim($texcache->rawtext); // The entities are now decoded before inserting to DB.
+                            // Remove non breaking spaces.
+                            $texexp = trim(str_replace(" ", "", $texexp));
+                            $texexp = 'f(x)=5x^2+\frac{6a}{c}';
+                            $latexpath = $latex->render($texexp, $parts[1], 12, $density, $background);
                             if ($latexpath) {
                                 copy($latexpath, $teximagefile);
                             }
@@ -167,8 +170,12 @@ class offlinequiz_html_translator {
                     if (!check_dir_exists($CFG->tempdir . "/offlinequiz", true, true)) {
                         throw new \moodle_exception("Could not create data directory");
                     }
-                    copy($teximagefile, $file);
-                    $teximage = true;
+                    if (!file_exists($teximagefile)) {
+                        echo $OUTPUT->notification(get_string('errorcouldnotcreatetex', 'offlinequiz'), 'notifyproblem');
+                    } else {
+                        copy($teximagefile, $file);
+                        $teximage = true;
+                    }
                 } else {
                     // Image file URL.
                     $imageurl = true;

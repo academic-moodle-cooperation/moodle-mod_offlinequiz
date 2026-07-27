@@ -140,8 +140,12 @@ $string['deleteresultcheck'] = 'Do you really want to delete the selected result
 $string['deleteselectedresults'] = 'Delete selected results';
 $string['deletethislist'] = 'Delete this list';
 $string['deleteupdatepdf'] = 'Delete and update PDF-forms';
-$string['disableimgnewlines'] = 'Disable new lines before and after images';
-$string['disableimgnewlines_help'] = 'This option disables new lines before and after images in the pdf question sheets. Warning: This might lead to formatting problems.';
+$string['difficultytitle'] = 'Difficulty';
+$string['difficultytitlea'] = 'Difficulty A';
+$string['difficultytitleb'] = 'Difficulty B';
+$string['difficultytitlediff'] = 'Difference';
+$string['disableimgnewlines'] = 'Disable new lines before and after images or equations (Latex, MathJax, Tex)';
+$string['disableimgnewlines_help'] = 'Enable continuous text for images or equations (Latex, MathJax, Tex). Warning: This might lead to formatting problems.';
 $string['discriminationindex_info'] = 'Since the discrimination index calculates prediction of the question between good and inferior grades it can\'t be calculated if either
 - there are no different responses of the students in this question
 - there are no different grades in the exam';
@@ -171,6 +175,7 @@ $string['editscannedform'] = 'Edit scanned form';
 $string['editthislist'] = 'Edit this list';
 $string['enroluser'] = 'Enrol user';
 $string['erroraccessingreport'] = 'You are not allowed to view this report.';
+$string['errorcouldnotcreatetex'] = 'Coud not create image file for LaTeX formula';
 $string['errormultiuserinlist'] = 'User is more than once listed in attendance lists!';
 $string['errorreport'] = 'Report of import errors';
 $string['evaluated'] = 'Evaluated: ';
