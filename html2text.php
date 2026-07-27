@@ -157,15 +157,6 @@ class offlinequiz_html_translator {
                             $latexpath = $latex->render($texexp, $md5, 12, $density, $background);
                             if ($latexpath) {
                                 copy($latexpath, $teximagefile);
-                            } else {
-                                // Failing that, use mimetex.
-                                $texexp = $texcache->rawtext;
-                                $texexp = str_replace('&lt;', '<', $texexp);
-                                $texexp = str_replace('&gt;', '>', $texexp);
-                                $texexp = preg_replace('!\r\n?!', ' ', $texexp);
-                                $texexp = '\Large ' . $texexp;
-                                $cmd = filter_tex_get_cmd($teximagefile, $texexp);
-                                system($cmd, $status);
                             }
                         }
                     }

@@ -24,8 +24,7 @@
 
 import {call as fetchMany} from 'core/ajax';
 import Notification from 'core/notification';
-import ModalFactory from 'core/modal_factory';
-import ModalEvents from 'core/modal_events';
+import {Alert} from 'core/modal';
 import * as str from 'core/str';
 
 /**
@@ -34,7 +33,7 @@ import * as str from 'core/str';
  * @param {Number} slotId
  * @param {Number} newVersion
  * @param {Boolean} canBeEdited Whether the forms were already created
- * @return {Array} The modified question version
+ * @return {Promise}
  */
 const setQuestionVersion = (slotId, newVersion, canBeEdited) => fetchMany([{
     methodname: 'mod_offlinequiz_set_question_version',
@@ -42,89 +41,83 @@ const setQuestionVersion = (slotId, newVersion, canBeEdited) => fetchMany([{
         slotid: slotId,
         newversion: newVersion,
         canbeedited: canBeEdited
-    }
+    },
 }])[0];
 
-/**
- * Replace the container with a new version.
- *
- * @param {bool} canbeedited  whether the question can be edited
- */
-const registerEventListeners = (canbeedited) => {
-    document.addEventListener('change', e => {
-        if (!e.target.matches('[data-action="mod_offlinequiz-select_slot"][data-slot-id]')) {
+const registerEventListeners = (canBeEdited) => {
+    document.addEventListener('change', async(e) => {
+        const target = e.target;
+
+        if (!target.matches('[data-action="mod_offlinequiz-select_slot"][data-slot-id]')) {
             return;
         }
 
-        const slotId = e.target.dataset.slotId;
-        const newVersion = parseInt(e.target.value);
+        try {
+            const slotId = target.dataset.slotId;
+            const newVersion = Number(target.value);
 
-        setQuestionVersion(slotId, newVersion, canbeedited)
-            .then((response) => {
-                let message = new Object();
-                var langstrings = [
-                    {key: 'qversioncannotupdate', component: 'mod_offlinequiz'},
-                    {key: 'qversionupdated', component: 'mod_offlinequiz'},
-                    {key: 'qversionnumbersdiffer', component: 'mod_offlinequiz'},
-                    {key: 'qversionupdatedwarning', component: 'mod_offlinequiz'},
-                    {key: 'qversionupdateerror', component: 'mod_offlinequiz'},
-                ];
-                str.get_strings(langstrings).done(function(strings) {
-                    if (response.result) { // If the question was updated.
-                        // If the number of answers are the same but the forms are already created, we need a warning.
-                        if (!response.answersdiffer && !canbeedited) {
-                            message.title = strings[1];
-                            message.body = strings[3];
-                        } else {
-                            message.title = null;
-                        }
-                    } else {
-                        if (response.answersdiffer && !canbeedited) {
-                            // If the version was not updated because the numbers of answers differ and the forms are created.
-                            message.title = strings[0];
-                            message.body = strings[2];
-                        } else {
-                            // If the version was not updated because of some other error.
-                            message.title = strings[0];
-                            message.body = strings[4];
-                        }
-                    }
+            const response = await setQuestionVersion(slotId, newVersion, canBeEdited);
 
-                    if (message.title) {
-                        ModalFactory.create({
-                            type: ModalFactory.types.ALERT,
-                            title: message.title,
-                            body: message.body
-                        }).done(function(modal) {
-                            var root = modal.getRoot();
-                            root.on(ModalEvents.cancel, function() {
-                                location.reload(true);
-                            });
-                            modal.show();
-                        });
-                    } else {
-                        location.reload(true);
-                    }
+            const strings = await str.get_strings([
+                {key: 'qversioncannotupdate', component: 'mod_offlinequiz'},
+                {key: 'qversionupdated', component: 'mod_offlinequiz'},
+                {key: 'qversionnumbersdiffer', component: 'mod_offlinequiz'},
+                {key: 'qversionupdatedwarning', component: 'mod_offlinequiz'},
+                {key: 'qversionupdateerror', component: 'mod_offlinequiz'}
+            ]);
+
+            let title = null;
+            let body = null;
+
+            if (response.result) {
+                // Updated successfully.
+                if (!response.answersdiffer && !canBeEdited) {
+                    title = strings[1];
+                    body = strings[3];
+                }
+            } else if (response.answersdiffer && !canBeEdited) {
+                // Update prevented because answer count differs.
+                title = strings[0];
+                body = strings[2];
+            } else {
+                // Generic update error.
+                title = strings[0];
+                body = strings[4];
+            }
+
+            if (title) {
+                const modal = await Alert.create({
+                    title,
+                    body,
                 });
-                return;
-            })
-            .catch(Notification.exception);
+
+                modal.getRoot().on('hidden.bs.modal', () => {
+                    window.location.reload();
+                });
+
+                modal.show();
+            } else {
+                window.location.reload();
+            }
+        } catch (error) {
+            Notification.exception(error);
+        }
     });
 };
 
-/** @property {Boolean} eventsRegistered If the event has been registered or not */
 let eventsRegistered = false;
 
 /**
- * Entrypoint of the js.
+ * Entrypoint.
  *
- * @param {number} slotid the id of the slot
- * @param {bool} canbeedited whether the forms have been created already
+ * @param {number} slotid
+ * @param {boolean} canBeEdited
  */
-export const init = (slotid, canbeedited) => {
+export const init = (slotid, canBeEdited) => {
     if (eventsRegistered) {
         return;
     }
 
-    registerEventListeners(canbeedited);
+    eventsRegistered = true;
+    registerEventListeners(canBeEdited);
 };

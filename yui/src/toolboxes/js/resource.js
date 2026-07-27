@@ -175,49 +175,54 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      */
     // eslint-disable-next-line camelcase
     delete_with_confirmation: function(ev, button, activity) {
-        // Prevent the default button action.
         ev.preventDefault();
 
-        // Get the element we're working on.
         var element = activity,
-            // Create confirm string (different if element has or does not have name).
-            confirmstring = '',
-            qtypename = M.util.get_string('pluginname',
-                        'qtype_' + element.getAttribute('class').match(/qtype_([^\s]*)/)[1]);
-        confirmstring = M.util.get_string('confirmremovequestion', 'offlinequiz', qtypename);
+            qtypename = M.util.get_string(
+                'pluginname',
+                'qtype_' + element.getAttribute('class').match(/qtype_([^\s]*)/)[1]
+            ),
+            confirmstring = M.util.get_string(
+                'confirmremovequestion',
+                'offlinequiz',
+                qtypename
+            );
 
-        // Create the confirmation dialogue.
-        var confirm = new M.core.confirm({
-            question: confirmstring,
-            modal: true
-        });
+        require(['core/notification'], function(Notification) {
 
-        // If it is confirmed.
-        confirm.on('complete-yes', function() {
+            Notification.confirm(
+                M.util.get_string('confirm', 'moodle'),
+                confirmstring,
+                M.util.get_string('yes', 'moodle'),
+                M.util.get_string('no', 'moodle'),
+                function() {
 
-            var spinner = this.add_spinner(element);
-            var data = {
-                'class': 'resource',
-                'action': 'DELETE',
-                'id': Y.Moodle.mod_offlinequiz.util.slot.getId(element)
-            };
-            this.send_request(data, spinner, function(response) {
-                if (response.deleted) {
-                    // Actually remove the element.
-                    Y.Moodle.mod_offlinequiz.util.slot.remove(element);
-                    this.reorganise_edit_page();
-                    if (M.core.actionmenu && M.core.actionmenu.instance) {
-                        M.core.actionmenu.instance.hideMenu();
-                    }
-                } else {
-                    window.location.reload(true);
-                }
-            });
+                    var spinner = this.add_spinner(element);
 
-        }, this);
+                    var data = {
+                        'class': 'resource',
+                        'action': 'DELETE',
+                        'id': Y.Moodle.mod_offlinequiz.util.slot.getId(element)
+                    };
+
+                    this.send_request(data, spinner, function(response) {
+                        if (response.deleted) {
+                            Y.Moodle.mod_offlinequiz.util.slot.remove(element);
+                            this.reorganise_edit_page();
+                        } else {
+                            window.location.reload(true);
+                        }
+                    });
+
+                }.bind(this)
+
+            );
+
+        }.bind(this));
 
         return this;
     },
+
 
 
     /**
