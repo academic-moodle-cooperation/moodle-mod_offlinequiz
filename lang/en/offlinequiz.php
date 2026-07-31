@@ -228,6 +228,8 @@ $string['formsheetsettings'] = 'Form Settings';
 $string['formspreview'] = 'Preview';
 $string['fromquestionbank'] = 'from question bank';
 $string['furtheroptionsheading'] = 'Further Options';
+// Lang string used by module.js.
+$string['functiondisabledbysecuremode'] = 'That functionality is currently disabled';
 $string['grade'] = 'Grade';
 $string['gradedscannedform'] = 'Scanned form with grades';
 $string['gradeiszero'] = 'Note: The maximum grade for this offline quiz is 0 points!';
@@ -754,6 +756,8 @@ $string['tabstatistics'] = 'Statistics';
 $string['temporaryfiledeletiontask'] = 'Delete temporary files';
 $string['testdate'] = 'Test date';
 $string['theattempt'] = 'The attempt';
+// The langstring timesup is used by module.js.
+$string['timesup'] = 'Time is up!';
 $string['totalmarksx'] = 'Total of marks: {$a}';
 $string['tutorial'] = 'Tutorial for offline quizzes';
 $string['tutorial:alt:answerform'] = 'The answer form of the offline quiz';
