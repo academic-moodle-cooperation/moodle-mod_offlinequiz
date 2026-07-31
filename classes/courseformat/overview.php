@@ -132,7 +132,10 @@ class overview extends \core_courseformat\activityoverviewbase {
             }
         }
         $result = $this->get_result();
-        if ($result && offlinequiz_results_open($this->offlinequiz) && has_capability('mod/offlinequiz:attempt', $this->modulecontext)) {
+        if (
+            $result && offlinequiz_results_open($this->offlinequiz)
+            && has_capability('mod/offlinequiz:attempt', $this->modulecontext)
+        ) {
             $options = offlinequiz_get_review_options($this->offlinequiz, $result, $this->modulecontext);
             if (
                 $result->timefinish && ($options->attempt == \question_display_options::VISIBLE ||

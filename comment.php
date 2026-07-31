@@ -89,7 +89,10 @@ if (data_submitted() && confirm_sesskey()) {
         }
         if ($mark) {
             if ($mark > $maxmark) {
-                echo $OUTPUT->notification(get_string('savemanualgradingfailed', 'offlinequiz'), \core\output\notification::NOTIFY_ERROR);
+                echo $OUTPUT->notification(
+                    get_string('savemanualgradingfailed', 'offlinequiz'),
+                    \core\output\notification::NOTIFY_ERROR
+                );
             } else {
                 $transaction = $DB->start_delegated_transaction();
                 $quba->process_all_actions(time());

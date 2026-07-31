@@ -634,7 +634,7 @@ function xmldb_offlinequiz_upgrade($oldversion = 0) {
             }
         }
 
-        // Mark upgrade complete
+        // Mark upgrade complete.
         upgrade_plugin_savepoint(true, 2026031801, 'mod', 'offlinequiz');
     }
 

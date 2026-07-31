@@ -76,7 +76,40 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         // Introduction.
         $this->standard_intro_elements();
 
+        $mform->addElement('header', 'testsettingsheader', get_string('testsettingsheader', 'offlinequiz'));
+        $mform->setExpanded(headername: 'testsettingsheader', expanded: true);
+
         $mform->addElement('date_time_selector', 'time', get_string("quizdate", "offlinequiz"), ['optional' => true]);
+
+        $mform->addElement('selectyesno', 'participantsusage', get_string('participantsusage', 'offlinequiz'));
+        $mform->addHelpButton('participantsusage', 'participantsusage', 'offlinequiz');
+        $mform->setDefault('participantsusage', $offlinequizconfig->defaultparticipantsusage);
+
+        // Option for show tutorial.
+        $mform->addElement('selectyesno', 'showtutorial', get_string("showtutorial", "offlinequiz"));
+        $mform->addHelpButton('showtutorial', "showtutorial", "offlinequiz");
+        if ($this->_cm) {
+            $mform->addElement('static', 'showtutorialdescription', '', get_string("showtutorialdescription", "offlinequiz") .
+                '<br/><a href="' . $CFG->wwwroot . '/mod/offlinequiz/tutorial.php?id=' .
+                $this->_cm->id . '">' . "$CFG->wwwroot/mod/offlinequiz/tutorial.php?id=" . $this->_cm->id . '</a>');
+        }
+
+        $hasevalationrights = false;
+        if ($offlinequiz) {
+            $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
+            $context = context_module::instance($cm->id);
+            $hasevalationrights = $offlinequizconfig->experimentalevaluation &&
+            has_capability('mod/offlinequiz:changeevaluationmode', $context);
+        }
+        if (is_siteadmin() || $hasevalationrights) {
+            $mform->addElement('selectyesno', 'experimentalevaluation', get_string('experimentalevaluation', 'offlinequiz'));
+            $mform->addHelpButton('experimentalevaluation', 'experimentalevaluation', 'offlinequiz');
+            $mform->setDefault('experimentalevaluation', 0);
+        }
+
+        $mform->addElement('header', 'qandabehaviourheader', get_string('qandabehaviourheader', 'offlinequiz'));
+        $mform->setExpanded(headername: 'qandabehaviourheader', expanded: true);
+
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             for ($i = 1; $i <= 6; $i++) {
                 $groupmenu[$i] = "$i";
@@ -93,7 +126,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         } else {
             $attribs = ' disabled="disabled"';
         }
-
         $mform->addElement('selectyesno', 'shufflequestions', get_string("shufflequestions", "offlinequiz"), $attribs);
         $mform->setDefault('shufflequestions', $offlinequizconfig->shufflequestions);
 
@@ -101,51 +133,18 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('shuffleanswers', 'shufflewithin', 'offlinequiz');
         $mform->setDefault('shuffleanswers', $offlinequizconfig->shuffleanswers);
 
-        $mform->addElement('selectyesno', 'participantsusage', get_string('participantsusage', 'offlinequiz'));
-        $mform->addHelpButton('participantsusage', 'participantsusage', 'offlinequiz');
-        $mform->setDefault('participantsusage', $offlinequizconfig->defaultparticipantsusage);
+        // ------------------------------------------------------------------------------
+        $mform->addElement('header', 'layoutheader', get_string('formsheetsettings', 'offlinequiz'));
+        $mform->setExpanded(headername: 'layoutheader', expanded: true);
 
-        // Option for show tutorial.
-        $mform->addElement('selectyesno', 'showtutorial', get_string("showtutorial", "offlinequiz"));
-        $mform->addHelpButton('showtutorial', "showtutorial", "offlinequiz");
-        if ($this->_cm) {
-            $mform->addElement('static', 'showtutorialdescription', '', get_string("showtutorialdescription", "offlinequiz") .
-                '<br/><a href="' . $CFG->wwwroot . '/mod/offlinequiz/tutorial.php?id=' .
-                $this->_cm->id . '">' . "$CFG->wwwroot/mod/offlinequiz/tutorial.php?id=" . $this->_cm->id . '</a>');
-        }
-        unset($options);
         $options = [];
-        for ($i = 0; $i <= 3; $i++) {
-            $options[$i] = $i;
-        }
-        $mform->addElement('select', 'decimalpoints', get_string('decimalplaces', 'offlinequiz'), $options);
-        $mform->addHelpButton('decimalpoints', 'decimalplaces', 'offlinequiz');
-        $mform->setDefault('decimalpoints', $offlinequizconfig->decimalpoints);
-        $hasevalationrights = false;
-        if ($offlinequiz) {
-            $cm = get_coursemodule_from_instance("offlinequiz", $offlinequiz->id, $offlinequiz->course);
-            $context = context_module::instance($cm->id);
-            $hasevalationrights = $offlinequizconfig->experimentalevaluation &&
-            has_capability('mod/offlinequiz:changeevaluationmode', $context);
-        }
-        if (is_siteadmin() || $hasevalationrights) {
-                $mform->addElement('selectyesno', 'experimentalevaluation', get_string('experimentalevaluation', 'offlinequiz'));
-                $mform->addHelpButton('experimentalevaluation', 'experimentalevaluation', 'offlinequiz');
-                $mform->setDefault('experimentalevaluation', 0);
-        }
-        // -------------------------------------------------------------------------
-        $this->standard_grading_coursemodule_elements();
+        $options[OFFLINEQUIZ_PDF_FORMAT] = 'PDF';
+        $options[OFFLINEQUIZ_DOCX_FORMAT] = 'DOCX';
+        $options[OFFLINEQUIZ_LATEX_FORMAT] = 'LATEX';
+        $mform->addElement('select', 'fileformat', get_string('fileformat', 'offlinequiz'), $options, $attribs);
+        $mform->addHelpButton('fileformat', 'fileformat', 'offlinequiz');
+        $mform->setDefault('fileformat', 0);
 
-        $mform->removeElement('grade');
-        if (property_exists($this->current, 'grade')) {
-            $currentgrade = $this->current->grade;
-        } else {
-            $currentgrade = 0;
-        }
-        $mform->addElement('hidden', 'grade', $currentgrade);
-        $mform->setType('grade', PARAM_FLOAT);
-        // -------------------------------------------------------------------------
-        $mform->addElement('header', 'layouthdr', get_string('formsheetsettings', 'offlinequiz'));
         require_once($CFG->dirroot . '/lib/pdflib.php');
         $pdf = new pdf();
         if ($pdf) {
@@ -154,7 +153,7 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $fontfamilies = [];
             $fontfamilies['fontfamilyfreserif'] = get_string('fontfamilyfreeserif', 'offlinequiz');
         }
-        $options = [];
+        unset($options);
         foreach ($fontfamilies as $name => $values) {
             if (get_string_manager()->string_exists('fontfamily' . $name, 'offlinequiz')) {
                 $options[$name] = get_string('fontfamily' . $name, 'offlinequiz');
@@ -164,22 +163,23 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'pdffont', get_string('pdffont', 'offlinequiz'), $options, $attribs);
         $mform->addHelpButton('pdffont', 'pdffont', 'offlinequiz');
+        $mform->setDefault('pdffont', offlinequiz_get_pdffont($offlinequiz));
 
-        unset($options);
-        $options[610] = get_string("darkgray", "offlinequiz");
-        $options[640] = get_string("lightgray", "offlinequiz");
-        $options[670] = get_string("standard", "offlinequiz");
-        $options[680] = get_string("white", "offlinequiz");
-        $options[700] = get_string("pearlywhite", "offlinequiz");
-        $mform->addElement('select', 'papergray', get_string('papergray', 'offlinequiz'), $options);
-        $mform->addHelpButton('papergray', 'papergray', 'offlinequiz');
-        $mform->setDefault('papergray', $offlinequizconfig->papergray);
+        $options = [
+            8 => 8,
+            9 => 9,
+            10 => 10,
+            11 => 11,
+            12 => 12,
+            14 => 14,
+        ];
+        $mform->addElement('select', 'fontsize', get_string('fontsize', 'offlinequiz'), $options, $attribs);
+        $mform->setDefault('fontsize', $offlinequizconfig->defaultpdffontsize);
 
         $mform->addElement('selectyesno', 'printstudycodefield', get_string('printstudycodefield', 'offlinequiz'), $attribs);
         $mform->addHelpButton('printstudycodefield', 'printstudycodefield', 'offlinequiz');
         $mform->setDefault('printstudycodefield', $offlinequizconfig->printstudycodefield);
 
-        // ------------------------------------------------------------------------------
         if (!$offlinequiz || !$offlinequiz->docscreated) {
             $mform->addElement(
                 'editor',
@@ -194,26 +194,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->setType('pdfintro', PARAM_RAW);
         $mform->addHelpButton('pdfintro', 'pdfintro', 'offlinequiz');
 
-        $mform->setDefault('pdffont', offlinequiz_get_pdffont($offlinequiz));
-        $options = [
-           8 => 8,
-           9 => 9,
-           10 => 10,
-           11 => 11,
-           12 => 12,
-           14 => 14,
-        ];
-        $mform->addElement('select', 'fontsize', get_string('fontsize', 'offlinequiz'), $options, $attribs);
-        $mform->setDefault('fontsize', $offlinequizconfig->defaultpdffontsize);
-
-        $options = [];
-        $options[OFFLINEQUIZ_PDF_FORMAT] = 'PDF';
-        $options[OFFLINEQUIZ_DOCX_FORMAT] = 'DOCX';
-        $options[OFFLINEQUIZ_LATEX_FORMAT] = 'LATEX';
-        $mform->addElement('select', 'fileformat', get_string('fileformat', 'offlinequiz'), $options, $attribs);
-        $mform->addHelpButton('fileformat', 'fileformat', 'offlinequiz');
-        $mform->setDefault('fileformat', 0);
-
         $mform->addElement('selectyesno', 'showgrades', get_string("showgrades", "offlinequiz"), $attribs);
         $mform->addHelpButton('showgrades', "showgrades", "offlinequiz");
 
@@ -227,6 +207,34 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'disableimgnewlines', get_string("disableimgnewlines", "offlinequiz"), $attribs);
         $mform->addHelpButton('disableimgnewlines', 'disableimgnewlines', 'offlinequiz');
         $mform->setDefault('disableimgnewlines', $offlinequizconfig->disableimgnewlines);
+
+        unset($options);
+        $options[610] = get_string("darkgray", "offlinequiz");
+        $options[640] = get_string("lightgray", "offlinequiz");
+        $options[670] = get_string("standard", "offlinequiz");
+        $options[680] = get_string("white", "offlinequiz");
+        $options[700] = get_string("pearlywhite", "offlinequiz");
+        $mform->addElement('select', 'papergray', get_string('papergray', 'offlinequiz'), $options);
+        $mform->addHelpButton('papergray', 'papergray', 'offlinequiz');
+        $mform->setDefault('papergray', $offlinequizconfig->papergray);
+
+        $this->standard_grading_coursemodule_elements();
+        $mform->removeElement('grade');
+        if (property_exists($this->current, 'grade')) {
+            $currentgrade = $this->current->grade;
+        } else {
+            $currentgrade = 0;
+        }
+        $mform->addElement('hidden', 'grade', $currentgrade);
+        $mform->setType('grade', PARAM_FLOAT);
+
+        $options = [];
+        for ($i = 0; $i <= 3; $i++) {
+            $options[$i] = $i;
+        }
+        $mform->addElement('select', 'decimalpoints', get_string('decimalplaces', 'offlinequiz'), $options);
+        $mform->addHelpButton('decimalpoints', 'decimalplaces', 'offlinequiz');
+        $mform->setDefault('decimalpoints', $offlinequizconfig->decimalpoints);
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'reviewoptionshdr', get_string("reviewoptions", "offlinequiz"));
@@ -296,7 +304,6 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         $mform->disabledIf('specificfeedbackclosed', 'attemptclosed');
         $mform->disabledIf('generalfeedbackclosed', 'attemptclosed');
         $mform->disabledIf('rightanswerclosed', 'attemptclosed');
-        $mform->setExpanded('reviewoptionshdr');
         // Try to insert student view for teachers.
 
         $language = current_language();
@@ -305,8 +312,9 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
             $language = 'en';
         }
 
-        $mform->addElement('html', '<input id="showviewbutton" type="button" class="btn btn-secondary" value="' .
-                get_string('showstudentview', 'offlinequiz') . '" onClick="showStudentView(); return false;">');
+        $mform->addElement('html', '<div class="row"><div class="col-md-3 col-form-label d-flex pb-0 pe-md-0"></div>' .
+                '<div class="col-md-9 d-flex flex-wrap align-items-start felement"><input id="showviewbutton" type="button" class="btn btn-secondary" value="' .
+                get_string('showstudentview', 'offlinequiz') . '" onClick="showStudentView(); return false;"></div></div>');
         $mform->addElement('html', '<div class="Popup"><center><input type="button" class="closePopup btn btn-primary"' .
                 ' onClick="closePopup(); return false;" value="' . get_string('closestudentview', 'offlinequiz') .
                 '"/></center><br/></div>');

@@ -27,7 +27,7 @@ Feature: Within a moodle instance, a teacher should be able to create all forms 
     And I am on "Course 1" course homepage
     And I switch editing mode on
     And I add a offlinequiz activity to course "Course 1" section "1" and I fill the form with:
-      | Offline quiz name | testofflinequiz |
+      | Name | testofflinequiz |
       | Description | Add an offline quiz and multiple choice questions to create files for 6 groups |
       | Number of groups | 6 |
     And I am on the "testofflinequiz" "offlinequiz activity" page logged in as teacher1

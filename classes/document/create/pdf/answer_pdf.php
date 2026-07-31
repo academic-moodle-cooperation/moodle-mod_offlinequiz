@@ -71,7 +71,7 @@ class answer_pdf extends offlinequiz_pdf {
         $context = \context_system::instance();
         $fs = get_file_storage();
 
-        // Get stored logo file
+        // Get stored logo file.
         $files = $fs->get_area_files(
             $context->id,
             'offlinequiz',
@@ -86,7 +86,7 @@ class answer_pdf extends offlinequiz_pdf {
 
             $filepath = $file->copy_content_to_temp();
 
-            // Now reuse your existing logic
+            // Now reuse your existing logic.
             if (getimagesize($filepath) !== false) {
                 $aspectratio = $this->get_logo_aspect_ratio($filepath);
 
