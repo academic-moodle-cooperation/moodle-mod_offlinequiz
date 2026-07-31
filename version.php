@@ -32,4 +32,4 @@ $plugin->version   = 2026031801;
 $plugin->requires  = 2025100600;
 $plugin->component = 'mod_offlinequiz';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = "v5.1.0";
+$plugin->release   = "v5.1.1";

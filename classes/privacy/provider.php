@@ -267,52 +267,59 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid): contextlist {
         global $DB;
-        $columns = $DB->get_columns("user");
+
         $offlinequizconfig = get_config('offlinequiz');
-        $type = $columns[$offlinequizconfig->ID_field]->type;
-        $offlinequizconfig = get_config('offlinequiz');
-        // Fetch all choice answers.
-        $sql = "SELECT c.id FROM {context} c
-        JOIN {course_modules} cm ON cm.id = c.instanceid
-        JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
-        JOIN {offlinequiz} oq ON cm.instance = oq.id
-        WHERE EXISTS (
-                SELECT 1
-                FROM {offlinequiz_p_lists} l
-                JOIN {offlinequiz_participants} p ON l.id = p.listid
-                WHERE userid = :participantsuserid
-                AND l.offlinequizid = oq.id)
-        OR EXISTS (
-                SELECT 1
-                FROM {offlinequiz_scanned_p_pages} p
-                JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
-                WHERE c.userid = :choiceuserid
-                AND p.offlinequizid = oq.id)
-        OR EXISTS (
-                SELECT 1
-                FROM {offlinequiz_queue} q
-                WHERE importuserid = :queueuserid
-                AND q.offlinequizid = oq.id)
-        OR EXISTS (
-                SELECT 1
-                FROM {offlinequiz_scanned_pages} sp";
-        if ($type == "int") {
-            $sql  .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = " . $DB->sql_cast_char2int("sp.userkey");
-        } else {
-            $sql .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey";
-        }
-               $sql .= " WHERE u.id = :scannedpageuserid
-                AND sp.offlinequizid = oq.id)";
+        $idfield = $offlinequizconfig->ID_field;
+
+        $userkeyvalue = $DB->get_field('user', $idfield, ['id' => $userid]);
+
+        $branches = [
+                "SELECT l.offlinequizid
+           FROM {offlinequiz_p_lists} l
+           JOIN {offlinequiz_participants} p ON p.listid = l.id
+          WHERE p.userid = :participantsuserid",
+
+                "SELECT spp.offlinequizid
+           FROM {offlinequiz_scanned_p_pages} spp
+           JOIN {offlinequiz_p_choices} pc ON pc.scannedppageid = spp.id
+          WHERE pc.userid = :choiceuserid",
+
+                "SELECT q.offlinequizid
+           FROM {offlinequiz_queue} q
+          WHERE q.importuserid = :queueuserid",
+        ];
 
         $params = [
-          'participantsuserid'        => $userid,
-          'choiceuserid'              => $userid,
-          'queueuserid'               => $userid,
-          'scannedpageuserid'         => $userid,
+                'participantsuserid' => $userid,
+                'choiceuserid'       => $userid,
+                'queueuserid'        => $userid,
+                'contextlevel'       => CONTEXT_MODULE,
         ];
+
+        if ($userkeyvalue !== null && $userkeyvalue !== '' && $userkeyvalue !== false) {
+            $columns = $DB->get_columns('user');
+            if ($columns[$idfield]->type == 'int') {
+                $useridfieldsql = $DB->sql_cast_char2int('sp.userkey');
+            } else {
+                $useridfieldsql = 'sp.userkey';
+            }
+            $branches[] = "SELECT sp.offlinequizid
+                         FROM {offlinequiz_scanned_pages} sp
+                        WHERE $useridfieldsql = :scannedpageuserkey";
+            $params['scannedpageuserkey'] = $userkeyvalue;
+        }
+
+        $userquizsql = implode("\n UNION \n", $branches);
+
+        $sql = "SELECT c.id
+              FROM ( $userquizsql ) uq
+              JOIN {course_modules} cm ON cm.instance = uq.offlinequizid
+              JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
+              JOIN {context} c ON c.instanceid = cm.id
+                              AND c.contextlevel = :contextlevel";
+
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
-
         return $contextlist;
     }
 
@@ -323,60 +330,76 @@ class provider implements
      */
     public static function export_user_data(approved_contextlist $contextlist) {
         global $DB;
-        $offlinequizconfig = get_config('offlinequiz');
+
         if (empty($contextlist->get_contextids())) {
             return;
         }
 
-        $columns = $DB->get_columns("user");
-        $type = $columns[$offlinequizconfig->ID_field]->type;
+        $offlinequizconfig = get_config('offlinequiz');
+        $idfield = $offlinequizconfig->ID_field;
         $user = $contextlist->get_user();
 
-        [$contextsql, $contextparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
-        $sql = "SELECT DISTINCT c.id contextid, cm.instance offlinequizid
-        FROM {context} c
-        JOIN {course_modules} cm ON cm.id = c.instanceid
-        JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz' AND contextlevel = 70
-                JOIN {offlinequiz} oq ON cm.instance = oq.id
-        WHERE EXISTS (
-                SELECT 1
-                FROM {offlinequiz_p_lists} l
-                JOIN {offlinequiz_participants} p ON l.id = p.listid
-                WHERE userid = :participantsuserid
-                AND l.offlinequizid = oq.id)
-        OR EXISTS (
-                SELECT 1
-                FROM {offlinequiz_scanned_p_pages} p
-                JOIN {offlinequiz_p_choices} c ON p.id = c.scannedppageid
-                WHERE c.userid = :choiceuserid
-                AND p.offlinequizid = oq.id)
-        OR EXISTS (
-                SELECT 1
-                FROM {offlinequiz_queue} q
-                WHERE importuserid = :queueuserid
-                AND q.offlinequizid = oq.id)
-        OR EXISTS (
-                SELECT 1
-                FROM {offlinequiz_scanned_pages} sp";
-        if ($type == "int") {
-            $sql  .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = " . $DB->sql_cast_char2int("sp.userkey");
-        } else {
-            $sql .= " JOIN {user} u ON u." . $offlinequizconfig->ID_field . " = sp.userkey";
-        }
-               $sql .= " WHERE u.id = :scannedpageuserid
-                AND sp.offlinequizid = oq.id)
-        AND (c.id {$contextsql})";
+        $userkeyvalue = $DB->get_field('user', $idfield, ['id' => $user->id]);
+
+        [$contextsql, $contextparams] = $DB->get_in_or_equal(
+            $contextlist->get_contextids(),
+            SQL_PARAMS_NAMED,
+            'ctx'
+        );
+
+        $branches = [
+                "SELECT l.offlinequizid
+           FROM {offlinequiz_p_lists} l
+           JOIN {offlinequiz_participants} p ON p.listid = l.id
+          WHERE p.userid = :participantsuserid",
+
+                "SELECT spp.offlinequizid
+           FROM {offlinequiz_scanned_p_pages} spp
+           JOIN {offlinequiz_p_choices} pc ON pc.scannedppageid = spp.id
+          WHERE pc.userid = :choiceuserid",
+
+                "SELECT q.offlinequizid
+           FROM {offlinequiz_queue} q
+          WHERE q.importuserid = :queueuserid",
+        ];
 
         $params = [
-                'participantsuserid'        => $user->id,
-                'choiceuserid'              => $user->id,
-                'queueuserid'               => $user->id,
-                'scannedpageuserid'         => $user->id,
-        ] + $contextparams;
+                        'participantsuserid' => $user->id,
+                        'choiceuserid'       => $user->id,
+                        'queueuserid'        => $user->id,
+                        'contextlevel'       => CONTEXT_MODULE,
+                ] + $contextparams;
+
+        if ($userkeyvalue !== null && $userkeyvalue !== '' && $userkeyvalue !== false) {
+            $columns = $DB->get_columns('user');
+            if ($columns[$idfield]->type == 'int') {
+                $userkeysql = $DB->sql_cast_char2int('sp.userkey');
+            } else {
+                $userkeysql = 'sp.userkey';
+            }
+            $branches[] = "SELECT sp.offlinequizid
+                         FROM {offlinequiz_scanned_pages} sp
+                        WHERE $userkeysql = :scannedpageuserkey";
+            $params['scannedpageuserkey'] = $userkeyvalue;
+        }
+
+        $userquizsql = implode("\n UNION \n", $branches);
+
+        $sql = "SELECT c.id AS contextid, cm.instance AS offlinequizid
+              FROM ( $userquizsql ) uq
+              JOIN {course_modules} cm ON cm.instance = uq.offlinequizid
+              JOIN {modules} m ON m.id = cm.module AND m.name = 'offlinequiz'
+              JOIN {context} c ON c.instanceid = cm.id
+                              AND c.contextlevel = :contextlevel
+             WHERE c.id {$contextsql}";
 
         $offlinequizes = $DB->get_records_sql($sql, $params);
         foreach ($offlinequizes as $offlinequiz) {
-            static::export_offlinequiz($offlinequiz->offlinequizid, \context::instance_by_id($offlinequiz->contextid), $user->id);
+            static::export_offlinequiz(
+                $offlinequiz->offlinequizid,
+                \context::instance_by_id($offlinequiz->contextid),
+                $user->id
+            );
         }
     }
     /**
