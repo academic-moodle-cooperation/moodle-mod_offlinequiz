@@ -1629,7 +1629,6 @@ function mod_offlinequiz_output_fragment_offlinequiz_question_bank($args): strin
 
     $viewclass = \mod_offlinequiz\question\bank\custom_view::class;
     $extraparams['view'] = $viewclass;
-
     // We need the quiz modid to POST back to.
     $extraparams['quizcmid'] = clean_param($args['quizcmid'], PARAM_INT);
 

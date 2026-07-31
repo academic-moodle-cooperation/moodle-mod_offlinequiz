@@ -91,7 +91,11 @@ class custom_view extends \core_question\local\bank\view {
         $this->init_columns($this->wanted_columns(), $this->heading_column());
         $this->pagesize = self::DEFAULT_PAGE_SIZE;
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
-        [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
+        if (array_key_exists('quizcmid', $extraparams)) {
+            [$this->offlinequiz, ] = get_module_from_cmid($extraparams['quizcmid']);
+        } else {
+            [$this->offlinequiz, ] = get_module_from_cmid($cm->id);
+        }
         $this->offlinequiz->questions = offlinequiz_get_group_question_ids($this->offlinequiz, $extraparams['groupid']);
         $this->offlinequiz->questionbankentries =
             offlinequiz_get_group_questionbankentry_ids($this->offlinequiz, $extraparams['groupid']);

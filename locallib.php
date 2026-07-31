@@ -402,11 +402,10 @@ function offlinequiz_get_group_questionbankentry_ids($offlinequiz, $groupid) {
     $sql = "SELECT qv.questionbankentryid
               FROM {offlinequiz_group_questions} ogq
               JOIN {question_versions} qv ON qv.questionid = ogq.questionid
-             WHERE offlinequizid = :offlinequizid
-               AND offlinegroupid = :offlinegroupid
+             WHERE offlinegroupid = :offlinegroupid
           ORDER BY slot ASC ";
 
-    $params = ['offlinequizid' => $offlinequiz->id, 'offlinegroupid' => $groupid];
+    $params = ['offlinegroupid' => $groupid];
     $questionbankentryids = $DB->get_fieldset_sql($sql, $params);
 
     return $questionbankentryids;
