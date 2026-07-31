@@ -26,6 +26,7 @@
  */
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
+use Behat\Mink\Exception\ExpectationException;
 use function PHPUnit\Framework\throwException;
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../../question/tests/behat/behat_question_base.php');
@@ -96,7 +97,7 @@ class behat_mod_offlinequiz extends behat_question_base {
      *
      * @When /^I duplicate the following activities:$/
      *
-     * @param string $entityname The name of the offlinequiz
+     * @param string $data The name of the offlinequizes
      * @param TableNode $data
      */
     #[\core\attribute\example('I duplicate the following activities:
@@ -113,5 +114,86 @@ class behat_mod_offlinequiz extends behat_question_base {
             $this->execute('behat_general::i_click_on', [ $xpath, 'xpath_element']);
         }
         $this->execute('behat_general::i_click_on', [get_string('duplicate'), 'button']);
+    }
+
+    /**
+     * Verifies that the given questions cannot be added.
+     *
+     * @Then /^I cannot add the following questions:$/
+     *
+     * @param TableNode $table The table of questions that needs to be checked.
+     */
+    public function i_cannot_add_the_following_questions(TableNode $table) {
+        // Open the question bank dialog once.
+        $this->execute('behat_general::i_click_on', ['Add', 'link']);
+        $this->execute('behat_general::i_click_on', ['from question bank', 'link']);
+
+        foreach ($table->getHash() as $row) {
+            $this->execute('behat_general::i_click_on', ['Switch bank', 'button']);
+            $container = $this->find('css_element', '.course-shared-banks');
+            $link = $container->findLink($row['questionbank']);
+            if (!$link) {
+                throw new ExpectationException(
+                    "Link '{$row['questionbank']}' not found.",
+                    $this->getSession()
+                );
+            }
+            $link->click();
+            $this->select_question_category($row["questioncategory"]);
+            $xpath = "//tr[.//td[contains(@class,'questionnametext')]" .
+                "[contains(normalize-space(.), '{$row['questionname']}')]]" .
+                "//input[contains(@class,'select-multiple-checkbox')]";
+
+            $this->execute(
+                'behat_general::the_element_should_be_disabled',
+                [$xpath, 'xpath_element']
+            );
+        }
+    }
+
+    /**
+     * Select the question category in the select menu
+     * @param string $category
+     * @throws ExpectationException
+     * @return void
+     */
+    private function select_question_category(string $category): void {
+        // Remove existing category selection.
+        $removebutton = $this->find(
+            'css_element',
+            '.form-autocomplete-selection .icon.fa-times'
+        );
+
+        if ($removebutton) {
+            $removebutton->click();
+        }
+
+        // Type the new category.
+        $input = $this->find(
+            'css_element',
+            'input[data-fieldtype="autocomplete"]'
+        );
+
+        $input->click();
+        $input->setValue($category);
+
+        // Wait for suggestions.
+        $this->getSession()->wait(
+            5000,
+            "document.querySelector('.form-autocomplete-suggestions li[role=\"option\"]') !== null"
+        );
+        $xpath = "//ul[contains(@class,'form-autocomplete-suggestions')]" .
+        "//li[@role='option' and contains(normalize-space(.), '{$category}')]";
+        // Select the category suggestion.
+        $this->getSession()->wait(5000, "
+            document.evaluate(
+                " . json_encode($xpath) . ",
+                document,
+                null,
+                XPathResult.FIRST_ORDERED_NODE_TYPE,
+                null
+            ).singleNodeValue !== null
+        ");
+        $this->find('xpath_element', $xpath)->click();
     }
 }

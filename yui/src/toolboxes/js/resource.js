@@ -223,8 +223,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         return this;
     },
 
-
-
     /**
      * Edit the maxmark for the resource
      *

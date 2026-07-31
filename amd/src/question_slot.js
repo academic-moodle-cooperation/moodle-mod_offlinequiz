@@ -59,7 +59,7 @@ const registerEventListeners = (canbeedited) => {
         const newVersion = parseInt(e.target.value);
 
         setQuestionVersion(slotId, newVersion, canbeedited)
-            .then(async (response) => {
+            .then(async(response) => {
                 let message = new Object();
                 var langstrings = [
                     {key: 'qversioncannotupdate', component: 'mod_offlinequiz'},
