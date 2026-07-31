@@ -170,8 +170,8 @@ switch ($requestmethod) {
                 }
                 $structure->remove_slot($offlinequiz, $slot->slot);
                 offlinequiz_delete_template_usages($offlinequiz);
-                offlinequiz_update_sumgrades($offlinequiz);
-                echo json_encode(['newsummarks' => offlinequiz_format_grade($offlinequiz, $offlinequiz->sumgrades),
+                $sumgrades = offlinequiz_update_sumgrades($offlinequiz);
+                echo json_encode(['newsummarks' => offlinequiz_format_grade($offlinequiz, $sumgrades),
                             'deleted' => true, 'newnumquestions' => $structure->get_question_count()]);
                 break;
         }

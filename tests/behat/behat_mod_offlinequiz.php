@@ -91,6 +91,46 @@ class behat_mod_offlinequiz extends behat_question_base {
         }
     }
 
+
+    /**
+     * Delete a question on the Edit offlinequiz page by first clicking on the Delete icon,
+     * then clicking one of the "After ..." links.
+     * @When /^I delete "(?P<question_name>(?:[^"]|\\")*)" in the offlinequiz by clicking the delete icon$/
+     * @param string $questionname the name of the question we are looking for.
+     */
+    public function i_delete_question_by_clicking_the_delete_icon($questionname) {
+        $slotxpath = "//li[contains(@class, ' slot ') and contains(., '" . $this->escape($questionname) .
+                "')]";
+        $deletexpath = "//a[contains(@class, 'editing_delete')]";
+
+        $this->execute("behat_general::i_click_on", [$slotxpath . $deletexpath, "xpath_element"]);
+
+        // Wait for the dialogue to exist before clicking on the 'Yes' button to avoid random failures.
+        $this->execute('behat_general::wait_until_exists', [".modal-content", "css_element"]);
+
+        $this->execute(
+            'behat_general::i_click_on_in_the',
+            ["Yes", "button", "Confirm", "dialogue"]
+        );
+    }
+
+    /**
+     * Change groups by selecting it in the group select
+     * @When /^I switch to group "(?P<groupname>(?:[^"]|\\")*)"$/
+     * @param string $groupname the name of the group we are switching to
+     */
+    public function i_switch_to_group($groupname) {
+
+        $page = $this->getSession()->getPage();
+
+        $select = $page->findField('groupnumber');
+        if (!$select) {
+            throw new \Exception('Could not find the group selector.');
+        }
+
+        $select->selectOption('Group ' . $groupname, false);
+    }
+
     /**
      * Adds the specified questions to offlinequiz
      *
