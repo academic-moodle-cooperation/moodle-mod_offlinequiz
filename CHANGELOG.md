@@ -4,9 +4,23 @@ CHANGELOG
 -----------------
 * [Feature] 5.2 compatible version
   * IMPORTANT: Since Moodle removed mimetex in 5.2, latex expressions will only work if the tex filter works. You can test it at https//your.moodle.instance/filter/tex/texdebug.php
+  * The tex-filter does NOT support "$" as delimiter for latex formulas. Questions using this need to be changed to "$$" in order to work. We are investigating options to use the Mathjax settings.
+* [Feature] Changed the order of the offlinequiz activity settings and gave them a proper renaming to be more understandable
+* [Feature] The document logo is now changable via filepicker. If you have already set a url it is downloaded during the upgrade. Any changes on the logo have to be done in moodle from now on. [github #267]
+* [Feature] Support for the Activity chooser activity enhancements (see https://moodle.atlassian.net/browse/MDL-87117)
+* [Bug] Fixed a bug when changing the points of a question to higher than the whole tests points
+* [Bug] Changed the order of questions when displaying or downloading the statistics of a group other than A
+* [Bug] Fixed a slow privacy provider export
+* [Bug] Fixed that Non-editing teachers get an error when viewing the offlinequiz
+* [Bug] Fixed the layout and position of the action buttons under the results table
+* [Bug] Fixed that super and lower texts added new lines in DOCX documents
 * [Bug] Fixed the look of the controls on the result overview
 * [Bug] Fixed that the order of questions wasn't correct in the single group view in the statistics overview
 * [Bug] Fixed that <code> end <pre> tags had a scroll bar [github #289]
+* [Bug] Fixed that multiple versions of the same question were addable when they were not in the offlinequiz questionbank
+* [Bug] Fixed that no note was displayed, when questions of an offline quiz with only one group where changed afer creating the forms. [github #278]
+* [Bug] Removed a lot of unneccesary langstrings
+
 
 5.1.1
 -----------------
