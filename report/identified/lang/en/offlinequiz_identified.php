@@ -25,19 +25,19 @@
  */
 
 $string['create'] = 'Create';
-$string['enableidentified'] = 'Enable prefilled answer forms';
-$string['enableidentified_help'] = 'Gives teachers the choice to create answer forms, prefilled with name and idnumber. This makes filling out the forms easier, but removes the ability to decide the users group at the time of the exam.';
+$string['enableidentified'] = 'Enable pre-filled answer forms';
+$string['enableidentified_help'] = 'Gives teachers the option to create answer forms that are already filled in with names and ID numbers. This makes filling out the forms easier, but removes the ability to decide the user\'s group at the time of the exam.';
 $string['group'] = 'Offline quiz group';
-$string['identified'] = 'Prefill answer forms';
-$string['identifiedreport'] = '<p class="alert alert-primary">Please select the offline quiz group and the attendance list (defined in the <a href="{$a}">Attendances</a> section) for which the answer forms should be prefilled with name and idnumber of participants.<br>The created prefilled answer forms can be saved, printed and given to students instead of the regular answer forms at the beginning of the test.<br><br><strong>Note: </strong>This means that the offline quiz group is already defined at this point and can no longer be assigned directly when the offline quiz takes place.
-<br>This feature is recommended for smaller groups of participants. Creating the prefilled answer forms may take a while depending on the number of participants.</p>';
+$string['identified'] = 'Pre-fill answer forms';
+$string['identifiedreport'] = '<p class="alert alert-primary">Please select the offline quiz group and the attendance list (defined in the <a href="{$a}">Attendances</a> section) for which the answer forms should be pre-filled with names and ID numbers of participants.<br>The created pre-filled answer forms can be saved, printed out and given to students instead of the regular answer forms at the beginning of the test.<br><br><strong>Note: </strong>This means that the offline quiz group is already defined at this point and can no longer be assigned directly when the offline quiz takes place.
+<br>This feature is recommended for smaller groups of participants. Creating the pre-filled answer forms may take a while depending on the number of participants.</p>';
 $string['missinggroup'] = 'Missing data for offline quiz group {$a}';
 $string['nogroupmark'] = 'Don\'t mark group';
 $string['noparticipantsinlist'] = 'There are no participants in the selected attendance list';
 $string['noroles'] = 'No roles with capability \'mod/offlinequiz:attempt\' defined in system context';
-$string['notgenerated'] = 'The forms have not been generated yet. Please, go to the <a href="{$a}">Preparation</a> section and create your forms.';
-$string['offlinequizidentifiedheading'] = 'Prefill answer forms';
+$string['notgenerated'] = 'The forms have not been generated yet. Please go to the <a href="{$a}">Preparation</a> section and create your forms.';
+$string['offlinequizidentifiedheading'] = 'Pre-fill answer forms';
 $string['participants'] = 'Attendance list';
-$string['pluginname'] = 'Prefilled answer forms';
-$string['privacy:metadata'] = 'Identified does not store any data about the user';
+$string['pluginname'] = 'Pre-filled answer forms';
+$string['privacy:metadata'] = 'This plugin does not store any user related data.';
 $string['return'] = 'Back';

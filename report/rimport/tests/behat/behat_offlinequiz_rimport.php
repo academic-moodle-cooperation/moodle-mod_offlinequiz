@@ -42,7 +42,7 @@ class behat_offlinequiz_rimport extends behat_base {
         global $CFG, $DB;
         $this->execute('behat_navigation::i_am_on_page_instance', [$this->escape($entityname), 'offlinequiz activity']);
         $this->execute("behat_general::i_click_on", [get_string('upload'), 'link']);
-        $this->execute('behat_repository_upload::i_upload_file_to_filemanager', [$filename, 'ZIP- or image-file']);
+        $this->execute('behat_repository_upload::i_upload_file_to_filemanager', [$filename, get_string('ziporimagefile', 'offlinequiz_rimport')]);
         $this->execute("behat_general::i_click_on", [get_string('import', 'offlinequiz_rimport'), 'button']);
 
         // Run adhoc tasks.

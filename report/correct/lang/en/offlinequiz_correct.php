@@ -25,5 +25,5 @@
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  **/
-$string['pluginname'] = 'Offlinequiz Results Correct';
+$string['pluginname'] = 'Offline Quiz Results Correct';
 $string['privacy:metadata'] = 'This plugin does not store any user related data.';
