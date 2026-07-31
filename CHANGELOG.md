@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+5.1.2
+-----------------
+* [Bug] Fixed that the correction of results did not update the grades
+
 5.1.1
 -----------------
 * [Security] Fixed a remote code execution with uploading arbitrary files
