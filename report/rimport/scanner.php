@@ -278,6 +278,54 @@ class offlinequiz_page_scanner {
         $this->iddigits = $offlinequiz->id_digits;
     }
 
+
+    /**
+     * convert file to other format
+     * @param string $file the name of the file.
+     * @param string $newfile The new name of the file
+     * @throws RuntimeException
+     * @return void
+     */
+    public function convertfile($file, $newfile) {
+        $command = [
+            'convert %s %s',
+            $file,
+            $newfile,
+        ];
+
+        $process = proc_open(
+            $command,
+            [
+                0 => ['pipe', 'r'],
+                1 => ['pipe', 'w'],
+                2 => ['pipe', 'w'],
+            ],
+            $pipes
+        );
+
+        if (!is_resource($process)) {
+            throw new RuntimeException('Unable to start ImageMagick');
+        }
+
+        // Close stdin.
+        fclose($pipes[0]);
+
+        // Consume stdout/stderr so the process cannot block on full pipes.
+        $stdout = stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
+
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+
+        $exitcode = proc_close($process);
+
+        if ($exitcode !== 0) {
+            throw new RuntimeException(
+                'ImageMagick conversion failed: ' . trim($stderr)
+            );
+        }
+    }
+
     /**
      * Initialises all the hotspots to be checked.
      *
@@ -468,8 +516,39 @@ class offlinequiz_page_scanner {
         // Reduce resolution of large images.
         $percent = round(300000 / $imageinfo['0']);
         if ($percent > 0 && $percent < 100) {
-            $handle = popen("convert '" . $file . "' -resize " . $percent . "% '" . $file . "'", 'r');
-            pclose($handle);
+            $command = [
+                'convert',
+                $file,
+                '-resize',
+                $percent . '%',
+                $file,
+            ];
+
+            $process = proc_open(
+                $command,
+                [
+                    0 => ['pipe', 'r'],
+                    1 => ['pipe', 'w'],
+                    2 => ['pipe', 'w'],
+                ],
+                $pipes
+            );
+
+            if (is_resource($process)) {
+                fclose($pipes[0]);
+
+                $stdout = stream_get_contents($pipes[1]);
+                $stderr = stream_get_contents($pipes[2]);
+
+                fclose($pipes[1]);
+                fclose($pipes[2]);
+
+                $exitcode = proc_close($process);
+
+                if ($exitcode !== 0) {
+                    throw new RuntimeException("ImageMagick failed: " . $stderr);
+                }
+            }
             $imageinfo = getimagesize($file);
         }
 
@@ -509,15 +588,11 @@ class offlinequiz_page_scanner {
                 }
                 break;
             case IMAGETYPE_TIFF_II:
-                $newfile = $pathparts["dirname"] . '/' . $pathparts["filename"] . ".png";
                 // Converting the tiff file to png format via imagemagick.
                 // This is much faster then using php's imagick extension.
-                $handle = popen("convert '" . $file . "' '" . $newfile . "' ", 'r');
-                fread($handle, 1);
-                while (!feof($handle)) {
-                    fread($handle, 1);
-                }
-                pclose($handle);
+                $newfile = $pathparts["dirname"] . '/' . $pathparts["filename"] . '.png';
+                $this->convertfile($file, $newfile);
+
                 if (file_exists($newfile)) {
                     $this->filename = $pathparts["filename"] . ".png";
                     $scannedpage->origfilename = $this->filename;
@@ -540,12 +615,7 @@ class offlinequiz_page_scanner {
             case IMAGETYPE_TIFF_MM:
                 $newfile = $pathparts["dirname"] . '/' . $pathparts["filename"] . ".png";
                 // Converting the tiff file to png format via imagemagick.
-                $handle = popen("convert '" . $file . "' '" . $newfile . "' ", 'r');
-                fread($handle, 100);
-                while (!feof($handle)) {
-                    fread($handle, 100);
-                }
-                pclose($handle);
+                $this->convertfile($file, $newfile);
                 if (file_exists($newfile)) {
                     $this->filename = $pathparts["filename"] . ".png";
                     $scannedpage->origfilename = $this->filename;
@@ -1102,8 +1172,41 @@ class offlinequiz_page_scanner {
         $tempsrc = $CFG->tempdir . "/$uniquename" . "_src.png";
         $tempdst = $CFG->tempdir . "/$uniquename" . "_dst.png";
         if (imagepng($this->image, $tempsrc)) {
-            $handle = popen("convert '" . $tempsrc . "' -rotate 180 '" . $tempdst . "' ", 'r');
-            pclose($handle);
+            $command = [
+                'convert %s -rotate 180 %s',
+                $tempsrc,
+                $tempdst,
+            ];
+
+            $process = proc_open(
+                $command,
+                [
+                    0 => ['pipe', 'r'],
+                    1 => ['pipe', 'w'],
+                    2 => ['pipe', 'w'],
+                ],
+                $pipes
+            );
+
+            if (!is_resource($process)) {
+                throw new RuntimeException('Unable to start ImageMagick.');
+            }
+
+            fclose($pipes[0]);
+
+            $stdout = stream_get_contents($pipes[1]);
+            $stderr = stream_get_contents($pipes[2]);
+
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+
+            $exitcode = proc_close($process);
+
+            if ($exitcode !== 0) {
+                throw new RuntimeException(
+                    'ImageMagick rotation failed: ' . trim($stderr)
+                );
+            }
             if ($this->image = imagecreatefrompng($tempdst)) {
                 $this->sourcefile = $tempdst;
 
@@ -1167,8 +1270,41 @@ class offlinequiz_page_scanner {
         $tempsrc = $CFG->tempdir . "/$uniquename" . "_src.png";
         $tempdst = $CFG->tempdir . "/$uniquename" . "_dst.png";
         if (imagepng($this->image, $tempsrc)) {
-            $handle = popen("convert '" . $tempsrc . "' -rotate 90 '" . $tempdst . "' ", 'r');
-            pclose($handle);
+            $command = [
+                'convert %s -rotate 180 %s',
+                $tempsrc,
+                $tempdst,
+            ];
+
+            $process = proc_open(
+                $command,
+                [
+                    0 => ['pipe', 'r'],
+                    1 => ['pipe', 'w'],
+                    2 => ['pipe', 'w'],
+                ],
+                $pipes
+            );
+
+            if (!is_resource($process)) {
+                throw new RuntimeException('Unable to start ImageMagick.');
+            }
+
+            fclose($pipes[0]);
+
+            $stdout = stream_get_contents($pipes[1]);
+            $stderr = stream_get_contents($pipes[2]);
+
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+
+            $exitcode = proc_close($process);
+
+            if ($exitcode !== 0) {
+                throw new RuntimeException(
+                    'ImageMagick rotation failed: ' . trim($stderr)
+                );
+            }
             if ($this->image = imagecreatefrompng($tempdst)) {
                 unlink($tempdst);
                 unlink($tempsrc);

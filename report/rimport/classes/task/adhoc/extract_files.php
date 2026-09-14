@@ -104,13 +104,37 @@ class extract_files extends \core\task\adhoc_task {
             } else if ($mimetype == 'image/tiff') {
                 // Extract each TIFF subfiles into a file.
                 // (it would be better to know if there are subfiles, but it is pretty cheap anyway).
-                $newfile = "$importfile-%d.tiff";
-                $handle = popen("convert '$importfile' '$newfile'", 'r');
-                fread($handle, 1);
-                while (!feof($handle)) {
-                    fread($handle, 1);
+                $newfile = $importfile . '-%d.tiff';
+
+                $command = [
+                    'convert',
+                    $importfile,
+                    $newfile,
+                ];
+
+                $descriptorspec = [
+                    0 => ['pipe', 'r'], // Stdin.
+                    1 => ['pipe', 'w'], // Stdout.
+                    2 => ['pipe', 'w'], // Stderr.
+                ];
+
+                $process = proc_open($command, $descriptorspec, $pipes);
+
+                if (!is_resource($process)) {
+                    $result = -1;
+                } else {
+                    fclose($pipes[0]);
+
+                    // Consume stdout/stderr so the process cannot block
+                    // if either pipe becomes full.
+                    stream_get_contents($pipes[1]);
+                    stream_get_contents($pipes[2]);
+
+                    fclose($pipes[1]);
+                    fclose($pipes[2]);
+
+                    $result = proc_close($process);
                 }
-                $result = pclose($handle);
                 if ($result) {
                     $queue->status = 'error';
                     $queue->error = 'couldnotextracttiff';
@@ -243,9 +267,46 @@ class extract_files extends \core\task\adhoc_task {
      * @return void
      */
     private function convert_black_white($file, $threshold) {
-        $command = "convert " . escapeshellarg(realpath($file)) .
-            " -colorspace gray -threshold $threshold% " .  escapeshellarg(realpath($file));
-        popen($command, 'r');
+        $input = realpath($file);
+
+        $command = [
+            'convert',
+            $input,
+            '-colorspace',
+            'gray',
+            '-threshold',
+            $threshold . '%',
+            $input,
+        ];
+
+        $descriptorspec = [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ];
+
+        $process = proc_open($command, $descriptorspec, $pipes);
+
+        if (!is_resource($process)) {
+            throw new \RuntimeException('Unable to start ImageMagick.');
+        }
+
+        fclose($pipes[0]);
+
+        // Consume output so the process cannot block.
+        stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
+
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+
+        $result = proc_close($process);
+
+        if ($result !== 0) {
+            throw new \RuntimeException(
+                'ImageMagick failed: ' . trim($stderr)
+            );
+        }
     }
     /**
      * remove original file from the list of files

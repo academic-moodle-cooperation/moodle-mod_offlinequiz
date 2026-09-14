@@ -420,7 +420,10 @@ class report extends default_report {
                 );
                 if ($page->scannedpageid) {
                     if (property_exists($page, 'resultid')) {
-                        $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid, 'overwrite' => 1]);
+                        $editurl = new moodle_url(
+                            '/mod/offlinequiz/correct.php',
+                            ['pageid' => $page->scannedpageid, 'overwrite' => 1],
+                        );
                     } else {
                         $editurl = new moodle_url('/mod/offlinequiz/correct.php', ['pageid' => $page->scannedpageid]);
                     }

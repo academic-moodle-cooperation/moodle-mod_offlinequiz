@@ -313,7 +313,8 @@ class mod_offlinequiz_mod_form extends moodleform_mod {
         }
 
         $mform->addElement('html', '<div class="row"><div class="col-md-3 col-form-label d-flex pb-0 pe-md-0"></div>' .
-                '<div class="col-md-9 d-flex flex-wrap align-items-start felement"><input id="showviewbutton" type="button" class="btn btn-secondary" value="' .
+                '<div class="col-md-9 d-flex flex-wrap align-items-start felement">'
+                . '<input id="showviewbutton" type="button" class="btn btn-secondary" value="' .
                 get_string('showstudentview', 'offlinequiz') . '" onClick="showStudentView(); return false;"></div></div>');
         $mform->addElement('html', '<div class="Popup"><center><input type="button" class="closePopup btn btn-primary"' .
                 ' onClick="closePopup(); return false;" value="' . get_string('closestudentview', 'offlinequiz') .

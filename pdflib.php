@@ -139,7 +139,7 @@ function offlinequiz_get_answers_html(
         // Remove all HTML comments (typically from MS Office).
         $answertext = preg_replace("/<!--.*?--\s*>/ms", "", $answertext);
         // Remove all paragraph tags because they mess up the layout.
-        $answertext = preg_replace("/<p\\b[^>]*>/ms", "", $answertext);
+        $answertext = preg_replace('/<\/?p\b[^>]*>/i', '', $answertext);
         // Remove <script> tags that are created by mathjax preview.
         $answertext = preg_replace("/<script[^>]*>[^<]*<\/script>/ms", "", $answertext);
         $answertext = preg_replace(

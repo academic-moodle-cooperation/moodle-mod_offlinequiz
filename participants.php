@@ -661,21 +661,56 @@ switch ($mode) {
             foreach ($files as $file) {
                 $mimetype = mimeinfo('type', $file);
                 if ($mimetype == 'application/pdf') {
-                    $newfile = "$file-%03d.tiff";
-                    $handle = popen("cd $tempdir;convert -type grayscale -density 300 '$file' '$newfile'", 'r');
-                    fread($handle, 1);
-                    while (!feof($handle)) {
-                        fread($handle, 1);
+                    $newfile = $file . '-%03d.tiff';
+
+                    $input = $tempdir . '/' . $file;
+                    $output = $tempdir . '/' . $newfile;
+
+                    $command = [
+                        'convert',
+                        '-type',
+                        'grayscale',
+                        '-density',
+                        '300',
+                        $input,
+                        $output,
+                    ];
+
+                    $descriptorspec = [
+                        0 => ['pipe', 'r'],
+                        1 => ['pipe', 'w'],
+                        2 => ['pipe', 'w'],
+                    ];
+
+                    $process = proc_open($command, $descriptorspec, $pipes);
+
+                    if (!is_resource($process)) {
+                        $returncode = -1;
+                    } else {
+                        fclose($pipes[0]);
+
+                        $stdout = stream_get_contents($pipes[1]);
+                        $stderr = stream_get_contents($pipes[2]);
+
+                        fclose($pipes[1]);
+                        fclose($pipes[2]);
+
+                        $returncode = proc_close($process);
                     }
-                    $returncode = pclose($handle);
-                    if ($returncode == 0) {
-                        unlink($tempdir . '/' . $file);
+
+                    if ($returncode === 0) {
+                        unlink($input);
                     } else {
                         echo $OUTPUT->notification(
-                            get_string('couldnotextractpdf', 'offlinequiz_rimport', $realfilename),
+                            get_string(
+                                'couldnotextractpdf',
+                                'offlinequiz_rimport',
+                                $realfilename
+                            ),
                             'notifyproblem'
                         );
                     }
+
                     $pdfs = true;
                 }
             }
