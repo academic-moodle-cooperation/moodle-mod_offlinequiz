@@ -32,9 +32,9 @@ import * as Templates from 'core/templates';
 import * as FormChangeChecker from 'core_form/changechecker';
 import {call as fetchMany} from 'core/ajax';
 import Pending from 'core/pending';
+import BankSwitcher from 'core_question/bank_switcher';
 
 const SELECTORS = {
-    ANCHOR: 'a[href]',
     EXISTING_CATEGORY_CONTAINER: '[data-region="existing-category-container"]',
     EXISTING_CATEGORY_TAB: '#id_existingcategoryheader',
     NEW_CATEGORY_CONTAINER: '[data-region="new-category-container"]',
@@ -52,9 +52,6 @@ const SELECTORS = {
     FORM_ELEMENT: '#add_random_question_form',
     MESSAGE_INPUT: '[name="message"]',
     SWITCH_TO_OTHER_BANK: 'button[data-action="switch-question-bank"]',
-    NEW_BANKMOD_ID: 'data-newmodid',
-    BANK_SEARCH: '#searchbanks',
-    GO_BACK_BUTTON: 'button[data-action="go-back"]',
     GROUP_ID: 'select[name="groupnumber"]',
     INCLUDE_SUBCATEGORIES: 'input[type="checkbox"][name="includesubcategories"]',
     PREVENT_SAME_QUESTION: 'input[type="checkbox"][name="preventsamequestion"]',
@@ -74,6 +71,7 @@ export default class ModalAddRandomQuestion extends Modal {
      * @param  {Number} quizCmId Current quiz course module id.
      * @param  {boolean} showNewCategory Display the New category tab when selecting random questions.
      * @param  {Number} groupNumber groupId
+     * @param  {Number} courseId Current course id, required for switching banks.
      */
     static init(
         contextId,
@@ -82,7 +80,8 @@ export default class ModalAddRandomQuestion extends Modal {
         returnUrl,
         quizCmId,
         showNewCategory = true,
-        groupNumber
+        groupNumber,
+        courseId,
     ) {
         const selector = '.menu [data-action="addarandomquestion"]';
         document.addEventListener('click', (e) => {
@@ -106,6 +105,7 @@ export default class ModalAddRandomQuestion extends Modal {
                 templateContext: {
                     hidden: showNewCategory,
                 },
+                courseId,
             });
         });
     }
@@ -122,6 +122,7 @@ export default class ModalAddRandomQuestion extends Modal {
         this.quizCmId = null;
         this.loadedForm = false;
         this.groupNumber = null;
+        this.courseId = null;
     }
 
     configure(modalConfig) {
@@ -130,6 +131,7 @@ export default class ModalAddRandomQuestion extends Modal {
         this.setCategory(modalConfig.category);
         this.setReturnUrl(modalConfig.returnUrl);
         this.showNewCategory = modalConfig.showNewCategory;
+        this.setCourseId(modalConfig.courseId);
 
         super.configure(modalConfig);
     }
@@ -185,6 +187,26 @@ export default class ModalAddRandomQuestion extends Modal {
      */
     getReturnUrl() {
         return this.returnUrl;
+    }
+
+    /**
+     * Store the ID of the current course.
+     *
+     * @method setCourseId
+     * @param {Number} courseId
+     */
+    setCourseId(courseId) {
+        this.courseId = courseId;
+    }
+
+    /**
+     * Get the current course ID.
+     *
+     * @method getCourseId
+     * @return {Number}
+     */
+    getCourseId() {
+        return this.courseId;
     }
 
     /**
@@ -323,66 +345,36 @@ export default class ModalAddRandomQuestion extends Modal {
                     }
                 });
 
+                const switcher = new BankSwitcher();
                 this.getModal().on('click', SELECTORS.SWITCH_TO_OTHER_BANK, () => {
-                    this.handleSwitchBankContentReload(SELECTORS.BANK_SEARCH)
-                        .then(function(ModalOfflinequizQuestionBank) {
-                            $(SELECTORS.BANK_SEARCH)?.on('change', (e) => {
-                                const bankCmId = $(e.currentTarget).val();
-                                // Have to recreate the modal as we have already used the body for the switch bank content.
-                                if (bankCmId > 0) {
-                                    ModalAddRandomQuestion.create({
-                                        'contextId': ModalOfflinequizQuestionBank.getContextId(),
-                                        'bankCmId': bankCmId,
-                                        'category': ModalOfflinequizQuestionBank.getCategory(),
-                                        'returnUrl': ModalOfflinequizQuestionBank.getReturnUrl(),
-                                        'quizCmId': ModalOfflinequizQuestionBank.quizCmId,
-                                        'title': ModalOfflinequizQuestionBank.originalTitle,
-                                        'addOnPage': ModalOfflinequizQuestionBank.getAddOnPageId(),
-                                        'templateContext': {hidden: ModalOfflinequizQuestionBank.showNewCategory},
-                                        'showNewCategory': ModalOfflinequizQuestionBank.showNewCategory,
-                                        'groupNumber': ModalOfflinequizQuestionBank.groupNumber,
-                                    })
-                                        .then(ModalOfflinequizQuestionBank.destroy())
-                                        .catch(Notification.exception);
-                                }
+                    try {
+                        switcher.show(this, this.getCourseId(), this.getContextId(), this.bankCmId, this.quizCmId);
+                    } catch (ex) {
+                        Notification.exception(ex);
+                    }
+                });
+
+                this.getModal().get(0).addEventListener('bankSwitched', async(e) => {
+                    if (e.detail.cmid > 0) {
+                        // Have to recreate the modal as we have already used the body for the switch bank content.
+                        try {
+                            await ModalAddRandomQuestion.create({
+                                'contextId': this.getContextId(),
+                                'bankCmId': e.detail.cmid,
+                                'category': this.getCategory(),
+                                'returnUrl': this.getReturnUrl(),
+                                'quizCmId': this.quizCmId,
+                                'title': this.originalTitle,
+                                'addOnPage': this.getAddOnPageId(),
+                                'templateContext': {hidden: this.showNewCategory},
+                                'showNewCategory': this.showNewCategory,
+                                'groupNumber': this.groupNumber,
+                                'courseId': this.getCourseId(),
                             });
-                            return ModalOfflinequizQuestionBank;
-                        });
-                });
-
-                this.getModal().on('click', SELECTORS.GO_BACK_BUTTON, (e) => {
-                    const anchorElement = $(e.currentTarget);
-                    // Have to recreate the modal as we have already used the body for the switch bank content.
-                    ModalAddRandomQuestion.create({
-                        'contextId': this.getContextId(),
-                        'bankCmId': anchorElement.attr('value'),
-                        'category': this.getCategory(),
-                        'returnUrl': this.getReturnUrl(),
-                        'quizCmId': this.quizCmId,
-                        'title': this.originalTitle,
-                        'addOnPage': this.getAddOnPageId(),
-                        'templateContext': {hidden: this.showNewCategory},
-                        'showNewCategory': this.showNewCategory,
-                        'groupNumber': this.groupNumber,
-                    }).then(this.destroy()).catch(Notification.exception);
-                });
-
-                this.getModal().on('click', SELECTORS.ANCHOR, (e) => {
-                    const anchorElement = $(e.currentTarget);
-                    // Have to recreate the modal as we have already used the body for the switch bank content.
-                    if (anchorElement.closest('a[' + SELECTORS.NEW_BANKMOD_ID + ']').length) {
-                        ModalAddRandomQuestion.create({
-                            'contextId': this.getContextId(),
-                            'bankCmId': anchorElement.attr(SELECTORS.NEW_BANKMOD_ID),
-                            'category': this.getCategory(),
-                            'returnUrl': this.getReturnUrl(),
-                            'quizCmId': this.quizCmId,
-                            'title': this.originalTitle,
-                            'addOnPage': this.getAddOnPageId(),
-                            'templateContext': {hidden: this.showNewCategory},
-                            'showNewCategory': this.showNewCategory,
-                            'groupNumber': this.groupNumber,
-                        }).then(this.destroy()).catch(Notification.exception);
+                            this.destroy();
+                        } catch (ex) {
+                            await Notification.exception(ex);
+                        }
                     }
                 });
             })

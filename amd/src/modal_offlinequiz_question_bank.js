@@ -26,6 +26,7 @@ import * as Fragment from 'core/fragment';
 import * as FormChangeChecker from 'core_form/changechecker';
 import * as ModalEvents from 'core/modal_events';
 import * as Notification from 'core/notification';
+import BankSwitcher from 'core_question/bank_switcher';
 
 const SELECTORS = {
     ADD_TO_OFFLINEQUIZ_CONTAINER: 'td.addtoofflinequizaction',
@@ -34,9 +35,6 @@ const SELECTORS = {
     ADD_QUESTIONS_FORM: 'form#questionsubmit',
     SORTERS: '.sorters',
     SWITCH_TO_OTHER_BANK: 'button[data-action="switch-question-bank"]',
-    NEW_BANKMOD_ID: 'data-newmodid',
-    BANK_SEARCH: '#searchbanks',
-    GO_BACK_BUTTON: 'button[data-action="go-back"]',
     ADD_ON_PAGE_FORM_ELEMENT: 'input[name="addonpage"]',
     CMID_FORM_ELEMENT: 'form#questionsubmit input[name="cmid"]',
 };
@@ -50,8 +48,9 @@ export default class ModalOfflinequizQuestionBank extends Modal {
      * @param {Number} contextId Current module context id.
      * @param {Number} bankCmId Current question bank course module id.
      * @param {Number} quizCmId Current quiz course module id.
+     * @param {Number} courseId Current course id, required for switching banks.
      */
-    static init(contextId, bankCmId, quizCmId) {
+    static init(contextId, bankCmId, quizCmId, courseId) {
         const selector = '.menu [data-action="questionbank"]';
         document.addEventListener('click', (e) => {
             const trigger = e.target.closest(selector);
@@ -70,6 +69,7 @@ export default class ModalOfflinequizQuestionBank extends Modal {
                     hidden: true,
                 },
                 large: true,
+                courseId,
             });
         });
     }
@@ -157,24 +157,27 @@ export default class ModalOfflinequizQuestionBank extends Modal {
             formElement.setAttribute('action', actionUrl.toString());
         });
 
+        const switcher = new BankSwitcher();
+
         this.getModal().on('click', SELECTORS.SWITCH_TO_OTHER_BANK, () => {
-            this.handleSwitchBankContentReload(SELECTORS.BANK_SEARCH)
-                .then(function(ModalOfflinequizQuestionBank) {
-                        // eslint-disable-next-line promise/always-return
-                        document.querySelector(SELECTORS.BANK_SEARCH)?.addEventListener('change', (e) => {
-                            const bankCmId = e.currentTarget.value;
-                            if (bankCmId > 0) {
-                                ModalOfflinequizQuestionBank.bankCmId = bankCmId;
-                                ModalOfflinequizQuestionBank.reloadBodyContent(window.location.search);
-                            }
-                        });
-                        document.querySelector(SELECTORS.GO_BACK_BUTTON).addEventListener('click', (e) => {
-                            ModalOfflinequizQuestionBank.bankCmId = e.currentTarget.value;
-                            ModalOfflinequizQuestionBank.reloadBodyContent(window.location.search);
-                        });
-                    }
-                )
-                .catch(Notification.exception);
+            try {
+                switcher.show(this, this.courseId, this.getContextId(), this.bankCmId, this.quizCmId);
+            } catch (ex) {
+                Notification.exception(ex);
+            }
+        });
+
+        this.getModal().get(0).addEventListener('bankSwitched', (e) => {
+            const bankCmId = e.detail.cmid;
+            if (bankCmId > 0) {
+                // We need to clear the filter as we are about to reload the content.
+                const url = new URL(location.href);
+                url.searchParams.delete('filter');
+                history.pushState({}, '', url);
+
+                this.bankCmId = bankCmId;
+                this.reloadBodyContent(window.location.search);
+            }
         });
 
         this.getModal().on('click', SELECTORS.ANCHOR, (e) => {
@@ -186,28 +189,7 @@ export default class ModalOfflinequizQuestionBank extends Modal {
                 return;
             }
 
-            // If the anchor element was a preview question link.
-            if (anchorElement.closest(SELECTORS.PREVIEW_CONTAINER)) {
-                return;
-            }
-
-            // Sorting links have their own handler.
-            if (anchorElement.closest(SELECTORS.SORTERS)) {
-                return;
-            }
-
-            if (anchorElement.closest('a[' + SELECTORS.NEW_BANKMOD_ID + ']')) {
-                this.bankCmId = anchorElement.getAttribute(SELECTORS.NEW_BANKMOD_ID);
-
-                // We need to clear the filter as we are about to reload the content.
-                const url = new URL(location.href);
-                url.searchParams.delete('filter');
-                history.pushState({}, '', url);
-            }
-
-            // Anything else means reload the pop-up contents.
             e.preventDefault();
-            this.reloadBodyContent(anchorElement.search);
         });
 
         // Disable the form change checker when the body is rendered.

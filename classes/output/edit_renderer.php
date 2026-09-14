@@ -137,6 +137,7 @@ class edit_renderer extends \plugin_renderer_base {
                 $thiscontext->id,
                 $offlinequizobj->get_cm()->id,
                 $offlinequizobj->get_cm()->id,
+                $offlinequizobj->get_courseid(),
             ]);
 
             $this->page->requires->js_call_amd('mod_offlinequiz/modal_add_random_question', 'init', [
@@ -147,6 +148,7 @@ class edit_renderer extends \plugin_renderer_base {
                 $pageurl->param('cmid'),
                 \core\plugininfo\qbank::is_plugin_enabled(\qbank_managecategories\helper::PLUGINNAME),
                 $offlinequiz->groupnumber,
+                $offlinequizobj->get_courseid(),
             ]);
             // Include the question chooser.
             $output .= $this->question_chooser();
