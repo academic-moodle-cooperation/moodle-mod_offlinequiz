@@ -141,7 +141,7 @@ function offlinequiz_create_latex_question(
             $questiontext = $question->questiontext;
             $questiontext = offlinequiz_convert_html_to_latex($question->questiontext);
             if ($question->qtype == 'description') {
-                $latexforquestions .= "\n" . '\\ ' . $questiontext . "\n";
+                $latexforquestions .= "\item" . '\\ ' . $questiontext . "\n";
             } else {
                 $latexforquestions .= '\item %' .  $question->name . "\n" . $questiontext . "\n";
             }
