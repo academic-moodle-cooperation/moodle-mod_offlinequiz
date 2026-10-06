@@ -2000,11 +2000,14 @@ function offlinequiz_get_math_filters($context, $page = null) {
     return $mathfilters;
 }
 /**
- * apply filters to a text
- * @param mixed $text
- * @param mixed $filters
+ * Apply filters to a text.
+ *
+ * @param string $text
+ * @param array $filters
+ * @param bool $forpdf Whether the filtered text will be written to a PDF.
+ * @return string
  */
-function offlinequiz_apply_filters($text, $filters) {
+function offlinequiz_apply_filters($text, $filters, $forpdf = false) {
 
     $text = preg_replace('/\\\\begin\{equation\}/i', '\\[', $text);
     $text = preg_replace('/\\\\end\{equation\}/i', '\\]', $text);
@@ -2012,6 +2015,18 @@ function offlinequiz_apply_filters($text, $filters) {
     foreach ($filters as $filter) {
         $text = $filter->filter($text);
     }
+
+    if ($forpdf) {
+        // TCPDF misplaces text after linked TeX images; Moodle's filter wraps them in this markup.
+        $text = preg_replace(
+            '~<span\b(?=[^>]*\bclass="[^"]*\bMathJax_Preview\b)[^>]*>\s*<a\b' .
+                '(?=[^>]*\bhref="[^"]*/filter/tex/(?:displaytex|texdebug)\.php(?:\?[^"]*)?")[^>]*>' .
+                '(<img\b[^>]*>)</a>\s*</span>~i',
+            '$1',
+            $text
+        );
+    }
+
     return $text;
 }
 

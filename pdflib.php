@@ -64,7 +64,7 @@ function offlinequiz_print_question_html($pdf, $question, $texfilters, $trans, $
     $questiontext = $question->questiontext;
 
     // Filter only for tex formulas.
-    $questiontext = offlinequiz_apply_filters($questiontext, $texfilters);
+    $questiontext = offlinequiz_apply_filters($questiontext, $texfilters, true);
 
     if ($question->questiontextformat == FORMAT_PLAIN) {
         $questiontext = s($questiontext);
@@ -131,7 +131,7 @@ function offlinequiz_get_answers_html(
     foreach ($order as $key => $answer) {
         $answertext = $question->options->answers[$answer]->answer;
         // Filter only for tex formulas.
-        $answertext = offlinequiz_apply_filters($answertext, $texfilters);
+        $answertext = offlinequiz_apply_filters($answertext, $texfilters, true);
         // If the answer is in plain text, escape it.
         if ($question->options->answers[$answer]->answerformat != FORMAT_HTML) {
             $answertext = s($answertext);
